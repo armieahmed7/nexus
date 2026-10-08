@@ -2,5 +2,381 @@
   "module": {
     "name": "Skills Passport"
   },
-  "routes": {}
+  "routes": {
+    "my-skills": {
+      "title": "My Skills Passport",
+      "purpose": "What you are qualified and skilled in, how it was evidenced, and what is about to lapse."
+    },
+    "my-skills-wallet": {
+      "title": "Credential Wallet",
+      "purpose": "Signed, shareable badges for your Kafa'a course certificates and completions."
+    },
+    "my-skills-print": {
+      "title": "Printable Skills Passport",
+      "purpose": "A one-page passport to print or save, in English or Arabic."
+    },
+    "team-passport": {
+      "title": "Team member's Skills Passport",
+      "purpose": "Read-only passport of a person in your scope."
+    },
+    "verify-badge-check": {
+      "title": "Verify a Kafa'a badge",
+      "purpose": "Check the signature and status of a downloaded Kafa'a badge."
+    },
+    "verify-badge": {
+      "title": "Badge verification",
+      "purpose": "Public verification of a shared Kafa'a badge: holder initials only."
+    }
+  },
+  "mirror": "Mirror",
+  "reasons": {
+    "transfer": "Valued by {n} role(s) you can reach: {roles}",
+    "held": "You hold level {level} ({basis})",
+    "best_role": "Closest match: {role} needs level {need} ({pct}% skills match)",
+    "ageing_ageing": "Strongest evidence is from {date}: older than 36 months, so it counts one level lower",
+    "ageing_soon": "Strongest evidence turns 36 months old on {date}; after that it counts one level lower",
+    "ageing_lapsed": "The qualification record behind this skill has lapsed ({date}): it now counts as evidenced, not verified"
+  },
+  "passport": {
+    "intro": "Your skills as Kafa'a derives them from recorded evidence: qualification records, courses, assessments, JPMs, validated ratings and credentials. Every level shows how it was evidenced.",
+    "eyebrow": "Skills Passport",
+    "years": "{n} years of service",
+    "yearsNote": "from hire date; role history is not mirrored",
+    "quals": "Qualifications",
+    "noQuals": "No qualification records mirrored",
+    "licence": "Licence",
+    "noLicence": "No operator licence",
+    "statSkills": "Skills with evidence",
+    "statSkillsSub": "{n} evidence records",
+    "statVerified": "Verified",
+    "statVerifiedSub": "by a current qualification record",
+    "statCoverage": "Role requirements met",
+    "statCoverageSub": "for {role}",
+    "statExpiring": "Expiring or ageing",
+    "statExpiringSub": "qualifications within 90 days and ageing skills",
+    "wallet": "Credential Wallet",
+    "print": "Print passport",
+    "json": "Download JSON",
+    "levelOf": "Level {level} of {need} required",
+    "openEvidence": "{basis}: open the evidence",
+    "noPerson": "Passport not available",
+    "noPersonBody": "This person is not in your scope, or has no Kafa'a profile."
+  },
+  "qual": {
+    "qualified": "Qualified",
+    "notQualified": "Not qualified",
+    "view": {
+      "qualified": "Qualified",
+      "due": "Due for renewal",
+      "expired": "Expired",
+      "in_progress": "In progress",
+      "planned": "Planned",
+      "suspended": "Suspended",
+      "renewed": "Renewed"
+    }
+  },
+  "licence": {
+    "valid": "Valid (mirror)",
+    "renewal_due": "Renewal due (mirror)",
+    "lapsed": "Lapsed (mirror)",
+    "suspended": "Suspended (mirror)",
+    "withdrawn": "Withdrawn (mirror)",
+    "pending": "Pending (mirror)",
+    "stale": "Sync stale: status not shown"
+  },
+  "radar": {
+    "title": "Skills radar",
+    "byDomain": "By domain",
+    "byCompetency": "By competency",
+    "mode": "Radar axes",
+    "overlay": "Overlay a target role",
+    "noOverlay": "No target role",
+    "figTitle": "Skills radar: my level against the requirements of {role}",
+    "me": "My level",
+    "required": "Required",
+    "requiredFor": "Required for {role}",
+    "target": "Target",
+    "targetFor": "Target: {role}",
+    "axis": "Axis",
+    "showTable": "Show as table",
+    "hideTable": "Hide table",
+    "tooFew": "Not enough axes for a radar: see the table below.",
+    "securityTarget": "Security roles show the career path only: no readiness is computed."
+  },
+  "strengths": {
+    "title": "Strengths for my next move",
+    "eyebrow": "Top transferable skills",
+    "needs": "needs {n}",
+    "none": "No transferable strength found for the roles you can reach.",
+    "noRole": "No current role is recorded, so next moves cannot be computed.",
+    "closest": "Closest reachable roles"
+  },
+  "expiring": {
+    "title": "Expiring and decaying",
+    "intro": "Qualifications with a 90, 60 or 30-day notice, and skills whose evidence is ageing (older than 36 months counts one level lower).",
+    "quals": "Qualifications",
+    "qualsEyebrow": "Mirror of the training records system",
+    "noQuals": "Nothing expires in the next 90 days.",
+    "expiresOn": "Expires {date} (in {n} days)",
+    "expiredOn": "Expired {date}",
+    "notice": "{n}-day notice",
+    "skills": "Ageing skills",
+    "skillsEyebrow": "Evidence decay",
+    "noSkills": "No skill evidence is ageing.",
+    "state": {
+      "ageing": "Evidence from {date}: counted one level lower",
+      "soon": "Starts ageing on {date}",
+      "lapsed": "Qualification lapsed ({date})"
+    },
+    "chip": {
+      "ageing": "Ageing",
+      "soon": "Ageing soon",
+      "lapsed": "Lapsed"
+    },
+    "refresh": "refresh with {course}"
+  },
+  "list": {
+    "title": "Skills",
+    "intro": "Each skill shows its level, how it was evidenced and the confidence. Select a basis chip to see the records behind it.",
+    "search": "Search skills",
+    "area": "Area",
+    "basis": "Basis",
+    "scope": "Show",
+    "roleOnly": "Role requirements only",
+    "skill": "Skill",
+    "level": "Level",
+    "confidence": "Confidence",
+    "evidence": "Evidence",
+    "evidenceN": "{n} records",
+    "noEvidence": "No evidence yet",
+    "roleReq": "Role requirement",
+    "gap": "Gap",
+    "statusOnly": "Completed · status only",
+    "empty": "No skill matches these filters."
+  },
+  "area": {
+    "plant_systems": "Plant systems",
+    "operations": "Operations",
+    "maintenance": "Maintenance",
+    "radiation_chemistry": "Radiation protection and chemistry",
+    "engineering": "Engineering",
+    "safety": "Nuclear safety",
+    "human_performance": "Human performance and culture",
+    "emergency": "Emergency preparedness",
+    "security": "Security (status only)",
+    "quality": "Quality",
+    "leadership": "Leadership",
+    "digital": "Digital and data",
+    "project": "Projects"
+  },
+  "evidence": {
+    "intro": "Strongest evidence first. Kafa'a reads these records from the systems that hold them; it does not create them.",
+    "recorded": "As recorded in {system} on {date}",
+    "ref": "Record",
+    "lapsed": "Lapsed",
+    "ageing": "Ageing",
+    "strongest": "Strongest",
+    "mirrorNote": "Qualification and licence entries mirror the licensee's systems. Kafa'a is not an authority.",
+    "securityQual": "Security qualification (status only)",
+    "kind": {
+      "qual": "Qualification record",
+      "course": "Course passed",
+      "assessment": "Assessment passed",
+      "jpm": "Job performance measure passed",
+      "ojt": "On-the-job sign-off",
+      "credential": "Credential",
+      "rating": "Rating",
+      "claim": "Self-claim",
+      "validated": "Validated rating"
+    },
+    "sys": {
+      "assess": "Kafa'a assessments",
+      "jpm": "Kafa'a JPM records",
+      "wallet": "Kafa'a credential wallet",
+      "application": "the application form",
+      "onboarding": "the onboarding profile",
+      "passport": "Kafa'a skills passport"
+    }
+  },
+  "claims": {
+    "title": "My claims",
+    "titleTeam": "Claims",
+    "intro": "Self-rated skills stay \"claimed\" until a manager or peer validates them.",
+    "none": "No claims yet",
+    "noneBody": "Add a claim for a skill you use that no record shows yet.",
+    "link": "Evidence link",
+    "awaiting": "Awaiting validation by a manager or peer.",
+    "validatedOn": "Validated on {date}",
+    "status": {
+      "claimed": "Claimed",
+      "validated": "Validated",
+      "rejected": "Not validated",
+      "superseded": "Superseded"
+    }
+  },
+  "claim": {
+    "add": "Add a claim",
+    "title": "Add a skill claim",
+    "intro": "Rate a skill you use. The claim shows on your passport as \"claimed\" and counts less than recorded evidence until it is validated.",
+    "skill": "Skill",
+    "securityNote": "Security competencies cannot be self-claimed: they show as qualified or not qualified only.",
+    "current": "Current state: level {level}, {basis}",
+    "level": "Level",
+    "note": "What shows this level?",
+    "noteHint": "A short note, 3 to 500 characters. Do not include personal or security details.",
+    "url": "Evidence link (optional)",
+    "urlHint": "An http(s) link, for example to a published report.",
+    "urlBad": "Use an http or https address of up to 300 characters.",
+    "submit": "Add claim",
+    "done": "Claim added: it stays \"claimed\" until validated"
+  },
+  "notAuthority": {
+    "title": "Kafa'a is not an authority",
+    "body": "Qualification and licence lines mirror the licensee's systems. Skill levels are inferred from recorded evidence to support development conversations; they are not a FANR certification or a qualification decision."
+  },
+  "team": {
+    "pickTitle": "Passports in your scope",
+    "pickEyebrow": "Managers and instructors: read-only",
+    "person": "Person",
+    "open": "Open passport",
+    "intro": "A read-only view of the skills passport of a person in your scope.",
+    "readOnly": "Read-only",
+    "readOnlyBody": "Only the holder can add claims or issue badges. Use it to prepare a development conversation."
+  },
+  "print": {
+    "intro": "A one-page passport in the language you are reading. It carries no email, no photo and no task detail.",
+    "print": "Print",
+    "download": "Download HTML",
+    "back": "Back to the passport",
+    "frame": "Printable passport preview",
+    "title": "Kafa'a Skills Passport",
+    "subtitle": "Skills derived from recorded evidence · demo tenant (synthetic data)",
+    "years": "Years of service",
+    "generated": "Generated",
+    "skills": "Skills",
+    "code": "Code",
+    "skill": "Skill",
+    "level": "Level",
+    "basis": "Basis",
+    "required": "Role needs",
+    "more": "More skills are listed in the online passport.",
+    "quals": "Qualifications (mirror)",
+    "licence": "Licence",
+    "mirror": "mirror of the licensee's records",
+    "badges": "Credentials",
+    "footer": "Kafa'a is not an authority. Qualification and licence entries mirror the licensee's systems; skill levels are inferred from recorded evidence and are not a FANR certification or licence. Concept demo with synthetic data.",
+    "basis_verified": "Verified",
+    "basis_evidenced": "Evidenced",
+    "basis_validated": "Validated",
+    "basis_claimed": "Claimed",
+    "basis_none": "No evidence"
+  },
+  "wallet": {
+    "intro": "Wrap your Kafa'a course certificates and completions in signed, shareable badges (Open Badges 3.0 format).",
+    "toPassport": "Back to the passport",
+    "noticeTitle": "Internal credentials only",
+    "notice": "Internal Kafa'a credential; not a FANR certificate or licence. Licences and qualification records are never issued as badges.",
+    "statActive": "Active badges",
+    "statReady": "Ready to wrap",
+    "statReadySub": "certificates and completions",
+    "statSoon": "Expiring in 90 days",
+    "statSoonSub": "revoked on expiry",
+    "statInactive": "Expired or revoked",
+    "statInactiveSub": "kept for history",
+    "badges": "My badges",
+    "none": "No badges yet",
+    "noneBody": "Issue a badge from one of your certificates or course completions below.",
+    "ready": "Certificates and completions",
+    "readyEyebrow": "What can become a badge",
+    "noSources": "No Kafa'a certificate or course completion is recorded for you yet.",
+    "completionRef": "course completion record",
+    "issue": "Issue badge",
+    "issueTitle": "Issue a signed badge for {course}?",
+    "issueConsequence": "Kafa'a signs an Open Badges 3.0 credential with its issuer key and records the action in the audit log and the NEXUS evidence ledger. Anyone with the share link sees your initials, the course and the skills it evidences.",
+    "issued": "Badge issued and signed",
+    "copied": "Share link copied",
+    "neverMirrors": "FANR licences and qualification mirrors are never issued as badges. Security-related training shows as qualified or not qualified only.",
+    "howTitle": "How Kafa'a badges work",
+    "how1": "Each badge is an Open Badges 3.0-shaped credential: the course, its criteria, the Kafa'a skills it aligns to and the evidence.",
+    "how2": "It is signed with an Ed25519 key. Changing any field of the downloaded file makes the signature invalid.",
+    "how3": "The share link shows your initials only. A badge expires with its certificate and can be withdrawn at any time.",
+    "issuerKey": "Published issuer keys",
+    "why": {
+      "expired": "Expired: not eligible",
+      "revoked": "Revoked: not eligible",
+      "mirror": "Mirror record: never a badge",
+      "covered": "Covered by the certificate",
+      "security": "Security training: status only",
+      "duplicate": "Badge already issued",
+      "not_found": "Not found",
+      "not_eligible": "Not eligible",
+      "security_restricted": "Security training: status only",
+      "already_issued": "Badge already issued"
+    }
+  },
+  "badge": {
+    "kind": {
+      "certificate": "Course certificate",
+      "completion": "Course completion"
+    },
+    "status": {
+      "active": "Active",
+      "expired": "Expired",
+      "revoked": "Revoked"
+    },
+    "issued": "Issued",
+    "validTo": "Valid until",
+    "noExpiry": "No expiry",
+    "holder": "Holder",
+    "link": "Share code",
+    "alignment": "Skills",
+    "copy": "Copy share link",
+    "verify": "Verify page",
+    "download": "Download JSON",
+    "withdraw": "Withdraw",
+    "withdrawTitle": "Withdraw this badge?",
+    "withdrawConsequence": "The verify page will show the badge as revoked from now on, and the skill evidence it added is removed from your passport. The action is audited.",
+    "withdrawReason": "Reason",
+    "withdrawn": "Badge withdrawn",
+    "revokedBecause": "Revoked: {reason}"
+  },
+  "sig": {
+    "valid": "Signature verified",
+    "validOffline": "Signed with the offline demo key",
+    "invalid_signature": "Signature invalid",
+    "unknown_key": "Unknown signing key",
+    "malformed": "Not a Kafa'a credential"
+  },
+  "verify": {
+    "intro": "Check a Kafa'a badge: its signature, its current status and what it certifies. Only the holder's initials are shown.",
+    "bannerTitle": "Not a FANR certificate or licence",
+    "notFound": "Badge not found",
+    "notFoundBody": "No Kafa'a badge has this link. Check the address with the holder.",
+    "rateLimited": "Too many checks",
+    "invalidBody": "This file was changed after it was issued, or it was not issued by Kafa'a. Do not rely on it.",
+    "status": {
+      "expired": "This badge has expired",
+      "revoked": "This badge has been revoked"
+    },
+    "statusBody": {
+      "expired": "The signature is genuine, but the badge or its certificate is past its validity date.",
+      "revoked": "The signature is genuine, but the badge or its certificate has been revoked."
+    },
+    "issuer": "Issuer",
+    "criteria": "Criteria",
+    "key": "Signing key",
+    "checked": "Checked",
+    "fileTitle": "Check a downloaded badge",
+    "fileEyebrow": "Signature check in your browser",
+    "paste": "Paste the badge JSON",
+    "pasteHint": "The file the holder downloaded from their Kafa'a wallet.",
+    "check": "Check signature",
+    "upload": "Upload a file",
+    "notJson": "This is not valid JSON.",
+    "unknownTitle": "Not in the Kafa'a registry",
+    "unknownBody": "The signature checks out, but this badge is not in the registry of this Kafa'a tenant.",
+    "privacy": "The file is checked in your browser and is not uploaded. To check a certificate number instead:",
+    "certLink": "verify a certificate",
+    "keysNote": "Signatures are checked against the issuer keys Kafa'a publishes."
+  }
 }

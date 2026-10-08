@@ -1723,6 +1723,43 @@ create table if not exists kafaa_engine_settings (
 );
 comment on table kafaa_engine_settings is '[M16] Engine per surface (deterministic or model slot) and ranking weights (F02)';
 
+-- M17 · Self-claimed skill levels with a note (F03); claimed until validated (F10)
+create table if not exists kafaa_skill_claims (
+  id text primary key,
+  person_id text not null,
+  skill_id text not null,
+  level integer not null,
+  note text not null,
+  evidence_url text,
+  status text not null default 'claimed' check (status in ('claimed', 'validated', 'rejected', 'superseded')),
+  created_at timestamptz not null default now(),
+  decided_by text,
+  decided_at timestamptz,
+  decision_note text
+);
+comment on table kafaa_skill_claims is '[M17] Self-claimed skill levels with a note (F03); claimed until validated (F10)';
+
+-- M17 · Signed Open Badges 3.0-shaped credentials for Kafa'a course certificates and completions (F04); public verify via RPC
+create table if not exists kafaa_badges (
+  id text primary key,
+  person_id text not null,
+  source_table text not null check (source_table in ('certificates', 'training_records')),
+  source_id text not null,
+  course_id text not null,
+  holder_initials text not null,
+  achievement jsonb not null default '{}'::jsonb,
+  credential jsonb not null default '{}'::jsonb,
+  issued_on date not null,
+  valid_to date,
+  status text not null default 'active' check (status in ('active', 'revoked')),
+  key_id text not null default 'key-1' check (key_id in ('key-1', 'key-offline')),
+  public_slug text not null unique,
+  revoked_at timestamptz,
+  revoke_reason text,
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_badges is '[M17] Signed Open Badges 3.0-shaped credentials for Kafa''a course certificates and completions (F04); public verify via RPC';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -1847,6 +1884,10 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sk
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_evidence_skill_id_fk') then alter table kafaa_skill_evidence add constraint kafaa_skill_evidence_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_person_skills_person_id_fk') then alter table kafaa_person_skills add constraint kafaa_person_skills_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_person_skills_skill_id_fk') then alter table kafaa_person_skills add constraint kafaa_person_skills_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_claims_person_id_fk') then alter table kafaa_skill_claims add constraint kafaa_skill_claims_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_claims_skill_id_fk') then alter table kafaa_skill_claims add constraint kafaa_skill_claims_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_badges_person_id_fk') then alter table kafaa_badges add constraint kafaa_badges_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_badges_course_id_fk') then alter table kafaa_badges add constraint kafaa_badges_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -2004,6 +2045,13 @@ create index if not exists kafaa_skill_evidence_kind_idx on kafaa_skill_evidence
 create index if not exists kafaa_skill_evidence_ref_id_idx on kafaa_skill_evidence (ref_id);
 create index if not exists kafaa_person_skills_person_id_idx on kafaa_person_skills (person_id);
 create index if not exists kafaa_person_skills_skill_id_idx on kafaa_person_skills (skill_id);
+create index if not exists kafaa_skill_claims_person_id_idx on kafaa_skill_claims (person_id);
+create index if not exists kafaa_skill_claims_skill_id_idx on kafaa_skill_claims (skill_id);
+create index if not exists kafaa_skill_claims_status_idx on kafaa_skill_claims (status);
+create index if not exists kafaa_badges_person_id_idx on kafaa_badges (person_id);
+create index if not exists kafaa_badges_source_id_idx on kafaa_badges (source_id);
+create index if not exists kafaa_badges_course_id_idx on kafaa_badges (course_id);
+create index if not exists kafaa_badges_status_idx on kafaa_badges (status);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -2016,4 +2064,4 @@ create trigger kafaa_evaluations_append_only before update or delete on kafaa_ev
 drop trigger if exists kafaa_evaluation_acks_append_only on kafaa_evaluation_acks;
 create trigger kafaa_evaluation_acks_append_only before update or delete on kafaa_evaluation_acks for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 107) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 109) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

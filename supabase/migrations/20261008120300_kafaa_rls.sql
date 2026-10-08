@@ -1173,3 +1173,17 @@ create policy kafaa_read on kafaa_engine_settings for select to anon, authentica
 grant select on kafaa_engine_settings to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- skill_claims
+alter table kafaa_skill_claims enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_claims;
+create policy kafaa_read on kafaa_skill_claims for select to anon, authenticated using (kafaa_rule_read('skills_profile', person_id, null::text, true));
+grant select on kafaa_skill_claims to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- badges
+alter table kafaa_badges enable row level security;
+drop policy if exists kafaa_read on kafaa_badges;
+create policy kafaa_read on kafaa_badges for select to anon, authenticated using (kafaa_rule_read('skills_profile', person_id, null::text, true));
+grant select on kafaa_badges to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+

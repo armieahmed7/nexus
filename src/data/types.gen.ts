@@ -1410,6 +1410,37 @@ export interface LedgerLocalRow {
   hash: string;
   actor_persona_id?: string | null;
 }
+export interface SkillClaimsRow {
+  id: string;
+  person_id: string;
+  skill_id: string;
+  level: number;
+  note: string;
+  evidence_url?: string | null;
+  status: 'claimed' | 'validated' | 'rejected' | 'superseded';
+  created_at: string;
+  decided_by?: string | null;
+  decided_at?: string | null;
+  decision_note?: string | null;
+}
+export interface BadgesRow {
+  id: string;
+  person_id: string;
+  source_table: 'certificates' | 'training_records';
+  source_id: string;
+  course_id: string;
+  holder_initials: string;
+  achievement: any;
+  credential: any;
+  issued_on: string;
+  valid_to?: string | null;
+  status: 'active' | 'revoked';
+  key_id: 'key-1' | 'key-offline';
+  public_slug: string;
+  revoked_at?: string | null;
+  revoke_reason?: string | null;
+  created_at: string;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -1520,6 +1551,8 @@ export interface Tables {
   person_skills: PersonSkillsRow;
   engine_settings: EngineSettingsRow;
   ledger_local: LedgerLocalRow;
+  skill_claims: SkillClaimsRow;
+  badges: BadgesRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];
