@@ -40,11 +40,21 @@ alter table kafaa_mentoring_requests add column if not exists message text not n
 alter table kafaa_mentoring_requests add column if not exists responded_at timestamptz;
 create index if not exists kafaa_mentoring_requests_mentor_person_id_idx on kafaa_mentoring_requests (mentor_person_id);
 
--- ───────────── 2. Access changes (schema.ts: items, item_versions and appeals are now RPC-only; mentors read requests addressed to them)
+-- ───────────── 2. Access changes (schema.ts: items, item_versions and appeals are now RPC-only; mentors read requests addressed to them;
+--                staff may opt in and edit their own mentor offer)
 revoke insert, update, delete on kafaa_items, kafaa_item_versions, kafaa_appeals from anon, authenticated;
 do $$ begin
   if exists (select 1 from pg_policies where tablename = 'kafaa_mentoring_requests' and policyname = 'kafaa_read') then
     execute 'alter policy kafaa_read on kafaa_mentoring_requests using (kafaa_rule_read(''dev_plans'', person_id, null::text, true) or kafaa_rule_read(''dev_plans'', mentor_person_id, null::text, true))';
+  end if;
+  if exists (select 1 from pg_policies where tablename = 'kafaa_mentors' and policyname = 'kafaa_read') then
+    execute 'alter policy kafaa_read on kafaa_mentors using (kafaa_rule_read(''internal_content'', null::text, null::text, true) or kafaa_rule_read(''dev_plans'', person_id, null::text, true))';
+  end if;
+  if exists (select 1 from pg_policies where tablename = 'kafaa_mentors' and policyname = 'kafaa_insert') then
+    execute 'alter policy kafaa_insert on kafaa_mentors with check (kafaa_has_grant(''dev_plans'', array[''W'',''A'']) or (person_id = kafaa_me() and kafaa_has_grant(''dev_plans'', array[''Own'',''Scope''])))';
+  end if;
+  if exists (select 1 from pg_policies where tablename = 'kafaa_mentors' and policyname = 'kafaa_update') then
+    execute 'alter policy kafaa_update on kafaa_mentors using (kafaa_has_grant(''dev_plans'', array[''W'',''A'']) or (person_id = kafaa_me() and kafaa_has_grant(''dev_plans'', array[''Own'',''Scope'']))) with check (kafaa_has_grant(''dev_plans'', array[''W'',''A'']) or (person_id = kafaa_me() and kafaa_has_grant(''dev_plans'', array[''Own'',''Scope''])))';
   end if;
   if exists (select 1 from pg_policies where tablename = 'kafaa_appeals' and policyname = 'kafaa_read') then
     execute 'alter policy kafaa_read on kafaa_appeals using (kafaa_rule_read(''qual_records'', person_id, null::text, true) or kafaa_rule_read(''secure_items'', null::text, null::text, true))';
@@ -72,6 +82,45 @@ begin
   return new;
 end $$;
 create or replace trigger kafaa_enrolments_guard before insert or update on kafaa_enrolments for each row execute function kafaa_enrolments_guard();
+
+-- Approvals and responses are recorded only through the audited RPCs (mirror: src/data/local/guards.ts).
+create or replace function kafaa_g2_guard_decisions() returns trigger language plpgsql set search_path = public as $$
+declare v_bad boolean := false; v_msg text;
+begin
+  if current_user not in ('authenticated', 'anon') then return new; end if;
+  if tg_table_name = 'kafaa_external_requests' then
+    v_msg := 'External requests are decided through the approval workflow';
+    if tg_op = 'INSERT' then
+      v_bad := new.status <> 'requested' or new.approver_person_id is not null or new.decided_at is not null or new.decision_note is not null;
+    else
+      v_bad := (new.status is distinct from old.status and new.status <> 'requested') or new.approver_person_id is distinct from old.approver_person_id
+        or new.decided_at is distinct from old.decided_at or new.decision_note is distinct from old.decision_note;
+    end if;
+  elsif tg_table_name = 'kafaa_dev_plans' then
+    v_msg := 'Development plans are approved by a line manager';
+    if tg_op = 'INSERT' then
+      v_bad := new.status not in ('draft', 'submitted', 'closed') or new.approved_by is not null or new.decided_at is not null or new.decision_note is not null;
+    else
+      v_bad := (new.status is distinct from old.status and new.status not in ('draft', 'submitted', 'closed')) or new.approved_by is distinct from old.approved_by
+        or new.decided_at is distinct from old.decided_at or new.decision_note is distinct from old.decision_note;
+    end if;
+  elsif tg_table_name = 'kafaa_mentoring_requests' then
+    v_msg := 'Only the mentor accepts or declines a request';
+    if tg_op = 'INSERT' then
+      v_bad := new.status <> 'requested' or new.responded_at is not null;
+    else
+      v_bad := (new.status is distinct from old.status and new.status <> 'closed') or new.responded_at is distinct from old.responded_at;
+    end if;
+  elsif tg_table_name = 'kafaa_courses' then
+    if new.qualifying and new.evaluation_form_id is null then raise exception 'A qualifying course needs a linked evaluation form' using errcode = '23514'; end if;
+  end if;
+  if v_bad then raise exception '%', v_msg using errcode = '42501'; end if;
+  return new;
+end $$;
+create or replace trigger kafaa_g2_guard before insert or update on kafaa_external_requests for each row execute function kafaa_g2_guard_decisions();
+create or replace trigger kafaa_g2_guard before insert or update on kafaa_dev_plans for each row execute function kafaa_g2_guard_decisions();
+create or replace trigger kafaa_g2_guard before insert or update on kafaa_mentoring_requests for each row execute function kafaa_g2_guard_decisions();
+create or replace trigger kafaa_g2_guard before insert or update on kafaa_courses for each row execute function kafaa_g2_guard_decisions();
 
 -- ───────────── 3. Helpers (internal)
 create or replace function kafaa_g2_in_scope(p_person text) returns boolean language sql stable security definer set search_path = public as $$
@@ -200,6 +249,16 @@ begin
   l := kafaa_ledger('kafaa.training.enrolment_decision', format('Enrolment %s (%s) %s', p_id, coalesce(co.code, e.course_id), p_decision));
   a := kafaa_audit('enrolment.decide', 'enrolments', p_id, 'ok', p_decision || ': ' || v_status, case when l is null then 'skipped' else 'written' end, l, v_role);
   return kafaa_result(true, 'ok', case when p_decision = 'approve' then 'Approved' else 'Rejected' end, a, l, jsonb_build_object('status', v_status));
+end $$;
+
+-- Seats taken and waitlist length per session (counts only): learners cannot read other people's enrolments.
+create or replace function kafaa_session_availability(p_course_id text) returns jsonb language plpgsql stable security definer set search_path = public as $$
+begin
+  if not kafaa_has_grant('training', array['Own','OwnOrg','W','A','R']) then return jsonb_build_object('ok', false, 'code', 'forbidden', 'message', 'Sign in to see sessions'); end if;
+  return jsonb_build_object('ok', true, 'code', 'ok', 'message', 'ok', 'data', coalesce((
+    select jsonb_agg(jsonb_build_object('session_id', s.id, 'capacity', s.capacity, 'taken', kafaa_g2_taken(s.id),
+      'waiting', (select count(*) from kafaa_enrolments e where e.session_id = s.id and e.status = 'waitlisted')) order by s.starts_at)
+    from kafaa_sessions s where s.course_id = p_course_id), '[]'::jsonb));
 end $$;
 
 create or replace function kafaa_cancel_enrolment(p_id text, p_reason text default '') returns jsonb language plpgsql security definer set search_path = public as $$
@@ -659,15 +718,15 @@ end $$;
 
 -- ───────────── 7. Grants: signed-in users only; helpers are internal
 revoke execute on function
-  kafaa_enrolments_guard(), kafaa_g2_in_scope(text), kafaa_g2_taken(text), kafaa_g2_next_cert(integer), kafaa_g2_retake(text, text, timestamptz, text), kafaa_g2_retake_message(text, text),
-  kafaa_enrol_course(text, text, text), kafaa_decide_enrolment(text, text, text), kafaa_cancel_enrolment(text, text), kafaa_record_attendance(text, jsonb),
+  kafaa_enrolments_guard(), kafaa_g2_guard_decisions(), kafaa_g2_in_scope(text), kafaa_g2_taken(text), kafaa_g2_next_cert(integer), kafaa_g2_retake(text, text, timestamptz, text), kafaa_g2_retake_message(text, text),
+  kafaa_enrol_course(text, text, text), kafaa_session_availability(text), kafaa_decide_enrolment(text, text, text), kafaa_cancel_enrolment(text, text), kafaa_record_attendance(text, jsonb),
   kafaa_complete_enrolment(text, text, numeric, text), kafaa_decide_external_request(text, text, text), kafaa_curriculum_sync(text), kafaa_decide_dev_plan(text, text, text),
   kafaa_respond_mentoring(text, text), kafaa_item_review(text, text), kafaa_save_item(jsonb), kafaa_retire_item(text, text), kafaa_schedule_attempt(text, text, timestamptz, text),
   kafaa_start_attempt(text), kafaa_submit_attempt(text, jsonb), kafaa_release_attempt(text, text), kafaa_record_performance(text, text, boolean, numeric, text),
   kafaa_attempt_feedback(text), kafaa_file_appeal(text, text, text), kafaa_decide_appeal(text, text, text, text[])
 from public, anon;
 grant execute on function
-  kafaa_enrol_course(text, text, text), kafaa_decide_enrolment(text, text, text), kafaa_cancel_enrolment(text, text), kafaa_record_attendance(text, jsonb),
+  kafaa_enrol_course(text, text, text), kafaa_session_availability(text), kafaa_decide_enrolment(text, text, text), kafaa_cancel_enrolment(text, text), kafaa_record_attendance(text, jsonb),
   kafaa_complete_enrolment(text, text, numeric, text), kafaa_decide_external_request(text, text, text), kafaa_curriculum_sync(text), kafaa_decide_dev_plan(text, text, text),
   kafaa_respond_mentoring(text, text), kafaa_item_review(text, text), kafaa_save_item(jsonb), kafaa_retire_item(text, text), kafaa_schedule_attempt(text, text, timestamptz, text),
   kafaa_start_attempt(text), kafaa_submit_attempt(text, jsonb), kafaa_release_attempt(text, text), kafaa_record_performance(text, text, boolean, numeric, text),

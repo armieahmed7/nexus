@@ -164,6 +164,18 @@ Need a foundation change (shared UI component, new rule in `rules.ts`, a field i
 
 - **2026-10-08 · v1.0** Initial contract. 85 routes scaffolded, 94 tables, 24 RPCs, two backends. Supabase: schema, policy matrix, RLS, RPCs and NEXUS reads applied to `hlirqxoddysxtdezwcgv`; grants hardened after the advisor run; SupabaseBackend verified end to end (NEXUS role-card sign-in → RLS read → `kafaa_signoff_evaluation` → audit row + NEXUS ledger entry). Live seed is partial (organisations, job families, job roles and an E2E subset), so `local` stays the default backend.
 
+- **2026-10-08 · G2 (branch g2, pending foundation merge)** Shared-file edits made by the G2 module engineer. All are additive and commented `G2` in place:
+  - `src/data/schema.ts`: new columns on sessions, enrolments, training_records, external_requests, certificates, item_versions, assessment_forms, attempts, appeals, dev_plans and mentoring_requests. `items`, `item_versions` and `appeals` moved to write mode `rpc`. Mentors and mentoring_requests get person-scoped read rules. Run `npm run gen` after merging; it regenerates the RLS migration.
+  - `src/data/types.ts`: `Rpc extends G2Rpc` (the interface lives in `src/data/rpc_g2.ts`).
+  - `src/data/local/rpc.ts`: G2 methods are mixed in through `makeG2LocalRpc`. `itemReview` now checks status and refuses a writer approving their own item (`maker_checker`).
+  - `src/data/local/LocalBackend.ts`: one-line hook to `directWriteGuard` (`src/data/local/guards.ts`) on insert and update.
+  - `src/data/supabase/SupabaseBackend.ts`: spreads `makeG2SupabaseRpc`.
+  - `scripts/validate-migrations.mjs`: loads `scripts/validate/*.mjs` hooks.
+  - `scripts/build-seed.mjs`, `scripts/seed/assess.mjs`, `scripts/seed/people.mjs`: G2 sessions, enrolments, attempts, item workflow and course evaluation forms.
+  - `src/domain/learning.ts` (new): seat, waitlist, evaluation-gate, retake, appeal-window and item-analysis rules.
+  - `src/modules/m04/routes.ts`: new routes `learn-paths` (`/learn/paths`) and `learn-path` (`/learn/paths/:track`).
+  - Migration `20261008132001_kafaa_g2_learning.sql`: 21 RPCs, direct-write guard triggers, policy alters. Additive only, with no DROP statements.
+
 ## 11. Acceptance checklists per module
 
 Each group's hand-off lists every box below as done, or explains why not. These are the spec's acceptance criteria plus the contract's own items.

@@ -533,7 +533,8 @@ export const SCHEMA: Record<string, TableDef> = {
       id: 'text pk', person_id: 'text ref:people idx', role_id: 'text? ref:job_roles', interests: 'text[] =[]', capacity: 'int =2', opt_in: 'bool =true',
       bio_en: 'text =\'\'', bio_ar: 'text =\'\'',
     },
-    read: [{ res: 'internal_content' }], write: { mode: 'direct', res: 'dev_plans', own: true },
+    // G2: second rule gives the mentor's own row a person column, so staff can opt in and edit their own offer
+    read: [{ res: 'internal_content' }, { res: 'dev_plans', person: 'person_id' }], write: { mode: 'direct', res: 'dev_plans', own: true },
   },
   mentoring_requests: {
     module: 'M04', label: 'Mentoring request (human matching)',

@@ -613,11 +613,12 @@ create trigger kafaa_plan_activities_audit after insert or update on kafaa_plan_
 -- mentors
 alter table kafaa_mentors enable row level security;
 drop policy if exists kafaa_read on kafaa_mentors;
-create policy kafaa_read on kafaa_mentors for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, true));
+create policy kafaa_read on kafaa_mentors for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, true)
+    or kafaa_rule_read('dev_plans', person_id, null::text, true));
 drop policy if exists kafaa_insert on kafaa_mentors;
-create policy kafaa_insert on kafaa_mentors for insert to anon, authenticated with check (kafaa_has_grant('dev_plans', array['W','A']));
+create policy kafaa_insert on kafaa_mentors for insert to anon, authenticated with check (kafaa_has_grant('dev_plans', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('dev_plans', array['Own','Scope'])));
 drop policy if exists kafaa_update on kafaa_mentors;
-create policy kafaa_update on kafaa_mentors for update to authenticated using (kafaa_has_grant('dev_plans', array['W','A'])) with check (kafaa_has_grant('dev_plans', array['W','A']));
+create policy kafaa_update on kafaa_mentors for update to authenticated using (kafaa_has_grant('dev_plans', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('dev_plans', array['Own','Scope']))) with check (kafaa_has_grant('dev_plans', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('dev_plans', array['Own','Scope'])));
 grant select, insert, update on kafaa_mentors to authenticated;
 grant select on kafaa_mentors to anon;
 drop trigger if exists kafaa_mentors_audit on kafaa_mentors;

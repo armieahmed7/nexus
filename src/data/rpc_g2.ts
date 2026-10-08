@@ -55,6 +55,8 @@ export interface G2Rpc {
   enrolCourse(courseId: string, sessionId: string | null, personId?: string | null): Promise<Result<{ id: string; status: string }>>;
   /** Manager or training manager approves or rejects a requested enrolment (not their own). */
   decideEnrolment(enrolmentId: string, decision: EnrolmentDecision, note: string): Promise<Result<{ status: string }>>;
+  /** Seats taken and waitlist length per session of a course (counts only, no names): learners cannot read others' enrolments. */
+  sessionAvailability(courseId: string): Promise<Result<{ session_id: string; capacity: number; taken: number; waiting: number }[]>>;
   /** Learner withdraws (mandatory assignments go back to 'assigned') or a coordinator cancels; promotes the waitlist. */
   cancelEnrolment(enrolmentId: string, reason: string): Promise<Result<{ status: string; promoted: string | null }>>;
   /** Instructor records attendance for a session that has started. */
@@ -94,6 +96,7 @@ export interface G2Rpc {
 export const G2_TOUCHED: Record<keyof G2Rpc, string[]> = {
   enrolCourse: ['enrolments'],
   decideEnrolment: ['enrolments'],
+  sessionAvailability: [],
   cancelEnrolment: ['enrolments'],
   recordAttendance: ['enrolments'],
   completeEnrolment: ['enrolments', 'training_records', 'certificates'],

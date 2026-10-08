@@ -12,6 +12,7 @@ export function makeG2SupabaseRpc(call: Call): G2Rpc {
   return {
     enrolCourse: (courseId, sessionId, personId) => call('kafaa_enrol_course', { p_course_id: courseId, p_session_id: sessionId, p_person_id: personId ?? null }, t('enrolCourse')),
     decideEnrolment: (id, decision, note) => call('kafaa_decide_enrolment', { p_id: id, p_decision: decision, p_note: note ?? '' }, t('decideEnrolment')),
+    sessionAvailability: (courseId) => call('kafaa_session_availability', { p_course_id: courseId }),
     cancelEnrolment: (id, reason) => call('kafaa_cancel_enrolment', { p_id: id, p_reason: reason ?? '' }, t('cancelEnrolment')),
     recordAttendance: (sessionId, marks) => call('kafaa_record_attendance', { p_session_id: sessionId, p_marks: marks }, t('recordAttendance')),
     completeEnrolment: (id, result, score, note) => call('kafaa_complete_enrolment', { p_id: id, p_result: result, p_score: score, p_note: note ?? '' }, t('completeEnrolment')),

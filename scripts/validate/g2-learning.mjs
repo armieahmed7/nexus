@@ -91,6 +91,16 @@ export default async function g2Checks({ db, ok }) {
   const at4 = (await db.query(`select score, counts, voided_item_ids from kafaa_attempts where id = 'at-4'`)).rows[0];
   ok(appeal.ok && Number(at4.score) === 78 && at4.counts === false && at4.voided_item_ids.includes('it-reactor-theory-07'), 'G2: an upheld appeal voids the item and rescores the attempt');
 
+  // ── decisions only through RPCs (guard triggers)
+  ok(await fails('k-ro', `update kafaa_external_requests set status = 'approved' where id = 'xr-1'`), 'G2: a learner cannot approve their own external request directly');
+  ok(!(await fails('k-ro', `insert into kafaa_external_requests (id, person_id, title, provider, justification, status) values ('xr-t1', kafaa_me(), 'Course', 'Provider', 'Needed', 'requested')`))
+    && await fails('k-ro', `insert into kafaa_external_requests (id, person_id, title, provider, justification, status) values ('xr-t2', kafaa_me(), 'Course', 'Provider', 'Needed', 'approved')`), 'G2: learners can request external courses but cannot insert an approved request');
+  ok(!(await fails('k-lo-trainee', `insert into kafaa_mentoring_requests (id, person_id, mentor_id, mentor_person_id, interest, status) values ('mr-t1', kafaa_me(), 'mt-2', 'w-ss-01', 'leadership', 'requested')`))
+    && await fails('k-lo-trainee', `update kafaa_mentoring_requests set status = 'matched' where id = 'mr-t1'`), 'G2: mentoring requests are created by the learner and accepted only by the mentor');
+  ok(await fails('k-lo-trainee', `update kafaa_dev_plans set status = 'active' where id = 'dp-k-lo'`), 'G2: a learner cannot activate their own development plan directly');
+  const dp = await r('ops-ceo', `select kafaa_decide_dev_plan('dp-k-lo', 'approve', '') r`);
+  ok(dp.ok, 'G2: a manager in scope approves a submitted development plan');
+
   // ── grants
   ok(await fails(null, `select kafaa_enrol_course('c-get', null, null)`), 'G2: anonymous callers cannot execute the G2 RPCs');
 }

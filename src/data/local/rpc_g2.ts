@@ -142,6 +142,13 @@ export function makeG2LocalRpc(b: LocalBackend): G2Rpc {
       return done<R>('enrolment.decide', 'enrolments', id, `${decision}: ${status}`, role, 'kafaa.training.enrolment_decision', `Enrolment ${id} (${co?.code ?? e.course_id}) ${decision}`, decision === 'approve' ? 'Approved' : 'Rejected', { status });
     },
 
+    async sessionAvailability(courseId) {
+      await b.whenReady();
+      if (!ctx().has('training', ['Own', 'OwnOrg', 'W', 'A', 'R'])) return { ok: false, code: 'forbidden', message: 'Sign in to see sessions' };
+      const data = b.raw('sessions').filter((x) => x.course_id === courseId).map((x) => ({ session_id: x.id, capacity: x.capacity, taken: taken(x.id), waiting: b.raw('enrolments').filter((e) => e.session_id === x.id && e.status === 'waitlisted').length }));
+      return { ok: true, code: 'ok', message: 'ok', data };
+    },
+
     async cancelEnrolment(id, reason) {
       await b.whenReady();
       type R = { status: string; promoted: string | null };
