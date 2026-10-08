@@ -1,6 +1,6 @@
 -- G1 (M01 career map, M02 qualification, M03 licensing tracker): additive kafaa_* objects only.
 -- Mirrored 1:1 by src/data/local/rpc.g1.ts (and the detectLicensingEvents fix in src/data/local/rpc.ts). Change both together.
--- Idempotent (create or replace / if not exists) and written without DROP statements so it can be applied live as is.
+-- Idempotent (create or replace / if not exists) and purely additive, so it can be applied live as is.
 -- Kafa'a is a tracker, not an authority: nothing here decides a licence, and nothing is sent to FANR.
 
 -- ───────────── M02 · evaluation acknowledgements (table also generated into 20261008120100/0300 by npm run gen)

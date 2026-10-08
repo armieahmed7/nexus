@@ -6,7 +6,7 @@ import { Page, Section, Card, Async, EmptyState, Callout, StatusPill, SelectFiel
 import { useQuery, useRepo } from '../../data';
 import { useT, usePick, L, useFormat } from '../../i18n';
 import { useSession } from '../../auth/session';
-import { useCareerData, EdgeCard, useConditionText, type CareerData, type Edge } from './shared';
+import { useCareerData, EdgeCard, useConditionText, useArrow, type CareerData, type Edge } from './shared';
 import { findPaths, pathMonths, competencyGap, reachable } from './careerGraph';
 
 export default function CareersPlanPage() {
@@ -26,6 +26,7 @@ function Planner({ data }: { data: CareerData }) {
   const repo = useRepo();
   const s = useSession();
   const condText = useConditionText();
+  const arrow = useArrow();
   const mine = s.person?.job_role_id ?? '';
   const [p, setP] = useFilters({ from: '', to: '' }, true);
   const from = p.from === 'none' ? '' : p.from || mine;
@@ -58,7 +59,7 @@ function Planner({ data }: { data: CareerData }) {
       '',
       ...routes.flatMap((r, i) => [
         `${t('m01.plan.routeN', { n: i + 1 })} (${t('m01.plan.minMonths', { n: pathMonths(r) })})`,
-        ...r.flatMap((e) => [`  → ${pick(data.roleById.get(e.to_role_id), 'title')}: ${pick(e, 'label')}${e.rule_ref ? ` [${e.rule_ref}]` : ''}`, ...condText(e).map((c) => `      - ${c}`)]),
+        ...r.flatMap((e) => [`  ${arrow} ${pick(data.roleById.get(e.to_role_id), 'title')}: ${pick(e, 'label')}${e.rule_ref ? ` [${e.rule_ref}]` : ''}`, ...condText(e).map((c) => `      - ${c}`)]),
         '',
       ]),
       t('m01.plan.disclaimer'),

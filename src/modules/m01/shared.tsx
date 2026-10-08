@@ -4,7 +4,7 @@ import { useQuery, useRepo } from '../../data';
 import type { RowOf } from '../../data';
 import { StatusPill, SourceLink, Icon } from '../../ui';
 import { useFormat, usePick } from '../../i18n';
-import { useT, useLang, L } from '../../i18n';
+import { useT, useLang, useI18n, L } from '../../i18n';
 import { conds, edgeMonths, type PathEdge } from './careerGraph';
 
 export type Role = RowOf<'job_roles'>;
@@ -68,6 +68,11 @@ export function RoleBadges({ role, compact }: { role: Role; compact?: boolean })
 }
 
 /** Conditions on a progression edge, as a list of bilingual strings. */
+/** Direction-aware arrow for "from -> to" labels. */
+export function useArrow() {
+  return useI18n().dir === 'rtl' ? '←' : '→';
+}
+
 export function useConditionText() {
   const lang = useLang();
   return (e: Pick<PathEdge, 'conditions'>) => conds(e).map((c) => (lang === 'ar' && c.ar ? c.ar : c.en));

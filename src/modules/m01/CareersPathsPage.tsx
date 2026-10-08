@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { Page, Section, Card, Grid, Async, EmptyState, Tabs, CareerLadder, PathGraph, StatusPill, Callout, SourceLink, FilterBar, useFilters } from '../../ui';
 import { useT, usePick, useI18n, useNav, L, useFormat } from '../../i18n';
-import { useCareerData, BasisBadge, EdgeCard, CareerSourcesFooter, useConditionText, LEVELS, type CareerData } from './shared';
+import { useCareerData, BasisBadge, EdgeCard, CareerSourcesFooter, useConditionText, useArrow, LEVELS, type CareerData } from './shared';
 import { ladderSteps, edgeMonths, neighbours } from './careerGraph';
 
 export default function CareersPathsPage() {
@@ -40,6 +40,7 @@ export default function CareersPathsPage() {
 }
 
 function LadderView({ data }: { data: CareerData }) {
+  const arrow = useArrow();
   const t = useT();
   const pick = usePick();
   const f = useFormat();
@@ -79,7 +80,7 @@ function LadderView({ data }: { data: CareerData }) {
           <Card title={t('m01.ladder.entryTitle')}>
             <div className="space-y-2" data-testid="m01-ladder-entries">
               {entries.map((e) => (
-                <EdgeCard key={e.id} edge={e} title={`${pick({ x_en: e.from_label_en, x_ar: e.from_label_ar }, 'x')} → ${pick(data.roleById.get(e.to_role_id), 'title')}`} conds={condText(e)} />
+                <EdgeCard key={e.id} edge={e} title={`${pick({ x_en: e.from_label_en, x_ar: e.from_label_ar }, 'x')} ${arrow} ${pick(data.roleById.get(e.to_role_id), 'title')}`} conds={condText(e)} />
               ))}
             </div>
           </Card>
@@ -158,6 +159,7 @@ function HierarchyView({ data }: { data: CareerData }) {
 }
 
 function FamilyView({ data, family, setFamily }: { data: CareerData; family: string; setFamily: (f: string) => void }) {
+  const arrow = useArrow();
   const t = useT();
   const pick = usePick();
   const condText = useConditionText();
@@ -185,7 +187,7 @@ function FamilyView({ data, family, setFamily }: { data: CareerData; family: str
               <EdgeCard
                 key={e.id}
                 edge={e}
-                title={`${e.from_role_id ? pick(data.roleById.get(e.from_role_id), 'title') : pick({ x_en: e.from_label_en, x_ar: e.from_label_ar }, 'x')} → ${pick(data.roleById.get(e.to_role_id), 'title')}`}
+                title={`${e.from_role_id ? pick(data.roleById.get(e.from_role_id), 'title') : pick({ x_en: e.from_label_en, x_ar: e.from_label_ar }, 'x')} ${arrow} ${pick(data.roleById.get(e.to_role_id), 'title')}`}
                 conds={condText(e)}
               />
             ))}
@@ -197,6 +199,7 @@ function FamilyView({ data, family, setFamily }: { data: CareerData; family: str
 }
 
 function GraphView({ data, type, setType }: { data: CareerData; type: string; setType: (t: string) => void }) {
+  const arrow = useArrow();
   const t = useT();
   const pick = usePick();
   const nav = useNav();
@@ -223,7 +226,7 @@ function GraphView({ data, type, setType }: { data: CareerData; type: string; se
           {edges.map((e) => (
             <li key={e.id} className="flex flex-wrap items-center gap-1.5">
               <L to={`/careers/roles/${e.from_role_id}`}>{pick(data.roleById.get(e.from_role_id!), 'title')}</L>
-              <span aria-hidden>→</span>
+              <span aria-hidden>{arrow}</span>
               <L to={`/careers/roles/${e.to_role_id}`}>{pick(data.roleById.get(e.to_role_id), 'title')}</L>
               <StatusPill tone="neutral">{t(`m01.edgeType.${e.type}`)}</StatusPill>
               <span className="text-ink-3">{pick(e, 'label')}</span>
