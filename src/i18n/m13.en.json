@@ -1,0 +1,13 @@
+{
+  "module": {},
+  "routes": {
+    "ask": {
+      "title": "Ask Dalil",
+      "purpose": "Dalil, the governed AI guide: answers from approved sources with citations, refuses out-of-scope topics, hands off to people."
+    },
+    "admin-dalil": {
+      "title": "Dalil",
+      "purpose": "Corpus, refusal policy, evaluation runs, logs and the kill switch."
+    }
+  }
+}

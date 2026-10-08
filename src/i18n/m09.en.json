@@ -1,0 +1,37 @@
+{
+  "module": {},
+  "routes": {
+    "partners": {
+      "title": "Partners",
+      "purpose": "Directory of publicly announced relationships with source links and relationship status."
+    },
+    "partners-detail": {
+      "title": "Partner",
+      "purpose": "Relationship type, dates, binding flag and public sources. No individual names, no logos."
+    },
+    "suppliers": {
+      "title": "Become a supplier",
+      "purpose": "Localisation, ICV and quality standards, then the readiness path and sign-up."
+    },
+    "partner": {
+      "title": "Partner home",
+      "purpose": "Home for supplier, university and international partner users."
+    },
+    "partner-onboarding": {
+      "title": "Supplier readiness",
+      "purpose": "Readiness steps, self-assessment, document checklist and hand-off to ENEC supplier registration."
+    },
+    "partner-academy": {
+      "title": "Supplier academy",
+      "purpose": "Supplier courses with certificates."
+    },
+    "partner-workforce": {
+      "title": "Contractor qualifications",
+      "purpose": "Contractor staff qualification evidence and equivalency requests (own organisation only)."
+    },
+    "partner-icv": {
+      "title": "ICV",
+      "purpose": "ICV explainer, improvement plan and certificate upload."
+    }
+  }
+}

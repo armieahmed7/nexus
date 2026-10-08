@@ -211,3 +211,8 @@ export const RULES = {
   /** UAE weekend for working-day clocks (Saturday, Sunday since 2022). */
   weekendDays: [0, 6] as const,
 };
+
+/** Levels one role carries on a resource (no implicit 'public'). Mirrors a kafaa_policy_matrix lookup. */
+export function levelsOf(role: PlatformRole, resource: Resource): Level[] {
+  return MATRIX[resource][role] ?? [];
+}

@@ -1,0 +1,45 @@
+{
+  "module": {},
+  "routes": {
+    "learn": {
+      "title": "Learn",
+      "purpose": "Programme catalogue summary: what each initial and continuing programme covers and how long it runs, with sources."
+    },
+    "learn-course": {
+      "title": "Course",
+      "purpose": "Objectives tied to competencies, modality, prerequisites and sessions (sessions for staff only)."
+    },
+    "my-learning": {
+      "title": "My learning",
+      "purpose": "Assigned and elective training, enrolments, simulator sessions and transcript."
+    },
+    "my-plan": {
+      "title": "My development plan",
+      "purpose": "Individual development plan towards a target role."
+    },
+    "my-mentoring": {
+      "title": "Mentoring",
+      "purpose": "Opt-in mentor matching by role and interest (human matching)."
+    },
+    "training": {
+      "title": "Training admin",
+      "purpose": "Course builder, sessions, simulator scheduling, JPM evaluator, item bank and cohorts."
+    },
+    "training-courses": {
+      "title": "Course builder",
+      "purpose": "SAT-based courses with objectives tied to competencies and role-based mandatory assignment."
+    },
+    "training-schedule": {
+      "title": "Sessions",
+      "purpose": "Sessions, rooms, waitlists, attendance and completion evidence."
+    },
+    "training-simulator": {
+      "title": "Simulator booking",
+      "purpose": "Simulator slots by crew; licence-critical training (COCT, requalification) cannot be displaced by elective use."
+    },
+    "training-cohorts": {
+      "title": "Cohorts",
+      "purpose": "Cohort views and external course requests with approval."
+    }
+  }
+}

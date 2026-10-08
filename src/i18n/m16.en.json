@@ -1,0 +1,29 @@
+{
+  "module": {},
+  "routes": {
+    "admin": {
+      "title": "Administration",
+      "purpose": "Access, frameworks, content, Dalil, integrations and the audit log."
+    },
+    "admin-frameworks": {
+      "title": "Frameworks",
+      "purpose": "Job families, roles, competencies and qualification standards with versions and effective dates."
+    },
+    "admin-content": {
+      "title": "Content",
+      "purpose": "Pages, translations, source citations and the review workflow."
+    },
+    "admin-integrations": {
+      "title": "Integrations",
+      "purpose": "Connectors, sync status, last success and reconciliation errors."
+    },
+    "admin-nexus": {
+      "title": "NEXUS integration",
+      "purpose": "The seven integration points with ENEC NEXUS: reads, hand-offs and ledger appends."
+    },
+    "admin-audit": {
+      "title": "Audit log",
+      "purpose": "Search the append-only, hash-chained audit log. Entries cannot be edited or deleted."
+    }
+  }
+}

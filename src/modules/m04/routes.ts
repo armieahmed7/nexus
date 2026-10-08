@@ -1,0 +1,16 @@
+// M04 routes (owner: G2). Paths, guards and nav placement for this module. Shared registry: src/routes/registry.ts
+import { lazy } from 'react';
+import type { RouteDef } from '../../routes/types';
+
+export const routes: RouteDef[] = [
+  { id: 'learn', path: '/learn', module: 'M04', zone: 'public', guard: {}, nav: { lens: 'public', section: 'learn', order: 30 }, parent: 'home', spec: "§5 /learn · M04", component: lazy(() => import('./LearnPage')) },
+  { id: 'learn-course', path: '/learn/course/:id', module: 'M04', zone: 'public', guard: {}, parent: 'learn', spec: "M04 /learn/course/:id", component: lazy(() => import('./LearnCoursePage')) },
+  { id: 'my-learning', path: '/my/learning', module: 'M04', zone: 'staff', guard: { signedIn: true, anyRole: ['employee'] }, nav: { lens: 'my', section: 'me', order: 12 }, parent: 'my', spec: "§5 /my/learning · M04", component: lazy(() => import('./MyLearningPage')) },
+  { id: 'my-plan', path: '/my/plan', module: 'M04', zone: 'staff', guard: { signedIn: true, grant: { res: 'dev_plans', levels: ['Own'] } }, nav: { lens: 'my', section: 'me', order: 14 }, parent: 'my', spec: "§5 /my/plan · M04", component: lazy(() => import('./MyPlanPage')) },
+  { id: 'my-mentoring', path: '/my/mentoring', module: 'M04', zone: 'staff', guard: { signedIn: true, anyRole: ['employee'] }, nav: { lens: 'my', section: 'me', order: 15 }, parent: 'my', spec: "§5 /my/mentoring · M04", component: lazy(() => import('./MyMentoringPage')) },
+  { id: 'training', path: '/training', module: 'M04', zone: 'staff', guard: { signedIn: true, anyRole: ['instructor', 'training_manager'] }, nav: { lens: 'my', section: 'training', order: 40 }, parent: 'my', spec: "§5 /training/* · M04", component: lazy(() => import('./TrainingPage')) },
+  { id: 'training-courses', path: '/training/courses', module: 'M04', zone: 'staff', guard: { signedIn: true, anyRole: ['instructor', 'training_manager'] }, nav: { lens: 'my', section: 'training', order: 41 }, parent: 'training', spec: "M04 course builder", component: lazy(() => import('./TrainingCoursesPage')) },
+  { id: 'training-schedule', path: '/training/schedule', module: 'M04', zone: 'staff', guard: { signedIn: true, anyRole: ['instructor', 'training_manager'] }, nav: { lens: 'my', section: 'training', order: 42 }, parent: 'training', spec: "M04 /training/schedule", component: lazy(() => import('./TrainingSchedulePage')) },
+  { id: 'training-simulator', path: '/training/simulator', module: 'M04', zone: 'staff', guard: { signedIn: true, anyRole: ['instructor', 'training_manager'] }, nav: { lens: 'my', section: 'training', order: 43 }, parent: 'training', spec: "M04 simulator booking", component: lazy(() => import('./TrainingSimulatorPage')) },
+  { id: 'training-cohorts', path: '/training/cohorts', module: 'M04', zone: 'staff', guard: { signedIn: true, anyRole: ['instructor', 'training_manager'] }, nav: { lens: 'my', section: 'training', order: 44 }, parent: 'training', spec: "M04 cohorts", component: lazy(() => import('./TrainingCohortsPage')) },
+];

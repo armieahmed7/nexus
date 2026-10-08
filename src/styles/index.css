@@ -1,0 +1,67 @@
+/* Kafa'a styles. Tokens are copied from ENEC NEXUS so the portal looks native (scratchpad nexus_discovery §1.6). */
+@import '@fontsource-variable/hanken-grotesk';
+@import '@fontsource/ibm-plex-sans-arabic/400.css';
+@import '@fontsource/ibm-plex-sans-arabic/500.css';
+@import '@fontsource/ibm-plex-sans-arabic/600.css';
+@import '@fontsource/ibm-plex-sans-arabic/700.css';
+@import '@fontsource/ibm-plex-mono/400.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root,[data-theme=light]{color-scheme:light;--bg: 244 247 247;--sunken: 235 241 241;--panel: 255 255 255;--raised: 250 252 252;--line: 215 226 227;--line-strong: 182 200 202;--ink: 14 42 46;--ink-2: 77 100 104;--ink-3: 90 112 115;--accent: 10 124 137;--accent-ink: 255 255 255;--accent-soft: 227 241 242;--eyebrow: 4 94 104;--navactive: 227 241 242;--bubble: 4 94 104;--leaf: 111 182 54;--sky: 42 187 221;--sim: 138 90 0;--sim-bg: 255 244 220;--sim-line: 217 164 65;--ok: 52 112 24;--ok-bg: 234 246 225;--ok-line: 150 200 106;--bad: 196 40 54;--bad-bg: 253 236 237;--bad-line: 236 150 156;--info: 6 112 140;--info-bg: 227 246 251;--info-line: 128 206 228;--reserved: 107 78 30;--reserved-bg: 243 234 217;--reserved-line: 214 186 130;--facing-partner: 42 187 221;--facing-employee: 4 94 104;--facing-dual: 111 182 54;--shadow-card: 0 4px 16px rgba(8, 40, 46, .06)}
+  [data-theme=dark]{color-scheme:dark;--bg: 4 26 30;--sunken: 3 20 24;--panel: 7 42 48;--raised: 11 53 60;--line: 23 69 76;--line-strong: 36 96 104;--ink: 234 244 244;--ink-2: 157 184 187;--ink-3: 128 158 162;--accent: 35 166 180;--accent-ink: 2 22 26;--accent-soft: 12 60 68;--eyebrow: 76 203 232;--navactive: 13 64 72;--bubble: 12 70 80;--leaf: 143 208 90;--sky: 76 203 232;--sim: 245 184 61;--sim-bg: 58 46 14;--sim-line: 224 165 38;--ok: 143 208 90;--ok-bg: 21 52 30;--ok-line: 74 132 50;--bad: 255 90 110;--bad-bg: 60 20 30;--bad-line: 160 50 66;--info: 76 203 232;--info-bg: 8 54 66;--info-line: 30 112 134;--reserved: 245 184 61;--reserved-bg: 58 46 14;--reserved-line: 224 165 38;--facing-partner: 42 187 221;--facing-employee: 42 143 153;--facing-dual: 111 182 54;--shadow-card: 0 6px 22px rgba(0, 0, 0, .35)}
+
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    @apply bg-bg text-ink font-sans antialiased;
+    font-feature-settings: 'ss01', 'cv11';
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  html[lang='ar'] body { @apply font-arabic; font-size: 15px; }
+  h1, h2, h3, h4 { @apply text-ink; letter-spacing: -0.01em; }
+  html[lang='ar'] h1, html[lang='ar'] h2, html[lang='ar'] h3 { letter-spacing: 0; }
+  a { @apply text-accent; }
+  a:hover { text-decoration: underline; }
+  :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; border-radius: 4px; }
+  ::selection { background: rgb(var(--accent) / .2); }
+  .num, code, kbd, .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
+  /* Numbers, codes and dates stay left-to-right inside Arabic text */
+  .ltr { direction: ltr; unicode-bidi: isolate; }
+}
+
+@layer components {
+  .card { @apply rounded-card border border-line bg-panel shadow-card; }
+  .eyebrow { font-size: 11.5px; line-height: 16px; letter-spacing: .14em; font-weight: 600; text-transform: uppercase; color: rgb(var(--eyebrow)); }
+  .caps { font-size: 10.5px; line-height: 14px; letter-spacing: .12em; font-weight: 600; text-transform: uppercase; color: rgb(var(--ink-3)); }
+  html[lang='ar'] .eyebrow, html[lang='ar'] .caps { letter-spacing: 0; text-transform: none; font-size: 12px; }
+  .btn { @apply inline-flex h-9 items-center justify-center gap-1.5 rounded-btn px-3.5 text-[13px] font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50; text-decoration: none !important; }
+  .btn-primary { @apply btn bg-accent text-accent-ink hover:bg-accent/90; }
+  .btn-outline { @apply btn border border-line-strong text-ink hover:bg-sunken; }
+  .btn-ghost { @apply btn text-ink-2 hover:bg-sunken hover:text-ink; }
+  .btn-danger { @apply btn bg-bad text-white hover:bg-bad/90; }
+  .btn-sm { @apply h-7 px-2.5 text-[12px]; }
+  .frame-line { background: linear-gradient(90deg, #045e68, #2abbdd 45%, #6fb636); }
+  [dir='rtl'] .frame-line { background: linear-gradient(270deg, #045e68, #2abbdd 45%, #6fb636); }
+  .input { @apply h-9 w-full rounded-btn border border-line-strong bg-panel px-3 text-[14px] text-ink placeholder:text-ink-3 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20; }
+  textarea.input { @apply h-auto py-2; }
+  .input[aria-invalid='true'] { @apply border-bad ring-bad/20; }
+  .chip { @apply inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11.5px] font-semibold leading-4; }
+  .link-plain { @apply text-ink; text-decoration: none !important; }
+  .skeleton { @apply animate-pulse rounded bg-sunken; }
+  .table-base th { @apply caps whitespace-nowrap px-3 py-2 text-start; }
+  .table-base td { @apply border-t border-line px-3 py-2 align-top; }
+  .flip-rtl { }
+  [dir='rtl'] .flip-rtl { transform: scaleX(-1); }
+}
+
+@media print {
+  header, nav, footer, .no-print { display: none !important; }
+  body { background: #fff; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}

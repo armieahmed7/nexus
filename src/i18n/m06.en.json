@@ -1,0 +1,25 @@
+{
+  "module": {},
+  "routes": {
+    "pathways": {
+      "title": "Pathways",
+      "purpose": "Programme finder by life stage: Mustaqbali, internships, DNT, Energy Pioneers, GDP, GPO, Train for Work, DGE Mawaheb."
+    },
+    "pathways-programme": {
+      "title": "Programme",
+      "purpose": "Eligibility (nationality, education) and duration with a source, plus a non-binding eligibility check."
+    },
+    "apply": {
+      "title": "Apply",
+      "purpose": "Light application or expression of interest with a status tracker. Requires an applicant account to submit."
+    },
+    "my-applications": {
+      "title": "My applications",
+      "purpose": "Application status in plain language, mirrored from ENEC HR."
+    },
+    "workforce-applications": {
+      "title": "Application funnel",
+      "purpose": "HR funnel (counts only, small cells suppressed) and recording of HR decisions."
+    }
+  }
+}

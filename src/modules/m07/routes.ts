@@ -1,0 +1,13 @@
+// M07 routes (owner: G3). Paths, guards and nav placement for this module. Shared registry: src/routes/registry.ts
+import { lazy } from 'react';
+import type { RouteDef } from '../../routes/types';
+
+export const routes: RouteDef[] = [
+  { id: 'workforce', path: '/workforce', module: 'M07', zone: 'staff', guard: { signedIn: true, anyRole: ['manager', 'hr_analyst', 'hr_director', 'auditor'] }, nav: { lens: 'my', section: 'workforce', order: 60 }, parent: 'my', spec: "§5 /workforce/* · M07", component: lazy(() => import('./WorkforcePage')) },
+  { id: 'workforce-emiratization', path: '/workforce/emiratization', module: 'M07', zone: 'staff', guard: { signedIn: true, anyRole: ['manager', 'hr_analyst', 'hr_director', 'auditor'] }, nav: { lens: 'my', section: 'workforce', order: 61 }, parent: 'workforce', spec: "M07 /workforce/emiratization", component: lazy(() => import('./WorkforceEmiratizationPage')) },
+  { id: 'workforce-pipeline', path: '/workforce/pipeline', module: 'M07', zone: 'staff', guard: { signedIn: true, anyRole: ['manager', 'hr_analyst', 'hr_director', 'auditor'] }, nav: { lens: 'my', section: 'workforce', order: 62 }, parent: 'workforce', spec: "M07 /workforce/pipeline", component: lazy(() => import('./WorkforcePipelinePage')) },
+  { id: 'workforce-critical-roles', path: '/workforce/critical-roles', module: 'M07', zone: 'staff', guard: { signedIn: true, anyRole: ['manager', 'hr_analyst', 'hr_director', 'auditor'] }, nav: { lens: 'my', section: 'workforce', order: 63 }, parent: 'workforce', spec: "M07 /workforce/critical-roles", component: lazy(() => import('./WorkforceCriticalRolesPage')) },
+  { id: 'workforce-training', path: '/workforce/training', module: 'M07', zone: 'staff', guard: { signedIn: true, anyRole: ['manager', 'hr_analyst', 'hr_director', 'auditor'] }, nav: { lens: 'my', section: 'workforce', order: 64 }, parent: 'workforce', spec: "M07 /workforce/training", component: lazy(() => import('./WorkforceTrainingPage')) },
+  { id: 'workforce-scenarios', path: '/workforce/scenarios', module: 'M07', zone: 'staff', guard: { signedIn: true, anyRole: ['hr_analyst', 'hr_director', 'auditor'] }, nav: { lens: 'my', section: 'workforce', order: 65 }, parent: 'workforce', spec: "M07 scenario planner", component: lazy(() => import('./WorkforceScenariosPage')) },
+  { id: 'observer', path: '/observer', module: 'M07', zone: 'admin', guard: { signedIn: true, anyRole: ['observer', 'auditor'] }, nav: { lens: 'admin', section: 'observer', order: 10 }, parent: 'home', spec: "§5 /observer", component: lazy(() => import('./ObserverPage')) },
+];

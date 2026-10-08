@@ -1,0 +1,108 @@
+{
+  "brand": "Kafa'a",
+  "brandSub": "ENEC NEXUS · Workforce",
+  "brandHome": "Kafa'a home",
+  "backToNexus": "Back to NEXUS",
+  "skipToContent": "Skip to content",
+  "menu": "Menu",
+  "signIn": "Sign in",
+  "signOut": "Sign out",
+  "breadcrumbs": "Breadcrumbs",
+  "crash": "This page hit a problem",
+  "lens": {
+    "label": "Portal view",
+    "public": "Public site",
+    "my": "My Kafa'a",
+    "partner": "Partner portal",
+    "admin": "Admin"
+  },
+  "nav": {
+    "primary": "Main navigation",
+    "section": "Section navigation"
+  },
+  "sections": {
+    "careers": "Careers",
+    "pathways": "Pathways",
+    "learn": "Learn",
+    "about": "About",
+    "partners": "Partners",
+    "ask": "Ask Dalil",
+    "me": "Me",
+    "safety": "Safety culture",
+    "team": "My team",
+    "training": "Training",
+    "licensing": "Licensing",
+    "workforce": "Workforce",
+    "partner": "Partner",
+    "admin": "Administration",
+    "observer": "Observer"
+  },
+  "search": {
+    "open": "Search",
+    "title": "Search Kafa'a",
+    "placeholder": "Search pages, roles, programmes, courses, partners",
+    "none": "No results",
+    "kind": {
+      "page": "Page",
+      "role": "Role",
+      "programme": "Programme",
+      "course": "Course",
+      "partner": "Partner",
+      "term": "Term"
+    }
+  },
+  "notifications": {
+    "label": "Notifications ({n} unread)",
+    "title": "Notifications",
+    "markAll": "Mark all as read",
+    "empty": "No notifications"
+  },
+  "backend": {
+    "local": "Local demo data",
+    "supabase": "Live (NEXUS)",
+    "localHelp": "You are using synthetic demo data stored in this browser. Changes stay here until you reset.",
+    "supabaseHelp": "You are connected to the shared NEXUS record. Actions are audited and appended to the NEXUS ledger.",
+    "reset": "Reset demo data",
+    "resetDone": "Demo data reset to its starting state",
+    "useLive": "Use live NEXUS data",
+    "useLocal": "Use local demo data"
+  },
+  "account": {
+    "profile": "My profile",
+    "settings": "Settings and data rights",
+    "switch": "Switch role card",
+    "dark": "Dark theme",
+    "light": "Light theme",
+    "digits": "Digits: {d}"
+  },
+  "rehearsal": {
+    "title": "Rehearsal mode.",
+    "supabase": "Writes to the shared record are blocked in this browser, so actions will not save.",
+    "local": "Kafa'a is using local demo data, so actions work and stay in this browser."
+  },
+  "guard": {
+    "signInTitle": "Sign in to continue",
+    "signInBody": "This page is for signed-in users. Choose a demo role card to continue.",
+    "forbiddenTitle": "You don't have access to this page",
+    "forbiddenBody": "Your role does not include this page. The attempt was recorded in the audit log.",
+    "goHome": "Go to the home page"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "We couldn't find that page. Try search, or ask Dalil."
+  },
+  "dalil": {
+    "launch": "Ask Dalil"
+  },
+  "footer": {
+    "tagline": "Careers, competencies and qualifications for the UAE's nuclear energy workforce.",
+    "explore": "Explore",
+    "help": "Help",
+    "legal": "Legal",
+    "terms": "Terms of use",
+    "privacy": "Privacy notice",
+    "accessibility": "Accessibility",
+    "disclaimer": "Concept — not affiliated with or endorsed by ENEC.",
+    "partOf": "A portal within ENEC NEXUS"
+  }
+}

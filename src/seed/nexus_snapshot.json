@@ -1,0 +1,1057 @@
+{
+ "_note": "Read-only snapshot of ENEC NEXUS tables (8 Oct 2026) used by the LocalBackend. Live reads go through kafaa_nexus_* functions.",
+ "personas": [
+  {
+   "id": "ai-governance",
+   "role": "AI Governance Lead",
+   "title": "AI Governance Lead · NEXUS Trust Rail",
+   "lens": "admin",
+   "org_id": "enec",
+   "plane": "TRUST RAIL",
+   "decides": "Registers agents · approves releases"
+  },
+  {
+   "id": "eval-lead",
+   "role": "Evaluation Lead",
+   "title": "Evaluation Lead · AI assurance, NEXUS Trust Rail (role card)",
+   "lens": "admin",
+   "org_id": "enec",
+   "plane": "TRUST RAIL",
+   "decides": "Agent release sign-off (checker, with the fleet owner) · eval pack floors"
+  },
+  {
+   "id": "advance-director",
+   "role": "ADVANCE Programme Director",
+   "title": "ADVANCE Programme Director · advanced reactors & SMRs (role card)",
+   "lens": "employee",
+   "org_id": "enec",
+   "plane": "GROWTH",
+   "decides": "Recommends a shortlist for further study · the Board decides technology selection"
+  },
+  {
+   "id": "buyer",
+   "role": "Buyer",
+   "title": "Buyer · Procurement Specialist, Procurement & Supply Chain",
+   "lens": "employee",
+   "org_id": "enec",
+   "plane": "SUPPLY CHAIN",
+   "decides": "Outreach sends · RFQ issue · recommendation to award"
+  },
+  {
+   "id": "cap-chair",
+   "role": "CAP Screening Committee",
+   "title": "CAP Screening Committee chair · signs for the committee (role card) · quorum recorded",
+   "lens": "employee",
+   "org_id": "enec-ops",
+   "plane": "OPERATIONS SUPPORT",
+   "decides": "CR significance level (A–D) · for the committee"
+  },
+  {
+   "id": "cap-coord",
+   "role": "CAP Coordinator",
+   "title": "CAP Coordinator · Corrective Action Program",
+   "lens": "employee",
+   "org_id": "enec-ops",
+   "plane": "OPERATIONS SUPPORT",
+   "decides": "Prepares · the CAP Screening Committee decides significance"
+  },
+  {
+   "id": "chem-sup",
+   "role": "Chemistry Supervisor",
+   "title": "Chemistry Supervisor · role card",
+   "lens": "employee",
+   "org_id": "enec-ops",
+   "plane": "OPERATIONS SUPPORT",
+   "decides": "Response to chemistry trend exceptions"
+  },
+  {
+   "id": "ciso",
+   "role": "Chief Information Security Officer",
+   "title": "Chief Information Security Officer · role card",
+   "lens": "employee",
+   "org_id": "enec",
+   "plane": "REGULATORY",
+   "decides": "Control effectiveness · cyber programme attestations"
+  },
+  {
+   "id": "compliance",
+   "role": "Compliance & Ethics Officer",
+   "title": "Compliance & Ethics Officer · Integrity due diligence",
+   "lens": "employee",
+   "org_id": "enec",
+   "plane": "SUPPLY CHAIN",
+   "decides": "Integrity clearance"
+  },
+  {
+   "id": "consulting-director",
+   "role": "Engagement Director · ENEC Consulting",
+   "title": "Engagement Director · ENEC Consulting",
+   "lens": "employee",
+   "org_id": "enec-con",
+   "plane": "GROWTH",
+   "decides": "Deliverable release to a client · engagement scope changes"
+  },
+  {
+   "id": "cpo",
+   "role": "Chief Procurement Officer",
+   "title": "Chief Procurement Officer · Procurement & Supply Chain",
+   "lens": "employee",
+   "org_id": "enec",
+   "plane": "SUPPLY CHAIN",
+   "decides": "Award (per DOA)"
+  },
+  {
+   "id": "doa-signatory",
+   "role": "DOA signatory",
+   "title": "DOA signatory · CPO delegate (Board DOA · contracts ≤ AED 5m, illustrative)",
+   "lens": "employee",
+   "org_id": "enec",
+   "plane": "SUPPLY CHAIN",
+   "decides": "Contract signature (per DOA signatory list)"
+  },
+  {
+   "id": "dra",
+   "role": "Director Regulatory Affairs",
+   "title": "Director Regulatory Affairs · role card",
+   "lens": "employee",
+   "org_id": "enec-ops",
+   "plane": "REGULATORY",
+   "decides": "Any FANR submission or commitment"
+  },
+  {
+   "id": "emergency-director",
+   "role": "Emergency Director",
+   "title": "Emergency Director · role card (never in NEXUS)",
+   "lens": "employee",
+   "org_id": "enec-ops",
+   "plane": "OPERATIONS SUPPORT",
+   "decides": "Emergency classification · off-site notification · protective-action recommendations"
+  },
+  {
+   "id": "ep-manager",
+   "role": "Emergency Preparedness Manager",
+   "title": "Emergency Preparedness Manager · ENEC Operations",
+   "lens": "employee",
+   "org_id": "enec-ops",
+   "plane": "OPERATIONS SUPPORT",
+   "decides": "Exercise scenarios and schedules · after-action reports · never an emergency class"
+  },
+  {
+   "id": "fuel-pm",
+   "role": "Fuel Procurement Manager",
+   "title": "Fuel Procurement Manager · Fuel Cycle",
+   "lens": "employee",
+   "org_id": "enec",
+   "plane": "COMMERCIAL & FINANCE",
+   "decides": "Fuel contract actions · shipment release"
+  },
+  {
+   "id": "head-localisation",
+   "role": "Head of Localisation & ICV",
+   "title": "Head of Localisation & ICV · Procurement & Supply Chain",
+   "lens": "employee",
+   "org_id": "enec",
+   "plane": "SUPPLY CHAIN",
+   "decides": "Localisation roadmap waves (checker) · programme budget within delegation"
+  },
+  {
+   "id": "head-sq",
+   "role": "Head of Supplier Quality",
+   "title": "Head of Supplier Quality · Vendor Qualification Management",
+   "lens": "employee",
+   "org_id": "enec",
+   "plane": "SUPPLY CHAIN",
+   "decides": "NASL listing and quality-class scope"
+  },
+  {
+   "id": "head-sustainability",
+   "role": "Head of Sustainability",
+   "title": "Head of Sustainability · Corporate Strategy & Governance",
+   "lens": "employee",
+   "org_id": "enec",
+   "plane": "COMMERCIAL & FINANCE",
+   "decides": "ESG report content approval (public release stays with Group Strategy + Communications)"
+  },
+  {
+   "id": "nse",
+   "role": "Nuclear Specification Engineer",
+   "title": "Nuclear Specification Engineer · NSE",
+   "lens": "employee",
+   "org_id": "enec",
+   "plane": "SUPPLY CHAIN",
+   "decides": "Item quality class · CGD acceptance"
+  },
+  {
+   "id": "nuc-security",
+   "role": "Nuclear Security Manager",
+   "title": "Nuclear Security Manager · role card",
+   "lens": "employee",
+   "org_id": "enec-ops",
+   "plane": "COMMERCIAL & FINANCE",
+   "decides": "Security concurrence on shipment release"
+  },
+  {
+   "id": "outage-manager",
+   "role": "Outage Manager",
+   "title": "Outage Manager · role card",
+   "lens": "employee",
+   "org_id": "enec-ops",
+   "plane": "OPERATIONS SUPPORT",
+   "decides": "Scope freeze / change · critical path"
+  },
+  {
+   "id": "outage-planner",
+   "role": "Outage Planner",
+   "title": "Outage Planner · ENEC Operations Work Management",
+   "lens": "employee",
+   "org_id": "enec-ops",
+   "plane": "OPERATIONS SUPPORT",
+   "decides": "Nothing reserved · prepares for the Outage Manager"
+  },
+  {
+   "id": "qc-inspector",
+   "role": "QC Receiving Inspector",
+   "title": "QC Receiving Inspector · Quality Control",
+   "lens": "employee",
+   "org_id": "enec-ops",
+   "plane": "SUPPLY CHAIN",
+   "decides": "Item acceptance at receiving · NCR disposition with engineering"
+  },
+  {
+   "id": "rao",
+   "role": "Regulatory Affairs Officer",
+   "title": "Regulatory Affairs Officer · Licensing",
+   "lens": "employee",
+   "org_id": "enec-ops",
+   "plane": "REGULATORY",
+   "decides": "Prepares · the Director Regulatory Affairs decides"
+  },
+  {
+   "id": "rnd-partnerships",
+   "role": "R&D Partnerships Manager",
+   "title": "R&D Partnerships Manager · Nuclear Research & Development",
+   "lens": "employee",
+   "org_id": "enec",
+   "plane": "GROWTH",
+   "decides": "Recommends publication and patent clearance · never releases"
+  },
+  {
+   "id": "rp-lead",
+   "role": "Radiation Protection Team Leader",
+   "title": "Radiation Protection Team Leader · role card",
+   "lens": "employee",
+   "org_id": "enec-ops",
+   "plane": "OPERATIONS SUPPORT",
+   "decides": "ALARA dose plans · effluent release permits"
+  },
+  {
+   "id": "sec-compliance",
+   "role": "Security Compliance Officer",
+   "title": "Security Compliance Officer · Nuclear Security & Safeguards (metadata only)",
+   "lens": "employee",
+   "org_id": "enec-ops",
+   "plane": "REGULATORY",
+   "decides": "Nothing substantive · prepares and routes · owners determine"
+  },
+  {
+   "id": "sme-reviewer",
+   "role": "SME reviewer",
+   "title": "SME reviewer · responsible engineer, Engineering (role card)",
+   "lens": "employee",
+   "org_id": "enec-ops",
+   "plane": "SUPPLY CHAIN",
+   "decides": "Engineering recommendation on NCR dispositions (QC decides) · SME approval of knowledge articles"
+  },
+  {
+   "id": "sq-lead",
+   "role": "Supplier Quality Lead",
+   "title": "Supplier Quality Lead · Vendor Qualification Management",
+   "lens": "employee",
+   "org_id": "enec",
+   "plane": "SUPPLY CHAIN",
+   "decides": "Audit findings · CAPA acceptance · NASL recommendation"
+  },
+  {
+   "id": "sro",
+   "role": "Shift Manager · licensed SRO",
+   "title": "Shift Manager · licensed SRO · role card (never in NEXUS)",
+   "lens": "employee",
+   "org_id": "enec-ops",
+   "plane": "OPERATIONS SUPPORT",
+   "decides": "Operability · clearance · mode (outside NEXUS)"
+  },
+  {
+   "id": "supplier-dev-mgr",
+   "role": "Supplier Development Programme Manager",
+   "title": "Supplier Development Programme Manager · Localisation & ICV, Procurement & Supply Chain",
+   "lens": "employee",
+   "org_id": "enec",
+   "plane": "SUPPLY CHAIN",
+   "decides": "Recommends roadmap waves and ICV plans · never a NASL scope or an award"
+  },
+  {
+   "id": "sustainability-lead",
+   "role": "Sustainability Reporting Lead",
+   "title": "Sustainability Reporting Lead · Corporate Strategy & Governance",
+   "lens": "employee",
+   "org_id": "enec",
+   "plane": "COMMERCIAL & FINANCE",
+   "decides": "Recommends ESG report sections for approval"
+  },
+  {
+   "id": "training-mgr",
+   "role": "Training Manager",
+   "title": "Training Manager · Nuclear Training",
+   "lens": "employee",
+   "org_id": "enec-ops",
+   "plane": "PEOPLE",
+   "decides": "Bookings · qualification sign-off · licensing candidacy"
+  },
+  {
+   "id": "vp-rnd",
+   "role": "VP Nuclear Research & Development",
+   "title": "VP Nuclear Research & Development · role card",
+   "lens": "employee",
+   "org_id": "enec",
+   "plane": "GROWTH",
+   "decides": "Publication and patent-filing clearance"
+  },
+  {
+   "id": "work-control",
+   "role": "Execution Supervisor · Work Control",
+   "title": "Execution Supervisor · Work Control · role card",
+   "lens": "employee",
+   "org_id": "enec-ops",
+   "plane": "OPERATIONS SUPPORT",
+   "decides": "Schedule slots at the daily plant schedule meeting"
+  },
+  {
+   "id": "board-secretary",
+   "role": "Board Secretary",
+   "title": "Board Secretary · Corporate Governance · role card",
+   "lens": "leadership",
+   "org_id": "enec",
+   "plane": "GROWTH",
+   "decides": "Pack completeness (maker) · circulation to the Board"
+  },
+  {
+   "id": "chco",
+   "role": "Chief Human Capital Officer",
+   "title": "Chief Human Capital Officer · role card (leadership lens, read only by design)",
+   "lens": "leadership",
+   "org_id": "enec",
+   "plane": "PEOPLE",
+   "decides": "Workforce plans · cohort intakes"
+  },
+  {
+   "id": "group-ceo",
+   "role": "Group CEO",
+   "title": "Group CEO · role card (leadership lens, read only by design)",
+   "lens": "leadership",
+   "org_id": "enec",
+   "plane": "GROWTH",
+   "decides": "Initiative launch · policy · budget"
+  },
+  {
+   "id": "group-cfo",
+   "role": "Group CFO",
+   "title": "Group CFO · role card (leadership lens, read only by design)",
+   "lens": "leadership",
+   "org_id": "enec",
+   "plane": "COMMERCIAL & FINANCE",
+   "decides": "Treasury · reporting · capital proposals"
+  },
+  {
+   "id": "incident-commander",
+   "role": "Incident Commander",
+   "title": "Incident Commander · role card · Approver A",
+   "lens": "leadership",
+   "org_id": "enec",
+   "plane": "TRUST RAIL",
+   "decides": "Kill switch · approver A (requests)"
+  },
+  {
+   "id": "independent-approver",
+   "role": "Independent approver",
+   "title": "Independent approver · role card · Approver B",
+   "lens": "leadership",
+   "org_id": "enec",
+   "plane": "TRUST RAIL",
+   "decides": "Kill switch · approver B (confirms)"
+  },
+  {
+   "id": "ops-ceo",
+   "role": "CEO, ENEC Operations",
+   "title": "CEO, ENEC Operations · role card (leadership lens, read only by design)",
+   "lens": "leadership",
+   "org_id": "enec",
+   "plane": "OPERATIONS SUPPORT",
+   "decides": "Operator priorities · outage scope"
+  },
+  {
+   "id": "alnoor-gm",
+   "role": "Al Noor General Manager",
+   "title": "General Manager · Al Noor Precision Engineering LLC (synthetic)",
+   "lens": "partner",
+   "org_id": "org-alnoor",
+   "plane": "SUPPLY CHAIN",
+   "decides": "Signs NDU, application, bid, contract acceptance, CAPA"
+  },
+  {
+   "id": "alnoor-qaqc",
+   "role": "Al Noor QA/QC Manager",
+   "title": "QA/QC Manager · Al Noor Precision Engineering LLC (synthetic)",
+   "lens": "partner",
+   "org_id": "org-alnoor",
+   "plane": "SUPPLY CHAIN",
+   "decides": "Prepares the supplier's own file"
+  },
+  {
+   "id": "alnoor-sales",
+   "role": "Al Noor Sales Engineer",
+   "title": "Sales Engineer · Al Noor Precision Engineering LLC (synthetic)",
+   "lens": "partner",
+   "org_id": "org-alnoor",
+   "plane": "SUPPLY CHAIN",
+   "decides": "Prepares bids (the GM signs)"
+  },
+  {
+   "id": "gulfhydro-qa",
+   "role": "Gulf Hydro-Valve QA Manager",
+   "title": "QA Manager · Gulf Hydro-Valve Industries LLC (synthetic · RLS test persona)",
+   "lens": "partner",
+   "org_id": "org-gulfhydro",
+   "plane": "SUPPLY CHAIN",
+   "decides": "Prepares its own file"
+  },
+  {
+   "id": "meridia-pd",
+   "role": "Client Programme Director",
+   "title": "Programme Director · Meridia NEPIO (synthetic client)",
+   "lens": "partner",
+   "org_id": "org-meridia",
+   "plane": "GROWTH",
+   "decides": "Accepts deliverables for the client · the client's government decides the programme"
+  },
+  {
+   "id": "presenter",
+   "role": "Presenter",
+   "title": "Presenter · NEXUS Stage",
+   "lens": "stage",
+   "org_id": "enec",
+   "plane": "GROWTH",
+   "decides": "Nothing — narrates"
+  }
+ ],
+ "authority": [
+  {
+   "decision_key": "talent.candidacy",
+   "decision": "Hiring; licensing candidacy",
+   "domain": "T",
+   "authority_role": "Training Manager",
+   "evidence_required": "pipeline brief",
+   "authority_ref": "HR policy · SAT",
+   "requires_second": false
+  }
+ ],
+ "training_programs": [
+  {
+   "id": "TP-EP",
+   "name": "Energy Pioneers",
+   "kind": "pipeline",
+   "duration_months": null,
+   "participants": 500,
+   "description": "Scholarship and recruitment brand since 2009 (500+ UAE nationals benefited).",
+   "basis": "public"
+  },
+  {
+   "id": "TP-DNT",
+   "name": "Diploma in Nuclear Technology (DNT)",
+   "kind": "pipeline",
+   "duration_months": 24,
+   "participants": 20,
+   "description": "First cohort of 20 graduated 17 Jun 2026.",
+   "basis": "public"
+  },
+  {
+   "id": "TP-GPO",
+   "name": "Graduate Plant Operator (GPO)",
+   "kind": "licensed_operator",
+   "duration_months": 36,
+   "participants": null,
+   "description": "Launched 21 Aug 2025: three years as local operator, then SRO training.",
+   "basis": "public"
+  },
+  {
+   "id": "TP-GDP",
+   "name": "Graduate Development Program (GDP)",
+   "kind": "pipeline",
+   "duration_months": 36,
+   "participants": null,
+   "description": "Workplace-based development.",
+   "basis": "public"
+  },
+  {
+   "id": "TP-LOCT",
+   "name": "Licensed Operator Continuing Training (LOCT)",
+   "kind": "continuing",
+   "duration_months": null,
+   "participants": 190,
+   "description": "~190 licensed SRO/RO (70+ Emirati).",
+   "basis": "public"
+  },
+  {
+   "id": "TP-SUPPLIER",
+   "name": "Supplier education: NQA-1 · CGD · CFSI · ICV",
+   "kind": "supplier",
+   "duration_months": null,
+   "participants": 64,
+   "description": "Vendor education topics published by ENEC; cohort sizes illustrative.",
+   "basis": "illustrative"
+  },
+  {
+   "id": "TP-SCHOL",
+   "name": "Nuclear engineering scholarships (with KU and FANR)",
+   "kind": "pipeline",
+   "duration_months": 48,
+   "participants": null,
+   "description": "BSc/MSc nuclear engineering at Khalifa University and universities in the US, UK and Korea.",
+   "basis": "public"
+  },
+  {
+   "id": "TP-COIT",
+   "name": "Certified Operator Initial Training (COIT)",
+   "kind": "licensed_operator",
+   "duration_months": 24,
+   "participants": null,
+   "description": "Initial licensed-operator training on the full-scope simulators.",
+   "basis": "public"
+  },
+  {
+   "id": "TP-KC",
+   "name": "Knowledge capture · OSSA secondees and retiring experts",
+   "kind": "continuing",
+   "duration_months": null,
+   "participants": null,
+   "description": "Structured interviews before seconded operators rotate (OSSA runs to 2030) · 120 sessions/yr target [I].",
+   "basis": "illustrative"
+  },
+  {
+   "id": "TP-MAWAHEB",
+   "name": "DGE Mawaheb national talent track",
+   "kind": "pipeline",
+   "duration_months": 60,
+   "participants": 100,
+   "description": "Five-year agreement (May 2026): at least 100 UAE Nationals across high-school, diploma and postgraduate entry; ENEC funds training and trainee support.",
+   "basis": "public"
+  }
+ ],
+ "people_quals": [
+  {
+   "id": "PQ-01",
+   "cohort": "GPO cohort 2025 · local operators",
+   "program_id": "TP-GPO",
+   "qualification": "Local operator",
+   "status": "in_training",
+   "expires_at": null,
+   "progress_pct": 38,
+   "headcount": 24
+  },
+  {
+   "id": "PQ-02",
+   "cohort": "DNT graduates 2026",
+   "program_id": "TP-DNT",
+   "qualification": "Maintenance technician",
+   "status": "qualified",
+   "expires_at": null,
+   "progress_pct": 100,
+   "headcount": 20
+  },
+  {
+   "id": "PQ-03",
+   "cohort": "Licensed SRO · Unit 2 crews",
+   "program_id": "TP-LOCT",
+   "qualification": "SRO requalification",
+   "status": "expiring",
+   "expires_at": "2027-04-16",
+   "progress_pct": 80,
+   "headcount": 6
+  },
+  {
+   "id": "PQ-04",
+   "cohort": "Outage contractors · U2 RFO",
+   "program_id": null,
+   "qualification": "Site induction + radiation worker",
+   "status": "qualified",
+   "expires_at": "2027-05-31",
+   "progress_pct": 97,
+   "headcount": 212
+  },
+  {
+   "id": "PQ-05",
+   "cohort": "Outage contractors · certificates expiring",
+   "program_id": null,
+   "qualification": "Rigging / confined space",
+   "status": "expiring",
+   "expires_at": "2027-04-19",
+   "progress_pct": 0,
+   "headcount": 6
+  },
+  {
+   "id": "PQ-06",
+   "cohort": "Supplier QA managers (education)",
+   "program_id": "TP-SUPPLIER",
+   "qualification": "NQA-1 awareness",
+   "status": "qualified",
+   "expires_at": null,
+   "progress_pct": 100,
+   "headcount": 64
+  },
+  {
+   "id": "PQ-07",
+   "cohort": "Licensed RO · Unit 2 crews",
+   "program_id": "TP-LOCT",
+   "qualification": "RO requalification",
+   "status": "expiring",
+   "expires_at": "2027-04-22",
+   "progress_pct": 72,
+   "headcount": 9
+  },
+  {
+   "id": "PQ-08",
+   "cohort": "Licensed SRO · Unit 3 crews",
+   "program_id": "TP-LOCT",
+   "qualification": "SRO requalification",
+   "status": "qualified",
+   "expires_at": "2027-06-22",
+   "progress_pct": 100,
+   "headcount": 7
+  },
+  {
+   "id": "PQ-09",
+   "cohort": "COIT class 2026 · RO candidates",
+   "program_id": "TP-COIT",
+   "qualification": "RO licence (initial)",
+   "status": "in_training",
+   "expires_at": null,
+   "progress_pct": 61,
+   "headcount": 12
+  },
+  {
+   "id": "PQ-10",
+   "cohort": "Local operators · all units",
+   "program_id": null,
+   "qualification": "Local operator task qualification",
+   "status": "expiring",
+   "expires_at": "2027-04-27",
+   "progress_pct": 88,
+   "headcount": 14
+  },
+  {
+   "id": "PQ-11",
+   "cohort": "Radiation workers · station staff",
+   "program_id": null,
+   "qualification": "Radiation worker (RP) refresher",
+   "status": "expiring",
+   "expires_at": "2027-05-04",
+   "progress_pct": 90,
+   "headcount": 38
+  },
+  {
+   "id": "PQ-12",
+   "cohort": "Fire brigade · site",
+   "program_id": null,
+   "qualification": "Fire brigade live-fire refresher",
+   "status": "expiring",
+   "expires_at": "2027-04-12",
+   "progress_pct": 93,
+   "headcount": 11
+  },
+  {
+   "id": "PQ-13",
+   "cohort": "Maintenance technicians · mechanical",
+   "program_id": null,
+   "qualification": "Foreign material exclusion (FME)",
+   "status": "qualified",
+   "expires_at": "2027-06-30",
+   "progress_pct": 100,
+   "headcount": 64
+  },
+  {
+   "id": "PQ-14",
+   "cohort": "Energy Pioneers scholars 2023–2026",
+   "program_id": "TP-SCHOL",
+   "qualification": "BSc / MSc nuclear engineering",
+   "status": "in_training",
+   "expires_at": null,
+   "progress_pct": 55,
+   "headcount": 46
+  },
+  {
+   "id": "PQ-15",
+   "cohort": "DNT intake 2025",
+   "program_id": "TP-DNT",
+   "qualification": "Diploma in Nuclear Technology",
+   "status": "in_training",
+   "expires_at": null,
+   "progress_pct": 70,
+   "headcount": 32
+  }
+ ],
+ "eco_courses": [
+  {
+   "id": "SA-NQA1-101",
+   "code": "SA 101",
+   "title": "NQA-1 for suppliers · the 18 requirements in practice",
+   "topic": "NQA-1",
+   "hours": 4,
+   "format": "blended",
+   "pass_mark": 80,
+   "validity_months": 36,
+   "audience": "QA/QC managers · quality engineers",
+   "summary": "How ASME NQA-1 quality-assurance requirements land in a supplier's shop."
+  },
+  {
+   "id": "SA-CFSI-102",
+   "code": "SA 102",
+   "title": "CFSI · counterfeit, fraudulent and suspect items",
+   "topic": "CFSI",
+   "hours": 2.5,
+   "format": "e-learning",
+   "pass_mark": 80,
+   "validity_months": 24,
+   "audience": "Receiving, stores, purchasing and QC staff",
+   "summary": "Recognise, prevent and report counterfeit, fraudulent and suspect items."
+  },
+  {
+   "id": "SA-CGD-103",
+   "code": "SA 103",
+   "title": "Commercial Grade Dedication · critical characteristics and acceptance",
+   "topic": "CGD",
+   "hours": 3,
+   "format": "classroom",
+   "pass_mark": 75,
+   "validity_months": 36,
+   "audience": "Engineering and QA staff of Class R/T suppliers",
+   "summary": "How a commercial-grade item is dedicated for use."
+  },
+  {
+   "id": "SA-SC-104",
+   "code": "SA 104",
+   "title": "Nuclear safety culture for suppliers",
+   "topic": "Safety culture",
+   "hours": 2,
+   "format": "e-learning",
+   "pass_mark": 75,
+   "validity_months": 24,
+   "audience": "All supplier staff working on ENEC orders",
+   "summary": "What a healthy nuclear safety culture looks like in a supplier's workshop and on site."
+  },
+  {
+   "id": "SA-ICV-105",
+   "code": "SA 105",
+   "title": "ICV certification and your improvement plan",
+   "topic": "ICV",
+   "hours": 2,
+   "format": "clinic",
+   "pass_mark": 70,
+   "validity_months": 12,
+   "audience": "General managers · finance and HR leads",
+   "summary": "How the National ICV Programme certificate is composed and weighted in ENEC tenders."
+  },
+  {
+   "id": "SA-BRK-106",
+   "code": "SA 106",
+   "title": "Working with Barakah · nuclear vs. non-nuclear supply",
+   "topic": "Working at Barakah",
+   "hours": 1.5,
+   "format": "e-learning",
+   "pass_mark": 70,
+   "validity_months": 36,
+   "audience": "Anyone new to ENEC supply",
+   "summary": "General requirements for supplying ENEC."
+  },
+  {
+   "id": "SA-DEF-107",
+   "code": "SA 107",
+   "title": "Defect and noncompliance reporting",
+   "topic": "Defect reporting",
+   "hours": 1.5,
+   "format": "e-learning",
+   "pass_mark": 80,
+   "validity_months": 24,
+   "audience": "QA managers of Class Q/T/R suppliers",
+   "summary": "When and how a supplier must evaluate and report a defect or noncompliance."
+  },
+  {
+   "id": "SA-BCM-108",
+   "code": "SA 108",
+   "title": "Supplier business continuity",
+   "topic": "Supplier BCM",
+   "hours": 1.25,
+   "format": "e-learning",
+   "pass_mark": 70,
+   "validity_months": 24,
+   "audience": "Operations and HSE leads",
+   "summary": "ENEC's supplier BCM expectations."
+  }
+ ],
+ "eco_enrolments": [
+  {
+   "id": "ENR-AN-00101",
+   "org_id": "org-alnoor",
+   "persona_id": "alnoor-qaqc",
+   "course_id": "SA-NQA1-101",
+   "status": "certified",
+   "score": 88,
+   "certificate_no": "SA-CERT-00101"
+  },
+  {
+   "id": "ENR-AN-00102",
+   "org_id": "org-alnoor",
+   "persona_id": "alnoor-qaqc",
+   "course_id": "SA-CFSI-102",
+   "status": "certified",
+   "score": 92,
+   "certificate_no": "SA-CERT-00102"
+  },
+  {
+   "id": "ENR-AN-00103",
+   "org_id": "org-alnoor",
+   "persona_id": "alnoor-qaqc",
+   "course_id": "SA-CGD-103",
+   "status": "in_progress",
+   "score": null,
+   "certificate_no": null
+  },
+  {
+   "id": "ENR-AN-00105",
+   "org_id": "org-alnoor",
+   "persona_id": "alnoor-gm",
+   "course_id": "SA-ICV-105",
+   "status": "certified",
+   "score": 81,
+   "certificate_no": "SA-CERT-00105"
+  },
+  {
+   "id": "ENR-AN-00106",
+   "org_id": "org-alnoor",
+   "persona_id": "alnoor-gm",
+   "course_id": "SA-BRK-106",
+   "status": "certified",
+   "score": 93,
+   "certificate_no": "SA-CERT-00106"
+  },
+  {
+   "id": "ENR-GH-00201",
+   "org_id": "org-gulfhydro",
+   "persona_id": "gulfhydro-qa",
+   "course_id": "SA-NQA1-101",
+   "status": "certified",
+   "score": 84,
+   "certificate_no": "SA-CERT-00201"
+  },
+  {
+   "id": "ENR-GH-00203",
+   "org_id": "org-gulfhydro",
+   "persona_id": "gulfhydro-qa",
+   "course_id": "SA-CGD-103",
+   "status": "in_progress",
+   "score": null,
+   "certificate_no": null
+  },
+  {
+   "id": "ENR-TC-00501",
+   "org_id": "org-tarsus",
+   "persona_id": null,
+   "course_id": "SA-NQA1-101",
+   "status": "in_progress",
+   "score": null,
+   "certificate_no": null
+  }
+ ],
+ "eco_scholarships": [
+  {
+   "id": "SCH-2022-KU",
+   "programme": "Energy Pioneers · BSc nuclear engineering",
+   "intake_year": 2022,
+   "destination": "Khalifa University",
+   "pathway": "Graduate Plant Operator → SRO training",
+   "applicants": 186,
+   "awarded": 24,
+   "in_study": 22,
+   "graduated": 0,
+   "placed": 0,
+   "women_pct": 46,
+   "basis": "illustrative"
+  },
+  {
+   "id": "SCH-2021-INT",
+   "programme": "Energy Pioneers · BSc (international)",
+   "intake_year": 2021,
+   "destination": "US, UK and Korean universities",
+   "pathway": "Engineering · GDP",
+   "applicants": 142,
+   "awarded": 18,
+   "in_study": 3,
+   "graduated": 14,
+   "placed": 13,
+   "women_pct": 39,
+   "basis": "illustrative"
+  },
+  {
+   "id": "SCH-2023-KU",
+   "programme": "Energy Pioneers · BSc nuclear engineering",
+   "intake_year": 2023,
+   "destination": "Khalifa University",
+   "pathway": "Graduate Plant Operator → SRO training",
+   "applicants": 204,
+   "awarded": 26,
+   "in_study": 26,
+   "graduated": 0,
+   "placed": 0,
+   "women_pct": 50,
+   "basis": "illustrative"
+  },
+  {
+   "id": "SCH-2024-MSC",
+   "programme": "MSc nuclear engineering · KU + FANR",
+   "intake_year": 2024,
+   "destination": "Khalifa University",
+   "pathway": "Engineering · licensing support",
+   "applicants": 58,
+   "awarded": 12,
+   "in_study": 5,
+   "graduated": 7,
+   "placed": 6,
+   "women_pct": 58,
+   "basis": "illustrative"
+  },
+  {
+   "id": "SCH-2025-KU",
+   "programme": "Energy Pioneers · BSc nuclear engineering",
+   "intake_year": 2025,
+   "destination": "Khalifa University",
+   "pathway": "Graduate Plant Operator → SRO training",
+   "applicants": 231,
+   "awarded": 28,
+   "in_study": 28,
+   "graduated": 0,
+   "placed": 0,
+   "women_pct": 43,
+   "basis": "illustrative"
+  },
+  {
+   "id": "SCH-2026-ADV",
+   "programme": "Advanced-reactor MSc track (ADVANCE)",
+   "intake_year": 2026,
+   "destination": "US and Korean universities",
+   "pathway": "ADVANCE programme office · technology evaluation",
+   "applicants": 40,
+   "awarded": 6,
+   "in_study": 6,
+   "graduated": 0,
+   "placed": 0,
+   "women_pct": 50,
+   "basis": "illustrative"
+  }
+ ],
+ "eco_partnerships": [
+  {
+   "id": "PT-KU-ENTC",
+   "org_id": "ku",
+   "name": "Khalifa University · Emirates Nuclear Technology Center (ENTC)",
+   "kind": "university",
+   "since": "Jan 2020",
+   "instrument": "Centre jointly funded by ENEC, FANR and Khalifa University",
+   "scope": "Nuclear safety, materials and chemistry, radiation safety and advanced technologies",
+   "status": "active",
+   "basis": "public",
+   "source": "NEXUS eco_partnerships"
+  },
+  {
+   "id": "PT-KU-SCH",
+   "org_id": "ku",
+   "name": "Khalifa University + FANR · nuclear engineering scholarships",
+   "kind": "university",
+   "since": "2009 (Energy Pioneers)",
+   "instrument": "Joint scholarships · BSc / MSc nuclear engineering",
+   "scope": "Nuclear engineering degrees at KU and at US, UK and Korean universities",
+   "status": "active",
+   "basis": "public",
+   "source": "NEXUS eco_partnerships"
+  },
+  {
+   "id": "PT-FANR",
+   "org_id": "fanr",
+   "name": "FANR · ENTC co-funder",
+   "kind": "government",
+   "since": "Jan 2020",
+   "instrument": "ENTC co-funding (the regulator stays independent)",
+   "scope": "Research capacity in nuclear safety for the UAE",
+   "status": "active",
+   "basis": "public",
+   "source": "NEXUS eco_partnerships"
+  },
+  {
+   "id": "PT-SRC-GIEMS",
+   "org_id": null,
+   "name": "Saskatchewan Research Council and GIEMS (Canada)",
+   "kind": "research_council",
+   "since": "Jan 2026 (WFES)",
+   "instrument": "MoU",
+   "scope": "SMRs and microreactors, plant efficiency, waste, AI and robotics in nuclear",
+   "status": "active",
+   "basis": "public",
+   "source": "NEXUS eco_partnerships"
+  },
+  {
+   "id": "PT-KEPCO-LAB",
+   "org_id": "kepco",
+   "name": "KEPCO · safety R&D and joint AI Innovation Lab",
+   "kind": "industry",
+   "since": "18 Nov 2025",
+   "instrument": "MoU (UAE–Korea summit)",
+   "scope": "SMRs, advanced reactors, fuel cycle, waste and safety R&D; AI with a joint ENEC–KEPCO AI Innovation Lab",
+   "status": "active",
+   "basis": "public",
+   "source": "NEXUS eco_partnerships"
+  },
+  {
+   "id": "PT-TII",
+   "org_id": null,
+   "name": "TII and ASPIRE · autonomous perimeter patrol",
+   "kind": "research_council",
+   "since": "28 Jan 2026",
+   "instrument": "Proof of concept",
+   "scope": "Autonomous aerial (drone) perimeter patrolling",
+   "status": "active",
+   "basis": "public",
+   "source": "NEXUS eco_partnerships"
+  },
+  {
+   "id": "PT-AYC",
+   "org_id": null,
+   "name": "Arab Youth Center · R&D",
+   "kind": "youth",
+   "since": "Nov 2024",
+   "instrument": "MoU",
+   "scope": "Youth research and development in nuclear and clean energy",
+   "status": "active",
+   "basis": "public",
+   "source": "NEXUS eco_partnerships"
+  },
+  {
+   "id": "PT-MOET-IP",
+   "org_id": null,
+   "name": "Ministry of Economy & Tourism · IP and patents",
+   "kind": "government",
+   "since": "6 May 2026",
+   "instrument": "MoU",
+   "scope": "IP and patents, including fast-track patent examination",
+   "status": "active",
+   "basis": "public",
+   "source": "NEXUS eco_partnerships"
+  }
+ ]
+}

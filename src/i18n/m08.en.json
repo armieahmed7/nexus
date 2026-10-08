@@ -1,0 +1,25 @@
+{
+  "module": {},
+  "routes": {
+    "safety-culture": {
+      "title": "Safety culture",
+      "purpose": "The 10 traits, values, and how concerns are raised (links to official channels)."
+    },
+    "speak-up": {
+      "title": "Raise a concern",
+      "purpose": "Pointer to Employee Concerns Program channels. Stores nothing, sends no analytics."
+    },
+    "my-safety-culture": {
+      "title": "Safety culture learning",
+      "purpose": "Trait learning, HU tool refreshers and reflection prompts. No points, no badges."
+    },
+    "oe": {
+      "title": "Operating experience",
+      "purpose": "Curated, de-identified operating-experience lessons with review date and reviewing body."
+    },
+    "admin-ecp": {
+      "title": "ECP referrals",
+      "purpose": "Referral metadata only (channel, category, status). Concern text never enters Kafa'a."
+    }
+  }
+}

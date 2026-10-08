@@ -7,14 +7,16 @@
   "scripts": {
     "dev": "vite",
     "gen": "node scripts/gen-all.mjs",
-    "build": "npm run gen && tsc -b --noEmit && vite build",
+    "build": "npm run gen && npm run check:i18n && tsc -p tsconfig.json --noEmit && vite build",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "preview": "vite preview --port 4173 --strictPort",
     "test:unit": "vitest run",
     "migrations:validate": "node scripts/validate-migrations.mjs",
     "check:public": "node scripts/check-public-payloads.mjs",
     "test:smoke": "playwright test",
-    "verify": "npm run gen && npm run typecheck && npm run test:unit && npm run migrations:validate && npm run check:public && vite build && npm run test:smoke"
+    "verify": "npm run gen && npm run check:i18n && npm run typecheck && npm run test:unit && npm run migrations:validate && npm run check:public && vite build && npm run test:smoke",
+    "check:i18n": "node scripts/check-i18n.mjs",
+    "scaffold": "node scripts/scaffold-modules.mjs"
   },
   "dependencies": {
     "@fontsource-variable/hanken-grotesk": "^5.3.0",

@@ -1,0 +1,57 @@
+{
+  "module": {},
+  "routes": {
+    "my": {
+      "title": "My dashboard",
+      "purpose": "Next expiries, assigned training, plan progress and notices."
+    },
+    "my-profile": {
+      "title": "My profile",
+      "purpose": "Minimal profile: name, language, digit preference, contact and role. No photo."
+    },
+    "my-settings": {
+      "title": "Settings and data rights",
+      "purpose": "Language and digits, calendar, notifications, and data requests (view, export, correction)."
+    },
+    "admin-access": {
+      "title": "Access",
+      "purpose": "Users, roles, scopes, partner organisations and access reviews; elevated grants need a second admin."
+    },
+    "sign-in": {
+      "title": "Sign in",
+      "purpose": "Choose a demo role card. Opening a URL never signs anyone in."
+    }
+  },
+  "signIn": {
+    "title": "Choose a demo role card",
+    "intro": "Kafa'a has no passwords in the demo. Pick a role card to see the portal as that person; opening a link never signs anyone in.",
+    "localTitle": "Local demo",
+    "localBody": "All 57 personas are available. Data is synthetic and stays in this browser.",
+    "liveTitle": "Live NEXUS record",
+    "liveBody": "Kafa'a reuses your ENEC NEXUS role-card session. If a card does not sign in here, choose it in NEXUS first.",
+    "openNexus": "Open NEXUS sign-in",
+    "filter": "Filter role cards",
+    "anonymous": "Browse without signing in",
+    "localOnly": "Local demo only",
+    "current": "Signed in",
+    "failed": "Sign-in failed",
+    "localOnlyError": "This persona exists only in the local demo. Switch to local demo data to use it.",
+    "signedInAs": "Signed in as {who}",
+    "groups": {
+      "kafaa": "Kafa'a personas",
+      "staff": "ENEC NEXUS role cards: managers and authorities",
+      "staffBasic": "ENEC NEXUS role cards: staff",
+      "partners": "Partners, suppliers and universities",
+      "public": "Students and applicants",
+      "oversight": "Oversight and audit"
+    },
+    "groupHelp": {
+      "kafaa": "Workforce roles Kafa'a adds for the demo (trainee, operator, instructor, licensing, HR, editor, admin, ECP). Local demo only.",
+      "staff": "The NEXUS role cards with elevated Kafa'a roles such as line manager, licensing coordinator or auditor.",
+      "staffBasic": "NEXUS role cards that see Kafa'a as ordinary employees.",
+      "partners": "Supplier, contractor and university users see only their own organisation.",
+      "public": "Applicants see their own applications and practice quizzes.",
+      "oversight": "Read-only roles: observers see released aggregate reports only."
+    }
+  }
+}

@@ -132,11 +132,12 @@ if (problems.length) {
 }
 
 // ───────────── Persona catalogue for the sign-in screen
-const personas = PERSONAS.map((p) => ({ persona: p.persona, person_id: personPid(p.persona), nexus: p.nexus, title_en: p.title_en, title_ar: p.title_ar, kind: p.kind, org_id: p.org_id ?? null, roles: p.roles.map((x) => x.role) }));
+const personas = PERSONAS.map((p) => ({ persona: p.persona, person_id: personPid(p.persona), nexus: p.nexus, title_en: p.title_en, title_ar: p.title_ar, kind: p.kind, org_id: p.org_id ?? null, roles: p.roles.map((x) => x.role), scopes: p.roles.map((x) => `${x.role}:${x.scope_type}${x.scope_value ? '=' + x.scope_value : ''}`) }));
 
 mkdirSync('src/seed', { recursive: true });
 const seed = { meta: { generated_at: new Date().toISOString().slice(0, 10), demo_today: DEMO_TODAY, tenant: "demo (synthetic)", note: "Kafa'a demo tenant. All people are synthetic. Public facts cite sources; everything else is SAMPLE." }, personas, tables: T };
 writeFileSync('src/seed/seed.json', JSON.stringify(seed));
+writeFileSync('src/seed/personas.json', JSON.stringify(personas, null, 1));
 
 // ───────────── seed.sql
 const lit = (v, type) => {

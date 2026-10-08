@@ -1,0 +1,33 @@
+{
+  "module": {},
+  "routes": {
+    "workforce": {
+      "title": "Workforce analytics",
+      "purpose": "Aggregate workforce, pipeline, training and critical-role depth. Groups under 10 are suppressed."
+    },
+    "workforce-emiratization": {
+      "title": "Emiratization",
+      "purpose": "Emiratization by entity, job family and level, with definitions and reconciliation notes."
+    },
+    "workforce-pipeline": {
+      "title": "Pipeline",
+      "purpose": "From programme intake to placement (aggregate)."
+    },
+    "workforce-critical-roles": {
+      "title": "Critical roles",
+      "purpose": "Bench depth for licensed and scarce roles against targets: counts only, never names."
+    },
+    "workforce-training": {
+      "title": "Training volume",
+      "purpose": "Training hours and completions."
+    },
+    "workforce-scenarios": {
+      "title": "Scenario planner",
+      "purpose": "Headcount scenarios by technology or programme, always labelled SIMULATED."
+    },
+    "observer": {
+      "title": "Observer reports",
+      "purpose": "Aggregate reports that ENEC has approved for release to your organisation. Not a regulatory channel."
+    }
+  }
+}

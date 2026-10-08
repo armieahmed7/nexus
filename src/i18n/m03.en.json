@@ -1,0 +1,25 @@
+{
+  "module": {},
+  "routes": {
+    "licensing": {
+      "title": "Operator licensing",
+      "purpose": "How RO and SRO certification works under FANR-REG-17, with links to the regulation."
+    },
+    "my-licence": {
+      "title": "My licence",
+      "purpose": "Certificate validity, medical due date, this quarter's shifts and the requalification window, as recorded in the source system."
+    },
+    "licensing-candidates": {
+      "title": "Licensing candidates",
+      "purpose": "Candidate lists for each programme with eligibility evidence status (clearance shown as confirmed or pending only)."
+    },
+    "licensing-validity": {
+      "title": "Certificate validity",
+      "purpose": "Everyone certified, sorted by the soonest risk; lapse tasks with working-day clocks."
+    },
+    "licensing-calendar": {
+      "title": "Reporting calendar",
+      "purpose": "Reporting obligations and exam milestones. Kafa'a sends nothing to FANR; notices are drafts for a named role."
+    }
+  }
+}

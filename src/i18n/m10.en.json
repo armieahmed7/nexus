@@ -1,0 +1,21 @@
+{
+  "module": {},
+  "routes": {
+    "universities": {
+      "title": "Universities",
+      "purpose": "Academic partners, scholarships and curriculum alignment."
+    },
+    "research": {
+      "title": "Research challenges",
+      "purpose": "Screened public research challenges and how to propose work."
+    },
+    "partner-university": {
+      "title": "University workspace",
+      "purpose": "Internship intakes, consenting scholar cohorts and curriculum alignment."
+    },
+    "partner-research": {
+      "title": "Research proposals",
+      "purpose": "Research challenges, proposals and IP routing."
+    }
+  }
+}

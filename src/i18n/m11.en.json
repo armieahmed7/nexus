@@ -1,0 +1,13 @@
+{
+  "module": {},
+  "routes": {
+    "future": {
+      "title": "Future workforce",
+      "purpose": "The ADVANCE programme and the skills advanced reactors may need. No deployment decision is implied."
+    },
+    "workforce-future": {
+      "title": "Future skills",
+      "purpose": "Future-skills radar with scenarios labelled SIMULATED, never forecasts."
+    }
+  }
+}

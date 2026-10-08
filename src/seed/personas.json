@@ -1,0 +1,943 @@
+[
+ {
+  "persona": "group-ceo",
+  "person_id": "p-group-ceo",
+  "nexus": true,
+  "title_en": "Group CEO (role card)",
+  "title_ar": "الرئيس التنفيذي للمجموعة (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee",
+   "manager"
+  ],
+  "scopes": [
+   "employee:self",
+   "manager:all"
+  ]
+ },
+ {
+  "persona": "board-secretary",
+  "person_id": "p-board-secretary",
+  "nexus": true,
+  "title_en": "Board Secretary (role card)",
+  "title_ar": "أمين سر المجلس (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee",
+   "auditor"
+  ],
+  "scopes": [
+   "employee:self",
+   "auditor:all"
+  ]
+ },
+ {
+  "persona": "group-cfo",
+  "person_id": "p-group-cfo",
+  "nexus": true,
+  "title_en": "Group CFO (role card)",
+  "title_ar": "الرئيس التنفيذي للشؤون المالية (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee",
+   "manager"
+  ],
+  "scopes": [
+   "employee:self",
+   "manager:entity=enec"
+  ]
+ },
+ {
+  "persona": "chco",
+  "person_id": "p-chco",
+  "nexus": true,
+  "title_en": "Chief Human Capital Officer (role card)",
+  "title_ar": "الرئيس التنفيذي لرأس المال البشري (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee",
+   "hr_director",
+   "hr_analyst"
+  ],
+  "scopes": [
+   "employee:self",
+   "hr_director:all",
+   "hr_analyst:all"
+  ]
+ },
+ {
+  "persona": "training-mgr",
+  "person_id": "p-training-mgr",
+  "nexus": true,
+  "title_en": "Training Manager (role card)",
+  "title_ar": "مدير التدريب (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee",
+   "training_manager",
+   "instructor"
+  ],
+  "scopes": [
+   "employee:self",
+   "training_manager:entity=enec-ops",
+   "instructor:entity=enec-ops"
+  ]
+ },
+ {
+  "persona": "cpo",
+  "person_id": "p-cpo",
+  "nexus": true,
+  "title_en": "Chief Procurement Officer (role card)",
+  "title_ar": "الرئيس التنفيذي للمشتريات (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee",
+   "manager"
+  ],
+  "scopes": [
+   "employee:self",
+   "manager:family=supply-chain"
+  ]
+ },
+ {
+  "persona": "buyer",
+  "person_id": "p-buyer",
+  "nexus": true,
+  "title_en": "Buyer (role card)",
+  "title_ar": "مشترٍ (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee"
+  ],
+  "scopes": [
+   "employee:self"
+  ]
+ },
+ {
+  "persona": "doa-signatory",
+  "person_id": "p-doa-signatory",
+  "nexus": true,
+  "title_en": "DOA signatory (role card)",
+  "title_ar": "مفوض بالتوقيع (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee"
+  ],
+  "scopes": [
+   "employee:self"
+  ]
+ },
+ {
+  "persona": "head-sq",
+  "person_id": "p-head-sq",
+  "nexus": true,
+  "title_en": "Head of Supplier Quality (role card)",
+  "title_ar": "رئيس جودة الموردين (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee",
+   "manager",
+   "instructor"
+  ],
+  "scopes": [
+   "employee:self",
+   "manager:family=quality",
+   "instructor:family=quality"
+  ]
+ },
+ {
+  "persona": "sq-lead",
+  "person_id": "p-sq-lead",
+  "nexus": true,
+  "title_en": "Supplier Quality Lead (role card)",
+  "title_ar": "قائد جودة الموردين (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee",
+   "instructor"
+  ],
+  "scopes": [
+   "employee:self",
+   "instructor:family=quality"
+  ]
+ },
+ {
+  "persona": "nse",
+  "person_id": "p-nse",
+  "nexus": true,
+  "title_en": "Nuclear Specification Engineer (role card)",
+  "title_ar": "مهندس المواصفات النووية (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee"
+  ],
+  "scopes": [
+   "employee:self"
+  ]
+ },
+ {
+  "persona": "sme-reviewer",
+  "person_id": "p-sme-reviewer",
+  "nexus": true,
+  "title_en": "SME reviewer (role card)",
+  "title_ar": "مراجع خبير (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee"
+  ],
+  "scopes": [
+   "employee:self"
+  ]
+ },
+ {
+  "persona": "fuel-pm",
+  "person_id": "p-fuel-pm",
+  "nexus": true,
+  "title_en": "Fuel Procurement Manager (role card)",
+  "title_ar": "مدير مشتريات الوقود (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee"
+  ],
+  "scopes": [
+   "employee:self"
+  ]
+ },
+ {
+  "persona": "head-sustainability",
+  "person_id": "p-head-sustainability",
+  "nexus": true,
+  "title_en": "Head of Sustainability (role card)",
+  "title_ar": "رئيس الاستدامة (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee",
+   "editor"
+  ],
+  "scopes": [
+   "employee:self",
+   "editor:all"
+  ]
+ },
+ {
+  "persona": "sustainability-lead",
+  "person_id": "p-sustainability-lead",
+  "nexus": true,
+  "title_en": "Sustainability Reporting Lead (role card)",
+  "title_ar": "قائد تقارير الاستدامة (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee",
+   "editor"
+  ],
+  "scopes": [
+   "employee:self",
+   "editor:all"
+  ]
+ },
+ {
+  "persona": "compliance",
+  "person_id": "p-compliance",
+  "nexus": true,
+  "title_en": "Compliance & Ethics Officer (role card)",
+  "title_ar": "مسؤول الامتثال والأخلاقيات (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee",
+   "auditor"
+  ],
+  "scopes": [
+   "employee:self",
+   "auditor:all"
+  ]
+ },
+ {
+  "persona": "ai-governance",
+  "person_id": "p-ai-governance",
+  "nexus": true,
+  "title_en": "AI Governance Lead (role card)",
+  "title_ar": "قائد حوكمة الذكاء الاصطناعي (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee",
+   "admin"
+  ],
+  "scopes": [
+   "employee:self",
+   "admin:all"
+  ]
+ },
+ {
+  "persona": "ciso",
+  "person_id": "p-ciso",
+  "nexus": true,
+  "title_en": "Chief Information Security Officer (role card)",
+  "title_ar": "الرئيس التنفيذي لأمن المعلومات (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee",
+   "manager"
+  ],
+  "scopes": [
+   "employee:self",
+   "manager:family=cyber"
+  ]
+ },
+ {
+  "persona": "incident-commander",
+  "person_id": "p-incident-commander",
+  "nexus": true,
+  "title_en": "Incident Commander (role card)",
+  "title_ar": "قائد الحوادث (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee",
+   "manager"
+  ],
+  "scopes": [
+   "employee:self",
+   "manager:entity=enec"
+  ]
+ },
+ {
+  "persona": "independent-approver",
+  "person_id": "p-independent-approver",
+  "nexus": true,
+  "title_en": "Independent approver (role card)",
+  "title_ar": "معتمد مستقل (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee",
+   "auditor"
+  ],
+  "scopes": [
+   "employee:self",
+   "auditor:all"
+  ]
+ },
+ {
+  "persona": "ops-ceo",
+  "person_id": "p-ops-ceo",
+  "nexus": true,
+  "title_en": "CEO, ENEC Operations (role card)",
+  "title_ar": "الرئيس التنفيذي لـENEC للعمليات (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee",
+   "manager"
+  ],
+  "scopes": [
+   "employee:self",
+   "manager:entity=enec-ops"
+  ]
+ },
+ {
+  "persona": "sro",
+  "person_id": "p-sro",
+  "nexus": true,
+  "title_en": "Shift Manager · licensed SRO, Crew B (role card)",
+  "title_ar": "مدير الوردية · مشغّل أول مرخّص، الطاقم ب (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee",
+   "licensed_operator",
+   "manager"
+  ],
+  "scopes": [
+   "employee:self",
+   "licensed_operator:self",
+   "manager:crew=B"
+  ]
+ },
+ {
+  "persona": "outage-manager",
+  "person_id": "p-outage-manager",
+  "nexus": true,
+  "title_en": "Outage Manager (role card)",
+  "title_ar": "مدير فترات الإيقاف (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee",
+   "manager"
+  ],
+  "scopes": [
+   "employee:self",
+   "manager:family=outage"
+  ]
+ },
+ {
+  "persona": "outage-planner",
+  "person_id": "p-outage-planner",
+  "nexus": true,
+  "title_en": "Outage Planner (role card)",
+  "title_ar": "مخطط فترات الإيقاف (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee"
+  ],
+  "scopes": [
+   "employee:self"
+  ]
+ },
+ {
+  "persona": "work-control",
+  "person_id": "p-work-control",
+  "nexus": true,
+  "title_en": "Execution Supervisor · Work Control (role card)",
+  "title_ar": "مشرف التنفيذ · التحكم في الأعمال (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee",
+   "manager"
+  ],
+  "scopes": [
+   "employee:self",
+   "manager:team=ops-wc"
+  ]
+ },
+ {
+  "persona": "cap-chair",
+  "person_id": "p-cap-chair",
+  "nexus": true,
+  "title_en": "CAP Screening Committee chair (role card)",
+  "title_ar": "رئيس لجنة فرز الإجراءات التصحيحية (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee",
+   "manager"
+  ],
+  "scopes": [
+   "employee:self",
+   "manager:family=oversight"
+  ]
+ },
+ {
+  "persona": "cap-coord",
+  "person_id": "p-cap-coord",
+  "nexus": true,
+  "title_en": "CAP Coordinator (role card)",
+  "title_ar": "منسق الإجراءات التصحيحية (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee"
+  ],
+  "scopes": [
+   "employee:self"
+  ]
+ },
+ {
+  "persona": "dra",
+  "person_id": "p-dra",
+  "nexus": true,
+  "title_en": "Director Regulatory Affairs (role card)",
+  "title_ar": "مدير الشؤون التنظيمية (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee",
+   "manager",
+   "licensing_coord"
+  ],
+  "scopes": [
+   "employee:self",
+   "manager:family=licensing",
+   "licensing_coord:all"
+  ]
+ },
+ {
+  "persona": "rao",
+  "person_id": "p-rao",
+  "nexus": true,
+  "title_en": "Regulatory Affairs Officer · licensing coordinator (role card)",
+  "title_ar": "مسؤول الشؤون التنظيمية · منسق الترخيص (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee",
+   "licensing_coord"
+  ],
+  "scopes": [
+   "employee:self",
+   "licensing_coord:all"
+  ]
+ },
+ {
+  "persona": "emergency-director",
+  "person_id": "p-emergency-director",
+  "nexus": true,
+  "title_en": "Emergency Director (role card)",
+  "title_ar": "مدير الطوارئ (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee",
+   "manager"
+  ],
+  "scopes": [
+   "employee:self",
+   "manager:family=emergency-preparedness"
+  ]
+ },
+ {
+  "persona": "ep-manager",
+  "person_id": "p-ep-manager",
+  "nexus": true,
+  "title_en": "Emergency Preparedness Manager (role card)",
+  "title_ar": "مدير التأهب للطوارئ (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee",
+   "manager",
+   "instructor"
+  ],
+  "scopes": [
+   "employee:self",
+   "manager:family=emergency-preparedness",
+   "instructor:family=emergency-preparedness"
+  ]
+ },
+ {
+  "persona": "nuc-security",
+  "person_id": "p-nuc-security",
+  "nexus": true,
+  "title_en": "Nuclear Security Manager (role card)",
+  "title_ar": "مدير الأمن النووي (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee",
+   "manager"
+  ],
+  "scopes": [
+   "employee:self",
+   "manager:family=security"
+  ]
+ },
+ {
+  "persona": "sec-compliance",
+  "person_id": "p-sec-compliance",
+  "nexus": true,
+  "title_en": "Security Compliance Officer (role card)",
+  "title_ar": "مسؤول الامتثال الأمني (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee"
+  ],
+  "scopes": [
+   "employee:self"
+  ]
+ },
+ {
+  "persona": "qc-inspector",
+  "person_id": "p-qc-inspector",
+  "nexus": true,
+  "title_en": "QC Receiving Inspector (role card)",
+  "title_ar": "مفتش جودة الاستلام (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee"
+  ],
+  "scopes": [
+   "employee:self"
+  ]
+ },
+ {
+  "persona": "rp-lead",
+  "person_id": "p-rp-lead",
+  "nexus": true,
+  "title_en": "Radiation Protection Team Leader (role card)",
+  "title_ar": "قائد فريق الوقاية من الإشعاع (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee",
+   "manager",
+   "instructor"
+  ],
+  "scopes": [
+   "employee:self",
+   "manager:family=radiation-protection",
+   "instructor:family=radiation-protection"
+  ]
+ },
+ {
+  "persona": "chem-sup",
+  "person_id": "p-chem-sup",
+  "nexus": true,
+  "title_en": "Chemistry Supervisor (role card)",
+  "title_ar": "مشرف الكيمياء (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee",
+   "manager"
+  ],
+  "scopes": [
+   "employee:self",
+   "manager:family=chemistry"
+  ]
+ },
+ {
+  "persona": "consulting-director",
+  "person_id": "p-consulting-director",
+  "nexus": true,
+  "title_en": "Engagement Director · ENEC Consulting (role card)",
+  "title_ar": "مدير المشاريع · ENEC للاستشارات (بطاقة دور)",
+  "kind": "staff",
+  "org_id": "enec-con",
+  "roles": [
+   "employee",
+   "manager"
+  ],
+  "scopes": [
+   "employee:self",
+   "manager:entity=enec-con"
+  ]
+ },
+ {
+  "persona": "alnoor-gm",
+  "person_id": "p-alnoor-gm",
+  "nexus": true,
+  "title_en": "Al Noor General Manager · partner admin (synthetic)",
+  "title_ar": "المدير العام للنور · مسؤول الشريك (اصطناعي)",
+  "kind": "partner",
+  "org_id": "org-alnoor",
+  "roles": [
+   "partner_admin"
+  ],
+  "scopes": [
+   "partner_admin:org=org-alnoor"
+  ]
+ },
+ {
+  "persona": "alnoor-qaqc",
+  "person_id": "p-alnoor-qaqc",
+  "nexus": true,
+  "title_en": "Al Noor QA/QC Manager (synthetic)",
+  "title_ar": "مدير الجودة في النور (اصطناعي)",
+  "kind": "partner",
+  "org_id": "org-alnoor",
+  "roles": [
+   "partner_user"
+  ],
+  "scopes": [
+   "partner_user:org=org-alnoor"
+  ]
+ },
+ {
+  "persona": "alnoor-sales",
+  "person_id": "p-alnoor-sales",
+  "nexus": true,
+  "title_en": "Al Noor Sales Engineer (synthetic)",
+  "title_ar": "مهندس المبيعات في النور (اصطناعي)",
+  "kind": "partner",
+  "org_id": "org-alnoor",
+  "roles": [
+   "partner_user"
+  ],
+  "scopes": [
+   "partner_user:org=org-alnoor"
+  ]
+ },
+ {
+  "persona": "gulfhydro-qa",
+  "person_id": "p-gulfhydro-qa",
+  "nexus": true,
+  "title_en": "Gulf Hydro-Valve QA Manager · partner admin (synthetic)",
+  "title_ar": "مدير الجودة في الخليج للصمامات · مسؤول الشريك (اصطناعي)",
+  "kind": "partner",
+  "org_id": "org-gulfhydro",
+  "roles": [
+   "partner_admin"
+  ],
+  "scopes": [
+   "partner_admin:org=org-gulfhydro"
+  ]
+ },
+ {
+  "persona": "meridia-pd",
+  "person_id": "p-meridia-pd",
+  "nexus": true,
+  "title_en": "Meridia Programme Director · international partner (synthetic)",
+  "title_ar": "مدير برنامج ميريديا · شريك دولي (اصطناعي)",
+  "kind": "partner",
+  "org_id": "org-meridia",
+  "roles": [
+   "partner_user"
+  ],
+  "scopes": [
+   "partner_user:org=org-meridia"
+  ]
+ },
+ {
+  "persona": "presenter",
+  "person_id": "p-presenter",
+  "nexus": true,
+  "title_en": "Presenter (read-only walkthrough)",
+  "title_ar": "مقدّم العرض (قراءة فقط)",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "auditor"
+  ],
+  "scopes": [
+   "auditor:all"
+  ]
+ },
+ {
+  "persona": "k-student",
+  "person_id": "p-k-student",
+  "nexus": false,
+  "title_en": "Grade 12 student (applicant)",
+  "title_ar": "طالب في الصف الثاني عشر (متقدّم)",
+  "kind": "applicant",
+  "org_id": null,
+  "roles": [
+   "applicant"
+  ],
+  "scopes": [
+   "applicant:self"
+  ]
+ },
+ {
+  "persona": "k-graduate",
+  "person_id": "p-k-graduate",
+  "nexus": false,
+  "title_en": "Engineering graduate (applicant, Energy Pioneer)",
+  "title_ar": "خريج هندسة (متقدّم، من رواد الطاقة)",
+  "kind": "applicant",
+  "org_id": null,
+  "roles": [
+   "applicant"
+  ],
+  "scopes": [
+   "applicant:self"
+  ]
+ },
+ {
+  "persona": "k-lo-trainee",
+  "person_id": "p-k-lo-trainee",
+  "nexus": false,
+  "title_en": "Local Operator trainee, Crew C (DNT graduate)",
+  "title_ar": "متدرب مشغّل محلي، الطاقم ج (خريج الدبلوم)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee"
+  ],
+  "scopes": [
+   "employee:self"
+  ]
+ },
+ {
+  "persona": "k-ro",
+  "person_id": "p-k-ro",
+  "nexus": false,
+  "title_en": "Reactor Operator, Crew B",
+  "title_ar": "مشغّل مفاعل، الطاقم ب",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee",
+   "licensed_operator"
+  ],
+  "scopes": [
+   "employee:self",
+   "licensed_operator:self"
+  ]
+ },
+ {
+  "persona": "k-instructor",
+  "person_id": "p-k-instructor",
+  "nexus": false,
+  "title_en": "Simulator instructor (SRO-qualified)",
+  "title_ar": "مدرب المحاكي (مؤهل كمشغّل أول)",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee",
+   "licensed_operator",
+   "instructor"
+  ],
+  "scopes": [
+   "employee:self",
+   "licensed_operator:self",
+   "instructor:entity=enec-ops"
+  ]
+ },
+ {
+  "persona": "k-licensing-coord",
+  "person_id": "p-k-licensing-coord",
+  "nexus": false,
+  "title_en": "Licensing coordinator",
+  "title_ar": "منسق الترخيص",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee",
+   "licensing_coord"
+  ],
+  "scopes": [
+   "employee:self",
+   "licensing_coord:all"
+  ]
+ },
+ {
+  "persona": "k-hr-analyst",
+  "person_id": "p-k-hr-analyst",
+  "nexus": false,
+  "title_en": "HR and Emiratization analyst",
+  "title_ar": "محلل الموارد البشرية والتوطين",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee",
+   "hr_analyst"
+  ],
+  "scopes": [
+   "employee:self",
+   "hr_analyst:all"
+  ]
+ },
+ {
+  "persona": "k-university",
+  "person_id": "p-k-university",
+  "nexus": false,
+  "title_en": "Khalifa University partner liaison",
+  "title_ar": "منسق الشراكة في جامعة خليفة",
+  "kind": "partner",
+  "org_id": "ku",
+  "roles": [
+   "university"
+  ],
+  "scopes": [
+   "university:org=ku"
+  ]
+ },
+ {
+  "persona": "k-observer",
+  "person_id": "p-k-observer",
+  "nexus": false,
+  "title_en": "Government observer (read-only, synthetic office)",
+  "title_ar": "مراقب حكومي (قراءة فقط، مكتب اصطناعي)",
+  "kind": "observer",
+  "org_id": "org-observer",
+  "roles": [
+   "observer"
+  ],
+  "scopes": [
+   "observer:org=org-observer"
+  ]
+ },
+ {
+  "persona": "k-editor",
+  "person_id": "p-k-editor",
+  "nexus": false,
+  "title_en": "Content editor",
+  "title_ar": "محرر المحتوى",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee",
+   "editor"
+  ],
+  "scopes": [
+   "employee:self",
+   "editor:all"
+  ]
+ },
+ {
+  "persona": "k-admin",
+  "person_id": "p-k-admin",
+  "nexus": false,
+  "title_en": "Platform admin",
+  "title_ar": "مسؤول المنصة",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "employee",
+   "admin"
+  ],
+  "scopes": [
+   "employee:self",
+   "admin:all"
+  ]
+ },
+ {
+  "persona": "k-auditor",
+  "person_id": "p-k-auditor",
+  "nexus": false,
+  "title_en": "Auditor",
+  "title_ar": "مدقّق",
+  "kind": "staff",
+  "org_id": "enec",
+  "roles": [
+   "auditor"
+  ],
+  "scopes": [
+   "auditor:all"
+  ]
+ },
+ {
+  "persona": "k-ecp",
+  "person_id": "p-k-ecp",
+  "nexus": false,
+  "title_en": "ECP officer",
+  "title_ar": "مسؤول برنامج مخاوف الموظفين",
+  "kind": "staff",
+  "org_id": "enec-ops",
+  "roles": [
+   "employee",
+   "ecp_officer"
+  ],
+  "scopes": [
+   "employee:self",
+   "ecp_officer:all"
+  ]
+ },
+ {
+  "persona": "k-contractor",
+  "person_id": "p-k-contractor",
+  "nexus": false,
+  "title_en": "Contractor technician, Dhafra Industrial Services (synthetic)",
+  "title_ar": "فني مقاول، الظفرة للخدمات الصناعية (اصطناعي)",
+  "kind": "contractor",
+  "org_id": "org-dhafra",
+  "roles": [
+   "partner_user"
+  ],
+  "scopes": [
+   "partner_user:org=org-dhafra"
+  ]
+ }
+]

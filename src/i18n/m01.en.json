@@ -1,0 +1,21 @@
+{
+  "module": {},
+  "routes": {
+    "careers": {
+      "title": "Career Map",
+      "purpose": "Job family tiles, search and filters for entry level, regulated role and education."
+    },
+    "careers-role": {
+      "title": "Role",
+      "purpose": "What the role does, qualifications, training path, licensing body, entry routes, next roles and related competencies."
+    },
+    "careers-paths": {
+      "title": "Career paths",
+      "purpose": "Hierarchy, family and path views plus the licensed operator ladder with conditions on each step."
+    },
+    "careers-jobs": {
+      "title": "Vacancies",
+      "purpose": "Vacancy listing linked to ENEC's official careers channel."
+    }
+  }
+}

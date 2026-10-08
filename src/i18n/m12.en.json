@@ -1,0 +1,41 @@
+{
+  "module": {},
+  "routes": {
+    "home": {
+      "title": "Home",
+      "purpose": "Front door: four audience cards (students, job seekers, staff, partners), Barakah facts with sources, featured programmes."
+    },
+    "about": {
+      "title": "About",
+      "purpose": "Group entities, mandate, strategy themes and oversight bodies. Entities and roles only; no named staff."
+    },
+    "about-structure": {
+      "title": "Group structure",
+      "purpose": "ENEC, ENEC Operations, ENEC Commercial and ENEC Consulting, with ownership and oversight."
+    },
+    "community": {
+      "title": "Community",
+      "purpose": "Al Dhafra community, STEM materials and outreach."
+    },
+    "esg": {
+      "title": "Climate and ESG",
+      "purpose": "Climate contribution and sustainability reporting, linked rather than copied."
+    },
+    "emergency": {
+      "title": "Emergency information",
+      "purpose": "Links to official ENEC and NCEMA guidance only: Go In, Stay In, Listen In."
+    },
+    "faq": {
+      "title": "FAQ",
+      "purpose": "Frequently asked questions."
+    },
+    "contact": {
+      "title": "Contact",
+      "purpose": "Contact form with real routing to a role mailbox."
+    },
+    "legal": {
+      "title": "Legal",
+      "purpose": "Terms, privacy notice and accessibility statement."
+    }
+  }
+}

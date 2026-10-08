@@ -1,0 +1,33 @@
+{
+  "module": {},
+  "routes": {
+    "competencies": {
+      "title": "Competency library",
+      "purpose": "Competency domains, proficiency levels and linked roles."
+    },
+    "verify": {
+      "title": "Verify a certificate",
+      "purpose": "Verify a Kafa'a-issued course certificate by its number (internal courses only, never a FANR certificate)."
+    },
+    "my-quals": {
+      "title": "My qualifications",
+      "purpose": "Qualification cards task by task, with evaluator role, date and expiry (mirror of the training records system)."
+    },
+    "team": {
+      "title": "My team",
+      "purpose": "Team qualification readiness and expiry calendar for my direct scope."
+    },
+    "team-quals": {
+      "title": "Team qualification matrix",
+      "purpose": "People in my scope against qualifications, coloured by status; who is qualified for task X."
+    },
+    "training-quals": {
+      "title": "Qualification standards",
+      "purpose": "Qualification standards with versions, task lists and JPMs."
+    },
+    "training-quals-standard": {
+      "title": "Qualification standard",
+      "purpose": "Standard editor: revising creates a new version and lists every record that needs review."
+    }
+  }
+}

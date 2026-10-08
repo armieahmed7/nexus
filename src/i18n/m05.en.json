@@ -1,0 +1,29 @@
+{
+  "module": {},
+  "routes": {
+    "learn-practice": {
+      "title": "Practice quizzes",
+      "purpose": "Open practice quizzes on public topics for students and applicants."
+    },
+    "learn-practice-quiz": {
+      "title": "Practice quiz",
+      "purpose": "Take a practice quiz with instant explanations."
+    },
+    "my-assessments": {
+      "title": "My assessments",
+      "purpose": "Scheduled exams, practice checks and results released to me."
+    },
+    "training-jpm": {
+      "title": "JPM evaluator",
+      "purpose": "Record JPMs and task evaluations; a failed critical step fails the JPM; self-sign is refused."
+    },
+    "training-items": {
+      "title": "Item bank",
+      "purpose": "Secure item bank with metadata, versions and separation of duties (writer, reviewer, approver)."
+    },
+    "training-assessments": {
+      "title": "Exams and proctoring",
+      "purpose": "Exam assembly from blueprints, proctor console, item analysis and appeals."
+    }
+  }
+}
