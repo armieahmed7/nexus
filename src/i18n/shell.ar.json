@@ -35,7 +35,16 @@
     "workforce": "القوى العاملة",
     "partner": "الشريك",
     "admin": "الإدارة",
-    "observer": "المراقب"
+    "observer": "المراقب",
+    "skills": "المهارات",
+    "career": "المسار المهني",
+    "growth": "النمو",
+    "opportunities": "الفرص",
+    "future": "المستقبل",
+    "leadership": "القيادة",
+    "talent": "المواهب",
+    "knowledge": "المعرفة",
+    "quality": "جودة التدريب"
   },
   "search": {
     "open": "بحث",

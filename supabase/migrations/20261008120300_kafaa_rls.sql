@@ -1138,3 +1138,38 @@ grant select on kafaa_feature_flags to anon;
 drop trigger if exists kafaa_feature_flags_audit on kafaa_feature_flags;
 create trigger kafaa_feature_flags_audit after insert or update on kafaa_feature_flags for each row execute function kafaa_audit_row();
 
+-- skills
+alter table kafaa_skills enable row level security;
+drop policy if exists kafaa_read on kafaa_skills;
+create policy kafaa_read on kafaa_skills for select to anon, authenticated using (kafaa_rule_read('frameworks', null::text, null::text, true)
+    or kafaa_rule_read('public_content', null::text, null::text, true));
+drop policy if exists kafaa_insert on kafaa_skills;
+create policy kafaa_insert on kafaa_skills for insert to anon, authenticated with check (kafaa_has_grant('frameworks', array['W','A']));
+drop policy if exists kafaa_update on kafaa_skills;
+create policy kafaa_update on kafaa_skills for update to authenticated using (kafaa_has_grant('frameworks', array['W','A'])) with check (kafaa_has_grant('frameworks', array['W','A']));
+grant select, insert, update on kafaa_skills to authenticated;
+grant select on kafaa_skills to anon;
+drop trigger if exists kafaa_skills_audit on kafaa_skills;
+create trigger kafaa_skills_audit after insert or update on kafaa_skills for each row execute function kafaa_audit_row();
+
+-- skill_evidence
+alter table kafaa_skill_evidence enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_evidence;
+create policy kafaa_read on kafaa_skill_evidence for select to anon, authenticated using (kafaa_rule_read('skills_profile', person_id, null::text, true));
+grant select on kafaa_skill_evidence to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- person_skills
+alter table kafaa_person_skills enable row level security;
+drop policy if exists kafaa_read on kafaa_person_skills;
+create policy kafaa_read on kafaa_person_skills for select to anon, authenticated using (kafaa_rule_read('skills_profile', person_id, null::text, true));
+grant select on kafaa_person_skills to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- engine_settings
+alter table kafaa_engine_settings enable row level security;
+drop policy if exists kafaa_read on kafaa_engine_settings;
+create policy kafaa_read on kafaa_engine_settings for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_engine_settings to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+

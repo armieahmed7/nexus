@@ -1,5 +1,5 @@
 // Reads the route registry source files (no bundler needed) so the smoke test always covers every registered route.
-import { readdirSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
 export interface SmokeRoute {
@@ -34,6 +34,11 @@ const PARAMS: Record<string, string> = {
   page: 'privacy',
 };
 const PER_ROUTE: Record<string, Record<string, string>> = { 'partners-detail': { slug: 'kepco' }, 'news-item': { slug: 'dnt-first-cohort' } /* G5 */ };
+// F01 (wave 0): module owners give sample params in src/modules/<m>/smoke.json ({ "<route-id>": { "<param>": "<seed id>" } }).
+for (const dir of existsSync('src/modules') ? readdirSync('src/modules') : []) {
+  const f = join('src/modules', dir, 'smoke.json');
+  if (existsSync(f)) Object.assign(PER_ROUTE, JSON.parse(readFileSync(f, 'utf8')) as Record<string, Record<string, string>>);
+}
 export function fill(r: SmokeRoute): string {
   return r.path.replace(/:(\w+)/g, (_, k) => (PER_ROUTE[r.id]?.[k] ?? PARAMS[k] ?? 'x'));
 }

@@ -10,6 +10,7 @@ import type { IntegrationsRow } from '../../data/types';
 import { RULES } from '../../auth/policy';
 import { syncState } from '../../domain/g5rules';
 import { GatedConfirm, Metric } from './parts';
+import { EnginesCard } from './EnginesCard'; // F02 (wave 0)
 
 export default function AdminIntegrationsPage() {
   const t = useT();
@@ -95,6 +96,7 @@ export default function AdminIntegrationsPage() {
                   </ul>
                 </Card>
               </div>
+              <EnginesCard />
               <p className="text-[12px] text-ink-3">{t('m16.int.footer')}</p>
             </div>
           );

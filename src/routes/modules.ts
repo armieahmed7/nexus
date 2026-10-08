@@ -24,4 +24,16 @@ export const MODULES: Record<ModuleId, ModuleMeta> = {
   M14: { id: 'M14', group: 'G5', en: 'Identity, access and personal data', ar: 'الهوية والوصول والبيانات الشخصية' },
   M15: { id: 'M15', group: 'F', en: 'Bilingual experience (EN/AR)', ar: 'التجربة ثنائية اللغة' },
   M16: { id: 'M16', group: 'G5', en: 'Administration, audit and integrations', ar: 'الإدارة والتدقيق والتكاملات' },
+  // F01 (wave 0): additional-features modules. group = the wave that first owns the folder (BACKLOG.md section 3).
+  M17: { id: 'M17', group: 'W1', en: 'Skills Passport', ar: 'جواز المهارات' },
+  M18: { id: 'M18', group: 'W1', en: 'Career Navigator', ar: 'مستكشف المسار المهني' },
+  M19: { id: 'M19', group: 'W1', en: 'Learning Coach', ar: 'مدرّب التعلّم' },
+  M20: { id: 'M20', group: 'W1', en: 'Opportunities (marketplace, rotations, alumni)', ar: 'الفرص (السوق الداخلي والتناوب والخبراء السابقون)' },
+  M21: { id: 'M21', group: 'W1', en: 'Future Me (personal ADVANCE readiness and horizon)', ar: 'أنا في المستقبل (الجاهزية الشخصية لعصر ADVANCE والأفق)' },
+  M22: { id: 'M22', group: 'W2', en: 'Leadership and communities', ar: 'القيادة ومجتمعات الممارسة' },
+  M23: { id: 'M23', group: 'W3', en: 'Talent review and succession', ar: 'مراجعة المواهب والتعاقب الوظيفي' },
+  M24: { id: 'M24', group: 'W3', en: 'Knowledge continuity', ar: 'استمرارية المعرفة' },
+  M25: { id: 'M25', group: 'W4', en: 'Training effectiveness and needs', ar: 'فعالية التدريب واحتياجاته' },
+  M26: { id: 'M26', group: 'W4', en: 'SAT and accreditation workbench', ar: 'منصة النهج المنهجي للتدريب والاعتماد' },
+  M27: { id: 'M27', group: 'W4', en: 'Learning record store', ar: 'مخزن سجلات التعلّم' },
 };

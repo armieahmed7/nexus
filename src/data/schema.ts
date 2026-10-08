@@ -24,8 +24,10 @@
  *                    `orgw` lets OrgW holders write rows where row[org]=my org; `anonInsert` lets anyone insert
  *   mode 'append' -> insert only through kafaa_audit()/RPCs; update and delete always refused (append-only)
  *   mode 'none'   -> read-only reference data (seeded; admins change it through RPCs or migrations)
- * This file must stay import-free (node scripts import it directly).
+ * This file must stay import-free (node scripts import it directly). Exception (F01): the M17-M27 table blocks are merged in
+ * from src/data/ext/schema.ts, which only imports the modules' own backend/schema.ts files (with explicit .ts extensions).
  */
+import { EXT_TABLES } from './ext/schema.ts';
 
 export type ReadRule = {
   res: string;
@@ -966,6 +968,50 @@ export const SCHEMA: Record<string, TableDef> = {
     read: PUB, write: { mode: 'direct', res: 'integrations' },
   },
 
+  // ───────────────────────────── F01 (wave 0) · Skills core: catalogue, evidence and derived person skill state
+  // The catalogue is a finer layer under the 29 competencies (one core skill per competency, code = competency code, plus
+  // specialised skills). Evidence rows are derived from qualification records, course passes, assessment passes and JPM
+  // passes (kinds qual|course|assessment|jpm, rebuilt by rpc.recomputeSkills) or recorded by other features (rating|ojt|
+  // credential, kept across recomputes). Rules: src/domain/skills.ts (TS) = kafaa_skill_* functions (SQL).
+  skills: {
+    module: 'M17', label: 'Skill catalogue: finer layer under the competencies (F01)',
+    cols: {
+      id: 'text pk', code: 'text uniq', competency_id: 'text ref:competencies idx', name_en: 'text', name_ar: 'text',
+      area: 'text enum:plant_systems|operations|maintenance|radiation_chemistry|engineering|safety|human_performance|emergency|security|quality|leadership|digital|project idx',
+      core: 'bool =false', key_level: 'int =2', evidence_keys: 'text[] =[]', adjacent_ids: 'text[] =[]', adv_skill_ids: 'text[] =[]',
+      description_en: 'text =\'\'', description_ar: 'text =\'\'', sources: 'json =[]', sort: 'int =0',
+    },
+    read: [{ res: 'frameworks' }, ...PUB], write: { mode: 'direct', res: 'frameworks' },
+  },
+  skill_evidence: {
+    module: 'M17', label: 'Skill evidence per person (derived from records, or recorded by later features) (F01)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', skill_id: 'text ref:skills idx',
+      kind: 'text enum:qual|course|assessment|jpm|rating|ojt|credential idx', ref_table: 'text', ref_id: 'text idx', level: 'int',
+      basis: 'text enum:verified|evidenced|validated|claimed', status: 'text enum:current|lapsed =\'current\'', observed_on: 'date',
+      note: 'text?', recorded_by: 'text?', active: 'bool =true', created_at: 'ts =now',
+    },
+    read: [{ res: 'skills_profile', person: 'person_id' }], write: { mode: 'rpc', res: 'skills_profile' },
+  },
+  person_skills: {
+    module: 'M17', label: 'Derived skill state per person: level 0-4, confidence, basis and reasons (F01)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', skill_id: 'text ref:skills idx', level: 'int', confidence: 'num',
+      basis: 'text enum:verified|evidenced|validated|claimed|none', reasons: 'json =[]', evidence_count: 'int =0', active: 'bool =true', updated_at: 'ts =now',
+    },
+    read: [{ res: 'skills_profile', person: 'person_id' }], write: { mode: 'rpc', res: 'skills_profile' },
+  },
+  // F02 (wave 0) · which engine serves each AI-flavoured surface, and its weights. Readable by everyone (transparency);
+  // changed only by platform admins through rpc.setEngineWeights (audited).
+  engine_settings: {
+    module: 'M16', label: 'Engine per surface (deterministic or model slot) and ranking weights (F02)',
+    cols: {
+      id: 'text pk', surface: 'text uniq enum:skills|recommend|match|search', engine: 'text enum:deterministic|model =\'deterministic\'',
+      weights: 'json ={}', updated_by: 'text?', updated_at: 'ts =now',
+    },
+    read: PUB, write: { mode: 'rpc', res: 'integrations' },
+  },
+
   // ───────────────────────────── Local-only mirror of the NEXUS evidence ledger
   ledger_local: {
     module: 'M16', label: 'LocalBackend mirror of nexus_append_ledger writes (same hash scheme). Not created in SQL.',
@@ -977,6 +1023,8 @@ export const SCHEMA: Record<string, TableDef> = {
     read: [{ res: 'audit_log' }],
     write: { mode: 'append' },
   },
+  // F01: M17-M27 module tables (src/modules/<m>/backend/schema.ts)
+  ...EXT_TABLES,
 };
 void T;
 

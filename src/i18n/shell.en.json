@@ -35,7 +35,16 @@
     "workforce": "Workforce",
     "partner": "Partner",
     "admin": "Administration",
-    "observer": "Observer"
+    "observer": "Observer",
+    "skills": "Skills",
+    "career": "Career",
+    "growth": "Growth",
+    "opportunities": "Opportunities",
+    "future": "Future",
+    "leadership": "Leadership",
+    "talent": "Talent",
+    "knowledge": "Knowledge",
+    "quality": "Training quality"
   },
   "search": {
     "open": "Search",

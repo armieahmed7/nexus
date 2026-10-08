@@ -10,3 +10,4 @@ export * from './charts';
 export * from './CareerLadder';
 export * from './Toast';
 export { Icon } from './Icon';
+export * from './WhyThis'; // F02 (wave 0)

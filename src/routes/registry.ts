@@ -19,8 +19,21 @@ import { routes as m12 } from '../modules/m12/routes';
 import { routes as m13 } from '../modules/m13/routes';
 import { routes as m14 } from '../modules/m14/routes';
 import { routes as m16 } from '../modules/m16/routes';
+// F01 (wave 0): M17-M27 are registered here once; their owners only edit src/modules/<m>/routes.ts.
+import { routes as m17 } from '../modules/m17/routes';
+import { routes as m18 } from '../modules/m18/routes';
+import { routes as m19 } from '../modules/m19/routes';
+import { routes as m20 } from '../modules/m20/routes';
+import { routes as m21 } from '../modules/m21/routes';
+import { routes as m22 } from '../modules/m22/routes';
+import { routes as m23 } from '../modules/m23/routes';
+import { routes as m24 } from '../modules/m24/routes';
+import { routes as m25 } from '../modules/m25/routes';
+import { routes as m26 } from '../modules/m26/routes';
+import { routes as m27 } from '../modules/m27/routes';
 
-export const ROUTES: RouteDef[] = [...m12, ...m01, ...m02, ...m03, ...m04, ...m05, ...m06, ...m07, ...m08, ...m09, ...m10, ...m11, ...m13, ...m14, ...m16];
+export const ROUTES: RouteDef[] = [...m12, ...m01, ...m02, ...m03, ...m04, ...m05, ...m06, ...m07, ...m08, ...m09, ...m10, ...m11, ...m13, ...m14, ...m16,
+  ...m17, ...m18, ...m19, ...m20, ...m21, ...m22, ...m23, ...m24, ...m25, ...m26, ...m27];
 
 export function validateRoutes(list: RouteDef[]): string[] {
   const errs: string[] = [];

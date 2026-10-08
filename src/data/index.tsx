@@ -92,3 +92,5 @@ export function useAction() {
 }
 
 export { config };
+// F02 (wave 0): engine kernel hook for pages
+export { useEngine } from './useEngine';

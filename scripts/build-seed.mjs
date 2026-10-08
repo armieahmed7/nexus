@@ -1,7 +1,7 @@
 // Builds the demo-tenant seed ONCE as JSON (src/seed/seed.json) and renders supabase/seed.sql from the same object,
 // so the LocalBackend and the database never drift. Also validates the seed against src/data/schema.ts
 // (types, enums, not-null, foreign keys) and writes the persona catalogue used by the sign-in screen.
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, readdirSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { SCHEMA, columnsOf, sqlName } from '../src/data/schema.ts';
 import { SOURCES } from './seed/sources.mjs';
@@ -77,6 +77,19 @@ patchSeedAttempts(T.attempts);
 { const w = buildItemWorkflow(); T.items.push(...w.items); T.item_versions.push(...w.versions); }
 applyG4(T); // [G4] after people: patches partner_onboarding, equivalency_requests, icv_plans; adds supplier documents, academy checks, M11 catalogue
 extendG5(T); // G5: news, feature flags, FAQs, facts, corpus, ECP/Dalil/access-review demo rows
+// F01 (wave 0): feature seed builders, auto-loaded so wave engineers never edit this file. Each scripts/seed/ext/<name>.mjs
+// default-exports build(T, ctx) (runs in file-name order) and may export finalize(T, ctx) (runs after every build, same order).
+// f01-skills.mjs finalize derives every person's skill state, so evidence added by later builders is included.
+{
+  const ctx = { DEMO_TODAY, SOURCES };
+  const dir = 'scripts/seed/ext';
+  const mods = [];
+  for (const f of (existsSync(dir) ? readdirSync(dir) : []).filter((x) => x.endsWith('.mjs')).sort()) mods.push(await import(`./seed/ext/${f}`));
+  for (const m of mods) await m.default?.(T, ctx);
+  // f01 finalize last, so states include every builder's evidence
+  const order = [...mods.filter((m) => !m.FINALIZE_LAST), ...mods.filter((m) => m.FINALIZE_LAST)];
+  for (const m of order) await m.finalize?.(T, ctx);
+}
 
 // ───────────── Seed audit log (hash chain identical to kafaa_audit_canonical in SQL and src/data/audit.ts)
 const canon = (e) => [e.seq, e.ts.replace(/\.\d{3}Z$/, 'Z'), e.actor_person_id ?? '', e.actor_role ?? '', e.action, e.entity_table ?? '', e.entity_id ?? '', e.outcome, e.reason ?? ''].join('|');

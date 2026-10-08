@@ -11,6 +11,7 @@ import type { Identity, Query, Repository, Result, RowOf, Rpc, Table, NexusReads
 import type { PlatformRole } from '../../auth/policy';
 import { accessTokenFor } from '../../auth/nexusSession';
 import { makeG2SupabaseRpc } from './rpc_g2';
+import { makeExtSupabaseRpc } from '../ext/supabase'; // F01: M17-M27 module RPCs
 
 type AnyQ = any; // supabase-js builder types are deep; kept local to this file
 
@@ -140,6 +141,18 @@ export class SupabaseBackend implements Repository {
   private makeRpc(): Rpc {
     return {
       ...makeG2SupabaseRpc((fn, args, touched) => this.call(fn, args, touched)), // G2: M04/M05 RPCs (./rpc_g2.ts)
+      // F01 (wave 0): M17-M27 module RPCs (src/modules/<m>/backend/supabase.ts)
+      ...makeExtSupabaseRpc({
+        call: (fn, args, touched) => this.call(fn, args, touched ?? []),
+        rpc: async <T,>(fn: string, args: Record<string, unknown> = {}) => {
+          const { data, error } = await this.client.rpc(fn, args);
+          if (error) throw new Error(error.message);
+          return data as T;
+        },
+      }),
+      // F01/F02 (wave 0): 20261009101001_kafaa_w0e1_skills_core.sql
+      recomputeSkills: (personId = null) => this.call('kafaa_recompute_skills', { p_person: personId }, ['person_skills', 'skill_evidence']),
+      setEngineWeights: (surface, engine, weights = null) => this.call('kafaa_set_engine_weights', { p_surface: surface, p_engine: engine, p_weights: weights }, ['engine_settings']),
       signoffEvaluation: (p: SignoffInput) => this.call('kafaa_signoff_evaluation', { p }, ['evaluations', 'qual_records']),
       setLicenceStatus: (id, status, reason) => this.call('kafaa_set_licence_status', { p_licence_id: id, p_status: status, p_reason: reason }, ['licences', 'licensing_tasks', 'reporting_obligations']),
       detectLicensingEvents: () => this.call('kafaa_detect_licensing_events', {}, ['licences', 'licensing_tasks']),

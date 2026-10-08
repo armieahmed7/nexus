@@ -1,0 +1,18 @@
+// F01: installs the M17-M27 Supabase RPC mappings on SupabaseBackend.rpc. Each module owns src/modules/<m>/backend/supabase.ts.
+import type { SupabaseExtCtx } from './types';
+import type { ExtRpc } from './rpc';
+import { makeSupabaseM17 } from '../../modules/m17/backend/supabase';
+import { makeSupabaseM18 } from '../../modules/m18/backend/supabase';
+import { makeSupabaseM19 } from '../../modules/m19/backend/supabase';
+import { makeSupabaseM20 } from '../../modules/m20/backend/supabase';
+import { makeSupabaseM21 } from '../../modules/m21/backend/supabase';
+import { makeSupabaseM22 } from '../../modules/m22/backend/supabase';
+import { makeSupabaseM23 } from '../../modules/m23/backend/supabase';
+import { makeSupabaseM24 } from '../../modules/m24/backend/supabase';
+import { makeSupabaseM25 } from '../../modules/m25/backend/supabase';
+import { makeSupabaseM26 } from '../../modules/m26/backend/supabase';
+import { makeSupabaseM27 } from '../../modules/m27/backend/supabase';
+
+export function makeExtSupabaseRpc(x: SupabaseExtCtx): ExtRpc {
+  return { ...makeSupabaseM17(x), ...makeSupabaseM18(x), ...makeSupabaseM19(x), ...makeSupabaseM20(x), ...makeSupabaseM21(x), ...makeSupabaseM22(x), ...makeSupabaseM23(x), ...makeSupabaseM24(x), ...makeSupabaseM25(x), ...makeSupabaseM26(x), ...makeSupabaseM27(x) };
+}

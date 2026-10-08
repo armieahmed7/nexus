@@ -1340,6 +1340,59 @@ export interface FeatureFlagsRow {
   updated_at: string;
   updated_by?: string | null;
 }
+export interface SkillsRow {
+  id: string;
+  code: string;
+  competency_id: string;
+  name_en: string;
+  name_ar: string;
+  area: 'plant_systems' | 'operations' | 'maintenance' | 'radiation_chemistry' | 'engineering' | 'safety' | 'human_performance' | 'emergency' | 'security' | 'quality' | 'leadership' | 'digital' | 'project';
+  core: boolean;
+  key_level: number;
+  evidence_keys: string[];
+  adjacent_ids: string[];
+  adv_skill_ids: string[];
+  description_en: string;
+  description_ar: string;
+  sources: any;
+  sort: number;
+}
+export interface SkillEvidenceRow {
+  id: string;
+  person_id: string;
+  skill_id: string;
+  kind: 'qual' | 'course' | 'assessment' | 'jpm' | 'rating' | 'ojt' | 'credential';
+  ref_table: string;
+  ref_id: string;
+  level: number;
+  basis: 'verified' | 'evidenced' | 'validated' | 'claimed';
+  status: 'current' | 'lapsed';
+  observed_on: string;
+  note?: string | null;
+  recorded_by?: string | null;
+  active: boolean;
+  created_at: string;
+}
+export interface PersonSkillsRow {
+  id: string;
+  person_id: string;
+  skill_id: string;
+  level: number;
+  confidence: number;
+  basis: 'verified' | 'evidenced' | 'validated' | 'claimed' | 'none';
+  reasons: any;
+  evidence_count: number;
+  active: boolean;
+  updated_at: string;
+}
+export interface EngineSettingsRow {
+  id: string;
+  surface: 'skills' | 'recommend' | 'match' | 'search';
+  engine: 'deterministic' | 'model';
+  weights: any;
+  updated_by?: string | null;
+  updated_at: string;
+}
 export interface LedgerLocalRow {
   id: string;
   seq: number;
@@ -1462,6 +1515,10 @@ export interface Tables {
   dalil_settings: DalilSettingsRow;
   integrations: IntegrationsRow;
   feature_flags: FeatureFlagsRow;
+  skills: SkillsRow;
+  skill_evidence: SkillEvidenceRow;
+  person_skills: PersonSkillsRow;
+  engine_settings: EngineSettingsRow;
   ledger_local: LedgerLocalRow;
 }
 export type Table = keyof Tables;

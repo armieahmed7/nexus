@@ -1658,6 +1658,71 @@ create table if not exists kafaa_feature_flags (
 );
 comment on table kafaa_feature_flags is '[M16] Feature flags for the demo tenant (admin console)';
 
+-- M17 · Skill catalogue: finer layer under the competencies (F01)
+create table if not exists kafaa_skills (
+  id text primary key,
+  code text not null unique,
+  competency_id text not null,
+  name_en text not null,
+  name_ar text not null,
+  area text not null check (area in ('plant_systems', 'operations', 'maintenance', 'radiation_chemistry', 'engineering', 'safety', 'human_performance', 'emergency', 'security', 'quality', 'leadership', 'digital', 'project')),
+  core boolean not null default false,
+  key_level integer not null default 2,
+  evidence_keys text[] not null default '{}'::text[],
+  adjacent_ids text[] not null default '{}'::text[],
+  adv_skill_ids text[] not null default '{}'::text[],
+  description_en text not null default '',
+  description_ar text not null default '',
+  sources jsonb not null default '[]'::jsonb,
+  sort integer not null default 0
+);
+comment on table kafaa_skills is '[M17] Skill catalogue: finer layer under the competencies (F01)';
+
+-- M17 · Skill evidence per person (derived from records, or recorded by later features) (F01)
+create table if not exists kafaa_skill_evidence (
+  id text primary key,
+  person_id text not null,
+  skill_id text not null,
+  kind text not null check (kind in ('qual', 'course', 'assessment', 'jpm', 'rating', 'ojt', 'credential')),
+  ref_table text not null,
+  ref_id text not null,
+  level integer not null,
+  basis text not null check (basis in ('verified', 'evidenced', 'validated', 'claimed')),
+  status text not null default 'current' check (status in ('current', 'lapsed')),
+  observed_on date not null,
+  note text,
+  recorded_by text,
+  active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_skill_evidence is '[M17] Skill evidence per person (derived from records, or recorded by later features) (F01)';
+
+-- M17 · Derived skill state per person: level 0-4, confidence, basis and reasons (F01)
+create table if not exists kafaa_person_skills (
+  id text primary key,
+  person_id text not null,
+  skill_id text not null,
+  level integer not null,
+  confidence numeric not null,
+  basis text not null check (basis in ('verified', 'evidenced', 'validated', 'claimed', 'none')),
+  reasons jsonb not null default '[]'::jsonb,
+  evidence_count integer not null default 0,
+  active boolean not null default true,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_person_skills is '[M17] Derived skill state per person: level 0-4, confidence, basis and reasons (F01)';
+
+-- M16 · Engine per surface (deterministic or model slot) and ranking weights (F02)
+create table if not exists kafaa_engine_settings (
+  id text primary key,
+  surface text not null unique check (surface in ('skills', 'recommend', 'match', 'search')),
+  engine text not null default 'deterministic' check (engine in ('deterministic', 'model')),
+  weights jsonb not null default '{}'::jsonb,
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_engine_settings is '[M16] Engine per surface (deterministic or model slot) and ranking weights (F02)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -1777,6 +1842,11 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_fa
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_advisor_sessions_person_id_fk') then alter table kafaa_advisor_sessions add constraint kafaa_advisor_sessions_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_advisor_turns_session_id_fk') then alter table kafaa_advisor_turns add constraint kafaa_advisor_turns_session_id_fk foreign key (session_id) references kafaa_advisor_sessions(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_advisor_turns_person_id_fk') then alter table kafaa_advisor_turns add constraint kafaa_advisor_turns_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skills_competency_id_fk') then alter table kafaa_skills add constraint kafaa_skills_competency_id_fk foreign key (competency_id) references kafaa_competencies(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_evidence_person_id_fk') then alter table kafaa_skill_evidence add constraint kafaa_skill_evidence_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_evidence_skill_id_fk') then alter table kafaa_skill_evidence add constraint kafaa_skill_evidence_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_person_skills_person_id_fk') then alter table kafaa_person_skills add constraint kafaa_person_skills_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_person_skills_skill_id_fk') then alter table kafaa_person_skills add constraint kafaa_person_skills_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -1926,6 +1996,14 @@ create index if not exists kafaa_advisor_sessions_person_id_idx on kafaa_advisor
 create index if not exists kafaa_advisor_sessions_client_key_idx on kafaa_advisor_sessions (client_key);
 create index if not exists kafaa_advisor_turns_session_id_idx on kafaa_advisor_turns (session_id);
 create index if not exists kafaa_advisor_turns_person_id_idx on kafaa_advisor_turns (person_id);
+create index if not exists kafaa_skills_competency_id_idx on kafaa_skills (competency_id);
+create index if not exists kafaa_skills_area_idx on kafaa_skills (area);
+create index if not exists kafaa_skill_evidence_person_id_idx on kafaa_skill_evidence (person_id);
+create index if not exists kafaa_skill_evidence_skill_id_idx on kafaa_skill_evidence (skill_id);
+create index if not exists kafaa_skill_evidence_kind_idx on kafaa_skill_evidence (kind);
+create index if not exists kafaa_skill_evidence_ref_id_idx on kafaa_skill_evidence (ref_id);
+create index if not exists kafaa_person_skills_person_id_idx on kafaa_person_skills (person_id);
+create index if not exists kafaa_person_skills_skill_id_idx on kafaa_person_skills (skill_id);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -1938,4 +2016,4 @@ create trigger kafaa_evaluations_append_only before update or delete on kafaa_ev
 drop trigger if exists kafaa_evaluation_acks_append_only on kafaa_evaluation_acks;
 create trigger kafaa_evaluation_acks_append_only before update or delete on kafaa_evaluation_acks for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 103) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 107) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

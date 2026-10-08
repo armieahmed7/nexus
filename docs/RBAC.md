@@ -31,3 +31,10 @@ Codes: · none · R read · Own own records · Scope records in the user's assig
 | [K] Vacancies, programme pages and events (`talent_content`) | R | R | R | R | R | R | R | R | R W | R W | R | R | R | R | R W | R | R A | R |
 | [K] Notifications (`notifications`) | · | Own | Own | Own | Own | Own | Own | Own | Own | Own | Own | Own | Own | Own | Own | Own | Own | Own |
 | [K] Integrations and sync status (`integrations`) | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | · | R A | R |
+| [K] Person skill state, skill evidence and claims (F01) (`skills_profile`) | · | · | Own | Own | Own Scope | Own Scope | Own Scope A | Own | Own Agg | Own Agg | · | · | · | · | Own | Own | Own | · |
+| [K] Opportunity marketplace, rotations and alumni reserve (`opportunities`) | · | · | R Own | R Own | R Own W A | R Own | R Own W A | R Own | R Own Agg | R Own Agg A | · | · | · | · | R Own | R Own | R Own | R |
+| [K] Talent review and succession (confidential) (`talent_review`) | · | · | · | · | Scope | · | · | · | Scope Agg | R A | · | · | · | · | · | · | · | · |
+| [K] Knowledge continuity: KLRA and captured knowledge (`knowledge`) | · | · | R | R | R Scope | R W | R W A | R | R Agg | R Agg | · | · | · | · | R | R | R | R |
+| [K] Training effectiveness and needs analytics (`learning_analytics`) | · | · | Own | Own | Own Agg W | Own Agg | Own Agg W A | · | Agg | Agg | · | · | · | · | · | · | · | R |
+| [K] SAT analysis and accreditation workbench (`sat`) | · | · | · | · | · | R W | R W A | · | · | · | · | · | · | · | · | · | · | R |
+| [K] Learning record store (xAPI statements) (`lrs`) | · | · | Own | Own | Own Scope | Own Scope | Own Scope Agg | · | Agg | · | · | · | · | · | · | · | · | R |

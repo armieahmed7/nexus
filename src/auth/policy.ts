@@ -66,6 +66,14 @@ export const RESOURCES = [
   'talent_content', // [K] vacancies, programme pages, events
   'notifications', // [K]
   'integrations', // [K]
+  // F01 (wave 0) [K]: resources for the M17-M27 additional features (BACKLOG.md section 3)
+  'skills_profile',
+  'opportunities',
+  'talent_review',
+  'knowledge',
+  'learning_analytics',
+  'sat',
+  'lrs',
 ] as const;
 export type Resource = (typeof RESOURCES)[number];
 
@@ -95,6 +103,13 @@ export const RESOURCE_LABELS: Record<Resource, string> = {
   talent_content: '[K] Vacancies, programme pages and events',
   notifications: '[K] Notifications',
   integrations: '[K] Integrations and sync status',
+  skills_profile: '[K] Person skill state, skill evidence and claims (F01)',
+  opportunities: '[K] Opportunity marketplace, rotations and alumni reserve',
+  talent_review: '[K] Talent review and succession (confidential)',
+  knowledge: '[K] Knowledge continuity: KLRA and captured knowledge',
+  learning_analytics: '[K] Training effectiveness and needs analytics',
+  sat: '[K] SAT analysis and accreditation workbench',
+  lrs: '[K] Learning record store (xAPI statements)',
 };
 
 export const ROLE_LABELS: Record<PlatformRole, { en: string; ar: string; tier: 'public' | 'applicant' | 'staff' | 'elevated' | 'partner' | 'observer' | 'admin' }> = {
@@ -159,6 +174,36 @@ export const MATRIX: Record<Resource, Row> = {
   talent_content: { ...fill(PLATFORM_ROLES as unknown as PlatformRole[], ['R']), hr_analyst: ['R', 'W'], hr_director: ['R', 'W'], editor: ['R', 'W'], admin: ['R', 'A'] },
   notifications: fill(ALL_SIGNED_IN, ['Own']),
   integrations: { admin: ['R', 'A'], auditor: ['R'] },
+  // ── F01 (wave 0). Exact grants from the BACKLOG.md feature cards; row rules live in each table's read rule.
+  // skills_profile: every staff role reads its own skill state; managers and instructors their scope; training_manager
+  // also A (recompute-all); HR aggregates only. Partners excluded until F33. Auditors read the audit log, not skills.
+  skills_profile: {
+    ...fill(STAFF.filter((r) => r !== 'auditor'), ['Own']),
+    manager: ['Own', 'Scope'], instructor: ['Own', 'Scope'], training_manager: ['Own', 'Scope', 'A'], hr_analyst: ['Own', 'Agg'], hr_director: ['Own', 'Agg'],
+  },
+  // opportunities (F08/F15/F23): staff read (Own for their applications); managers and training_manager post (W) and decide (A).
+  opportunities: {
+    ...fill(STAFF.filter((r) => r !== 'auditor'), ['R', 'Own']),
+    manager: ['R', 'Own', 'W', 'A'], training_manager: ['R', 'Own', 'W', 'A'], hr_analyst: ['R', 'Own', 'Agg'], hr_director: ['R', 'Own', 'Agg', 'A'], auditor: ['R'],
+  },
+  // talent_review (F18/F19, confidential): managers their own team, HR BP in scope, HR director decides. Employees none; auditor none (audit log only).
+  talent_review: { manager: ['Scope'], hr_analyst: ['Scope', 'Agg'], hr_director: ['R', 'A'] },
+  // knowledge (F20/F21): captured knowledge readable by staff; KLRA rows must use Scope/Agg/A-only rules (never staff R).
+  knowledge: {
+    ...fill(STAFF, ['R']), manager: ['R', 'Scope'], training_manager: ['R', 'W', 'A'], instructor: ['R', 'W'], hr_analyst: ['R', 'Agg'], hr_director: ['R', 'Agg'],
+  },
+  // learning_analytics (F25/F26): learners own L1; managers W on L3 for their team; training_manager decides.
+  learning_analytics: {
+    employee: ['Own'], licensed_operator: ['Own'], manager: ['Own', 'Agg', 'W'], instructor: ['Own', 'Agg'], training_manager: ['Own', 'Agg', 'W', 'A'],
+    hr_analyst: ['Agg'], hr_director: ['Agg'], auditor: ['R'],
+  },
+  // sat (F27/F29): training staff write; training_manager approves; auditor reads.
+  sat: { instructor: ['R', 'W'], training_manager: ['R', 'W', 'A'], auditor: ['R'] },
+  // lrs (F30): own statements; instructors and managers in scope; analytics aggregate; writes only through RPCs.
+  lrs: {
+    employee: ['Own'], licensed_operator: ['Own'], manager: ['Own', 'Scope'], instructor: ['Own', 'Scope'], training_manager: ['Own', 'Scope', 'Agg'],
+    hr_analyst: ['Agg'], auditor: ['R'],
+  },
 };
 
 /** Grants for a set of roles on a resource. Every caller implicitly holds 'public'. */

@@ -16,6 +16,10 @@ import { G1LocalRpc } from './rpc.g1';
 import { makeG2LocalRpc } from './rpc_g2';
 import type { G2Rpc } from '../rpc_g2';
 import { G4LocalRpc } from './rpc.g4'; // [G4]
+import { makeW0LocalRpc, type W0Rpc } from './rpc.w0'; // F01/F02 (wave 0)
+import { makeExtLocalRpc } from '../ext/local'; // F01: M17-M27 module RPCs
+import type { ExtRpc } from '../ext/rpc';
+import type { LocalRpcHelpers } from '../ext/types';
 import { DOC_CHECKLIST, equivalencyCoverage, readinessState } from '../../domain/partners'; // [G4]
 
 // [G3] shared with the SQL mirror: answers that must never be collected at application time, retention and IP route
@@ -31,13 +35,16 @@ const addMonths = (d: string, m: number) => {
 
 // G2 (2026-10-08): the M04/M05 RPCs are implemented in ./rpc_g2.ts and installed on every LocalRpc instance.
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
-export interface LocalRpc extends G2Rpc {}
+export interface LocalRpc extends G2Rpc, W0Rpc, ExtRpc {}
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class LocalRpc implements Rpc {
   constructor(private readonly b: LocalBackend) {
     this.g1 = new G1LocalRpc(b);
     Object.assign(this, makeG2LocalRpc(b));
     this.g4 = new G4LocalRpc(b, (...a) => this.refuse(...a), (...a) => this.done(...a));
+    // F01 (wave 0): W0 RPCs and the M17-M27 modules' RPCs share refuse/done (audit + ledger) with this class.
+    const helpers: LocalRpcHelpers = { refuse: (...a) => this.refuse(...a), done: (...a) => this.done(...a) };
+    Object.assign(this, makeW0LocalRpc(b, helpers), makeExtLocalRpc(b, helpers));
   }
   private readonly g1: G1LocalRpc;
   /** [G4] M09/M11 RPCs live in rpc.g4.ts and share refuse/done with this class. */

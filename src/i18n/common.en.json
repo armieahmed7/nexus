@@ -201,5 +201,87 @@
     "enec-ops": "ENEC Operations (Nawah Energy Company PJSC)",
     "enec-com": "ENEC Commercial (Barakah One Company PJSC)",
     "enec-con": "ENEC Consulting"
+  },
+  "engines": {
+    "whyThis": "Why this?",
+    "whyTitle": "Why this suggestion",
+    "noReasons": "No explanation is available for this item.",
+    "badge": {
+      "deterministic": "Deterministic engine",
+      "model": "Model engine",
+      "model_unavailable": "Model unavailable: deterministic engine in use"
+    },
+    "surface": {
+      "skills": "Skills inference",
+      "recommend": "Recommendations",
+      "match": "Matching",
+      "search": "Search"
+    },
+    "kind": {
+      "deterministic": "Deterministic",
+      "model": "Model"
+    },
+    "reason": {
+      "gap": "Closes {skill} from level {from} to {to}",
+      "gap_role": "Closes {skill} from level {from} to {to} for {role}",
+      "effort": "About {hours} hours of effort",
+      "lift": "{pct}% of the {n} people who made this move did {item} ({lift} times the average)",
+      "similar": "{pct}% skills match",
+      "shared": "Shares {skill}",
+      "move_vertical": "Next step up: {role}",
+      "move_lateral": "Lateral move: {role}",
+      "move_cross_functional": "Cross-functional move: {role}",
+      "move_entry": "Entry route: {role}",
+      "readiness": "{pct}% ready on the required competencies (gates are shown separately)",
+      "steps": "{n} step(s) away",
+      "path_only": "Career path only: readiness is not computed for security roles"
+    },
+    "admin": {
+      "title": "Recommendation engines",
+      "intro": "Which engine serves each AI-flavoured surface. Every result shows its reasons. The model slot stays off until a model gateway is configured; without one the deterministic engine serves and the page says \"model unavailable\".",
+      "surface": "Surface",
+      "requested": "Requested",
+      "serving": "Serving",
+      "weights": "Weights",
+      "gateway": "Model gateway",
+      "gatewayDisabled": "Not configured (no model URL): disabled",
+      "gatewayConfigured": "Configured",
+      "useModel": "Use model",
+      "useDeterministic": "Use deterministic",
+      "confirmTitle": "Switch {surface} to the {engine} engine?",
+      "consequence": "The change is audited. Without a model gateway the deterministic engine keeps serving.",
+      "saved": "Engine settings saved"
+    }
+  },
+  "skills": {
+    "basis": {
+      "verified": "Verified",
+      "evidenced": "Evidenced",
+      "validated": "Validated",
+      "claimed": "Claimed",
+      "none": "No evidence"
+    },
+    "reason": {
+      "qual": "Verified by a current qualification record (level {level}, {date})",
+      "qual_lapsed": "Lapsed qualification record: counts as evidenced at level {level} ({date})",
+      "course": "Course passed (level {level}, {date})",
+      "assessment": "Assessment passed (level {level}, {date})",
+      "jpm": "Job performance measure passed (level {level}, {date})",
+      "rating_claimed": "Self-rated, not yet validated (level {level}, {date})",
+      "rating_validated": "Validated by a manager (level {level}, {date})",
+      "ojt": "On-the-job work signed off (level {level}, {date})",
+      "credential": "Credential held (level {level}, {date})",
+      "qual_ageing": "Verified by a current qualification record (level {level}, {date}) · ageing: older than 36 months, counted one level lower",
+      "qual_lapsed_ageing": "Lapsed qualification record: counts as evidenced at level {level} ({date}) · ageing: older than 36 months, counted one level lower",
+      "course_ageing": "Course passed (level {level}, {date}) · ageing: older than 36 months, counted one level lower",
+      "assessment_ageing": "Assessment passed (level {level}, {date}) · ageing: older than 36 months, counted one level lower",
+      "jpm_ageing": "Job performance measure passed (level {level}, {date}) · ageing: older than 36 months, counted one level lower",
+      "rating_claimed_ageing": "Self-rated, not yet validated (level {level}, {date}) · ageing: older than 36 months, counted one level lower",
+      "rating_validated_ageing": "Validated by a manager (level {level}, {date}) · ageing: older than 36 months, counted one level lower",
+      "ojt_ageing": "On-the-job work signed off (level {level}, {date}) · ageing: older than 36 months, counted one level lower",
+      "credential_ageing": "Credential held (level {level}, {date}) · ageing: older than 36 months, counted one level lower"
+    },
+    "level": "Level {level}",
+    "confidence": "Confidence {pct}%"
   }
 }

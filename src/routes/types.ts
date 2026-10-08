@@ -18,8 +18,10 @@ export interface Guard {
 }
 
 export type Lens = 'public' | 'my' | 'partner' | 'admin';
-export type ModuleId = 'M01' | 'M02' | 'M03' | 'M04' | 'M05' | 'M06' | 'M07' | 'M08' | 'M09' | 'M10' | 'M11' | 'M12' | 'M13' | 'M14' | 'M15' | 'M16';
-export type Group = 'G1' | 'G2' | 'G3' | 'G4' | 'G5' | 'F';
+export type ModuleId = 'M01' | 'M02' | 'M03' | 'M04' | 'M05' | 'M06' | 'M07' | 'M08' | 'M09' | 'M10' | 'M11' | 'M12' | 'M13' | 'M14' | 'M15' | 'M16'
+  // F01 (wave 0): new modules registered once; each is owned by one wave engineer (see src/routes/modules.ts)
+  | 'M17' | 'M18' | 'M19' | 'M20' | 'M21' | 'M22' | 'M23' | 'M24' | 'M25' | 'M26' | 'M27';
+export type Group = 'G1' | 'G2' | 'G3' | 'G4' | 'G5' | 'F' | 'W1' | 'W2' | 'W3' | 'W4' | 'W5';
 
 export interface RouteDef {
   /** Stable id, also the i18n key: `<module>.routes.<id>.title` / `.purpose` */
