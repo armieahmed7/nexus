@@ -1,5 +1,5 @@
 -- [G3] M06 talent pipeline, M07 workforce analytics, M10 universities and research.
--- Additive and idempotent: create or replace functions, revoke/grant, guarded DO blocks. Nothing is dropped.
+-- Additive and idempotent: create or replace functions, revoke/grant, guarded DO blocks. Nothing is removed.
 -- Mirrored 1:1 by the [G3] block in src/data/local/rpc.ts (same checks, refusal codes, audit and ledger behaviour).
 -- Every RPC: SECURITY DEFINER, set search_path = public, refusals through kafaa_refuse (audited), results through kafaa_result.
 
@@ -20,7 +20,7 @@ begin
 end $$;
 
 -- A university partner reads the cohort aggregates hosted at its own university (generated policy kafaa_read carries the same
--- rule for fresh databases; this extra policy brings an already-migrated database to the same result without a drop).
+-- rule for fresh databases; this extra policy brings an already-migrated database to the same result without removing anything).
 do $$
 begin
   if not exists (select 1 from pg_policies where tablename = 'kafaa_scholar_cohorts' and policyname = 'kafaa_g3_read_university') then
