@@ -5,10 +5,11 @@
  * Change both files together.
  */
 import type { LocalBackend } from './LocalBackend';
-import type { AggregateRow, CertificateCheck, Result, Rpc, SignoffInput, RowOf } from '../types';
+import type { AggregateRow, CertificateCheck, Result, Rpc, SignoffInput, RowOf, DalilTurnInput, DalilTurnResult, ConcernReferralInput, DalilMode } from '../types';
 import type { PlatformRole } from '../../auth/policy';
 import { MIN_GROUP_SIZE } from '../../auth/policy';
 import { addWorkingDays, isoDate, todayIso, bookingPriority, scoreJpm } from '../../domain/rules';
+import { concernTransitionError, dalilModeAllowed, CONCERN_WITHHELD, HANDOFF_ROLES } from '../../domain/g5rules';
 import { canonical, chainHash, GENESIS } from '../audit';
 import { newId } from './store';
 
@@ -413,5 +414,116 @@ export class LocalRpc implements Rpc {
     }
     void canonical;
     return { ok: true, code: 'ok', message: `Chain verified (${rows.length} entries)`, data: { entries: rows.length } };
+  }
+
+  // ───────────── G5 (M13) Dalil turn log: kill switch, mode gate, rate limit, concern redaction. Mirror of kafaa_dalil_turn.
+  async dalilTurn(p: DalilTurnInput): Promise<Result<DalilTurnResult>> {
+    await this.b.whenReady();
+    type R = DalilTurnResult;
+    const settings = this.b.rawGet('dalil_settings', 'global');
+    const who = this.b.identity();
+    const me = who.personId;
+    if (!settings || !settings.enabled) return this.refuse<R>('dalil.turn', 'advisor_turns', null, 'disabled', 'Dalil is switched off by the AI owner');
+    const flag = this.b.raw('feature_flags').find((f) => f.key === 'dalil_public');
+    if (!me && flag && !flag.enabled) return this.refuse<R>('dalil.turn', 'advisor_turns', null, 'not_signed_in', 'Sign in to use Dalil');
+    if (!dalilModeAllowed(p.mode as DalilMode, who.roles, !!me)) return this.refuse<R>('dalil.turn', 'advisor_turns', null, 'forbidden', `Mode ${p.mode} is not available to you`);
+    const key = me ? null : (p.client_key ?? '').slice(0, 64);
+    if (!me && !key) return this.refuse<R>('dalil.turn', 'advisor_turns', null, 'invalid', 'A client key is required for anonymous use');
+    if (!p.question?.trim() || p.question.length > 2000) return this.refuse<R>('dalil.turn', 'advisor_turns', null, 'invalid', 'Questions must be 1 to 2,000 characters');
+    const limit = me ? settings.signed_in_rate_limit_per_hour : settings.public_rate_limit_per_hour;
+    const since = new Date(Date.now() - 3_600_000).toISOString();
+    const mine = new Set(this.b.raw('advisor_sessions').filter((x) => (me ? x.person_id === me : x.client_key === key)).map((x) => x.id));
+    const used = this.b.raw('advisor_turns').filter((t) => t.speaker === 'user' && mine.has(t.session_id) && t.ts >= since).length;
+    if (used >= limit) {
+      const a = await this.b.audit('dalil.turn', 'advisor_turns', null, 'refused', `rate_limited: ${used}/${limit} per hour (${me ? 'user' : 'anonymous'})`);
+      return { ok: false, code: 'rate_limited', message: `You have reached ${limit} questions this hour. Try again later.`, audit_seq: a.seq as number, data: { session_id: p.session_id ?? '', used, limit, remaining: 0 } };
+    }
+    const now = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
+    let session = p.session_id ? this.b.rawGet('advisor_sessions', p.session_id) : undefined;
+    if (session && (me ? session.person_id !== me : session.client_key !== key)) session = undefined; // never append to someone else's session
+    if (!session) {
+      const keep = new Date();
+      keep.setUTCDate(keep.getUTCDate() + settings.retention_days);
+      session = this.b.rawInsert('advisor_sessions', { id: newId('as'), person_id: me, mode: p.mode, started_at: now, retention_until: isoDate(keep), client_key: key, page_context: p.page_context ?? null, turns: 0, last_turn_at: now });
+    }
+    const redacted = !!p.redact_question || p.refusal_category === 'concern';
+    const n = session.turns;
+    this.b.rawInsert('advisor_turns', { id: `${session.id}-${n + 1}`, session_id: session.id, person_id: me, speaker: 'user', text: redacted ? CONCERN_WITHHELD : p.question.slice(0, 2000), citations: [], refused: false, refusal_category: null, ts: now, intent: p.intent ?? null, confidence: null, redacted, mode: p.mode });
+    this.b.rawInsert('advisor_turns', { id: `${session.id}-${n + 2}`, session_id: session.id, person_id: me, speaker: 'dalil', text: p.answer.slice(0, 4000), citations: (p.citations ?? []).slice(0, 10), refused: !!p.refused, refusal_category: p.refusal_category ?? null, ts: now, intent: p.intent ?? null, confidence: p.confidence ?? null, redacted: false, mode: p.mode });
+    this.b.rawUpdate('advisor_sessions', session.id, { turns: n + 2, last_turn_at: now, mode: p.mode });
+    return this.done<R>('dalil.turn', 'advisor_turns', session.id, `${p.mode} ${p.intent ?? '-'}${p.refused ? ` refused:${p.refusal_category}` : ''}`, null, null, '', 'ok', { session_id: session.id, used: used + 1, limit, remaining: Math.max(0, limit - used - 1) }, ['advisor_sessions', 'advisor_turns']);
+  }
+  async dalilHandoff(sessionId: string, target: 'careers' | 'training' | 'partner_desk', consent: boolean, note: string) {
+    await this.b.whenReady();
+    const me = this.me;
+    if (!me) return this.refuse('dalil.handoff', 'advisor_sessions', sessionId, 'not_signed_in', 'Sign in to ask for a person, or use the contact form');
+    if (!['careers', 'training', 'partner_desk'].includes(target)) return this.refuse('dalil.handoff', 'advisor_sessions', sessionId, 'invalid', 'Unknown team');
+    const flag = this.b.raw('feature_flags').find((f) => f.key === 'dalil_handoff');
+    if (flag && !flag.enabled) return this.refuse('dalil.handoff', 'advisor_sessions', sessionId, 'disabled', 'Hand-off is switched off');
+    const s = this.b.rawGet('advisor_sessions', sessionId);
+    if (!s || s.person_id !== me) return this.refuse('dalil.handoff', 'advisor_sessions', sessionId, 'not_found', 'Conversation not found');
+    this.b.rawUpdate('advisor_sessions', sessionId, { handoff: target, handoff_consent: !!consent, handoff_status: 'requested', handoff_note: (note ?? '').slice(0, 500) || null });
+    const roles = HANDOFF_ROLES[target];
+    const people = new Set(this.b.raw('role_assignments').filter((a) => a.status === 'active' && roles.includes(a.role)).map((a) => a.person_id));
+    let k = 0;
+    for (const pid of people) {
+      this.b.rawInsert('notifications', { id: newId('nt'), person_id: pid, kind: 'dalil_handoff', title_en: `Dalil hand-off request (${target.replace('_', ' ')})`, title_ar: 'طلب إحالة من دليل', body_en: consent ? 'The user agreed to share the conversation.' : 'The user did not share the conversation; contact details only through the request.', body_ar: consent ? 'وافق المستخدم على مشاركة المحادثة.' : 'لم يشارك المستخدم المحادثة.', link: '/admin/dalil', severity: 'info' });
+      if (++k >= 5) break;
+    }
+    return this.done('dalil.handoff', 'advisor_sessions', sessionId, `${target} consent=${!!consent}`, null, null, '', 'Request sent', undefined, ['advisor_sessions', 'notifications']);
+  }
+  async resolveDalilHandoff(sessionId: string, status: 'picked_up' | 'closed') {
+    await this.b.whenReady();
+    const c = this.ctx;
+    const role = c.actingRole('dalil_config', ['W', 'A']) ?? (['training_manager', 'hr_analyst', 'hr_director'].find((r) => c.roles.includes(r as never)) as never) ?? null;
+    if (!role) return this.refuse('dalil.handoff.resolve', 'advisor_sessions', sessionId, 'forbidden', 'Only the receiving team or the AI owner may update a hand-off');
+    if (!['picked_up', 'closed'].includes(status)) return this.refuse('dalil.handoff.resolve', 'advisor_sessions', sessionId, 'invalid', 'Unknown status', role);
+    const s = this.b.rawGet('advisor_sessions', sessionId);
+    if (!s || s.handoff_status === 'none') return this.refuse('dalil.handoff.resolve', 'advisor_sessions', sessionId, 'not_found', 'No hand-off on this conversation', role);
+    this.b.rawUpdate('advisor_sessions', sessionId, { handoff_status: status });
+    return this.done('dalil.handoff.resolve', 'advisor_sessions', sessionId, status, role, null, '', 'Updated');
+  }
+
+  // ───────────── G5 (M08) ECP referral log: metadata only (never the concern text)
+  async logConcernReferral(p: ConcernReferralInput) {
+    await this.b.whenReady();
+    type R = { id: string; ref_no: string };
+    const role = this.ctx.actingRole('concern_cases', ['A']);
+    if (!role) return this.refuse<R>('ecp.log', 'concern_cases', null, 'forbidden', 'Only the ECP officer may log referrals');
+    if (!['ecp_office', 'intranet', 'phone', 'email', 'unit_rep', 'r2p_referral'].includes(p.channel) || !['nuclear_safety', 'quality', 'hird', 'other'].includes(p.category))
+      return this.refuse<R>('ecp.log', 'concern_cases', null, 'invalid', 'Unknown channel or category', role);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(p.received_on ?? '') || p.received_on > todayIso()) return this.refuse<R>('ecp.log', 'concern_cases', null, 'invalid', 'Received date must be today or earlier', role);
+    if (!p.ecp_system_ref?.trim()) return this.refuse<R>('ecp.log', 'concern_cases', null, 'invalid', 'The ECP system reference is required (the case itself stays in the ECP system)', role);
+    const year = p.received_on.slice(0, 4);
+    const nums = this.b.raw('concern_cases').filter((c) => c.ref_no.startsWith(`ECP-${year}-`)).map((c) => Number(c.ref_no.slice(9)) || 0);
+    const ref_no = `ECP-${year}-${String(Math.max(0, ...nums) + 1).padStart(3, '0')}`;
+    const id = newId('cc');
+    this.b.rawInsert('concern_cases', { id, ref_no, received_on: p.received_on, channel: p.channel as never, anonymous: !!p.anonymous, category: p.category as never, status: 'received', priority: (['routine', 'priority', 'urgent'].includes(p.priority ?? '') ? p.priority : 'routine') as never, ecp_system_ref: p.ecp_system_ref.trim().slice(0, 80), sample: false });
+    return this.done<R>('ecp.log', 'concern_cases', id, `${p.channel} ${p.category} anonymous=${!!p.anonymous}`, role, null, '', 'Referral logged', { id, ref_no });
+  }
+  async triageConcernV2(id: string, status: string, priority: string, outcome: string | null) {
+    await this.b.whenReady();
+    const role = this.ctx.actingRole('concern_cases', ['A']);
+    if (!role) return this.refuse('ecp.triage', 'concern_cases', id, 'forbidden', 'Only the ECP officer may triage referrals');
+    const c = this.b.rawGet('concern_cases', id);
+    if (!c) return this.refuse('ecp.triage', 'concern_cases', id, 'not_found', 'Referral not found', role);
+    const err = concernTransitionError(c.status, status, priority, outcome);
+    if (err) return this.refuse('ecp.triage', 'concern_cases', id, 'invalid', err, role);
+    this.b.rawUpdate('concern_cases', id, { status: status as never, priority: priority as never, triage_owner_role: 'ECP officer', triaged_at: c.triaged_at ?? new Date().toISOString(), closed_on: status === 'closed' ? todayIso() : null, outcome: status === 'closed' ? (outcome as never) : null });
+    return this.done('ecp.triage', 'concern_cases', id, `${c.status} -> ${status} / ${priority}${outcome ? ` / ${outcome}` : ''}`, role, 'kafaa.ecp.triage', 'ECP referral triaged; no case content recorded', 'Triage recorded');
+  }
+
+  // ───────────── G5 (M14) access review
+  async reviewRoleAccess(assignmentId: string, decision: 'keep' | 'revoke', note: string) {
+    await this.b.whenReady();
+    if (!this.ctx.has('users_roles', ['W'])) return this.refuse('role.review', 'role_assignments', assignmentId, 'forbidden', 'Only an admin may record an access review');
+    const r = this.b.rawGet('role_assignments', assignmentId);
+    if (!r || r.status !== 'active') return this.refuse('role.review', 'role_assignments', assignmentId, 'not_found', 'No active grant', 'admin');
+    if (r.person_id === this.me) return this.refuse('role.review', 'role_assignments', assignmentId, 'maker_checker', 'You cannot review your own access', 'admin');
+    if (!['keep', 'revoke'].includes(decision)) return this.refuse('role.review', 'role_assignments', assignmentId, 'invalid', 'Decision must be keep or revoke', 'admin');
+    if (decision === 'revoke' && (note ?? '').trim().length < 5) return this.refuse('role.review', 'role_assignments', assignmentId, 'invalid', 'A revocation needs a reason', 'admin');
+    const now = new Date().toISOString();
+    this.b.rawUpdate('role_assignments', assignmentId, { reviewed_at: now, reviewed_by: this.me, review_note: (note ?? '').slice(0, 300) || (decision === 'keep' ? 'Quarterly access review: keep' : null), ...(decision === 'revoke' ? { status: 'revoked' as const } : {}) });
+    return this.done('role.review', 'role_assignments', assignmentId, `${r.role}: ${decision}`, 'admin', 'kafaa.role.review', `${r.person_id} ${r.role} access review: ${decision}`, decision === 'keep' ? 'Review recorded' : 'Access revoked');
   }
 }

@@ -11,6 +11,7 @@ import { buildAssessments } from './seed/assess.mjs';
 import { buildOrganisations } from './seed/partners.mjs';
 import { buildFacts, buildPages, buildFaqs, buildGlossary, buildSafetyCulture, buildAdvanced, buildTalent, buildKpis, buildWorkforce, buildCriticalRoles, buildDalil, buildIntegrations } from './seed/content.mjs';
 import { buildPeople, PERSONAS, personPid, DEMO_TODAY } from './seed/people.mjs';
+import { extendG5 } from './seed/g5.mjs'; // G5 (M08/M12/M13/M14/M16) rows; see CONTRACT.md changelog
 
 const T = {};
 T.sources = SOURCES.map(([id, label, url, publisher]) => ({ id, label, url, publisher, accessed: '2026-10-08', note: null }));
@@ -68,6 +69,7 @@ T.dalil_settings = dal.settings;
 T.eval_runs = dal.evals;
 T.integrations = buildIntegrations();
 Object.assign(T, buildPeople({ standards: T.qual_standards, tasks: T.task_items, curriculum: T.curriculum_rules, courses: T.courses }));
+extendG5(T); // G5: news, feature flags, FAQs, facts, corpus, ECP/Dalil/access-review demo rows
 
 // ───────────── Seed audit log (hash chain identical to kafaa_audit_canonical in SQL and src/data/audit.ts)
 const canon = (e) => [e.seq, e.ts.replace(/\.\d{3}Z$/, 'Z'), e.actor_person_id ?? '', e.actor_role ?? '', e.action, e.entity_table ?? '', e.entity_id ?? '', e.outcome, e.reason ?? ''].join('|');

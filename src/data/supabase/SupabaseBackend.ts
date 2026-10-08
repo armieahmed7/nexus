@@ -180,6 +180,13 @@ export class SupabaseBackend implements Repository {
       logDenied: async (route, resource) => {
         await this.client.rpc('kafaa_log_denied', { p_route: route, p_resource: resource });
       },
+      // G5 (M08, M13, M14)
+      dalilTurn: (p) => this.call('kafaa_dalil_turn', { p }, ['advisor_sessions', 'advisor_turns']),
+      dalilHandoff: (id, target, consent, note) => this.call('kafaa_dalil_handoff', { p_session_id: id, p_target: target, p_consent: consent, p_note: note }, ['advisor_sessions', 'notifications']),
+      resolveDalilHandoff: (id, status) => this.call('kafaa_resolve_dalil_handoff', { p_session_id: id, p_status: status }, ['advisor_sessions']),
+      logConcernReferral: (p) => this.call('kafaa_log_concern_referral', { p }, ['concern_cases']),
+      triageConcernV2: (id, status, priority, outcome) => this.call('kafaa_triage_concern_v2', { p_id: id, p_status: status, p_priority: priority, p_outcome: outcome }, ['concern_cases']),
+      reviewRoleAccess: (id, decision, note) => this.call('kafaa_review_role_access', { p_id: id, p_decision: decision, p_note: note }, ['role_assignments']),
       auditVerify: async () => {
         const { data, error } = await this.client.rpc('kafaa_audit_verify');
         if (error) return { ok: false, code: 'error', message: error.message };
@@ -203,6 +210,7 @@ export class SupabaseBackend implements Repository {
       ecoEnrolments: () => read('kafaa_nexus_eco_enrolments'),
       ecoScholarships: () => read('kafaa_nexus_eco_scholarships'),
       ecoPartnerships: () => read('kafaa_nexus_eco_partnerships'),
+      ledger: () => read('kafaa_nexus_ledger'), // G5 (M16)
     };
   }
 }

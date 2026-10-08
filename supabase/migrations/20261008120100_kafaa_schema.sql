@@ -88,6 +88,9 @@ create table if not exists kafaa_role_assignments (
   expires_at date,
   status text not null default 'active' check (status in ('active', 'pending_second', 'revoked')),
   second_approver text,
+  reviewed_at timestamptz,
+  reviewed_by text,
+  review_note text,
   constraint kafaa_role_assignments_role_chk check (role in ('public', 'applicant', 'employee', 'licensed_operator', 'manager', 'instructor', 'training_manager', 'licensing_coord', 'hr_analyst', 'hr_director', 'partner_user', 'partner_admin', 'university', 'observer', 'editor', 'ecp_officer', 'admin', 'auditor'))
 );
 comment on table kafaa_role_assignments is '[M14] Role assignment: platform role + scope per person';
@@ -175,7 +178,10 @@ create table if not exists kafaa_contact_requests (
   email text,
   message text not null,
   created_at timestamptz not null default now(),
-  status text not null default 'new' check (status in ('new', 'routed', 'closed'))
+  status text not null default 'new' check (status in ('new', 'routed', 'closed')),
+  lang text not null default 'en' check (lang in ('en', 'ar')),
+  consent_contact boolean not null default false,
+  retention_until date
 );
 comment on table kafaa_contact_requests is '[M12] Contact form submissions with routing';
 
@@ -1242,7 +1248,9 @@ create table if not exists kafaa_concern_cases (
   triage_owner_role text,
   triaged_at timestamptz,
   ecp_system_ref text not null,
-  sample boolean not null default true
+  sample boolean not null default true,
+  closed_on date,
+  outcome text check (outcome in ('substantiated', 'not_substantiated', 'referred_cap', 'referred_hr', 'referred_external', 'no_action'))
 );
 comment on table kafaa_concern_cases is '[M08] [K] ECP referral log: metadata only, never the concern text; anonymous option';
 
@@ -1303,7 +1311,15 @@ create table if not exists kafaa_content_pages (
   is_published boolean not null default false,
   translation_status text not null default 'en_only' check (translation_status in ('en_only', 'ar_draft', 'both_approved')),
   owner_role text not null default 'Editor',
-  ecp_owned boolean not null default false
+  ecp_owned boolean not null default false,
+  kind text not null default 'page' check (kind in ('page', 'news')),
+  published_on date,
+  summary_en text not null default '',
+  summary_ar text not null default '',
+  topic text not null default 'general',
+  updated_by text,
+  updated_at timestamptz not null default now(),
+  no_factual_claims boolean not null default false
 );
 comment on table kafaa_content_pages is '[M16] Content page with sources, review date and bilingual approval';
 
@@ -1374,7 +1390,12 @@ create table if not exists kafaa_advisor_sessions (
   retention_until date not null,
   handoff text not null default 'none' check (handoff in ('none', 'careers', 'training', 'partner_desk')),
   handoff_consent boolean not null default false,
-  turns integer not null default 0
+  turns integer not null default 0,
+  client_key text,
+  page_context text,
+  handoff_status text not null default 'none' check (handoff_status in ('none', 'requested', 'picked_up', 'closed')),
+  handoff_note text,
+  last_turn_at timestamptz
 );
 comment on table kafaa_advisor_sessions is '[M13] Dalil session (retained for a limited period)';
 
@@ -1388,7 +1409,11 @@ create table if not exists kafaa_advisor_turns (
   citations jsonb not null default '[]'::jsonb,
   refused boolean not null default false,
   refusal_category text,
-  ts timestamptz not null default now()
+  ts timestamptz not null default now(),
+  intent text,
+  confidence numeric,
+  redacted boolean not null default false,
+  mode text check (mode in ('public', 'applicant', 'staff', 'partner'))
 );
 comment on table kafaa_advisor_turns is '[M13] Dalil turn (question, cited answer or refusal)';
 
@@ -1403,7 +1428,12 @@ create table if not exists kafaa_eval_runs (
   refusal_total integer not null,
   refusal_correct integer not null,
   pass boolean not null,
-  notes text not null default ''
+  notes text not null default '',
+  details jsonb not null default '[]'::jsonb,
+  engine text not null default 'retrieval-v1',
+  run_by text,
+  security_total integer not null default 0,
+  security_correct integer not null default 0
 );
 comment on table kafaa_eval_runs is '[M13] Dalil evaluation run (citation and refusal thresholds)';
 
@@ -1430,7 +1460,9 @@ create table if not exists kafaa_dalil_settings (
   model_gateway text not null default 'UAE-hosted model option (concept)',
   retention_days integer not null default 30,
   updated_at timestamptz not null default now(),
-  updated_by text
+  updated_by text,
+  signed_in_rate_limit_per_hour integer not null default 60,
+  engine text not null default 'retrieval-v1'
 );
 comment on table kafaa_dalil_settings is '[M13] Dalil global settings and kill switch';
 
@@ -1450,6 +1482,22 @@ create table if not exists kafaa_integrations (
   notes text not null default ''
 );
 comment on table kafaa_integrations is '[M16] Connector and sync status (systems of record)';
+
+-- M16 · Feature flags for the demo tenant (admin console)
+create table if not exists kafaa_feature_flags (
+  id text primary key,
+  key text not null unique,
+  label_en text not null,
+  label_ar text not null,
+  description_en text not null default '',
+  description_ar text not null default '',
+  enabled boolean not null default true,
+  locked boolean not null default false,
+  area text not null default 'general',
+  updated_at timestamptz not null default now(),
+  updated_by text
+);
+comment on table kafaa_feature_flags is '[M16] Feature flags for the demo tenant (admin console)';
 
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -1690,8 +1738,10 @@ create index if not exists kafaa_critical_roles_role_id_idx on kafaa_critical_ro
 create index if not exists kafaa_skill_bridges_from_role_id_idx on kafaa_skill_bridges (from_role_id);
 create index if not exists kafaa_skill_bridges_tech_id_idx on kafaa_skill_bridges (tech_id);
 create index if not exists kafaa_content_pages_is_published_idx on kafaa_content_pages (is_published);
+create index if not exists kafaa_content_pages_kind_idx on kafaa_content_pages (kind);
 create index if not exists kafaa_facts_source_id_idx on kafaa_facts (source_id);
 create index if not exists kafaa_advisor_sessions_person_id_idx on kafaa_advisor_sessions (person_id);
+create index if not exists kafaa_advisor_sessions_client_key_idx on kafaa_advisor_sessions (client_key);
 create index if not exists kafaa_advisor_turns_session_id_idx on kafaa_advisor_turns (session_id);
 create index if not exists kafaa_advisor_turns_person_id_idx on kafaa_advisor_turns (person_id);
 
@@ -1704,4 +1754,4 @@ create trigger kafaa_audit_events_append_only before update or delete on kafaa_a
 drop trigger if exists kafaa_evaluations_append_only on kafaa_evaluations;
 create trigger kafaa_evaluations_append_only before update or delete on kafaa_evaluations for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 94) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 95) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

@@ -93,5 +93,44 @@ const self2 = await one('k-admin', `select kafaa_approve_role('${grant.r.data.id
 const second = await one('ai-governance', `select kafaa_approve_role('${grant.r.data.id}') r`);
 ok(grant.r.data.status === 'pending_second' && !self2.r.ok && second.r.ok, 'elevated role grant needs a second admin');
 
+// ───────────── G5 checks (M08, M13, M14, M16) · 20261008135001_kafaa_g5_core.sql
+console.log('G5 checks');
+const dt = (persona, extra = {}) => one(persona, `select kafaa_dalil_turn($1::jsonb) r`, [JSON.stringify({ mode: 'public', client_key: 'pglite-anon', question: 'What are the RO entry requirements?', answer: 'Three routes (FANR-REG-17 Art. 4).', citations: [{ label: 'FANR-REG-17', url: 'https://www.fanr.gov.ae' }], refused: false, intent: 'entry_requirements', ...extra })]);
+const t1 = await dt(null);
+ok(t1.r.ok === true && t1.r.data.limit === 20, 'anonymous Dalil turn is logged with the public rate limit');
+ok((await dt(null, { mode: 'staff' })).r.code === 'forbidden', 'anonymous visitors cannot use staff mode');
+let last;
+for (let k = 0; k < 20; k++) last = await dt(null, { session_id: t1.r.data.session_id });
+ok(last.r.ok === false && last.r.code === 'rate_limited', 'anonymous use is rate-limited (21st question in an hour refused)');
+const conc = await dt(null, { client_key: 'pglite-anon-2', question: 'I want to report my supervisor', refused: true, refusal_category: 'concern', intent: 'concern' });
+const stored = (await db.query(`select text, redacted from kafaa_advisor_turns where session_id = $1 and speaker = 'user'`, [conc.r.data.session_id])).rows[0];
+ok(conc.r.ok && stored.redacted === true && !stored.text.includes('supervisor'), 'a concern typed into Dalil is never stored (text withheld)');
+let directDenied = false;
+try { await as(null, `insert into kafaa_advisor_turns (id, session_id, speaker, text) values ('x', '${t1.r.data.session_id}', 'user', 'x')`); } catch { directDenied = true; }
+ok(directDenied, 'Dalil logs cannot be written directly (RPC only)');
+await one('k-admin', `select kafaa_set_dalil_enabled(false) r`);
+ok((await dt(null, { client_key: 'pglite-anon-3' })).r.code === 'disabled', 'kill switch: Dalil refuses every turn when disabled');
+await one('k-admin', `select kafaa_set_dalil_enabled(true) r`);
+const lg = await one('k-ecp', `select kafaa_log_concern_referral('{"received_on":"2026-10-08","channel":"phone","anonymous":true,"category":"quality","ecp_system_ref":"ECP-SYS/T-1"}'::jsonb) r`);
+ok(lg.r.ok && /^ECP-2026-\d{3}$/.test(lg.r.data.ref_no), 'ECP officer logs a referral (metadata only) with a generated reference');
+ok((await one('sro', `select kafaa_log_concern_referral('{"received_on":"2026-10-08","channel":"phone","anonymous":true,"category":"quality","ecp_system_ref":"x"}'::jsonb) r`)).r.code === 'forbidden', 'nobody else can log ECP referrals');
+const skip = await one('k-ecp', `select kafaa_triage_concern_v2($1, 'closed', 'routine', null) r`, [lg.r.data.id]);
+const tri2 = await one('k-ecp', `select kafaa_triage_concern_v2($1, 'triaged', 'priority', null) r`, [lg.r.data.id]);
+const close1 = await one('k-ecp', `select kafaa_triage_concern_v2($1, 'closed', 'priority', null) r`, [lg.r.data.id]);
+const close2 = await one('k-ecp', `select kafaa_triage_concern_v2($1, 'closed', 'priority', 'no_action') r`, [lg.r.data.id]);
+const reopen = await one('k-ecp', `select kafaa_triage_concern_v2($1, 'triaged', 'priority', null) r`, [lg.r.data.id]);
+ok(!skip.r.ok && tri2.r.ok && !close1.r.ok && close2.r.ok && !reopen.r.ok, 'ECP triage: no skipping triage, closing needs an outcome, closed cannot reopen');
+const ownRa = (await db.query(`select id from kafaa_role_assignments where person_id = 'p-k-admin' and role = 'admin' limit 1`)).rows[0].id;
+const otherRa = (await db.query(`select id from kafaa_role_assignments where person_id = 'p-k-auditor' and role = 'auditor' and status = 'active' limit 1`)).rows[0].id;
+const rv1 = await one('k-admin', `select kafaa_review_role_access($1, 'keep', '') r`, [ownRa]);
+const rv2 = await one('k-admin', `select kafaa_review_role_access($1, 'keep', 'Q4 review') r`, [otherRa]);
+ok(rv1.r.code === 'maker_checker' && rv2.r.ok, 'access review: admins cannot review their own access; others are recorded');
+ok((await as('k-auditor', 'select * from kafaa_nexus_ledger()')).every((r) => r.domain === 'KAFAA') && (await as('sro', 'select * from kafaa_nexus_ledger()')).length === 0, 'NEXUS ledger viewer: Kafa\'a entries for auditors only');
+ok((await count(null, 'kafaa_feature_flags')) >= 8, 'feature flags are readable by everyone');
+const ffUp = await as('k-admin', `update kafaa_feature_flags set enabled = false where key = 'news' returning id`);
+const ffLocked = await as('k-admin', `update kafaa_feature_flags set enabled = false where key = 'speak_up_no_telemetry' returning id`);
+const ffSro = await as('sro', `update kafaa_feature_flags set enabled = false where key = 'contact_form' returning id`);
+ok(ffUp.length === 1 && ffLocked.length === 0 && ffSro.length === 0, 'feature flags: admins change unlocked flags only; others cannot');
+
 console.log(failures ? `\n${failures} check(s) FAILED` : '\nAll migration checks passed');
 process.exit(failures ? 1 : 0);
