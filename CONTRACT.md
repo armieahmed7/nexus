@@ -285,3 +285,11 @@ Each group's hand-off lists every box below as done, or explains why not. These 
 - [ ] No production build contains a route under /api/debug or similar.
 - [ ] Audit entries cannot be edited or deleted through any interface, including the admin console (append-only trigger; `rpc.auditVerify` shows the chain).
 - [ ] `/admin/nexus` shows the integration status and the NEXUS ledger entries written by Kafa'a.
+
+- **2026-10-09 · W1 · E5 · F09 Future Me (branch `w1e5`, module M21)** Only M21-owned files plus generated output; no shared source file edited.
+  - Tables (`src/modules/m21/backend/schema.ts`): `horizon_lanes` and `future_resources` (public reference data, write mode `none`), `future_interest` (own rows only via `own_profile`, direct own writes, row-trigger audited), `future_goals` (own rows only, RPC writes).
+  - **Shared hand-off for F07 (M19 Learning Coach):** `future_goals` rows with `status = 'active'` are coach targets: `skill_ids` (Kafa'a skills to grow, never security-area skills), `target_level` (2), `kind` (`adv_skill|bridge|lane|future_role`), `ref_id`, `title_en/ar`, `source = 'future_me'`. The coach runs as the person, so the Own read rule is enough; it should read, not write, this table.
+  - **Shared hand-off for F26 (training needs):** `rpc.futureDemand()` (`kafaa_future_demand()`, `skills_profile` Agg/R/A) returns distinct-people counts per technology family or horizon lane for interest and goals, `n = null` and `suppressed = true` below `MIN_GROUP_SIZE`.
+  - RPCs: `setFutureGoal(kind, refId, active?)` (`kafaa_set_future_goal`, audited, no ledger; refusals `not_signed_in`, `forbidden`, `invalid`, `not_found`, `limit` at 12 active goals) and `futureDemand()`.
+  - Routes: `my-future` (`/my/future`), `my-future-tech` (`/my/future/:tech`), `workforce-future-interest` (`/workforce/future/interest`, parent `workforce-future`).
+  - SQL `supabase/migrations/20261009115001_kafaa_w1e5_future.sql`; PGlite checks `scripts/validate/w1e5-future.mjs`; seed `scripts/seed/ext/f09-future.mjs`. Applied live to `hlirqxoddysxtdezwcgv` as `kafaa_w1e5_future`, seed rows loaded with `on conflict do nothing` (5 lanes, 17 resources, 192 interest rows, 42 goals; goal rows md5-identical to `seed.json`).

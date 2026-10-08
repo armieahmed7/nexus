@@ -1410,6 +1410,69 @@ export interface LedgerLocalRow {
   hash: string;
   actor_persona_id?: string | null;
 }
+export interface HorizonLanesRow {
+  id: string;
+  code: string;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  why_en: string;
+  why_ar: string;
+  skill_ids: string[];
+  horizon: 'now' | 'next' | 'later';
+  path_only_role_ids: string[];
+  role_ids: string[];
+  sources: any;
+  sort: number;
+}
+export interface FutureResourcesRow {
+  id: string;
+  kind: 'course' | 'track' | 'programme' | 'event' | 'reading';
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  provider_en: string;
+  provider_ar: string;
+  tech_ids: string[];
+  adv_skill_ids: string[];
+  lane_ids: string[];
+  course_id?: string | null;
+  track_id?: string | null;
+  org_id?: string | null;
+  level: number;
+  hours?: number | null;
+  sources: any;
+  sort: number;
+}
+export interface FutureInterestRow {
+  id: string;
+  person_id: string;
+  target_kind: 'tech' | 'lane';
+  tech_id?: string | null;
+  lane_id?: string | null;
+  active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+export interface FutureGoalsRow {
+  id: string;
+  person_id: string;
+  kind: 'adv_skill' | 'bridge' | 'lane' | 'future_role';
+  ref_id: string;
+  tech_id?: string | null;
+  lane_id?: string | null;
+  skill_ids: string[];
+  adv_skill_ids: string[];
+  target_level: number;
+  title_en: string;
+  title_ar: string;
+  status: 'active' | 'removed';
+  source: string;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -1520,6 +1583,10 @@ export interface Tables {
   person_skills: PersonSkillsRow;
   engine_settings: EngineSettingsRow;
   ledger_local: LedgerLocalRow;
+  horizon_lanes: HorizonLanesRow;
+  future_resources: FutureResourcesRow;
+  future_interest: FutureInterestRow;
+  future_goals: FutureGoalsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];

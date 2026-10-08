@@ -1173,3 +1173,37 @@ create policy kafaa_read on kafaa_engine_settings for select to anon, authentica
 grant select on kafaa_engine_settings to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- horizon_lanes
+alter table kafaa_horizon_lanes enable row level security;
+drop policy if exists kafaa_read on kafaa_horizon_lanes;
+create policy kafaa_read on kafaa_horizon_lanes for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_horizon_lanes to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- future_resources
+alter table kafaa_future_resources enable row level security;
+drop policy if exists kafaa_read on kafaa_future_resources;
+create policy kafaa_read on kafaa_future_resources for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_future_resources to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- future_interest
+alter table kafaa_future_interest enable row level security;
+drop policy if exists kafaa_read on kafaa_future_interest;
+create policy kafaa_read on kafaa_future_interest for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+drop policy if exists kafaa_insert on kafaa_future_interest;
+create policy kafaa_insert on kafaa_future_interest for insert to anon, authenticated with check (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope'])));
+drop policy if exists kafaa_update on kafaa_future_interest;
+create policy kafaa_update on kafaa_future_interest for update to authenticated using (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope']))) with check (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope'])));
+grant select, insert, update on kafaa_future_interest to authenticated;
+grant select on kafaa_future_interest to anon;
+drop trigger if exists kafaa_future_interest_audit on kafaa_future_interest;
+create trigger kafaa_future_interest_audit after insert or update on kafaa_future_interest for each row execute function kafaa_audit_row();
+
+-- future_goals
+alter table kafaa_future_goals enable row level security;
+drop policy if exists kafaa_read on kafaa_future_goals;
+create policy kafaa_read on kafaa_future_goals for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_future_goals to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
