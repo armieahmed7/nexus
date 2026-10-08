@@ -11,10 +11,11 @@ import { config } from '../../src/config';
 
 afterEach(() => cleanup());
 
-export async function renderPage(el: ReactElement, opts: { persona?: string | null; path?: string; route?: string } = {}) {
+export async function renderPage(el: ReactElement, opts: { persona?: string | null; path?: string; route?: string; prepare?: (b: ReturnType<typeof getLocalBackend>) => void } = {}) {
   const b = getLocalBackend();
   await b.whenReady();
   await b.reset();
+  opts.prepare?.(b);
   if (opts.persona) localStorage.setItem(config.sessionKey, JSON.stringify({ persona: opts.persona, at: Date.now() }));
   else localStorage.removeItem(config.sessionKey);
   return render(

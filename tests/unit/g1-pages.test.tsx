@@ -11,6 +11,10 @@ import TeamQualsPage from '../../src/modules/m02/TeamQualsPage';
 import TrainingQualsStandardPage from '../../src/modules/m02/TrainingQualsStandardPage';
 import VerifyPage from '../../src/modules/m02/VerifyPage';
 import { fireEvent } from '@testing-library/react';
+import MyLicencePage from '../../src/modules/m03/MyLicencePage';
+import LicensingPage from '../../src/modules/m03/LicensingPage';
+import LicensingValidityPage from '../../src/modules/m03/LicensingValidityPage';
+import TeamPage from '../../src/modules/m02/TeamPage';
 
 describe('M01 pages', () => {
   it('the Career Map lists all 28 roles, each with a basis badge', async () => {
@@ -80,5 +84,51 @@ describe('M02 pages', () => {
     fireEvent.click(screen.getByTestId('m02-verify-submit'));
     const res = await screen.findByTestId('m02-verify-result', {}, { timeout: 5000 });
     expect(res.textContent).toMatch(/Not an operator licence/);
+  });
+});
+
+describe('M03 pages', () => {
+  it('an SRO with 6 eight-hour shifts, 1 in the SRO role and 2 scheduled sees the SRO-role warning', async () => {
+    await renderPage(<MyLicencePage />, {
+      persona: 'sro',
+      path: '/my/licence',
+      prepare: (b) => b.rawUpdate('shift_proficiency', 'sp-p-sro-2026q4', { shifts_8h: 6, shifts_12h: 0, sro_role_shifts: 1, scheduled_remaining_8h: 2, scheduled_remaining_12h: 0, scheduled_remaining_sro: 0 }),
+    });
+    expect(await screen.findByText('SRO-role minimum at risk', {}, { timeout: 5000 })).toBeTruthy();
+    expect(screen.queryByText('Quarterly shift minimum at risk')).toBeNull();
+  });
+  it('a past medical due date shows "medical overdue" on the operator view', async () => {
+    await renderPage(<MyLicencePage />, { persona: 'k-ro', path: '/my/licence', prepare: (b) => b.rawUpdate('medical_due', 'med-p-k-ro', { due_on: '2026-09-15' }) });
+    const pill = await screen.findByTestId('medical-pill', {}, { timeout: 5000 });
+    expect(pill.getAttribute('data-view')).toBe('overdue');
+    expect(pill.textContent).toBe('Medical overdue');
+  });
+  it('a stale source sync never shows the certificate as valid', async () => {
+    await renderPage(<MyLicencePage />, { persona: 'k-ro', path: '/my/licence', prepare: (b) => b.rawUpdate('licences', 'lic-p-k-ro', { last_synced: '2026-09-01T00:00:00Z' }) });
+    const pill = await screen.findByTestId('licence-pill', {}, { timeout: 5000 });
+    expect(pill.getAttribute('data-view')).toBe('stale');
+    expect(pill.textContent).not.toBe('Valid');
+    expect(screen.getByText('Not confirmed: the source sync is stale')).toBeTruthy();
+  });
+  it('the public explainer lists three RO and three SRO routes with article references', async () => {
+    await renderPage(<LicensingPage />, { path: '/licensing' });
+    const ro = await screen.findByTestId('m03-routes-reactor-operator', {}, { timeout: 5000 });
+    const sro = screen.getByTestId('m03-routes-senior-reactor-operator');
+    expect(within(ro).getAllByRole('listitem')).toHaveLength(3);
+    expect(within(sro).getAllByRole('listitem')).toHaveLength(3);
+    expect(within(ro).getAllByText(/Art\. 4/)).toHaveLength(3);
+  });
+  it('the coordinator sees the lapse task due three UAE working days after a Thursday', async () => {
+    await renderPage(<LicensingValidityPage />, { persona: 'k-licensing-coord', path: '/licensing/validity' });
+    fireEvent.click(await screen.findByRole('tab', { name: /Tasks/ }, { timeout: 5000 }));
+    const tasks = await screen.findByTestId('m03-tasks');
+    const row = within(tasks).getByText('Report validity lapse within 3 working days').closest('tr')!;
+    expect(row.textContent).toMatch(/13 Oct 2026/);
+  });
+  it('a shift supervisor sees crew availability but no medical dates or flags', async () => {
+    await renderPage(<TeamPage />, { persona: 'sro', path: '/team' });
+    const crew = await screen.findByTestId('m02-crew-licences', {}, { timeout: 5000 });
+    expect(crew.textContent).toMatch(/Available|Not available/);
+    expect(crew.textContent).not.toMatch(/Fit for duty|Medical overdue|Not yet confirmed/);
   });
 });
