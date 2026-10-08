@@ -376,6 +376,8 @@ export const SCHEMA: Record<string, TableDef> = {
       id: 'text pk', course_id: 'text ref:courses idx', starts_at: 'ts idx', ends_at: 'ts', location: 'text', instructor_person_id: 'text? ref:people',
       capacity: 'int =12', kind: 'text enum:class|simulator|drill|elearning|clinic', crew: 'text?', priority: 'text enum:licence_critical|mandatory|elective =\'mandatory\'',
       audience: 'text enum:staff|contractor|supplier =\'staff\'', public_summary: 'bool =false',
+      // G2 additions (2026-10-08): session lifecycle
+      status: 'text enum:scheduled|completed|cancelled =\'scheduled\'',
     },
     read: [{ res: 'internal_content' }, { res: 'training' }, { res: 'public_content', where: 'public_summary' }],
     write: { mode: 'direct', res: 'training' },
@@ -396,6 +398,8 @@ export const SCHEMA: Record<string, TableDef> = {
       status: 'text enum:assigned|requested|approved|waitlisted|enrolled|in_progress|completed|failed|cancelled idx',
       source: 'text enum:role_rule|manager|self|partner_admin|coordinator', assigned_by: 'text?', due_on: 'date?', enrolled_at: 'ts =now',
       progress_pct: 'int =0', completed_at: 'ts?', score: 'num?', certificate_no: 'text?', evaluation_id: 'text?',
+      // G2 additions (2026-10-08): attendance, waitlist order, approval trail
+      attendance: 'text? enum:present|absent|excused', waitlisted_at: 'ts?', decided_by: 'text?', decision_note: 'text?',
     },
     read: [{ res: 'training', person: 'person_id', org: 'org_id' }],
     write: { mode: 'direct', res: 'training', own: true, orgw: true },
@@ -405,6 +409,7 @@ export const SCHEMA: Record<string, TableDef> = {
     cols: {
       id: 'text pk', person_id: 'text ref:people idx', course_id: 'text ref:courses', completed_on: 'date', hours: 'num =0',
       result: 'text enum:completed|passed|failed|attended', source_system: 'text =\'Training records system\'', evaluation_id: 'text?',
+      enrolment_id: 'text?', // G2 addition
     },
     read: [{ res: 'training', person: 'person_id' }, { res: 'qual_records', person: 'person_id' }], write: { mode: 'rpc', res: 'training' },
   },
@@ -418,6 +423,7 @@ export const SCHEMA: Record<string, TableDef> = {
     cols: {
       id: 'text pk', person_id: 'text ref:people idx', title: 'text', provider: 'text', cost_aed: 'num?', justification: 'text =\'\'',
       status: 'text enum:requested|approved|rejected =\'requested\'', approver_person_id: 'text?', decided_at: 'ts?', created_at: 'ts =now',
+      start_on: 'date?', hours: 'num?', decision_note: 'text?', // G2 additions
     },
     read: [{ res: 'training', person: 'person_id' }], write: { mode: 'direct', res: 'training', own: true },
   },
@@ -426,6 +432,7 @@ export const SCHEMA: Record<string, TableDef> = {
     cols: {
       id: 'text pk', person_id: 'text? ref:people idx', org_id: 'text? ref:organisations', holder_initials: 'text', course_id: 'text ref:courses',
       issued_on: 'date', valid_to: 'date?', status: 'text enum:valid|expired|revoked =\'valid\'',
+      enrolment_id: 'text?', issued_by: 'text?', // G2 additions
     },
     read: [{ res: 'training', person: 'person_id', org: 'org_id' }], write: { mode: 'rpc', res: 'training' },
   },
@@ -439,15 +446,17 @@ export const SCHEMA: Record<string, TableDef> = {
       status: 'text enum:draft|in_review|approved|retired =\'draft\'', writer_person_id: 'text?', reviewer_person_id: 'text?', approver_person_id: 'text?',
       p_value: 'num?', discrimination: 'num?',
     },
-    read: [{ res: 'public_content', where: 'is_practice' }, { res: 'secure_items' }], write: { mode: 'direct', res: 'secure_items' },
+    // G2 (2026-10-08): items change only through RPCs (kafaa_save_item, kafaa_item_review, kafaa_retire_item) so separation of duties cannot be bypassed
+    read: [{ res: 'public_content', where: 'is_practice' }, { res: 'secure_items' }], write: { mode: 'rpc', res: 'secure_items' },
   },
   item_versions: {
     module: 'M05', label: 'Item version (stem, options, key, rationale)',
     cols: {
       id: 'text pk', item_id: 'text ref:items idx', version: 'int', is_practice: 'bool =false', stem_en: 'text', stem_ar: 'text', options: 'json =[]',
       answer: 'text', rationale_en: 'text =\'\'', rationale_ar: 'text =\'\'', created_at: 'ts =now',
+      author_person_id: 'text?', change_note: 'text?', // G2 additions
     },
-    read: [{ res: 'public_content', where: 'is_practice' }, { res: 'secure_items' }], write: { mode: 'direct', res: 'secure_items' },
+    read: [{ res: 'public_content', where: 'is_practice' }, { res: 'secure_items' }], write: { mode: 'rpc', res: 'secure_items' },
   },
   blueprints: {
     module: 'M05', label: 'Exam blueprint',
@@ -460,6 +469,8 @@ export const SCHEMA: Record<string, TableDef> = {
       id: 'text pk', blueprint_id: 'text? ref:blueprints', title_en: 'text', title_ar: 'text', kind: 'text enum:written|jpm|simulator|ojt|practice',
       is_practice: 'bool =false', item_ids: 'text[] =[]', time_limit_min: 'int =30', pass_mark: 'num =80', status: 'text enum:draft|approved|retired =\'approved\'',
       audience_en: 'text =\'\'', audience_ar: 'text =\'\'',
+      // G2 additions: linked course and the retake / appeal rules of the standard
+      course_id: 'text?', max_attempts: 'int =3', retake_wait_days: 'int =7', appeal_days: 'int =10',
     },
     read: [{ res: 'public_content', where: 'is_practice' }, { res: 'secure_items' }, { res: 'internal_content' }], write: { mode: 'direct', res: 'secure_items' },
   },
@@ -468,6 +479,9 @@ export const SCHEMA: Record<string, TableDef> = {
     cols: {
       id: 'text pk', form_id: 'text ref:assessment_forms idx', person_id: 'text ref:people idx', scheduled_for: 'ts?', started_at: 'ts?', submitted_at: 'ts?',
       score: 'num?', passed: 'bool?', status: 'text enum:scheduled|in_progress|submitted|graded|released', proctor_person_id: 'text?', released: 'bool =false',
+      // G2 additions: retakes, timing, release sign-off, appeal outcome
+      attempt_no: 'int =1', retake_of: 'text?', deadline_at: 'ts?', late: 'bool =false', released_by: 'text?', released_at: 'ts?',
+      voided_item_ids: 'text[] =[]', counts: 'bool =true', evaluator_note: 'text?',
     },
     read: [{ res: 'qual_records', person: 'person_id' }, { res: 'secure_items' }], write: { mode: 'rpc', res: 'secure_items' },
   },
@@ -489,8 +503,10 @@ export const SCHEMA: Record<string, TableDef> = {
     cols: {
       id: 'text pk', attempt_id: 'text ref:attempts', person_id: 'text ref:people idx', reason: 'text', status: 'text enum:open|upheld|rejected =\'open\'',
       decided_by: 'text?', created_at: 'ts =now',
+      item_id: 'text?', decision_note: 'text?', decided_at: 'ts?', // G2 additions
     },
-    read: [{ res: 'qual_records', person: 'person_id' }], write: { mode: 'direct', res: 'secure_items', own: true },
+    // G2: candidates read their own appeals; instructors and training managers read all (secure_items)
+    read: [{ res: 'qual_records', person: 'person_id' }, { res: 'secure_items' }], write: { mode: 'rpc', res: 'secure_items' },
   },
 
   // ───────────────────────────── Development (M02/M04)
@@ -499,6 +515,7 @@ export const SCHEMA: Record<string, TableDef> = {
     cols: {
       id: 'text pk', person_id: 'text ref:people idx', target_role_id: 'text ref:job_roles', status: 'text enum:draft|submitted|approved|active|closed =\'draft\'',
       approved_by: 'text?', created_at: 'ts =now', review_on: 'date?', note: 'text?',
+      decision_note: 'text?', decided_at: 'ts?', // G2 additions
     },
     read: [{ res: 'dev_plans', person: 'person_id' }], write: { mode: 'direct', res: 'dev_plans', own: true },
   },
@@ -522,8 +539,9 @@ export const SCHEMA: Record<string, TableDef> = {
     module: 'M04', label: 'Mentoring request (human matching)',
     cols: {
       id: 'text pk', person_id: 'text ref:people idx', mentor_id: 'text? ref:mentors', interest: 'text', status: 'text enum:requested|matched|declined|closed =\'requested\'', created_at: 'ts =now',
+      mentor_person_id: 'text? idx', message: 'text =\'\'', responded_at: 'ts?', // G2 additions: the mentor sees requests addressed to them
     },
-    read: [{ res: 'dev_plans', person: 'person_id' }], write: { mode: 'direct', res: 'dev_plans', own: true },
+    read: [{ res: 'dev_plans', person: 'person_id' }, { res: 'dev_plans', person: 'mentor_person_id' }], write: { mode: 'direct', res: 'dev_plans', own: true },
   },
 
   // ───────────────────────────── Talent pipeline (M06, M10)

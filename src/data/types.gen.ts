@@ -489,6 +489,7 @@ export interface SessionsRow {
   priority: 'licence_critical' | 'mandatory' | 'elective';
   audience: 'staff' | 'contractor' | 'supplier';
   public_summary: boolean;
+  status: 'scheduled' | 'completed' | 'cancelled';
 }
 export interface SimulatorSlotsRow {
   id: string;
@@ -518,6 +519,10 @@ export interface EnrolmentsRow {
   score?: number | null;
   certificate_no?: string | null;
   evaluation_id?: string | null;
+  attendance?: 'present' | 'absent' | 'excused' | null;
+  waitlisted_at?: string | null;
+  decided_by?: string | null;
+  decision_note?: string | null;
 }
 export interface TrainingRecordsRow {
   id: string;
@@ -528,6 +533,7 @@ export interface TrainingRecordsRow {
   result: 'completed' | 'passed' | 'failed' | 'attended';
   source_system: string;
   evaluation_id?: string | null;
+  enrolment_id?: string | null;
 }
 export interface CurriculumRulesRow {
   id: string;
@@ -548,6 +554,9 @@ export interface ExternalRequestsRow {
   approver_person_id?: string | null;
   decided_at?: string | null;
   created_at: string;
+  start_on?: string | null;
+  hours?: number | null;
+  decision_note?: string | null;
 }
 export interface CertificatesRow {
   id: string;
@@ -558,6 +567,8 @@ export interface CertificatesRow {
   issued_on: string;
   valid_to?: string | null;
   status: 'valid' | 'expired' | 'revoked';
+  enrolment_id?: string | null;
+  issued_by?: string | null;
 }
 export interface ItemsRow {
   id: string;
@@ -588,6 +599,8 @@ export interface ItemVersionsRow {
   rationale_en: string;
   rationale_ar: string;
   created_at: string;
+  author_person_id?: string | null;
+  change_note?: string | null;
 }
 export interface BlueprintsRow {
   id: string;
@@ -609,6 +622,10 @@ export interface AssessmentFormsRow {
   status: 'draft' | 'approved' | 'retired';
   audience_en: string;
   audience_ar: string;
+  course_id?: string | null;
+  max_attempts: number;
+  retake_wait_days: number;
+  appeal_days: number;
 }
 export interface AttemptsRow {
   id: string;
@@ -622,6 +639,15 @@ export interface AttemptsRow {
   status: 'scheduled' | 'in_progress' | 'submitted' | 'graded' | 'released';
   proctor_person_id?: string | null;
   released: boolean;
+  attempt_no: number;
+  retake_of?: string | null;
+  deadline_at?: string | null;
+  late: boolean;
+  released_by?: string | null;
+  released_at?: string | null;
+  voided_item_ids: string[];
+  counts: boolean;
+  evaluator_note?: string | null;
 }
 export interface ResponsesRow {
   id: string;
@@ -652,6 +678,9 @@ export interface AppealsRow {
   status: 'open' | 'upheld' | 'rejected';
   decided_by?: string | null;
   created_at: string;
+  item_id?: string | null;
+  decision_note?: string | null;
+  decided_at?: string | null;
 }
 export interface DevPlansRow {
   id: string;
@@ -662,6 +691,8 @@ export interface DevPlansRow {
   created_at: string;
   review_on?: string | null;
   note?: string | null;
+  decision_note?: string | null;
+  decided_at?: string | null;
 }
 export interface PlanActivitiesRow {
   id: string;
@@ -691,6 +722,9 @@ export interface MentoringRequestsRow {
   interest: string;
   status: 'requested' | 'matched' | 'declined' | 'closed';
   created_at: string;
+  mentor_person_id?: string | null;
+  message: string;
+  responded_at?: string | null;
 }
 export interface TalentProgrammesRow {
   id: string;

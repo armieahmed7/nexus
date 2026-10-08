@@ -515,28 +515,16 @@ alter table kafaa_items enable row level security;
 drop policy if exists kafaa_read on kafaa_items;
 create policy kafaa_read on kafaa_items for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, is_practice)
     or kafaa_rule_read('secure_items', null::text, null::text, true));
-drop policy if exists kafaa_insert on kafaa_items;
-create policy kafaa_insert on kafaa_items for insert to anon, authenticated with check (kafaa_has_grant('secure_items', array['W','A']));
-drop policy if exists kafaa_update on kafaa_items;
-create policy kafaa_update on kafaa_items for update to authenticated using (kafaa_has_grant('secure_items', array['W','A'])) with check (kafaa_has_grant('secure_items', array['W','A']));
-grant select, insert, update on kafaa_items to authenticated;
-grant select on kafaa_items to anon;
-drop trigger if exists kafaa_items_audit on kafaa_items;
-create trigger kafaa_items_audit after insert or update on kafaa_items for each row execute function kafaa_audit_row();
+grant select on kafaa_items to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
 -- item_versions
 alter table kafaa_item_versions enable row level security;
 drop policy if exists kafaa_read on kafaa_item_versions;
 create policy kafaa_read on kafaa_item_versions for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, is_practice)
     or kafaa_rule_read('secure_items', null::text, null::text, true));
-drop policy if exists kafaa_insert on kafaa_item_versions;
-create policy kafaa_insert on kafaa_item_versions for insert to anon, authenticated with check (kafaa_has_grant('secure_items', array['W','A']));
-drop policy if exists kafaa_update on kafaa_item_versions;
-create policy kafaa_update on kafaa_item_versions for update to authenticated using (kafaa_has_grant('secure_items', array['W','A'])) with check (kafaa_has_grant('secure_items', array['W','A']));
-grant select, insert, update on kafaa_item_versions to authenticated;
-grant select on kafaa_item_versions to anon;
-drop trigger if exists kafaa_item_versions_audit on kafaa_item_versions;
-create trigger kafaa_item_versions_audit after insert or update on kafaa_item_versions for each row execute function kafaa_audit_row();
+grant select on kafaa_item_versions to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
 -- blueprints
 alter table kafaa_blueprints enable row level security;
@@ -591,15 +579,10 @@ grant select on kafaa_jpm_results to anon, authenticated;
 -- appeals
 alter table kafaa_appeals enable row level security;
 drop policy if exists kafaa_read on kafaa_appeals;
-create policy kafaa_read on kafaa_appeals for select to anon, authenticated using (kafaa_rule_read('qual_records', person_id, null::text, true));
-drop policy if exists kafaa_insert on kafaa_appeals;
-create policy kafaa_insert on kafaa_appeals for insert to anon, authenticated with check (kafaa_has_grant('secure_items', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('secure_items', array['Own','Scope'])));
-drop policy if exists kafaa_update on kafaa_appeals;
-create policy kafaa_update on kafaa_appeals for update to authenticated using (kafaa_has_grant('secure_items', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('secure_items', array['Own','Scope']))) with check (kafaa_has_grant('secure_items', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('secure_items', array['Own','Scope'])));
-grant select, insert, update on kafaa_appeals to authenticated;
-grant select on kafaa_appeals to anon;
-drop trigger if exists kafaa_appeals_audit on kafaa_appeals;
-create trigger kafaa_appeals_audit after insert or update on kafaa_appeals for each row execute function kafaa_audit_row();
+create policy kafaa_read on kafaa_appeals for select to anon, authenticated using (kafaa_rule_read('qual_records', person_id, null::text, true)
+    or kafaa_rule_read('secure_items', null::text, null::text, true));
+grant select on kafaa_appeals to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
 -- dev_plans
 alter table kafaa_dev_plans enable row level security;
@@ -643,7 +626,8 @@ create trigger kafaa_mentors_audit after insert or update on kafaa_mentors for e
 -- mentoring_requests
 alter table kafaa_mentoring_requests enable row level security;
 drop policy if exists kafaa_read on kafaa_mentoring_requests;
-create policy kafaa_read on kafaa_mentoring_requests for select to anon, authenticated using (kafaa_rule_read('dev_plans', person_id, null::text, true));
+create policy kafaa_read on kafaa_mentoring_requests for select to anon, authenticated using (kafaa_rule_read('dev_plans', person_id, null::text, true)
+    or kafaa_rule_read('dev_plans', mentor_person_id, null::text, true));
 drop policy if exists kafaa_insert on kafaa_mentoring_requests;
 create policy kafaa_insert on kafaa_mentoring_requests for insert to anon, authenticated with check (kafaa_has_grant('dev_plans', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('dev_plans', array['Own','Scope'])));
 drop policy if exists kafaa_update on kafaa_mentoring_requests;

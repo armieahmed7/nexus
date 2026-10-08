@@ -7,7 +7,7 @@ import { SCHEMA, columnsOf, sqlName } from '../src/data/schema.ts';
 import { SOURCES } from './seed/sources.mjs';
 import { FAMILIES, LEVELS, buildRoles, buildCompetencies, buildRoleCompetencies, buildCareerPaths } from './seed/framework.mjs';
 import { buildQualification, buildProgrammes, buildCourses, buildCurriculum } from './seed/learning.mjs';
-import { buildAssessments } from './seed/assess.mjs';
+import { buildAssessments, buildCourseForms, buildAttemptHistory, patchSeedAttempts, buildItemWorkflow } from './seed/assess.mjs'; // G2: course forms, attempt history, item workflow
 import { buildOrganisations } from './seed/partners.mjs';
 import { buildFacts, buildPages, buildFaqs, buildGlossary, buildSafetyCulture, buildAdvanced, buildTalent, buildKpis, buildWorkforce, buildCriticalRoles, buildDalil, buildIntegrations } from './seed/content.mjs';
 import { buildPeople, PERSONAS, personPid, DEMO_TODAY } from './seed/people.mjs';
@@ -68,6 +68,11 @@ T.dalil_settings = dal.settings;
 T.eval_runs = dal.evals;
 T.integrations = buildIntegrations();
 Object.assign(T, buildPeople({ standards: T.qual_standards, tasks: T.task_items, curriculum: T.curriculum_rules, courses: T.courses }));
+// G2 (M04/M05): linked evaluation forms for qualifying courses, attempt history behind item analysis, items in review
+T.assessment_forms.push(...buildCourseForms(T.courses));
+patchSeedAttempts(T.attempts);
+{ const h = buildAttemptHistory(); T.attempts.push(...h.attempts); T.responses = [...(T.responses ?? []), ...h.responses]; }
+{ const w = buildItemWorkflow(); T.items.push(...w.items); T.item_versions.push(...w.versions); }
 
 // ───────────── Seed audit log (hash chain identical to kafaa_audit_canonical in SQL and src/data/audit.ts)
 const canon = (e) => [e.seq, e.ts.replace(/\.\d{3}Z$/, 'Z'), e.actor_person_id ?? '', e.actor_role ?? '', e.action, e.entity_table ?? '', e.entity_id ?? '', e.outcome, e.reason ?? ''].join('|');

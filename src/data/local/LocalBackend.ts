@@ -13,6 +13,7 @@ import { chainHash, GENESIS, nowTs, sha256Hex, ledgerCanonical, type AuditFields
 import { config } from '../../config';
 import type { PlatformRole } from '../../auth/policy';
 import { LocalRpc } from './rpc';
+import { directWriteGuard } from './guards';
 import nexusSnapshot from '../../seed/nexus_snapshot.json';
 
 type Rows = Record<string, Record<string, unknown>[]>;
@@ -184,6 +185,11 @@ export class LocalBackend implements Repository {
       await this.audit(`insert:${table}`, table, String(row.id), 'refused', 'RLS: insert not permitted');
       return { ok: false, code: 'forbidden', message: 'Not permitted' };
     }
+    const guard = directWriteGuard(table, null, row, ctx); // G2: column guards (./guards.ts), mirrored by SQL triggers
+    if (guard) {
+      await this.audit(`insert:${table}`, table, String(row.id), 'refused', `guard: ${guard}`);
+      return { ok: false, code: 'forbidden', message: guard };
+    }
     if (this.byId[table].has(String(row.id))) return { ok: false, code: 'conflict', message: 'Duplicate id' };
     const err = this.validate(table, row);
     if (err) return { ok: false, code: 'invalid', message: err };
@@ -204,6 +210,11 @@ export class LocalBackend implements Repository {
     if (!ctx.canWriteRow(table, current, 'update') || !ctx.canWriteRow(table, next, 'update')) {
       await this.audit(`update:${table}`, table, id, 'refused', 'RLS: update not permitted');
       return { ok: false, code: 'forbidden', message: 'Not permitted' };
+    }
+    const guard = directWriteGuard(table, current, next, ctx); // G2: column guards (./guards.ts), mirrored by SQL triggers
+    if (guard) {
+      await this.audit(`update:${table}`, table, id, 'refused', `guard: ${guard}`);
+      return { ok: false, code: 'forbidden', message: guard };
     }
     const err = this.validate(table, next);
     if (err) return { ok: false, code: 'invalid', message: err };

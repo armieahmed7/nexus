@@ -274,6 +274,11 @@ export function buildPeople({ standards, tasks, curriculum, courses }) {
   sess('s-sa101', 'c-sa-nqa1-101', addDays(DEMO_TODAY, 12), 4, 'Abu Dhabi (supplier academy)', 'class', null, 'elective', 'p-sq-lead', 'supplier', true);
   sess('s-sa103', 'c-sa-cgd-103', addDays(DEMO_TODAY, 19), 3, 'Abu Dhabi (supplier academy)', 'class', null, 'elective', 'p-sq-lead', 'supplier', true);
   sess('s-get', 'c-get', addDays(DEMO_TODAY, 3), 8, 'Barakah training centre', 'class', null, 'mandatory', 'w-instr-02');
+  // G2 additions: a session that already ran (attendance and completion), and a full simulator session with a waitlist
+  sess('s-hu-past', 'c-hu', addDays(DEMO_TODAY, -1), 8, 'Barakah training centre', 'class', null, 'mandatory', 'p-k-instructor');
+  sess('s-sam', 'c-sam', addDays(DEMO_TODAY, 11), 8, 'Simulator Training Center', 'simulator', 'A', 'mandatory', 'p-k-instructor');
+  sess('s-coit-gf', 'c-coit-gf', addDays(DEMO_TODAY, 25), 8, 'Barakah training centre', 'class', null, 'mandatory', 'w-instr-02');
+  sess('s-apr', 'c-apr', addDays(DEMO_TODAY, 18), 8, 'Abu Dhabi', 'class', null, 'elective', 'w-instr-01');
   let slot = 0;
   const sim = (sim, day, crew, kind, priority, status = 'booked', session_id = null) => out.simulator_slots.push({ id: `sim-${++slot}`, simulator: sim, starts_at: ts(day, 7), ends_at: ts(day, 15), crew, session_id, booking_kind: kind, priority, status, booked_by: 'p-k-instructor' });
   for (let d = 1; d <= 20; d++) {
@@ -315,6 +320,16 @@ export function buildPeople({ standards, tasks, curriculum, courses }) {
   for (const p of [...W.map((x) => x.id), 'p-k-ro', 'p-k-lo-trainee', 'p-sro', 'p-k-instructor', 'p-training-mgr']) {
     for (const [c, h, d] of [['c-get', 16, -400], ['c-hu', 8, -300], ['c-sec-aw', 1, -200], ['c-scwe', 4, -150]]) out.training_records.push({ id: `tr-${++trSeq}`, person_id: p, course_id: c, completed_on: addDays(DEMO_TODAY, d + (trSeq % 30)), hours: h, result: 'passed', source_system: 'Training records system', evaluation_id: null });
   }
+  // G2 additions: enrolments on the past and full sessions, an elective awaiting a crew B manager, external requests
+  const hu = out.enrolments.find((e) => e.person_id === 'p-k-lo-trainee' && e.course_id === 'c-hu');
+  if (hu) Object.assign(hu, { session_id: 's-hu-past', status: 'enrolled', progress_pct: 0 });
+  for (const pid of ['w-fire-01', 'w-fire-02', 'w-ep-01', 'w-qa-01']) enrol(pid, 'c-hu', 'enrolled', 'coordinator', { session_id: 's-hu-past', due_on: addDays(DEMO_TODAY, 20) });
+  ['w-ro-01', 'w-ro-02', 'w-ro-03', 'w-ro-04', 'w-sro-02', 'w-sro-03'].forEach((pid) => enrol(pid, 'c-sam', 'enrolled', 'coordinator', { session_id: 's-sam' }));
+  ['w-ro-05', 'w-ro-06'].forEach((pid, i) => enrol(pid, 'c-sam', 'waitlisted', 'coordinator', { session_id: 's-sam', waitlisted_at: ts(addDays(DEMO_TODAY, -3 + i)) }));
+  ['w-ro-02', 'w-sro-01', 'w-sro-04'].forEach((pid) => enrol(pid, 'c-coct', 'enrolled', 'coordinator', { session_id: 's-coct-b' }));
+  enrol('w-ro-01', 'c-apr', 'requested', 'self', { session_id: 's-apr' });
+  out.external_requests.push({ id: 'xr-2', person_id: 'w-ro-01', title: 'Leadership webinar series (external)', provider: 'External provider', cost_aed: 1500, justification: 'SRO preparation', status: 'approved', approver_person_id: 'p-sro', decided_at: ts(addDays(DEMO_TODAY, -20)), created_at: ts(addDays(DEMO_TODAY, -25)), start_on: addDays(DEMO_TODAY, 14), hours: 12, decision_note: 'Approved within the crew training budget' });
+  out.external_requests.push({ id: 'xr-3', person_id: 'p-k-instructor', title: 'Instructional design workshop (external)', provider: 'External provider', cost_aed: 6800, justification: 'Simulator scenario design (SAT)', status: 'requested', approver_person_id: null, decided_at: null, created_at: ts(addDays(DEMO_TODAY, -1)), start_on: addDays(DEMO_TODAY, 40), hours: 24 });
   out.external_requests.push({ id: 'xr-1', person_id: 'p-k-ro', title: 'Crucial Conversations (external)', provider: 'External provider', cost_aed: 4200, justification: 'Preparing for SRO leadership', status: 'requested', approver_person_id: null, decided_at: null, created_at: ts(addDays(DEMO_TODAY, -3)) });
 
   // ───────────── Assessments (attempts, JPM results, appeals)
@@ -322,7 +337,10 @@ export function buildPeople({ standards, tasks, curriculum, courses }) {
   out.attempts.push({ id: 'at-2', form_id: 'form-thermo', person_id: 'w-lo-03', scheduled_for: ts(addDays(DEMO_TODAY, 9)), started_at: null, submitted_at: null, score: null, passed: null, status: 'scheduled', proctor_person_id: 'w-instr-01', released: false });
   out.attempts.push({ id: 'at-3', form_id: 'form-thermo', person_id: 'p-k-lo-trainee', scheduled_for: ts(addDays(DEMO_TODAY, 9)), started_at: null, submitted_at: null, score: null, passed: null, status: 'scheduled', proctor_person_id: 'w-instr-01', released: false });
   out.attempts.push({ id: 'at-4', form_id: 'form-reactor-theory', person_id: 'w-lo-04', scheduled_for: ts(addDays(DEMO_TODAY, -12)), started_at: ts(addDays(DEMO_TODAY, -12)), submitted_at: ts(addDays(DEMO_TODAY, -12), 9), score: 70, passed: false, status: 'released', proctor_person_id: 'w-instr-01', released: true });
-  out.appeals.push({ id: 'ap-1', attempt_id: 'at-4', person_id: 'w-lo-04', reason: 'Question 7 wording was ambiguous in Arabic', status: 'open', decided_by: null, created_at: ts(addDays(DEMO_TODAY, -10)) });
+  // G2 additions: exams open today (timed delivery), a retake, a graded result waiting for release
+  out.attempts.push({ id: 'at-5', form_id: 'form-c-hu', person_id: 'p-k-lo-trainee', scheduled_for: ts(DEMO_TODAY, 6), started_at: null, submitted_at: null, score: null, passed: null, status: 'scheduled', proctor_person_id: 'p-k-instructor', released: false });
+  out.attempts.push({ id: 'at-6', form_id: 'form-thermo', person_id: 'p-k-ro', scheduled_for: ts(DEMO_TODAY, 6), started_at: null, submitted_at: null, score: null, passed: null, status: 'scheduled', proctor_person_id: 'w-instr-01', released: false });
+  out.appeals.push({ id: 'ap-1', attempt_id: 'at-4', person_id: 'w-lo-04', reason: 'Question 7 wording was ambiguous in Arabic', item_id: 'it-reactor-theory-07', status: 'open', decided_by: null, created_at: ts(addDays(DEMO_TODAY, -10)) });
   const steps = (fails) => [1, 2, 3, 4, 5].map((n) => ({ n, result: fails.includes(n) ? 'fail' : 'pass' }));
   out.jpm_results.push({ id: 'jr-1', jpm_id: 'jpm-qs-lo-turbine-t2', person_id: 'p-k-lo-trainee', evaluator_person_id: 'p-k-instructor', date: addDays(DEMO_TODAY, -6), steps: steps([]), critical_failed: false, score_pct: 100, result: 'pass', signed: false, evaluation_id: null });
   out.jpm_results.push({ id: 'jr-2', jpm_id: 'jpm-qs-lo-turbine-t3', person_id: 'p-k-lo-trainee', evaluator_person_id: 'p-k-instructor', date: addDays(DEMO_TODAY, -4), steps: steps([4]), critical_failed: true, score_pct: 80, result: 'fail', signed: true, evaluation_id: null }); // AC: failed critical step fails the JPM
@@ -337,7 +355,8 @@ export function buildPeople({ standards, tasks, curriculum, courses }) {
   plan('dp-k-lo', 'p-k-lo-trainee', 'reactor-operator', 'submitted', [['course', 'Complete LO watch-station qualifications', 'إكمال تأهيلات محطات المراقبة', '2027-06-30', 'in_progress', null], ['course', 'APR1400 Course', 'دورة APR1400', '2027-03-31', 'planned', 'c-apr'], ['reading', 'REG-17 entry routes explainer', 'شرح مسارات الالتحاق وفق اللائحة 17', '2026-11-15', 'done', null]]);
   plan('dp-w-eng-01', 'w-eng-01', 'shift-technical-advisor', 'draft', [['course', 'Transient and accident analysis', 'تحليل الحالات العابرة والحوادث', '2027-04-30', 'planned', null]]);
   [['p-k-instructor', 'nuclear-training-instructor', ['simulator', 'sro career'], 'SRO-qualified instructor; happy to talk about the SRO route.', 'مدرب مؤهل كمشغّل أول؛ يسعدني الحديث عن مسار المشغّل الأول.'], ['w-ss-01', 'shift-supervisor', ['leadership', 'operations'], 'Shift supervisor mentoring new SROs.', 'مشرف وردية يوجّه المشغّلين الأوائل الجدد.'], ['w-eng-01', 'systems-design-plant-engineer', ['engineering', 'digital'], 'Systems engineer interested in digital twins.', 'مهندس أنظمة مهتم بالتوائم الرقمية.'], ['w-rp-01', 'radiation-protection-technician', ['rp', 'alara'], 'RP technician; ALARA planning.', 'فني وقاية من الإشعاع؛ تخطيط ALARA.'], ['w-corp-01', 'corporate-professional', ['women in nuclear', 'hr'], 'Women in Nuclear UAE mentor.', 'موجّهة في برنامج المرأة في المجال النووي.']].forEach(([pid, role, interests, bio_en, bio_ar], i) => out.mentors.push({ id: `mt-${i + 1}`, person_id: pid, role_id: role, interests, capacity: 2, opt_in: true, bio_en, bio_ar }));
-  out.mentoring_requests.push({ id: 'mr-1', person_id: 'p-k-lo-trainee', mentor_id: 'mt-1', interest: 'sro career', status: 'requested', created_at: ts(addDays(DEMO_TODAY, -2)) });
+  out.mentoring_requests.push({ id: 'mr-1', person_id: 'p-k-lo-trainee', mentor_id: 'mt-1', mentor_person_id: 'p-k-instructor', interest: 'sro career', message: 'I would like to understand the route from Local Operator to SRO.', status: 'requested', created_at: ts(addDays(DEMO_TODAY, -2)) });
+  out.mentoring_requests.push({ id: 'mr-2', person_id: 'w-lo-03', mentor_id: 'mt-1', mentor_person_id: 'p-k-instructor', interest: 'simulator', message: '', status: 'matched', created_at: ts(addDays(DEMO_TODAY, -30)), responded_at: ts(addDays(DEMO_TODAY, -28)) });
 
   // ───────────── Applications (M06)
   let apSeq = 0;

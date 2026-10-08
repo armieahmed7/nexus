@@ -1,7 +1,7 @@
 // Validates supabase/migrations/*.sql + supabase/seed.sql against a local Postgres (PGlite), with test-only stubs of the
 // existing NEXUS objects. Applies everything twice (idempotency), then runs RLS / RPC acceptance checks as real roles.
 import { PGlite } from '@electric-sql/pglite';
-import { readFileSync, readdirSync } from 'node:fs';
+import { readFileSync, readdirSync, existsSync } from 'node:fs';
 
 const db = new PGlite();
 const read = (p) => readFileSync(p, 'utf8');
@@ -92,6 +92,12 @@ const grant = await one('k-admin', `select kafaa_grant_role('p-k-editor', 'audit
 const self2 = await one('k-admin', `select kafaa_approve_role('${grant.r.data.id}') r`);
 const second = await one('ai-governance', `select kafaa_approve_role('${grant.r.data.id}') r`);
 ok(grant.r.data.status === 'pending_second' && !self2.r.ok && second.r.ok, 'elevated role grant needs a second admin');
+
+// Module group checks (G2 hook, 2026-10-08): every scripts/validate/*.mjs default-exports async ({ db, as, one, count, ok, uid }) => void
+for (const f of (existsSync('scripts/validate') ? readdirSync('scripts/validate') : []).filter((x) => x.endsWith('.mjs')).sort()) {
+  console.log(`checks: ${f}`);
+  await (await import(`./validate/${f}`)).default({ db, as, one, count, ok, uid });
+}
 
 console.log(failures ? `\n${failures} check(s) FAILED` : '\nAll migration checks passed');
 process.exit(failures ? 1 : 0);
