@@ -259,6 +259,16 @@ export const SCHEMA: Record<string, TableDef> = {
     },
     read: [{ res: 'qual_records', person: 'person_id' }], write: { mode: 'append', res: 'signoff' },
   },
+  // [G1] Supervisor acknowledgement of an evaluation (trainee -> evaluator -> supervisor). Evaluations are append-only,
+  // so the acknowledgement is its own append-only row written by rpc.ackEvaluation.
+  evaluation_acks: {
+    module: 'M02', label: 'Supervisor acknowledgement of an evaluation (append-only)',
+    cols: {
+      id: 'text pk', evaluation_id: 'text ref:evaluations idx', record_id: 'text ref:qual_records idx', person_id: 'text ref:people idx',
+      ack_by_person_id: 'text ref:people', ack_role: 'text', note: 'text?', created_at: 'ts =now',
+    },
+    read: [{ res: 'qual_records', person: 'person_id' }], write: { mode: 'append', res: 'signoff' },
+  },
   requal_rules: {
     module: 'M02', label: 'Requalification rule and notice intervals',
     cols: { id: 'text pk', standard_id: 'text ref:qual_standards idx', interval_months: 'int', notice_days: 'json =[90,60,30]', description_en: 'text', description_ar: 'text' },

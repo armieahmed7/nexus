@@ -282,6 +282,13 @@ create policy kafaa_read on kafaa_evaluations for select to anon, authenticated 
 grant select on kafaa_evaluations to anon, authenticated;
 -- writes: append-only, through kafaa_audit() / RPCs
 
+-- evaluation_acks
+alter table kafaa_evaluation_acks enable row level security;
+drop policy if exists kafaa_read on kafaa_evaluation_acks;
+create policy kafaa_read on kafaa_evaluation_acks for select to anon, authenticated using (kafaa_rule_read('qual_records', person_id, null::text, true));
+grant select on kafaa_evaluation_acks to anon, authenticated;
+-- writes: append-only, through kafaa_audit() / RPCs
+
 -- requal_rules
 alter table kafaa_requal_rules enable row level security;
 drop policy if exists kafaa_read on kafaa_requal_rules;

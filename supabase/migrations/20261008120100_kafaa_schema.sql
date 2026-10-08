@@ -398,6 +398,19 @@ create table if not exists kafaa_evaluations (
 );
 comment on table kafaa_evaluations is '[M02] Evaluation (append-only; corrections create a new entry)';
 
+-- M02 · Supervisor acknowledgement of an evaluation (append-only)
+create table if not exists kafaa_evaluation_acks (
+  id text primary key,
+  evaluation_id text not null,
+  record_id text not null,
+  person_id text not null,
+  ack_by_person_id text not null,
+  ack_role text not null,
+  note text,
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_evaluation_acks is '[M02] Supervisor acknowledgement of an evaluation (append-only)';
+
 -- M02 · Requalification rule and notice intervals
 create table if not exists kafaa_requal_rules (
   id text primary key,
@@ -1481,6 +1494,10 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ev
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_evaluations_task_id_fk') then alter table kafaa_evaluations add constraint kafaa_evaluations_task_id_fk foreign key (task_id) references kafaa_task_items(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_evaluations_person_id_fk') then alter table kafaa_evaluations add constraint kafaa_evaluations_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_evaluations_evaluator_person_id_fk') then alter table kafaa_evaluations add constraint kafaa_evaluations_evaluator_person_id_fk foreign key (evaluator_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_evaluation_acks_evaluation_id_fk') then alter table kafaa_evaluation_acks add constraint kafaa_evaluation_acks_evaluation_id_fk foreign key (evaluation_id) references kafaa_evaluations(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_evaluation_acks_record_id_fk') then alter table kafaa_evaluation_acks add constraint kafaa_evaluation_acks_record_id_fk foreign key (record_id) references kafaa_qual_records(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_evaluation_acks_person_id_fk') then alter table kafaa_evaluation_acks add constraint kafaa_evaluation_acks_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_evaluation_acks_ack_by_person_id_fk') then alter table kafaa_evaluation_acks add constraint kafaa_evaluation_acks_ack_by_person_id_fk foreign key (ack_by_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_requal_rules_standard_id_fk') then alter table kafaa_requal_rules add constraint kafaa_requal_rules_standard_id_fk foreign key (standard_id) references kafaa_qual_standards(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_licences_person_id_fk') then alter table kafaa_licences add constraint kafaa_licences_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_medical_due_person_id_fk') then alter table kafaa_medical_due add constraint kafaa_medical_due_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -1601,6 +1618,10 @@ create index if not exists kafaa_evaluations_record_id_idx on kafaa_evaluations 
 create index if not exists kafaa_evaluations_task_id_idx on kafaa_evaluations (task_id);
 create index if not exists kafaa_evaluations_person_id_idx on kafaa_evaluations (person_id);
 create index if not exists kafaa_evaluations_evaluator_person_id_idx on kafaa_evaluations (evaluator_person_id);
+create index if not exists kafaa_evaluation_acks_evaluation_id_idx on kafaa_evaluation_acks (evaluation_id);
+create index if not exists kafaa_evaluation_acks_record_id_idx on kafaa_evaluation_acks (record_id);
+create index if not exists kafaa_evaluation_acks_person_id_idx on kafaa_evaluation_acks (person_id);
+create index if not exists kafaa_evaluation_acks_ack_by_person_id_idx on kafaa_evaluation_acks (ack_by_person_id);
 create index if not exists kafaa_requal_rules_standard_id_idx on kafaa_requal_rules (standard_id);
 create index if not exists kafaa_licences_person_id_idx on kafaa_licences (person_id);
 create index if not exists kafaa_licences_status_idx on kafaa_licences (status);
@@ -1703,5 +1724,7 @@ drop trigger if exists kafaa_audit_events_append_only on kafaa_audit_events;
 create trigger kafaa_audit_events_append_only before update or delete on kafaa_audit_events for each row execute function kafaa_append_only();
 drop trigger if exists kafaa_evaluations_append_only on kafaa_evaluations;
 create trigger kafaa_evaluations_append_only before update or delete on kafaa_evaluations for each row execute function kafaa_append_only();
+drop trigger if exists kafaa_evaluation_acks_append_only on kafaa_evaluation_acks;
+create trigger kafaa_evaluation_acks_append_only before update or delete on kafaa_evaluation_acks for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 94) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 95) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

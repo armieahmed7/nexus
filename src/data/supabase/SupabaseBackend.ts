@@ -180,6 +180,18 @@ export class SupabaseBackend implements Repository {
       logDenied: async (route, resource) => {
         await this.client.rpc('kafaa_log_denied', { p_route: route, p_resource: resource });
       },
+      // ───── G1 additions (supabase/migrations/20261008131000_kafaa_g1_quals_licensing.sql)
+      ackEvaluation: (id, note) => this.call('kafaa_ack_evaluation', { p_evaluation_id: id, p_note: note }, ['evaluation_acks']),
+      qualExpirySweep: () => this.call('kafaa_qual_expiry_sweep', {}, ['qual_records', 'notifications']),
+      reviewQualRecord: (id, decision, note) => this.call('kafaa_review_qual_record', { p_record_id: id, p_decision: decision, p_note: note }, ['qual_records']),
+      licensingAlerts: () => this.call('kafaa_licensing_alerts', {}, ['licensing_tasks', 'notifications']),
+      closeLicensingTask: (id, note) => this.call('kafaa_close_licensing_task', { p_task_id: id, p_note: note }, ['licensing_tasks']),
+      recordMedicalDate: (personId, dueOn, flag, ref) => this.call('kafaa_record_medical_date', { p_person_id: personId, p_due_on: dueOn, p_flag: flag, p_source_ref: ref }, ['medical_due', 'licensing_tasks']),
+      crewAvailability: async () => {
+        const { data, error } = await this.client.rpc('kafaa_crew_availability');
+        if (error) throw new Error(error.message);
+        return (data ?? []) as { person_id: string; available: boolean | null }[];
+      },
       auditVerify: async () => {
         const { data, error } = await this.client.rpc('kafaa_audit_verify');
         if (error) return { ok: false, code: 'error', message: error.message };
