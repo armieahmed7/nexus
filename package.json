@@ -8,6 +8,7 @@
     "dev": "vite",
     "gen": "node scripts/gen-all.mjs",
     "build": "npm run gen && npm run check:i18n && tsc -p tsconfig.json --noEmit && vite build",
+    "build:deploy": "npm run build && node scripts/make-deploy.mjs",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "preview": "vite preview --port 4173 --strictPort",
     "test:unit": "vitest run",

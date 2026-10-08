@@ -123,7 +123,7 @@ function Header({ lens, onMenu }: { lens: Lens; onMenu: () => void }) {
           </button>
         )}
         <Brand />
-        {/* Plain anchor on purpose: NEXUS is a different app on the same origin. */}
+        {/* Plain anchor on purpose: NEXUS is a different app ("/" on the NEXUS origin, https://enecai.xyz/ elsewhere). */}
         <a href={config.nexusHome} className="btn-ghost btn-sm ms-1 hidden sm:inline-flex" data-testid="back-to-nexus">
           <Icon name="back" size={14} />
           {t('shell.backToNexus')}

@@ -16,6 +16,8 @@ export default function ApplyPage() {
   const s = useSession();
   const q = useQuery('talent_programmes', () => repo.get('talent_programmes', programme), [programme]);
   const mine = useQuery('applications', () => (s.status === 'signed_in' ? repo.list('applications', { filter: { programme_id: programme } }) : Promise.resolve([])), [programme, s.status, s.persona?.persona]);
+  // Kept here, not in ApplyForm: the submit refreshes "mine", which would otherwise swap the confirmation for "already applied".
+  const [done, setDone] = useState<{ id: string; stage: string } | null>(null);
 
   return (
     <Async state={q} isEmpty={(d) => d === null} empty={<Page title={t('m06.routes.apply.title')}><EmptyState title={t('m06.programme.notFound')} action={<L to="/pathways" className="btn-outline btn-sm">{t('m06.programme.back')}</L>} /></Page>}>
@@ -37,8 +39,10 @@ export default function ApplyPage() {
               <SignInFirst />
             ) : !s.can('applications', ['Own']) ? (
               <Callout tone="sim" title={t('m06.apply.cannotTitle')}>{t('m06.apply.cannotBody')}</Callout>
+            ) : done ? (
+              <ApplyDone done={done} />
             ) : (
-              <Async state={mine} empty={<ApplyForm programmeId={p.id} school={p.stage === 'school'} />}>
+              <Async state={mine} empty={<ApplyForm programmeId={p.id} school={p.stage === 'school'} onDone={setDone} />}>
                 {(apps) => {
                   const open = apps.find((a) => !isClosed(a.stage));
                   return open ? (
@@ -47,7 +51,7 @@ export default function ApplyPage() {
                       <L to="/my/applications">{t('m06.apply.track')}</L>
                     </Callout>
                   ) : (
-                    <ApplyForm programmeId={p.id} school={p.stage === 'school'} />
+                    <ApplyForm programmeId={p.id} school={p.stage === 'school'} onDone={setDone} />
                   );
                 }}
               </Async>
@@ -76,7 +80,19 @@ function SignInFirst() {
   );
 }
 
-function ApplyForm({ programmeId, school }: { programmeId: string; school: boolean }) {
+function ApplyDone({ done }: { done: { id: string; stage: string } }) {
+  const t = useT();
+  return (
+    <div data-testid="m06-apply-done">
+      <Card title={done.stage === 'interest' ? t('m06.apply.doneInterest') : t('m06.apply.doneTitle')}>
+        <p className="text-ink-2">{t('m06.apply.doneBody')}</p>
+        <div className="mt-2"><StatusPill status={done.stage}>{t(`m06.appStage.${done.stage}`)}</StatusPill></div>
+        <L to="/my/applications" className="btn-primary mt-3">{t('m06.apply.track')}</L>
+      </Card>
+    </div>
+  );
+}
+function ApplyForm({ programmeId, school, onDone }: { programmeId: string; school: boolean; onDone: (d: { id: string; stage: string }) => void }) {
   const t = useT();
   const repo = useRepo();
   const run = useAction();
@@ -89,19 +105,8 @@ function ApplyForm({ programmeId, school }: { programmeId: string; school: boole
   const [lang, setLang] = useState('ar');
   const [consent, setConsent] = useState(false);
   const [confirm, setConfirm] = useState(false);
-  const [done, setDone] = useState<{ id: string; stage: string } | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
-  if (done)
-    return (
-      <div data-testid="m06-apply-done">
-      <Card title={done.stage === 'interest' ? t('m06.apply.doneInterest') : t('m06.apply.doneTitle')}>
-        <p className="text-ink-2">{t('m06.apply.doneBody')}</p>
-        <div className="mt-2"><StatusPill status={done.stage}>{t(`m06.appStage.${done.stage}`)}</StatusPill></div>
-        <L to="/my/applications" className="btn-primary mt-3">{t('m06.apply.track')}</L>
-      </Card>
-      </div>
-    );
 
   const steps = [{ id: 'about', label: t('m06.apply.step.about') }, { id: 'motivation', label: t('m06.apply.step.motivation') }, { id: 'review', label: t('m06.apply.step.review') }];
   const next = () => {
@@ -163,7 +168,7 @@ function ApplyForm({ programmeId, school }: { programmeId: string; school: boole
         confirmLabel={t('m06.apply.submit')}
         onConfirm={async () => {
           const r = await run(() => repo.rpc.submitApplication(programmeId, answers));
-          if (r.ok && r.data) setDone(r.data);
+          if (r.ok && r.data) onDone(r.data);
         }}
       />
     </Card>

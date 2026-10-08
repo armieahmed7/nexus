@@ -10,6 +10,7 @@ import { Async, Callout, Card, DataTable, EmptyState, FilterBar, Icon, Page, Sim
 import type { LedgerEntry } from '../../data/types';
 import { syncState } from '../../domain/g5rules';
 import { useFlags } from './flags';
+import { nexusHref } from '../../config';
 import { Metric } from './parts';
 
 const POINTS = [
@@ -110,7 +111,7 @@ export default function AdminNexusPage() {
                             <ul className="flex flex-wrap gap-2" data-testid="m16-nexus-links">
                               {NEXUS_LINKS.map((l) => (
                                 <li key={l.id}>
-                                  <a href={l.href} className="btn-outline btn-sm">
+                                  <a href={nexusHref(l.href)} className="btn-outline btn-sm">
                                     <Icon name="external" />
                                     {t(`m16.nexus.links.${l.id}`)}
                                   </a>
@@ -239,7 +240,7 @@ function LedgerView({ rows, counts }: { rows: LedgerEntry[]; counts: { k: string
               { key: 'seq', header: '#', value: (r) => r.seq, sortable: true, align: 'end' },
               { key: 'ts', header: t('m16.audit.when'), value: (r) => r.ts, sortable: true, render: (r) => f.dateTime(r.ts) },
               { key: 'action', header: t('m16.nexus.action'), value: (r) => r.action, render: (r) => <code className="ltr text-[12px]">{r.action}</code> },
-              { key: 'actor', header: t('m16.audit.actor'), value: (r) => `${r.actor} (${r.role})`, render: (r) => <span className="ltr text-[12.5px]">{r.actor} · {r.role}</span> },
+              { key: 'actor', header: t('m16.audit.actor'), value: (r) => (!r.role || r.actor === r.role ? r.actor : `${r.actor} (${r.role})`), render: (r) => <span className="ltr text-[12.5px]">{!r.role || r.actor === r.role ? r.actor : `${r.actor} · ${r.role}`}</span> },
               { key: 'reason', header: t('m16.audit.reason'), value: (r) => r.reason ?? '', render: (r) => <span className="line-clamp-2 text-[12.5px]">{r.reason ?? '—'}</span> },
               { key: 'hash', header: t('m16.audit.hash'), value: (r) => r.hash, render: (r) => <code className="ltr text-[11px] text-ink-3">{r.hash.slice(0, 12)}…</code> },
             ]}

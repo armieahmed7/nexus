@@ -5,3 +5,4 @@ playwright-report
 .env
 .env.local
 *.log
+deploy_out

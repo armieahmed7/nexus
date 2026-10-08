@@ -9,7 +9,10 @@ export const DAY = 86_400_000;
 export const toDate = (d: string | Date) => (typeof d === 'string' ? new Date(d.length === 10 ? `${d}T00:00:00Z` : d) : d);
 export const isoDate = (d: Date) => d.toISOString().slice(0, 10);
 export const todayIso = () => isoDate(new Date());
-export const daysBetween = (from: string | Date, to: string | Date) => Math.round((toDate(to).getTime() - toDate(from).getTime()) / DAY);
+/** Whole calendar days (UTC) from `from` to `to`, like SQL `date - date`. Times of day are ignored, so a 6 Oct expiry read at
+ * 17:00 on 8 Oct is 2 days ago (rounding the millisecond difference made it 3 after midday). */
+const dayNumber = (d: string | Date) => Math.floor(toDate(d).getTime() / DAY);
+export const daysBetween = (from: string | Date, to: string | Date) => dayNumber(to) - dayNumber(from);
 
 /** UAE working days: Monday to Friday (weekend Saturday-Sunday). Public holidays are not modelled in the demo. */
 export function addWorkingDays(from: string | Date, n: number): string {

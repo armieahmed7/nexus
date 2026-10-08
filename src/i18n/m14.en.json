@@ -28,7 +28,7 @@
     "localTitle": "Local demo",
     "localBody": "All 57 personas are available. Data is synthetic and stays in this browser.",
     "liveTitle": "Live NEXUS record",
-    "liveBody": "Kafa'a reuses your ENEC NEXUS role-card session. If a card does not sign in here, choose it in NEXUS first.",
+    "liveBody": "Data is the live ENEC NEXUS demo record. Choosing a NEXUS role card signs you in to that card's NEXUS demo account.",
     "openNexus": "Open NEXUS sign-in",
     "filter": "Filter role cards",
     "anonymous": "Browse without signing in",

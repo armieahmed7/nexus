@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { addWorkingDays, lapseReportDue, licenceView, proficiency, scoreJpm, suppress, canDisplace, qualView } from '../../src/domain/rules';
+import { addWorkingDays, daysBetween, lapseReportDue, licenceView, proficiency, scoreJpm, suppress, canDisplace, qualView } from '../../src/domain/rules';
 
 describe('UAE working days (Mon–Fri)', () => {
   it('lapse detected Thursday 8 Oct 2026 is reportable by Tuesday 13 Oct (3 working days)', () => {
@@ -59,5 +59,17 @@ describe('aggregates and booking', () => {
     const q = qualView({ status: 'qualified', expires_on: '2026-11-02' }, new Date('2026-10-08T00:00:00Z'));
     expect(q.view).toBe('due');
     expect(q.notice).toBe(30);
+  });
+});
+
+describe('calendar day differences (QA fix: no rounding of time of day)', () => {
+  it('an expiry on 6 Oct read at 17:06 on 8 Oct is 2 days ago, as SQL date arithmetic says', () => {
+    expect(daysBetween(new Date('2026-10-08T17:06:00Z'), '2026-10-06')).toBe(-2);
+    expect(licenceView({ status: 'lapsed', expires_on: '2026-10-06', last_synced: '2026-10-08T08:00:00Z' }, new Date('2026-10-08T17:06:00Z')).daysToExpiry).toBe(-2);
+  });
+  it('something due today is 0 days away all day long', () => {
+    expect(daysBetween(new Date('2026-10-08T00:01:00Z'), '2026-10-08')).toBe(0);
+    expect(daysBetween(new Date('2026-10-08T23:59:00Z'), '2026-10-08')).toBe(0);
+    expect(daysBetween('2026-10-08', '2027-04-01')).toBe(175);
   });
 });

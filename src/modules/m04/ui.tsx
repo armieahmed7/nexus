@@ -6,6 +6,7 @@ import { SourceLink, StatusPill, type PillTone } from '../../ui';
 import { useFormat, useLang, useT } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { isOpen } from '../../domain/learning';
+import { daysBetween } from '../../domain/rules';
 
 export const ENROL_TONE: Record<string, PillTone> = {
   assigned: 'neutral', requested: 'sim', approved: 'info', waitlisted: 'sim', enrolled: 'ok', in_progress: 'info', completed: 'ok', failed: 'bad', cancelled: 'neutral',
@@ -116,4 +117,5 @@ export function Chip({ children, tone = 'neutral' }: { children: ReactNode; tone
 }
 
 /** Days until a date (negative when past). */
-export const daysUntil = (d: string | null | undefined) => (d ? Math.round((new Date(d.length === 10 ? `${d}T00:00:00Z` : d).getTime() - Date.now()) / 86_400_000) : null);
+/** Calendar days from today to `d` (0 = due today, negative = overdue). */
+export const daysUntil = (d: string | null | undefined) => (d ? daysBetween(new Date(), d) : null);

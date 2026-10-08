@@ -143,7 +143,7 @@ export default function AskPage() {
             </Callout>
             <div className="text-[12px] text-ink-3">
               {d.corpus.data ? t('m13.ask.corpusInfo', { n: f.num(d.corpus.data.docs.filter((x) => x.modes.includes(d.mode)).length), mode: t(`m13.modes.${d.mode}`) }) : t('m13.ask.loadingCorpus')}
-              {d.setting && <div className="mt-1">{t('m13.ask.retention', { days: f.num(d.setting.retention_days) })}</div>}
+              {d.setting && <div className="mt-1">{t('m13.ask.retention', { n: f.num(d.setting.retention_days) })}</div>}
             </div>
           </aside>
         </div>
