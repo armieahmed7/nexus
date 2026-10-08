@@ -93,5 +93,7 @@ const self2 = await one('k-admin', `select kafaa_approve_role('${grant.r.data.id
 const second = await one('ai-governance', `select kafaa_approve_role('${grant.r.data.id}') r`);
 ok(grant.r.data.status === 'pending_second' && !self2.r.ok && second.r.ok, 'elevated role grant needs a second admin');
 
+// [G4] M09/M11 checks (scripts/validate/g4.mjs)
+await (await import('./validate/g4.mjs')).g4Checks({ db, as, one, count, ok, uid });
 console.log(failures ? `\n${failures} check(s) FAILED` : '\nAll migration checks passed');
 process.exit(failures ? 1 : 0);

@@ -11,6 +11,7 @@ import { buildAssessments } from './seed/assess.mjs';
 import { buildOrganisations } from './seed/partners.mjs';
 import { buildFacts, buildPages, buildFaqs, buildGlossary, buildSafetyCulture, buildAdvanced, buildTalent, buildKpis, buildWorkforce, buildCriticalRoles, buildDalil, buildIntegrations } from './seed/content.mjs';
 import { buildPeople, PERSONAS, personPid, DEMO_TODAY } from './seed/people.mjs';
+import { applyG4 } from './seed/g4.mjs'; // [G4] M09/M11 rows and patches
 
 const T = {};
 T.sources = SOURCES.map(([id, label, url, publisher]) => ({ id, label, url, publisher, accessed: '2026-10-08', note: null }));
@@ -68,6 +69,7 @@ T.dalil_settings = dal.settings;
 T.eval_runs = dal.evals;
 T.integrations = buildIntegrations();
 Object.assign(T, buildPeople({ standards: T.qual_standards, tasks: T.task_items, curriculum: T.curriculum_rules, courses: T.courses }));
+applyG4(T); // [G4] after people: patches partner_onboarding, equivalency_requests, icv_plans; adds supplier documents, academy checks, M11 catalogue
 
 // ───────────── Seed audit log (hash chain identical to kafaa_audit_canonical in SQL and src/data/audit.ts)
 const canon = (e) => [e.seq, e.ts.replace(/\.\d{3}Z$/, 'Z'), e.actor_person_id ?? '', e.actor_role ?? '', e.action, e.entity_table ?? '', e.entity_id ?? '', e.outcome, e.reason ?? ''].join('|');

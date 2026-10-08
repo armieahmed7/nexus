@@ -757,14 +757,8 @@ create trigger kafaa_internships_audit after insert or update on kafaa_internshi
 alter table kafaa_partner_onboarding enable row level security;
 drop policy if exists kafaa_read on kafaa_partner_onboarding;
 create policy kafaa_read on kafaa_partner_onboarding for select to anon, authenticated using (kafaa_rule_read('partner_org', null::text, org_id, true));
-drop policy if exists kafaa_insert on kafaa_partner_onboarding;
-create policy kafaa_insert on kafaa_partner_onboarding for insert to anon, authenticated with check (kafaa_has_grant('partner_org', array['W','A']) or (org_id = kafaa_my_org() and kafaa_has_grant('partner_org', array['OrgW'])));
-drop policy if exists kafaa_update on kafaa_partner_onboarding;
-create policy kafaa_update on kafaa_partner_onboarding for update to authenticated using (kafaa_has_grant('partner_org', array['W','A']) or (org_id = kafaa_my_org() and kafaa_has_grant('partner_org', array['OrgW']))) with check (kafaa_has_grant('partner_org', array['W','A']) or (org_id = kafaa_my_org() and kafaa_has_grant('partner_org', array['OrgW'])));
-grant select, insert, update on kafaa_partner_onboarding to authenticated;
-grant select on kafaa_partner_onboarding to anon;
-drop trigger if exists kafaa_partner_onboarding_audit on kafaa_partner_onboarding;
-create trigger kafaa_partner_onboarding_audit after insert or update on kafaa_partner_onboarding for each row execute function kafaa_audit_row();
+grant select on kafaa_partner_onboarding to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
 -- supplier_readiness
 alter table kafaa_supplier_readiness enable row level security;
@@ -783,27 +777,36 @@ create trigger kafaa_supplier_readiness_audit after insert or update on kafaa_su
 alter table kafaa_equivalency_requests enable row level security;
 drop policy if exists kafaa_read on kafaa_equivalency_requests;
 create policy kafaa_read on kafaa_equivalency_requests for select to anon, authenticated using (kafaa_rule_read('equivalency', null::text, org_id, true));
-drop policy if exists kafaa_insert on kafaa_equivalency_requests;
-create policy kafaa_insert on kafaa_equivalency_requests for insert to anon, authenticated with check (kafaa_has_grant('equivalency', array['W','A']) or (org_id = kafaa_my_org() and kafaa_has_grant('equivalency', array['OrgW'])));
-drop policy if exists kafaa_update on kafaa_equivalency_requests;
-create policy kafaa_update on kafaa_equivalency_requests for update to authenticated using (kafaa_has_grant('equivalency', array['W','A']) or (org_id = kafaa_my_org() and kafaa_has_grant('equivalency', array['OrgW']))) with check (kafaa_has_grant('equivalency', array['W','A']) or (org_id = kafaa_my_org() and kafaa_has_grant('equivalency', array['OrgW'])));
-grant select, insert, update on kafaa_equivalency_requests to authenticated;
-grant select on kafaa_equivalency_requests to anon;
-drop trigger if exists kafaa_equivalency_requests_audit on kafaa_equivalency_requests;
-create trigger kafaa_equivalency_requests_audit after insert or update on kafaa_equivalency_requests for each row execute function kafaa_audit_row();
+grant select on kafaa_equivalency_requests to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
 -- icv_plans
 alter table kafaa_icv_plans enable row level security;
 drop policy if exists kafaa_read on kafaa_icv_plans;
 create policy kafaa_read on kafaa_icv_plans for select to anon, authenticated using (kafaa_rule_read('partner_org', null::text, org_id, true));
-drop policy if exists kafaa_insert on kafaa_icv_plans;
-create policy kafaa_insert on kafaa_icv_plans for insert to anon, authenticated with check (kafaa_has_grant('partner_org', array['W','A']) or (org_id = kafaa_my_org() and kafaa_has_grant('partner_org', array['OrgW'])));
-drop policy if exists kafaa_update on kafaa_icv_plans;
-create policy kafaa_update on kafaa_icv_plans for update to authenticated using (kafaa_has_grant('partner_org', array['W','A']) or (org_id = kafaa_my_org() and kafaa_has_grant('partner_org', array['OrgW']))) with check (kafaa_has_grant('partner_org', array['W','A']) or (org_id = kafaa_my_org() and kafaa_has_grant('partner_org', array['OrgW'])));
-grant select, insert, update on kafaa_icv_plans to authenticated;
-grant select on kafaa_icv_plans to anon;
-drop trigger if exists kafaa_icv_plans_audit on kafaa_icv_plans;
-create trigger kafaa_icv_plans_audit after insert or update on kafaa_icv_plans for each row execute function kafaa_audit_row();
+grant select on kafaa_icv_plans to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- supplier_documents
+alter table kafaa_supplier_documents enable row level security;
+drop policy if exists kafaa_read on kafaa_supplier_documents;
+create policy kafaa_read on kafaa_supplier_documents for select to anon, authenticated using (kafaa_rule_read('partner_org', null::text, org_id, true));
+grant select on kafaa_supplier_documents to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- academy_checks
+alter table kafaa_academy_checks enable row level security;
+drop policy if exists kafaa_read on kafaa_academy_checks;
+create policy kafaa_read on kafaa_academy_checks for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_academy_checks to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- academy_check_keys
+alter table kafaa_academy_check_keys enable row level security;
+drop policy if exists kafaa_read on kafaa_academy_check_keys;
+create policy kafaa_read on kafaa_academy_check_keys for select to anon, authenticated using (kafaa_rule_read('training', null::text, null::text, true));
+grant select on kafaa_academy_check_keys to anon, authenticated;
+-- writes: reference data, no client writes
 
 -- research_challenges
 alter table kafaa_research_challenges enable row level security;
@@ -961,6 +964,52 @@ grant select, insert, update on kafaa_future_skills to authenticated;
 grant select on kafaa_future_skills to anon;
 drop trigger if exists kafaa_future_skills_audit on kafaa_future_skills;
 create trigger kafaa_future_skills_audit after insert or update on kafaa_future_skills for each row execute function kafaa_audit_row();
+
+-- adv_skills
+alter table kafaa_adv_skills enable row level security;
+drop policy if exists kafaa_read on kafaa_adv_skills;
+create policy kafaa_read on kafaa_adv_skills for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+drop policy if exists kafaa_insert on kafaa_adv_skills;
+create policy kafaa_insert on kafaa_adv_skills for insert to anon, authenticated with check (kafaa_has_grant('public_content', array['W','A']));
+drop policy if exists kafaa_update on kafaa_adv_skills;
+create policy kafaa_update on kafaa_adv_skills for update to authenticated using (kafaa_has_grant('public_content', array['W','A'])) with check (kafaa_has_grant('public_content', array['W','A']));
+grant select, insert, update on kafaa_adv_skills to authenticated;
+grant select on kafaa_adv_skills to anon;
+drop trigger if exists kafaa_adv_skills_audit on kafaa_adv_skills;
+create trigger kafaa_adv_skills_audit after insert or update on kafaa_adv_skills for each row execute function kafaa_audit_row();
+
+-- future_roles
+alter table kafaa_future_roles enable row level security;
+drop policy if exists kafaa_read on kafaa_future_roles;
+create policy kafaa_read on kafaa_future_roles for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+drop policy if exists kafaa_insert on kafaa_future_roles;
+create policy kafaa_insert on kafaa_future_roles for insert to anon, authenticated with check (kafaa_has_grant('public_content', array['W','A']));
+drop policy if exists kafaa_update on kafaa_future_roles;
+create policy kafaa_update on kafaa_future_roles for update to authenticated using (kafaa_has_grant('public_content', array['W','A'])) with check (kafaa_has_grant('public_content', array['W','A']));
+grant select, insert, update on kafaa_future_roles to authenticated;
+grant select on kafaa_future_roles to anon;
+drop trigger if exists kafaa_future_roles_audit on kafaa_future_roles;
+create trigger kafaa_future_roles_audit after insert or update on kafaa_future_roles for each row execute function kafaa_audit_row();
+
+-- adv_tracks
+alter table kafaa_adv_tracks enable row level security;
+drop policy if exists kafaa_read on kafaa_adv_tracks;
+create policy kafaa_read on kafaa_adv_tracks for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+drop policy if exists kafaa_insert on kafaa_adv_tracks;
+create policy kafaa_insert on kafaa_adv_tracks for insert to anon, authenticated with check (kafaa_has_grant('public_content', array['W','A']));
+drop policy if exists kafaa_update on kafaa_adv_tracks;
+create policy kafaa_update on kafaa_adv_tracks for update to authenticated using (kafaa_has_grant('public_content', array['W','A'])) with check (kafaa_has_grant('public_content', array['W','A']));
+grant select, insert, update on kafaa_adv_tracks to authenticated;
+grant select on kafaa_adv_tracks to anon;
+drop trigger if exists kafaa_adv_tracks_audit on kafaa_adv_tracks;
+create trigger kafaa_adv_tracks_audit after insert or update on kafaa_adv_tracks for each row execute function kafaa_audit_row();
+
+-- skill_gap_plans
+alter table kafaa_skill_gap_plans enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_gap_plans;
+create policy kafaa_read on kafaa_skill_gap_plans for select to anon, authenticated using (kafaa_has_grant('workforce_analytics', array['Agg','R','W','A']));
+grant select on kafaa_skill_gap_plans to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
 -- content_pages
 alter table kafaa_content_pages enable row level security;
