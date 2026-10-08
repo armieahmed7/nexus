@@ -163,6 +163,16 @@ Need a foundation change (shared UI component, new rule in `rules.ts`, a field i
 ### Changelog
 
 - **2026-10-08 · v1.0** Initial contract. 85 routes scaffolded, 94 tables, 24 RPCs, two backends. Supabase: schema, policy matrix, RLS, RPCs and NEXUS reads applied to `hlirqxoddysxtdezwcgv`; grants hardened after the advisor run; SupabaseBackend verified end to end (NEXUS role-card sign-in → RLS read → `kafaa_signoff_evaluation` → audit row + NEXUS ledger entry). Live seed is partial (organisations, job families, job roles and an E2E subset), so `local` stays the default backend.
+- **2026-10-08 · G5 (branch g5)** Shared edits, all additive and commented `G5`:
+  - `src/data/schema.ts`: new columns on `role_assignments` (reviewed_at/by, review_note), `contact_requests` (lang, consent_contact, retention_until), `concern_cases` (closed_on, outcome), `content_pages` (kind page|news, published_on, summary_en/ar, topic, updated_by/at, no_factual_claims), `advisor_sessions` (client_key, page_context, handoff_status, handoff_note, last_turn_at), `advisor_turns` (intent, confidence, redacted, mode), `eval_runs` (details, engine, run_by, security_total/correct), `dalil_settings` (signed_in_rate_limit_per_hour, engine); `advisor_sessions`/`advisor_turns` write mode changed to `rpc` (server-side rate limit); new table `feature_flags` (read PUB, write `integrations`). Generated files re-run (`npm run gen`); the live delta is `supabase/migrations/20261008135001_kafaa_g5_core.sql` (add column if not exists, guarded policy blocks, no DROP).
+  - RPCs (types.ts + LocalRpc + SQL + SupabaseBackend): `dalilTurn`, `dalilHandoff`, `resolveDalilHandoff`, `logConcernReferral`, `triageConcernV2`, `reviewRoleAccess`; NEXUS read `repo.nexus.ledger()` (`kafaa_nexus_ledger`, domain KAFAA, admin/auditor). New types `DalilMode`, `DalilCitation`, `DalilTurnInput`, `DalilTurnResult`, `ConcernReferralInput`, `LedgerEntry`.
+  - `LocalBackend.ts`: locked feature flags refuse updates (mirror of the SQL policy); `nexus.ledger` reads `ledger_local`.
+  - `src/domain/g5rules.ts` (new, G5-owned): Dalil mode rules, ECP transitions and triage clock, access-review cadence (92 days), publish blockers, sync state, contact routing.
+  - `src/shell/DalilLauncher.tsx`: re-reads `dalil_settings` every 30 s (kill switch reaches open pages within a minute) and passes `?from=<page>` to `/ask`.
+  - Seed: `scripts/seed/g5.mjs` hooked from `build-seed.mjs` (news items, flags, FAQs, facts, corpus extras, refusal pattern overrides, ECP/access/Dalil samples). `validate-migrations.mjs`: 16 "G5 checks". `tests/smoke/routes.ts`: param for `news-item`.
+  - Routes: `news` (/news) and `news-item` (/news/:slug) in M12.
+  - Dev dependencies: `@testing-library/react`, `@testing-library/dom`, `jsdom` (component tests use `// @vitest-environment jsdom` in `.test.ts`, so `vitest.config.ts` is unchanged).
+  - Tests: `tests/unit/m14-rbac.test.ts` (every persona x every table, consequential RPC and route guard against the policy matrix), `g5-workflows.test.ts`, `g5-components.test.ts`, `m13-dalil.test.ts`.
 
 ## 11. Acceptance checklists per module
 
