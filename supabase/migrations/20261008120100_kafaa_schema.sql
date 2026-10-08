@@ -1760,6 +1760,41 @@ create table if not exists kafaa_badges (
 );
 comment on table kafaa_badges is '[M17] Signed Open Badges 3.0-shaped credentials for Kafa''a course certificates and completions (F04); public verify via RPC';
 
+-- M18 · Career Navigator shortlist: up to three target roles per person, optionally shared with the line manager (F05)
+create table if not exists kafaa_career_targets (
+  id text primary key,
+  person_id text not null,
+  role_id text not null,
+  rank integer not null default 1,
+  shared boolean not null default false,
+  shared_person_id text,
+  active boolean not null default true,
+  note text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_career_targets is '[M18] Career Navigator shortlist: up to three target roles per person, optionally shared with the line manager (F05)';
+
+-- M18 · Career roadmap scenario towards a target role, with its computed timeline (F06)
+create table if not exists kafaa_roadmaps (
+  id text primary key,
+  person_id text not null,
+  target_role_id text not null,
+  name text not null default '',
+  scenario jsonb not null default '{}'::jsonb,
+  plan jsonb not null default '[]'::jsonb,
+  earliest_on date,
+  end_on date,
+  shared boolean not null default false,
+  shared_person_id text,
+  active boolean not null default true,
+  sent_plan_id text,
+  sent_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_roadmaps is '[M18] Career roadmap scenario towards a target role, with its computed timeline (F06)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -1888,6 +1923,10 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sk
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_claims_skill_id_fk') then alter table kafaa_skill_claims add constraint kafaa_skill_claims_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_badges_person_id_fk') then alter table kafaa_badges add constraint kafaa_badges_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_badges_course_id_fk') then alter table kafaa_badges add constraint kafaa_badges_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_career_targets_person_id_fk') then alter table kafaa_career_targets add constraint kafaa_career_targets_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_career_targets_role_id_fk') then alter table kafaa_career_targets add constraint kafaa_career_targets_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_roadmaps_person_id_fk') then alter table kafaa_roadmaps add constraint kafaa_roadmaps_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_roadmaps_target_role_id_fk') then alter table kafaa_roadmaps add constraint kafaa_roadmaps_target_role_id_fk foreign key (target_role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -2052,6 +2091,12 @@ create index if not exists kafaa_badges_person_id_idx on kafaa_badges (person_id
 create index if not exists kafaa_badges_source_id_idx on kafaa_badges (source_id);
 create index if not exists kafaa_badges_course_id_idx on kafaa_badges (course_id);
 create index if not exists kafaa_badges_status_idx on kafaa_badges (status);
+create index if not exists kafaa_career_targets_person_id_idx on kafaa_career_targets (person_id);
+create index if not exists kafaa_career_targets_role_id_idx on kafaa_career_targets (role_id);
+create index if not exists kafaa_career_targets_shared_person_id_idx on kafaa_career_targets (shared_person_id);
+create index if not exists kafaa_roadmaps_person_id_idx on kafaa_roadmaps (person_id);
+create index if not exists kafaa_roadmaps_target_role_id_idx on kafaa_roadmaps (target_role_id);
+create index if not exists kafaa_roadmaps_shared_person_id_idx on kafaa_roadmaps (shared_person_id);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -2064,4 +2109,4 @@ create trigger kafaa_evaluations_append_only before update or delete on kafaa_ev
 drop trigger if exists kafaa_evaluation_acks_append_only on kafaa_evaluation_acks;
 create trigger kafaa_evaluation_acks_append_only before update or delete on kafaa_evaluation_acks for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 109) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 111) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
