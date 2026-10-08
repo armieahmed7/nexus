@@ -12,6 +12,7 @@ import { buildOrganisations } from './seed/partners.mjs';
 import { buildFacts, buildPages, buildFaqs, buildGlossary, buildSafetyCulture, buildAdvanced, buildTalent, buildKpis, buildWorkforce, buildCriticalRoles, buildDalil, buildIntegrations } from './seed/content.mjs';
 import { buildPeople, PERSONAS, personPid, DEMO_TODAY } from './seed/people.mjs';
 import { applyG4 } from './seed/g4.mjs'; // [G4] M09/M11 rows and patches
+import { extendG5 } from './seed/g5.mjs'; // G5 (M08/M12/M13/M14/M16) rows; see CONTRACT.md changelog
 
 const T = {};
 T.sources = SOURCES.map(([id, label, url, publisher]) => ({ id, label, url, publisher, accessed: '2026-10-08', note: null }));
@@ -75,6 +76,7 @@ patchSeedAttempts(T.attempts);
 { const h = buildAttemptHistory(); T.attempts.push(...h.attempts); T.responses = [...(T.responses ?? []), ...h.responses]; }
 { const w = buildItemWorkflow(); T.items.push(...w.items); T.item_versions.push(...w.versions); }
 applyG4(T); // [G4] after people: patches partner_onboarding, equivalency_requests, icv_plans; adds supplier documents, academy checks, M11 catalogue
+extendG5(T); // G5: news, feature flags, FAQs, facts, corpus, ECP/Dalil/access-review demo rows
 
 // ───────────── Seed audit log (hash chain identical to kafaa_audit_canonical in SQL and src/data/audit.ts)
 const canon = (e) => [e.seq, e.ts.replace(/\.\d{3}Z$/, 'Z'), e.actor_person_id ?? '', e.actor_role ?? '', e.action, e.entity_table ?? '', e.entity_id ?? '', e.outcome, e.reason ?? ''].join('|');

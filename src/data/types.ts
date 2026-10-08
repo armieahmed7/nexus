@@ -177,6 +177,57 @@ export interface G4Rpc {
   saveSkillGapPlan(plan: GapPlanInput): Promise<Result<{ id: string }>>;
 }
 
+// ───────────── G5 additions (M08, M13, M14, M16). Logged in CONTRACT.md changelog on branch g5.
+export type DalilMode = 'public' | 'applicant' | 'staff' | 'partner';
+export interface DalilCitation {
+  label: string;
+  url: string;
+}
+export interface DalilTurnInput {
+  session_id?: string | null;
+  /** Random per-browser key for anonymous rate limiting (no identity). */
+  client_key?: string | null;
+  mode: DalilMode;
+  page_context?: string | null;
+  question: string;
+  answer: string;
+  citations: DalilCitation[];
+  refused: boolean;
+  refusal_category?: string | null;
+  intent?: string | null;
+  confidence?: number | null;
+  /** Concerns are never stored: the question text is replaced by a marker. */
+  redact_question?: boolean;
+}
+export interface DalilTurnResult {
+  session_id: string;
+  used: number;
+  limit: number;
+  remaining: number;
+}
+export interface ConcernReferralInput {
+  received_on: string;
+  channel: string;
+  anonymous: boolean;
+  category: string;
+  ecp_system_ref: string;
+  priority?: string;
+}
+export interface LedgerEntry {
+  seq: number;
+  ts: string;
+  actor: string;
+  role: string;
+  plane: string;
+  domain: string;
+  action: string;
+  evidence_class: string;
+  reason: string | null;
+  prev_hash: string;
+  hash: string;
+  actor_persona_id: string | null;
+}
+
 /** Consequential actions. Each one audits (success and refusal) and, where material, appends to the NEXUS ledger. */
 // G2 (2026-10-08): M04/M05 RPCs are declared in ./rpc_g2.ts and merged here. [G4] M09/M11 in G4Rpc.
 export interface Rpc extends G2Rpc, G4Rpc {
@@ -228,6 +279,15 @@ export interface Rpc extends G2Rpc, G4Rpc {
   recordMedicalDate(personId: string, dueOn: string, flag: 'fit' | 'not_confirmed', sourceRef: string): Promise<Result<{ closed: number }>>;
   /** Crew availability for shift supervisors: available / not available only (null when the source sync is stale). Never medical detail. */
   crewAvailability(): Promise<{ person_id: string; available: boolean | null }[]>;
+  // ── G5 (M13) Dalil: log a turn with server-side kill switch, mode and rate-limit checks; request / resolve a human hand-off
+  dalilTurn(p: DalilTurnInput): Promise<Result<DalilTurnResult>>;
+  dalilHandoff(sessionId: string, target: 'careers' | 'training' | 'partner_desk', consent: boolean, note: string): Promise<Result>;
+  resolveDalilHandoff(sessionId: string, status: 'picked_up' | 'closed'): Promise<Result>;
+  // ── G5 (M08) ECP referral log (metadata only) and triage with closure outcome
+  logConcernReferral(p: ConcernReferralInput): Promise<Result<{ id: string; ref_no: string }>>;
+  triageConcernV2(id: string, status: string, priority: string, outcome: string | null): Promise<Result>;
+  // ── G5 (M14) quarterly access review of an elevated grant
+  reviewRoleAccess(assignmentId: string, decision: 'keep' | 'revoke', note: string): Promise<Result>;
 }
 
 /** Read-only views over existing NEXUS tables (SECURITY DEFINER kafaa_nexus_* functions; a static snapshot in local mode). */
@@ -240,6 +300,8 @@ export interface NexusReads {
   ecoEnrolments(): Promise<{ id: string; org_id: string; persona_id: string; course_id: string; status: string; score: number | null; certificate_no: string | null }[]>;
   ecoScholarships(): Promise<Record<string, unknown>[]>;
   ecoPartnerships(): Promise<Record<string, unknown>[]>;
+  /** G5 (M16): NEXUS evidence-ledger entries written by Kafa'a (domain KAFAA). Admin and auditor only. */
+  ledger(): Promise<LedgerEntry[]>;
   /** Where the data came from: 'live' (Supabase) or 'snapshot' (bundled, read-only). */
   source: 'live' | 'snapshot';
 }

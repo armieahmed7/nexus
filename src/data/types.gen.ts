@@ -70,6 +70,9 @@ export interface RoleAssignmentsRow {
   expires_at?: string | null;
   status: 'active' | 'pending_second' | 'revoked';
   second_approver?: string | null;
+  reviewed_at?: string | null;
+  reviewed_by?: string | null;
+  review_note?: string | null;
 }
 export interface ConsentsRow {
   id: string;
@@ -139,6 +142,9 @@ export interface ContactRequestsRow {
   message: string;
   created_at: string;
   status: 'new' | 'routed' | 'closed';
+  lang: 'en' | 'ar';
+  consent_contact: boolean;
+  retention_until?: string | null;
 }
 export interface SourcesRow {
   id: string;
@@ -1077,6 +1083,8 @@ export interface ConcernCasesRow {
   triaged_at?: string | null;
   ecp_system_ref: string;
   sample: boolean;
+  closed_on?: string | null;
+  outcome?: 'substantiated' | 'not_substantiated' | 'referred_cap' | 'referred_hr' | 'referred_external' | 'no_action' | null;
 }
 export interface AdvTechnologiesRow {
   id: string;
@@ -1180,6 +1188,14 @@ export interface ContentPagesRow {
   translation_status: 'en_only' | 'ar_draft' | 'both_approved';
   owner_role: string;
   ecp_owned: boolean;
+  kind: 'page' | 'news';
+  published_on?: string | null;
+  summary_en: string;
+  summary_ar: string;
+  topic: string;
+  updated_by?: string | null;
+  updated_at: string;
+  no_factual_claims: boolean;
 }
 export interface FactsRow {
   id: string;
@@ -1236,6 +1252,11 @@ export interface AdvisorSessionsRow {
   handoff: 'none' | 'careers' | 'training' | 'partner_desk';
   handoff_consent: boolean;
   turns: number;
+  client_key?: string | null;
+  page_context?: string | null;
+  handoff_status: 'none' | 'requested' | 'picked_up' | 'closed';
+  handoff_note?: string | null;
+  last_turn_at?: string | null;
 }
 export interface AdvisorTurnsRow {
   id: string;
@@ -1247,6 +1268,10 @@ export interface AdvisorTurnsRow {
   refused: boolean;
   refusal_category?: string | null;
   ts: string;
+  intent?: string | null;
+  confidence?: number | null;
+  redacted: boolean;
+  mode?: 'public' | 'applicant' | 'staff' | 'partner' | null;
 }
 export interface EvalRunsRow {
   id: string;
@@ -1259,6 +1284,11 @@ export interface EvalRunsRow {
   refusal_correct: number;
   pass: boolean;
   notes: string;
+  details: any;
+  engine: string;
+  run_by?: string | null;
+  security_total: number;
+  security_correct: number;
 }
 export interface RefusalPoliciesRow {
   id: string;
@@ -1280,6 +1310,8 @@ export interface DalilSettingsRow {
   retention_days: number;
   updated_at: string;
   updated_by?: string | null;
+  signed_in_rate_limit_per_hour: number;
+  engine: string;
 }
 export interface IntegrationsRow {
   id: string;
@@ -1294,6 +1326,19 @@ export interface IntegrationsRow {
   errors: number;
   schedule: string;
   notes: string;
+}
+export interface FeatureFlagsRow {
+  id: string;
+  key: string;
+  label_en: string;
+  label_ar: string;
+  description_en: string;
+  description_ar: string;
+  enabled: boolean;
+  locked: boolean;
+  area: string;
+  updated_at: string;
+  updated_by?: string | null;
 }
 export interface LedgerLocalRow {
   id: string;
@@ -1416,6 +1461,7 @@ export interface Tables {
   refusal_policies: RefusalPoliciesRow;
   dalil_settings: DalilSettingsRow;
   integrations: IntegrationsRow;
+  feature_flags: FeatureFlagsRow;
   ledger_local: LedgerLocalRow;
 }
 export type Table = keyof Tables;

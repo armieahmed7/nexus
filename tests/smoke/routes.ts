@@ -33,7 +33,7 @@ const PARAMS: Record<string, string> = {
   standard: 'qs-ro',
   page: 'privacy',
 };
-const PER_ROUTE: Record<string, Record<string, string>> = { 'partners-detail': { slug: 'kepco' } };
+const PER_ROUTE: Record<string, Record<string, string>> = { 'partners-detail': { slug: 'kepco' }, 'news-item': { slug: 'dnt-first-cohort' } /* G5 */ };
 export function fill(r: SmokeRoute): string {
   return r.path.replace(/:(\w+)/g, (_, k) => (PER_ROUTE[r.id]?.[k] ?? PARAMS[k] ?? 'x'));
 }

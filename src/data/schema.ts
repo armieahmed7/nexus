@@ -93,6 +93,8 @@ export const SCHEMA: Record<string, TableDef> = {
       id: 'text pk', person_id: 'text ref:people idx', role: 'text idx', org_id: 'text? ref:organisations',
       scope_type: 'text enum:all|entity|family|team|crew|org|self =\'self\'', scope_value: 'text?',
       granted_by: 'text?', granted_at: 'ts =now', expires_at: 'date?', status: 'text enum:active|pending_second|revoked =\'active\'', second_approver: 'text?',
+      // G5 (M14): quarterly access reviews for elevated roles (rpc.reviewRoleAccess)
+      reviewed_at: 'ts?', reviewed_by: 'text?', review_note: 'text?',
     },
     read: [{ res: 'own_profile', person: 'person_id' }, { res: 'users_roles', org: 'org_id' }],
     write: { mode: 'rpc', res: 'users_roles' },
@@ -143,6 +145,8 @@ export const SCHEMA: Record<string, TableDef> = {
     cols: {
       id: 'text pk', topic: 'text enum:careers|programmes|suppliers|universities|media|accessibility|other', route_to: 'text',
       name: 'text?', email: 'text?', message: 'text', created_at: 'ts =now', status: 'text enum:new|routed|closed =\'new\'',
+      // G5 (M12): language of the request, stated-purpose consent and retention
+      lang: 'text enum:en|ar =\'en\'', consent_contact: 'bool =false', retention_until: 'date?',
     },
     read: [{ res: 'users_roles' }],
     write: { mode: 'direct', res: 'users_roles', anonInsert: true },
@@ -786,6 +790,8 @@ export const SCHEMA: Record<string, TableDef> = {
       id: 'text pk', ref_no: 'text uniq', received_on: 'date', channel: 'text enum:ecp_office|intranet|phone|email|unit_rep|r2p_referral',
       anonymous: 'bool =true', category: 'text enum:nuclear_safety|quality|hird|other', status: 'text enum:received|triaged|investigating|referred|closed =\'received\'',
       priority: 'text enum:routine|priority|urgent =\'routine\'', triage_owner_role: 'text?', triaged_at: 'ts?', ecp_system_ref: 'text', sample: 'bool =true',
+      // G5 (M08): closure metadata only (never the concern text)
+      closed_on: 'date?', outcome: 'text? enum:substantiated|not_substantiated|referred_cap|referred_hr|referred_external|no_action',
     },
     read: [{ res: 'concern_cases' }], write: { mode: 'rpc', res: 'concern_cases' },
   },
@@ -857,6 +863,9 @@ export const SCHEMA: Record<string, TableDef> = {
       id: 'text pk', slug: 'text uniq', zone: 'text enum:public|staff|partner', module: 'text', title_en: 'text', title_ar: 'text', body_en: 'text', body_ar: 'text',
       sources: 'json =[]', as_of: 'date', review_on: 'date', status: 'text enum:draft|in_translation|in_review|published =\'draft\'',
       is_published: 'bool =false idx', translation_status: 'text enum:en_only|ar_draft|both_approved =\'en_only\'', owner_role: 'text =\'Editor\'', ecp_owned: 'bool =false',
+      // G5 (M12/M16): news-style items and summaries; editorial trail
+      kind: 'text enum:page|news =\'page\' idx', published_on: 'date?', summary_en: 'text =\'\'', summary_ar: 'text =\'\'', topic: 'text =\'general\'',
+      updated_by: 'text?', updated_at: 'ts =now', no_factual_claims: 'bool =false',
     },
     read: [{ res: 'public_content', where: 'is_published' }, { res: 'internal_content' }], write: { mode: 'direct', res: 'public_content' },
   },
@@ -893,22 +902,28 @@ export const SCHEMA: Record<string, TableDef> = {
     cols: {
       id: 'text pk', person_id: 'text? ref:people idx', mode: 'text enum:public|applicant|staff|partner', started_at: 'ts =now', retention_until: 'date',
       handoff: 'text enum:none|careers|training|partner_desk =\'none\'', handoff_consent: 'bool =false', turns: 'int =0',
+      // G5 (M13): anonymous rate-limit key (random per browser, no identity), page the user came from, hand-off status
+      client_key: 'text? idx', page_context: 'text?', handoff_status: 'text enum:none|requested|picked_up|closed =\'none\'', handoff_note: 'text?', last_turn_at: 'ts?',
     },
-    read: [{ res: 'own_profile', person: 'person_id' }, { res: 'dalil_config' }], write: { mode: 'direct', res: 'own_profile', own: true, anonInsert: true },
+    read: [{ res: 'own_profile', person: 'person_id' }, { res: 'dalil_config' }], write: { mode: 'rpc', res: 'dalil_config' }, // G5: writes only via rpc.dalilTurn / dalilHandoff (server-side rate limit)
   },
   advisor_turns: {
     module: 'M13', label: 'Dalil turn (question, cited answer or refusal)',
     cols: {
       id: 'text pk', session_id: 'text ref:advisor_sessions idx', person_id: 'text? ref:people', speaker: 'text enum:user|dalil', text: 'text', citations: 'json =[]',
       refused: 'bool =false', refusal_category: 'text?', ts: 'ts =now',
+      // G5 (M13): detected intent, retrieval confidence, and whether the user's text was withheld (concerns are never stored)
+      intent: 'text?', confidence: 'num?', redacted: 'bool =false', mode: 'text? enum:public|applicant|staff|partner',
     },
-    read: [{ res: 'own_profile', person: 'person_id' }, { res: 'dalil_config' }], write: { mode: 'direct', res: 'own_profile', own: true, anonInsert: true },
+    read: [{ res: 'own_profile', person: 'person_id' }, { res: 'dalil_config' }], write: { mode: 'rpc', res: 'dalil_config' }, // G5: writes only via rpc.dalilTurn / dalilHandoff (server-side rate limit)
   },
   eval_runs: {
     module: 'M13', label: 'Dalil evaluation run (citation and refusal thresholds)',
     cols: {
       id: 'text pk', run_at: 'ts', release: 'text', lang: 'text enum:en|ar|both', in_scope_total: 'int', cited_correct: 'int', refusal_total: 'int', refusal_correct: 'int',
       pass: 'bool', notes: 'text =\'\'',
+      // G5 (M13): per-case results and the engine that ran
+      details: 'json =[]', engine: 'text =\'retrieval-v1\'', run_by: 'text?', security_total: 'int =0', security_correct: 'int =0',
     },
     read: [{ res: 'dalil_config' }], write: { mode: 'direct', res: 'dalil_config' },
   },
@@ -925,6 +940,8 @@ export const SCHEMA: Record<string, TableDef> = {
     cols: {
       id: 'text pk', enabled: 'bool =true', public_rate_limit_per_hour: 'int =20', staff_mode: 'bool =false', model_gateway: 'text =\'UAE-hosted model option (concept)\'',
       retention_days: 'int =30', updated_at: 'ts =now', updated_by: 'text?',
+      // G5 (M13): signed-in rate limit and the active answer engine (pluggable; no LLM key in the demo)
+      signed_in_rate_limit_per_hour: 'int =60', engine: 'text =\'retrieval-v1\'',
     },
     read: PUB, write: { mode: 'rpc', res: 'dalil_config' },
   },
@@ -937,6 +954,16 @@ export const SCHEMA: Record<string, TableDef> = {
       status: 'text enum:ok|degraded|stale|error|disabled', records: 'int =0', errors: 'int =0', schedule: 'text =\'\'', notes: 'text =\'\'',
     },
     read: [{ res: 'integrations' }, { res: 'internal_content' }], write: { mode: 'direct', res: 'integrations' },
+  },
+  // G5 (M16): demo feature flags. Readable by everyone (pages hide features), written by platform admins only
+  // (write rule uses the 'integrations' resource: admin A, auditor R). Every change is audited by the row trigger.
+  feature_flags: {
+    module: 'M16', label: 'Feature flags for the demo tenant (admin console)',
+    cols: {
+      id: 'text pk', key: 'text uniq', label_en: 'text', label_ar: 'text', description_en: 'text =\'\'', description_ar: 'text =\'\'',
+      enabled: 'bool =true', locked: 'bool =false', area: 'text =\'general\'', updated_at: 'ts =now', updated_by: 'text?',
+    },
+    read: PUB, write: { mode: 'direct', res: 'integrations' },
   },
 
   // ───────────────────────────── Local-only mirror of the NEXUS evidence ledger

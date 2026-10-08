@@ -1067,28 +1067,16 @@ alter table kafaa_advisor_sessions enable row level security;
 drop policy if exists kafaa_read on kafaa_advisor_sessions;
 create policy kafaa_read on kafaa_advisor_sessions for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
     or kafaa_rule_read('dalil_config', null::text, null::text, true));
-drop policy if exists kafaa_insert on kafaa_advisor_sessions;
-create policy kafaa_insert on kafaa_advisor_sessions for insert to anon, authenticated with check (true);
-drop policy if exists kafaa_update on kafaa_advisor_sessions;
-create policy kafaa_update on kafaa_advisor_sessions for update to authenticated using (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope']))) with check (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope'])));
-grant select, insert on kafaa_advisor_sessions to authenticated;
-grant select, insert on kafaa_advisor_sessions to anon;
-drop trigger if exists kafaa_advisor_sessions_audit on kafaa_advisor_sessions;
-create trigger kafaa_advisor_sessions_audit after insert or update on kafaa_advisor_sessions for each row execute function kafaa_audit_row();
+grant select on kafaa_advisor_sessions to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
 -- advisor_turns
 alter table kafaa_advisor_turns enable row level security;
 drop policy if exists kafaa_read on kafaa_advisor_turns;
 create policy kafaa_read on kafaa_advisor_turns for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
     or kafaa_rule_read('dalil_config', null::text, null::text, true));
-drop policy if exists kafaa_insert on kafaa_advisor_turns;
-create policy kafaa_insert on kafaa_advisor_turns for insert to anon, authenticated with check (true);
-drop policy if exists kafaa_update on kafaa_advisor_turns;
-create policy kafaa_update on kafaa_advisor_turns for update to authenticated using (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope']))) with check (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope'])));
-grant select, insert on kafaa_advisor_turns to authenticated;
-grant select, insert on kafaa_advisor_turns to anon;
-drop trigger if exists kafaa_advisor_turns_audit on kafaa_advisor_turns;
-create trigger kafaa_advisor_turns_audit after insert or update on kafaa_advisor_turns for each row execute function kafaa_audit_row();
+grant select on kafaa_advisor_turns to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
 -- eval_runs
 alter table kafaa_eval_runs enable row level security;
@@ -1136,4 +1124,17 @@ grant select, insert, update on kafaa_integrations to authenticated;
 grant select on kafaa_integrations to anon;
 drop trigger if exists kafaa_integrations_audit on kafaa_integrations;
 create trigger kafaa_integrations_audit after insert or update on kafaa_integrations for each row execute function kafaa_audit_row();
+
+-- feature_flags
+alter table kafaa_feature_flags enable row level security;
+drop policy if exists kafaa_read on kafaa_feature_flags;
+create policy kafaa_read on kafaa_feature_flags for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+drop policy if exists kafaa_insert on kafaa_feature_flags;
+create policy kafaa_insert on kafaa_feature_flags for insert to anon, authenticated with check (kafaa_has_grant('integrations', array['W','A']));
+drop policy if exists kafaa_update on kafaa_feature_flags;
+create policy kafaa_update on kafaa_feature_flags for update to authenticated using (kafaa_has_grant('integrations', array['W','A'])) with check (kafaa_has_grant('integrations', array['W','A']));
+grant select, insert, update on kafaa_feature_flags to authenticated;
+grant select on kafaa_feature_flags to anon;
+drop trigger if exists kafaa_feature_flags_audit on kafaa_feature_flags;
+create trigger kafaa_feature_flags_audit after insert or update on kafaa_feature_flags for each row execute function kafaa_audit_row();
 

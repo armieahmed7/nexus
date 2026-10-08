@@ -36,6 +36,383 @@
     "legal": {
       "title": "Legal",
       "purpose": "Terms, privacy notice and accessibility statement."
+    },
+    "news": {
+      "title": "News",
+      "purpose": "Sourced updates on people, programmes, partners and the community."
+    },
+    "news-item": {
+      "title": "News item",
+      "purpose": "A sourced news item."
     }
+  },
+  "common": {
+    "sourcesDiffer": "Sources differ",
+    "noSource": "No source",
+    "sources": "Sources",
+    "pageUnavailable": "This page is not available right now."
+  },
+  "home": {
+    "titleTag": "Nuclear careers and skills",
+    "eyebrow": "Kafa'a · كفاءة",
+    "title": "Careers, competence and qualification for the UAE's nuclear energy workforce",
+    "intro": "Explore the roles that run Barakah, the programmes that lead to them, and how people are trained and qualified. Every figure links its public source.",
+    "ctaCareers": "Explore careers",
+    "ctaProgrammes": "Find a programme",
+    "ctaAsk": "Ask Dalil",
+    "concept": "A concept within ENEC NEXUS. Not an official ENEC website; official information is on enec.ae.",
+    "audiencesTitle": "Where would you like to start?",
+    "aud": {
+      "students": {
+        "title": "Students and school leavers",
+        "body": "Which subjects lead to nuclear careers, and the programmes open to you after school or university.",
+        "links": {
+          "pathways": "Programmes by life stage",
+          "dnt": "Leaving school? Diploma in Nuclear Technology",
+          "stem": "STEM materials for schools"
+        }
+      },
+      "seekers": {
+        "title": "Job seekers",
+        "body": "Roles, entry routes and what counts towards becoming a Reactor Operator or Senior Reactor Operator.",
+        "links": {
+          "careers": "Career Map",
+          "licensing": "How operator certification works",
+          "jobs": "Open roles (official channel)"
+        }
+      },
+      "staff": {
+        "title": "ENEC staff",
+        "body": "Your qualifications, licence tracker, learning and development plan. Sign in with a demo role card.",
+        "signedIn": "You are signed in: go to your dashboard for expiries, training and notices.",
+        "links": {
+          "my": "My dashboard",
+          "learn": "Training catalogue",
+          "safety": "Safety culture"
+        }
+      },
+      "partners": {
+        "title": "Suppliers and partners",
+        "body": "How to become a Barakah supplier, the partner directory, and routes for universities and researchers.",
+        "links": {
+          "suppliers": "Become a supplier",
+          "directory": "Partner directory",
+          "universities": "Universities and research"
+        }
+      }
+    },
+    "numbersTitle": "Barakah in numbers",
+    "numbersIntro": "Each figure shows its source and the date it was checked.",
+    "aboutLink": "About Barakah",
+    "programmesTitle": "Featured programmes",
+    "programmesIntro": "Eligibility and duration as published; ENEC decides admission.",
+    "nat": {
+      "uae_only": "UAE nationals",
+      "uae_priority": "UAE nationals first",
+      "open": "Open to all"
+    },
+    "peopleTitle": "People behind Barakah",
+    "newsTitle": "Latest news",
+    "safetyTitle": "Safety culture",
+    "safetyEyebrow": "M08",
+    "safetyBody": "The 10 traits of a healthy nuclear safety culture, human performance tools and how to raise a concern safely.",
+    "safetyLink": "Explore safety culture",
+    "speakUpLink": "Raise a concern",
+    "emergencyTitle": "Emergency information",
+    "emergencyEyebrow": "Official guidance",
+    "emergencyBody": "Public emergency guidance lives on official ENEC and NCEMA pages. Kafa'a links to them.",
+    "emergencyLink": "Official links",
+    "dalilTitle": "Dalil, the guide",
+    "dalilEyebrow": "Governed AI",
+    "dalilBody": "Ask about careers, programmes and partnering. Dalil answers only from approved sources, cites them, and hands off to people."
+  },
+  "news": {
+    "topics": {
+      "talent": "Talent",
+      "research": "Research",
+      "community": "Community",
+      "environment": "Environment",
+      "partners": "Partners",
+      "technology": "Technology",
+      "barakah": "Barakah",
+      "corporate": "Corporate"
+    },
+    "off": "The news section is switched off.",
+    "intro": "Short, sourced updates about people, programmes, partners and the community. Read the full story at the source.",
+    "topic": "Topic",
+    "year": "Year",
+    "none": "No news matches these filters.",
+    "notFound": "News item not found",
+    "more": "More news"
+  },
+  "about": {
+    "eyebrow": "About",
+    "intro": "Who owns, operates and oversees Barakah, and where people fit in. Entities and roles only; no named staff.",
+    "structureLink": "Group structure and oversight",
+    "unit": "Unit",
+    "unitN": "Unit {n}",
+    "licence": "FANR operating licence",
+    "grid": "Grid connection",
+    "cod": "Commercial operation",
+    "unitsCaption": "Barakah unit milestones",
+    "unitsSources": "Unit milestones: sources",
+    "strategyTitle": "Enterprise Strategy 2025-2029",
+    "strategyIntro": "ENEC names three strategic themes. Kafa'a is a concept for the people side of the third.",
+    "themeN": "Theme {n}",
+    "themes": {
+      "fleet": {
+        "title": "Excellence in Fleet Management",
+        "body": "Operating the four Barakah units safely and reliably."
+      },
+      "growth": {
+        "title": "Program Growth",
+        "body": "Growth across the nuclear value chain and adjacent sectors, including advanced reactors."
+      },
+      "people": {
+        "title": "People & Culture",
+        "body": "Building and keeping a qualified, largely Emirati workforce with a strong safety culture."
+      }
+    },
+    "barakahTitle": "Barakah Nuclear Energy Plant",
+    "barakahIntro": "Four APR-1400 pressurised water reactors in the Al Dhafra Region of Abu Dhabi. Each operating licence runs for 60 years.",
+    "peopleTitle": "The workforce",
+    "peopleIntro": "Group figures from ENEC's audited 2024 sustainability data and other public reports.",
+    "noNamesTitle": "No named staff on this site",
+    "noNamesBody": "Kafa'a shows entities and roles, never people. For leadership and governance, see",
+    "moreTitle": "Keep exploring",
+    "more": {
+      "structure": "Group structure and oversight",
+      "careers": "Career Map",
+      "safety": "Safety culture",
+      "esg": "Climate and ESG"
+    }
+  },
+  "structure": {
+    "intro": "ENEC and its subsidiaries, who owns them, and the bodies that oversee Barakah.",
+    "ownershipTitle": "Ownership",
+    "diagramNote": "Simplified. ENEC Consulting ownership is not confirmed in public sources.",
+    "diagramAlt": "ADQ owns 100% of ENEC. ENEC owns 82% of ENEC Operations and of ENEC Commercial; KEPCO owns 18% of each. ENEC Consulting is an ENEC subsidiary.",
+    "entitiesTitle": "Group entities",
+    "entities": {
+      "enec": {
+        "legal": "Emirates Nuclear Energy Company",
+        "name": "ENEC",
+        "role": "Owner and developer of Barakah; investment arm; leads international partnerships. Established December 2009.",
+        "owner": "100% ADQ (since 2020)",
+        "url": "https://www.enec.ae/about-us/overview/",
+        "source": "ENEC · About us"
+      },
+      "enec-ops": {
+        "legal": "Nawah Energy Company PJSC",
+        "name": "ENEC Operations",
+        "role": "Operates and maintains Barakah Units 1-4 and holds the four FANR operating licences. Still registered and licensed as Nawah.",
+        "owner": "ENEC 82% · KEPCO 18%",
+        "url": "https://www.enec.ae/our-subsidiaries/enec-operations/our-shareholders/",
+        "source": "ENEC Operations · Our shareholders"
+      },
+      "enec-com": {
+        "legal": "Barakah One Company PJSC",
+        "name": "ENEC Commercial",
+        "role": "Holds project finance, the 60-year power purchase agreement with EWEC and the DoE generation licence.",
+        "owner": "ENEC 82% · KEPCO 18%",
+        "url": "https://www.enec.ae/our-subsidiaries/enec-commercial/about-enec-commercial/",
+        "source": "ENEC Commercial · About"
+      },
+      "enec-con": {
+        "legal": "ENEC subsidiary",
+        "name": "ENEC Consulting",
+        "role": "Advisory arm for countries starting nuclear programmes, launched 15 January 2025.",
+        "owner": "ENEC subsidiary (share not confirmed)",
+        "url": "https://www.enec.ae/our-subsidiaries/enec-consulting/about-enec-consulting/",
+        "source": "ENEC Consulting · About"
+      }
+    },
+    "oversightTitle": "Regulators and oversight",
+    "oversightIntro": "Kafa'a is not a regulatory channel. Regulators appear only as sources and, where ENEC chooses, as observers of aggregate reports.",
+    "oversight": {
+      "fanr": {
+        "name": "FANR",
+        "body": "Independent regulator for safety, security, radiation protection and safeguards. Certifies ROs and SROs under FANR-REG-17."
+      },
+      "iaea": {
+        "name": "IAEA",
+        "body": "Safeguards and peer-review missions (INIR, OSART, EPREV); source of SSG-75 staffing and qualification guidance."
+      },
+      "ead": {
+        "name": "EAD",
+        "body": "Environmental regulator; partner on the 500,000-coral programme."
+      },
+      "ad-doe": {
+        "name": "Abu Dhabi DoE",
+        "body": "Generation licence and the Clean Energy Certificate scheme."
+      },
+      "ncema": {
+        "name": "NCEMA",
+        "body": "National emergency authority for off-site planning; supervises national Barakah exercises."
+      }
+    },
+    "directoryEntry": "Directory entry",
+    "summaryTitle": "In brief",
+    "tree": {
+      "adq": "ADQ",
+      "enec": "ENEC · Emirates Nuclear Energy Company",
+      "ops": "ENEC Operations (Nawah) · 82%",
+      "com": "ENEC Commercial (Barakah One) · 82%",
+      "con": "ENEC Consulting",
+      "kepco18": "KEPCO · 18%"
+    }
+  },
+  "community": {
+    "eyebrow": "Community",
+    "intro": "ENEC's activity in the Al Dhafra Region and its outreach to students and young professionals.",
+    "esgLink": "Climate and ESG",
+    "numbersTitle": "Community in numbers",
+    "dhafraTitle": "Al Dhafra",
+    "eventsTitle": "Events and career fairs",
+    "eventsIntro": "Past events link their source; future dates are samples until confirmed.",
+    "eventKinds": {
+      "career_fair": "Career fair",
+      "open_day": "Open day",
+      "webinar": "Webinar",
+      "festival": "Festival",
+      "info_session": "Information session",
+      "summer_school": "Summer school"
+    },
+    "stemTitle": "STEM for schools",
+    "stemIntro": "ENEC publishes learning materials on its students page.",
+    "stem": {
+      "booklets": {
+        "title": "Student booklets",
+        "body": "For ages 6-10, 11-16 and 17-19."
+      },
+      "vr": {
+        "title": "VR plant tour app",
+        "body": "A virtual tour of the plant for students."
+      },
+      "festivals": {
+        "title": "Science festivals",
+        "body": "Abu Dhabi Science Festival, Emirates Skills and Emirati Bright Minds."
+      }
+    },
+    "peopleTitle": "People programmes",
+    "people": {
+      "win": {
+        "title": "Women in Nuclear UAE",
+        "body": "Launched in 2018; helped found the WiN Middle East chapter in 2023. Mentoring, a book club and visibility programmes."
+      },
+      "youth": {
+        "title": "Barakah Youth Council",
+        "body": "Founded in 2018; hosted IYNC 2024 in Abu Dhabi for young nuclear professionals."
+      }
+    }
+  },
+  "esg": {
+    "eyebrow": "Climate and ESG",
+    "intro": "Barakah's contribution to the UAE's clean-energy goals, with links to ENEC's sustainability reporting.",
+    "climateTitle": "Climate contribution",
+    "socialTitle": "Investing in people",
+    "socialIntro": "Training hours across the group, from ENEC's sustainability report.",
+    "trainingChart": "Training hours by year",
+    "reportsTitle": "Reports and pages",
+    "reportsIntro": "Kafa'a links to ENEC's reporting rather than copying it, so figures never go stale here.",
+    "reports": {
+      "sr2024": {
+        "title": "Sustainability Report 2024",
+        "body": "GRI data; published 23 October 2025."
+      },
+      "sustainability": {
+        "title": "ENEC · Sustainability",
+        "body": "Sustainability approach and past reports."
+      },
+      "climate": {
+        "title": "ENEC · Climate change",
+        "body": "Barakah's role in the UAE's climate goals."
+      }
+    },
+    "communityPrompt": "Looking for Al Dhafra community programmes?"
+  },
+  "emergency": {
+    "headline": "Go In, Stay In, Listen In",
+    "links": {
+      "enecFaq": "ENEC Operations · Emergency preparedness FAQs",
+      "enecEp": "ENEC · Emergency preparedness",
+      "ncema": "NCEMA · National Emergency Crisis and Disaster Management Authority",
+      "fanr": "FANR · Federal Authority for Nuclear Regulation"
+    }
+  },
+  "faq": {
+    "intro": "Answers to common questions. Can't find yours? Ask Dalil or use the contact form.",
+    "askDalil": "Ask Dalil",
+    "topic": "Topic",
+    "topics": {
+      "general": "General",
+      "careers": "Careers",
+      "licensing": "Licensing",
+      "programmes": "Programmes",
+      "suppliers": "Suppliers",
+      "privacy": "Privacy",
+      "dalil": "Dalil",
+      "safety": "Safety culture",
+      "emergency": "Emergency",
+      "community": "Community"
+    },
+    "none": "No questions match.",
+    "glossaryTitle": "Glossary",
+    "glossaryIntro": "Arabic-English nuclear terms reviewed by Nuclear Training."
+  },
+  "contact": {
+    "sent": "Message sent",
+    "intro": "Send a question to the right team. Messages go to a role mailbox, never to a named person.",
+    "doneTitle": "Thank you, your message was sent",
+    "doneBody": "It was routed to {route}. Reference: {ref}.",
+    "another": "Send another message",
+    "closedTitle": "The contact form is closed",
+    "closedBody": "Please use the official channels on the right.",
+    "purpose": "Purpose: we use your message only to answer it. Name and email are optional; without them we cannot reply.",
+    "topic": "Topic",
+    "topics": {
+      "careers": "Careers and vacancies",
+      "programmes": "Talent programmes and scholarships",
+      "suppliers": "Becoming a supplier",
+      "universities": "Universities and research",
+      "media": "Media",
+      "accessibility": "Accessibility",
+      "other": "Something else"
+    },
+    "routesTo": "Goes to: {route}",
+    "message": "Your message",
+    "messageHint": "Please don't include personal details about other people.",
+    "concernTitle": "Raising a safety concern?",
+    "concernBody": "Kafa'a does not take concerns. Use the Employee Concerns Program channels, which are confidential and independent.",
+    "concernLink": "See the ECP channels",
+    "name": "Name",
+    "email": "Email",
+    "optional": "Optional",
+    "consent": "I agree that my name and email are used to reply to this message.",
+    "consentHint": "Kept for {days} days, then deleted.",
+    "consentNeeded": "Tick the consent box, or remove your name and email.",
+    "send": "Send",
+    "retention": "Messages are kept for {days} days.",
+    "officialTitle": "Official channels",
+    "official": {
+      "careers": "ENEC careers",
+      "vendors": "ENEC vendor education and ICV",
+      "enec": "ENEC · About us"
+    },
+    "safetyTitle": "Safety concerns",
+    "safetyBody": "For a nuclear safety, quality or workplace concern, use the ECP channels."
+  },
+  "legal": {
+    "terms": "Terms of use",
+    "privacy": "Privacy notice",
+    "accessibility": "Accessibility statement",
+    "intro": "How Kafa'a works, what it holds and how we make it usable for everyone.",
+    "unknown": "This legal page does not exist.",
+    "rightsTitle": "Your data rights",
+    "rightsBody": "Signed-in users can view, export or ask to correct their data.",
+    "rightsLink": "Go to My settings",
+    "barrierTitle": "Found a barrier?",
+    "barrierLink": "Tell us through the contact form (topic: accessibility)",
+    "reviewed": "Content as of {date}; next review {next}."
   }
 }

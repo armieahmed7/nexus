@@ -207,6 +207,8 @@ export class LocalBackend implements Repository {
     if (!current || !ctx.canReadRow(table, current)) return { ok: false, code: 'not_found', message: 'Not found' };
     if (def.write.mode === 'append') return { ok: false, code: 'forbidden', message: `${table} is append-only: corrections create a new entry with a reason` };
     const next = { ...current, ...(patch as Record<string, unknown>), id };
+    // G5 (M16): mirror of the kafaa_feature_flags update policy: locked flags never change
+    if (table === 'feature_flags' && current.locked) return { ok: false, code: 'forbidden', message: 'This flag is locked by design' };
     if (!ctx.canWriteRow(table, current, 'update') || !ctx.canWriteRow(table, next, 'update')) {
       await this.audit(`update:${table}`, table, id, 'refused', 'RLS: update not permitted');
       return { ok: false, code: 'forbidden', message: 'Not permitted' };
@@ -310,6 +312,8 @@ export class LocalBackend implements Repository {
       },
       ecoScholarships: async () => (ctx().has('cohorts', ['Scope', 'R']) || ctx().has('workforce_analytics', ['Agg', 'R']) ? (snap.eco_scholarships as never) : []),
       ecoPartnerships: async () => snap.eco_partnerships.filter((p) => p.basis === 'public' || ctx().has('research', ['R', 'A'])) as never,
+      // G5 (M16): Kafa'a's NEXUS ledger appends (local mirror), admin and auditor only
+      ledger: async () => (ctx().has('audit_log', ['R']) ? ([...this.tables.ledger_local].sort((a, b) => Number(b.seq) - Number(a.seq)) as never) : []),
     };
   }
 }
