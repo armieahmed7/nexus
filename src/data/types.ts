@@ -130,6 +130,8 @@ export interface Repository {
   rpc: Rpc;
   nexus: NexusReads;
   whoami(): Promise<Identity>;
+  /** Switch the acting persona (null = anonymous). Called by the session provider only. */
+  setPersona(persona: string | null): void;
   /** Fires with the tables that changed so hooks can refetch. */
   subscribe(fn: (tables: Table[]) => void): () => void;
   /** Local backend only: restore the seeded demo tenant. */

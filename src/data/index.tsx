@@ -20,16 +20,12 @@ export function getLocalBackend(): LocalBackend {
   return (localSingleton ??= new LocalBackend());
 }
 let supaSingleton: SupabaseBackend | null = null;
-export function getSupabaseBackend(persona: string | null): SupabaseBackend {
-  if (!supaSingleton) supaSingleton = new SupabaseBackend(persona);
-  else supaSingleton.setPersona(persona);
-  return supaSingleton;
+export function getSupabaseBackend(): SupabaseBackend {
+  return (supaSingleton ??= new SupabaseBackend(null));
 }
-export function makeBackend(kind: BackendKind, persona: string | null): Repository {
-  if (kind === 'supabase') return getSupabaseBackend(persona);
-  const b = getLocalBackend();
-  b.setPersona(persona);
-  return b;
+/** Backends are singletons; the session sets the persona on them (repo.setPersona) inside an effect. */
+export function makeBackend(kind: BackendKind): Repository {
+  return kind === 'supabase' ? getSupabaseBackend() : getLocalBackend();
 }
 
 const RepoContext = createContext<Repository | null>(null);

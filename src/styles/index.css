@@ -49,7 +49,7 @@
   .input { @apply h-9 w-full rounded-btn border border-line-strong bg-panel px-3 text-[14px] text-ink placeholder:text-ink-3 focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/20; }
   textarea.input { @apply h-auto py-2; }
   .input[aria-invalid='true'] { @apply border-bad ring-bad/20; }
-  .chip { @apply inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11.5px] font-semibold leading-4; }
+  .chip { @apply inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-[11.5px] font-semibold leading-4; }
   .link-plain { @apply text-ink; text-decoration: none !important; }
   .skeleton { @apply animate-pulse rounded bg-sunken; }
   .table-base th { @apply caps whitespace-nowrap px-3 py-2 text-start; }

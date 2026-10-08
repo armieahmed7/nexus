@@ -57,7 +57,7 @@ function storedLocalPersona(): string | null {
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [backend, setBackend] = useState<BackendKind>(config.backend);
   const [personaId, setPersonaId] = useState<string | null>(() => (config.backend === 'supabase' ? activeNexusPersona() : storedLocalPersona()));
-  const repo = useMemo(() => makeBackend(backend, personaId), [backend, personaId]);
+  const repo = useMemo(() => makeBackend(backend), [backend]);
   const [identity, setIdentity] = useState<Identity>(ANON);
   const [person, setPerson] = useState<PeopleRow | null>(null);
   const [status, setStatus] = useState<Session['status']>('loading');
@@ -65,6 +65,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let alive = true;
     setStatus('loading');
+    repo.setPersona(personaId);
     (async () => {
       const who = await repo.whoami().catch(() => ANON);
       const me = who.personId ? await repo.get('people', who.personId).catch(() => null) : null;
@@ -76,7 +77,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     return () => {
       alive = false;
     };
-  }, [repo]);
+  }, [repo, personaId]);
 
   // Pick up NEXUS role-card changes made in another tab (supabase mode).
   useEffect(() => {
