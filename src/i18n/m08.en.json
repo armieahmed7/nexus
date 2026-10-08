@@ -21,5 +21,215 @@
       "title": "ECP referrals",
       "purpose": "Referral metadata only (channel, category, status). Concern text never enters Kafa'a."
     }
+  },
+  "sc": {
+    "eyebrow": "Nuclear safety culture",
+    "intro": "How ENEC Operations describes a healthy nuclear safety culture, the practices behind it and how anyone can raise a concern safely.",
+    "myLink": "My safety-culture learning",
+    "oeLink": "Operating experience",
+    "traitsTitle": "The 10 traits",
+    "traitsIntro": "Published by ENEC Operations.",
+    "informedBy": "informed by INPO 12-012 and WANO PL 2013-01",
+    "valuesTitle": "AT SITE values",
+    "valuesIntro": "The values ENEC Operations works by.",
+    "values": {
+      "A": "Accountability",
+      "T": "Teamwork",
+      "S": "Safety",
+      "I": "Integrity",
+      "T2": "Trust",
+      "E": "Excellence"
+    },
+    "practicesTitle": "How it is kept alive",
+    "practices": {
+      "assessment": {
+        "title": "Independent assessment",
+        "body": "Every two years; 89% of the workforce completed the 2024 survey."
+      },
+      "panels": {
+        "title": "Monitoring panels",
+        "body": "Six-monthly nuclear safety culture monitoring panels."
+      },
+      "steering": {
+        "title": "Steering committees",
+        "body": "Quarterly steering committees, pulse surveys and peer reviews."
+      },
+      "majlis": {
+        "title": "Leader-led majlis",
+        "body": "Leaders meet teams in majlis sessions to talk about safety."
+      },
+      "fair": {
+        "title": "Safety Culture Fair",
+        "body": "An annual Nuclear Safety Culture Fair; daily safety messages during outages."
+      }
+    },
+    "huTitle": "Human performance tools",
+    "huIntro": "Core tools apply to everyone, supplemental workers included; conditional tools depend on the job.",
+    "hu": {
+      "core": "Core tools",
+      "coreHint": "Everyone, every job",
+      "conditional": "Conditional tools",
+      "conditionalHint": "When the job calls for them"
+    },
+    "concernsTitle": "Raising a concern",
+    "concernsBody": "Anyone can raise a nuclear safety, quality or workplace concern through the Employee Concerns Program, which is independent and confidential. Kafa'a points you to the channels; it never takes or stores a concern.",
+    "concernsLink": "See the ECP channels",
+    "noGameTitle": "No points, no badges",
+    "noGameBody": "Safety culture is never scored or gamified in Kafa'a.",
+    "noGamePill": "Locked by design"
+  },
+  "speak": {
+    "eyebrow": "Employee Concerns Program",
+    "intro": "Kafa'a does not take concerns. Use one of the Employee Concerns Program channels ENEC publishes.",
+    "protectionTitle": "You are protected",
+    "protection": "You are protected against harassment, intimidation, retaliation and discrimination for raising a concern.",
+    "channelsTitle": "Channels",
+    "external": "External option, run by the regulator.",
+    "sourceNote": "Channels as published in ENEC's Sustainability Report 2024 (p.86-87) and the UAE national report to the Convention on Nuclear Safety.",
+    "anonTitle": "Prefer not to give your name?",
+    "anonBody": "Say so when you contact the ECP. The ECP is confidential and independent, and explains which anonymity options apply to each channel. FANR's Report to Protect is a further, external option.",
+    "whatTitle": "What can I raise?",
+    "what": {
+      "1": "Nuclear safety or quality issues.",
+      "2": "Harassment, intimidation, retaliation or discrimination.",
+      "3": "Anything you feel you cannot raise through your line."
+    },
+    "privacyTitle": "This page stores nothing",
+    "privacyBody": "There is no form here, nothing you do on this page is recorded, analytics are switched off and Dalil is not available on this page.",
+    "owner": "Content owned by the Employee Concerns Program. Kafa'a editors cannot change it without ECP approval."
+  },
+  "my": {
+    "intro": "One trait each week, human performance refreshers and reflection prompts. Your notes stay in this browser.",
+    "tabTraits": "Traits",
+    "tabHu": "HU tool refreshers",
+    "traitList": "The 10 traits",
+    "thisWeek": "This week's trait",
+    "trait": "Trait {n}",
+    "looksLike": "What it looks like",
+    "reflect": "Reflect",
+    "notesTitle": "My reflection",
+    "notesPlaceholder": "A private note to yourself",
+    "saveNote": "Save in this browser",
+    "saved": "Saved in this browser",
+    "notesPrivacy": "Notes are kept only in this browser. They are never sent to Kafa'a, your manager or anyone else.",
+    "relatedOe": "Related operating experience",
+    "noOe": "No published lesson is linked to this trait yet.",
+    "huIntro": "Refresh the tools you use every day. Nothing here is scored.",
+    "whenToUse": "When to use it",
+    "coreWhen": "On every job, by everyone, including supplemental workers.",
+    "conditionalWhen": "When the task, its risk or the procedure calls for it; your pre-job brief decides.",
+    "noGame": "There are no points, streaks or badges for safety-culture learning."
+  },
+  "oe": {
+    "intro": "Curated, de-identified lessons from this and other plants, each reviewed by the OE Screening Committee before publication.",
+    "new": "New lesson",
+    "lesson": "Lesson",
+    "source": "Source",
+    "traits": "Traits",
+    "trait": "Trait",
+    "reviewedOn": "Review date",
+    "reviewingBody": "Reviewing body",
+    "status": "Status",
+    "none": "No lessons match these filters.",
+    "footer": "Nothing security-sensitive is published. Lessons marked SAMPLE are illustrative.",
+    "deidentified": "De-identified",
+    "lessonFor": "The lesson",
+    "standards": "Affected qualification standards",
+    "toLearning": "Open my safety-culture learning",
+    "sendToReview": "Send to review",
+    "sentToReview": "Sent to the OE Screening Committee",
+    "publish": "Publish",
+    "publishTitle": "Publish this lesson",
+    "publishBody": "The lesson becomes visible to all staff with today's review date and the OE Screening Committee as reviewing body.",
+    "actingEditor": "Content editor",
+    "checkDeid": "It is de-identified: no names, crews, dates or places that identify people.",
+    "checkNoSec": "It contains nothing security-sensitive (no security arrangements, layouts or procedures).",
+    "checksNeeded": "Confirm both checks to publish.",
+    "published": "Lesson published",
+    "drafted": "Draft saved",
+    "saveDraft": "Save draft",
+    "newHelp": "Write in both languages. Drafts are visible only to editors and training staff until published.",
+    "titleEn": "Title (English)",
+    "titleAr": "Title (Arabic)",
+    "summaryEn": "What happened (English)",
+    "summaryAr": "What happened (Arabic)",
+    "lessonEn": "Lesson (English)",
+    "lessonAr": "Lesson (Arabic)",
+    "pickTrait": "Pick at least one trait."
+  },
+  "ecp": {
+    "intro": "Referral metadata for the Employee Concerns Program team. The concern itself stays in the ECP system.",
+    "log": "Log a referral",
+    "logSave": "Log referral",
+    "privacyTitle": "Metadata only",
+    "privacyBody": "Kafa'a never holds the concern text or anything that identifies the person who raised it. Only the channel, category, anonymous flag, status and the ECP system reference are kept, and only you can see them.",
+    "ref": "Reference",
+    "received": "Received",
+    "channel": "Channel",
+    "category": "Category",
+    "anonymous": "Anonymous",
+    "anon": "Anonymous",
+    "named": "Named in ECP system",
+    "priority": "Priority",
+    "status": "Status",
+    "sysRef": "ECP system reference",
+    "overdue": "Triage overdue",
+    "mOpen": "Open referrals",
+    "mAwaiting": "Awaiting triage",
+    "mOverdue": "Triage overdue",
+    "mAnon": "Raised anonymously",
+    "targetNote": "Demo target: triage within 2 UAE working days",
+    "byCategory": "By category",
+    "byChannel": "By channel",
+    "allOpen": "All open",
+    "chan": {
+      "ecp_office": "ECP office",
+      "intranet": "Intranet portal",
+      "phone": "24/7 phone line",
+      "email": "Email",
+      "unit_rep": "Unit representative",
+      "r2p_referral": "FANR R2P referral"
+    },
+    "cat": {
+      "nuclear_safety": "Nuclear safety",
+      "quality": "Quality",
+      "hird": "HIRD (harassment, intimidation, retaliation, discrimination)",
+      "other": "Other"
+    },
+    "prio": {
+      "routine": "Routine",
+      "priority": "Priority",
+      "urgent": "Urgent"
+    },
+    "st": {
+      "received": "Received",
+      "triaged": "Triaged",
+      "investigating": "Investigating",
+      "referred": "Referred",
+      "closed": "Closed"
+    },
+    "out": {
+      "substantiated": "Substantiated",
+      "not_substantiated": "Not substantiated",
+      "referred_cap": "Referred to the corrective action programme",
+      "referred_hr": "Referred to HR",
+      "referred_external": "Referred externally",
+      "no_action": "No further action"
+    },
+    "outcome": "Outcome",
+    "closedOn": "Closed on",
+    "triageBy": "Triage by",
+    "triageTitle": "Record the next step",
+    "nextStatus": "Next status",
+    "record": "Record step",
+    "closedNote": "Closed referrals cannot be reopened in Kafa'a. Reopen the case in the ECP system.",
+    "confirmTitle": "Update referral {ref}",
+    "confirmBody": "Moves the referral from {from} to {to}. Only metadata is recorded; the step is written to the audit log and the NEXUS ledger.",
+    "actingAs": "ECP officer",
+    "noTextTitle": "Do not type the concern here",
+    "noTextBody": "Record only the metadata below. The concern, names and evidence belong in the ECP system.",
+    "sysRefHint": "The case reference in the ECP system, for example ECP-SYS/2026-123.",
+    "anonLabel": "Raised anonymously",
+    "anonHint": "Tick when the person chose not to give their name to the ECP."
   }
 }
