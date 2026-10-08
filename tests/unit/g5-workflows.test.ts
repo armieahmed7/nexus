@@ -104,7 +104,7 @@ describe('access administration', () => {
     const mine = await b.list('people');
     expect(mine.length).toBeGreaterThan(0);
     expect(mine.every((p) => p.org_id === mine[0].org_id)).toBe(true);
-    expect((await b.rpc.grantRole(mine[0].id, 'partner_user', 'org', mine[0].org_id)).ok).toBe(true);
+    expect((await b.rpc.grantRole(mine[0].id, 'partner_user', 'org', mine[0].org_id ?? null)).ok).toBe(true);
     expect((await b.rpc.grantRole(mine[0].id, 'admin', 'all', null)).ok).toBe(false);
   });
   it('access review: keep stamps the review, revoke needs a reason, nobody reviews their own access', async () => {

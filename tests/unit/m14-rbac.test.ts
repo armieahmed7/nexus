@@ -6,7 +6,8 @@
  */
 import { beforeAll, describe, expect, it } from 'vitest';
 import { LocalBackend } from '../../src/data/local/LocalBackend';
-import { SCHEMA, TABLE_NAMES, type TableName } from '../../src/data/schema';
+import { SCHEMA, TABLE_NAMES } from '../../src/data/schema';
+import type { Table } from '../../src/data/types';
 import { MATRIX, grantsFor, type Level, type PlatformRole, type Resource } from '../../src/auth/policy';
 import { checkGuard } from '../../src/auth/guards';
 import { ROUTES } from '../../src/routes/registry';
@@ -53,8 +54,8 @@ describe.each(CARDS.map((c) => [c.persona, c] as const))('persona %s', (_id, car
   it('reads match the matrix for every table', async () => {
     for (const t of TABLE_NAMES) {
       const rules = SCHEMA[t].read;
-      const raw = b.raw(t as TableName);
-      const seen = await b.list(t as TableName);
+      const raw = b.raw(t as Table);
+      const seen = await b.list(t as Table);
       const g = rules.map((r) => levels(roles, r.res));
       // No level at all on any rule resource: nothing may come back.
       if (g.every((s) => s.size === 0)) {
@@ -67,7 +68,7 @@ describe.each(CARDS.map((c) => [c.persona, c] as const))('persona %s', (_id, car
       // Only Own-type grants (no R/W/A/Scope/OwnOrg/Agg anywhere): every visible row is the caller's own or public.
       const ownOnly = g.every((s) => !any(s, ['R', 'W', 'A', 'Scope', 'OwnOrg', 'OrgW', 'Agg']));
       if (ownOnly) {
-        for (const row of seen as Record<string, unknown>[]) {
+        for (const row of seen as unknown as Record<string, unknown>[]) {
           const mine = rules.some((r) => r.person && row[r.person] === me);
           expect(mine, `${card.persona} saw a ${t} row that is not theirs`).toBe(true);
         }
@@ -79,7 +80,7 @@ describe.each(CARDS.map((c) => [c.persona, c] as const))('persona %s', (_id, car
     for (const t of TABLE_NAMES) {
       const w = SCHEMA[t].write;
       if (w.mode === 'direct') continue;
-      const r = await b.insert(t as TableName, { id: `rbac-probe-${t}` } as never);
+      const r = await b.insert(t as Table, { id: `rbac-probe-${t}` } as never);
       expect(r.ok, `${card.persona} inserted into ${t}`).toBe(false);
     }
   });
@@ -89,7 +90,7 @@ describe.each(CARDS.map((c) => [c.persona, c] as const))('persona %s', (_id, car
       const w = SCHEMA[t].write;
       if (w.mode !== 'direct' || w.anonInsert || !w.res) continue;
       if (levels(roles, w.res).size > 0) continue;
-      const r = await b.insert(t as TableName, { id: `rbac-probe-${t}` } as never);
+      const r = await b.insert(t as Table, { id: `rbac-probe-${t}` } as never);
       expect(r.ok, `${card.persona} inserted into ${t}`).toBe(false);
       expect(r.code).toBe('forbidden');
     }
