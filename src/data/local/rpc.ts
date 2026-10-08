@@ -11,6 +11,7 @@ import { MIN_GROUP_SIZE } from '../../auth/policy';
 import { addWorkingDays, isoDate, todayIso, bookingPriority, scoreJpm } from '../../domain/rules';
 import { canonical, chainHash, GENESIS } from '../audit';
 import { newId } from './store';
+import { G1LocalRpc } from './rpc.g1';
 
 const ELEVATED: PlatformRole[] = ['admin', 'auditor', 'hr_director', 'licensing_coord', 'training_manager', 'ecp_officer', 'instructor', 'hr_analyst'];
 const addMonths = (d: string, m: number) => {
@@ -20,7 +21,10 @@ const addMonths = (d: string, m: number) => {
 };
 
 export class LocalRpc implements Rpc {
-  constructor(private readonly b: LocalBackend) {}
+  constructor(private readonly b: LocalBackend) {
+    this.g1 = new G1LocalRpc(b);
+  }
+  private readonly g1: G1LocalRpc;
 
   private get ctx() {
     return this.b.access();
@@ -116,7 +120,8 @@ export class LocalRpc implements Rpc {
       await this.setLicenceStatus(l.id, 'lapsed', 'Detected by sweep: expiry date passed');
       lapses++;
     }
-    for (const m of this.b.raw('medical_due').filter((x) => x.due_on < today && x.flag !== 'fit')) {
+    // [G1 fix] a past due date with no new date is overdue whatever the last flag said (M03 acceptance)
+    for (const m of this.b.raw('medical_due').filter((x) => x.due_on < today)) {
       if (this.b.raw('licensing_tasks').some((t) => t.person_id === m.person_id && t.kind === 'medical_overdue' && t.status === 'open')) continue;
       this.b.rawInsert('licensing_tasks', { id: newId('lt'), kind: 'medical_overdue', person_id: m.person_id, due_at: addWorkingDays(today, 5), title_en: 'Medical overdue: confirm new date', title_ar: 'فحص طبي متأخر: تأكيد موعد جديد', rule_ref: 'FANR-REG-17 Art. 10' });
       medical++;
@@ -401,6 +406,15 @@ export class LocalRpc implements Rpc {
     if (route.startsWith('/speak-up') || route.startsWith('/ar/speak-up')) return; // M08: the speak-up route sends no audit events
     await this.b.audit('access.denied', null, route.slice(0, 200), 'refused', `route guard: ${resource}`);
   }
+  // ───────────── G1 additions (src/data/local/rpc.g1.ts)
+  ackEvaluation(evaluationId: string, note: string) { return this.g1.ackEvaluation(evaluationId, note); }
+  qualExpirySweep() { return this.g1.qualExpirySweep(); }
+  reviewQualRecord(recordId: string, decision: 'carry_over' | 'retrain', note: string) { return this.g1.reviewQualRecord(recordId, decision, note); }
+  licensingAlerts() { return this.g1.licensingAlerts(); }
+  closeLicensingTask(taskId: string, note: string) { return this.g1.closeLicensingTask(taskId, note); }
+  recordMedicalDate(personId: string, dueOn: string, flag: 'fit' | 'not_confirmed', sourceRef: string) { return this.g1.recordMedicalDate(personId, dueOn, flag, sourceRef); }
+  crewAvailability() { return this.g1.crewAvailability(); }
+
   async auditVerify() {
     await this.b.whenReady();
     if (!this.ctx.has('audit_log', ['R'])) return { ok: false, code: 'forbidden', message: 'Audit log is restricted' };

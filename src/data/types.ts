@@ -103,6 +103,21 @@ export interface Rpc {
   applicationFunnel(): Promise<{ programme_id: string; stage: string; n: number | null; suppressed: boolean }[]>;
   logDenied(route: string, resource: string): Promise<void>;
   auditVerify(): Promise<Result<{ entries: number }>>;
+  // ───── G1 additions (M02 qualification, M03 licensing tracker). SQL: supabase/migrations/20261008131000_kafaa_g1_quals_licensing.sql
+  /** Supervisor acknowledges a signed evaluation in their scope (not their own, not one they evaluated). */
+  ackEvaluation(evaluationId: string, note: string): Promise<Result<{ ack_id: string }>>;
+  /** Expiry sweep over records in the caller's scope: notices at the standard's intervals (default 90/60/30) to person and manager; due/expired status. */
+  qualExpirySweep(): Promise<Result<{ notices: number; due: number; expired: number }>>;
+  /** Decide a record flagged by a standard revision: carry it over to the new version, or require retraining. */
+  reviewQualRecord(recordId: string, decision: 'carry_over' | 'retrain', note: string): Promise<Result<{ record_status: string; standard_id: string }>>;
+  /** Licensing alerts: renewal tasks from 12 months out, quarterly proficiency risk, 75-day FANR exam-notice reminders, withdrawal escalation, medical-due notices. */
+  licensingAlerts(): Promise<Result<{ renewal: number; proficiency: number; exam_notice: number; withdrawal: number; medical_notices: number }>>;
+  /** Close a coordinator task (the named role sent the notice through official channels; Kafa'a sends nothing to FANR). */
+  closeLicensingTask(taskId: string, note: string): Promise<Result>;
+  /** Mirror a new medical due date and fitness flag from the occupational health record (no medical content). Closes open medical tasks. */
+  recordMedicalDate(personId: string, dueOn: string, flag: 'fit' | 'not_confirmed', sourceRef: string): Promise<Result<{ closed: number }>>;
+  /** Crew availability for shift supervisors: available / not available only (null when the source sync is stale). Never medical detail. */
+  crewAvailability(): Promise<{ person_id: string; available: boolean | null }[]>;
 }
 
 /** Read-only views over existing NEXUS tables (SECURITY DEFINER kafaa_nexus_* functions; a static snapshot in local mode). */

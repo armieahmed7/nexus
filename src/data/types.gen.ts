@@ -317,6 +317,16 @@ export interface EvaluationsRow {
   correction_reason?: string | null;
   created_at: string;
 }
+export interface EvaluationAcksRow {
+  id: string;
+  evaluation_id: string;
+  record_id: string;
+  person_id: string;
+  ack_by_person_id: string;
+  ack_role: string;
+  note?: string | null;
+  created_at: string;
+}
 export interface RequalRulesRow {
   id: string;
   standard_id: string;
@@ -1203,6 +1213,7 @@ export interface Tables {
   evaluator_quals: EvaluatorQualsRow;
   qual_records: QualRecordsRow;
   evaluations: EvaluationsRow;
+  evaluation_acks: EvaluationAcksRow;
   requal_rules: RequalRulesRow;
   licences: LicencesRow;
   medical_due: MedicalDueRow;
