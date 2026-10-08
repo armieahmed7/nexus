@@ -732,3 +732,6 @@ grant execute on function
   kafaa_start_attempt(text), kafaa_submit_attempt(text, jsonb), kafaa_release_attempt(text, text), kafaa_record_performance(text, text, boolean, numeric, text),
   kafaa_attempt_feedback(text), kafaa_file_appeal(text, text, text), kafaa_decide_appeal(text, text, text, text[])
 to authenticated;
+-- Internal helpers and trigger functions are not callable by signed-in users either (the RPCs and triggers run them as the owner).
+revoke execute on function kafaa_g2_in_scope(text), kafaa_g2_taken(text), kafaa_g2_next_cert(integer), kafaa_g2_retake(text, text, timestamptz, text), kafaa_g2_retake_message(text, text),
+  kafaa_enrolments_guard(), kafaa_g2_guard_decisions() from authenticated;
