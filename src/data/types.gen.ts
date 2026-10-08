@@ -1410,6 +1410,23 @@ export interface LedgerLocalRow {
   hash: string;
   actor_persona_id?: string | null;
 }
+export interface CoachFeedbackRow {
+  id: string;
+  person_id: string;
+  item_kind: 'course' | 'practice' | 'ojt' | 'mentor' | 'opportunity' | 'reading' | 'refresher';
+  item_id: string;
+  signal: 'saved' | 'dismissed' | 'enrolled' | 'cleared';
+  competency_ids: string[];
+  at: string;
+  hidden_until?: string | null;
+}
+export interface LearningGoalsRow {
+  id: string;
+  person_id: string;
+  hours_per_week: number;
+  focus_role_ids: string[];
+  updated_at: string;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -1520,6 +1537,8 @@ export interface Tables {
   person_skills: PersonSkillsRow;
   engine_settings: EngineSettingsRow;
   ledger_local: LedgerLocalRow;
+  coach_feedback: CoachFeedbackRow;
+  learning_goals: LearningGoalsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];

@@ -1723,6 +1723,29 @@ create table if not exists kafaa_engine_settings (
 );
 comment on table kafaa_engine_settings is '[M16] Engine per surface (deterministic or model slot) and ranking weights (F02)';
 
+-- M19 · Learning Coach feedback per person and suggestion: saved, dismissed (hidden 90 days), enrolled (F07)
+create table if not exists kafaa_coach_feedback (
+  id text primary key,
+  person_id text not null,
+  item_kind text not null check (item_kind in ('course', 'practice', 'ojt', 'mentor', 'opportunity', 'reading', 'refresher')),
+  item_id text not null,
+  signal text not null check (signal in ('saved', 'dismissed', 'enrolled', 'cleared')),
+  competency_ids text[] not null default '{}'::text[],
+  at timestamptz not null default now(),
+  hidden_until date
+);
+comment on table kafaa_coach_feedback is '[M19] Learning Coach feedback per person and suggestion: saved, dismissed (hidden 90 days), enrolled (F07)';
+
+-- M19 · Weekly learning goal in hours and coach focus roles: optional and private, no streaks (F07)
+create table if not exists kafaa_learning_goals (
+  id text primary key,
+  person_id text not null unique,
+  hours_per_week numeric not null default 0,
+  focus_role_ids text[] not null default '{}'::text[],
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_learning_goals is '[M19] Weekly learning goal in hours and coach focus roles: optional and private, no streaks (F07)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -1847,6 +1870,8 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sk
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_evidence_skill_id_fk') then alter table kafaa_skill_evidence add constraint kafaa_skill_evidence_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_person_skills_person_id_fk') then alter table kafaa_person_skills add constraint kafaa_person_skills_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_person_skills_skill_id_fk') then alter table kafaa_person_skills add constraint kafaa_person_skills_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_coach_feedback_person_id_fk') then alter table kafaa_coach_feedback add constraint kafaa_coach_feedback_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_learning_goals_person_id_fk') then alter table kafaa_learning_goals add constraint kafaa_learning_goals_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -2004,6 +2029,8 @@ create index if not exists kafaa_skill_evidence_kind_idx on kafaa_skill_evidence
 create index if not exists kafaa_skill_evidence_ref_id_idx on kafaa_skill_evidence (ref_id);
 create index if not exists kafaa_person_skills_person_id_idx on kafaa_person_skills (person_id);
 create index if not exists kafaa_person_skills_skill_id_idx on kafaa_person_skills (skill_id);
+create index if not exists kafaa_coach_feedback_person_id_idx on kafaa_coach_feedback (person_id);
+create index if not exists kafaa_coach_feedback_item_kind_idx on kafaa_coach_feedback (item_kind);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -2016,4 +2043,4 @@ create trigger kafaa_evaluations_append_only before update or delete on kafaa_ev
 drop trigger if exists kafaa_evaluation_acks_append_only on kafaa_evaluation_acks;
 create trigger kafaa_evaluation_acks_append_only before update or delete on kafaa_evaluation_acks for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 107) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 109) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

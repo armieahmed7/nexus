@@ -1173,3 +1173,23 @@ create policy kafaa_read on kafaa_engine_settings for select to anon, authentica
 grant select on kafaa_engine_settings to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- coach_feedback
+alter table kafaa_coach_feedback enable row level security;
+drop policy if exists kafaa_read on kafaa_coach_feedback;
+create policy kafaa_read on kafaa_coach_feedback for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_coach_feedback to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- learning_goals
+alter table kafaa_learning_goals enable row level security;
+drop policy if exists kafaa_read on kafaa_learning_goals;
+create policy kafaa_read on kafaa_learning_goals for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+drop policy if exists kafaa_insert on kafaa_learning_goals;
+create policy kafaa_insert on kafaa_learning_goals for insert to anon, authenticated with check (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope'])));
+drop policy if exists kafaa_update on kafaa_learning_goals;
+create policy kafaa_update on kafaa_learning_goals for update to authenticated using (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope']))) with check (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope'])));
+grant select, insert, update on kafaa_learning_goals to authenticated;
+grant select on kafaa_learning_goals to anon;
+drop trigger if exists kafaa_learning_goals_audit on kafaa_learning_goals;
+create trigger kafaa_learning_goals_audit after insert or update on kafaa_learning_goals for each row execute function kafaa_audit_row();
+
