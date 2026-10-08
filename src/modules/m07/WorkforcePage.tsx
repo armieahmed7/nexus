@@ -5,7 +5,7 @@ import { useAction, useRepo, useQuery } from '../../data';
 import type { ObserverReportsRow } from '../../data/types';
 import { useSession } from '../../auth/session';
 import { Page, Section, Grid, Card, Async, EmptyState, Callout, LineChart, StatTile, DataTable, StatusPill, Modal, ConfirmDialog, SourceLink, Icon, KeyValue } from '../../ui';
-import { L, useFormat, usePick, useT } from '../../i18n';
+import { L, hasKey, useFormat, usePick, useT } from '../../i18n';
 import { shareRows, valueRows } from './metrics';
 import { KpiTile, SampleBanner, SR2024, kpiLatest, kpiSeries, useAggregates, useKpis, usePeriods } from './shared';
 
@@ -211,7 +211,7 @@ export function ReportBody({ r, orgName }: { r: ObserverReportsRow; orgName?: (i
     <div className="space-y-3">
       <Grid cols={3}>
         {(body.tiles ?? []).map((x) => (
-          <StatTile key={x.k} label={t(`m07.metric.${x.k}`) === `m07.metric.${x.k}` ? x.k : t(`m07.metric.${x.k}`)} value={x.v} source={x.src} />
+          <StatTile key={x.k} label={hasKey(`m07.metric.${x.k}`) ? t(`m07.metric.${x.k}`) : x.k} value={x.v} source={x.src} />
         ))}
       </Grid>
       {!(body.tiles ?? []).length && <EmptyState title={t('m07.releases.emptyBody')} />}

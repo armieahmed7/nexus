@@ -117,7 +117,7 @@ function QueueTab({ canDecide }: { canDecide: boolean }) {
   const pick = usePick();
   const repo = useRepo();
   const progs = useProgrammes();
-  const [flt, setFlt] = useFilters({ programme: '', stage: '', open: 'open' });
+  const [flt, setFlt] = useFilters({ programme: '', stage: '', open: 'open' }, true);
   const apps = useQuery('applications', () => repo.list('applications', { order: [['updated_at', 'desc']] }));
   const [sel, setSel] = useState<ApplicationsRow | null>(null);
   const rows = useMemo(
