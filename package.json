@@ -1,0 +1,42 @@
+{
+  "name": "kafaa",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Kafa'a Nuclear Skills Platform: a concept portal inside ENEC NEXUS (not affiliated with or endorsed by ENEC)",
+  "scripts": {
+    "dev": "vite",
+    "gen": "node scripts/gen-all.mjs",
+    "build": "npm run gen && tsc -b --noEmit && vite build",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "preview": "vite preview --port 4173 --strictPort",
+    "test:unit": "vitest run",
+    "migrations:validate": "node scripts/validate-migrations.mjs",
+    "check:public": "node scripts/check-public-payloads.mjs",
+    "test:smoke": "playwright test",
+    "verify": "npm run gen && npm run typecheck && npm run test:unit && npm run migrations:validate && npm run check:public && vite build && npm run test:smoke"
+  },
+  "dependencies": {
+    "@fontsource-variable/hanken-grotesk": "^5.3.0",
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/ibm-plex-sans-arabic": "^5.3.0",
+    "@supabase/supabase-js": "^2.45.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.2.12",
+    "@playwright/test": "^1.56.1",
+    "@types/node": "^22.9.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10",
+    "vitest": "^2.1.4"
+  }
+}
