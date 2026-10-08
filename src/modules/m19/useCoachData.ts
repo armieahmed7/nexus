@@ -16,13 +16,13 @@ export function useCoachData() {
   const s = useSession();
   const eng = useEngine('recommend');
   const me = s.identity.personId;
-  const tables: Table[] = ['person_skills', 'enrolments', 'training_records', 'qual_records', 'coach_feedback', 'learning_goals', 'dev_plans', 'mentoring_requests', 'sessions', 'evaluations'];
+  const tables: Table[] = ['person_skills', 'enrolments', 'training_records', 'qual_records', 'coach_feedback', 'learning_goals', 'dev_plans', 'mentoring_requests', 'sessions', 'evaluations', ...(['career_targets', 'opportunities', 'future_goals'].filter(has) as Table[])];
   const q = useQuery(tables, async () => {
     if (!me) return null;
     const safe = <T,>(p: Promise<T[]>) => p.catch(() => [] as T[]);
     const mine = { filter: { person_id: me } } as never;
     const [person, person_skills, skills, job_roles, role_competencies, competencies, courses, sessions, enrolments, training_records, qual_records, qual_standards, requal_rules, curriculum_rules,
-      assessment_forms, items, task_items, evaluations, mentors, mentoring_requests, oe_lessons, dev_plans, coach_feedback, learning_goals, career_targets, opportunities, programmes, faqs, course_modules] = await Promise.all([
+      assessment_forms, items, task_items, evaluations, mentors, mentoring_requests, oe_lessons, dev_plans, coach_feedback, learning_goals, career_targets, opportunities, programmes, faqs, course_modules, future_goals] = await Promise.all([
       repo.get('people', me),
       safe(repo.list('person_skills', mine)), safe(repo.list('skills')), safe(repo.list('job_roles', { order: [['sort', 'asc']] })), safe(repo.list('role_competencies')), safe(repo.list('competencies')),
       safe(repo.list('courses')), safe(repo.list('sessions', { order: [['starts_at', 'asc']] })), safe(repo.list('enrolments', mine)), safe(repo.list('training_records', mine)),
@@ -33,6 +33,7 @@ export function useCoachData() {
       has('career_targets') ? safe(repo.list('career_targets' as Table, mine)) : Promise.resolve([]),
       has('opportunities') ? safe(repo.list('opportunities' as Table, { filter: { status: 'open' } } as never)) : Promise.resolve([]),
       safe(repo.list('programmes')), safe(repo.list('faqs', { order: [['sort', 'asc']] })), safe(repo.list('course_modules')),
+      has('future_goals') ? safe(repo.list('future_goals' as Table, mine)) : Promise.resolve([]),
     ]);
     const now = todayIso();
     const upcoming = [...new Set(sessions.filter((x) => x.status === 'scheduled' && x.starts_at > `${now}T00:00:00Z`).map((x) => x.course_id))];
@@ -42,7 +43,7 @@ export function useCoachData() {
     const t: CoachTables = {
       person, person_skills, skills, job_roles, role_competencies, competencies, courses, sessions, enrolments, training_records, qual_records, qual_standards, requal_rules, curriculum_rules,
       assessment_forms, items, task_items, evaluations, mentors, mentoring_requests, oe_lessons, dev_plans, coach_feedback, learning_goals, career_targets, opportunities,
-      programmes, faqs, course_modules,
+      programmes, faqs, course_modules, future_goals,
     } as never;
     return { t, availability, now };
   }, [me]);

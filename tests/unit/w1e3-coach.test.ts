@@ -143,7 +143,9 @@ describe('F07 ranking behaviour', () => {
   it('k-ro: 5 to 8 cards, mandatory must-keep items first, then a mix of kinds ranked against RO (1.0) and the SRO plan target (0.6)', () => {
     const { res, input } = feedFor('p-k-ro', (t) => { t.coach_feedback = []; });
     expect(input.targets).toContain('senior-reactor-operator');
-    expect(res.targets).toEqual(['senior-reactor-operator']);
+    // after the wave-1 merge the F05 shortlist also feeds the coach: SRO (development plan / rank 1) stays first
+    expect(res.targets[0]).toBe('senior-reactor-operator');
+    expect(res.targets.length).toBeLessThanOrEqual(3);
     expect(res.feed.length).toBeGreaterThanOrEqual(FEED_MIN);
     expect(res.feed.length).toBeLessThanOrEqual(FEED_MAX);
     const firstUnpinned = res.feed.findIndex((c) => !c.pinned);

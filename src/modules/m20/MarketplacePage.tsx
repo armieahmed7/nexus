@@ -41,7 +41,7 @@ function Market({ d, me, currentRole, family }: { d: MarketData; me: string | nu
   const pick = usePick();
   const lab = useLabels(d);
   const [flt, setFlt] = useFilters<Flt>({ q: '', kind: '', loc: '', hours: '', flag: '', show: '', sort: '', target: '' }, true);
-  const target = flt.target === 'none' ? null : flt.target || defaultTarget(d.paths, currentRole);
+  const target = flt.target === 'none' ? null : flt.target || defaultTarget(d.paths, currentRole, d.shortlist);
   const { eng, ranked } = useMatches(d, target, currentRole, family);
   const saved = new Set(d.saves.filter((s) => s.saved).map((s) => s.opportunity_id));
   const mine = new Map(d.apps.filter((a) => a.person_id === me && a.status !== 'withdrawn').map((a) => [a.opportunity_id, a]));
@@ -93,6 +93,7 @@ function Market({ d, me, currentRole, family }: { d: MarketData; me: string | nu
             <span className="caps">{t('m20.market.target')}</span>
             <select className="input" value={flt.target || target || ''} onChange={(e) => setFlt({ target: e.target.value })} data-testid="m20-target">
               <option value="none">{t('m20.market.noTarget')}</option>
+              {(d.shortlist ?? []).length > 0 && <optgroup label={t('m20.market.shortlist')}>{(d.shortlist ?? []).map((id) => <option key={`s-${id}`} value={id}>{lab.role(id)}</option>)}</optgroup>}
               {targets.length > 0 && <optgroup label={t('m20.market.nextSteps')}>{targets.map((id) => <option key={id} value={id}>{lab.role(id)}</option>)}</optgroup>}
               <optgroup label={t('m20.market.allRoles')}>{roleOpts.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</optgroup>
             </select>

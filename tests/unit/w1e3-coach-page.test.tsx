@@ -32,7 +32,8 @@ describe('F07 /my/coach page', () => {
     expect(cards[0].getAttribute('data-pinned')).toBe('must_keep');
     fireEvent.click(within(cards[2]).getByTestId('why-this'));
     expect(within(cards[2]).getByTestId('why-this-panel').querySelectorAll('li').length).toBeGreaterThan(0);
-    expect(screen.getByTestId('m19-goal').textContent).toContain('4');
+    expect(screen.getByTestId('m19-goal')).toBeTruthy();
+    expect(screen.getAllByText(/\b4 h a week\b/).length).toBeGreaterThan(0);
   });
   it('has no points, streak or leaderboard UI', async () => {
     const { container } = await renderG4(<MyCoachPage />, { persona: 'k-ro', path: '/my/coach' });

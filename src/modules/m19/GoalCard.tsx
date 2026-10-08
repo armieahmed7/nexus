@@ -67,7 +67,8 @@ export function FocusCard({ result }: { result: R }) {
   const roles = new Map(result.input.roles.map((x) => [x.id, x]));
   const focus = goal?.focus_role_ids ?? [];
   const plan = new Set(result.t.dev_plans.filter((p) => p.person_id === result.input.personId).map((p) => String(p.target_role_id)));
-  const shortlist = new Set((result.t.career_targets ?? []).filter((p) => p.person_id === result.input.personId).map((p) => String(p.role_id)));
+  const shortlist = new Set((result.t.career_targets ?? []).filter((p) => p.person_id === result.input.personId && p.active !== false).map((p) => String(p.role_id)));
+  const future = result.input.futureGoals ?? [];
   const [sel, setSel] = useState<string[]>(focus);
   const current = result.input.roleId ? roles.get(result.input.roleId) : null;
   const source = (id: string) => (focus.includes(id) ? 'focus' : shortlist.has(id) ? 'shortlist' : plan.has(id) ? 'plan' : 'focus');
@@ -80,6 +81,12 @@ export function FocusCard({ result }: { result: R }) {
           {result.targets.map((id) => <li key={id}><StatusPill tone="accent">{pick(roles.get(id) ?? null, 'title')}</StatusPill> <span className="text-[11.5px] text-ink-3">{t(`m19.focus.source.${source(id)}`)}</span></li>)}
         </ul>
       ) : <p className="mt-2 text-[13.5px] text-ink-2">{t('m19.focus.none')}</p>}
+      {future.length > 0 && (
+        <ul className="mt-2 flex flex-wrap gap-2" data-testid="m19-future-goals">
+          {future.map((g) => <li key={g.id}><StatusPill tone="info">{pick(g as never, 'title')}</StatusPill> <span className="text-[11.5px] text-ink-3">{t('m19.focus.source.future')}</span></li>)}
+        </ul>
+      )}
+      {future.length > 0 && <p className="mt-1 text-[11.5px] text-ink-3">{t('m19.focus.futureNote')}</p>}
       <Drawer open={open} onClose={() => setOpen(false)} title={t('m19.focus.drawerTitle')}
         footer={<><button type="button" className="btn-outline" onClick={() => setOpen(false)}>{t('common.cancel')}</button>
           <button type="button" className="btn-primary" data-testid="m19-focus-save" onClick={async () => { if (!s.identity.personId) return; const r = await run(() => saveGoal(repo, goal, s.identity.personId!, { focus_role_ids: sel }), { success: t('m19.focus.saved') }); if (r.ok) setOpen(false); }}>{t('common.save')}</button></>}>

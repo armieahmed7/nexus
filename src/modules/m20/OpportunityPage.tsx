@@ -30,7 +30,7 @@ function Detail({ d, o, me, currentRole, family }: { d: MarketData; o: Opp; me: 
   const pick = usePick();
   const lab = useLabels(d);
   const range = useRange();
-  const target = defaultTarget(d.paths, currentRole);
+  const target = defaultTarget(d.paths, currentRole, d.shortlist);
   const { eng, byId } = useMatches(d, target, currentRole, family);
   const r = byId.get(o.id);
   const lv = new Map(d.states.map((s) => [s.skill_id, s.level]));

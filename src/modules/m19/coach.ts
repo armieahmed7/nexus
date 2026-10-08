@@ -56,7 +56,9 @@ export interface MentorLite { id: string; person_id: string; role_id?: string | 
 export interface MentorRequestLite { mentor_id?: string | null; status: string }
 export interface LessonLite { id: string; title_en: string; title_ar: string; affected_standard_ids: string[]; status: string; reviewed_on: string; reviewing_body: string }
 export interface OpportunityLite { id: string; kind: string; title_en: string; title_ar?: string | null; status: string; skills_gained?: string[] | null; hours_week?: number | null; start_on?: string | null }
-export interface SkillLite { id: string; competency_id: string; evidence_keys?: string[] | null }
+export interface SkillLite { id: string; competency_id: string; area?: string | null; evidence_keys?: string[] | null }
+/** F09 hand-off: an active Future Me goal (future_goals) is a coach target: grow `skill_ids` to `target_level`. */
+export interface FutureGoalLite { id: string; kind: string; ref_id?: string | null; skill_ids: string[]; target_level?: number | null; title_en: string; title_ar?: string | null }
 export interface FeedbackLite { item_kind: string; item_id: string; signal: string; competency_ids?: string[] | null; hidden_until?: string | null }
 
 export interface CoachInput {
@@ -87,6 +89,7 @@ export interface CoachInput {
   mentorRequests?: MentorRequestLite[];
   lessons: LessonLite[];
   opportunities?: OpportunityLite[];
+  futureGoals?: FutureGoalLite[];
   skills?: SkillLite[];
   feedback: FeedbackLite[];
   weights?: Weights;
@@ -198,6 +201,20 @@ export function buildCoachFeed(input: CoachInput): CoachResult {
     for (const rc of input.roleComps.filter((x) => x.role_id === roleId)) {
       needs.push({ key: rc.competency_id, need: rc.required_level, have: input.have.get(rc.competency_id) ?? 0, importance: (['core', 'important', 'useful'].includes(rc.importance) ? rc.importance : 'useful') as never,
         weight: r4(w * (fb.comp.get(rc.competency_id) ?? 1)), label: compLabel(rc.competency_id), role: roleLabel(rc.role_id), role_id: roleId });
+    }
+  }
+  // F09 Future Me goals: each active goal adds its (non-security) skills as needs at the target-role weight, labelled with
+  // the goal's title, so the "Why this?" reasons name the goal.
+  const skillById = new Map((input.skills ?? []).map((x) => [x.id, x]));
+  for (const g of input.futureGoals ?? []) {
+    const seen = new Set<string>();
+    for (const sid of g.skill_ids ?? []) {
+      const sk = skillById.get(sid);
+      if (!sk || sk.area === 'security' || seen.has(sk.competency_id)) continue;
+      seen.add(sk.competency_id);
+      needs.push({ key: sk.competency_id, need: Number(g.target_level ?? 2), have: input.have.get(sk.competency_id) ?? 0, importance: 'useful',
+        weight: r4(wt('target_role', DEFAULT_RECOMMEND.target_role) * (fb.comp.get(sk.competency_id) ?? 1)), label: compLabel(sk.competency_id),
+        role: { en: g.title_en, ar: g.title_ar || g.title_en }, role_id: `future:${g.id}` });
     }
   }
   const current = input.roleId && !securityRole(input.roleId) ? input.roleComps.filter((x) => x.role_id === input.roleId) : [];
@@ -414,7 +431,7 @@ export function buildCoachFeed(input: CoachInput): CoachResult {
     ranked.opportunity.push(card({
       id: `opportunity:${o.id}`, kind: 'opportunity', itemId: o.id, title: { en: o.title_en, ar: o.title_ar || o.title_en }, meta: null, hours: o.hours_week ?? null, pinned: null, score: g.score,
       reasons: [...g.reasons.filter((x) => x.code !== 'effort'), ...(o.hours_week ? [r('opportunity_hours', { hours: o.hours_week })] : []), ...fbReasons('opportunity', compIds)],
-      competencyIds: compIds, link: `/opportunities`, action: { type: 'link', to: '/opportunities', label: 'openOpportunity' }, session: null, days: null,
+      competencyIds: compIds, link: `/opportunities/${o.id}`, action: { type: 'link', to: `/opportunities/${o.id}`, label: 'openOpportunity' }, session: null, days: null,
     }));
   }
 

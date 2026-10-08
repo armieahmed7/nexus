@@ -267,6 +267,7 @@ function RoleCard(p: { d: CareerBase; roleId: string; r: CareerReadiness | null;
               );
             })}
           </ul>
+          <L to="/my/coach" className="mt-1 inline-block text-[12.5px]" data-testid="m18-coach-link">{t('m18.card.coachLink')}</L>
         </div>
       ) : p.r ? (
         <p className="text-[13px] text-ok">{t('m18.card.noGaps')}</p>

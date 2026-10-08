@@ -59,9 +59,12 @@ export const MATRIX: { persona: string | null; backend: Backend; covers: string 
 ];
 
 const ONLY = process.env.E2E_ONLY ? new Set(process.env.E2E_ONLY.split(',')) : null;
+// E2E_MODULES=M17,M18 limits the visited routes to those modules (quick reruns); the full sweep visits every route.
+const MODS = process.env.E2E_MODULES ? new Set(process.env.E2E_MODULES.split(',')) : null;
+const VISIT = MODS ? ROUTES.filter((r) => MODS.has(r.module)) : ROUTES;
 
 test('route registry loaded', () => {
-  expect(ROUTES.length).toBe(98);
+  expect(ROUTES.length).toBe(118); // 98 + 20 wave-1 routes (M17 6, M18 3, M19 2, M20 6, M21 3)
 });
 
 for (const m of MATRIX) {
@@ -77,7 +80,7 @@ for (const m of MATRIX) {
     w.take();
     const results: { route: string; url: string; expect: string; got: string; issues: string[] }[] = [];
     const TRANSIENT = /net::ERR_(CONNECTION_RESET|CONNECTION_CLOSED|NETWORK_CHANGED|TIMED_OUT|HTTP2_PROTOCOL_ERROR)/;
-    for (const r of ROUTES) {
+    for (const r of VISIT) {
       const url = BASE + fill(r);
       for (let attempt = 1; attempt <= 2; attempt++) {
       await page.goto(url);
@@ -105,7 +108,7 @@ for (const m of MATRIX) {
       break;
       }
     }
-    writeOut(`sweep-${name}.json`, { persona: name, backend: m.backend, covers: m.covers, roles, results });
+    writeOut(`sweep-${name}${MODS ? '-' + [...MODS].join('_') : ''}.json`, { persona: name, backend: m.backend, covers: m.covers, roles, results });
     const bad = results.filter((x) => x.issues.length);
     expect(bad.map((b) => `${b.route} (${b.url}): ${b.issues.join(' | ')}`), `${name}: ${bad.length} routes with issues`).toEqual([]);
   });

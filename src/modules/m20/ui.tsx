@@ -18,8 +18,8 @@ export function useMarket(targetOverride?: string | null) {
   const repo = useRepo();
   const s = useSession();
   const me = s.identity.personId;
-  const q = useQuery(['opportunities', 'opportunity_applications', 'opportunity_saves', 'person_skills', 'skills', 'job_roles', 'job_families', 'role_competencies', 'career_paths'], async () => {
-    const [opps, apps, saves, states, skills, roles, families, roleComps, paths] = await Promise.all([
+  const q = useQuery(['opportunities', 'opportunity_applications', 'opportunity_saves', 'person_skills', 'skills', 'job_roles', 'job_families', 'role_competencies', 'career_paths', 'career_targets'], async () => {
+    const [opps, apps, saves, states, skills, roles, families, roleComps, paths, targets] = await Promise.all([
       repo.list('opportunities', { order: [['start_on', 'asc']] }),
       repo.list('opportunity_applications', { order: [['updated_at', 'desc']] }),
       repo.list('opportunity_saves'),
@@ -29,18 +29,25 @@ export function useMarket(targetOverride?: string | null) {
       repo.list('job_families', { order: [['sort', 'asc']] }),
       repo.list('role_competencies'),
       repo.list('career_paths'),
+      me ? repo.list('career_targets', { filter: { person_id: me, active: true }, order: [['rank', 'asc']] }).catch(() => []) : Promise.resolve([]),
     ]);
-    return { opps, apps, saves, states, skills, roles, families, roleComps, paths };
+    // F05 hand-off: my Career Navigator shortlist (active targets by rank) is the default target role
+    const shortlist = (targets as { role_id: string }[]).map((x) => x.role_id);
+    return { opps, apps, saves, states, skills, roles, families, roleComps, paths, shortlist };
   }, [me]);
   return { q, me, person: s.person };
 }
 
 export interface MarketData {
   opps: Opp[]; apps: App[]; saves: { opportunity_id: string; saved: boolean; person_id: string }[]; states: PersonSkillsRow[]; skills: SkillsRow[]; roles: JobRolesRow[]; families: JobFamiliesRow[]; roleComps: RoleCompetenciesRow[]; paths: CareerPathsRow[];
+  /** My active F05 shortlist (role ids by rank). */
+  shortlist?: string[];
 }
 
-/** Default target role: the next vertical step from my current role, else the first lateral one. */
-export function defaultTarget(paths: CareerPathsRow[], current: string | null | undefined): string | null {
+/** Default target role: my top Career Navigator shortlist role (F05), else the next vertical step from my current role, else the first lateral one. */
+export function defaultTarget(paths: CareerPathsRow[], current: string | null | undefined, shortlist: string[] = []): string | null {
+  const top = shortlist.find((x) => x && x !== current);
+  if (top) return top;
   if (!current) return null;
   const out = paths.filter((p) => p.from_role_id === current);
   return (out.find((p) => p.type === 'vertical') ?? out[0])?.to_role_id ?? null;

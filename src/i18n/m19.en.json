@@ -113,8 +113,10 @@
     "source": {
       "focus": "focus role",
       "shortlist": "shortlist",
-      "plan": "development plan"
-    }
+      "plan": "development plan",
+      "future": "Future Me goal"
+    },
+    "futureNote": "Goals you added in Future Me count like a target role."
   },
   "ask": {
     "title": "Ask the coach",
