@@ -347,13 +347,46 @@ export function buildPeople({ standards, tasks, curriculum, courses }) {
     const id = `app-${++apSeq}`;
     const decision = stage === 'offer' || stage === 'accepted' ? 'offer' : stage === 'unsuccessful' ? 'unsuccessful' : stage === 'withdrawn' ? 'withdrawn' : 'none';
     out.applications.push({ id, person_id, programme_id, stage, submitted_at: ts(addDays(DEMO_TODAY, -60 + apSeq)), updated_at: ts(addDays(DEMO_TODAY, -5 + (apSeq % 4))), decision, decision_source: decision === 'none' ? null : 'ENEC HR (mirrored)', consent_version: '1', delete_after: stage === 'unsuccessful' ? addMonths(DEMO_TODAY, 6) : null, answers: { stage_finder: programme_id === 'dnt' ? 'finishing_school' : 'graduate' }, nationality_flag: nat, gender });
-    const path = stage === 'unsuccessful' || stage === 'withdrawn' ? ['submitted', 'screening', stage] : STAGES.slice(1, STAGES.indexOf(stage) + 1).concat(stage === 'interest' ? ['interest'] : []);
+    const path = stage === 'unsuccessful' || stage === 'withdrawn' ? ['submitted', 'screening', stage] : stage === 'accepted' ? ['submitted', 'screening', 'interview', 'offer', 'accepted'] /* [G3] accepted had no history */ : STAGES.slice(1, STAGES.indexOf(stage) + 1).concat(stage === 'interest' ? ['interest'] : []);
     path.forEach((s, k) => out.application_events.push({ id: `${id}-e${k + 1}`, application_id: id, person_id, ts: ts(addDays(DEMO_TODAY, -55 + apSeq + k * 7)), stage: s, note_en: NOTES[s][0], note_ar: NOTES[s][1], by_role: s === 'submitted' || s === 'interest' ? 'Applicant' : 'ENEC HR' }));
     out.consents.push({ id: `cn-${id}`, person_id, type: 'application', purpose: `Process my application to ${programme_id}; delete if unsuccessful on the published schedule`, version: '1', granted_at: ts(addDays(DEMO_TODAY, -60 + apSeq)), withdrawn_at: null });
   };
   apply('p-k-student', 'mustaqbali', 'screening', 'uae', 'm');
   apply('p-k-graduate', 'gpo', 'interview', 'uae', 'f');
   ['dnt', 'dnt', 'dnt', 'gdp', 'gdp', 'gpo', 'internships', 'internships', 'energy-pioneers', 'dnt', 'mustaqbali', 'gpo'].forEach((prog, i) => apply(APPL[i], prog, ['submitted', 'screening', 'assessment', 'interview', 'offer', 'unsuccessful', 'accepted', 'screening', 'withdrawn', 'interview', 'submitted', 'screening'][i], i === 6 ? 'other' : 'uae', i % 2 === 0 ? 'm' : 'f'));
+
+  // ───────────── [G3] Applicant pool for the HR funnel (M06). Synthetic applicants, first names only, no personas.
+  // Sized so some programme x stage cells reach the minimum group size (10) and others stay suppressed (AC M06).
+  const POOL = {
+    dnt: { submitted: 22, screening: 14, assessment: 11, interview: 6, offer: 4, unsuccessful: 12, withdrawn: 2 },
+    gpo: { submitted: 12, screening: 10, assessment: 4, interview: 3, unsuccessful: 6 },
+    gdp: { submitted: 11, screening: 5, interview: 4, offer: 2, unsuccessful: 3 },
+    internships: { submitted: 10, screening: 4, accepted: 6, unsuccessful: 3 },
+    'energy-pioneers': { submitted: 13, screening: 6, assessment: 3, unsuccessful: 4 },
+    mustaqbali: { interest: 6, submitted: 12, accepted: 10 },
+  };
+  const PATHS = { interest: ['interest'], submitted: ['submitted'], screening: ['submitted', 'screening'], assessment: ['submitted', 'screening', 'assessment'], interview: ['submitted', 'screening', 'assessment', 'interview'], offer: ['submitted', 'screening', 'assessment', 'interview', 'offer'], accepted: ['submitted', 'screening', 'interview', 'offer', 'accepted'], unsuccessful: ['submitted', 'screening', 'unsuccessful'], withdrawn: ['submitted', 'withdrawn'] };
+  let poolSeq = 0;
+  for (const [programme_id, stages] of Object.entries(POOL)) {
+    for (const [stage, n] of Object.entries(stages)) {
+      for (let k = 0; k < n; k++) {
+        const i = ++poolSeq;
+        const pid = `ap-${String(i).padStart(3, '0')}`;
+        const female = (i * 7) % 10 < 3 || (programme_id === 'mustaqbali' && i % 2 === 0);
+        const uae = programme_id === 'internships' ? i % 5 !== 0 : true;
+        const nm = synthName(400 + i, uae, female);
+        out.people.push({ id: pid, persona_id: null, display_name: nm.en.split(' ')[0], display_name_ar: nm.ar.split(' ')[0], initials: nm.initials, kind: 'applicant', entity_id: null, org_id: null, job_role_id: null, job_family_id: null, team_id: null, crew: null, unit: null, level: null, nationality_flag: uae ? 'uae' : 'other', gender: female ? 'f' : 'm', language: i % 3 === 0 ? 'en' : 'ar', digits: 'latn', hire_date: null, status: 'candidate', manager_id: null, synthetic: true, notes: 'First name only by default' });
+        ra(pid, 'applicant');
+        const id = `app-p${String(i).padStart(3, '0')}`;
+        const start = -120 + (i % 90);
+        const decision = stage === 'offer' || stage === 'accepted' ? 'offer' : stage === 'unsuccessful' ? 'unsuccessful' : stage === 'withdrawn' ? 'withdrawn' : 'none';
+        const path = PATHS[stage];
+        out.applications.push({ id, person_id: pid, programme_id, stage, submitted_at: ts(addDays(DEMO_TODAY, start)), updated_at: ts(addDays(DEMO_TODAY, start + (path.length - 1) * 6)), decision, decision_source: decision === 'none' || decision === 'withdrawn' ? null : 'ENEC HR (mirrored)', consent_version: '1', delete_after: stage === 'unsuccessful' ? addMonths(addDays(DEMO_TODAY, start + (path.length - 1) * 6), 6) : null, answers: { stage_finder: programme_id === 'dnt' ? 'finishing_school' : programme_id === 'mustaqbali' ? 'school' : 'graduate' }, nationality_flag: uae ? 'uae' : 'other', gender: female ? 'f' : 'm' });
+        path.forEach((s, j) => out.application_events.push({ id: `${id}-e${j + 1}`, application_id: id, person_id: pid, ts: ts(addDays(DEMO_TODAY, start + j * 6)), stage: s, note_en: NOTES[s][0], note_ar: NOTES[s][1], by_role: s === 'submitted' || s === 'interest' || s === 'withdrawn' ? 'Applicant' : 'ENEC HR' }));
+        out.consents.push({ id: `cn-${id}`, person_id: pid, type: 'application', purpose: `Process my application to ${programme_id}; delete if unsuccessful on the published schedule`, version: '1', granted_at: ts(addDays(DEMO_TODAY, start)), withdrawn_at: null });
+      }
+    }
+  }
 
   // ───────────── Cohorts, scholars, internships (M10)
   const coh = (id, programme_id, intake_year, university_org_id, destination, pathway, size, in_study, graduated, placed, women_pct) => out.scholar_cohorts.push({ id, programme_id, intake_year, university_org_id, destination, pathway, size, in_study, graduated, placed, women_pct, sample: true });

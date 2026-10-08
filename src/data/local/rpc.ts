@@ -5,13 +5,17 @@
  * Change both files together.
  */
 import type { LocalBackend } from './LocalBackend';
-import type { AggregateRow, CertificateCheck, Result, Rpc, SignoffInput, RowOf } from '../types';
+import type { AggregateRow, CertificateCheck, Result, Rpc, SignoffInput, RowOf, ObserverReportDraft, ScenarioInput, ResearchChallengeInput, ResearchProposalInput } from '../types';
 import type { PlatformRole } from '../../auth/policy';
 import { MIN_GROUP_SIZE } from '../../auth/policy';
 import { addWorkingDays, isoDate, todayIso, bookingPriority, scoreJpm } from '../../domain/rules';
 import { canonical, chainHash, GENESIS } from '../audit';
 import { newId } from './store';
 
+// [G3] shared with the SQL mirror: answers that must never be collected at application time, retention and IP route
+export const G3_FORBIDDEN_ANSWER_KEYS = ['emirates_id', 'emiratesid', 'eid', 'passport', 'passport_no', 'dob', 'date_of_birth', 'birth_date'];
+export const G3_RETENTION_MONTHS = 6;
+export const G3_DEFAULT_IP_ROUTE = 'MoET patents route (May 2026 MoU)';
 const ELEVATED: PlatformRole[] = ['admin', 'auditor', 'hr_director', 'licensing_coord', 'training_manager', 'ecp_officer', 'instructor', 'hr_analyst'];
 const addMonths = (d: string, m: number) => {
   const x = new Date(`${d}T00:00:00Z`);
@@ -396,6 +400,147 @@ export class LocalRpc implements Rpc {
       return { programme_id, stage, n: n < MIN_GROUP_SIZE ? null : n, suppressed: n < MIN_GROUP_SIZE };
     });
   }
+  // ───────────── [G3] M06 applications (applicant side), M07 HR planning, M10 research. Mirror of 20261008133001_kafaa_g3_rpcs.sql.
+  private g3HrRole(): PlatformRole | null {
+    const roles = this.b.identity().roles;
+    return roles.includes('hr_director') ? 'hr_director' : roles.includes('hr_analyst') ? 'hr_analyst' : null;
+  }
+  async submitApplication(programmeId: string, answers: Record<string, string>) {
+    await this.b.whenReady();
+    const me = this.me;
+    if (!me) return this.refuse<{ id: string; stage: string }>('application.submit', 'applications', programmeId, 'not_signed_in', 'Sign in with an applicant account to apply');
+    const role = this.ctx.actingRole('applications', ['Own']);
+    if (!role) return this.refuse<{ id: string; stage: string }>('application.submit', 'applications', programmeId, 'forbidden', 'This account cannot apply to talent programmes');
+    const prog = this.b.rawGet('talent_programmes', programmeId);
+    if (!prog) return this.refuse<{ id: string; stage: string }>('application.submit', 'applications', programmeId, 'not_found', 'Programme not found', role);
+    if (prog.apply_mode !== 'in_kafaa') return this.refuse<{ id: string; stage: string }>('application.submit', 'applications', programmeId, 'invalid', "This programme takes applications on ENEC's official channel", role);
+    const a = answers && typeof answers === 'object' ? answers : {};
+    if (Object.keys(a).some((k) => G3_FORBIDDEN_ANSWER_KEYS.includes(k.toLowerCase()))) return this.refuse<{ id: string; stage: string }>('application.submit', 'applications', programmeId, 'invalid', 'Do not send an Emirates ID, passport number or date of birth: they are collected later through UAE Pass if a stage needs them', role);
+    if (JSON.stringify(a).length > 4000 || Object.values(a).some((v) => typeof v !== 'string')) return this.refuse<{ id: string; stage: string }>('application.submit', 'applications', programmeId, 'invalid', 'Answers are too long or not text', role);
+    if (this.b.raw('applications').some((x) => x.person_id === me && x.programme_id === programmeId && !['withdrawn', 'unsuccessful'].includes(x.stage)))
+      return this.refuse<{ id: string; stage: string }>('application.submit', 'applications', programmeId, 'conflict', 'You already have an open application for this programme', role);
+    const id = newId('app');
+    const stage = a.mode === 'interest' ? 'interest' : 'submitted';
+    const now = new Date().toISOString();
+    const nat = a.nationality === 'uae' || a.nationality === 'other' ? a.nationality : 'unknown';
+    this.b.rawInsert('applications', { id, person_id: me, programme_id: programmeId, stage: stage as never, submitted_at: now, updated_at: now, decision: 'none', decision_source: null, consent_version: '1', delete_after: null, answers: a as never, nationality_flag: nat as never, gender: null });
+    this.b.rawInsert('application_events', { id: newId('ae'), application_id: id, person_id: me, ts: now, stage, note_en: stage === 'interest' ? 'Interest registered' : 'Application received', note_ar: stage === 'interest' ? 'تم تسجيل الاهتمام' : 'تم استلام الطلب', by_role: 'Applicant' });
+    return this.done('application.submit', 'applications', id, `${programmeId} ${stage}`, role, 'kafaa.application.submit', `Application ${id} to ${programmeId} (${stage})`, stage === 'interest' ? 'Interest registered' : 'Application submitted', { id, stage }, ['applications', 'application_events']);
+  }
+  async withdrawApplication(id: string, reason: string) {
+    await this.b.whenReady();
+    const me = this.me;
+    if (!me) return this.refuse('application.withdraw', 'applications', id, 'not_signed_in', 'Sign in to manage your applications');
+    const role = this.ctx.actingRole('applications', ['Own']);
+    const ap = this.b.rawGet('applications', id);
+    if (!ap || ap.person_id !== me || !role) return this.refuse('application.withdraw', 'applications', id, 'not_found', 'Application not found', role);
+    if (['withdrawn', 'unsuccessful', 'accepted'].includes(ap.stage)) return this.refuse('application.withdraw', 'applications', id, 'invalid', 'Application is closed', role);
+    const now = new Date().toISOString();
+    this.b.rawUpdate('applications', id, { stage: 'withdrawn', decision: 'withdrawn', updated_at: now, delete_after: addMonths(todayIso(), G3_RETENTION_MONTHS) });
+    const note = (reason ?? '').slice(0, 300);
+    this.b.rawInsert('application_events', { id: newId('ae'), application_id: id, person_id: me, ts: now, stage: 'withdrawn', note_en: note || 'Withdrawn by applicant', note_ar: note || 'سحبه المتقدم', by_role: 'Applicant' });
+    return this.done('application.withdraw', 'applications', id, 'withdrawn', role, 'kafaa.application.withdraw', `Application ${id} (${ap.programme_id}) withdrawn by the applicant`, 'Application withdrawn', undefined, ['applications', 'application_events']);
+  }
+  async draftObserverReport(p: ObserverReportDraft) {
+    await this.b.whenReady();
+    const role = this.ctx.actingRole('observer_release', ['W', 'A']);
+    if (!role) return this.refuse<{ id: string }>('observer_report.draft', 'observer_reports', null, 'forbidden', 'Only HR may prepare an observer report');
+    const tiles = Array.isArray(p?.tiles) ? p.tiles : [];
+    if (!p || (p.title_en ?? '').trim().length < 5 || (p.title_ar ?? '').trim().length < 5 || !(p.period ?? '').trim()) return this.refuse<{ id: string }>('observer_report.draft', 'observer_reports', null, 'invalid', 'A report needs an English and an Arabic title and a period', role);
+    if (tiles.length < 1 || tiles.length > 12 || tiles.some((x) => !x || typeof x.k !== 'string' || typeof x.v !== 'string' || !x.k || !x.v || x.v.length > 60)) return this.refuse<{ id: string }>('observer_report.draft', 'observer_reports', null, 'invalid', 'Choose between 1 and 12 aggregate tiles', role);
+    const id = newId('or');
+    this.b.rawInsert('observer_reports', { id, title_en: p.title_en.trim(), title_ar: p.title_ar.trim(), period: p.period.trim(), body: { tiles: tiles.map((x) => ({ k: x.k, v: x.v, src: x.src ?? '' })), note: p.note ?? 'Aggregate only; groups under 10 suppressed.' } as never, status: 'draft', prepared_by: this.me, approved_by: null, approved_at: null, released_to_org_ids: [] });
+    return this.done('observer_report.draft', 'observer_reports', id, `${tiles.length} tiles`, role, null, '', 'Draft saved', { id });
+  }
+  async saveScenario(p: ScenarioInput) {
+    await this.b.whenReady();
+    const role = this.g3HrRole();
+    if (!role) return this.refuse<{ id: string }>('scenario.save', 'scenarios', p?.id ?? null, 'forbidden', 'Only HR analysts may save workforce scenarios');
+    if (!p || (p.name ?? '').trim().length < 3 || !['headcount', 'technology', 'programme'].includes(p.kind)) return this.refuse<{ id: string }>('scenario.save', 'scenarios', p?.id ?? null, 'invalid', 'A scenario needs a name and a kind', role);
+    const name = /simulated/i.test(p.name) ? p.name.trim() : `${p.name.trim()} (SIMULATED)`;
+    if (p.id) {
+      const cur = this.b.rawGet('scenarios', p.id);
+      if (!cur || cur.owner_person_id !== this.me) return this.refuse<{ id: string }>('scenario.save', 'scenarios', p.id, 'not_found', 'Scenario not found', role);
+      this.b.rawUpdate('scenarios', p.id, { name, kind: p.kind, params: (p.params ?? {}) as never, results: (p.results ?? {}) as never, simulated: true });
+      return this.done('scenario.save', 'scenarios', p.id, name, role, null, '', 'Scenario saved', { id: p.id });
+    }
+    const id = newId('scn');
+    this.b.rawInsert('scenarios', { id, name, kind: p.kind, params: (p.params ?? {}) as never, results: (p.results ?? {}) as never, simulated: true, owner_person_id: this.me, created_at: new Date().toISOString() });
+    return this.done('scenario.save', 'scenarios', id, name, role, null, '', 'Scenario saved', { id });
+  }
+  async setBenchTarget(id: string, target: number, reason: string) {
+    await this.b.whenReady();
+    const role = this.g3HrRole();
+    if (!role) return this.refuse('bench.target', 'critical_roles', id, 'forbidden', 'Only HR sets bench-depth targets');
+    const r = this.b.rawGet('critical_roles', id);
+    if (!r) return this.refuse('bench.target', 'critical_roles', id, 'not_found', 'Critical role not found', role);
+    if (!Number.isInteger(target) || target < 0 || target > 1000) return this.refuse('bench.target', 'critical_roles', id, 'invalid', 'Target must be a whole number from 0 to 1000', role);
+    if ((reason ?? '').trim().length < 5) return this.refuse('bench.target', 'critical_roles', id, 'invalid', 'Give a reason of at least 5 characters', role);
+    this.b.rawUpdate('critical_roles', id, { target_bench: target });
+    return this.done('bench.target', 'critical_roles', id, `${r.target_bench} -> ${target}: ${reason.trim()}`, role, 'kafaa.workforce.bench_target', `Bench target for ${r.role_id} set to ${target}`, 'Target updated');
+  }
+  async saveResearchChallenge(p: ResearchChallengeInput) {
+    await this.b.whenReady();
+    type R = { id: string; status: string };
+    const role = this.ctx.actingRole('research', ['A']);
+    if (!role) return this.refuse<R>('research.challenge_save', 'research_challenges', p?.id ?? null, 'forbidden', 'Only the research screening authority may edit challenges');
+    if (!p || [p.title_en, p.title_ar, p.summary_en, p.summary_ar, p.theme].some((x) => !x || x.trim().length < 3)) return this.refuse<R>('research.challenge_save', 'research_challenges', p?.id ?? null, 'invalid', 'Titles, summaries (English and Arabic) and a theme are required', role);
+    const fields = { title_en: p.title_en.trim(), title_ar: p.title_ar.trim(), theme: p.theme.trim(), summary_en: p.summary_en.trim(), summary_ar: p.summary_ar.trim(), closes_on: p.closes_on || null };
+    if (p.id) {
+      const c = this.b.rawGet('research_challenges', p.id);
+      if (!c) return this.refuse<R>('research.challenge_save', 'research_challenges', p.id, 'not_found', 'Challenge not found', role);
+      if (c.status === 'closed') return this.refuse<R>('research.challenge_save', 'research_challenges', p.id, 'invalid', 'A closed challenge cannot be edited', role);
+      // Any edit to a screened or published challenge needs a fresh screening sign-off before it is public again.
+      const status = c.status === 'draft' && !p.submit ? 'draft' : 'screening';
+      this.b.rawUpdate('research_challenges', p.id, { ...fields, status, is_published: false, security_ok: false, export_control_ok: false, screening_signed_by: null, screening_signed_at: null });
+      return this.done<R>('research.challenge_save', 'research_challenges', p.id, `edited; now ${status}`, role, null, '', status === 'screening' ? 'Saved; awaiting screening sign-off' : 'Draft saved', { id: p.id, status });
+    }
+    const id = newId('rc');
+    const status = p.submit ? 'screening' : 'draft';
+    this.b.rawInsert('research_challenges', { id, ...fields, status, is_published: false, screening_signed_by: null, screening_signed_at: null, security_ok: false, export_control_ok: false });
+    return this.done<R>('research.challenge_save', 'research_challenges', id, `created; ${status}`, role, null, '', status === 'screening' ? 'Saved; awaiting screening sign-off' : 'Draft saved', { id, status });
+  }
+  async saveResearchProposal(p: ResearchProposalInput) {
+    await this.b.whenReady();
+    type R = { id: string; status: string };
+    const me = this.me;
+    const org = this.b.identity().orgId;
+    if (!me) return this.refuse<R>('research.proposal_save', 'research_proposals', p?.id ?? null, 'not_signed_in', 'Sign in to propose research');
+    const role = this.ctx.actingRole('research', ['OrgW']);
+    if (!role || !org) return this.refuse<R>('research.proposal_save', 'research_proposals', p?.id ?? null, 'forbidden', 'Only partner organisations may submit research proposals');
+    if (!p || (p.title ?? '').trim().length < 5 || (p.summary ?? '').trim().length < 20 || p.summary.length > 4000 || p.title.length > 200) return this.refuse<R>('research.proposal_save', 'research_proposals', p?.id ?? null, 'invalid', 'A proposal needs a title (5-200 characters) and a summary (20-4000 characters)', role);
+    if (p.challenge_id) {
+      const c = this.b.rawGet('research_challenges', p.challenge_id);
+      if (!c || !c.is_published) return this.refuse<R>('research.proposal_save', 'research_proposals', p.id ?? null, 'invalid', 'Respond to a published challenge, or leave the challenge empty for an open proposal', role);
+    }
+    const ip = (p.ip_route ?? '').trim() || G3_DEFAULT_IP_ROUTE;
+    const status = p.submit ? 'submitted' : 'draft';
+    if (p.id) {
+      const cur = this.b.rawGet('research_proposals', p.id);
+      if (!cur || cur.org_id !== org) return this.refuse<R>('research.proposal_save', 'research_proposals', p.id, 'not_found', 'Proposal not found', role);
+      if (cur.status !== 'draft') return this.refuse<R>('research.proposal_save', 'research_proposals', p.id, 'invalid', 'A submitted proposal cannot be edited', role);
+      this.b.rawUpdate('research_proposals', p.id, { challenge_id: p.challenge_id || null, title: p.title.trim(), summary: p.summary.trim(), ip_route: ip, status, submitted_at: p.submit ? new Date().toISOString() : null });
+      return this.done<R>('research.proposal_save', 'research_proposals', p.id, status, role, p.submit ? 'kafaa.research.proposal_submit' : null, `Research proposal ${p.id} submitted by ${org}`, p.submit ? 'Proposal submitted for screening' : 'Draft saved', { id: p.id, status });
+    }
+    const id = newId('rp');
+    this.b.rawInsert('research_proposals', { id, challenge_id: p.challenge_id || null, org_id: org, title: p.title.trim(), summary: p.summary.trim(), status, ip_route: ip, screened: false, submitted_at: p.submit ? new Date().toISOString() : null });
+    return this.done<R>('research.proposal_save', 'research_proposals', id, status, role, p.submit ? 'kafaa.research.proposal_submit' : null, `Research proposal ${id} submitted by ${org}`, p.submit ? 'Proposal submitted for screening' : 'Draft saved', { id, status });
+  }
+  async decideResearchProposal(id: string, decision: 'screening' | 'accepted' | 'declined', securityOk: boolean, note: string) {
+    await this.b.whenReady();
+    const role = this.ctx.actingRole('research', ['A']);
+    if (!role) return this.refuse('research.proposal_decide', 'research_proposals', id, 'forbidden', 'Only the research screening authority may decide proposals');
+    if (!['screening', 'accepted', 'declined'].includes(decision)) return this.refuse('research.proposal_decide', 'research_proposals', id, 'invalid', 'Unknown decision', role);
+    const r = this.b.rawGet('research_proposals', id);
+    if (!r) return this.refuse('research.proposal_decide', 'research_proposals', id, 'not_found', 'Proposal not found', role);
+    if (!['submitted', 'screening'].includes(r.status)) return this.refuse('research.proposal_decide', 'research_proposals', id, 'invalid', 'Only submitted proposals can be screened or decided', role);
+    const screened = r.screened || !!securityOk;
+    if (decision === 'accepted' && !screened) return this.refuse('research.proposal_decide', 'research_proposals', id, 'invalid', 'Screen the proposal for security sensitivity and export control before accepting it', role);
+    if (decision !== 'screening' && (note ?? '').trim().length < 5) return this.refuse('research.proposal_decide', 'research_proposals', id, 'invalid', 'A decision note of at least 5 characters is required', role);
+    this.b.rawUpdate('research_proposals', id, { status: decision, screened });
+    return this.done('research.proposal_decide', 'research_proposals', id, `${decision}; screened=${screened}${note ? `; ${note.trim().slice(0, 200)}` : ''}`, role, decision === 'screening' ? null : 'kafaa.research.proposal_decide', `Research proposal ${id} (${r.org_id}): ${decision}`, 'Decision recorded');
+  }
+
   async logDenied(route: string, resource: string) {
     await this.b.whenReady();
     if (route.startsWith('/speak-up') || route.startsWith('/ar/speak-up')) return; // M08: the speak-up route sends no audit events

@@ -77,6 +77,40 @@ export interface CertificateCheck {
   note?: string;
 }
 
+// ── [G3] inputs for the M06/M07/M10 RPCs
+export interface ObserverReportDraft {
+  title_en: string;
+  title_ar: string;
+  period: string;
+  tiles: { k: string; v: string; src: string }[];
+  note?: string;
+}
+export interface ScenarioInput {
+  id?: string | null;
+  name: string;
+  kind: 'headcount' | 'technology' | 'programme';
+  params: Record<string, unknown>;
+  results: Record<string, unknown>;
+}
+export interface ResearchChallengeInput {
+  id?: string | null;
+  title_en: string;
+  title_ar: string;
+  theme: string;
+  summary_en: string;
+  summary_ar: string;
+  closes_on: string | null;
+  submit?: boolean;
+}
+export interface ResearchProposalInput {
+  id?: string | null;
+  challenge_id: string | null;
+  title: string;
+  summary: string;
+  ip_route: string | null;
+  submit: boolean;
+}
+
 /** Consequential actions. Each one audits (success and refusal) and, where material, appends to the NEXUS ledger. */
 export interface Rpc {
   signoffEvaluation(p: SignoffInput): Promise<Result<{ evaluation_id: string; record_status: string }>>;
@@ -101,6 +135,15 @@ export interface Rpc {
   verifyCertificate(no: string): Promise<CertificateCheck>;
   workforceAggregate(period: string, measure: string | null): Promise<AggregateRow[]>;
   applicationFunnel(): Promise<{ programme_id: string; stage: string; n: number | null; suppressed: boolean }[]>;
+  // ── [G3] M06 talent pipeline, M07 workforce analytics, M10 universities and research (SQL: 20261008133001_kafaa_g3_rpcs.sql)
+  submitApplication(programmeId: string, answers: Record<string, string>): Promise<Result<{ id: string; stage: string }>>;
+  withdrawApplication(id: string, reason: string): Promise<Result>;
+  draftObserverReport(p: ObserverReportDraft): Promise<Result<{ id: string }>>;
+  saveScenario(p: ScenarioInput): Promise<Result<{ id: string }>>;
+  setBenchTarget(id: string, target: number, reason: string): Promise<Result>;
+  saveResearchChallenge(p: ResearchChallengeInput): Promise<Result<{ id: string; status: string }>>;
+  saveResearchProposal(p: ResearchProposalInput): Promise<Result<{ id: string; status: string }>>;
+  decideResearchProposal(id: string, decision: 'screening' | 'accepted' | 'declined', securityOk: boolean, note: string): Promise<Result>;
   logDenied(route: string, resource: string): Promise<void>;
   auditVerify(): Promise<Result<{ entries: number }>>;
 }

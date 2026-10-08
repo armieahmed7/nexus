@@ -290,6 +290,35 @@ export function buildWorkforce(families) {
     out.push({ id: `ws-2026q3-ent-${ent}-hc`, period: '2026-Q3', entity_id: ent, family_id: null, level: null, measure: 'headcount', value: n, group_size: n, source: 'Demo tenant (SAMPLE)', sample: true });
     out.push({ id: `ws-2026q3-ent-${ent}-em`, period: '2026-Q3', entity_id: ent, family_id: null, level: null, measure: 'emirati', value: e, group_size: n, source: 'Demo tenant (SAMPLE)', sample: true });
   }
+  // [G3] Earlier quarters for trends, hires and leavers by family, organisation totals, women by level and age bands (M07).
+  const S = 'Demo tenant (SAMPLE)';
+  const row = (id, period, dims, measure, value, group_size) => out.push({ id, period, entity_id: dims.entity_id ?? null, family_id: dims.family_id ?? null, level: dims.level ?? null, measure, value, group_size, source: S, sample: true });
+  const totals = {};
+  const addT = (period, m, v) => { totals[period] ??= {}; totals[period][m] = (totals[period][m] ?? 0) + v; };
+  for (const [period, scale, emAdj, thPer] of [['2026-Q1', 0.97, -0.02, 49], ['2026-Q2', 0.985, -0.01, 50], ['2026-Q3', 1, 0, 52]]) {
+    const pk = period.toLowerCase().replace('-', '');
+    for (const f of families) {
+      const base = sizes[f.id] ?? 20;
+      const n = period === '2026-Q3' ? base : Math.max(1, Math.round(base * scale));
+      const em = Math.round(n * (0.45 + ((f.sort * 7) % 25) / 100 + emAdj));
+      const wm = Math.round(n * (0.08 + ((f.sort * 5) % 15) / 100));
+      if (period !== '2026-Q3') {
+        row(`ws-${pk}-${f.id}-hc`, period, { family_id: f.id }, 'headcount', n, n);
+        row(`ws-${pk}-${f.id}-em`, period, { family_id: f.id }, 'emirati', em, n);
+        row(`ws-${pk}-${f.id}-wo`, period, { family_id: f.id }, 'women', wm, n);
+        row(`ws-${pk}-${f.id}-th`, period, { family_id: f.id }, 'training_hours', n * thPer, n);
+      }
+      const hires = Math.round(n * (0.035 + ((f.sort * 3) % 4) / 100));
+      const leavers = Math.round(n * (0.012 + ((f.sort * 2) % 3) / 200));
+      row(`ws-${pk}-${f.id}-hi`, period, { family_id: f.id }, 'hires', hires, n);
+      row(`ws-${pk}-${f.id}-at`, period, { family_id: f.id }, 'attrition', leavers, n);
+      addT(period, 'headcount', n); addT(period, 'emirati', em); addT(period, 'women', wm); addT(period, 'training_hours', n * (period === '2026-Q3' ? 52 : thPer)); addT(period, 'hires', hires); addT(period, 'attrition', leavers);
+    }
+    const hc = totals[period].headcount;
+    for (const [m, v] of Object.entries(totals[period])) row(`ws-${pk}-org-${m}`, period, {}, m, v, hc);
+  }
+  for (const [lvl, n, w] of [['entry', 820, 168], ['professional', 1420, 252], ['senior', 560, 62], ['leadership', 179, 16]]) row(`ws-2026q3-level-${lvl}-wo`, '2026-Q3', { level: lvl }, 'women', w, n);
+  for (const [m, v] of [['age_18_30', 506], ['age_31_50', 1874], ['age_51_plus', 589]]) row(`ws-2026q3-org-${m}`, '2026-Q3', {}, m, v, 2969);
   return out;
 }
 
@@ -297,7 +326,11 @@ export function buildCriticalRoles() {
   return [
     ['senior-reactor-operator', 90, 84, 14, 22], ['reactor-operator', 110, 106, 56, 40], ['local-operator', 180, 162, 237, 35], ['shift-supervisor', 24, 22, 6, 10],
     ['nuclear-training-instructor', 40, 33, 6, 8], ['radiation-protection-technician', 60, 52, 18, 12], ['chemistry-technician', 34, 30, 8, 6], ['emergency-preparedness-coordinator', 16, 14, 3, 4],
-  ].map(([role_id, target_bench, qualified, in_training, pipeline]) => ({ id: `crit-${role_id}`, role_id, period: '2026-Q3', target_bench, qualified, in_training, pipeline, source: 'Demo tenant (SAMPLE)', sample: true }));
+  ].flatMap(([role_id, target_bench, qualified, in_training, pipeline]) => [
+    { id: `crit-${role_id}`, role_id, period: '2026-Q3', target_bench, qualified, in_training, pipeline, source: 'Demo tenant (SAMPLE)', sample: true },
+    // [G3] previous quarter for the bench-depth trend
+    { id: `crit-${role_id}-2026q2`, role_id, period: '2026-Q2', target_bench, qualified: Math.max(0, qualified - 2), in_training: in_training + 1, pipeline: Math.max(0, pipeline - 3), source: 'Demo tenant (SAMPLE)', sample: true },
+  ]);
 }
 
 export function buildDalil(pages, roles) {

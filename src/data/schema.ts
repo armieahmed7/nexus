@@ -546,7 +546,9 @@ export const SCHEMA: Record<string, TableDef> = {
       consent_version: 'text =\'1\'', delete_after: 'date?', answers: 'json ={}', nationality_flag: 'text enum:uae|other|unknown =\'unknown\'',
       gender: 'text? enum:f|m',
     },
-    read: [{ res: 'applications', person: 'person_id' }], write: { mode: 'direct', res: 'applications', own: true },
+    // [G3] write mode 'rpc': applicants submit and withdraw through kafaa_submit_application / kafaa_withdraw_application,
+    // so nobody can move their own application to "offer" with a direct update.
+    read: [{ res: 'applications', person: 'person_id' }], write: { mode: 'rpc', res: 'applications' },
   },
   application_events: {
     module: 'M06', label: 'Application stage history (plain-language)',
@@ -575,7 +577,8 @@ export const SCHEMA: Record<string, TableDef> = {
       id: 'text pk', programme_id: 'text ref:talent_programmes', intake_year: 'int', university_org_id: 'text? ref:organisations', destination: 'text',
       pathway: 'text', size: 'int', in_study: 'int =0', graduated: 'int =0', placed: 'int =0', women_pct: 'num?', sample: 'bool =true',
     },
-    read: [{ res: 'cohorts', special: 'agg_ok' }, { res: 'cohorts' }, { res: 'workforce_analytics', special: 'agg_ok' }],
+    // [G3] a university partner reads the cohort aggregates hosted at its own university (partner_org OwnOrg on university_org_id)
+    read: [{ res: 'cohorts', special: 'agg_ok' }, { res: 'cohorts' }, { res: 'workforce_analytics', special: 'agg_ok' }, { res: 'partner_org', org: 'university_org_id' }],
     write: { mode: 'direct', res: 'cohorts' },
   },
   scholars: {
@@ -645,7 +648,9 @@ export const SCHEMA: Record<string, TableDef> = {
       id: 'text pk', challenge_id: 'text? ref:research_challenges', org_id: 'text ref:organisations idx', title: 'text', summary: 'text',
       status: 'text enum:draft|submitted|screening|accepted|declined =\'draft\'', ip_route: 'text?', screened: 'bool =false', submitted_at: 'ts?',
     },
-    read: [{ res: 'research', org: 'org_id' }], write: { mode: 'direct', res: 'research', orgw: true },
+    // [G3] write mode 'rpc': proposals are saved and submitted through kafaa_save_research_proposal and decided through
+    // kafaa_decide_research_proposal, so a partner cannot mark its own proposal screened or accepted.
+    read: [{ res: 'research', org: 'org_id' }], write: { mode: 'rpc', res: 'research' },
   },
 
   // ───────────────────────────── Workforce analytics (M07)

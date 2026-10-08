@@ -177,6 +177,15 @@ export class SupabaseBackend implements Repository {
         if (error) throw new Error(error.message);
         return (data ?? []) as { programme_id: string; stage: string; n: number | null; suppressed: boolean }[];
       },
+      // ── [G3] M06 / M07 / M10 (supabase/migrations/20261008133001_kafaa_g3_rpcs.sql)
+      submitApplication: (programmeId, answers) => this.call('kafaa_submit_application', { p_programme_id: programmeId, p_answers: answers ?? {} }, ['applications', 'application_events']),
+      withdrawApplication: (id, reason) => this.call('kafaa_withdraw_application', { p_id: id, p_reason: reason ?? '' }, ['applications', 'application_events']),
+      draftObserverReport: (p) => this.call('kafaa_draft_observer_report', { p }, ['observer_reports']),
+      saveScenario: (p) => this.call('kafaa_save_scenario', { p }, ['scenarios']),
+      setBenchTarget: (id, target, reason) => this.call('kafaa_set_bench_target', { p_id: id, p_target: target, p_reason: reason }, ['critical_roles']),
+      saveResearchChallenge: (p) => this.call('kafaa_save_research_challenge', { p }, ['research_challenges']),
+      saveResearchProposal: (p) => this.call('kafaa_save_research_proposal', { p }, ['research_proposals']),
+      decideResearchProposal: (id, decision, securityOk, note) => this.call('kafaa_decide_research_proposal', { p_id: id, p_decision: decision, p_security_ok: securityOk, p_note: note ?? '' }, ['research_proposals']),
       logDenied: async (route, resource) => {
         await this.client.rpc('kafaa_log_denied', { p_route: route, p_resource: resource });
       },

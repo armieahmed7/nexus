@@ -670,14 +670,8 @@ create trigger kafaa_talent_programmes_audit after insert or update on kafaa_tal
 alter table kafaa_applications enable row level security;
 drop policy if exists kafaa_read on kafaa_applications;
 create policy kafaa_read on kafaa_applications for select to anon, authenticated using (kafaa_rule_read('applications', person_id, null::text, true));
-drop policy if exists kafaa_insert on kafaa_applications;
-create policy kafaa_insert on kafaa_applications for insert to anon, authenticated with check (kafaa_has_grant('applications', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('applications', array['Own','Scope'])));
-drop policy if exists kafaa_update on kafaa_applications;
-create policy kafaa_update on kafaa_applications for update to authenticated using (kafaa_has_grant('applications', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('applications', array['Own','Scope']))) with check (kafaa_has_grant('applications', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('applications', array['Own','Scope'])));
-grant select, insert, update on kafaa_applications to authenticated;
-grant select on kafaa_applications to anon;
-drop trigger if exists kafaa_applications_audit on kafaa_applications;
-create trigger kafaa_applications_audit after insert or update on kafaa_applications for each row execute function kafaa_audit_row();
+grant select on kafaa_applications to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
 -- application_events
 alter table kafaa_application_events enable row level security;
@@ -717,7 +711,8 @@ alter table kafaa_scholar_cohorts enable row level security;
 drop policy if exists kafaa_read on kafaa_scholar_cohorts;
 create policy kafaa_read on kafaa_scholar_cohorts for select to anon, authenticated using (kafaa_has_grant('cohorts', array['Agg','R','W','A'])
     or kafaa_rule_read('cohorts', null::text, null::text, true)
-    or kafaa_has_grant('workforce_analytics', array['Agg','R','W','A']));
+    or kafaa_has_grant('workforce_analytics', array['Agg','R','W','A'])
+    or kafaa_rule_read('partner_org', null::text, university_org_id, true));
 drop policy if exists kafaa_insert on kafaa_scholar_cohorts;
 create policy kafaa_insert on kafaa_scholar_cohorts for insert to anon, authenticated with check (kafaa_has_grant('cohorts', array['W','A']));
 drop policy if exists kafaa_update on kafaa_scholar_cohorts;
@@ -817,14 +812,8 @@ grant select on kafaa_research_challenges to anon, authenticated;
 alter table kafaa_research_proposals enable row level security;
 drop policy if exists kafaa_read on kafaa_research_proposals;
 create policy kafaa_read on kafaa_research_proposals for select to anon, authenticated using (kafaa_rule_read('research', null::text, org_id, true));
-drop policy if exists kafaa_insert on kafaa_research_proposals;
-create policy kafaa_insert on kafaa_research_proposals for insert to anon, authenticated with check (kafaa_has_grant('research', array['W','A']) or (org_id = kafaa_my_org() and kafaa_has_grant('research', array['OrgW'])));
-drop policy if exists kafaa_update on kafaa_research_proposals;
-create policy kafaa_update on kafaa_research_proposals for update to authenticated using (kafaa_has_grant('research', array['W','A']) or (org_id = kafaa_my_org() and kafaa_has_grant('research', array['OrgW']))) with check (kafaa_has_grant('research', array['W','A']) or (org_id = kafaa_my_org() and kafaa_has_grant('research', array['OrgW'])));
-grant select, insert, update on kafaa_research_proposals to authenticated;
-grant select on kafaa_research_proposals to anon;
-drop trigger if exists kafaa_research_proposals_audit on kafaa_research_proposals;
-create trigger kafaa_research_proposals_audit after insert or update on kafaa_research_proposals for each row execute function kafaa_audit_row();
+grant select on kafaa_research_proposals to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
 -- workforce_snapshots
 alter table kafaa_workforce_snapshots enable row level security;
