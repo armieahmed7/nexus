@@ -177,6 +177,13 @@ Need a foundation change (shared UI component, new rule in `rules.ts`, a field i
   - `src/modules/m04/routes.ts`: new routes `learn-paths` (`/learn/paths`) and `learn-path` (`/learn/paths/:track`).
   - Migration `20261008132001_kafaa_g2_learning.sql`: 21 RPCs, direct-write guard triggers, policy alters. Additive only, with no DROP statements.
 
+- **2026-10-08 · G3 (branch g3)** Additive shared edits, all marked `[G3]`:
+  - `src/data/schema.ts`: `applications` and `research_proposals` move to write mode `'rpc'` (an applicant can no longer move their own application to "offer", a partner can no longer accept its own proposal by direct update); `scholar_cohorts` gains read rule `{ res: 'partner_org', org: 'university_org_id' }` (a university reads cohort totals hosted at its own university). Regenerated files follow.
+  - `src/data/types.ts`, `src/data/local/rpc.ts`, `src/data/supabase/SupabaseBackend.ts`: 8 RPCs `submitApplication`, `withdrawApplication`, `draftObserverReport`, `saveScenario`, `setBenchTarget`, `saveResearchChallenge`, `saveResearchProposal`, `decideResearchProposal` (SQL in `20261008133001_kafaa_g3_rpcs.sql`, which also revokes direct writes on the two tables, disables their now-redundant row-audit triggers and adds the cohort policy without any drop).
+  - `scripts/seed/people.mjs` and `content.mjs`: synthetic applicant pool (`ap-001`..`ap-208`, first names only, no personas) so funnel cells reach 10; earlier quarters, hires/leavers, organisation totals, women by level and age bands in `workforce_snapshots`; previous-quarter `critical_roles` rows; the "accepted" seed application now has its history.
+  - `scripts/validate-migrations.mjs` calls `scripts/validate-g3.mjs` (28 PGlite checks). New routes in G3's own `routes.ts`: `workforce-talent`, `workforce-definitions`, `admin-research`.
+  - Dev dependencies `@testing-library/react`, `@testing-library/dom`, `jsdom` for component tests (`// @vitest-environment jsdom` per file; vitest config unchanged).
+
 ## 11. Acceptance checklists per module
 
 Each group's hand-off lists every box below as done, or explains why not. These are the spec's acceptance criteria plus the contract's own items.

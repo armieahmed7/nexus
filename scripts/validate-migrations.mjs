@@ -100,6 +100,8 @@ for (const f of (existsSync('scripts/validate') ? readdirSync('scripts/validate'
   console.log(`checks: ${f}`);
   await (await import(`./validate/${f}`)).default({ db, as, one, count, ok, uid });
 }
+// [G3] M06/M07/M10 checks
+await (await import('./validate-g3.mjs')).default({ db, as, one, count, ok, uid });
 
 console.log(failures ? `\n${failures} check(s) FAILED` : '\nAll migration checks passed');
 process.exit(failures ? 1 : 0);
