@@ -1410,6 +1410,35 @@ export interface LedgerLocalRow {
   hash: string;
   actor_persona_id?: string | null;
 }
+export interface CareerTargetsRow {
+  id: string;
+  person_id: string;
+  role_id: string;
+  rank: number;
+  shared: boolean;
+  shared_person_id?: string | null;
+  active: boolean;
+  note?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+export interface RoadmapsRow {
+  id: string;
+  person_id: string;
+  target_role_id: string;
+  name: string;
+  scenario: any;
+  plan: any;
+  earliest_on?: string | null;
+  end_on?: string | null;
+  shared: boolean;
+  shared_person_id?: string | null;
+  active: boolean;
+  sent_plan_id?: string | null;
+  sent_at?: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -1520,6 +1549,8 @@ export interface Tables {
   person_skills: PersonSkillsRow;
   engine_settings: EngineSettingsRow;
   ledger_local: LedgerLocalRow;
+  career_targets: CareerTargetsRow;
+  roadmaps: RoadmapsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];

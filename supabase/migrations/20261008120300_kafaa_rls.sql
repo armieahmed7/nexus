@@ -1173,3 +1173,31 @@ create policy kafaa_read on kafaa_engine_settings for select to anon, authentica
 grant select on kafaa_engine_settings to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- career_targets
+alter table kafaa_career_targets enable row level security;
+drop policy if exists kafaa_read on kafaa_career_targets;
+create policy kafaa_read on kafaa_career_targets for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('skills_profile', shared_person_id, null::text, shared));
+drop policy if exists kafaa_insert on kafaa_career_targets;
+create policy kafaa_insert on kafaa_career_targets for insert to anon, authenticated with check (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope'])));
+drop policy if exists kafaa_update on kafaa_career_targets;
+create policy kafaa_update on kafaa_career_targets for update to authenticated using (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope']))) with check (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope'])));
+grant select, insert, update on kafaa_career_targets to authenticated;
+grant select on kafaa_career_targets to anon;
+drop trigger if exists kafaa_career_targets_audit on kafaa_career_targets;
+create trigger kafaa_career_targets_audit after insert or update on kafaa_career_targets for each row execute function kafaa_audit_row();
+
+-- roadmaps
+alter table kafaa_roadmaps enable row level security;
+drop policy if exists kafaa_read on kafaa_roadmaps;
+create policy kafaa_read on kafaa_roadmaps for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('skills_profile', shared_person_id, null::text, shared));
+drop policy if exists kafaa_insert on kafaa_roadmaps;
+create policy kafaa_insert on kafaa_roadmaps for insert to anon, authenticated with check (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope'])));
+drop policy if exists kafaa_update on kafaa_roadmaps;
+create policy kafaa_update on kafaa_roadmaps for update to authenticated using (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope']))) with check (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope'])));
+grant select, insert, update on kafaa_roadmaps to authenticated;
+grant select on kafaa_roadmaps to anon;
+drop trigger if exists kafaa_roadmaps_audit on kafaa_roadmaps;
+create trigger kafaa_roadmaps_audit after insert or update on kafaa_roadmaps for each row execute function kafaa_audit_row();
+
