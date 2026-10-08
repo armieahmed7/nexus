@@ -9,5 +9,210 @@
       "title": "Dalil",
       "purpose": "Corpus, refusal policy, evaluation runs, logs and the kill switch."
     }
+  },
+  "engine": {
+    "hello": {
+      "public": "I'm Dalil, Kafa'a's guide. I answer questions about nuclear careers, talent programmes, training, partnering and public facts about Barakah, only from approved sources, and I cite them. I can't take concerns, give plant operating or security details, or decide eligibility.",
+      "applicant": "I'm Dalil. As well as careers and programmes, I can tell you the status of your own applications. I answer only from approved sources and cite them.",
+      "staff": "I'm Dalil in staff mode. I can answer from the catalogue and internal guides cleared for me, and tell you about your own qualifications, licence, learning and plan. I never decide qualification or licensing outcomes.",
+      "partner": "I'm Dalil in partner mode. I can help with supplier readiness, the supplier academy and In-Country Value guidance, and your organisation's onboarding status."
+    },
+    "aboutDalil": "FAQ · What is Dalil?",
+    "contactPage": "Contact form",
+    "signInPage": "Sign in",
+    "speakUpPage": "Raise a concern: ECP channels",
+    "emergencyPage": "Emergency information (official links)",
+    "practicePage": "Practice quizzes",
+    "licensingPage": "How RO and SRO certification works",
+    "pathwaysPage": "Talent programmes",
+    "faqLink": "Browse the FAQ",
+    "handoff": {
+      "offer": "I can pass your question to a person: the careers team, a training coordinator or the partner desk. Choose a team below; you decide whether the conversation goes with it.",
+      "anon": "To reach a person, use the contact form (it routes to a role mailbox) or sign in and ask me to hand off."
+    },
+    "notDecision": "This is general guidance from published sources; ENEC and FANR decide eligibility.",
+    "openRole": "Open the {role} page",
+    "openProgramme": "Open {name}",
+    "checkRoutes": "Entry-route explainer",
+    "entry": {
+      "intro": "{role}: {ref} sets {n} entry routes.",
+      "noRoutes": "{role}: the role page lists the qualifications and training path; no regulatory entry routes are published for it."
+    },
+    "role": {
+      "training": "Training path",
+      "authority": "Licensing or authorising body",
+      "securityCareerOnly": "Kafa'a shows the career path only for this role; no security detail is held here."
+    },
+    "nationality": {
+      "uae_only": "UAE nationals",
+      "uae_priority": "UAE nationals first",
+      "open": "open to all nationalities"
+    },
+    "prog": {
+      "who": "Who it is for",
+      "duration": "Duration",
+      "outcome": "Leads to",
+      "apply": {
+        "in_kafaa": "You can express interest through Kafa'a (Apply).",
+        "link_out": "Applications go through the official ENEC or partner channel (linked on the programme page).",
+        "closed": "Applications are closed at the moment."
+      },
+      "sourcesDiffer": "Sources differ",
+      "scholarships": "Two sponsored study routes are published:"
+    },
+    "fact": {
+      "answer": "{label}: {value} (as of {date}).",
+      "conflict": "Note:",
+      "sample": "This is a SAMPLE figure from the demo tenant."
+    },
+    "noAnswer": "I couldn't find this in Kafa'a's approved sources, so I won't guess. Try rephrasing, browse the FAQ, or ask for a person.",
+    "personal": {
+      "signIn": "Sign in to ask about your own records. I only ever show your own information.",
+      "publicMode": "You're in public mode. Switch to staff, applicant or partner mode above to ask about your own records.",
+      "intro": {
+        "qual": "Your qualification records (mirrored from the training records system):",
+        "licence": "Your licence record (mirrored from the licensee's certification records; FANR decides):",
+        "enrolment": "Your training:",
+        "plan": "Your development plan:",
+        "application": "Your applications (decisions are mirrored from ENEC HR):",
+        "onboarding": "Your organisation's onboarding:"
+      },
+      "none": {
+        "qual": "I can't see any qualification records for you.",
+        "licence": "I can't see a licence record for you. Licence tracking applies to certified operators.",
+        "enrolment": "You have no assigned or requested training.",
+        "plan": "You don't have a development plan yet.",
+        "application": "You have no applications.",
+        "onboarding": "Your organisation has no onboarding case."
+      },
+      "page": {
+        "qual": "My qualifications",
+        "licence": "My licence",
+        "enrolment": "My learning",
+        "plan": "My development plan",
+        "application": "My applications",
+        "onboarding": "Partner onboarding"
+      },
+      "expires": "expires {date}",
+      "due": "due {date}",
+      "synced": "last synced {date}",
+      "progress": "{done} of {total} activities done",
+      "noDate": "no date",
+      "securityMirror": "{status} (security qualifications show qualified or not qualified only)"
+    },
+    "st": {
+      "planned": "planned",
+      "in_progress": "in progress",
+      "qualified": "qualified",
+      "due": "due",
+      "expired": "expired",
+      "suspended": "suspended",
+      "renewed": "renewed",
+      "valid": "valid",
+      "lapsed": "lapsed",
+      "withdrawn": "withdrawn",
+      "pending": "pending",
+      "assigned": "assigned",
+      "requested": "requested",
+      "approved": "approved",
+      "waitlisted": "waitlisted",
+      "enrolled": "enrolled",
+      "completed": "completed",
+      "failed": "failed",
+      "cancelled": "cancelled",
+      "draft": "draft",
+      "submitted": "submitted",
+      "active": "active",
+      "closed": "closed",
+      "interest": "interest registered",
+      "screening": "screening",
+      "assessment": "assessment",
+      "interview": "interview",
+      "offer": "offer",
+      "accepted": "accepted",
+      "unsuccessful": "unsuccessful",
+      "invited": "invited",
+      "returned": "returned",
+      "handed_off": "handed off to NEXUS"
+    },
+    "refuse": {
+      "concern": "I can't take concerns. Please use the Employee Concerns Program channels below.",
+      "injection": "I can't change how I work. I answer only from Kafa'a's approved sources, with citations.",
+      "security": "I can't discuss plant security. If you are interested in a security career, the Career Map shows the path and the public requirements.",
+      "safeguards": "Safeguards details are out of scope. The IAEA and FANR publish general information.",
+      "cyber": "I can't discuss cyber security details.",
+      "operations": "I can't help with plant operating procedures.",
+      "emergency": "For emergency guidance, use official ENEC and NCEMA pages: Go In, Stay In, Listen In.",
+      "medical": "I can't discuss medical matters. Occupational health can help.",
+      "exam": "I can't share exam content.",
+      "personal": "I can't share information about other people.",
+      "decision": "I can explain the published criteria, but I can't decide or predict eligibility, admission or licensing outcomes."
+    },
+    "careers": {
+      "security": "Career path: Security Officer",
+      "safeguards": "Career path: Safeguards Specialist",
+      "cyber": "Career path: Cyber Security Engineer",
+      "operations": "Career Map: operations roles"
+    },
+    "follow": {
+      "capabilities": {
+        "1": "What are the RO entry requirements?",
+        "2": "Which programmes are open to school leavers?",
+        "3": "How much of UAE electricity does Barakah produce?"
+      },
+      "staff": {
+        "1": "When do my qualifications expire?",
+        "2": "What training is assigned to me?"
+      },
+      "partner": {
+        "1": "What is the supplier readiness path?",
+        "2": "Which supplier academy courses are there?"
+      },
+      "entry": {
+        "1": "What does the SRO route require?",
+        "2": "How long is RO initial training?",
+        "3": "Which programmes lead to Local Operator?"
+      },
+      "entrySro": {
+        "1": "What does a Shift Supervisor do?",
+        "2": "How long is an operator certificate valid?",
+        "3": "What is the Graduate Plant Operator programme?"
+      },
+      "role": {
+        "1": "What are the entry requirements for this role?",
+        "2": "Which programmes lead to this role?",
+        "3": "What is the safety culture at Barakah?"
+      },
+      "programme": {
+        "1": "Which scholarships are available?",
+        "2": "What is the Diploma in Nuclear Technology?",
+        "3": "How do I become a Reactor Operator?"
+      },
+      "fact": {
+        "1": "How many people work for the ENEC group?",
+        "2": "What is the Emiratization rate?",
+        "3": "How much CO2 does Barakah avoid?"
+      },
+      "personal": {
+        "1": "What training is assigned to me?",
+        "2": "When do my qualifications expire?"
+      },
+      "security": {
+        "1": "What qualifications does a security officer career need?",
+        "2": "Where can I find emergency information?"
+      },
+      "faq": {
+        "1": "What is Dalil?",
+        "2": "Where do I raise a safety concern?"
+      },
+      "news": {
+        "1": "What is the Diploma in Nuclear Technology?",
+        "2": "Which scholarships are available?"
+      },
+      "page": {
+        "1": "What are the traits of a healthy safety culture?",
+        "2": "How can my company become a supplier?"
+      }
+    }
   }
 }

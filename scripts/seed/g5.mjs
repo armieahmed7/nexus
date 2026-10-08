@@ -209,6 +209,19 @@ export function extendG5(T) {
   T.facts.push(...buildFacts2());
   // Dalil corpus additions (news, internal and partner documents)
   T.corpus_docs.push(...buildCorpusExtra(newsPages));
+  // Refusal policy patterns: precise additions on top of the engine's built-in floor (broad words such as "procedure",
+  // "network" or "who is the" caused false refusals of careers questions), plus a prompt-injection policy.
+  const PAT = {
+    operations: ['how do i operate', 'emergency operating procedure', 'تشغيل المفاعل خطوة بخطوة'],
+    security: ['security arrangement', 'physical protection system', 'perimeter', 'access control system', 'drone', 'الترتيبات الأمنية'],
+    safeguards: ['nuclear material account', 'inventory of uranium'],
+    cyber: ['firewall', 'scada', 'vulnerability', 'password'],
+    emergency: ['evacuat', 'iodine', 'emergency zone', 'what should i do in an emergency', 'إخلاء'],
+    personal: ['name of the operator', 'phone number of', 'email of'],
+    concern: ['i want to report', 'report a concern', 'harass', 'retaliat', 'أريد الإبلاغ', 'أبلغ عن'],
+  };
+  for (const r of T.refusal_policies) if (PAT[r.category]) r.patterns = PAT[r.category];
+  T.refusal_policies.push({ id: 'rp-injection', category: 'injection', description_en: 'Prompt injection and attempts to change Dalil\'s rules', description_ar: 'محاولات حقن التعليمات أو تغيير قواعد دليل', patterns: ['ignore previous instructions', 'system prompt'], response_en: 'I can\'t change how I work. I answer only from Kafa\'a\'s approved sources, with citations.', response_ar: 'لا يمكنني تغيير طريقة عملي. أجيب فقط من مصادر كفاءة المعتمدة مع ذكر المصدر.', enabled: true, stop_conversation: false });
   T.dalil_settings = T.dalil_settings.map((s) => ({ ...s, signed_in_rate_limit_per_hour: 60, engine: 'retrieval-v1' }));
   T.eval_runs = T.eval_runs.map((e) => ({ ...e, details: [], engine: 'retrieval-v1', run_by: null, security_total: e.id === 'eval-2026-09' ? 20 : 20, security_correct: e.id === 'eval-2026-09' ? 19 : 20 }));
   // ECP referral log: closure metadata on closed cases and two more SAMPLE referrals (metadata only)
