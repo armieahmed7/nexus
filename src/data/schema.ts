@@ -61,7 +61,8 @@ export const SCHEMA: Record<string, TableDef> = {
       binding: 'bool?', public_listed: 'bool =false idx', synthetic: 'bool =false', nexus_org_id: 'text?', icv_score: 'num?',
       sources: 'json =[]', contact_route: 'text?',
     },
-    read: [{ res: 'public_content', where: 'public_listed' }, { res: 'partner_org', org: 'id' }],
+    // [G4] + equivalency: ENEC evaluators (and auditors) see which contractor organisation an equivalency request comes from
+    read: [{ res: 'public_content', where: 'public_listed' }, { res: 'partner_org', org: 'id' }, { res: 'equivalency' }],
     write: { mode: 'rpc', res: 'partner_org' },
   },
   agreements: {
@@ -634,8 +635,10 @@ export const SCHEMA: Record<string, TableDef> = {
     cols: {
       id: 'text pk', org_id: 'text ref:organisations idx', kind: 'text enum:supplier|university|international', status: 'text enum:invited|in_progress|submitted|approved|returned|handed_off idx',
       started_at: 'ts =now', submitted_at: 'ts?', decided_at: 'ts?', decided_by: 'text?', decision_note: 'text?', summary: 'json ={}', nexus_handoff_ref: 'text?',
+      history: 'json =[]', // [G4] status-tracking trail shown to the supplier: [{ at, action, status, by_role, note }]
     },
-    read: [{ res: 'partner_org', org: 'org_id' }], write: { mode: 'direct', res: 'partner_org', orgw: true },
+    // [G4] rpc only: the supplier submits through kafaa_partner_onboarding_action, ENEC decides through kafaa_decide_partner_onboarding
+    read: [{ res: 'partner_org', org: 'org_id' }], write: { mode: 'rpc', res: 'partner_org' },
   },
   supplier_readiness: {
     module: 'M09', label: 'Supplier readiness path step status',
@@ -651,16 +654,43 @@ export const SCHEMA: Record<string, TableDef> = {
       id: 'text pk', org_id: 'text ref:organisations idx', person_id: 'text? ref:people', person_label: 'text', standard_id: 'text ref:qual_standards',
       evidence: 'json =[]', status: 'text enum:submitted|under_review|equivalent|training_required|rejected idx', decision_note: 'text?', decider_role: 'text?',
       decided_by: 'text?', decided_at: 'ts?', submitted_at: 'ts =now',
+      mapping: 'json =[]', // [G4] evaluator mapping of evidence to task items: [{ task_id, covered, evidence: [index], note }]
+      history: 'json =[]', // [G4] [{ at, action, status, by_role, note }]
+      submitted_by: 'text?', // [G4]
     },
-    read: [{ res: 'equivalency', org: 'org_id' }], write: { mode: 'direct', res: 'equivalency', orgw: true },
+    // [G4] rpc only: partner admins submit through kafaa_submit_equivalency, evaluators map and decide through RPCs
+    read: [{ res: 'equivalency', org: 'org_id' }], write: { mode: 'rpc', res: 'equivalency' },
   },
   icv_plans: {
     module: 'M09', label: 'ICV improvement plan',
     cols: {
       id: 'text pk', org_id: 'text ref:organisations idx', baseline: 'num', target: 'num', target_year: 'int', certificate_valid_to: 'date?', levers: 'json =[]',
       status: 'text enum:draft|submitted|reviewed =\'draft\'', reviewed_at: 'ts?', certificate_file: 'text?',
+      review_note: 'text?', submitted_at: 'ts?', reviewed_by: 'text?', certificate_sha256: 'text?', // [G4]
     },
-    read: [{ res: 'partner_org', org: 'org_id' }], write: { mode: 'direct', res: 'partner_org', orgw: true },
+    // [G4] rpc only: kafaa_save_icv_plan (supplier) and kafaa_review_icv_plan (ENEC) so a supplier cannot mark its own plan reviewed
+    read: [{ res: 'partner_org', org: 'org_id' }], write: { mode: 'rpc', res: 'partner_org' },
+  },
+  // [G4] Supplier document checklist: metadata and hash of each uploaded file (the file itself stays with the supplier in this concept)
+  supplier_documents: {
+    module: 'M09', label: 'Supplier onboarding document checklist with review evidence',
+    cols: {
+      id: 'text pk', org_id: 'text ref:organisations idx', doc_key: 'text', required: 'bool =true', step_key: 'text',
+      status: 'text enum:missing|uploaded|accepted|rejected =\'missing\' idx', file_name: 'text?', size_kb: 'int?', sha256: 'text?',
+      uploaded_at: 'ts?', uploaded_by: 'text?', reviewed_at: 'ts?', reviewed_by: 'text?', review_note: 'text?',
+    },
+    read: [{ res: 'partner_org', org: 'org_id' }], write: { mode: 'rpc', res: 'partner_org' },
+  },
+  // [G4] Supplier academy knowledge checks (concept content; questions are public, answer keys are not)
+  academy_checks: {
+    module: 'M09', label: 'Supplier academy knowledge-check questions (concept content)',
+    cols: { id: 'text pk', course_id: 'text ref:courses idx', n: 'int', q_en: 'text', q_ar: 'text', options: 'json =[]' },
+    read: PUB, write: { mode: 'none' },
+  },
+  academy_check_keys: {
+    module: 'M09', label: 'Answer keys for supplier academy checks (read by RPC only)',
+    cols: { id: 'text pk', check_id: 'text ref:academy_checks idx', answer: 'int' },
+    read: [{ res: 'training' }], write: { mode: 'none' },
   },
   research_challenges: {
     module: 'M10', label: 'Research challenge (publishes only after a screening sign-off)',
@@ -776,8 +806,48 @@ export const SCHEMA: Record<string, TableDef> = {
   },
   future_skills: {
     module: 'M11', label: 'Future-skills radar values (SIMULATED scenarios, never forecasts)',
-    cols: { id: 'text pk', skill_en: 'text', skill_ar: 'text', tech_ids: 'text[] =[]', scenario: 'text', value: 'num', simulated: 'bool =true' },
+    cols: {
+      id: 'text pk', skill_en: 'text', skill_ar: 'text', tech_ids: 'text[] =[]', scenario: 'text', value: 'num', simulated: 'bool =true',
+      skill_key: 'text =\'\'', readiness: 'num?', // [G4] stable skill key and SIMULATED current-readiness index (0-100)
+    },
     read: [{ res: 'workforce_analytics', special: 'agg_ok' }], write: { mode: 'direct', res: 'workforce_analytics' },
+  },
+  // [G4] Skills needed per technology family (orientation only; no deployment decision implied)
+  adv_skills: {
+    module: 'M11', label: 'Skill areas per technology family and how they relate to APR-1400 skills',
+    cols: {
+      id: 'text pk', tech_id: 'text ref:adv_technologies idx', skill_en: 'text', skill_ar: 'text',
+      area: 'text enum:physics|chemistry|materials|operations|maintenance|licensing|digital|project|safety',
+      relation: 'text enum:transfers|adapts|new', note_en: 'text =\'\'', note_ar: 'text =\'\'', sort: 'int =0',
+    },
+    read: PUB, write: { mode: 'direct', res: 'public_content' },
+  },
+  // [G4] Future-role catalogue: concept roles, no headcount, no sites, no dates
+  future_roles: {
+    module: 'M11', label: 'Future-role catalogue (concept roles; no headcount, sites or dates)',
+    cols: {
+      id: 'text pk', tech_ids: 'text[] =[]', title_en: 'text', title_ar: 'text', summary_en: 'text', summary_ar: 'text',
+      from_role_ids: 'text[] =[]', skill_ids: 'text[] =[]', horizon: 'text enum:watch|explore|prepare', family_id: 'text? ref:job_families', sort: 'int =0',
+    },
+    read: PUB, write: { mode: 'direct', res: 'public_content' },
+  },
+  // [G4] Learning tracks on advanced reactor fundamentals for interested staff and students
+  adv_tracks: {
+    module: 'M11', label: 'Learning tracks on advanced reactor fundamentals (concept content)',
+    cols: {
+      id: 'text pk', title_en: 'text', title_ar: 'text', summary_en: 'text', summary_ar: 'text', audience: 'text enum:students|staff|all',
+      level: 'text enum:intro|intermediate', tech_ids: 'text[] =[]', modules: 'json =[]', course_id: 'text? ref:courses', hours: 'num =0', sources: 'json =[]', sort: 'int =0',
+    },
+    read: PUB, write: { mode: 'direct', res: 'public_content' },
+  },
+  // [G4] Skills-gap plan actions against SIMULATED scenarios (HR only; never a forecast)
+  skill_gap_plans: {
+    module: 'M11', label: 'Skills-gap plan actions against SIMULATED scenarios',
+    cols: {
+      id: 'text pk', skill_key: 'text idx', scenario: 'text', action: 'text enum:train|reskill|hire|partner|research', owner_role: 'text',
+      target_quarter: 'text', status: 'text enum:draft|active|done =\'draft\'', note: 'text =\'\'', created_by: 'text?', created_at: 'ts =now', updated_at: 'ts?',
+    },
+    read: [{ res: 'workforce_analytics', special: 'agg_ok' }], write: { mode: 'rpc', res: 'workforce_analytics' },
   },
 
   // ───────────────────────────── Public content (M12, M15, M16)

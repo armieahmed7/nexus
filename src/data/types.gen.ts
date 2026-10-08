@@ -860,6 +860,7 @@ export interface PartnerOnboardingRow {
   decision_note?: string | null;
   summary: any;
   nexus_handoff_ref?: string | null;
+  history: any;
 }
 export interface SupplierReadinessRow {
   id: string;
@@ -883,6 +884,9 @@ export interface EquivalencyRequestsRow {
   decided_by?: string | null;
   decided_at?: string | null;
   submitted_at: string;
+  mapping: any;
+  history: any;
+  submitted_by?: string | null;
 }
 export interface IcvPlansRow {
   id: string;
@@ -895,6 +899,39 @@ export interface IcvPlansRow {
   status: 'draft' | 'submitted' | 'reviewed';
   reviewed_at?: string | null;
   certificate_file?: string | null;
+  review_note?: string | null;
+  submitted_at?: string | null;
+  reviewed_by?: string | null;
+  certificate_sha256?: string | null;
+}
+export interface SupplierDocumentsRow {
+  id: string;
+  org_id: string;
+  doc_key: string;
+  required: boolean;
+  step_key: string;
+  status: 'missing' | 'uploaded' | 'accepted' | 'rejected';
+  file_name?: string | null;
+  size_kb?: number | null;
+  sha256?: string | null;
+  uploaded_at?: string | null;
+  uploaded_by?: string | null;
+  reviewed_at?: string | null;
+  reviewed_by?: string | null;
+  review_note?: string | null;
+}
+export interface AcademyChecksRow {
+  id: string;
+  course_id: string;
+  n: number;
+  q_en: string;
+  q_ar: string;
+  options: any;
+}
+export interface AcademyCheckKeysRow {
+  id: string;
+  check_id: string;
+  answer: number;
 }
 export interface ResearchChallengesRow {
   id: string;
@@ -1071,6 +1108,60 @@ export interface FutureSkillsRow {
   scenario: string;
   value: number;
   simulated: boolean;
+  skill_key: string;
+  readiness?: number | null;
+}
+export interface AdvSkillsRow {
+  id: string;
+  tech_id: string;
+  skill_en: string;
+  skill_ar: string;
+  area: 'physics' | 'chemistry' | 'materials' | 'operations' | 'maintenance' | 'licensing' | 'digital' | 'project' | 'safety';
+  relation: 'transfers' | 'adapts' | 'new';
+  note_en: string;
+  note_ar: string;
+  sort: number;
+}
+export interface FutureRolesRow {
+  id: string;
+  tech_ids: string[];
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  from_role_ids: string[];
+  skill_ids: string[];
+  horizon: 'watch' | 'explore' | 'prepare';
+  family_id?: string | null;
+  sort: number;
+}
+export interface AdvTracksRow {
+  id: string;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  audience: 'students' | 'staff' | 'all';
+  level: 'intro' | 'intermediate';
+  tech_ids: string[];
+  modules: any;
+  course_id?: string | null;
+  hours: number;
+  sources: any;
+  sort: number;
+}
+export interface SkillGapPlansRow {
+  id: string;
+  skill_key: string;
+  scenario: string;
+  action: 'train' | 'reskill' | 'hire' | 'partner' | 'research';
+  owner_role: string;
+  target_quarter: string;
+  status: 'draft' | 'active' | 'done';
+  note: string;
+  created_by?: string | null;
+  created_at: string;
+  updated_at?: string | null;
 }
 export interface ContentPagesRow {
   id: string;
@@ -1292,6 +1383,9 @@ export interface Tables {
   supplier_readiness: SupplierReadinessRow;
   equivalency_requests: EquivalencyRequestsRow;
   icv_plans: IcvPlansRow;
+  supplier_documents: SupplierDocumentsRow;
+  academy_checks: AcademyChecksRow;
+  academy_check_keys: AcademyCheckKeysRow;
   research_challenges: ResearchChallengesRow;
   research_proposals: ResearchProposalsRow;
   workforce_snapshots: WorkforceSnapshotsRow;
@@ -1307,6 +1401,10 @@ export interface Tables {
   adv_technologies: AdvTechnologiesRow;
   skill_bridges: SkillBridgesRow;
   future_skills: FutureSkillsRow;
+  adv_skills: AdvSkillsRow;
+  future_roles: FutureRolesRow;
+  adv_tracks: AdvTracksRow;
+  skill_gap_plans: SkillGapPlansRow;
   content_pages: ContentPagesRow;
   facts: FactsRow;
   glossary: GlossaryRow;

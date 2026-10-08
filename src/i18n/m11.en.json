@@ -5,9 +5,189 @@
       "title": "Future workforce",
       "purpose": "The ADVANCE programme and the skills advanced reactors may need. No deployment decision is implied."
     },
+    "future-tech": {
+      "title": "Technology family",
+      "purpose": "One technology family under evaluation: MoU partners, sources, skills, bridges and learning tracks."
+    },
     "workforce-future": {
       "title": "Future skills",
       "purpose": "Future-skills radar with scenarios labelled SIMULATED, never forecasts."
     }
+  },
+  "common": {
+    "noDecision": "ENEC is evaluating these technologies; no deployment decision is implied.",
+    "noDecisionBody": "The technologies below are under evaluation through MoUs and studies. None of these MoUs is a deployment decision, and this page contains no projected headcount and no site information."
+  },
+  "rel": {
+    "transfers": "Transfers",
+    "adapts": "Adapts",
+    "new": "New"
+  },
+  "relHint": {
+    "transfers": "carries over from APR-1400 work",
+    "adapts": "familiar, but works differently",
+    "new": "not part of APR-1400 work today"
+  },
+  "area": {
+    "physics": "Reactor physics",
+    "chemistry": "Chemistry",
+    "materials": "Materials and fuel",
+    "operations": "Operations",
+    "maintenance": "Maintenance and I&C",
+    "licensing": "Licensing",
+    "digital": "Digital and autonomy",
+    "project": "Projects and investment",
+    "safety": "Safety and radiation protection"
+  },
+  "horizon": {
+    "watch": "Watch",
+    "explore": "Explore",
+    "prepare": "Prepare"
+  },
+  "horizonHint": {
+    "watch": "follow the technology",
+    "explore": "build awareness and links",
+    "prepare": "skills useful now, for work ENEC already does"
+  },
+  "audience": {
+    "students": "Students",
+    "staff": "Staff",
+    "all": "Staff and students"
+  },
+  "level": {
+    "intro": "Introductory",
+    "intermediate": "Intermediate"
+  },
+  "band": {
+    "none": "None",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High"
+  },
+  "action": {
+    "train": "Train",
+    "reskill": "Reskill",
+    "hire": "Hire",
+    "partner": "Partner",
+    "research": "Research"
+  },
+  "planStatus": {
+    "draft": "Draft",
+    "active": "Active",
+    "done": "Done"
+  },
+  "pub": {
+    "eyebrow": "Advanced reactors",
+    "intro": "ENEC launched the ADVANCE programme to evaluate small modular reactors, advanced reactors and microreactors. Here is what those technologies are and which skills they may need.",
+    "empty": "No technology entries yet.",
+    "advanceTitle": "The ADVANCE programme",
+    "advanceDate": "30 Nov 2023",
+    "advanceLaunch": "ADVANCE launched",
+    "advanceLaunchBody": "ENEC launched ADVANCE to evaluate SMRs, advanced reactors and microreactors for the UAE and abroad.",
+    "copDate": "Dec 2023 (COP28)",
+    "copTitle": "First MoUs",
+    "copBody": "MoUs with GE Hitachi, TerraPower, Westinghouse, X-energy, USNC, MoltexFLEX and CNNC; others followed in later years.",
+    "fanrDate": "Feb 2026",
+    "fanrTitle": "Regulator's position",
+    "fanrBody": "FANR said it had received no formal proposal for new capacity and was training its staff on SMRs.",
+    "srcAdvance": "WNN · ADVANCE programme",
+    "srcCop": "WNN · COP28 SMR MoUs",
+    "srcFanr": "The National · FANR (Feb 2026)",
+    "techTitle": "Technology families",
+    "techDesc": "General descriptions for orientation. Each cites its MoU source and date.",
+    "partners": "MoU partners",
+    "differs": "What differs from APR-1400 operations",
+    "mouDate": "MoU dates",
+    "nonBinding": "Non-binding",
+    "techFoot": "Technology families are general descriptions. None of these MoUs is a deployment decision.",
+    "matrixTitle": "Skills per technology",
+    "matrixDesc": "How each skill area relates to today's APR-1400 work at Barakah.",
+    "area": "Skill area",
+    "bridgeTitle": "Skill bridges",
+    "bridgeDesc": "Pick a current role to see what transfers to a technology and what is new.",
+    "fromRole": "Current role",
+    "noBridges": "No bridges for this role yet.",
+    "transfers": "What transfers",
+    "isNew": "What is new",
+    "roleLink": "Open this role in the career map",
+    "catalogueTitle": "Future-role catalogue",
+    "catalogueDesc": "Concept roles that these technologies could need. Descriptions only: no numbers, no sites, no dates.",
+    "f": {
+      "tech": "Technology",
+      "horizon": "Horizon"
+    },
+    "from": "Builds on",
+    "noRoles": "No roles match these filters.",
+    "catalogueFoot": "Concept roles for career conversations. They are not vacancies and imply no plan to hire.",
+    "tracksTitle": "Learning tracks",
+    "tracksDesc": "Advanced reactor fundamentals for interested staff and students.",
+    "hours": "{n} h",
+    "minutes": "{n} min",
+    "openCourse": "Open the course",
+    "adjacentTitle": "Adjacent themes ENEC has named",
+    "aiTitle": "AI and digital twins",
+    "aiBody": "The ENEC-KEPCO AI Innovation Lab (MoU, Nov 2025) and the ENECIQ agentic AI platform co-developed with Presight, which runs separately from reactor systems.",
+    "cmTitle": "Clean molecules",
+    "cmBody": "Exploratory only: letters of intent and research cooperation on hydrogen and related systems. No pilot or investment decision has been announced.",
+    "srcKepco": "WNN · KEPCO-ENEC MoU (Nov 2025)",
+    "srcPresight": "ENEC · ENECIQ with Presight",
+    "srcInl": "WNN · INL and other MoUs",
+    "srcEdf": "WNN · EDF cooperation",
+    "guard": "A public payload check flagged content on this page for review."
+  },
+  "tech": {
+    "notFound": "Technology not found",
+    "back": "All technologies",
+    "mou": "MoU and status",
+    "binding": "Binding",
+    "sourceFoot": "MoUs record intentions to evaluate; they are not deployment decisions.",
+    "skills": "Skills this technology may need",
+    "navLabel": "Other technology families"
+  },
+  "wf": {
+    "eyebrow": "Workforce planning",
+    "intro": "Compare a scenario's demand for future skills with today's readiness, then plan actions. Every index here is SIMULATED.",
+    "simTitle": "SIMULATED: scenarios, not forecasts",
+    "simBody": "Indices run from 0 to 100 and are illustrative. They are not forecasts, not headcounts and not decisions. Use them to discuss options.",
+    "empty": "No scenario data.",
+    "scenario": "Scenario",
+    "adoption": "Adoption what-if: ×{n}",
+    "adoptionHint": "Scales the scenario's demand index from half to one and a half times.",
+    "statSkills": "Skills tracked",
+    "statHigh": "High gaps",
+    "statUnplanned": "High gaps without a plan",
+    "statPlans": "Active plan actions",
+    "statPlansSub": "{n} actions in total",
+    "radarTitle": "Demand and readiness ({s})",
+    "skill": "Skill",
+    "tech": "Technology",
+    "demand": "Demand index",
+    "readiness": "Readiness index",
+    "gap": "Gap",
+    "band": "Gap band",
+    "planned": "Planned",
+    "gapTitle": "Skills gaps",
+    "gapDesc": "Gap = demand index minus readiness index. High is 30 or more.",
+    "addPlan": "Plan",
+    "plansTitle": "Skills-gap plan",
+    "plansDesc": "Actions HR has recorded against SIMULATED scenarios. Each save is audited.",
+    "newPlan": "New action",
+    "editPlan": "Edit action",
+    "noPlans": "No plan actions yet.",
+    "action": "Action",
+    "owner": "Owner (role)",
+    "ownerHint": "A role, not a person (for example: Nuclear Training).",
+    "quarter": "Target quarter",
+    "status": "Status",
+    "note": "Note",
+    "planNote": "Plans respond to a SIMULATED scenario. They are not commitments to hire or deploy.",
+    "savePlan": "Save plan action",
+    "savePlanBody": "The action is saved and written to the audit log.",
+    "saved": "Plan saved",
+    "actingHr": "HR analyst or CHCO office",
+    "structureTitle": "Bridge coverage",
+    "structureDesc": "How many current roles have a mapped skill bridge into each technology, and how many concept roles exist.",
+    "bridges": "Roles with a bridge",
+    "conceptRoles": "Concept roles"
   }
 }

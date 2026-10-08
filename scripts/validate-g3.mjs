@@ -3,7 +3,7 @@
 export default async function g3Checks({ db, as, one, count, ok, uid }) {
   console.log('G3 checks (M06, M07, M10)');
   // Test identities for personas the foundation block does not create.
-  for (const [persona, org, n] of [['k-student', 'public', 901], ['k-graduate', 'public', 902]]) {
+  for (const [persona, org, n] of [['k-student', 'public', 951], ['k-graduate', 'public', 952]]) {
     uid[persona] = `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
     await db.query(`insert into profiles (user_id, email, persona_id, org_id, lens, roles) values ($1,$2,$3,$4,$5,$6) on conflict do nothing`, [uid[persona], `${persona}@test`, persona, org, 'public', ['Applicant']]);
   }

@@ -14,6 +14,8 @@ import { newId } from './store';
 import { G1LocalRpc } from './rpc.g1';
 import { makeG2LocalRpc } from './rpc_g2';
 import type { G2Rpc } from '../rpc_g2';
+import { G4LocalRpc } from './rpc.g4'; // [G4]
+import { DOC_CHECKLIST, equivalencyCoverage, readinessState } from '../../domain/partners'; // [G4]
 
 // [G3] shared with the SQL mirror: answers that must never be collected at application time, retention and IP route
 export const G3_FORBIDDEN_ANSWER_KEYS = ['emirates_id', 'emiratesid', 'eid', 'passport', 'passport_no', 'dob', 'date_of_birth', 'birth_date'];
@@ -34,8 +36,22 @@ export class LocalRpc implements Rpc {
   constructor(private readonly b: LocalBackend) {
     this.g1 = new G1LocalRpc(b);
     Object.assign(this, makeG2LocalRpc(b));
+    this.g4 = new G4LocalRpc(b, (...a) => this.refuse(...a), (...a) => this.done(...a));
   }
   private readonly g1: G1LocalRpc;
+  /** [G4] M09/M11 RPCs live in rpc.g4.ts and share refuse/done with this class. */
+  private readonly g4: G4LocalRpc;
+  invitePartner: Rpc['invitePartner'] = (...a) => this.g4.invitePartner(...a);
+  partnerOnboardingAction: Rpc['partnerOnboardingAction'] = (...a) => this.g4.partnerOnboardingAction(...a);
+  uploadSupplierDocument: Rpc['uploadSupplierDocument'] = (...a) => this.g4.uploadSupplierDocument(...a);
+  reviewSupplierDocument: Rpc['reviewSupplierDocument'] = (...a) => this.g4.reviewSupplierDocument(...a);
+  saveIcvPlan: Rpc['saveIcvPlan'] = (...a) => this.g4.saveIcvPlan(...a);
+  reviewIcvPlan: Rpc['reviewIcvPlan'] = (...a) => this.g4.reviewIcvPlan(...a);
+  submitEquivalency: Rpc['submitEquivalency'] = (...a) => this.g4.submitEquivalency(...a);
+  mapEquivalency: Rpc['mapEquivalency'] = (...a) => this.g4.mapEquivalency(...a);
+  enrolSupplierCourse: Rpc['enrolSupplierCourse'] = (...a) => this.g4.enrolSupplierCourse(...a);
+  completeSupplierCourse: Rpc['completeSupplierCourse'] = (...a) => this.g4.completeSupplierCourse(...a);
+  saveSkillGapPlan: Rpc['saveSkillGapPlan'] = (...a) => this.g4.saveSkillGapPlan(...a);
 
   private get ctx() {
     return this.b.access();
@@ -151,8 +167,17 @@ export class LocalRpc implements Rpc {
     if (o.org_id === this.b.identity().orgId) return this.refuse('partner.decide', 'partner_onboarding', id, 'conflict', "You cannot decide your own organisation's case", role);
     if (decision === 'handed_off' && o.status !== 'approved') return this.refuse('partner.decide', 'partner_onboarding', id, 'invalid', 'Only an approved case can be handed off', role);
     if (decision !== 'handed_off' && !['submitted', 'in_progress'].includes(o.status)) return this.refuse('partner.decide', 'partner_onboarding', id, 'invalid', 'Case is not awaiting a decision', role);
-    this.b.rawUpdate('partner_onboarding', id, { status: decision, decided_at: new Date().toISOString(), decided_by: this.me, decision_note: note, nexus_handoff_ref: decision === 'handed_off' ? '/partner/readiness' : o.nexus_handoff_ref });
-    return this.done('partner.decide', 'partner_onboarding', id, `${decision}${note ? `: ${note}` : ''}`, role, `kafaa.partner.${decision}`, `Partner onboarding ${id} (${o.org_id}): ${note ?? ''}`, 'Decision recorded');
+    // [G4] a return needs a note the supplier can act on; a supplier approval needs every required document accepted
+    if (decision === 'returned' && String(note ?? '').trim().length < 5) return this.refuse('partner.decide', 'partner_onboarding', id, 'invalid', 'Returning a case needs a note the supplier can act on', role);
+    if (decision === 'approved' && o.kind === 'supplier') {
+      const open = DOC_CHECKLIST.filter((k) => k.required && !this.b.raw('supplier_documents').some((d) => d.org_id === o.org_id && d.doc_key === k.key && d.status === 'accepted')).length;
+      if (open > 0 || !readinessState(this.b.raw('supplier_readiness').filter((s) => s.org_id === o.org_id), this.b.raw('supplier_documents').filter((d) => d.org_id === o.org_id), this.b.raw('icv_plans').find((p) => p.org_id === o.org_id)).ready)
+        return this.refuse('partner.decide', 'partner_onboarding', id, 'invalid', `Review the evidence first: ${open} required document(s) not accepted, or the readiness path is incomplete`, role);
+    }
+    const history = [...(Array.isArray(o.history) ? o.history : []), { at: new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'), action: decision, status: decision, by_role: role, note: note || null }];
+    this.b.rawUpdate('partner_onboarding', id, { status: decision, decided_at: new Date().toISOString(), decided_by: this.me, decision_note: note, nexus_handoff_ref: decision === 'handed_off' ? '/partner/readiness' : o.nexus_handoff_ref, history: history as never });
+    if (decision === 'handed_off') for (const s of this.b.raw('supplier_readiness').filter((x) => x.org_id === o.org_id && x.step_key === 'handoff')) this.b.rawUpdate('supplier_readiness', s.id, { status: 'done', evidence: 'NEXUS /partner/readiness', updated_at: new Date().toISOString() });
+    return this.done('partner.decide', 'partner_onboarding', id, `${decision}${note ? `: ${note}` : ''}`, role, `kafaa.partner.${decision}`, `Partner onboarding ${id} (${o.org_id}): ${note ?? ''}`, 'Decision recorded', undefined, ['partner_onboarding', 'supplier_readiness']);
   }
 
   // ───────────── M06 application decision (mirrored from HR)
@@ -195,7 +220,12 @@ export class LocalRpc implements Rpc {
     if (status !== 'under_review' && !roles.includes('training_manager') && !this.b.raw('evaluator_quals').some((q) => q.person_id === this.me && q.standard_id === r.standard_id && q.valid_to >= today))
       return this.refuse('equivalency.decide', 'equivalency_requests', id, 'not_evaluator', 'You do not hold the evaluator qualification for this standard', role);
     if (status !== 'under_review' && !note) return this.refuse('equivalency.decide', 'equivalency_requests', id, 'invalid', 'A decision note is required', role);
-    this.b.rawUpdate('equivalency_requests', id, { status: status as never, decision_note: note, decider_role: 'Instructor / evaluator', decided_by: this.me, decided_at: status === 'under_review' ? null : new Date().toISOString() });
+    // [G4] decisions are final, and "equivalent" needs every task item covered by mapped evidence (rule M09-R4)
+    if (['equivalent', 'training_required', 'rejected'].includes(r.status)) return this.refuse('equivalency.decide', 'equivalency_requests', id, 'invalid', 'The request has already been decided', role);
+    if (status === 'equivalent' && !equivalencyCoverage(this.b.raw('task_items').filter((t) => t.standard_id === r.standard_id), r.mapping as never).complete)
+      return this.refuse('equivalency.decide', 'equivalency_requests', id, 'invalid', 'Map evidence to every task item before recording an equivalent decision', role);
+    const history = [...(Array.isArray(r.history) ? r.history : []), { at: new Date().toISOString().replace(/\.\d{3}Z$/, 'Z'), action: 'decide', status, by_role: role, note: note || null }];
+    this.b.rawUpdate('equivalency_requests', id, { status: status as never, decision_note: note, decider_role: 'Instructor / evaluator', decided_by: this.me, decided_at: status === 'under_review' ? null : new Date().toISOString(), history: history as never });
     return this.done('equivalency.decide', 'equivalency_requests', id, status, role, status === 'under_review' ? null : 'kafaa.equivalency.decide', `Equivalency ${id} (${r.org_id}, ${r.standard_id}): ${status}`, 'Decision recorded');
   }
   async getEquivalency(id: string) {

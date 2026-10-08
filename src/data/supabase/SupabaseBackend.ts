@@ -143,7 +143,7 @@ export class SupabaseBackend implements Repository {
       signoffEvaluation: (p: SignoffInput) => this.call('kafaa_signoff_evaluation', { p }, ['evaluations', 'qual_records']),
       setLicenceStatus: (id, status, reason) => this.call('kafaa_set_licence_status', { p_licence_id: id, p_status: status, p_reason: reason }, ['licences', 'licensing_tasks', 'reporting_obligations']),
       detectLicensingEvents: () => this.call('kafaa_detect_licensing_events', {}, ['licences', 'licensing_tasks']),
-      decidePartnerOnboarding: (id, decision, note) => this.call('kafaa_decide_partner_onboarding', { p_id: id, p_decision: decision, p_note: note }, ['partner_onboarding']),
+      decidePartnerOnboarding: (id, decision, note) => this.call('kafaa_decide_partner_onboarding', { p_id: id, p_decision: decision, p_note: note }, ['partner_onboarding', 'supplier_readiness']),
       decideApplication: (id, stage, note) => this.call('kafaa_decide_application', { p_id: id, p_stage: stage, p_note: note }, ['applications', 'application_events']),
       triageConcern: (id, status, priority) => this.call('kafaa_triage_concern', { p_id: id, p_status: status, p_priority: priority }, ['concern_cases']),
       decideEquivalency: (id, status, note) => this.call('kafaa_decide_equivalency', { p_id: id, p_status: status, p_note: note }, ['equivalency_requests']),
@@ -203,6 +203,18 @@ export class SupabaseBackend implements Repository {
         if (error) throw new Error(error.message);
         return (data ?? []) as { person_id: string; available: boolean | null }[];
       },
+      // [G4] M09/M11 (supabase/migrations/20261008134001_kafaa_g4_partners.sql)
+      invitePartner: (input) => this.call('kafaa_invite_partner', { p: input }, ['organisations', 'partner_onboarding', 'supplier_readiness', 'supplier_documents']),
+      partnerOnboardingAction: (id, action) => this.call('kafaa_partner_onboarding_action', { p_id: id, p_action: action }, ['partner_onboarding']),
+      uploadSupplierDocument: (orgId, docKey, fileName, sizeKb, sha) => this.call('kafaa_upload_supplier_document', { p_org_id: orgId, p_doc_key: docKey, p_file_name: fileName, p_size_kb: sizeKb, p_sha256: sha }, ['supplier_documents']),
+      reviewSupplierDocument: (id, decision, note) => this.call('kafaa_review_supplier_document', { p_id: id, p_decision: decision, p_note: note }, ['supplier_documents']),
+      saveIcvPlan: (orgId, plan, submit) => this.call('kafaa_save_icv_plan', { p_org_id: orgId, p_plan: plan, p_submit: submit }, ['icv_plans']),
+      reviewIcvPlan: (id, decision, note) => this.call('kafaa_review_icv_plan', { p_id: id, p_decision: decision, p_note: note }, ['icv_plans']),
+      submitEquivalency: (input) => this.call('kafaa_submit_equivalency', { p: input }, ['equivalency_requests']),
+      mapEquivalency: (id, mapping) => this.call('kafaa_map_equivalency', { p_id: id, p_mapping: mapping }, ['equivalency_requests']),
+      enrolSupplierCourse: (courseId, personId) => this.call('kafaa_enrol_supplier_course', { p_course_id: courseId, p_person_id: personId }, ['enrolments']),
+      completeSupplierCourse: (id, answers) => this.call('kafaa_complete_supplier_course', { p_enrolment_id: id, p_answers: answers }, ['enrolments', 'certificates']),
+      saveSkillGapPlan: (plan) => this.call('kafaa_save_skill_gap_plan', { p: plan }, ['skill_gap_plans']),
       auditVerify: async () => {
         const { data, error } = await this.client.rpc('kafaa_audit_verify');
         if (error) return { ok: false, code: 'error', message: error.message };

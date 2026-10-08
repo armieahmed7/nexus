@@ -98,10 +98,12 @@ await (await import('./validate-migrations.g1.mjs')).default({ db, as, one, coun
 // Module group checks (G2 hook, 2026-10-08): every scripts/validate/*.mjs default-exports async ({ db, as, one, count, ok, uid }) => void
 for (const f of (existsSync('scripts/validate') ? readdirSync('scripts/validate') : []).filter((x) => x.endsWith('.mjs')).sort()) {
   console.log(`checks: ${f}`);
-  await (await import(`./validate/${f}`)).default({ db, as, one, count, ok, uid });
+  const mod = await import(`./validate/${f}`);
+  await (mod.default ?? mod.g4Checks)({ db, as, one, count, ok, uid }); // g4.mjs exports g4Checks
 }
 // [G3] M06/M07/M10 checks
 await (await import('./validate-g3.mjs')).default({ db, as, one, count, ok, uid });
+// [G4] M09/M11 checks (scripts/validate/g4.mjs) run in the scripts/validate loop above.
 
 console.log(failures ? `\n${failures} check(s) FAILED` : '\nAll migration checks passed');
 process.exit(failures ? 1 : 0);

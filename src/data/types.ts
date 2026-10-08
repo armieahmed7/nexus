@@ -113,9 +113,73 @@ export interface ResearchProposalInput {
   submit: boolean;
 }
 
+// ───────────── [G4] M09 partners and suppliers, M11 future workforce (local: src/data/local/rpc.g4.ts; SQL: 20261008134001_kafaa_g4_partners.sql)
+export interface IcvPlanInput {
+  baseline: number;
+  target: number;
+  target_year: number;
+  levers: { lever: string; en?: string; ar?: string; delta: number }[];
+  certificate_valid_to?: string | null;
+  certificate_file?: string | null;
+  certificate_sha256?: string | null;
+}
+export interface EquivalencyInput {
+  person_id?: string | null;
+  person_label: string;
+  standard_id: string;
+  evidence: { name: string; kind: string; sha256?: string | null; size_kb?: number | null }[];
+}
+export interface EquivalencyMapping {
+  task_id: string;
+  covered: boolean;
+  evidence?: number[];
+  note?: string;
+}
+export interface GapPlanInput {
+  id?: string | null;
+  skill_key: string;
+  scenario: string;
+  action: 'train' | 'reskill' | 'hire' | 'partner' | 'research';
+  owner_role: string;
+  target_quarter: string;
+  status?: 'draft' | 'active' | 'done';
+  note?: string;
+}
+export interface InvitePartnerInput {
+  name_en: string;
+  name_ar?: string;
+  kind: 'supplier' | 'university' | 'international';
+  scope_en?: string;
+  request_id?: string | null;
+}
+export interface G4Rpc {
+  /** ENEC (platform admin) opens an onboarding case for a new partner organisation, for example from a register-interest request. */
+  invitePartner(input: InvitePartnerInput): Promise<Result<{ org_id: string; case_id: string }>>;
+  /** Supplier (partner admin) moves its own onboarding case: start, submit (builds the readiness summary), withdraw. */
+  partnerOnboardingAction(caseId: string, action: 'start' | 'submit' | 'withdraw'): Promise<Result<{ status: string; summary?: unknown }>>;
+  /** Record an uploaded checklist document (file name, size, SHA-256) for the caller's own organisation. */
+  uploadSupplierDocument(orgId: string, docKey: string, fileName: string, sizeKb: number, sha256: string): Promise<Result<{ id: string }>>;
+  /** ENEC review of one document (admin). A rejection needs a note. */
+  reviewSupplierDocument(docId: string, decision: 'accepted' | 'rejected', note: string): Promise<Result>;
+  /** Save (and optionally submit) the caller's own ICV improvement plan. */
+  saveIcvPlan(orgId: string, plan: IcvPlanInput, submit: boolean): Promise<Result<{ id: string; status: string }>>;
+  /** ENEC review of a submitted ICV plan (admin): reviewed, or returned to draft with a note. */
+  reviewIcvPlan(planId: string, decision: 'reviewed' | 'returned', note: string): Promise<Result>;
+  /** Partner admin submits a contractor equivalency request for its own organisation. */
+  submitEquivalency(input: EquivalencyInput): Promise<Result<{ id: string }>>;
+  /** ENEC evaluator maps evidence to the standard's task items (moves the request to under_review). */
+  mapEquivalency(id: string, mapping: EquivalencyMapping[]): Promise<Result<{ covered: number; total: number }>>;
+  /** Enrol in a supplier academy course: yourself, or (partner admin) someone in your organisation. */
+  enrolSupplierCourse(courseId: string, personId: string | null): Promise<Result<{ id: string }>>;
+  /** Submit the knowledge check for your own enrolment; scored on the server; a pass issues an internal course certificate. */
+  completeSupplierCourse(enrolmentId: string, answers: { check_id: string; answer: number }[]): Promise<Result<{ score: number; passed: boolean; certificate_no: string | null }>>;
+  /** HR (analyst or CHCO office) records a skills-gap plan action against a SIMULATED scenario. */
+  saveSkillGapPlan(plan: GapPlanInput): Promise<Result<{ id: string }>>;
+}
+
 /** Consequential actions. Each one audits (success and refusal) and, where material, appends to the NEXUS ledger. */
-// G2 (2026-10-08): M04/M05 RPCs are declared in ./rpc_g2.ts and merged here.
-export interface Rpc extends G2Rpc {
+// G2 (2026-10-08): M04/M05 RPCs are declared in ./rpc_g2.ts and merged here. [G4] M09/M11 in G4Rpc.
+export interface Rpc extends G2Rpc, G4Rpc {
   signoffEvaluation(p: SignoffInput): Promise<Result<{ evaluation_id: string; record_status: string }>>;
   setLicenceStatus(licenceId: string, status: string, reason: string): Promise<Result<{ due?: string }>>;
   detectLicensingEvents(): Promise<Result<{ lapses: number; medical: number }>>;
