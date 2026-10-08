@@ -29,6 +29,10 @@ export const METRICS: MetricDef[] = [
   { key: 'sro_ro', table: 'kafaa_kpi_series', kpi: 'sro_ro', unit: 'people' },
   { key: 'coct_population', table: 'kafaa_kpi_series', kpi: 'coct_population', unit: 'people' },
   { key: 'loct_population', table: 'kafaa_kpi_series', kpi: 'loct_population', unit: 'people' },
+  { key: 'quals_renewed_on_time', table: 'kafaa_kpi_series', kpi: 'quals_renewed_on_time', unit: '%' },
+  { key: 'lapses', table: 'kafaa_kpi_series', kpi: 'lapses', unit: 'count' },
+  { key: 'jpm_to_signed_days', table: 'kafaa_kpi_series', kpi: 'jpm_to_signed_days', unit: 'days' },
+  { key: 'equivalency_turnaround', table: 'kafaa_kpi_series', kpi: 'equivalency_turnaround', unit: 'days' },
   { key: 'share_emirati', table: 'kafaa_workforce_snapshots', gri: 'GRI 405-1', unit: '%' },
   { key: 'share_women', table: 'kafaa_workforce_snapshots', gri: 'GRI 405-1', unit: '%' },
   { key: 'headcount', table: 'kafaa_workforce_snapshots', gri: 'GRI 2-7', unit: 'people' },
@@ -67,7 +71,8 @@ export function shareRows(rows: AggregateRow[], dim: Dim | 'total', measure: str
   const col = dim === 'total' ? null : DIM_COL[dim];
   const keyOf = (r: AggregateRow) => (col ? String(r[col]) : 'total');
   const keys = Array.from(new Set(sel.map(keyOf)));
-  return keys.map((key) => {
+  // Groups without both rows have no data for this measure (not the same as suppressed): leave them out.
+  return keys.filter((key) => sel.some((r) => keyOf(r) === key && r.measure === 'headcount') && sel.some((r) => keyOf(r) === key && r.measure === measure)).map((key) => {
     const hc = sel.find((r) => keyOf(r) === key && r.measure === 'headcount');
     const m = sel.find((r) => keyOf(r) === key && r.measure === measure);
     const suppressed = !hc || !m || hc.suppressed || m.suppressed || hc.value == null || m.value == null || (hc.value ?? 0) < MIN_GROUP_SIZE;
