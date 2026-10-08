@@ -232,4 +232,26 @@ describe('M09 supplier academy', () => {
     await as('k-contractor');
     expect(await b.list('academy_check_keys')).toEqual([]);
   });
+  it('an admin invites a partner from a register-interest request: case, steps and checklist open; the organisation is not public', async () => {
+    await as('k-admin');
+    const r = await b.rpc.invitePartner({ name_en: 'Falcon Seals Trading', kind: 'supplier', request_id: 'ct-1', scope_en: 'Elastomer seals' });
+    expect(r.ok).toBe(true);
+    const { org_id, case_id } = r.data!;
+    expect((await b.get('partner_onboarding', case_id))?.status).toBe('invited');
+    expect(b.raw('supplier_readiness').filter((x) => x.org_id === org_id).map((x) => x.step_key).sort()).toEqual(['handoff', 'icv', 'orientation', 'quality', 'safety_culture', 'self_assessment']);
+    expect(b.raw('supplier_documents').filter((x) => x.org_id === org_id && x.status === 'missing')).toHaveLength(DOC_CHECKLIST.length);
+    expect(b.raw('audit_events').at(-1)).toMatchObject({ action: 'partner.invite', outcome: 'ok' });
+    expect((await b.rpc.invitePartner({ name_en: ' falcon seals trading ', kind: 'supplier' })).code).toBe('conflict');
+    expect((await b.rpc.invitePartner({ name_en: 'X', kind: 'supplier' })).code).toBe('invalid');
+    expect((await b.rpc.invitePartner({ name_en: 'Valid Name', kind: 'regulator' as never })).code).toBe('invalid');
+    const uni = await b.rpc.invitePartner({ name_en: 'Gulf Technical College', kind: 'university' });
+    expect(b.raw('supplier_documents').filter((x) => x.org_id === uni.data!.org_id)).toHaveLength(0);
+    await as(null);
+    expect(await b.get('organisations', org_id)).toBeFalsy();
+    await as('alnoor-gm');
+    expect((await b.rpc.invitePartner({ name_en: 'Self Made Org', kind: 'supplier' })).code).toBe('forbidden');
+    expect(await b.get('partner_onboarding', case_id)).toBeFalsy();
+    await as('k-auditor');
+    expect((await b.rpc.invitePartner({ name_en: 'Audit Org', kind: 'supplier' })).code).toBe('forbidden');
+  });
 });

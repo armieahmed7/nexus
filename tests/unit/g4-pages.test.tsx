@@ -111,6 +111,21 @@ describe('M09 ENEC review screens', () => {
     expect(await screen.findByTestId('m09-adm-case')).toBeTruthy();
     expect((screen.getByTestId('m09-adm-approve') as HTMLButtonElement).disabled).toBe(true); // documents not yet accepted
   });
+  it('admin opens an invited case from a register-interest request', async () => {
+    await renderG4(<AdminSuppliersPage />, { persona: 'k-admin', path: '/admin/suppliers' });
+    fireEvent.click(await screen.findByTestId('m09-adm-invite-ct-1', {}, T));
+    const form = await screen.findByTestId('m09-adm-invite-form');
+    fireEvent.change(within(form).getByLabelText(/Organisation name \(English\)/), { target: { value: 'Falcon Seals Trading' } });
+    fireEvent.click(screen.getByTestId('m09-adm-invite-submit'));
+    fireEvent.click(await screen.findByTestId('confirm-action'));
+    expect((await screen.findAllByText('Falcon Seals Trading', {}, T)).length).toBeGreaterThan(0);
+    await waitFor(() => expect(screen.queryByTestId('m09-adm-invite-ct-1')).toBeNull(), T);
+  });
+  it('an auditor sees the requests but cannot invite', async () => {
+    await renderG4(<AdminSuppliersPage />, { persona: 'k-auditor', path: '/admin/suppliers' });
+    await screen.findByTestId('m09-adm-open-po-tarsus', {}, T);
+    expect(screen.queryByTestId('m09-adm-invite')).toBeNull();
+  });
   it('the evaluator queue shows contractor organisation names', async () => {
     await renderG4(<TrainingEquivalencyPage />, { persona: 'training-mgr', path: '/training/equivalency' });
     expect((await screen.findAllByText(/Al Noor Precision Engineering/, {}, T)).length).toBeGreaterThan(0);

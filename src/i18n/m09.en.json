@@ -824,7 +824,32 @@
     "auditNote": "Every review and decision writes an audit event.",
     "auditLink": "Open the audit log",
     "actingAdmin": "Platform admin (supplier development)",
-    "noteLabel": "Note to the supplier"
+    "noteLabel": "Note to the supplier",
+    "interest": {
+      "title": "Register-interest requests and invitations",
+      "intro": "Requests sent from the suppliers and universities pages. Open an onboarding case from a request, or invite an organisation directly. Kafa'a prepares a file; registration stays with ENEC procurement.",
+      "invite": "Invite a partner",
+      "empty": "No register-interest requests yet.",
+      "anon": "Unnamed requester",
+      "topic": {
+        "suppliers": "Suppliers",
+        "universities": "Universities"
+      },
+      "route": "Routed to: {route}",
+      "openCase": "Open onboarding case",
+      "fromRequest": "From request {id}",
+      "f": {
+        "name": "Organisation name (English)",
+        "nameHint": "2 to 120 characters; must not match an existing organisation.",
+        "nameAr": "Organisation name (Arabic)",
+        "scope": "Scope of supply or collaboration",
+        "scopeHint": "Shown to the reviewers only; the organisation is not listed publicly."
+      },
+      "supplierNote": "A supplier case starts with the six readiness steps and the twelve-document checklist, all open. The organisation's partner admin completes them.",
+      "otherNote": "University and international cases have no supplier checklist; ENEC records the decision and history.",
+      "confirmBody": "Creates the organisation \"{name}\" (not public) and an invited onboarding case. The action is audited.",
+      "done": "Partner invited; onboarding case opened"
+    }
   },
   "eqr": {
     "intro": "Map contractor evidence to the task items of the qualification standard, then record the decision.",

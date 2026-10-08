@@ -4,12 +4,12 @@
  * and src/domain/future.ts so pages, local RPCs and tests share one definition. Change this file and the SQL together.
  */
 import type { LocalBackend } from './LocalBackend';
-import type { EquivalencyInput, EquivalencyMapping, G4Rpc, GapPlanInput, IcvPlanInput, Result, RowOf } from '../types';
+import type { EquivalencyInput, EquivalencyMapping, G4Rpc, GapPlanInput, IcvPlanInput, InvitePartnerInput, Result, RowOf } from '../types';
 import type { PlatformRole } from '../../auth/policy';
 import { newId } from './store';
 import { todayIso, addWorkingDays } from '../../domain/rules';
 import {
-  buildSummary, certificateValidTo, DOC_CHECKLIST, DOC_KEYS, EVIDENCE_KINDS, equivalencyCoverage, icvCheck, icvSubmittable, readinessState, scoreCheck, SUPPLIER_TRANSITIONS,
+  buildSummary, certificateValidTo, DOC_CHECKLIST, DOC_KEYS, EVIDENCE_KINDS, READINESS_STEPS, equivalencyCoverage, icvCheck, icvSubmittable, readinessState, scoreCheck, SUPPLIER_TRANSITIONS,
 } from '../../domain/partners';
 import { validGapPlan } from '../../domain/future';
 
@@ -110,6 +110,33 @@ export class G4LocalRpc implements G4Rpc {
   }
 
   // ───────────── M09 supplier onboarding (ENEC side)
+  async invitePartner(input: InvitePartnerInput) {
+    await this.b.whenReady();
+    type R = { org_id: string; case_id: string };
+    const role = this.ctx.actingRole('partner_org', ['A']);
+    if (!role) return this.refuse<R>('partner.invite', 'partner_onboarding', null, 'forbidden', 'Only a platform admin may invite a partner');
+    const name = String(input?.name_en ?? '').trim();
+    if (name.length < 2 || name.length > 120) return this.refuse<R>('partner.invite', 'partner_onboarding', null, 'invalid', 'An organisation name of 2 to 120 characters is required', role);
+    if (!['supplier', 'university', 'international'].includes(input.kind)) return this.refuse<R>('partner.invite', 'partner_onboarding', null, 'invalid', 'Kind must be supplier, university or international', role);
+    if (this.b.raw('organisations').some((o) => o.name_en.trim().toLowerCase() === name.toLowerCase())) return this.refuse<R>('partner.invite', 'partner_onboarding', null, 'conflict', 'An organisation with this name already exists', role);
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 24) || 'partner';
+    const orgId = `org-${slug}-${newId('x').slice(2, 6)}`;
+    const caseId = `po-${orgId.replace(/^org-/, '')}`;
+    const category = input.kind === 'supplier' ? 'local_supply_offtake' : input.kind === 'university' ? 'education_workforce' : 'international_operators';
+    this.b.rawInsert('organisations', {
+      id: orgId, name_en: name, name_ar: String(input.name_ar ?? '').trim() || name, short: null, kind: input.kind as never, category: category as never, categories: [category], rel_types: [],
+      relationship_en: String(input.scope_en ?? '').slice(0, 300), relationship_ar: String(input.scope_en ?? '').slice(0, 300), status: 'exploratory', dates: '', country: 'UAE', binding: null,
+      public_listed: false, synthetic: false, nexus_org_id: null, icv_score: null, sources: [] as never, contact_route: 'Partner desk (role mailbox)',
+    });
+    const note = input.request_id ? `Invited from register-interest request ${input.request_id}` : 'Invited by supplier development';
+    this.b.rawInsert('partner_onboarding', { id: caseId, org_id: orgId, kind: input.kind, status: 'invited', summary: {} as never, history: hist([], 'invited', 'invited', role, note) as never });
+    if (input.kind === 'supplier') {
+      for (const k of READINESS_STEPS) this.b.rawInsert('supplier_readiness', { id: `sr-${orgId}-${k}`, org_id: orgId, step_key: k, status: 'not_started' });
+      for (const d of DOC_CHECKLIST) this.b.rawInsert('supplier_documents', { id: `sd-${orgId}-${d.key}`, org_id: orgId, doc_key: d.key, required: d.required, step_key: d.step, status: 'missing' });
+    }
+    return this.done<R>('partner.invite', 'partner_onboarding', caseId, `${input.kind} ${name}${input.request_id ? ` (request ${input.request_id})` : ''}`, role, 'kafaa.partner.invite', `Partner invited: ${name} (${input.kind})`, 'Partner invited; onboarding case opened', { org_id: orgId, case_id: caseId }, ['organisations', 'partner_onboarding', 'supplier_readiness', 'supplier_documents']);
+  }
+
   async reviewSupplierDocument(docId: string, decision: 'accepted' | 'rejected', note: string) {
     await this.b.whenReady();
     const role = this.ctx.actingRole('partner_org', ['A']);

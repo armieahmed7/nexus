@@ -617,18 +617,54 @@ begin
   return kafaa_result(true, 'ok', 'Plan saved', a, null, jsonb_build_object('id', v_id));
 end $$;
 
+-- ───────────── M09 · ENEC opens an onboarding case for a new partner organisation (for example from a register-interest request)
+create or replace function kafaa_invite_partner(p jsonb) returns jsonb language plpgsql security definer set search_path = public as $$
+declare a kafaa_audit_events; l integer; v_role text := kafaa_acting_role('partner_org', array['A']);
+  v_name text := trim(coalesce(p->>'name_en', '')); v_kind text := coalesce(p->>'kind', ''); v_req text := nullif(trim(coalesce(p->>'request_id', '')), '');
+  v_slug text; v_org text; v_case text; v_cat text; v_scope text := left(coalesce(p->>'scope_en', ''), 300); v_note text; k text; d record;
+begin
+  if v_role is null then return kafaa_refuse('partner.invite', 'partner_onboarding', null, 'forbidden', 'Only a platform admin may invite a partner'); end if;
+  if length(v_name) < 2 or length(v_name) > 120 then return kafaa_refuse('partner.invite', 'partner_onboarding', null, 'invalid', 'An organisation name of 2 to 120 characters is required', v_role); end if;
+  if v_kind not in ('supplier', 'university', 'international') then return kafaa_refuse('partner.invite', 'partner_onboarding', null, 'invalid', 'Kind must be supplier, university or international', v_role); end if;
+  if exists (select 1 from kafaa_organisations o where lower(trim(o.name_en)) = lower(v_name)) then
+    return kafaa_refuse('partner.invite', 'partner_onboarding', null, 'conflict', 'An organisation with this name already exists', v_role);
+  end if;
+  v_slug := left(trim(both '-' from regexp_replace(lower(v_name), '[^a-z0-9]+', '-', 'g')), 24);
+  if v_slug = '' then v_slug := 'partner'; end if;
+  v_org := 'org-' || v_slug || '-' || substr(md5(random()::text || clock_timestamp()::text), 1, 4);
+  v_case := 'po-' || substr(v_org, 5);
+  v_cat := case v_kind when 'supplier' then 'local_supply_offtake' when 'university' then 'education_workforce' else 'international_operators' end;
+  insert into kafaa_organisations (id, name_en, name_ar, kind, category, categories, rel_types, relationship_en, relationship_ar, status, country, public_listed, synthetic, contact_route)
+  values (v_org, v_name, coalesce(nullif(trim(coalesce(p->>'name_ar', '')), ''), v_name), v_kind, v_cat, array[v_cat], '{}', v_scope, v_scope, 'exploratory', 'UAE', false, false, 'Partner desk (role mailbox)');
+  v_note := case when v_req is null then 'Invited by supplier development' else 'Invited from register-interest request ' || v_req end;
+  insert into kafaa_partner_onboarding (id, org_id, kind, status, summary, history)
+  values (v_case, v_org, v_kind, 'invited', '{}'::jsonb, kafaa_g4_hist('[]'::jsonb, 'invited', 'invited', v_role, v_note));
+  if v_kind = 'supplier' then
+    foreach k in array array['orientation', 'quality', 'safety_culture', 'icv', 'self_assessment', 'handoff'] loop
+      insert into kafaa_supplier_readiness (id, org_id, step_key, status) values ('sr-' || v_org || '-' || k, v_org, k, 'not_started') on conflict (id) do nothing;
+    end loop;
+    for d in select * from kafaa_g4_doc_checklist() loop
+      insert into kafaa_supplier_documents (id, org_id, doc_key, required, step_key, status)
+      values ('sd-' || v_org || '-' || d.doc_key, v_org, d.doc_key, d.required, d.step_key, 'missing') on conflict (id) do nothing;
+    end loop;
+  end if;
+  l := kafaa_ledger('kafaa.partner.invite', format('Partner invited: %s (%s)', v_name, v_kind));
+  a := kafaa_audit('partner.invite', 'partner_onboarding', v_case, 'ok', v_kind || ' ' || v_name || coalesce(' (request ' || v_req || ')', ''), case when l is null then 'skipped' else 'written' end, l, v_role);
+  return kafaa_result(true, 'ok', 'Partner invited; onboarding case opened', a, l, jsonb_build_object('org_id', v_org, 'case_id', v_case));
+end $$;
+
 -- ───────────── Grants: write RPCs for signed-in users only; internal helpers for the owner only
 revoke execute on function
   kafaa_partner_onboarding_action(text, text), kafaa_upload_supplier_document(text, text, text, numeric, text), kafaa_review_supplier_document(text, text, text),
   kafaa_save_icv_plan(text, jsonb, boolean), kafaa_review_icv_plan(text, text, text), kafaa_submit_equivalency(jsonb), kafaa_map_equivalency(text, jsonb),
   kafaa_decide_equivalency(text, text, text), kafaa_decide_partner_onboarding(text, text, text), kafaa_enrol_supplier_course(text, text),
-  kafaa_complete_supplier_course(text, jsonb), kafaa_save_skill_gap_plan(jsonb)
+  kafaa_complete_supplier_course(text, jsonb), kafaa_save_skill_gap_plan(jsonb), kafaa_invite_partner(jsonb)
 from public, anon;
 grant execute on function
   kafaa_partner_onboarding_action(text, text), kafaa_upload_supplier_document(text, text, text, numeric, text), kafaa_review_supplier_document(text, text, text),
   kafaa_save_icv_plan(text, jsonb, boolean), kafaa_review_icv_plan(text, text, text), kafaa_submit_equivalency(jsonb), kafaa_map_equivalency(text, jsonb),
   kafaa_decide_equivalency(text, text, text), kafaa_decide_partner_onboarding(text, text, text), kafaa_enrol_supplier_course(text, text),
-  kafaa_complete_supplier_course(text, jsonb), kafaa_save_skill_gap_plan(jsonb)
+  kafaa_complete_supplier_course(text, jsonb), kafaa_save_skill_gap_plan(jsonb), kafaa_invite_partner(jsonb)
 to authenticated;
 revoke execute on function kafaa_g4_now(), kafaa_g4_hist(jsonb, text, text, text, text), kafaa_g4_num(text), kafaa_g4_doc_checklist(), kafaa_g4_readiness(text), kafaa_g4_summary(text)
 from public, anon, authenticated;

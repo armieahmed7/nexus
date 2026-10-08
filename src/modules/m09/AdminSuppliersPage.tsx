@@ -1,8 +1,9 @@
 // M09 /admin/suppliers: ENEC-side review of supplier onboarding files. Evidence first (each document accepted or rejected
 // with a note, the ICV plan reviewed or returned), then the case decision: approve, return with a note, or hand off to ENEC's
 // supplier registration (the NEXUS partner lens). Every action is an audited RPC behind a confirmation. Auditors read only.
+// Admins also turn a register-interest request (/suppliers form) into an invited onboarding case (invitePartner).
 import { useMemo, useState } from 'react';
-import { Page, Section, Card, Callout, Async, EmptyState, Grid, StatTile, DataTable, Drawer, Tabs, ConfirmDialog, FilterBar, useFilters, KeyValue, ProgressBar, type Column } from '../../ui';
+import { Page, Section, Card, Callout, Async, EmptyState, Grid, StatTile, DataTable, Drawer, Tabs, ConfirmDialog, FilterBar, useFilters, KeyValue, ProgressBar, TextField, TextArea, SelectField, Icon, type Column } from '../../ui';
 import { useT, usePick, useFormat, L } from '../../i18n';
 import { useAction, useQuery, useRepo, type RowOf } from '../../data';
 import { useSession } from '../../auth/session';
@@ -29,7 +30,77 @@ export default function AdminSuppliersPage() {
     <Page title={t('m09.routes.admin-suppliers.title')} intro={t('m09.adm.intro')} wide>
       <Callout tone="info" title={t('m09.sup.prepTitle')}>{t('m09.adm.prepBody')}</Callout>
       <Async state={q} isEmpty={(d) => d.cases.length === 0} empty={<EmptyState title={t('m09.adm.empty')} />}>{(d) => <Queue d={d} />}</Async>
+      <Interest />
     </Page>
+  );
+}
+
+type InterestRow = RowOf<'contact_requests'>;
+
+/** Register-interest requests from /suppliers (topic 'suppliers'); an admin opens an invited case from one, or from scratch. */
+function Interest() {
+  const t = useT();
+  const f = useFormat();
+  const repo = useRepo();
+  const s = useSession();
+  const canInvite = s.can('partner_org', ['A']);
+  const [invite, setInvite] = useState<{ request: InterestRow | null } | null>(null);
+  const q = useQuery(['contact_requests', 'partner_onboarding'], async () => {
+    const [reqs, cases] = await Promise.all([repo.list('contact_requests', { order: [['created_at', 'desc']] }), repo.list('partner_onboarding')]);
+    const used = new Set(cases.flatMap((c) => ((c.history as { note?: string | null }[]) ?? []).map((h) => /request (\S+)$/.exec(h.note ?? '')?.[1]).filter(Boolean) as string[]));
+    return reqs.filter((r) => r.topic === 'suppliers' || r.topic === 'universities').map((r) => ({ ...r, invited: used.has(r.id) }));
+  });
+  return (
+    <Section title={t('m09.adm.interest.title')} description={t('m09.adm.interest.intro')}
+      actions={canInvite ? <button className="btn-primary btn-sm" onClick={() => setInvite({ request: null })} data-testid="m09-adm-invite"><Icon name="plus" size={12} /> {t('m09.adm.interest.invite')}</button> : undefined}>
+      <Async state={q} isEmpty={(d) => d.length === 0} empty={<EmptyState title={t('m09.adm.interest.empty')} />}>
+        {(d) => (
+          <ul className="space-y-2" data-testid="m09-adm-interest">
+            {d.map((r) => (
+              <li key={r.id} className="flex flex-wrap items-start justify-between gap-2 rounded-btn border border-line p-2.5">
+                <div className="min-w-0">
+                  <div className="font-semibold">{r.name || t('m09.adm.interest.anon')} <span className="text-[12px] font-normal text-ink-3">· {t(`m09.adm.interest.topic.${r.topic}`)} · {f.date(r.created_at)}</span></div>
+                  <p className="text-[13px] text-ink-2">{r.message}</p>
+                  <div className="text-[12px] text-ink-3">{t('m09.adm.interest.route', { route: r.route_to })}</div>
+                </div>
+                {r.invited ? <MStatus status="invited" /> : canInvite && <button className="btn-outline btn-sm" onClick={() => setInvite({ request: r })} data-testid={`m09-adm-invite-${r.id}`}>{t('m09.adm.interest.openCase')}</button>}
+              </li>
+            ))}
+          </ul>
+        )}
+      </Async>
+      {invite && <InviteDrawer request={invite.request} onClose={() => setInvite(null)} />}
+    </Section>
+  );
+}
+
+function InviteDrawer({ request, onClose }: { request: InterestRow | null; onClose: () => void }) {
+  const t = useT();
+  const repo = useRepo();
+  const run = useAction();
+  const [name, setName] = useState(request?.name ?? '');
+  const [nameAr, setNameAr] = useState('');
+  const [kind, setKind] = useState<'supplier' | 'university' | 'international'>(request?.topic === 'universities' ? 'university' : 'supplier');
+  const [scope, setScope] = useState(request?.message ?? '');
+  const [confirm, setConfirm] = useState(false);
+  const valid = name.trim().length >= 2 && name.trim().length <= 120;
+  return (
+    <Drawer open onClose={onClose} title={t('m09.adm.interest.invite')}
+      footer={<><button className="btn-outline" onClick={onClose}>{t('common.cancel')}</button><button className="btn-primary" disabled={!valid} onClick={() => setConfirm(true)} data-testid="m09-adm-invite-submit">{t('m09.adm.interest.openCase')}</button></>}>
+      <div className="space-y-3" data-testid="m09-adm-invite-form">
+        {request && <Callout tone="info" title={t('m09.adm.interest.fromRequest', { id: request.id })}>{request.message}</Callout>}
+        <TextField label={t('m09.adm.interest.f.name')} name="name_en" value={name} onChange={setName} required hint={t('m09.adm.interest.f.nameHint')} />
+        <TextField label={t('m09.adm.interest.f.nameAr')} name="name_ar" value={nameAr} onChange={setNameAr} />
+        <SelectField label={t('m09.adm.col.kind')} name="kind" value={kind} onChange={(v) => setKind(v as typeof kind)} options={(['supplier', 'university', 'international'] as const).map((k) => ({ value: k, label: t(`m09.kind.${k}`) }))} />
+        <TextArea label={t('m09.adm.interest.f.scope')} name="scope" value={scope} onChange={setScope} rows={3} hint={t('m09.adm.interest.f.scopeHint')} />
+        <p className="text-[12.5px] text-ink-2">{t(kind === 'supplier' ? 'm09.adm.interest.supplierNote' : 'm09.adm.interest.otherNote')}</p>
+      </div>
+      <ConfirmDialog open={confirm} onClose={() => setConfirm(false)} title={t('m09.adm.interest.invite')} consequence={t('m09.adm.interest.confirmBody', { name: name.trim() })} actingAs={t('m09.adm.actingAdmin')}
+        onConfirm={async () => {
+          const r = await run(() => repo.rpc.invitePartner({ name_en: name.trim(), name_ar: nameAr.trim() || undefined, kind, scope_en: scope.trim() || undefined, request_id: request?.id ?? null }), { success: t('m09.adm.interest.done') });
+          if (r.ok) onClose();
+        }} />
+    </Drawer>
   );
 }
 

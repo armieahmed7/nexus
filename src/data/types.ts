@@ -109,7 +109,16 @@ export interface GapPlanInput {
   status?: 'draft' | 'active' | 'done';
   note?: string;
 }
+export interface InvitePartnerInput {
+  name_en: string;
+  name_ar?: string;
+  kind: 'supplier' | 'university' | 'international';
+  scope_en?: string;
+  request_id?: string | null;
+}
 export interface G4Rpc {
+  /** ENEC (platform admin) opens an onboarding case for a new partner organisation, for example from a register-interest request. */
+  invitePartner(input: InvitePartnerInput): Promise<Result<{ org_id: string; case_id: string }>>;
   /** Supplier (partner admin) moves its own onboarding case: start, submit (builds the readiness summary), withdraw. */
   partnerOnboardingAction(caseId: string, action: 'start' | 'submit' | 'withdraw'): Promise<Result<{ status: string; summary?: unknown }>>;
   /** Record an uploaded checklist document (file name, size, SHA-256) for the caller's own organisation. */

@@ -181,6 +181,7 @@ export class SupabaseBackend implements Repository {
         await this.client.rpc('kafaa_log_denied', { p_route: route, p_resource: resource });
       },
       // [G4] M09/M11 (supabase/migrations/20261008134001_kafaa_g4_partners.sql)
+      invitePartner: (input) => this.call('kafaa_invite_partner', { p: input }, ['organisations', 'partner_onboarding', 'supplier_readiness', 'supplier_documents']),
       partnerOnboardingAction: (id, action) => this.call('kafaa_partner_onboarding_action', { p_id: id, p_action: action }, ['partner_onboarding']),
       uploadSupplierDocument: (orgId, docKey, fileName, sizeKb, sha) => this.call('kafaa_upload_supplier_document', { p_org_id: orgId, p_doc_key: docKey, p_file_name: fileName, p_size_kb: sizeKb, p_sha256: sha }, ['supplier_documents']),
       reviewSupplierDocument: (id, decision, note) => this.call('kafaa_review_supplier_document', { p_id: id, p_decision: decision, p_note: note }, ['supplier_documents']),

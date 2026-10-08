@@ -27,6 +27,7 @@ export class LocalRpc implements Rpc {
   constructor(private readonly b: LocalBackend) {
     this.g4 = new G4LocalRpc(b, (...a) => this.refuse(...a), (...a) => this.done(...a));
   }
+  invitePartner: Rpc['invitePartner'] = (...a) => this.g4.invitePartner(...a);
   partnerOnboardingAction: Rpc['partnerOnboardingAction'] = (...a) => this.g4.partnerOnboardingAction(...a);
   uploadSupplierDocument: Rpc['uploadSupplierDocument'] = (...a) => this.g4.uploadSupplierDocument(...a);
   reviewSupplierDocument: Rpc['reviewSupplierDocument'] = (...a) => this.g4.reviewSupplierDocument(...a);

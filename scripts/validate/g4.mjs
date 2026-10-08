@@ -90,7 +90,16 @@ export async function g4Checks({ db, as, one, count, ok, uid }) {
   ok(enOther.code === 'forbidden', 'only a partner admin may enrol someone else');
   ok((await count(null, 'kafaa_academy_checks')) > 0 && (await count(null, 'kafaa_academy_check_keys')) === 0 && (await count('k-contractor', 'kafaa_academy_check_keys')) === 0, 'questions are public, answer keys are not');
 
-  // M11 gap plans
+  // M09 invite a partner from a register-interest request
+  const inv = await rpc('k-admin', `kafaa_invite_partner('{"name_en":"Falcon Seals Trading","kind":"supplier","request_id":"ct-1"}'::jsonb)`);
+  const invDup = await rpc('k-admin', `kafaa_invite_partner('{"name_en":"falcon seals trading","kind":"supplier"}'::jsonb)`);
+  const invNo = await rpc('alnoor-gm', `kafaa_invite_partner('{"name_en":"Self Made Org","kind":"supplier"}'::jsonb)`);
+  const invDocs = inv.ok ? await one('k-admin', `select count(*)::int n from kafaa_supplier_documents where org_id = $1`, [inv.data.org_id]) : { n: 0 };
+  const invSteps = inv.ok ? await one('k-admin', `select count(*)::int n from kafaa_supplier_readiness where org_id = $1`, [inv.data.org_id]) : { n: 0 };
+  const invPub = inv.ok ? await one(null, `select count(*)::int n from kafaa_organisations where id = $1`, [inv.data.org_id]) : { n: 1 };
+  ok(inv.ok && invDocs.n === 12 && invSteps.n === 6 && invDup.code === 'conflict' && invNo.code === 'forbidden' && invPub.n === 0,
+    'admin invites a supplier (case, six steps, twelve checklist rows); duplicates and partners are refused; the new organisation is not public');
+
   const gp = await rpc('k-hr-analyst', `kafaa_save_skill_gap_plan('{"skill_key":"salt-chemistry","scenario":"Scenario A (SIMULATED)","action":"partner","owner_role":"Nuclear Training (role)","target_quarter":"2027-Q3"}'::jsonb)`);
   const gpNo = await rpc('alnoor-gm', `kafaa_save_skill_gap_plan('{"skill_key":"salt-chemistry","scenario":"A","action":"partner","owner_role":"x role","target_quarter":"2027-Q3"}'::jsonb)`);
   ok(gp.ok && gpNo.code === 'forbidden' && (await count(null, 'kafaa_skill_gap_plans')) === 0 && (await count(null, 'kafaa_future_skills')) === 0, 'HR saves skills-gap plans; the public sees no SIMULATED radar or plans');
