@@ -61,7 +61,8 @@ export const SCHEMA: Record<string, TableDef> = {
       binding: 'bool?', public_listed: 'bool =false idx', synthetic: 'bool =false', nexus_org_id: 'text?', icv_score: 'num?',
       sources: 'json =[]', contact_route: 'text?',
     },
-    read: [{ res: 'public_content', where: 'public_listed' }, { res: 'partner_org', org: 'id' }],
+    // [G4] + equivalency: ENEC evaluators (and auditors) see which contractor organisation an equivalency request comes from
+    read: [{ res: 'public_content', where: 'public_listed' }, { res: 'partner_org', org: 'id' }, { res: 'equivalency' }],
     write: { mode: 'rpc', res: 'partner_org' },
   },
   agreements: {

@@ -6,7 +6,8 @@
 alter table kafaa_organisations enable row level security;
 drop policy if exists kafaa_read on kafaa_organisations;
 create policy kafaa_read on kafaa_organisations for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, public_listed)
-    or kafaa_rule_read('partner_org', null::text, id, true));
+    or kafaa_rule_read('partner_org', null::text, id, true)
+    or kafaa_rule_read('equivalency', null::text, null::text, true));
 grant select on kafaa_organisations to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 

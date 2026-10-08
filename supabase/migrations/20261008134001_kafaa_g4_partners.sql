@@ -215,6 +215,11 @@ alter table kafaa_future_skills add column if not exists readiness numeric;
 -- closes the direct-write path on databases where the earlier insert/update policies still exist.
 revoke insert, update, delete on kafaa_partner_onboarding, kafaa_equivalency_requests, kafaa_icv_plans from anon, authenticated;
 
+-- organisations: ENEC evaluators and auditors (R/W/A on 'equivalency') also read the contractor organisation behind a request.
+alter policy kafaa_read on kafaa_organisations using (kafaa_rule_read('public_content', null::text, null::text, public_listed)
+    or kafaa_rule_read('partner_org', null::text, id, true)
+    or kafaa_rule_read('equivalency', null::text, null::text, true));
+
 -- ───────────── Internal helpers (owner only)
 create or replace function kafaa_g4_now() returns text language sql stable set search_path = public as $$
   select to_char(now() at time zone 'utc', 'YYYY-MM-DD"T"HH24:MI:SS"Z"')
