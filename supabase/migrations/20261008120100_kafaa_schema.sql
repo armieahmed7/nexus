@@ -1723,6 +1723,77 @@ create table if not exists kafaa_engine_settings (
 );
 comment on table kafaa_engine_settings is '[M16] Engine per surface (deterministic or model slot) and ranking weights (F02)';
 
+-- M20 · Opportunity marketplace: short stretch assignments posted by managers (F08)
+create table if not exists kafaa_opportunities (
+  id text primary key,
+  posted_by text not null,
+  org_id text,
+  family_id text,
+  host_role_id text,
+  host_team text,
+  kind text not null check (kind in ('project', 'outage_support', 'shadowing', 'oe_review', 'knowledge_capture', 'outreach', 'research')),
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  skills_needed text[] not null default '{}'::text[],
+  skills_gained text[] not null default '{}'::text[],
+  hours_week integer not null,
+  start_on date not null,
+  end_on date not null,
+  seats integer not null default 1,
+  seats_taken integer not null default 0,
+  location_type text not null check (location_type in ('office', 'site_non_protected', 'remote')),
+  eligible_families text[] not null default '{}'::text[],
+  priority_flags text[] not null default '{}'::text[],
+  status text not null default 'open' check (status in ('draft', 'open', 'closed', 'filled')),
+  listed boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_opportunities is '[M20] Opportunity marketplace: short stretch assignments posted by managers (F08)';
+
+-- M20 · Application to an opportunity: release by the line manager, selection, completion sign-off (F08)
+create table if not exists kafaa_opportunity_applications (
+  id text primary key,
+  opportunity_id text not null,
+  person_id text not null,
+  note text not null default '',
+  status text not null default 'applied' check (status in ('applied', 'released', 'declined_release', 'selected', 'not_selected', 'completed', 'withdrawn')),
+  history jsonb not null default '[]'::jsonb,
+  applicant_name text not null default '',
+  applicant_name_ar text not null default '',
+  applicant_role_id text,
+  applicant_family_id text,
+  poster_id text not null,
+  line_manager_id text,
+  releaser_id text,
+  skip_level boolean not null default false,
+  released_by text,
+  released_at timestamptz,
+  decided_by text,
+  decided_at timestamptz,
+  completed_at timestamptz,
+  outcome_note text,
+  outcome_levels jsonb not null default '{}'::jsonb,
+  evidence_ids text[] not null default '{}'::text[],
+  open_read boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_opportunity_applications is '[M20] Application to an opportunity: release by the line manager, selection, completion sign-off (F08)';
+
+-- M20 · Saved (bookmarked) opportunities per person (F08)
+create table if not exists kafaa_opportunity_saves (
+  id text primary key,
+  person_id text not null,
+  opportunity_id text not null,
+  saved boolean not null default true,
+  open_read boolean not null default false,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_opportunity_saves is '[M20] Saved (bookmarked) opportunities per person (F08)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -1847,6 +1918,17 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sk
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_evidence_skill_id_fk') then alter table kafaa_skill_evidence add constraint kafaa_skill_evidence_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_person_skills_person_id_fk') then alter table kafaa_person_skills add constraint kafaa_person_skills_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_person_skills_skill_id_fk') then alter table kafaa_person_skills add constraint kafaa_person_skills_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_opportunities_posted_by_fk') then alter table kafaa_opportunities add constraint kafaa_opportunities_posted_by_fk foreign key (posted_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_opportunities_org_id_fk') then alter table kafaa_opportunities add constraint kafaa_opportunities_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_opportunities_family_id_fk') then alter table kafaa_opportunities add constraint kafaa_opportunities_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_opportunities_host_role_id_fk') then alter table kafaa_opportunities add constraint kafaa_opportunities_host_role_id_fk foreign key (host_role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_opportunity_applications_opportunity_id_fk') then alter table kafaa_opportunity_applications add constraint kafaa_opportunity_applications_opportunity_id_fk foreign key (opportunity_id) references kafaa_opportunities(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_opportunity_applications_person_id_fk') then alter table kafaa_opportunity_applications add constraint kafaa_opportunity_applications_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_opportunity_applications_poster_id_fk') then alter table kafaa_opportunity_applications add constraint kafaa_opportunity_applications_poster_id_fk foreign key (poster_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_opportunity_applications_line_manager_id_fk') then alter table kafaa_opportunity_applications add constraint kafaa_opportunity_applications_line_manager_id_fk foreign key (line_manager_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_opportunity_applications_releaser_id_fk') then alter table kafaa_opportunity_applications add constraint kafaa_opportunity_applications_releaser_id_fk foreign key (releaser_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_opportunity_saves_person_id_fk') then alter table kafaa_opportunity_saves add constraint kafaa_opportunity_saves_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_opportunity_saves_opportunity_id_fk') then alter table kafaa_opportunity_saves add constraint kafaa_opportunity_saves_opportunity_id_fk foreign key (opportunity_id) references kafaa_opportunities(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -2004,6 +2086,20 @@ create index if not exists kafaa_skill_evidence_kind_idx on kafaa_skill_evidence
 create index if not exists kafaa_skill_evidence_ref_id_idx on kafaa_skill_evidence (ref_id);
 create index if not exists kafaa_person_skills_person_id_idx on kafaa_person_skills (person_id);
 create index if not exists kafaa_person_skills_skill_id_idx on kafaa_person_skills (skill_id);
+create index if not exists kafaa_opportunities_posted_by_idx on kafaa_opportunities (posted_by);
+create index if not exists kafaa_opportunities_org_id_idx on kafaa_opportunities (org_id);
+create index if not exists kafaa_opportunities_family_id_idx on kafaa_opportunities (family_id);
+create index if not exists kafaa_opportunities_host_role_id_idx on kafaa_opportunities (host_role_id);
+create index if not exists kafaa_opportunities_kind_idx on kafaa_opportunities (kind);
+create index if not exists kafaa_opportunities_status_idx on kafaa_opportunities (status);
+create index if not exists kafaa_opportunity_applications_opportunity_id_idx on kafaa_opportunity_applications (opportunity_id);
+create index if not exists kafaa_opportunity_applications_person_id_idx on kafaa_opportunity_applications (person_id);
+create index if not exists kafaa_opportunity_applications_status_idx on kafaa_opportunity_applications (status);
+create index if not exists kafaa_opportunity_applications_poster_id_idx on kafaa_opportunity_applications (poster_id);
+create index if not exists kafaa_opportunity_applications_line_manager_id_idx on kafaa_opportunity_applications (line_manager_id);
+create index if not exists kafaa_opportunity_applications_releaser_id_idx on kafaa_opportunity_applications (releaser_id);
+create index if not exists kafaa_opportunity_saves_person_id_idx on kafaa_opportunity_saves (person_id);
+create index if not exists kafaa_opportunity_saves_opportunity_id_idx on kafaa_opportunity_saves (opportunity_id);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -2016,4 +2112,4 @@ create trigger kafaa_evaluations_append_only before update or delete on kafaa_ev
 drop trigger if exists kafaa_evaluation_acks_append_only on kafaa_evaluation_acks;
 create trigger kafaa_evaluation_acks_append_only before update or delete on kafaa_evaluation_acks for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 107) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 110) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

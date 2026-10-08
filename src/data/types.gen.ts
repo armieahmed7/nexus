@@ -1410,6 +1410,68 @@ export interface LedgerLocalRow {
   hash: string;
   actor_persona_id?: string | null;
 }
+export interface OpportunitiesRow {
+  id: string;
+  posted_by: string;
+  org_id?: string | null;
+  family_id?: string | null;
+  host_role_id?: string | null;
+  host_team?: string | null;
+  kind: 'project' | 'outage_support' | 'shadowing' | 'oe_review' | 'knowledge_capture' | 'outreach' | 'research';
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  skills_needed: string[];
+  skills_gained: string[];
+  hours_week: number;
+  start_on: string;
+  end_on: string;
+  seats: number;
+  seats_taken: number;
+  location_type: 'office' | 'site_non_protected' | 'remote';
+  eligible_families: string[];
+  priority_flags: string[];
+  status: 'draft' | 'open' | 'closed' | 'filled';
+  listed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+export interface OpportunityApplicationsRow {
+  id: string;
+  opportunity_id: string;
+  person_id: string;
+  note: string;
+  status: 'applied' | 'released' | 'declined_release' | 'selected' | 'not_selected' | 'completed' | 'withdrawn';
+  history: any;
+  applicant_name: string;
+  applicant_name_ar: string;
+  applicant_role_id?: string | null;
+  applicant_family_id?: string | null;
+  poster_id: string;
+  line_manager_id?: string | null;
+  releaser_id?: string | null;
+  skip_level: boolean;
+  released_by?: string | null;
+  released_at?: string | null;
+  decided_by?: string | null;
+  decided_at?: string | null;
+  completed_at?: string | null;
+  outcome_note?: string | null;
+  outcome_levels: any;
+  evidence_ids: string[];
+  open_read: boolean;
+  created_at: string;
+  updated_at: string;
+}
+export interface OpportunitySavesRow {
+  id: string;
+  person_id: string;
+  opportunity_id: string;
+  saved: boolean;
+  open_read: boolean;
+  updated_at: string;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -1520,6 +1582,9 @@ export interface Tables {
   person_skills: PersonSkillsRow;
   engine_settings: EngineSettingsRow;
   ledger_local: LedgerLocalRow;
+  opportunities: OpportunitiesRow;
+  opportunity_applications: OpportunityApplicationsRow;
+  opportunity_saves: OpportunitySavesRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];

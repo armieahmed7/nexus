@@ -1173,3 +1173,29 @@ create policy kafaa_read on kafaa_engine_settings for select to anon, authentica
 grant select on kafaa_engine_settings to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- opportunities
+alter table kafaa_opportunities enable row level security;
+drop policy if exists kafaa_read on kafaa_opportunities;
+create policy kafaa_read on kafaa_opportunities for select to anon, authenticated using (kafaa_rule_read('opportunities', posted_by, null::text, listed)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_opportunities to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- opportunity_applications
+alter table kafaa_opportunity_applications enable row level security;
+drop policy if exists kafaa_read on kafaa_opportunity_applications;
+create policy kafaa_read on kafaa_opportunity_applications for select to anon, authenticated using (kafaa_rule_read('opportunities', person_id, null::text, open_read)
+    or kafaa_rule_read('opportunities', poster_id, null::text, open_read)
+    or kafaa_rule_read('opportunities', releaser_id, null::text, open_read)
+    or kafaa_rule_read('opportunities', line_manager_id, null::text, open_read)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_opportunity_applications to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- opportunity_saves
+alter table kafaa_opportunity_saves enable row level security;
+drop policy if exists kafaa_read on kafaa_opportunity_saves;
+create policy kafaa_read on kafaa_opportunity_saves for select to anon, authenticated using (kafaa_rule_read('opportunities', person_id, null::text, open_read));
+grant select on kafaa_opportunity_saves to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
