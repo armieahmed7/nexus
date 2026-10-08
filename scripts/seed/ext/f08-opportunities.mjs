@@ -213,7 +213,7 @@ export default function build(T, ctx) {
     if (!r.releaser) throw new Error(`f08: no releaser for ${pid} on ${oid}`);
     const id = `oa-${oid.replace(/^opp-/, '')}-${pid}`;
     const applied = minDate(addDays(o.created_at.slice(0, 10), 2 + (i % 5)), addDays(today, -1));
-    const history = [{ at: ts(applied, 9), status: 'applied', by: pid, note: note || null }];
+    const history = [{ at: ts(applied, 9), status: 'applied', by: pid, note: status === 'declined_release' ? null : note || null }];
     const row = {
       id, opportunity_id: oid, person_id: pid, note, status, history,
       applicant_name: p.display_name, applicant_name_ar: p.display_name_ar || p.display_name, applicant_role_id: p.job_role_id ?? null, applicant_family_id: p.job_family_id ?? null,
