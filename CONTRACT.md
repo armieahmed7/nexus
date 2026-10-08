@@ -165,6 +165,18 @@ Need a foundation change (shared UI component, new rule in `rules.ts`, a field i
 - **2026-10-08 · v1.0** Initial contract. 85 routes scaffolded, 94 tables, 24 RPCs, two backends. Supabase: schema, policy matrix, RLS, RPCs and NEXUS reads applied to `hlirqxoddysxtdezwcgv`; grants hardened after the advisor run; SupabaseBackend verified end to end (NEXUS role-card sign-in → RLS read → `kafaa_signoff_evaluation` → audit row + NEXUS ledger entry). Live seed is partial (organisations, job families, job roles and an E2E subset), so `local` stays the default backend.
 - **2026-10-08 · G1 (branch g1)** Additive shared edits, each marked `[G1]` in code: `schema.ts` new M02 table `evaluation_acks` (append-only supervisor acknowledgements); `types.ts` seven RPCs (`ackEvaluation`, `qualExpirySweep`, `reviewQualRecord`, `licensingAlerts`, `closeLicensingTask`, `recordMedicalDate`, `crewAvailability`) implemented in `src/data/local/rpc.g1.ts` (wired from `rpc.ts`), `SupabaseBackend.rpc` and `supabase/migrations/20261008131000_kafaa_g1_quals_licensing.sql` (also adds a `job_roles` check: a published role needs a source). Foundation fix: `detectLicensingEvents` now treats any past medical due date as overdue whatever the last flag (M03 acceptance), in `rpc.ts` and redefined in the G1 SQL. `scripts/validate-migrations.mjs` calls `validate-migrations.g1.mjs` (one line). `vitest.config.ts` also collects `*.test.tsx`; devDependencies `@testing-library/react`, `@testing-library/dom`, `jsdom` for component tests. New public routes `careers-plan` (`/careers/plan`) and `careers-compare` (`/careers/compare`). G1 SQL applied to `hlirqxoddysxtdezwcgv` with `apply_migration` (`kafaa_g1_quals_licensing`).
 
+- **2026-10-08 · G2 (branch g2, pending foundation merge)** Shared-file edits made by the G2 module engineer. All are additive and commented `G2` in place:
+  - `src/data/schema.ts`: new columns on sessions, enrolments, training_records, external_requests, certificates, item_versions, assessment_forms, attempts, appeals, dev_plans and mentoring_requests. `items`, `item_versions` and `appeals` moved to write mode `rpc`. Mentors and mentoring_requests get person-scoped read rules. Run `npm run gen` after merging; it regenerates the RLS migration.
+  - `src/data/types.ts`: `Rpc extends G2Rpc` (the interface lives in `src/data/rpc_g2.ts`).
+  - `src/data/local/rpc.ts`: G2 methods are mixed in through `makeG2LocalRpc`. `itemReview` now checks status and refuses a writer approving their own item (`maker_checker`).
+  - `src/data/local/LocalBackend.ts`: one-line hook to `directWriteGuard` (`src/data/local/guards.ts`) on insert and update.
+  - `src/data/supabase/SupabaseBackend.ts`: spreads `makeG2SupabaseRpc`.
+  - `scripts/validate-migrations.mjs`: loads `scripts/validate/*.mjs` hooks.
+  - `scripts/build-seed.mjs`, `scripts/seed/assess.mjs`, `scripts/seed/people.mjs`: G2 sessions, enrolments, attempts, item workflow and course evaluation forms.
+  - `src/domain/learning.ts` (new): seat, waitlist, evaluation-gate, retake, appeal-window and item-analysis rules.
+  - `src/modules/m04/routes.ts`: new routes `learn-paths` (`/learn/paths`) and `learn-path` (`/learn/paths/:track`).
+  - Migration `20261008132001_kafaa_g2_learning.sql`: 21 RPCs, direct-write guard triggers, policy alters. Additive only, with no DROP statements.
+
 ## 11. Acceptance checklists per module
 
 Each group's hand-off lists every box below as done, or explains why not. These are the spec's acceptance criteria plus the contract's own items.

@@ -12,6 +12,8 @@ import { addWorkingDays, isoDate, todayIso, bookingPriority, scoreJpm } from '..
 import { canonical, chainHash, GENESIS } from '../audit';
 import { newId } from './store';
 import { G1LocalRpc } from './rpc.g1';
+import { makeG2LocalRpc } from './rpc_g2';
+import type { G2Rpc } from '../rpc_g2';
 
 const ELEVATED: PlatformRole[] = ['admin', 'auditor', 'hr_director', 'licensing_coord', 'training_manager', 'ecp_officer', 'instructor', 'hr_analyst'];
 const addMonths = (d: string, m: number) => {
@@ -20,9 +22,14 @@ const addMonths = (d: string, m: number) => {
   return isoDate(x);
 };
 
+// G2 (2026-10-08): the M04/M05 RPCs are implemented in ./rpc_g2.ts and installed on every LocalRpc instance.
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
+export interface LocalRpc extends G2Rpc {}
+// eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export class LocalRpc implements Rpc {
   constructor(private readonly b: LocalBackend) {
     this.g1 = new G1LocalRpc(b);
+    Object.assign(this, makeG2LocalRpc(b));
   }
   private readonly g1: G1LocalRpc;
 
@@ -311,16 +318,20 @@ export class LocalRpc implements Rpc {
     const i = this.b.rawGet('items', itemId);
     if (!i) return this.refuse(`item.${action}`, 'items', itemId, 'not_found', 'Item not found', role);
     const me = this.me;
+    // G2 (2026-10-08): status checks added, and a writer approving their own item is refused as maker_checker (M05 acceptance).
     if (action === 'submit') {
       if (i.writer_person_id !== me) return this.refuse('item.submit', 'items', itemId, 'forbidden', 'Only the writer submits for review', role);
+      if (i.status !== 'draft') return this.refuse('item.submit', 'items', itemId, 'invalid', 'Only a draft can be submitted for review', role);
       this.b.rawUpdate('items', itemId, { status: 'in_review' });
     } else if (action === 'review') {
       if (i.writer_person_id === me) return this.refuse('item.review', 'items', itemId, 'separation_of_duties', 'The writer cannot review their own item', role);
+      if (i.status !== 'in_review') return this.refuse('item.review', 'items', itemId, 'invalid', 'The item is not in review', role);
       this.b.rawUpdate('items', itemId, { reviewer_person_id: me });
     } else if (action === 'approve') {
       if (!this.ctx.has('secure_items', ['A'])) return this.refuse('item.approve', 'items', itemId, 'forbidden', 'Approver role required', role);
-      if (i.writer_person_id === me || i.reviewer_person_id === me) return this.refuse('item.approve', 'items', itemId, 'separation_of_duties', 'Writer, reviewer and approver must be different people', role);
-      if (!i.reviewer_person_id) return this.refuse('item.approve', 'items', itemId, 'invalid', 'Item has not been reviewed', role);
+      if (i.writer_person_id === me) return this.refuse('item.approve', 'items', itemId, 'maker_checker', 'You wrote this item: a different person must approve it', role);
+      if (i.reviewer_person_id === me) return this.refuse('item.approve', 'items', itemId, 'separation_of_duties', 'Writer, reviewer and approver must be different people', role);
+      if (i.status !== 'in_review' || !i.reviewer_person_id) return this.refuse('item.approve', 'items', itemId, 'invalid', 'Item has not been reviewed', role);
       this.b.rawUpdate('items', itemId, { status: 'approved', approver_person_id: me });
     } else return this.refuse(`item.${action}`, 'items', itemId, 'invalid', 'Unknown action', role);
     return this.done(`item.${action}`, 'items', itemId, null, role, null, '', 'Recorded');

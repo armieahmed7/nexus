@@ -622,7 +622,8 @@ create table if not exists kafaa_sessions (
   crew text,
   priority text not null default 'mandatory' check (priority in ('licence_critical', 'mandatory', 'elective')),
   audience text not null default 'staff' check (audience in ('staff', 'contractor', 'supplier')),
-  public_summary boolean not null default false
+  public_summary boolean not null default false,
+  status text not null default 'scheduled' check (status in ('scheduled', 'completed', 'cancelled'))
 );
 comment on table kafaa_sessions is '[M04] Scheduled session (class, simulator, drill)';
 
@@ -657,7 +658,11 @@ create table if not exists kafaa_enrolments (
   completed_at timestamptz,
   score numeric,
   certificate_no text,
-  evaluation_id text
+  evaluation_id text,
+  attendance text check (attendance in ('present', 'absent', 'excused')),
+  waitlisted_at timestamptz,
+  decided_by text,
+  decision_note text
 );
 comment on table kafaa_enrolments is '[M04] Enrolment (assigned or elective)';
 
@@ -670,7 +675,8 @@ create table if not exists kafaa_training_records (
   hours numeric not null default 0,
   result text not null check (result in ('completed', 'passed', 'failed', 'attended')),
   source_system text not null default 'Training records system',
-  evaluation_id text
+  evaluation_id text,
+  enrolment_id text
 );
 comment on table kafaa_training_records is '[M04] Completed training (transcript)';
 
@@ -696,7 +702,10 @@ create table if not exists kafaa_external_requests (
   status text not null default 'requested' check (status in ('requested', 'approved', 'rejected')),
   approver_person_id text,
   decided_at timestamptz,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  start_on date,
+  hours numeric,
+  decision_note text
 );
 comment on table kafaa_external_requests is '[M04] External course request with approval';
 
@@ -709,7 +718,9 @@ create table if not exists kafaa_certificates (
   course_id text not null,
   issued_on date not null,
   valid_to date,
-  status text not null default 'valid' check (status in ('valid', 'expired', 'revoked'))
+  status text not null default 'valid' check (status in ('valid', 'expired', 'revoked')),
+  enrolment_id text,
+  issued_by text
 );
 comment on table kafaa_certificates is '[M04] Kafa''a-issued internal course certificates (never FANR certificates); public verify via RPC';
 
@@ -745,7 +756,9 @@ create table if not exists kafaa_item_versions (
   answer text not null,
   rationale_en text not null default '',
   rationale_ar text not null default '',
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  author_person_id text,
+  change_note text
 );
 comment on table kafaa_item_versions is '[M05] Item version (stem, options, key, rationale)';
 
@@ -772,7 +785,11 @@ create table if not exists kafaa_assessment_forms (
   pass_mark numeric not null default 80,
   status text not null default 'approved' check (status in ('draft', 'approved', 'retired')),
   audience_en text not null default '',
-  audience_ar text not null default ''
+  audience_ar text not null default '',
+  course_id text,
+  max_attempts integer not null default 3,
+  retake_wait_days integer not null default 7,
+  appeal_days integer not null default 10
 );
 comment on table kafaa_assessment_forms is '[M05] Assessment form (exam, practice quiz, JPM, simulator evaluation)';
 
@@ -788,7 +805,16 @@ create table if not exists kafaa_attempts (
   passed boolean,
   status text not null check (status in ('scheduled', 'in_progress', 'submitted', 'graded', 'released')),
   proctor_person_id text,
-  released boolean not null default false
+  released boolean not null default false,
+  attempt_no integer not null default 1,
+  retake_of text,
+  deadline_at timestamptz,
+  late boolean not null default false,
+  released_by text,
+  released_at timestamptz,
+  voided_item_ids text[] not null default '{}'::text[],
+  counts boolean not null default true,
+  evaluator_note text
 );
 comment on table kafaa_attempts is '[M05] Attempt (exam or practice); results update quals only after evaluator sign-off';
 
@@ -827,7 +853,10 @@ create table if not exists kafaa_appeals (
   reason text not null,
   status text not null default 'open' check (status in ('open', 'upheld', 'rejected')),
   decided_by text,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  item_id text,
+  decision_note text,
+  decided_at timestamptz
 );
 comment on table kafaa_appeals is '[M05] Appeal against an assessment outcome';
 
@@ -840,7 +869,9 @@ create table if not exists kafaa_dev_plans (
   approved_by text,
   created_at timestamptz not null default now(),
   review_on date,
-  note text
+  note text,
+  decision_note text,
+  decided_at timestamptz
 );
 comment on table kafaa_dev_plans is '[M04] Individual development plan towards a target role';
 
@@ -878,7 +909,10 @@ create table if not exists kafaa_mentoring_requests (
   mentor_id text,
   interest text not null,
   status text not null default 'requested' check (status in ('requested', 'matched', 'declined', 'closed')),
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  mentor_person_id text,
+  message text not null default '',
+  responded_at timestamptz
 );
 comment on table kafaa_mentoring_requests is '[M04] Mentoring request (human matching)';
 
@@ -1678,6 +1712,7 @@ create index if not exists kafaa_mentors_person_id_idx on kafaa_mentors (person_
 create index if not exists kafaa_mentors_role_id_idx on kafaa_mentors (role_id);
 create index if not exists kafaa_mentoring_requests_person_id_idx on kafaa_mentoring_requests (person_id);
 create index if not exists kafaa_mentoring_requests_mentor_id_idx on kafaa_mentoring_requests (mentor_id);
+create index if not exists kafaa_mentoring_requests_mentor_person_id_idx on kafaa_mentoring_requests (mentor_person_id);
 create index if not exists kafaa_talent_programmes_stage_idx on kafaa_talent_programmes (stage);
 create index if not exists kafaa_applications_person_id_idx on kafaa_applications (person_id);
 create index if not exists kafaa_applications_programme_id_idx on kafaa_applications (programme_id);

@@ -5,6 +5,9 @@ import type { RouteDef } from '../../routes/types';
 export const routes: RouteDef[] = [
   { id: 'learn', path: '/learn', module: 'M04', zone: 'public', guard: {}, nav: { lens: 'public', section: 'learn', order: 30 }, parent: 'home', spec: "§5 /learn · M04", component: lazy(() => import('./LearnPage')) },
   { id: 'learn-course', path: '/learn/course/:id', module: 'M04', zone: 'public', guard: {}, parent: 'learn', spec: "M04 /learn/course/:id", component: lazy(() => import('./LearnCoursePage')) },
+  // G2: training and qualification paths (spec Section 8), public timelines with personal progress for signed-in staff
+  { id: 'learn-paths', path: '/learn/paths', module: 'M04', zone: 'public', guard: {}, nav: { lens: 'public', section: 'learn', order: 32 }, parent: 'learn', spec: "§8 Training and qualification paths", component: lazy(() => import('./LearnPathsPage')) },
+  { id: 'learn-path', path: '/learn/paths/:track', module: 'M04', zone: 'public', guard: {}, parent: 'learn-paths', spec: "§8 Training and qualification paths", component: lazy(() => import('./LearnPathPage')) },
   { id: 'my-learning', path: '/my/learning', module: 'M04', zone: 'staff', guard: { signedIn: true, anyRole: ['employee'] }, nav: { lens: 'my', section: 'me', order: 12 }, parent: 'my', spec: "§5 /my/learning · M04", component: lazy(() => import('./MyLearningPage')) },
   { id: 'my-plan', path: '/my/plan', module: 'M04', zone: 'staff', guard: { signedIn: true, grant: { res: 'dev_plans', levels: ['Own'] } }, nav: { lens: 'my', section: 'me', order: 14 }, parent: 'my', spec: "§5 /my/plan · M04", component: lazy(() => import('./MyPlanPage')) },
   { id: 'my-mentoring', path: '/my/mentoring', module: 'M04', zone: 'staff', guard: { signedIn: true, anyRole: ['employee'] }, nav: { lens: 'my', section: 'me', order: 15 }, parent: 'my', spec: "§5 /my/mentoring · M04", component: lazy(() => import('./MyMentoringPage')) },

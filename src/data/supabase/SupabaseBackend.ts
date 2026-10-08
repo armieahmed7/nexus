@@ -10,6 +10,7 @@ import { sqlName } from '../schema';
 import type { Identity, Query, Repository, Result, RowOf, Rpc, Table, NexusReads, SignoffInput, AggregateRow, CertificateCheck } from '../types';
 import type { PlatformRole } from '../../auth/policy';
 import { accessTokenFor } from '../../auth/nexusSession';
+import { makeG2SupabaseRpc } from './rpc_g2';
 
 type AnyQ = any; // supabase-js builder types are deep; kept local to this file
 
@@ -138,6 +139,7 @@ export class SupabaseBackend implements Repository {
   }
   private makeRpc(): Rpc {
     return {
+      ...makeG2SupabaseRpc((fn, args, touched) => this.call(fn, args, touched)), // G2: M04/M05 RPCs (./rpc_g2.ts)
       signoffEvaluation: (p: SignoffInput) => this.call('kafaa_signoff_evaluation', { p }, ['evaluations', 'qual_records']),
       setLicenceStatus: (id, status, reason) => this.call('kafaa_set_licence_status', { p_licence_id: id, p_status: status, p_reason: reason }, ['licences', 'licensing_tasks', 'reporting_obligations']),
       detectLicensingEvents: () => this.call('kafaa_detect_licensing_events', {}, ['licences', 'licensing_tasks']),

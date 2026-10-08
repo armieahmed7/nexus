@@ -6,6 +6,8 @@
  */
 import type { Table, RowOf } from './types.gen';
 import type { PlatformRole } from '../auth/policy';
+import type { G2Rpc } from './rpc_g2';
+export type * from './rpc_g2';
 export type { Table, RowOf } from './types.gen';
 export * from './types.gen';
 
@@ -78,7 +80,8 @@ export interface CertificateCheck {
 }
 
 /** Consequential actions. Each one audits (success and refusal) and, where material, appends to the NEXUS ledger. */
-export interface Rpc {
+// G2 (2026-10-08): M04/M05 RPCs are declared in ./rpc_g2.ts and merged here.
+export interface Rpc extends G2Rpc {
   signoffEvaluation(p: SignoffInput): Promise<Result<{ evaluation_id: string; record_status: string }>>;
   setLicenceStatus(licenceId: string, status: string, reason: string): Promise<Result<{ due?: string }>>;
   detectLicensingEvents(): Promise<Result<{ lapses: number; medical: number }>>;

@@ -120,3 +120,109 @@ export function buildAssessments() {
   versions.push({ id: 'it-thermo-11-v1', item_id: 'it-thermo-11', version: 1, is_practice: false, stem_en: 'At higher pressure, the saturation temperature of water is:', stem_ar: 'عند ضغط أعلى تكون درجة حرارة تشبع الماء:', options: [{ id: 'a', en: 'Higher', ar: 'أعلى' }, { id: 'b', en: 'Lower', ar: 'أدنى' }, { id: 'c', en: 'Unchanged', ar: 'دون تغيير' }, { id: 'd', en: 'Zero', ar: 'صفراً' }], answer: 'a', rationale_en: 'Boiling point rises with pressure.', rationale_ar: 'ترتفع نقطة الغليان مع الضغط.' });
   return { items, versions, forms };
 }
+
+// ───────────── G2 additions (2026-10-08): GET knowledge check (secure bank), course evaluation forms, attempt history
+// Generic site-access fundamentals only (radiation basics, human performance, safety culture). No plant arrangements.
+BANKS.push({
+  id: 'get', bank: 'secure', title_en: 'General Employee Training knowledge check', title_ar: 'فحص المعرفة في التدريب العام للموظفين', topic: 'Site access fundamentals', competency: 'hu-01', audience_en: 'New starters and contractors (GET)', audience_ar: 'الموظفون الجدد والمقاولون (التدريب العام)',
+  items: [
+    Q('The three basic ways to reduce external radiation dose are:', 'الطرق الأساسية الثلاث لتقليل الجرعة الإشعاعية الخارجية هي:', [o('Time, distance and shielding', 'الوقت والمسافة والتدريع'), o('Speed, colour and size', 'السرعة واللون والحجم'), o('Heat, light and sound', 'الحرارة والضوء والصوت'), o('Water, air and soil', 'الماء والهواء والتربة')], 'a', 'Less time near a source, more distance from it and shielding between you and it all reduce dose.', 'تقليل الوقت قرب المصدر وزيادة المسافة عنه ووضع تدريع بينك وبينه كلها تقلل الجرعة.', 'easy'),
+    Q('ALARA means keeping radiation doses:', 'يعني مبدأ ALARA إبقاء الجرعات الإشعاعية:', [o('Below zero', 'دون الصفر'), o('As low as reasonably achievable', 'منخفضة بقدر ما يمكن تحقيقه بشكل معقول'), o('At the legal limit', 'عند الحد القانوني'), o('Unmeasured', 'دون قياس')], 'b', 'ALARA asks for doses as low as reasonably achievable, well below limits.', 'يطلب مبدأ ALARA جرعات منخفضة بقدر ما يمكن تحقيقه بشكل معقول، أدنى بكثير من الحدود.', 'easy'),
+    Q('A personal dosimeter is worn to:', 'يُرتدى مقياس الجرعات الشخصي من أجل:', [o('Measure the dose the wearer receives', 'قياس الجرعة التي يتلقاها مرتديه'), o('Shield the wearer', 'حماية مرتديه بالتدريع'), o('Open doors', 'فتح الأبواب'), o('Track working hours', 'تتبع ساعات العمل')], 'a', 'Dosimeters record the dose a person receives so it can be tracked and kept ALARA.', 'تسجل مقاييس الجرعات الجرعة التي يتلقاها الشخص لمتابعتها وإبقائها منخفضة.', 'easy'),
+    Q('When a procedure cannot be performed as written, you should:', 'عندما لا يمكن تنفيذ إجراء كما هو مكتوب، عليك:', [o('Improvise and finish the job', 'الارتجال وإنهاء العمل'), o('Stop, place the work in a safe condition and contact your supervisor', 'التوقف ووضع العمل في حالة آمنة والتواصل مع المشرف'), o('Skip the step', 'تخطي الخطوة'), o('Ask a colleague to sign it off', 'طلب توقيع زميل')], 'b', 'Procedure use and adherence: stop when unsure and get the procedure corrected.', 'استخدام الإجراء والالتزام به: توقف عند الشك واحصل على تصحيح الإجراء.', 'medium'),
+    Q('Who can raise a nuclear safety concern?', 'من يمكنه رفع مخاوف تتعلق بالسلامة النووية؟', [o('Only managers', 'المديرون فقط'), o('Only regulators', 'الجهات الرقابية فقط'), o('Anyone working at the site, without fear of retaliation', 'أي شخص يعمل في الموقع دون خوف من الانتقام'), o('Only the shift supervisor', 'مشرف الوردية فقط')], 'c', 'A safety-conscious work environment lets everyone raise concerns freely.', 'تتيح بيئة العمل الواعية بالسلامة للجميع رفع المخاوف بحرية.', 'easy'),
+    Q('Foreign material exclusion (FME) aims to:', 'يهدف استبعاد المواد الغريبة إلى:', [o('Keep loose items out of systems and components', 'إبقاء الأشياء السائبة خارج الأنظمة والمكونات'), o('Exclude foreign workers', 'استبعاد العمال الأجانب'), o('Remove imported parts', 'إزالة القطع المستوردة'), o('Reduce paperwork', 'تقليل الأعمال الورقية')], 'a', 'FME prevents debris entering plant systems, where it can damage equipment.', 'يمنع استبعاد المواد الغريبة دخول الحطام إلى أنظمة المحطة حيث قد يتلف المعدات.', 'medium'),
+    Q('Stop-work authority means:', 'تعني صلاحية إيقاف العمل:', [o('Only the plant manager can stop work', 'يستطيع مدير المحطة فقط إيقاف العمل'), o('Any worker may stop work they believe is unsafe', 'يجوز لأي عامل إيقاف عمل يعتقد أنه غير آمن'), o('Work never stops', 'العمل لا يتوقف أبداً'), o('Contractors cannot stop work', 'لا يمكن للمقاولين إيقاف العمل')], 'b', 'Everyone has the authority, and the duty, to stop unsafe work.', 'لكل شخص الصلاحية والواجب لإيقاف العمل غير الآمن.', 'easy'),
+    Q('Contamination differs from external exposure because contamination is:', 'يختلف التلوث عن التعرض الخارجي لأن التلوث هو:', [o('Radioactive material where it is not wanted', 'مواد مشعة في مكان غير مرغوب فيه'), o('Always harmless', 'غير ضار دائماً'), o('Only from X-rays', 'من الأشعة السينية فقط'), o('A type of shielding', 'نوع من التدريع')], 'a', 'Contamination is unwanted radioactive material on surfaces, skin or inside the body.', 'التلوث هو مواد مشعة غير مرغوبة على الأسطح أو الجلد أو داخل الجسم.', 'medium'),
+    Q('Before entering a radiologically controlled area you need:', 'قبل دخول منطقة خاضعة للرقابة الإشعاعية تحتاج إلى:', [o('Nothing special', 'لا شيء خاص'), o('The right training, a dosimeter and a radiation work permit', 'التدريب المناسب ومقياس جرعات وتصريح عمل إشعاعي'), o('Only a hard hat', 'خوذة فقط'), o('A colleague\'s badge', 'شارة زميل')], 'b', 'Access requires training, dosimetry and an RWP that describes the radiological conditions.', 'يتطلب الدخول التدريب وقياس الجرعات وتصريح عمل إشعاعي يصف الظروف الإشعاعية.', 'medium'),
+    Q('A near miss should be:', 'ينبغي التعامل مع الحادث الوشيك بـ:', [o('Ignored if nobody was hurt', 'تجاهله إذا لم يُصب أحد'), o('Reported so the organisation can learn from it', 'الإبلاغ عنه كي تتعلم المؤسسة منه'), o('Hidden', 'إخفائه'), o('Reported only if there is damage', 'الإبلاغ عنه فقط عند وقوع ضرر')], 'b', 'Operating experience depends on reporting near misses and low-level events.', 'تعتمد الخبرة التشغيلية على الإبلاغ عن الحوادث الوشيكة والأحداث منخفضة المستوى.', 'easy'),
+    Q('The purpose of a pre-job brief is to:', 'الغرض من إحاطة ما قبل العمل هو:', [o('Discuss critical steps, hazards and error traps before starting', 'مناقشة الخطوات الحرجة والمخاطر ومصائد الأخطاء قبل البدء'), o('Fill in time', 'ملء الوقت'), o('Assign blame', 'تحديد المسؤولية'), o('Replace the procedure', 'استبدال الإجراء')], 'a', 'The brief prepares the team for the critical steps and what could go wrong.', 'تهيّئ الإحاطة الفريق للخطوات الحرجة وما قد يسوء.', 'hard'),
+    Q('Fitness for duty means a worker is:', 'تعني اللياقة للعمل أن العامل:', [o('Wearing a uniform', 'يرتدي الزي'), o('Physically and mentally able to work safely, free of impairment', 'قادر بدنياً وذهنياً على العمل بأمان ودون أي إعاقة'), o('On time', 'في الموعد'), o('Fully qualified for all tasks', 'مؤهل بالكامل لجميع المهام')], 'b', 'Fitness for duty covers fatigue, impairment and anything that could affect safe performance.', 'تشمل اللياقة للعمل الإرهاق وأي إعاقة أو أمر قد يؤثر على الأداء الآمن.', 'hard'),
+  ],
+});
+
+/**
+ * Linked evaluations for qualifying courses (M04 rule: a qualifying course cannot complete without its linked evaluation).
+ * Written forms draw on the secure banks; performance forms (OJT, JPM, simulator) are recorded by a qualified evaluator.
+ */
+export function buildCourseForms(courses) {
+  const ids = (bank, n = 99) => BANKS.find((b) => b.id === bank).items.slice(0, n).map((_, i) => `it-${bank}-${String(i + 1).padStart(2, '0')}`);
+  const written = {
+    'c-get': [ids('get'), 20, 80],
+    'c-hu': [ids('get').filter((_, i) => [3, 4, 6, 9, 10, 11].includes(i)), 15, 80],
+    'c-coit-exam': [[...ids('reactor-theory'), ...ids('thermo')], 60, 80],
+  };
+  const kindOf = (c) => (c.modality === 'simulator' ? 'simulator' : c.modality === 'ojt' ? 'ojt' : c.id === 'c-loit-ojt' || c.id === 'c-mnt-ojt' ? 'jpm' : 'ojt');
+  return courses
+    .filter((c) => c.qualifying && c.evaluation_form_id)
+    .map((c) => {
+      const w = written[c.id];
+      return {
+        id: c.evaluation_form_id, blueprint_id: c.id === 'c-coit-exam' ? 'bp-coit-written' : null, title_en: `${c.title_en}: ${w ? 'knowledge check' : 'performance evaluation'}`,
+        title_ar: `${c.title_ar}: ${w ? 'فحص المعرفة' : 'تقييم الأداء'}`, kind: w ? 'written' : kindOf(c), is_practice: false, item_ids: w ? w[0] : [], time_limit_min: w ? w[1] : 60,
+        pass_mark: w ? w[2] : (c.pass_mark ?? 80), status: 'approved', audience_en: 'Enrolled candidates', audience_ar: 'المرشحون المسجلون', course_id: c.id, max_attempts: 3, retake_wait_days: 7, appeal_days: 10,
+      };
+    });
+}
+
+/** Deterministic attempt history (synthetic workers) so instructors see item analysis and the appeal / retake flows. */
+export function buildAttemptHistory() {
+  let seed = 20261008;
+  const rnd = () => ((seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648);
+  const key = {};
+  const diff = {};
+  for (const b of BANKS) b.items.forEach((q, i) => { const id = `it-${b.id}-${String(i + 1).padStart(2, '0')}`; key[id] = q.answer; diff[id] = q.difficulty; });
+  const attempts = [];
+  const responses = [];
+  const ts = (d, h) => `${d}T${String(h).padStart(2, '0')}:00:00Z`;
+  const addDays = (d, n) => { const x = new Date(`${d}T00:00:00Z`); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10); };
+  const T0 = '2026-10-08';
+  const wrongOf = (a) => ['a', 'b', 'c', 'd'].find((x) => x !== a);
+  const take = (id, form, items, person, dayOffset, ability, proctor, extra = {}) => {
+    const day = addDays(T0, dayOffset);
+    let correct = 0;
+    for (const it of items) {
+      const p = Math.min(0.98, Math.max(0.05, ability + (diff[it] === 'easy' ? 0.15 : diff[it] === 'hard' ? -0.2 : 0)));
+      const ok = rnd() < p;
+      if (ok) correct++;
+      responses.push({ id: `rs-${id}-${it}`, attempt_id: id, item_id: it, version: 1, answer: ok ? key[it] : wrongOf(key[it]), correct: ok });
+    }
+    const score = Math.round((correct * 100) / items.length);
+    attempts.push({ id, form_id: form, person_id: person, scheduled_for: ts(day, 8), started_at: ts(day, 8), submitted_at: ts(day, 9), score, passed: score >= 80, status: 'released', proctor_person_id: proctor, released: true,
+      attempt_no: 1, retake_of: null, deadline_at: ts(day, 9), late: false, released_by: proctor, released_at: ts(addDays(day, 1), 10), voided_item_ids: [], counts: true, evaluator_note: null, ...extra });
+  };
+  const rt = BANKS.find((b) => b.id === 'reactor-theory').items.map((_, i) => `it-reactor-theory-${String(i + 1).padStart(2, '0')}`);
+  const th = BANKS.find((b) => b.id === 'thermo').items.map((_, i) => `it-thermo-${String(i + 1).padStart(2, '0')}`);
+  const people = ['w-ro-01', 'w-ro-02', 'w-ro-03', 'w-ro-04', 'w-ro-05', 'w-ro-06', 'w-ro-07', 'w-ro-08', 'w-lo-01', 'w-lo-02', 'w-lo-05', 'w-lo-07', 'w-lo-09', 'w-sro-03'];
+  people.forEach((p, i) => take(`at-h-rt-${i + 1}`, 'form-reactor-theory', rt, p, -60 - i, 0.55 + ((i * 37) % 40) / 100, 'w-instr-01'));
+  people.slice(0, 12).forEach((p, i) => take(`at-h-th-${i + 1}`, 'form-thermo', th, p, -45 - i, 0.5 + ((i * 29) % 45) / 100, 'w-instr-02'));
+  // A GET knowledge check submitted yesterday and graded, waiting for the evaluator's release
+  const get = BANKS.find((b) => b.id === 'get').items.map((_, i) => `it-get-${String(i + 1).padStart(2, '0')}`);
+  take('at-7', 'form-c-get', get, 'w-lo-10', -1, 0.85, 'p-k-instructor', { status: 'graded', released: false, released_by: null, released_at: null });
+  // Responses behind the seeded results at-1 (k-ro, 90%) and at-4 (w-lo-04, 70%, under appeal)
+  const fixed = (attemptId, items, wrong) => items.forEach((it, i) => responses.push({ id: `rs-${attemptId}-${it}`, attempt_id: attemptId, item_id: it, version: 1, answer: wrong.includes(i + 1) ? wrongOf(key[it]) : key[it], correct: !wrong.includes(i + 1) }));
+  fixed('at-1', rt, [3]);
+  fixed('at-4', rt, [2, 5, 7]);
+  return { attempts, responses };
+}
+
+/** Patch the seeded person-linked attempts (people.mjs) with the G2 columns they need. */
+export function patchSeedAttempts(attempts) {
+  for (const a of attempts) {
+    if (a.status === 'released' && !a.released_at) Object.assign(a, { released_by: a.proctor_person_id, released_at: a.submitted_at });
+    if (a.started_at && !a.deadline_at) a.deadline_at = a.submitted_at;
+  }
+}
+
+/** Items in the review workflow for the separation-of-duties demo (writer, reviewer and approver must differ). */
+export function buildItemWorkflow() {
+  const items = [
+    { id: 'it-get-13', bank: 'secure', is_practice: false, competency_id: 'hu-01', task_id: null, topic: 'Site access fundamentals', difficulty: 'medium', reference: 'Generic nuclear fundamentals', current_version: 1, status: 'in_review', writer_person_id: 'p-training-mgr', reviewer_person_id: 'p-k-instructor', approver_person_id: null, p_value: null, discrimination: null },
+    { id: 'it-thermo-12', bank: 'secure', is_practice: false, competency_id: 'pf-02', task_id: null, topic: 'Thermodynamics', difficulty: 'medium', reference: 'Generic nuclear fundamentals', current_version: 1, status: 'draft', writer_person_id: 'p-k-instructor', reviewer_person_id: null, approver_person_id: null, p_value: null, discrimination: null },
+  ];
+  const versions = [
+    { id: 'it-get-13-v1', item_id: 'it-get-13', version: 1, is_practice: false, stem_en: 'Before starting work on equipment, the worker confirms the correct component by:', stem_ar: 'قبل بدء العمل على المعدات، يتأكد العامل من المكوّن الصحيح عن طريق:', options: [{ id: 'a', en: 'Assuming it from memory', ar: 'افتراضه من الذاكرة' }, { id: 'b', en: 'Checking the component label against the work document', ar: 'مطابقة ملصق المكوّن مع وثيقة العمل' }, { id: 'c', en: 'Asking anyone nearby', ar: 'سؤال أي شخص قريب' }, { id: 'd', en: 'Starting and seeing what happens', ar: 'البدء ومراقبة ما يحدث' }], answer: 'b', rationale_en: 'Component verification prevents wrong-unit and wrong-train errors.', rationale_ar: 'يمنع التحقق من المكوّن أخطاء الوحدة أو المسار الخاطئ.', author_person_id: 'p-training-mgr', change_note: 'New item' },
+    { id: 'it-thermo-12-v1', item_id: 'it-thermo-12', version: 1, is_practice: false, stem_en: 'Which heat transfer mode needs no medium?', stem_ar: 'أي نمط من أنماط انتقال الحرارة لا يحتاج إلى وسط؟', options: [{ id: 'a', en: 'Conduction', ar: 'التوصيل' }, { id: 'b', en: 'Convection', ar: 'الحمل' }, { id: 'c', en: 'Radiation', ar: 'الإشعاع' }, { id: 'd', en: 'Boiling', ar: 'الغليان' }], answer: 'c', rationale_en: 'Thermal radiation travels as electromagnetic waves.', rationale_ar: 'ينتقل الإشعاع الحراري على شكل موجات كهرومغناطيسية.', author_person_id: 'p-k-instructor', change_note: 'New item' },
+  ];
+  return { items, versions };
+}
