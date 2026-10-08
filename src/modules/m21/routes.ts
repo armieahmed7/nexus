@@ -1,7 +1,10 @@
-// M21 routes (Future Me (personal ADVANCE readiness and horizon); owner: W1 engineer, features F09 (W1)). Registered once by F01 in src/routes/registry.ts:
-// add routes here only, never in shared routing files. Each route: { id, path, module: 'M21', zone, guard, nav?, parent?, spec, component }.
-// Route ids are i18n keys (m21.routes.<id>.title|purpose in src/i18n/m21.{en,ar}.json) and are visited by the smoke suite automatically.
-// Param routes: put sample params in src/modules/m21/smoke.json ({ "<route-id>": { "<param>": "<seed id>" } }).
+// M21 routes (Future Me: personal ADVANCE readiness and horizon; owner W1 · E5, feature F09). Registered once by F01 in
+// src/routes/registry.ts. Route ids are i18n keys (m21.routes.<id>.title|purpose) and are visited by the smoke suite automatically.
+import { lazy } from 'react';
 import type { RouteDef } from '../../routes/types';
 
-export const routes: RouteDef[] = [];
+export const routes: RouteDef[] = [
+  { id: 'my-future', path: '/my/future', module: 'M21', zone: 'staff', guard: { signedIn: true, grant: { res: 'skills_profile', levels: ['Own'] } }, nav: { lens: 'my', section: 'future', order: 21 }, parent: 'my', spec: 'BACKLOG F09 · /my/future', component: lazy(() => import('./MyFuturePage')) },
+  { id: 'my-future-tech', path: '/my/future/:tech', module: 'M21', zone: 'staff', guard: { signedIn: true, grant: { res: 'skills_profile', levels: ['Own'] } }, parent: 'my-future', spec: 'BACKLOG F09 · readiness for one technology family', component: lazy(() => import('./MyFutureTechPage')) },
+  { id: 'workforce-future-interest', path: '/workforce/future/interest', module: 'M21', zone: 'staff', guard: { signedIn: true, grant: { res: 'skills_profile', levels: ['Agg', 'A'] } }, nav: { lens: 'my', section: 'workforce', order: 68 }, parent: 'workforce-future', spec: 'BACKLOG F09 · interest aggregate (demand signal for F26)', component: lazy(() => import('./FutureDemandPage')) },
+];

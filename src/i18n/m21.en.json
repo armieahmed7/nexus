@@ -2,5 +2,209 @@
   "module": {
     "name": "Future Me (personal ADVANCE readiness and horizon)"
   },
-  "routes": {}
+  "routes": {
+    "my-future": {
+      "title": "Future Me",
+      "purpose": "My readiness for the ADVANCE era (SIMULATED index), the skill bridges that move me most, a horizon roadmap to 2035 and the concept roles I am closest to."
+    },
+    "my-future-tech": {
+      "title": "Future Me: technology family",
+      "purpose": "How my skills count for one advanced reactor family, with the evidence behind each level and the learning that closes my gaps most."
+    },
+    "workforce-future-interest": {
+      "title": "Future Me demand signal",
+      "purpose": "How many people are interested in each technology family and horizon lane, as aggregates only (groups under 10 suppressed)."
+    }
+  },
+  "page": {
+    "eyebrow": "Future Me · ADVANCE era",
+    "intro": "How ready your skills are for the technologies ENEC is evaluating, which bridges would move you most, and what to watch between now and 2035. Every index here is SIMULATED and built from your own skill evidence.",
+    "signIn": "Sign in with a staff account to see Future Me.",
+    "noSkillsTitle": "No skill evidence yet",
+    "noSkillsBody": "Your indices stay at zero until your skills passport has evidence from qualifications, courses or ratings.",
+    "openPassport": "Open my skills passport"
+  },
+  "hero": {
+    "title": "My ADVANCE readiness",
+    "asRole": "Calculated for you as {role}",
+    "noRole": "Calculated from your skill evidence (no current role on file)",
+    "overall": "Overall readiness index",
+    "ceiling": "Ceiling from today's skills: {n}. The rest is new learning.",
+    "meter": "Readiness {v} of a ceiling of {c}, out of 100",
+    "legendMine": "My readiness",
+    "legendCeiling": "Ceiling from today's skills",
+    "explain": "Skills that transfer from APR-1400 work count in full, skills that adapt count at half, and new skills count zero until you learn them. The index is an orientation for your own development, not an assessment.",
+    "strongest": "Strongest family: {tech}",
+    "radar": "Readiness by technology family (SIMULATED index)"
+  },
+  "fam": {
+    "title": "By technology family",
+    "desc": "Each family ENEC is evaluating under ADVANCE, with how much of your current skill base carries over.",
+    "index": "Readiness index",
+    "ceiling": "Ceiling {n}",
+    "open": "See my skills for this family"
+  },
+  "bridge": {
+    "title": "My bridge plan",
+    "desc": "The skill bridges that would move you most: your own role first, then roles within two career steps. Each comes with source-linked learning from the catalogue and partner programmes.",
+    "empty": "No skill bridges are published yet.",
+    "fitMine": "From your role",
+    "fitNear": "Near your role",
+    "fitOther": "Other role",
+    "uplift": "Up to +{n} index points"
+  },
+  "res": {
+    "title": "Suggested learning",
+    "none": "No learning suggestion closes a gap here yet.",
+    "hours": "{n} h",
+    "kind": {
+      "course": "Course",
+      "track": "ADVANCE track",
+      "programme": "Partner programme",
+      "event": "Summer school",
+      "reading": "Reading"
+    }
+  },
+  "hz": {
+    "title": "Horizon roadmap 2026 to 2035",
+    "desc": "Trend lanes that will shape nuclear work, each with why it matters, a public source and your current level. Horizons are orientation, not plans.",
+    "h": {
+      "now": "Now",
+      "next": "Next",
+      "later": "Later"
+    },
+    "why": "Why it matters",
+    "myLevel": "My current level",
+    "levelOf": "{n} of 4",
+    "qualified": "qualified",
+    "notQualified": "not qualified",
+    "pathOnly": "Cyber and security roles are shown as a career path only:",
+    "roles": "Roles to explore:"
+  },
+  "roles": {
+    "title": "Concept future roles closest to me",
+    "desc": "From the future-role catalogue, ranked by your link to the roles they start from and your skill overlap. Concept roles have no headcount, sites or dates.",
+    "empty": "No concept role is linked to your role or skills yet.",
+    "closeness": "Closeness index"
+  },
+  "goals": {
+    "title": "My goals and interests",
+    "desc": "Goals you add here are handed to the Learning Coach as coach targets. Interests are private to you; HR sees only totals of 10 or more.",
+    "coach": "Learning goals for the coach",
+    "openCoach": "Open the Learning Coach",
+    "empty": "No Future Me goals yet",
+    "emptyBody": "Use \"Add to my learning goals\" on a bridge, lane, skill or future role.",
+    "skills": "{n} skills to grow",
+    "target": "target level {n}",
+    "handoff": "The Learning Coach reads these as targets when it ranks your next learning.",
+    "kind": {
+      "adv_skill": "ADVANCE skill",
+      "bridge": "Skill bridge",
+      "lane": "Horizon lane",
+      "future_role": "Future role"
+    }
+  },
+  "goal": {
+    "add": "Add to my learning goals",
+    "in": "In my learning goals",
+    "addShort": "Add to goals",
+    "inShort": "In my goals"
+  },
+  "interest": {
+    "title": "What I am watching",
+    "on": "Interested",
+    "off": "I'm interested",
+    "added": "Marked as interested",
+    "removed": "No longer marked as interested",
+    "empty": "Mark a technology family or lane as interesting to keep it here.",
+    "privacy": "Only you see your interests. HR sees counts of 10 people or more, never names."
+  },
+  "method": {
+    "title": "How Future Me works",
+    "level": "Your level on each ADVANCE skill is the best level among the Kafa'a skills mapped to it and their competency's core skill, from your skills passport (qualifications, courses, assessments, JPMs and ratings). Security skills never count.",
+    "factor": "Skills that transfer from APR-1400 work count in full, skills that adapt count at half, and new skills count zero.",
+    "index": "Readiness index = 100 × the sum of (factor × level up to 3, divided by 3) ÷ the number of ADVANCE skills in the family. The overall index is the mean of the six families.",
+    "ceiling": "The ceiling is the most your current skills can carry over; the gap above it is new learning.",
+    "bridges": "Bridge plan: role fit (1 your role, 0.6 within two career steps, 0.3 other) × (index points still available + 5). Learning suggestions are ranked by the deterministic gap-closure engine.",
+    "roles": "Concept roles: half for the link to the roles they start from, half for your skill overlap.",
+    "mirror": "Kafa'a is a mirror, not an authority: these indices are SIMULATED, are not a qualification or an assessment, and imply no deployment decision."
+  },
+  "tech": {
+    "notFound": "This technology family is not in the catalogue.",
+    "back": "Back to Future Me",
+    "public": "Public page for this family",
+    "about": "About this family",
+    "skillsTitle": "How my skills count",
+    "skillsDesc": "Every ADVANCE skill in this family, my level, how it counts and the evidence behind it.",
+    "col": {
+      "skill": "ADVANCE skill",
+      "relation": "Compared with APR-1400",
+      "level": "My level",
+      "counts": "Counts as",
+      "points": "Index points",
+      "actions": "Actions"
+    },
+    "via": "via {skill}",
+    "factor": "× {n}",
+    "pointsNote": "Index points add up to the family readiness index. New skills count zero until the formula is revised.",
+    "bridgesTitle": "Skill bridges into this family",
+    "bridgesDesc": "What transfers from today's roles and what is new, ranked for you.",
+    "noBridges": "No skill bridge leads into this family yet.",
+    "resTitle": "Learning that closes my gaps",
+    "resDesc": "Courses, ADVANCE tracks, partner programmes and readings, ranked by how far they lift your levels per hour of effort.",
+    "resRanked": "Ranked for you",
+    "rolesTitle": "Concept roles in this family"
+  },
+  "demand": {
+    "intro": "Interest and Future Me goals by technology family and horizon lane: a demand signal for training needs analysis. Counts of distinct people only.",
+    "privacyTitle": "Aggregates only",
+    "privacy": "Any group under {n} people shows as suppressed. Individual interest and goals are never shown to HR or managers.",
+    "empty": "No data yet.",
+    "cells": "Aggregate cells",
+    "cellsSub": "technology or lane × interest or goals",
+    "shown": "Cells shown",
+    "shownSub": "{n} people or more",
+    "suppressed": "Cells suppressed",
+    "suppressedSub": "fewer than 10 people",
+    "techTitle": "By technology family",
+    "laneTitle": "By horizon lane",
+    "interest": "People interested",
+    "goals": "People with a Future Me goal",
+    "laneInterest": "People interested, by lane",
+    "laneGoals": "People with a goal, by lane",
+    "tableTitle": "All cells",
+    "col": {
+      "target": "Technology or lane",
+      "kind": "Type",
+      "interest": "Interested",
+      "goals": "With a goal"
+    },
+    "kind": {
+      "tech": "Technology family",
+      "lane": "Horizon lane"
+    },
+    "foot": "Source: Future Me interest and goals in Kafa'a (synthetic demo tenant). A demand signal, not a forecast or a headcount."
+  },
+  "reasons": {
+    "transfers": "{skill} carries over at level {level} (via {via}) and counts in full",
+    "adapts": "{skill} adapts at level {level} (via {via}) and counts at half",
+    "no_carry": "No evidence yet on the {n} skills that carry over or adapt",
+    "new": "{n} new skill(s) count zero until you learn them",
+    "ceiling": "Ceiling from today's skills: {pct}",
+    "bridge_mine": "Starts from your role ({role})",
+    "bridge_near": "Starts from {role}, {n} career step(s) from your role",
+    "bridge_other": "Starts from {role}, not linked to your role",
+    "bridge_uplift": "Up to {pts} index points still available in {tech}",
+    "bridge_full": "Your transferable skills for {tech} are already at their ceiling",
+    "role_from": "Starts from your role ({role})",
+    "role_near": "Starts from {role}, {n} career step(s) from your role",
+    "role_none": "Not linked to your current role",
+    "overlap": "{pct}% skill overlap",
+    "shared": "You hold {skill} at level {level}",
+    "rel_transfers": "Transfers from APR-1400 work: counts × {factor}",
+    "rel_adapts": "Adapts from APR-1400 work: counts × {factor}",
+    "rel_new": "New skill: counts × {factor}",
+    "via": "Your level comes from {skill} (level {level})",
+    "no_evidence": "No evidence yet on the mapped skills"
+  }
 }
