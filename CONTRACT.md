@@ -163,6 +163,12 @@ Need a foundation change (shared UI component, new rule in `rules.ts`, a field i
 ### Changelog
 
 - **2026-10-08 · v1.0** Initial contract. 85 routes scaffolded, 94 tables, 24 RPCs, two backends. Supabase: schema, policy matrix, RLS, RPCs and NEXUS reads applied to `hlirqxoddysxtdezwcgv`; grants hardened after the advisor run; SupabaseBackend verified end to end (NEXUS role-card sign-in → RLS read → `kafaa_signoff_evaluation` → audit row + NEXUS ledger entry). Live seed is partial (organisations, job families, job roles and an E2E subset), so `local` stays the default backend.
+- **2026-10-08 · G3 (branch g3)** Additive shared edits, all marked `[G3]`:
+  - `src/data/schema.ts`: `applications` and `research_proposals` move to write mode `'rpc'` (an applicant can no longer move their own application to "offer", a partner can no longer accept its own proposal by direct update); `scholar_cohorts` gains read rule `{ res: 'partner_org', org: 'university_org_id' }` (a university reads cohort totals hosted at its own university). Regenerated files follow.
+  - `src/data/types.ts`, `src/data/local/rpc.ts`, `src/data/supabase/SupabaseBackend.ts`: 8 RPCs `submitApplication`, `withdrawApplication`, `draftObserverReport`, `saveScenario`, `setBenchTarget`, `saveResearchChallenge`, `saveResearchProposal`, `decideResearchProposal` (SQL in `20261008133001_kafaa_g3_rpcs.sql`, which also revokes direct writes on the two tables, disables their now-redundant row-audit triggers and adds the cohort policy without any drop).
+  - `scripts/seed/people.mjs` and `content.mjs`: synthetic applicant pool (`ap-001`..`ap-208`, first names only, no personas) so funnel cells reach 10; earlier quarters, hires/leavers, organisation totals, women by level and age bands in `workforce_snapshots`; previous-quarter `critical_roles` rows; the "accepted" seed application now has its history.
+  - `scripts/validate-migrations.mjs` calls `scripts/validate-g3.mjs` (28 PGlite checks). New routes in G3's own `routes.ts`: `workforce-talent`, `workforce-definitions`, `admin-research`.
+  - Dev dependencies `@testing-library/react`, `@testing-library/dom`, `jsdom` for component tests (`// @vitest-environment jsdom` per file; vitest config unchanged).
 
 ## 11. Acceptance checklists per module
 
