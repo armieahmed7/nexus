@@ -4,7 +4,7 @@ import { useRepo, useQuery } from '../../data';
 import type { KpiSeriesRow } from '../../data/types';
 import { useSession, roleLabel } from '../../auth/session';
 import { StatTile, SourceLink, SimChip, Icon, downloadText } from '../../ui';
-import { L, useFormat, usePick, useT, useLang } from '../../i18n';
+import { L, useFormat, usePick, useT, useLang, entityName } from '../../i18n';
 import { todayIso } from '../../domain/rules';
 import { MIN_GROUP_SIZE } from '../../auth/policy';
 import { csvWatermark, latestPeriod } from './metrics';
@@ -46,7 +46,7 @@ export function useDimLabels() {
     entities: q.data?.orgs ?? [],
     label: (dim: string, key: string) => {
       if (dim === 'family') return pick(q.data?.fams.find((f) => f.id === key), 'name') || key;
-      if (dim === 'entity') return pick(q.data?.orgs.find((o) => o.id === key), 'name') || key;
+      if (dim === 'entity') return pick(q.data?.orgs.find((o) => o.id === key), 'name') || entityName(t, key);
       if (dim === 'level') return t(`m07.level.${key}`);
       return t('m07.total');
     },

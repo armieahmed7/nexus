@@ -61,6 +61,8 @@ export default function LearnCoursePage() {
         const missing = me ? missingPrerequisites(c.prerequisites ?? [], done) : [];
         const active = d.mine.find((e) => isOpen(e.status));
         const upcoming = d.sessions.filter((x) => x.status === 'scheduled' && x.starts_at > new Date().toISOString());
+        // A booking on a cancelled or closed session no longer holds the learner (they can book another session).
+        const bookedLive = !!active?.session_id && d.sessions.some((x) => x.id === active.session_id && x.status === 'scheduled');
         const seats = (sid: string) => d.seatsBySession.get(sid)?.taken ?? 0;
         const waiting = (sid: string) => d.seatsBySession.get(sid)?.waiting ?? 0;
         const objectives = (Array.isArray(c.objectives) ? c.objectives : []) as { competency_id?: string; en: string; ar: string }[];
@@ -168,7 +170,7 @@ export default function LearnCoursePage() {
                       const full = seats(r.id) >= r.capacity;
                       const booked = active?.session_id === r.id;
                       return booked ? <G2Pill status={active!.status} /> : (
-                        <button className="btn-primary btn-sm" disabled={missing.length > 0 || (!!active?.session_id) || active?.status === 'requested'} onClick={() => setConfirm({ session: r })} data-testid="m04-enrol">
+                        <button className="btn-primary btn-sm" disabled={missing.length > 0 || bookedLive || active?.status === 'requested'} onClick={() => setConfirm({ session: r })} data-testid="m04-enrol">
                           {full ? t('m04.course.joinWaitlist') : !c.mandatory && !active ? t('m04.course.request') : t('m04.course.book')}
                         </button>
                       );

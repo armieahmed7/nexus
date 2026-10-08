@@ -6,7 +6,7 @@
 import { useMemo, useState } from 'react';
 import { Page, Section, Card, Grid, Async, EmptyState, StatTile, Tabs, DataTable, StatusPill, ConfirmDialog, Donut, BarChart, FilterBar, useFilters, SelectField, TextField, Drawer, KeyValue, Callout, ProgressBar, Icon } from '../../ui';
 import { useAction, useQuery, useRepo, type RowOf } from '../../data';
-import { useT, usePick, useFormat } from '../../i18n';
+import { useT, usePick, useFormat, systemName } from '../../i18n';
 import { licenceView, medicalView, proficiency, quarterOf, todayIso, withdrawalDate } from '../../domain/rules';
 import { riskOf, workingDaysLeft, type Risk } from './licensing';
 import { LicencePill, MedicalPill, PersonLabel } from './shared';
@@ -169,7 +169,7 @@ function PersonDrawer({ d, lic, onClose }: { d: Data; lic: RowOf<'licences'> | n
   return (
     <Drawer open={!!lic} onClose={onClose} title={<PersonLabel p={d.people.get(lic.person_id)} />}>
       <div className="space-y-4" data-testid="m03-person-drawer">
-        <Card title={t('m03.cert.title')} actions={<LicencePill lic={lic} />} footer={t('m02.mirror.asRecorded', { system: lic.source_system, date: f.dateTime(lic.last_synced) })}>
+        <Card title={t('m03.cert.title')} actions={<LicencePill lic={lic} />} footer={t('m02.mirror.asRecorded', { system: systemName(t, lic.source_system), date: f.dateTime(lic.last_synced) })}>
           <KeyValue
             items={[
               [t('m03.cert.type'), t(`m03.type.${lic.type}`)],

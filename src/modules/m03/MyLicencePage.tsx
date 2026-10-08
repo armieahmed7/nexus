@@ -3,7 +3,7 @@
 // shifts against the REG-17 Art. 11 minimums with an at-risk warning, requalification window and COCT hours, key dates.
 import { Page, Section, Card, Grid, Async, EmptyState, Callout, StatusPill, KeyValue, ProgressBar, ProgressRing, Timeline, DataTable, SimChip } from '../../ui';
 import { useQuery, useRepo, type RowOf } from '../../data';
-import { useT, useFormat, usePick, L } from '../../i18n';
+import { useT, useFormat, usePick, L, systemName } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { RULES } from '../../auth/policy';
 import { licenceView, medicalView, proficiency, quarterOf, quarterEnd, withdrawalDate, todayIso } from '../../domain/rules';
@@ -70,7 +70,7 @@ function Mine({ d }: { d: Mine }) {
       ))}
 
       <Grid cols={2}>
-        <Card title={t('m03.cert.title')} eyebrow={t(`m03.type.${lic.type}`)} actions={<LicencePill lic={lic} />} footer={t('m02.mirror.asRecorded', { system: lic.source_system, date: f.dateTime(lic.last_synced) })}>
+        <Card title={t('m03.cert.title')} eyebrow={t(`m03.type.${lic.type}`)} actions={<LicencePill lic={lic} />} footer={t('m02.mirror.asRecorded', { system: systemName(t, lic.source_system), date: f.dateTime(lic.last_synced) })}>
           <div className="flex items-center gap-4" data-testid="m03-my-certificate">
             <ProgressRing value={100 - pct} label={v.stale ? '—' : f.num(Math.max(0, v.daysToExpiry))} tone={v.view === 'valid' ? 'ok' : v.view === 'renewal_due' ? 'sim' : 'bad'} size={72} />
             <KeyValue
@@ -85,7 +85,7 @@ function Mine({ d }: { d: Mine }) {
           </div>
           {v.view === 'renewal_due' && <p className="mt-3 text-[13px] text-sim">{t('m03.cert.renewalNote', { n: RULES.licenceRenewalTaskMonths })}</p>}
         </Card>
-        <Card title={t('m03.med.title')} actions={d.med ? <MedicalPill med={d.med} /> : null} footer={d.med ? t('m02.mirror.asRecorded', { system: d.med.source_system, date: f.dateTime(d.med.last_synced) }) : undefined}>
+        <Card title={t('m03.med.title')} actions={d.med ? <MedicalPill med={d.med} /> : null} footer={d.med ? t('m02.mirror.asRecorded', { system: systemName(t, d.med.source_system), date: f.dateTime(d.med.last_synced) }) : undefined}>
           {d.med ? (
             <div data-testid="m03-my-medical">
               <KeyValue items={[[t('m03.med.due'), f.date(d.med.due_on)], [t('m03.med.flag'), t(`m03.med.flag_${d.med.flag}`)]]} />

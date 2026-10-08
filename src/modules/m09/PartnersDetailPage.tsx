@@ -59,7 +59,7 @@ function Detail({ org, agreements, related }: { org: Org; agreements: { id: stri
             items={[
               [t('m09.dir.col.category'), <CategoryChips key="c" cats={cats} />],
               [t('m09.dir.col.type'), types.map((x) => t(`m09.rel.${x}`)).join(', ') || '—'],
-              [t('m09.dir.col.dates'), <span key="d" className="num">{org.dates || '—'}</span>],
+              [t('m09.dir.col.dates'), <span key="d" className="num">{org.dates === 'current' || org.dates === 'historic' ? t(`m09.datesWord.${org.dates}`) : org.dates || '—'}</span>],
               [t('m09.dir.col.status'), <MStatus key="s" status={org.status} />],
               [t('m09.dir.col.binding'), org.binding ? t('m09.dir.binding') : t('m09.dir.nonBinding')],
               [t('m09.dir.col.country'), org.country ?? '—'],

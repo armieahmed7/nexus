@@ -47,7 +47,7 @@ export default function WorkforceDefinitionsPage() {
                         <>
                           <dt className="caps pt-0.5">{t('m07.defs.latest')}</dt>
                           <dd>
-                            <span className="num">{k.value}{k.unit === '%' ? '%' : ` ${k.unit}`}</span> · {k.period} · {k.source_url ? <SourceLink href={k.source_url}>{k.source}</SourceLink> : k.source}
+                            <span className="num">{k.value}{k.unit === '%' ? '%' : k.unit === 'count' ? '' : ['people', 'days', 'h'].includes(k.unit) ? ` ${t(`m07.unitShort.${k.unit}`)}` : ` ${k.unit}`}</span> · {k.period} · {k.source_url ? <SourceLink href={k.source_url}>{k.source}</SourceLink> : k.source}
                             {k.label_en.includes('uncertain') || k.source.includes('uncertain') ? <span className="ms-2"><StatusPill tone="sim">{t('m07.defs.uncertain')}</StatusPill></span> : null}
                           </dd>
                         </>

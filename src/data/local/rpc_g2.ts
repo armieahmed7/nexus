@@ -97,10 +97,11 @@ export function makeG2LocalRpc(b: LocalBackend): G2Rpc {
       if (ex) {
         if (ex.status === 'requested') return refuse<R>('enrolment.enrol', 'enrolments', ex.id, 'conflict', 'A request for this course is already waiting for approval', role);
         if (ex.session_id && ex.session_id === sessionId) return refuse<R>('enrolment.enrol', 'enrolments', ex.id, 'conflict', 'Already booked on this session', role);
-        if (ex.session_id) return refuse<R>('enrolment.enrol', 'enrolments', ex.id, 'conflict', 'Already booked on another session of this course; withdraw from it first', role);
+        // A booking on a cancelled or closed session does not block booking another one (mirror of 20261008140100).
+        if (ex.session_id && b.rawGet('sessions', ex.session_id)?.status === 'scheduled') return refuse<R>('enrolment.enrol', 'enrolments', ex.id, 'conflict', 'Already booked on another session of this course; withdraw from it first', role);
         if (!sessionId) return refuse<R>('enrolment.enrol', 'enrolments', ex.id, 'conflict', 'Already enrolled in this course', role);
         const status = seatDecision(session!.capacity, taken(sessionId));
-        b.rawUpdate('enrolments', ex.id, { session_id: sessionId, status, waitlisted_at: status === 'waitlisted' ? now() : null });
+        b.rawUpdate('enrolments', ex.id, { session_id: sessionId, status, attendance: null, waitlisted_at: status === 'waitlisted' ? now() : null });
         return done<R>('enrolment.book', 'enrolments', ex.id, `${course.code} ${status} ${sessionId}`, role, null, '', status === 'waitlisted' ? 'Added to the waitlist' : 'Seat booked', { id: ex.id, status });
       }
       const status = initialEnrolmentStatus({ self, mandatory: course.mandatory, assigned: false, supplierCourse, hasSession: !!sessionId, capacity: session?.capacity ?? 0, taken: sessionId ? taken(sessionId) : 0 });

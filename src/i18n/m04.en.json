@@ -82,7 +82,8 @@
     "status": "Status",
     "title": "Title",
     "when": "When",
-    "where": "Where"
+    "where": "Where",
+    "staffMember": "Staff member"
   },
   "status": {
     "qualifying": "Qualifying",
@@ -479,7 +480,19 @@
     "declinedTitle": "Decline this request?",
     "declinedBody": "The colleague is told you are unable to mentor now and can ask someone else.",
     "closedTitle": "Close this mentoring?",
-    "closedBody": "The request is closed for both of you and the place is freed."
+    "closedBody": "The request is closed for both of you and the place is freed.",
+    "tags": {
+      "simulator": "Simulator",
+      "sro_career": "SRO career",
+      "leadership": "Leadership",
+      "operations": "Operations",
+      "engineering": "Engineering",
+      "digital": "Digital",
+      "rp": "Radiation protection",
+      "alara": "ALARA",
+      "women_in_nuclear": "Women in nuclear",
+      "hr": "HR"
+    }
   },
   "my": {
     "approveTitle": "Approve this request?",

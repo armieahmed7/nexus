@@ -114,7 +114,7 @@ function Flags({ canEdit }: { canEdit: boolean }) {
                     {x.locked && <StatusPill tone="reserved"><Icon name="lock" size={11} /> {t('m16.flags.locked')}</StatusPill>}
                   </div>
                   <p className="text-[12.5px] text-ink-2">{pick(x, 'description')}</p>
-                  <p className="text-[11.5px] text-ink-3">{t('m16.flags.area', { area: x.area })} · {t('m16.flags.changed', { when: f.dateTime(x.updated_at) })}</p>
+                  <p className="text-[11.5px] text-ink-3">{t('m16.flags.area', { area: ['public', 'dalil', 'nexus', 'privacy', 'safety'].includes(x.area) ? t(`m16.flags.areas.${x.area}`) : x.area })} · {t('m16.flags.changed', { when: f.dateTime(x.updated_at) })}</p>
                 </div>
                 <button
                   role="switch"

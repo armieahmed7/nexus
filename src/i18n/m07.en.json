@@ -137,13 +137,34 @@
     "inQuarter": "in the quarter",
     "explore": "Explore",
     "link": {
-      "emiratization": { "title": "Emiratization", "body": "By entity, job family and level, with suppression." },
-      "pipeline": { "title": "Pipeline", "body": "From programme intake to placement and the operator ladder." },
-      "critical-roles": { "title": "Critical roles", "body": "Bench depth against HR targets. Counts only." },
-      "training": { "title": "Training volume", "body": "Hours, continuing training and completions." },
-      "scenarios": { "title": "Scenario planner", "body": "Headcount scenarios, always SIMULATED." },
-      "applications": { "title": "Application funnel", "body": "Counts by programme and stage." },
-      "definitions": { "title": "Definitions", "body": "Every metric, its source table and GRI disclosure." }
+      "emiratization": {
+        "title": "Emiratization",
+        "body": "By entity, job family and level, with suppression."
+      },
+      "pipeline": {
+        "title": "Pipeline",
+        "body": "From programme intake to placement and the operator ladder."
+      },
+      "critical-roles": {
+        "title": "Critical roles",
+        "body": "Bench depth against HR targets. Counts only."
+      },
+      "training": {
+        "title": "Training volume",
+        "body": "Hours, continuing training and completions."
+      },
+      "scenarios": {
+        "title": "Scenario planner",
+        "body": "Headcount scenarios, always SIMULATED."
+      },
+      "applications": {
+        "title": "Application funnel",
+        "body": "Counts by programme and stage."
+      },
+      "definitions": {
+        "title": "Definitions",
+        "body": "Every metric, its source table and GRI disclosure."
+      }
     }
   },
   "releases": {
@@ -359,5 +380,10 @@
     "latest": "Latest value",
     "uncertain": "Uncertain",
     "back": "Back to workforce analytics"
+  },
+  "unitShort": {
+    "people": "people",
+    "days": "days",
+    "h": "h"
   }
 }

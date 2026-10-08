@@ -93,7 +93,7 @@ function Brand() {
       </svg>
       <span className="leading-tight">
         <span className="block text-[15px] font-bold">{t('shell.brand')}</span>
-        <span className="caps block !text-[9.5px]">{t('shell.brandSub')}</span>
+        <span className="caps hidden !text-[9.5px] min-[420px]:block">{t('shell.brandSub')}</span>
       </span>
     </L>
   );
@@ -128,15 +128,16 @@ function Header({ lens, onMenu }: { lens: Lens; onMenu: () => void }) {
           <Icon name="back" size={14} />
           {t('shell.backToNexus')}
         </a>
-        <div className="ms-auto flex items-center gap-1">
+        <div className="ms-auto flex min-w-0 items-center gap-0.5 sm:gap-1">
           <button className="btn-ghost btn-sm" onClick={() => setSearchOpen(true)} aria-label={t('shell.search.open')} data-testid="open-search">
             <Icon name="search" />
             <span className="hidden md:inline">{t('shell.search.open')}</span>
             <kbd className="ms-1 hidden rounded border border-line px-1 text-[10px] text-ink-3 md:inline">/</kbd>
           </button>
-          <button className="btn-ghost btn-sm" onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')} lang={lang === 'ar' ? 'en' : 'ar'} data-testid="lang-toggle">
+          <button className="btn-ghost btn-sm" onClick={() => setLang(lang === 'ar' ? 'en' : 'ar')} lang={lang === 'ar' ? 'en' : 'ar'} aria-label={lang === 'ar' ? 'English' : 'العربية'} data-testid="lang-toggle">
             <Icon name="globe" />
-            {lang === 'ar' ? 'English' : 'العربية'}
+            {/* Icon only on phones: the full header would otherwise scroll sideways at 390 px (E2E QA). */}
+            <span className="hidden sm:inline">{lang === 'ar' ? 'English' : 'العربية'}</span>
           </button>
           {s.status === 'signed_in' && <Notifications />}
           <BackendChip />
@@ -277,8 +278,9 @@ function BackendChip() {
   const [open, setOpen] = useState(false);
   return (
     <div className="relative">
-      <button className={`chip ${s.backend === 'local' ? 'border-sim-line bg-sim-bg text-sim' : 'border-ok-line bg-ok-bg text-ok'}`} onClick={() => setOpen((v) => !v)} aria-expanded={open} data-testid="backend-chip" data-backend={s.backend}>
-        {t(`shell.backend.${s.backend}`)}
+      <button className={`chip ${s.backend === 'local' ? 'border-sim-line bg-sim-bg text-sim' : 'border-ok-line bg-ok-bg text-ok'}`} onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-label={t(`shell.backend.${s.backend}`)} title={t(`shell.backend.${s.backend}`)} data-testid="backend-chip" data-backend={s.backend}>
+        <span aria-hidden="true" className="inline-block h-2 w-2 rounded-full bg-current sm:hidden" />
+        <span className="hidden sm:inline">{t(`shell.backend.${s.backend}`)}</span>
       </button>
       {open && (
         <div className="card absolute end-0 top-full z-50 mt-1 w-72 p-3 text-[13px]" onMouseLeave={() => setOpen(false)}>

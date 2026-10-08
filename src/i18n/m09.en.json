@@ -876,5 +876,9 @@
     "decideBody": "The decision is final. It is recorded in the audit log and the NEXUS ledger, and the contractor's organisation sees it with your note.",
     "decisionNote": "Decision note",
     "actingEvaluator": "Instructor / evaluator"
+  },
+  "datesWord": {
+    "current": "Current",
+    "historic": "Historic"
   }
 }

@@ -155,7 +155,8 @@
     "summaryAr": "What happened (Arabic)",
     "lessonEn": "Lesson (English)",
     "lessonAr": "Lesson (Arabic)",
-    "pickTrait": "Pick at least one trait."
+    "pickTrait": "Pick at least one trait.",
+    "sourceInternal": "Internal (ENEC)"
   },
   "ecp": {
     "intro": "Referral metadata for the Employee Concerns Program team. The concern itself stays in the ECP system.",

@@ -177,3 +177,21 @@ export function useNav() {
   const lang = useLang();
   return useCallback((to: string, opts?: { replace?: boolean }) => navigate(localPath(to, lang), opts), [navigate, lang]);
 }
+
+/** Mirrored source-system names are stored in English; show the known ones in the reader's language. */
+const SYSTEM_KEYS: Record<string, string> = {
+  'Training records system': 'trs',
+  'Licensee certification records (OCTS mirror)': 'octs',
+  'Occupational health system (flag only)': 'ohs',
+  'Shift roster feed (counts only)': 'roster',
+};
+export function systemName(t: (key: string) => string, name: string | null | undefined): string {
+  const k = name ? SYSTEM_KEYS[name] : undefined;
+  return k ? t(`common.systems.${k}`) : (name ?? '');
+}
+
+/** ENEC group entities. Their organisation rows are not public, so staff screens name them from here. */
+export const ENEC_ENTITIES = ['enec', 'enec-ops', 'enec-com', 'enec-con'] as const;
+export function entityName(t: (key: string) => string, id: string | null | undefined): string {
+  return id && (ENEC_ENTITIES as readonly string[]).includes(id) ? t(`common.entities.${id}`) : (id ?? '');
+}

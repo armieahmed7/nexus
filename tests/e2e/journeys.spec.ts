@@ -103,13 +103,44 @@ test('J3 licence tracker alerts', async ({ page }) => {
   expect(w.take()).toEqual([]);
 });
 
+/** Sessions from an interrupted earlier run: remove anyone still seated, then cancel the session. */
+async function cleanupE2eSessions(page: Page) {
+  await go(page, '/training/schedule');
+  for (let guard = 0; guard < 5; guard++) {
+    const row = page.locator('tr', { hasText: E2E_TAG }).filter({ hasText: /Scheduled/ }).first();
+    if (!(await row.count())) break;
+    await row.click();
+    const drawer = page.locator('[role="dialog"]').last();
+    await expect(drawer.locator('[data-testid="m04-roster"]').or(drawer.getByText(/Nobody booked yet/)).first()).toBeVisible();
+    for (let k = 0; k < 4; k++) {
+      const rm = drawer.getByRole('button', { name: /^Remove$/ }).first();
+      if (!(await rm.count())) break;
+      await rm.click();
+      await confirmOk(page, `${E2E_TAG} cleanup of an interrupted test run`);
+    }
+    // A session that already ran is closed; one that has not started is cancelled.
+    const close = drawer.getByRole('button', { name: /Close session/ });
+    await ((await close.count()) ? close : drawer.getByRole('button', { name: /Cancel session/ })).click();
+    await confirmOk(page);
+    await page.keyboard.press('Escape');
+    await go(page, '/training/schedule');
+  }
+}
+
 test('J4 course enrol → attend → assessment → pass → certificate', async ({ page }) => {
   test.setTimeout(15 * 60_000);
   const w = watchErrors(page);
   await pinBackend(page, 'supabase');
   const tag = `${E2E_TAG} room ${Date.now().toString(36)}`;
-  // 1. Training manager schedules a short HU-101 session starting in two minutes.
+  // An operations employee who has not yet passed HU-101 (each run issues a real certificate, so rerun with another).
+  const learner = process.env.E2E_LEARNER || 'outage-planner';
+  const learnerId = `p-${learner}`;
+  const learnerName = String((T.people as { id: string; display_name: string }[]).find((x) => x.id === learnerId)?.display_name ?? learner);
+  // 0. Clean up sessions left by an earlier, interrupted run (remove the learner, cancel the session).
   await signIn(page, 'training-mgr');
+  await cleanupE2eSessions(page);
+  // 1. Training manager schedules a short HU-101 session starting in two minutes. The learner is an operations
+  //    employee: the training manager's scope is ENEC Operations, so the exam can be scheduled for them.
   await go(page, '/training/schedule');
   await page.locator('[data-testid="m04-session-new"]').click();
   const start = uaeNow(2);
@@ -123,7 +154,7 @@ test('J4 course enrol → attend → assessment → pass → certificate', async
   await page.locator('[data-testid="m04-session-save"]').click();
   await expect(page.locator('[data-testid="toast"]').last()).toHaveAttribute('data-tone', 'ok');
   // 2. Employee books a seat on it.
-  await signIn(page, 'nse');
+  await signIn(page, learner);
   await go(page, '/learn/course/c-hu');
   const sessRow = page.locator('tr', { hasText: tag });
   await expect(sessRow).toBeVisible();
@@ -146,36 +177,47 @@ test('J4 course enrol → attend → assessment → pass → certificate', async
   const now = uaeNow(0);
   const sf = page.locator('form', { has: page.locator('[data-testid="m05-schedule"]') });
   await sf.locator('select').nth(0).selectOption('form-c-hu');
-  await sf.locator('select').nth(1).selectOption('p-nse');
+  await sf.locator('select').nth(1).selectOption(learnerId);
   await sf.locator('input[type="date"]').fill(now.date);
   await sf.locator('input[type="time"]').fill(now.time);
   await page.locator('[data-testid="m05-schedule"]').click();
-  await confirmOk(page);
-  // 5. Employee sits the exam and answers from the approved key.
-  await signIn(page, 'nse');
-  await go(page, '/my/assessments');
-  await page.locator('[data-testid="m05-start-exam"]').first().click();
-  const dlg = page.locator('[role="dialog"] [data-testid="confirm-action"]');
-  if (await dlg.count()) await dlg.click();
-  const form = (T.assessment_forms as { id: string; item_ids: string[] }[]).find((x) => x.id === 'form-c-hu')!;
-  const versions = T.item_versions as { item_id: string; stem_en: string; answer: string; options: { id: string; en: string }[] }[];
-  for (let i = 0; i < form.item_ids.length; i++) {
-    const main = page.locator('main');
-    const stemText = await main.innerText();
-    const v = versions.find((x) => form.item_ids.includes(x.item_id) && stemText.includes(x.stem_en));
-    expect(v, 'exam shows a stem from the form').toBeTruthy();
-    const right = v!.options.find((o) => o.id === v!.answer)!;
-    await page.getByLabel(right.en, { exact: true }).check();
-    if (i < form.item_ids.length - 1) await page.locator('[data-testid="m05-exam-next"]').click();
+  {
+    // An attempt left open by an interrupted earlier run is reused (the retake rules refuse a second open attempt).
+    const dlg = page.locator('[role="dialog"]').last();
+    await dlg.locator('[data-testid="confirm-action"]').click();
+    const toast = page.locator('[data-testid="toast"]').last();
+    await expect(toast).toBeVisible();
+    if ((await toast.getAttribute('data-tone')) !== 'ok') expect(await toast.innerText()).toMatch(/scheduled, in progress or not yet released/);
   }
-  await page.locator('[data-testid="m05-exam-submit"]').click();
-  const sub = page.locator('[role="dialog"] [data-testid="confirm-action"]');
-  if (await sub.count()) await sub.click();
-  await expect(page.locator('[data-testid="m05-exam-done"]')).toBeVisible();
+  // 5. Employee sits the exam and answers from the approved key.
+  await signIn(page, learner);
+  await go(page, '/my/assessments');
+  // (An attempt already sat and graded in an interrupted earlier run goes straight to release.)
+  if (await page.locator('[data-testid="m05-start-exam"]').count()) {
+    await page.locator('[data-testid="m05-start-exam"]').first().click();
+    const dlg = page.locator('[role="dialog"] [data-testid="confirm-action"]');
+    if (await dlg.count()) await dlg.click();
+    const form = (T.assessment_forms as { id: string; item_ids: string[] }[]).find((x) => x.id === 'form-c-hu')!;
+    const versions = T.item_versions as { item_id: string; stem_en: string; answer: string; options: { id: string; en: string }[] }[];
+    for (let i = 0; i < form.item_ids.length; i++) {
+      const main = page.locator('main');
+      await expect(main.locator('[role="radiogroup"]')).toBeVisible({ timeout: 30_000 });
+      const stemText = await main.innerText();
+      const v = versions.find((x) => form.item_ids.includes(x.item_id) && stemText.includes(x.stem_en));
+      expect(v, 'exam shows a stem from the form').toBeTruthy();
+      const right = v!.options.find((o) => o.id === v!.answer)!;
+      await main.locator('[role="radiogroup"] label', { hasText: right.en }).first().locator('input[type="radio"]').check();
+      if (i < form.item_ids.length - 1) await page.locator('[data-testid="m05-exam-next"]').click();
+    }
+    await page.locator('[data-testid="m05-exam-submit"]').click();
+    const sub = page.locator('[role="dialog"] [data-testid="confirm-action"]');
+    if (await sub.count()) await sub.click();
+    await expect(page.locator('[data-testid="m05-exam-done"]')).toBeVisible();
+  }
   // 6. Training manager releases the graded attempt.
   await signIn(page, 'training-mgr');
   await go(page, '/training/assessments');
-  await page.locator('[data-testid="m05-release"]').first().click();
+  await page.locator('tr', { hasText: learnerName }).locator('[data-testid="m05-release"]').first().click();
   await confirmOk(page);
   // 7. ...and records the course as passed, which issues the certificate.
   await go(page, '/training/schedule');
@@ -184,11 +226,13 @@ test('J4 course enrol → attend → assessment → pass → certificate', async
   await page.locator('#m04-complete-form textarea').fill(`${E2E_TAG} evidence`);
   await page.locator('[data-testid="m04-complete-confirm"]').click();
   await expect(page.locator('[data-testid="toast"]').last()).toHaveAttribute('data-tone', 'ok');
+  await expect(page.locator('[data-testid="m04-roster"]')).toContainText(/KAF-\d{4}-\d{6}/);
   const certNo = (await page.locator('[data-testid="m04-roster"]').innerText()).match(/KAF-\d{4}-\d{6}/)?.[0];
   expect(certNo, 'certificate number on the roster').toBeTruthy();
   // 8. Employee sees it; anyone can verify it.
-  await signIn(page, 'nse');
+  await signIn(page, learner);
   await go(page, '/my/learning');
+  await page.getByRole('tab', { name: /Certificates/ }).click();
   await expect(page.locator('main')).toContainText(certNo!);
   await page.locator('[data-testid="account-menu"]').click();
   await page.locator('[data-testid="sign-out"]').click();
@@ -196,6 +240,12 @@ test('J4 course enrol → attend → assessment → pass → certificate', async
   await page.locator('[data-testid="m02-verify-form"] input').first().fill(certNo!);
   await page.locator('[data-testid="m02-verify-submit"]').click();
   await expect(page.locator('[data-testid="m02-verify-result"]')).toContainText(/valid|Valid/);
+  // Close the test session so it does not linger on the live schedule (the certificate and records stay, append-only).
+  await signIn(page, 'training-mgr');
+  await go(page, '/training/schedule');
+  await page.locator('tr', { hasText: tag }).first().click();
+  await page.getByRole('button', { name: /Close session/ }).click();
+  await confirmOk(page);
   expect(w.take()).toEqual([]);
 });
 
@@ -282,7 +332,7 @@ test('J7 supplier onboarding: submit → ENEC review → approve (local: keeps t
   // Documents: upload every missing required file (metadata and SHA-256 only).
   await page.getByRole('tab', { name: /Documents/ }).click();
   for (let guard = 0; guard < 15; guard++) {
-    const btn = page.locator('[data-testid^="m09-onb-upload-"]', { hasText: /^\s*Upload\s*$/ }).first();
+    const btn = page.locator('tr', { hasText: /Missing|Rejected/ }).locator('[data-testid^="m09-onb-upload-"]').first();
     if (!(await btn.count())) break;
     const [chooser] = await Promise.all([page.waitForEvent('filechooser'), btn.click()]);
     await chooser.setFiles({ name: `${E2E_TAG}-doc.pdf`, mimeType: 'application/pdf', buffer: Buffer.from(`%PDF-1.4 ${E2E_TAG} ${guard}`) });
@@ -314,12 +364,14 @@ test('J7 supplier onboarding: submit → ENEC review → approve (local: keeps t
   await page.locator('[data-testid="m09-adm-open-po-gulfhydro"]').click();
   const kase = page.locator('[data-testid="m09-adm-case"]');
   await expect(kase).toBeVisible();
+  await kase.getByRole('tab', { name: /Documents/ }).click();
   for (let guard = 0; guard < 15; guard++) {
     const acc = kase.locator('[data-testid^="m09-adm-accept-"]').first();
     if (!(await acc.count())) break;
     await acc.click();
     await confirmOk(page);
   }
+  await kase.getByRole('tab', { name: /ICV plan/ }).click();
   const icv = kase.locator('[data-testid="m09-adm-icv-reviewed"]');
   if (await icv.count()) {
     await icv.click();
@@ -363,9 +415,9 @@ test('J8 anonymous safety concern → ECP channels (no telemetry) → referral t
   await expect(lf.getByRole('checkbox')).toBeChecked(); // anonymous by default
   await lf.locator('[data-testid="m08-ecp-log-save"]').click();
   await expect(p2.locator('[data-testid="toast"]').last()).toHaveAttribute('data-tone', 'ok');
-  const ref = (await p2.locator('[data-testid="toast"]').last().innerText()).match(/ECP-\d{4}-\d{3}/)?.[0];
-  const row = ref ? p2.locator('[data-testid="m08-ecp-table"] tr', { hasText: ref }) : p2.locator('[data-testid="m08-ecp-table"] tr', { hasText: /Received/ });
-  await row.first().click();
+  const row = p2.locator('[data-testid="m08-ecp-table"] tr', { hasText: `${E2E_TAG}-REF` }).first();
+  await expect(row).toContainText('Anonymous');
+  await row.getByRole('button').first().click();
   const drawer = p2.locator('[data-testid="m08-ecp-drawer"]');
   await drawer.locator('input[name="next"]').first().check();
   await drawer.locator('[data-testid="m08-ecp-triage"]').click();
@@ -411,7 +463,7 @@ test('J10 admin feature flag + audit log', async ({ page }) => {
   await go(page, '/admin/audit');
   await expect(page.locator('[data-testid="m16-audit-table"]')).toContainText(/feature_flags/);
   await page.locator('[data-testid="m16-audit-verify"]').click();
-  await expect(page.locator('[data-testid="toast"]').last()).toHaveAttribute('data-tone', 'ok');
+  await expect(page.locator('main')).toContainText(/Chain intact|chain is intact|verified/i, { timeout: 60_000 });
   expect(offText.length).toBeGreaterThan(0);
   expect(w.take()).toEqual([]);
 });

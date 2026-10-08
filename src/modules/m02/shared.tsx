@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useQuery, useRepo, useAction } from '../../data';
 import type { RowOf, Query } from '../../data';
 import { StatusPill, Callout, EmptyState, ConfirmDialog, SelectField, TextField, CheckboxField, TextArea, Icon } from '../../ui';
-import { useT, usePick, useFormat } from '../../i18n';
+import { useT, usePick, useFormat, systemName } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { todayIso } from '../../domain/rules';
 import { displayView, viewTone, taskRows, ackState, qualGap, type EvalLite, type GapStatus } from './quals';
@@ -49,7 +49,7 @@ export function QualPill({ rec }: { rec: Rec }) {
 export function MirrorNote({ system, synced }: { system: string; synced: string }) {
   const t = useT();
   const f = useFormat();
-  return <span className="text-[12px] text-ink-3">{t('m02.mirror.asRecorded', { system, date: f.dateTime(synced) })}</span>;
+  return <span className="text-[12px] text-ink-3">{t('m02.mirror.asRecorded', { system: systemName(t, system), date: f.dateTime(synced) })}</span>;
 }
 
 export function ExpiryText({ rec }: { rec: Rec }) {

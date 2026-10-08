@@ -326,5 +326,27 @@
     "resource": "Resource",
     "matrixIntro": "What each Kafa'a role can do on each resource. The same matrix drives page guards, the repository and database row-level security.",
     "matrixFoot": "{n} resources. A dot means no access (deny by default)."
+  },
+  "team": {
+    "training": "Nuclear Training",
+    "ops-crew-a": "Operations, crew A",
+    "ops-crew-b": "Operations, crew B",
+    "ops-crew-c": "Operations, crew C",
+    "ops-crew-d": "Operations, crew D",
+    "ops-crew-e": "Operations, crew E",
+    "ops-wc": "Work control",
+    "mnt-elec": "Electrical maintenance",
+    "mnt-ic": "I&C maintenance",
+    "mnt-mech": "Mechanical maintenance",
+    "rp": "Radiation protection",
+    "chem": "Chemistry",
+    "eng": "Engineering",
+    "ep": "Emergency preparedness",
+    "fire": "Fire protection",
+    "qa": "Quality assurance",
+    "sec": "Security",
+    "hr": "Human capital",
+    "sc": "Supply chain",
+    "cyber": "Cyber security"
   }
 }

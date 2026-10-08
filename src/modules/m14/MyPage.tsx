@@ -6,7 +6,7 @@ import { useAction, useQuery, useRepo } from '../../data';
 import { useSession } from '../../auth/session';
 import { checkGuard } from '../../auth/guards';
 import { ROUTES } from '../../routes/registry';
-import { L, useFormat, usePick, useT } from '../../i18n';
+import { L, useFormat, usePick, useT, systemName } from '../../i18n';
 import { Async, Card, EmptyState, Icon, Page, ProgressBar, StatTile, StatusPill } from '../../ui';
 import { licenceView, medicalView, qualView } from '../../domain/rules';
 import type { NotificationsRow } from '../../data/types';
@@ -92,7 +92,7 @@ export default function MyPage() {
                       <li className="flex flex-wrap items-center justify-between gap-2 rounded-btn border border-line p-2.5">
                         <div>
                           <div className="font-semibold">{t('m14.my.licence', { type: lic.type })}</div>
-                          <div className="text-[12px] text-ink-3">{t('m14.my.expiresOn', { date: f.date(lic.expires_on) })} · {t('m14.my.mirror', { system: lic.source_system })}</div>
+                          <div className="text-[12px] text-ink-3">{t('m14.my.expiresOn', { date: f.date(lic.expires_on) })} · {t('m14.my.mirror', { system: systemName(t, lic.source_system) })}</div>
                         </div>
                         <div className="flex items-center gap-2">
                           <StatusPill status={lv.view} />

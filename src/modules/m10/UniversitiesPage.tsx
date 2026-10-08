@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useRepo, useQuery } from '../../data';
 import { Page, Section, Grid, Card, Async, EmptyState, StatusPill, Stepper, Callout, DataTable, FilterBar, useFilters, SourceLink } from '../../ui';
-import { L, useFormat, usePick, useT } from '../../i18n';
+import { L, entityName, useFormat, usePick, useT } from '../../i18n';
 import { SourceList } from '../m06/shared';
 import { CurriculumAlignment } from './shared';
 
@@ -21,7 +21,7 @@ export default function UniversitiesPage() {
   const orgs = useQuery('organisations', () => repo.list('organisations', { filter: { kind: ['university', 'research'] } }));
   const internships = useQuery(['internships', 'organisations'], async () => {
     const [rows, all] = await Promise.all([repo.list('internships', { filter: { status: 'open' }, order: [['starts_on', 'asc']] }), repo.list('organisations')]);
-    return rows.map((r) => ({ ...r, host: pick(all.find((o) => o.id === r.host_entity_id), 'name'), uni: r.university_org_id ? pick(all.find((o) => o.id === r.university_org_id), 'name') : null }));
+    return rows.map((r) => ({ ...r, host: pick(all.find((o) => o.id === r.host_entity_id), 'name') || entityName(t, r.host_entity_id), uni: r.university_org_id ? pick(all.find((o) => o.id === r.university_org_id), 'name') : null }));
   });
   const shown = useMemo(() => {
     const term = flt.q.trim().toLowerCase();

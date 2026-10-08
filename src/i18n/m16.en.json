@@ -47,6 +47,13 @@
     "none": "No feature flags.",
     "locked": "Locked",
     "area": "Area: {area}",
+    "areas": {
+      "public": "Public site",
+      "dalil": "Dalil",
+      "nexus": "NEXUS integration",
+      "privacy": "Privacy",
+      "safety": "Safety"
+    },
     "changed": "changed {when}",
     "readOnly": "Only a platform admin can change flags.",
     "turnOff": "Turn off {name}",
@@ -312,7 +319,59 @@
     "errorsTitle": "Open reconciliation errors",
     "noErrors": "No open errors.",
     "notesTitle": "Connector notes",
-    "footer": "In the demo, connectors are simulated; no external system is called."
+    "footer": "In the demo, connectors are simulated; no external system is called.",
+    "rows": {
+      "int-hr": {
+        "name": "HR system of record",
+        "domain": "people, org, positions",
+        "notes": "Joiner, mover and leaver events; leavers lose access within one sync cycle."
+      },
+      "int-trs": {
+        "name": "Training records system",
+        "domain": "qualifications, training history",
+        "notes": "Kafa'a mirrors qualification records until ENEC approves it as the system of record. 3 reconciliation errors open."
+      },
+      "int-octs": {
+        "name": "Licensee certification records (OCTS mirror)",
+        "domain": "RO/SRO certificate status",
+        "notes": "FANR records decisions in OCTS; Kafa'a mirrors status from the licensee's certification records."
+      },
+      "int-roster": {
+        "name": "Shift roster feed (counts only)",
+        "domain": "quarterly shift counts",
+        "notes": "Counts only; no rosters or crew composition."
+      },
+      "int-ohs": {
+        "name": "Occupational health (flag only)",
+        "domain": "medical due dates and fit flag",
+        "notes": "Stale: last success more than 72 hours ago. Medical flags show \"not yet confirmed\"."
+      },
+      "int-careers": {
+        "name": "ENEC careers channel",
+        "domain": "vacancies (link-out)",
+        "notes": "Vacancies link out to the official careers channel."
+      },
+      "int-lms": {
+        "name": "E-learning (xAPI)",
+        "domain": "e-learning completions",
+        "notes": "12 statements rejected for unknown activity ids."
+      },
+      "int-nexus-ledger": {
+        "name": "ENEC NEXUS evidence ledger",
+        "domain": "material actions (append)",
+        "notes": "Consequential actions append to nexus_append_ledger, plane PEOPLE."
+      },
+      "int-nexus-partner": {
+        "name": "NEXUS partner lens hand-off",
+        "domain": "supplier readiness summaries",
+        "notes": "Ready suppliers hand off to /partner/readiness in NEXUS."
+      },
+      "int-uaepass": {
+        "name": "UAE Pass (concept)",
+        "domain": "verified identity when a stage needs it",
+        "notes": "Not connected in the demo tenant."
+      }
+    }
   },
   "nexus": {
     "intro": "Kafa'a is the people and skills layer next to ENEC NEXUS. These are the seven agreed integration points, read-only mirrors of NEXUS role cards and the authority matrix, and the evidence ledger entries Kafa'a has appended.",

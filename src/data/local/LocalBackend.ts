@@ -80,14 +80,24 @@ export class LocalBackend implements Repository {
   }
   private persist() {
     if (this.saveTimer) clearTimeout(this.saveTimer);
-    this.saveTimer = setTimeout(() => {
-      try {
-        const payload: Persisted = { v: 1, seedStamp: this.seedStamp, tables: this.tables };
-        localStorage.setItem(config.localStorageKey, JSON.stringify(payload));
-      } catch {
-        /* storage full or blocked: keep working in memory */
-      }
-    }, 250);
+    this.saveTimer = setTimeout(() => this.flush(), 250);
+    // A reload or tab close inside the debounce window would otherwise drop the last write (found by E2E QA).
+    if (!this.flushOnHide && typeof window !== 'undefined') {
+      this.flushOnHide = true;
+      window.addEventListener('pagehide', () => this.flush());
+    }
+  }
+  private flushOnHide = false;
+  private flush() {
+    if (!this.saveTimer) return;
+    clearTimeout(this.saveTimer);
+    this.saveTimer = null;
+    try {
+      const payload: Persisted = { v: 1, seedStamp: this.seedStamp, tables: this.tables };
+      localStorage.setItem(config.localStorageKey, JSON.stringify(payload));
+    } catch {
+      /* storage full or blocked: keep working in memory */
+    }
   }
   async reset() {
     const seed = await loadSeed();

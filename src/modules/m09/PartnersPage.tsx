@@ -53,7 +53,7 @@ function Directory({ orgs }: { orgs: Org[] }) {
     { key: 'cat', header: t('m09.dir.col.category'), value: (o) => (o.categories ?? []).map((c) => t(`m09.cat.${c}`)).join('; '), sortable: true },
     { key: 'rel', header: t('m09.dir.col.relationship'), value: (o) => pick(o, 'relationship') },
     { key: 'type', header: t('m09.dir.col.type'), value: (o) => (o.rel_types ?? []).map((x) => t(`m09.rel.${x}`)).join(', '), sortable: true },
-    { key: 'dates', header: t('m09.dir.col.dates'), value: (o) => o.dates },
+    { key: 'dates', header: t('m09.dir.col.dates'), value: (o) => datesLabel(t, o.dates) },
     { key: 'status', header: t('m09.dir.col.status'), value: (o) => o.status, render: (o) => <MStatus status={o.status} />, sortable: true },
     { key: 'binding', header: t('m09.dir.col.binding'), value: (o) => (o.binding ? t('m09.dir.binding') : t('m09.dir.nonBinding')) },
     { key: 'country', header: t('m09.dir.col.country'), value: (o) => o.country ?? '', sortable: true },
@@ -149,7 +149,7 @@ function PartnerCard({ o, dates }: { o: Org; dates: Map<string, string | null> }
         {types.map((x) => (
           <span key={x} className="chip border-line bg-panel text-ink">{t(`m09.rel.${x}`)}</span>
         ))}
-        <span className="num text-ink-3">· {o.dates}</span>
+        <span className="num text-ink-3">· {datesLabel(t, o.dates)}</span>
         {nonBinding && <span className="chip border-sim-line bg-sim-bg text-sim" title={t('m09.dir.nonBindingHint')}>{t('m09.dir.nonBinding')}</span>}
       </div>
       <div className="mt-auto flex items-end justify-between gap-2 border-t border-line pt-2">
@@ -160,4 +160,9 @@ function PartnerCard({ o, dates }: { o: Org; dates: Map<string, string | null> }
       </div>
     </li>
   );
+}
+
+/** "current" / "historic" in the dates field are words, not dates: show them in the reader's language. */
+function datesLabel(t: (k: string) => string, dates: string | null | undefined): string {
+  return dates === 'current' || dates === 'historic' ? t(`m09.datesWord.${dates}`) : (dates ?? '');
 }

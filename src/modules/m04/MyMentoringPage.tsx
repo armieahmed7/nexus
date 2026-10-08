@@ -3,7 +3,7 @@ import { useMemo, useState } from 'react';
 import { Page, Section, Grid, Card, Async, EmptyState, ConfirmDialog, Modal, FilterBar, useFilters, Callout, Icon, SelectField, TextArea, TextField, CheckboxField, useForm, required, maxLen, numberRange } from '../../ui';
 import { useAction, useQuery, useRepo } from '../../data';
 import type { MentorsRow, MentoringRequestsRow } from '../../data/types';
-import { useFormat, usePick, useT } from '../../i18n';
+import { useFormat, usePick, useT, hasKey } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { Chip, G2Pill, usePeople } from './ui';
 
@@ -71,7 +71,7 @@ export default function MyMentoringPage() {
 
               <Section title={t('m04.mentor.find')}>
                 <FilterBar value={flt} onChange={setFlt} search="q" fields={[
-                  { key: 'interest', label: t('m04.mentor.fInterest'), options: interests.map((i) => ({ value: i, label: i })) },
+                  { key: 'interest', label: t('m04.mentor.fInterest'), options: interests.map((i) => ({ value: i, label: tagLabel(t, i) })) },
                   { key: 'role', label: t('m04.mentor.fRole'), options: [...new Set(d.mentors.map((m) => m.role_id).filter(Boolean))].map((id) => ({ value: id!, label: roleTitle(id) })) },
                 ]} />
                 {list.length === 0 ? <EmptyState icon="users" title={t('m04.mentor.none')} /> : (
@@ -81,7 +81,7 @@ export default function MyMentoringPage() {
                       return (
                         <Card key={m.id} as="article" title={roleTitle(m.role_id)} eyebrow={t('m04.mentor.optIn')} footer={t('m04.mentor.capacity', { n: f.num(free), cap: f.num(m.capacity) })}>
                           <p className="text-[13.5px] text-ink-2">{pick(m, 'bio')}</p>
-                          <div className="mt-2 flex flex-wrap gap-1">{(m.interests ?? []).map((i) => <Chip key={i}>{i}</Chip>)}</div>
+                          <div className="mt-2 flex flex-wrap gap-1">{(m.interests ?? []).map((i) => <Chip key={i}>{tagLabel(t, i)}</Chip>)}</div>
                           <button className="btn-primary btn-sm mt-3" disabled={free === 0 || openWith.has(m.id)} onClick={() => setAsk(m)} data-testid="m04-mentor-request">{openWith.has(m.id) ? t('m04.mentor.alreadyAsked') : t('m04.mentor.request')}</button>
                         </Card>
                       );
@@ -114,7 +114,7 @@ function RequestModal({ mentor, roleTitle, onClose }: { mentor: MentorsRow; role
         const r = await run(() => repo.insert('mentoring_requests', { person_id: s.identity.personId!, mentor_id: mentor.id, mentor_person_id: mentor.person_id, interest: v.interest, message: v.message.trim(), status: 'requested' }), { success: t('m04.mentor.sent') });
         if (r.ok) onClose();
       })}>
-        <SelectField label={t('m04.mentor.fInterest')} required options={(mentor.interests ?? []).map((i) => ({ value: i, label: i }))} {...form.field('interest')} />
+        <SelectField label={t('m04.mentor.fInterest')} required options={(mentor.interests ?? []).map((i) => ({ value: i, label: tagLabel(t, i) }))} {...form.field('interest')} />
         <TextArea label={t('m04.mentor.message')} hint={t('m04.mentor.messageHint')} {...form.field('message')} />
       </form>
     </Modal>
@@ -147,4 +147,10 @@ function OfferModal({ mine, roles, onClose }: { mine: MentorsRow | null; roles: 
       </form>
     </Modal>
   );
+}
+
+/** Interest tags are free text; the common ones have translations (key: lower case, spaces as underscores). */
+function tagLabel(t: (k: string) => string, tag: string): string {
+  const key = `m04.mentor.tags.${tag.trim().toLowerCase().replace(/\s+/g, '_')}`;
+  return hasKey(key) ? t(key) : tag;
 }

@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { useAction, useQuery, useRepo } from '../../data';
 import { roleLabel, useSession } from '../../auth/session';
-import { L, useFormat, useI18n, usePick, useT } from '../../i18n';
+import { L, useFormat, useI18n, usePick, useT, entityName, hasKey } from '../../i18n';
 import { Async, Callout, Card, EmptyState, KeyValue, Modal, Page, RadioGroup, StatusPill, TextArea, minLen, required, useForm } from '../../ui';
 import type { PlatformRole } from '../../auth/policy';
 import { accessReviewState } from '../../domain/g5rules';
@@ -65,10 +65,10 @@ export default function MyProfilePage() {
                   <KeyValue
                     items={[
                       [t('m14.profile.kind'), t(`m14.kind.${p.kind}`)],
-                      [t('m14.profile.org'), org ? pick(org, 'name') : '—'],
+                      [t('m14.profile.org'), org ? pick(org, 'name') : entityName(t, p.org_id) || '—'],
                       [t('m14.profile.role'), role ? pick(role, 'title') : '—'],
                       [t('m14.profile.family'), family ? pick(family, 'name') : '—'],
-                      [t('m14.profile.team'), [p.team_id, p.crew, p.unit].filter(Boolean).join(' · ') || '—'],
+                      [t('m14.profile.team'), [p.team_id ? (hasKey(`m14.team.${p.team_id}`) ? t(`m14.team.${p.team_id}`) : p.team_id) : null, p.crew, p.unit].filter(Boolean).join(' · ') || '—'],
                       [t('m14.profile.level'), p.level ? t(`m14.level.${p.level}`) : '—'],
                       [t('m14.profile.hire'), p.hire_date ? f.date(p.hire_date, 'long') : '—'],
                       [t('m14.profile.status'), <StatusPill key="s" status={p.status} />],

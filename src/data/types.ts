@@ -252,6 +252,8 @@ export interface Rpc extends G2Rpc, G4Rpc {
   assignCurriculum(personId: string): Promise<Result<{ assigned: number }>>;
   verifyCertificate(no: string): Promise<CertificateCheck>;
   workforceAggregate(period: string, measure: string | null): Promise<AggregateRow[]>;
+  /** Observer organisations a report can be released to (id and names only; empty without an observer_release grant). */
+  releaseTargets(): Promise<{ id: string; name_en: string; name_ar: string }[]>;
   applicationFunnel(): Promise<{ programme_id: string; stage: string; n: number | null; suppressed: boolean }[]>;
   // ── [G3] M06 talent pipeline, M07 workforce analytics, M10 universities and research (SQL: 20261008133001_kafaa_g3_rpcs.sql)
   submitApplication(programmeId: string, answers: Record<string, string>): Promise<Result<{ id: string; stage: string }>>;

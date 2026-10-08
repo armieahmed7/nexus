@@ -3,13 +3,17 @@
 // (rpc.auditVerify). Each entry shows whether it also reached the NEXUS evidence ledger.
 import { useMemo, useState } from 'react';
 import { useQuery, useRepo } from '../../data';
-import { useFormat, useT } from '../../i18n';
+import { useFormat, useLang, useT } from '../../i18n';
+import { ROLE_LABELS, type PlatformRole } from '../../auth/policy';
 import { Async, Callout, DataTable, Drawer, FilterBar, Icon, KeyValue, Page, StatusPill, TextField, useFilters, type Column } from '../../ui';
 import type { AuditEventsRow } from '../../data/types';
 import { Metric } from './parts';
 
 export default function AdminAuditPage() {
   const t = useT();
+  const lang = useLang();
+  // Kafa'a platform roles have labels; other actor roles (NEXUS role titles, "system") are shown as recorded.
+  const roleName = (r: string) => ROLE_LABELS[r as PlatformRole]?.[lang] ?? r;
   const f = useFormat();
   const repo = useRepo();
   const q = useQuery('audit_events', () => repo.list('audit_events', { order: [['seq', 'desc']] }));
@@ -44,7 +48,7 @@ export default function AdminAuditPage() {
     { key: 'ts', header: t('m16.audit.when'), value: (a) => a.ts, sortable: true, render: (a) => f.dateTime(a.ts) },
     { key: 'action', header: t('m16.audit.action'), value: (a) => a.action, render: (a) => <code className="ltr text-[12px]">{a.action}</code> },
     { key: 'entity', header: t('m16.audit.entity'), value: (a) => `${a.entity_table ?? ''}:${a.entity_id ?? ''}`, render: (a) => <span className="ltr text-[12px]">{a.entity_table ?? '—'}{a.entity_id ? ` · ${a.entity_id}` : ''}</span> },
-    { key: 'actor', header: t('m16.audit.actor'), value: (a) => `${a.actor_person_id ?? 'anonymous'} ${a.actor_role ?? ''}`, render: (a) => <span className="text-[12.5px]"><span className="ltr">{a.actor_person_id ?? t('m16.audit.anonymous')}</span>{a.actor_role && <span className="text-ink-3"> · {a.actor_role}</span>}</span> },
+    { key: 'actor', header: t('m16.audit.actor'), value: (a) => `${a.actor_person_id ?? 'anonymous'} ${a.actor_role ?? ''}`, render: (a) => <span className="text-[12.5px]"><span className="ltr">{a.actor_person_id ?? t('m16.audit.anonymous')}</span>{a.actor_role && <span className="text-ink-3"> · {roleName(a.actor_role)}</span>}</span> },
     { key: 'outcome', header: t('m16.audit.outcome'), value: (a) => a.outcome, render: (a) => <StatusPill status={a.outcome === 'ok' ? 'ok' : a.outcome === 'refused' ? 'declined' : 'error'}>{t(`m16.audit.out.${a.outcome}`)}</StatusPill> },
     { key: 'ledger', header: t('m16.audit.ledger'), value: (a) => a.ledger_status, render: (a) => <StatusPill tone={a.ledger_status === 'written' ? 'ok' : a.ledger_status === 'skipped' ? 'sim' : 'neutral'}>{t(`m16.audit.ls.${a.ledger_status}`)}</StatusPill> },
   ];
@@ -83,7 +87,7 @@ export default function AdminAuditPage() {
         fields={[
           { key: 'outcome', label: t('m16.audit.outcome'), options: ['ok', 'refused', 'error'].map((x) => ({ value: x, label: t(`m16.audit.out.${x}`) })) },
           { key: 'table', label: t('m16.audit.entity'), options: tables.map((x) => ({ value: x, label: x })) },
-          { key: 'role', label: t('m16.audit.role'), options: roles.map((x) => ({ value: x, label: x })) },
+          { key: 'role', label: t('m16.audit.role'), options: roles.map((x) => ({ value: x, label: roleName(x) })) },
           { key: 'ledger', label: t('m16.audit.ledger'), options: ['written', 'skipped', 'not_applicable'].map((x) => ({ value: x, label: t(`m16.audit.ls.${x}`) })) },
         ]}
         extra={
@@ -109,7 +113,7 @@ export default function AdminAuditPage() {
                 [t('m16.audit.action'), <code key="a" className="ltr">{open.action}</code>],
                 [t('m16.audit.entity'), <span key="e" className="ltr">{open.entity_table ?? '—'} {open.entity_id ?? ''}</span>],
                 [t('m16.audit.actor'), <span key="p" className="ltr">{open.actor_person_id ?? t('m16.audit.anonymous')}</span>],
-                [t('m16.audit.role'), open.actor_role ?? '—'],
+                [t('m16.audit.role'), open.actor_role ? roleName(open.actor_role) : '—'],
                 [t('m16.audit.outcome'), t(`m16.audit.out.${open.outcome}`)],
                 [t('m16.audit.reason'), open.reason ?? '—'],
                 [t('m16.audit.ledger'), `${t(`m16.audit.ls.${open.ledger_status}`)}${open.ledger_seq ? ` · #${open.ledger_seq}` : ''}`],

@@ -129,7 +129,8 @@ function Releases({ kpiRows }: { kpiRows: ReturnType<typeof useKpis>['data'] }) 
   const canPrepare = s.can('observer_release', ['W', 'A']);
   const canApprove = s.can('observer_release', ['A']);
   const reports = useQuery('observer_reports', () => repo.list('observer_reports', { order: [['period', 'desc']] }));
-  const orgs = useQuery('organisations', () => repo.list('organisations', { filter: { kind: 'observer_org' } }));
+  // Observer organisations are not public; the release targets come from a narrow read (id and names only).
+  const orgs = useQuery('organisations', () => repo.rpc.releaseTargets().catch(() => []));
   const [view, setView] = useState<ObserverReportsRow | null>(null);
   const [drafting, setDrafting] = useState(false);
   const [act, setAct] = useState<{ r: ObserverReportsRow; action: 'submit' | 'approve' | 'withdraw' } | null>(null);

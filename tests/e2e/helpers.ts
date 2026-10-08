@@ -82,6 +82,14 @@ export async function textIssues(page: Page): Promise<string[]> {
       out.push(`${label}: "…${text.slice(Math.max(0, i - 40), i + 40).replace(/\s+/g, ' ')}…"`);
     }
   }
+  // Status chips that fell back to the raw enum value (no translation): "in_progress" shown as "in progress".
+  const raw = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-status]')]
+      .map((el) => ({ s: el.getAttribute('data-status') ?? '', txt: (el.textContent ?? '').trim() }))
+      .filter((x) => x.s && /^[a-z_]+$/.test(x.s) && x.txt === x.s.replace(/_/g, ' '))
+      .map((x) => x.s),
+  );
+  if (raw.length) out.push(`untranslated status: ${[...new Set(raw)].join(', ')}`);
   return out;
 }
 

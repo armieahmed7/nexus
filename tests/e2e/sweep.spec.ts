@@ -76,8 +76,10 @@ for (const m of MATRIX) {
     else await page.goto(`${BASE}/`);
     w.take();
     const results: { route: string; url: string; expect: string; got: string; issues: string[] }[] = [];
+    const TRANSIENT = /net::ERR_(CONNECTION_RESET|CONNECTION_CLOSED|NETWORK_CHANGED|TIMED_OUT|HTTP2_PROTOCOL_ERROR)/;
     for (const r of ROUTES) {
       const url = BASE + fill(r);
+      for (let attempt = 1; attempt <= 2; attempt++) {
       await page.goto(url);
       let got = 'error';
       const issues: string[] = [];
@@ -97,7 +99,11 @@ for (const m of MATRIX) {
       const exp = expected(r, roles);
       if (got !== exp) issues.push(`guard: expected ${exp}, got ${got}`);
       issues.push(...w.take());
+      // A dropped connection through the egress proxy is not a page defect: visit once more before reporting.
+      if (attempt === 1 && issues.length && issues.every((x) => TRANSIENT.test(x))) continue;
       results.push({ route: r.id, url, expect: exp, got, issues });
+      break;
+      }
     }
     writeOut(`sweep-${name}.json`, { persona: name, backend: m.backend, covers: m.covers, roles, results });
     const bad = results.filter((x) => x.issues.length);

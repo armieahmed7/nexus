@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import { useAction, useRepo, useQuery } from '../../data';
 import type { Table } from '../../data/types';
 import { Page, Card, Async, EmptyState, Tabs, DataTable, Modal, ConfirmDialog, StatusPill, SimChip, Callout, Icon } from '../../ui';
-import { useFormat, usePick, useT } from '../../i18n';
+import { ENEC_ENTITIES, entityName, useFormat, usePick, useT } from '../../i18n';
 import { todayIso } from '../../domain/rules';
 
 type FieldSpec = { key: string; label: string; type: 'text' | 'date' | 'number' | 'select' | 'checkbox' | 'url'; required?: boolean; options?: { value: string; label: string }[]; dir?: 'rtl' | 'ltr' };
@@ -125,6 +125,7 @@ export default function TalentContentPage() {
 function useLookups() {
   const repo = useRepo();
   const pick = usePick();
+  const t = useT();
   const q = useQuery(['job_roles', 'organisations', 'job_families'], async () => {
     const [roles, orgs, fams] = await Promise.all([repo.list('job_roles', { order: [['sort', 'asc']] }), repo.list('organisations'), repo.list('job_families', { order: [['sort', 'asc']] })]);
     return { roles, orgs, fams };
@@ -133,12 +134,12 @@ function useLookups() {
     const d = q.data;
     return {
       roles: (d?.roles ?? []).map((r) => ({ value: r.id, label: pick(r, 'title') })),
-      entities: (d?.orgs ?? []).filter((o) => o.kind === 'group_entity').map((o) => ({ value: o.id, label: pick(o, 'name') })),
+      entities: ENEC_ENTITIES.map((id) => ({ value: id, label: pick(d?.orgs.find((o) => o.id === id), 'name') || entityName(t, id) })),
       universities: (d?.orgs ?? []).filter((o) => o.kind === 'university').map((o) => ({ value: o.id, label: pick(o, 'name') })),
       families: (d?.fams ?? []).map((f) => ({ value: f.id, label: pick(f, 'name') })),
-      orgName: (id: string | null | undefined) => pick(d?.orgs.find((o) => o.id === id), 'name') || id || '—',
+      orgName: (id: string | null | undefined) => pick(d?.orgs.find((o) => o.id === id), 'name') || entityName(t, id) || '—',
     };
-  }, [q.data, pick]);
+  }, [q.data, pick, t]);
 }
 
 /** Save helper: insert or update through the repository, toasting the outcome. */

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Page, Grid, Card, StatTile, Tabs, DataTable, Async, EmptyState, ConfirmDialog, Drawer, Modal, ProgressBar, ProgressRing, Callout, Icon, TextField, TextArea, useForm, required, numberRange, maxLen } from '../../ui';
 import { useAction, useQuery, useRepo } from '../../data';
 import type { CertificatesRow, EnrolmentsRow, ExternalRequestsRow, SessionsRow, SimulatorSlotsRow, TrainingRecordsRow } from '../../data/types';
-import { L, useFormat, usePick, useT } from '../../i18n';
+import { L, useFormat, usePick, useT, systemName } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { isOpen } from '../../domain/learning';
 import { G2Pill, useCatalogue, useLabels, daysUntil, Chip } from './ui';
@@ -148,7 +148,7 @@ function Enrolments({ rows, sessions }: { rows: EnrolmentsRow[]; sessions: Sessi
             <div className="flex flex-wrap justify-end gap-1">
               {selfPaced && r.progress_pct < 100 && <button className="btn-outline btn-sm" onClick={() => advance(r)} data-testid="m04-continue">{t('m04.my.continue')}</button>}
               {selfPaced && r.progress_pct >= 100 && !c?.qualifying && <button className="btn-primary btn-sm" onClick={() => setComplete(r)}>{t('m04.my.markComplete')}</button>}
-              {!selfPaced && !r.session_id && ['assigned', 'approved', 'enrolled'].includes(r.status) && <button className="btn-primary btn-sm" onClick={() => setBook(r)} data-testid="m04-book">{t('m04.my.bookSession')}</button>}
+              {!selfPaced && (!r.session_id || sessions.find((x) => x.id === r.session_id)?.status === 'cancelled') && ['assigned', 'approved', 'enrolled', 'in_progress'].includes(r.status) && <button className="btn-primary btn-sm" onClick={() => setBook(r)} data-testid="m04-book">{t('m04.my.bookSession')}</button>}
               {(r.session_id || (r.source !== 'role_rule' && !c?.mandatory)) && <button className="btn-ghost btn-sm" onClick={() => setCancel(r)}>{r.session_id && (r.source === 'role_rule' || c?.mandatory) ? t('m04.my.changeSession') : t('m04.my.cancel')}</button>}
             </div>
           );
@@ -250,7 +250,7 @@ function Transcript({ d }: { d: Data }) {
         { key: 'course', header: t('m04.common.course'), value: (r) => { const c = cat.course.get(r.course_id); return c ? pick(c, 'title') : r.course_id; } },
         { key: 'hours', header: t('m04.common.hoursCol'), value: (r) => Number(r.hours), align: 'end', sortable: true },
         { key: 'result', header: t('m04.common.result'), value: (r) => r.result, render: (r) => <G2Pill status={r.result} /> },
-        { key: 'src', header: t('m04.my.sourceSystem'), value: (r) => r.source_system },
+        { key: 'src', header: t('m04.my.sourceSystem'), value: (r) => systemName(t, r.source_system) },
       ]} />
     </div>
   );

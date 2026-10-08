@@ -427,6 +427,11 @@ export class LocalRpc implements Rpc {
     const status = c.status === 'valid' && c.valid_to && c.valid_to < todayIso() ? 'expired' : c.status;
     return { found: true, certificate_no: c.id, status, course_code: co?.code, course_en: co?.title_en, course_ar: co?.title_ar, issued_on: c.issued_on, valid_to: c.valid_to ?? null, holder_initials: c.holder_initials, note: "Internal Kafa'a course certificate. Not an operator licence." };
   }
+  async releaseTargets() {
+    await this.b.whenReady();
+    if (!this.ctx.has('observer_release', ['R', 'W', 'A'])) return [];
+    return this.b.raw('organisations').filter((o) => o.kind === 'observer_org').sort((a, b) => a.id.localeCompare(b.id)).map((o) => ({ id: o.id, name_en: o.name_en, name_ar: o.name_ar }));
+  }
   async workforceAggregate(period: string, measure: string | null): Promise<AggregateRow[]> {
     await this.b.whenReady();
     if (!this.ctx.has('workforce_analytics', ['Agg', 'R'])) throw new Error("Kafa'a · aggregate analytics are restricted");

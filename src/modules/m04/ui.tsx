@@ -4,7 +4,7 @@ import { useQuery, useRepo } from '../../data';
 import type { CoursesRow, PeopleRow, ProgrammesRow } from '../../data/types';
 import { SourceLink, StatusPill, type PillTone } from '../../ui';
 import { useFormat, useLang, useT } from '../../i18n';
-import { useSession } from '../../auth/session';
+import { PERSONAS, useSession } from '../../auth/session';
 import { isOpen } from '../../domain/learning';
 import { daysBetween } from '../../domain/rules';
 
@@ -64,17 +64,22 @@ export function SourceIds({ ids }: { ids: string[] }) {
 export function usePeople() {
   const repo = useRepo();
   const lang = useLang();
+  const t = useT();
   const q = useQuery('people', () => repo.list('people'), []);
   return useMemo(() => {
     const byId = new Map<string, PeopleRow>((q.data ?? []).map((p) => [p.id, p]));
     const name = (id: string | null | undefined) => {
       if (!id) return '—';
       const p = byId.get(id);
-      if (!p) return id;
+      // A person outside the caller's read scope: show the demo persona's role title, or a neutral label (never a raw id).
+      if (!p) {
+        const card = PERSONAS.find((c) => c.person_id === id);
+        return card ? (lang === 'ar' ? card.title_ar : card.title_en) : t('m04.common.staffMember');
+      }
       return lang === 'ar' && p.display_name_ar ? p.display_name_ar : p.display_name;
     };
     return { list: q.data ?? [], byId, name, loading: q.loading };
-  }, [q.data, q.loading, lang]);
+  }, [q.data, q.loading, lang, t]);
 }
 
 export function useCatalogue() {

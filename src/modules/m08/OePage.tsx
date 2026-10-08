@@ -43,7 +43,7 @@ export default function OePage() {
 
   const cols: Column<OeLessonsRow>[] = [
     { key: 'title', header: t('m08.oe.lesson'), value: (r) => pick(r, 'title'), sortable: true, render: (r) => <button className="text-start font-semibold text-eyebrow hover:underline" onClick={() => setOpen(r.id)}>{pick(r, 'title')}</button> },
-    { key: 'source', header: t('m08.oe.source'), value: (r) => r.source_kind, sortable: true },
+    { key: 'source', header: t('m08.oe.source'), value: (r) => (r.source_kind === 'internal' ? t('m08.oe.sourceInternal') : r.source_kind), sortable: true },
     { key: 'traits', header: t('m08.oe.traits'), value: (r) => r.trait_ids.map((x) => traitName.get(x)).join(', '), render: (r) => <span className="text-[12px] text-ink-2">{r.trait_ids.map((x) => traitName.get(x)).join(' · ')}</span> },
     { key: 'reviewed', header: t('m08.oe.reviewedOn'), value: (r) => r.reviewed_on, sortable: true, render: (r) => f.date(r.reviewed_on) },
     { key: 'body', header: t('m08.oe.reviewingBody'), value: (r) => r.reviewing_body },
@@ -58,7 +58,7 @@ export default function OePage() {
         search="q"
         fields={[
           { key: 'trait', label: t('m08.oe.trait'), options: (data.data?.traits ?? []).map((x) => ({ value: x.id, label: pick(x, 'name') })) },
-          { key: 'source', label: t('m08.oe.source'), options: SOURCE_KINDS.map((x) => ({ value: x, label: x })) },
+          { key: 'source', label: t('m08.oe.source'), options: SOURCE_KINDS.map((x) => ({ value: x, label: x === 'internal' ? t('m08.oe.sourceInternal') : x })) },
           ...(canEdit ? [{ key: 'status', label: t('m08.oe.status'), options: ['draft', 'in_review', 'published'].map((x) => ({ value: x, label: t(`common.status.${x}`) })) }] : []),
         ]}
       />
@@ -84,7 +84,7 @@ export default function OePage() {
               items={[
                 [t('m08.oe.reviewedOn'), f.date(open.reviewed_on, 'long')],
                 [t('m08.oe.reviewingBody'), open.reviewing_body],
-                [t('m08.oe.source'), open.source_kind],
+                [t('m08.oe.source'), open.source_kind === 'internal' ? t('m08.oe.sourceInternal') : open.source_kind],
                 [t('m08.oe.traits'), open.trait_ids.map((x) => traitName.get(x)).join(' · ') || '—'],
                 [t('m08.oe.standards'), open.affected_standard_ids.length ? open.affected_standard_ids.map((x) => <code key={x} className="ltr me-1">{x}</code>) : '—'],
               ]}
@@ -178,7 +178,7 @@ function NewLesson({ open, onClose, traits }: { open: boolean; onClose: () => vo
         <label className="flex flex-col gap-1">
           <span className="text-[13px] font-semibold">{t('m08.oe.source')}</span>
           <select className="input" value={source} onChange={(e) => setSource(e.target.value)}>
-            {SOURCE_KINDS.map((x) => <option key={x} value={x}>{x}</option>)}
+            {SOURCE_KINDS.map((x) => <option key={x} value={x}>{x === 'internal' ? t('m08.oe.sourceInternal') : x}</option>)}
           </select>
         </label>
         <fieldset>

@@ -169,6 +169,11 @@ export class SupabaseBackend implements Repository {
         if (error) return { found: false };
         return data as CertificateCheck;
       },
+      releaseTargets: async () => {
+        const { data, error } = await this.client.rpc('kafaa_release_targets');
+        if (error) throw new Error(error.message);
+        return (data ?? []) as { id: string; name_en: string; name_ar: string }[];
+      },
       workforceAggregate: async (period, measure) => {
         const { data, error } = await this.client.rpc('kafaa_workforce_aggregate', { p_period: period, p_measure: measure });
         if (error) throw new Error(error.message);

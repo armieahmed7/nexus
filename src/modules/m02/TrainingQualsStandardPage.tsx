@@ -5,7 +5,7 @@
 import { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Page, Section, Card, Grid, Async, EmptyState, Tabs, KeyValue, StatusPill, Callout, Timeline, DataTable, Drawer, Modal, ConfirmDialog, TextArea, TextField, CheckboxField, SelectField, RadioGroup, Icon } from '../../ui';
-import { useAction, useRepo } from '../../data';
+import { useAction, useQuery, useRepo } from '../../data';
 import { useT, usePick, useFormat, L, useNav } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { useCrumbLabel } from '../../shell/crumbs';
@@ -43,6 +43,8 @@ function StandardView({ d, std }: { d: QualData; std: Std }) {
   const f = useFormat();
   const s = useSession();
   const nav = useNav();
+  const repo = useRepo();
+  const roles = useQuery('job_roles', () => repo.list('job_roles').catch(() => []), []);
   const [params, setParams] = useSearchParams();
   const [revise, setRevise] = useState(false);
   const [flagged, setFlagged] = useState<{ id: string; n: number } | null>(null);
@@ -92,7 +94,7 @@ function StandardView({ d, std }: { d: QualData; std: Std }) {
               [t('m02.matrix.discipline'), std.discipline],
               [t('m02.std.owner'), std.owner_role],
               [t('m02.std.effective'), f.date(std.effective_date)],
-              [t('m02.std.roles'), (std.role_ids ?? []).length ? (std.role_ids ?? []).map((r) => <L key={r} to={`/careers/roles/${r}`} className="me-2">{r}</L>) : t('m02.std.allStaff')],
+              [t('m02.std.roles'), (std.role_ids ?? []).length ? (std.role_ids ?? []).map((r) => <L key={r} to={`/careers/roles/${r}`} className="me-2">{pick(roles.data?.find((x) => x.id === r), 'title') || r}</L>) : t('m02.std.allStaff')],
               [t('m02.stds.requal'), std.requal_months ? t('m02.stds.months', { n: f.num(std.requal_months) }) : '—'],
               [t('m02.std.notices'), rule ? (Array.isArray(rule.notice_days) ? (rule.notice_days as number[]).map((n) => t('m02.std.daysBefore', { n })).join(' · ') : '—') : t('m02.std.defaultNotices')],
             ]}

@@ -32,6 +32,9 @@ function Courses() {
   const canEdit = s.can('training', ['W']);
   const [flt, setFlt] = useFilters({ q: '', programme: '', modality: '', mandatory: '', qualifying: '' }, true);
   const [edit, setEdit] = useState<CoursesRow | 'new' | null>(null);
+  const repo = useRepo();
+  const forms = useQuery('assessment_forms', () => repo.list('assessment_forms').catch(() => []), []);
+  const formTitle = (id: string) => pick(forms.data?.find((x) => x.id === id), 'title') || id;
   const rows = cat.courses.filter((c) => (!flt.programme || c.programme_id === flt.programme) && (!flt.modality || c.modality === flt.modality) && (!flt.mandatory || String(c.mandatory) === flt.mandatory) && (!flt.qualifying || String(c.qualifying) === flt.qualifying)
     && (!flt.q || `${c.code} ${c.title_en} ${c.title_ar}`.toLowerCase().includes(flt.q.toLowerCase())));
   return (
@@ -54,7 +57,7 @@ function Courses() {
             { key: 'modality', header: t('m04.learn.fModality'), value: (r) => lab.modality(r.modality) },
             { key: 'hours', header: t('m04.common.hoursCol'), value: (r) => r.duration_hours ?? null, align: 'end', sortable: true },
             { key: 'flags', header: '', value: (r) => [r.mandatory ? 'mandatory' : '', r.qualifying ? 'qualifying' : ''].join(' '), render: (r) => <div className="flex flex-wrap gap-1">{r.mandatory && <Chip tone="accent">{t('m04.common.mandatory')}</Chip>}{r.qualifying && <G2Pill status="qualifying" tone="info" />}{r.public_summary && <Chip>{t('m04.builder.public')}</Chip>}</div> },
-            { key: 'eval', header: t('m04.builder.evaluation'), value: (r) => r.evaluation_form_id ?? '' , render: (r) => r.evaluation_form_id ? <span className="num text-[12px]">{r.evaluation_form_id}</span> : r.qualifying ? <G2Pill status="missing" tone="bad" /> : '—' },
+            { key: 'eval', header: t('m04.builder.evaluation'), value: (r) => (r.evaluation_form_id ? formTitle(r.evaluation_form_id) : ''), render: (r) => r.evaluation_form_id ? <span className="text-[12px]">{formTitle(r.evaluation_form_id)}</span> : r.qualifying ? <G2Pill status="missing" tone="bad" /> : '—' },
           ]} />
         )}
       </Async>
