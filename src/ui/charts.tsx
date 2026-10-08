@@ -24,7 +24,7 @@ export interface Datum {
 
 function SrTable({ title, rows }: { title: string; rows: [string, string][] }) {
   return (
-    <table className="sr-only">
+    <div className="sr-only"><table>
       <caption>{title}</caption>
       <tbody>
         {rows.map(([a, b], i) => (
@@ -34,7 +34,7 @@ function SrTable({ title, rows }: { title: string; rows: [string, string][] }) {
           </tr>
         ))}
       </tbody>
-    </table>
+    </table></div>
   );
 }
 function Hatch({ id }: { id: string }) {

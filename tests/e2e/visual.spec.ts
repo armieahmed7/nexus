@@ -48,6 +48,17 @@ const RTL: Shot[] = [
   { name: 'workforce', path: '/workforce', persona: 'chco' },
   { name: 'admin', path: '/admin', persona: 'ai-governance' },
   { name: 'partner-onboarding', path: '/partner/onboarding', persona: 'alnoor-gm' },
+  // wave 1 (F03-F09)
+  { name: 'w1-my-skills', path: '/my/skills', persona: 'sro' },
+  { name: 'w1-wallet', path: '/my/skills/wallet', persona: 'sro' },
+  { name: 'w1-verify-badge', path: '/verify/badge/kb3a512774a081' },
+  { name: 'w1-my-career', path: '/my/career', persona: 'qc-inspector' },
+  { name: 'w1-roadmap', path: '/my/career/roadmap?role=procurement-engineer', persona: 'qc-inspector' },
+  { name: 'w1-my-coach', path: '/my/coach', persona: 'qc-inspector' },
+  { name: 'w1-opportunities', path: '/opportunities', persona: 'qc-inspector' },
+  { name: 'w1-opportunity', path: '/opportunities/opp-u3-outage-valve-walkdowns', persona: 'qc-inspector' },
+  { name: 'w1-my-future', path: '/my/future', persona: 'qc-inspector' },
+  { name: 'w1-future-interest', path: '/workforce/future/interest', persona: 'chco' },
 ];
 for (const s of RTL) {
   test(`rtl ${s.name}`, async ({ page }) => {
@@ -77,6 +88,15 @@ const MOBILE: Shot[] = [
   { name: 'learn-course', path: '/learn/course/c-hu', persona: 'nse' },
   { name: 'partner-onboarding', path: '/partner/onboarding', persona: 'alnoor-gm' },
   { name: 'licensing-validity', path: '/licensing/validity', persona: 'rao' },
+  // wave 1 (F03-F09)
+  { name: 'w1-my-skills', path: '/my/skills', persona: 'sro' },
+  { name: 'w1-wallet', path: '/my/skills/wallet', persona: 'sro' },
+  { name: 'w1-verify-badge', path: '/verify/badge/kb3a512774a081' },
+  { name: 'w1-my-career', path: '/my/career', persona: 'qc-inspector' },
+  { name: 'w1-roadmap', path: '/my/career/roadmap?role=procurement-engineer', persona: 'qc-inspector' },
+  { name: 'w1-my-coach', path: '/my/coach', persona: 'qc-inspector' },
+  { name: 'w1-opportunities', path: '/opportunities', persona: 'qc-inspector' },
+  { name: 'w1-my-future', path: '/my/future', persona: 'qc-inspector' },
 ];
 for (const s of MOBILE) {
   test(`mobile ${s.name}`, async ({ page }) => {
@@ -112,5 +132,28 @@ for (const s of SET) {
     await page.setViewportSize({ width: 1440, height: 900 });
     await open(page, s);
     await page.screenshot({ path: join(SHOTS, `${s.name}.png`), fullPage: false });
+  });
+}
+
+// Wave 1 feature set (F03-F09): saved to KAFAA_SHOTS_W1.
+const SHOTS_W1 = process.env.KAFAA_SHOTS_W1 || 'test-results/shots_w1';
+mkdirSync(SHOTS_W1, { recursive: true });
+const SET_W1: Shot[] = [
+  { name: '01-skills-passport-en', path: '/my/skills', persona: 'sro' },
+  { name: '02-credential-wallet-en', path: '/my/skills/wallet', persona: 'sro' },
+  { name: '03-verify-badge-public-en', path: '/verify/badge/kb3a512774a081' },
+  { name: '04-career-navigator-en', path: '/my/career', persona: 'qc-inspector' },
+  { name: '05-career-roadmap-whatif-en', path: '/my/career/roadmap?role=procurement-engineer', persona: 'qc-inspector', then: async (p) => { await p.locator('input[type="range"]').first().fill('2'); } },
+  { name: '06-learning-coach-en', path: '/my/coach', persona: 'qc-inspector', then: async (p) => { await p.locator('[data-testid="m19-card"] [data-testid="why-this"]').nth(1).click(); } },
+  { name: '07-opportunity-marketplace-en', path: '/opportunities', persona: 'qc-inspector' },
+  { name: '08-future-me-en', path: '/my/future', persona: 'qc-inspector' },
+  { name: '09-skills-passport-ar', path: '/my/skills', persona: 'sro', ar: true },
+  { name: '10-future-me-mobile', path: '/my/future', persona: 'qc-inspector', mobile: true },
+];
+for (const s of SET_W1) {
+  test(`shot w1 ${s.name}`, async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await open(page, s);
+    await page.screenshot({ path: join(SHOTS_W1, `${s.name}.png`), fullPage: false });
   });
 }

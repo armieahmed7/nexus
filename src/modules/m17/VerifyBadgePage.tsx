@@ -5,7 +5,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Page, Card, Callout, KeyValue, TextArea, Icon, Skeleton } from '../../ui';
-import { useRepo, type Result } from '../../data';
+import { useQuery, useRepo, type Result } from '../../data';
 import { useT, useLang, useFormat, L } from '../../i18n';
 import { verifyCredential, ISSUER_KEYS, NOTICE_AR, NOTICE_EN, type CredentialCheck } from './issuer';
 import { BadgeMedal, BadgeStatusPill } from './ui';
@@ -58,6 +58,10 @@ export function CredentialCard({ cred, status, check, checkedOn }: { cred: Cred;
   const lang = useLang();
   const f = useFormat();
   const a = cred?.credentialSubject?.achievement ?? {};
+  // The signed credential carries English skill names; in Arabic the chips show the catalogue's Arabic name (display only).
+  const repo = useRepo();
+  const sk = useQuery(['skills'], () => repo.list('skills'), [lang]);
+  const arName = new Map((sk.data ?? []).map((x) => [`urn:kafaa:skill:${x.id}`, x.name_ar]));
   const ok = check.outcome === 'valid';
   const key = check.keyId ? ISSUER_KEYS[check.keyId] : null;
   return (
@@ -92,7 +96,7 @@ export function CredentialCard({ cred, status, check, checkedOn }: { cred: Cred;
               <div className="flex flex-wrap gap-1">
                 {a.alignment.map((x: Cred) => (
                   <span key={String(x.targetUrl)} className="chip border-line bg-sunken text-ink-2">
-                    <span className="num">{String(x.targetCode)}</span> {String(x.targetName)}
+                    <span className="num">{String(x.targetCode)}</span> {String((lang === 'ar' && arName.get(String(x.targetUrl))) || x.targetName)}
                   </span>
                 ))}
               </div>

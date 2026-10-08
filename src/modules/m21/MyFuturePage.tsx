@@ -252,7 +252,7 @@ function Horizon({ d }: { d: FutureMeData }) {
                     </div>
                     <ul className="mt-1.5 flex flex-wrap gap-1">
                       {lv.items.map((i) => (
-                        <li key={i.skill_id} className={`chip ${i.security ? (i.qualified ? 'border-ok-line bg-ok-bg text-ok' : 'border-line bg-sunken text-ink-2') : i.level > 0 ? 'border-accent/30 bg-accent-soft text-eyebrow' : 'border-line bg-panel text-ink-3'}`}>
+                        <li key={i.skill_id} className={`chip max-w-full whitespace-normal ${i.security ? (i.qualified ? 'border-ok-line bg-ok-bg text-ok' : 'border-line bg-sunken text-ink-2') : i.level > 0 ? 'border-accent/30 bg-accent-soft text-eyebrow' : 'border-line bg-panel text-ink-3'}`}>
                           {pick(skill(i.skill_id), 'name')}
                           <span className="num font-normal">· {i.security ? t(i.qualified ? 'm21.hz.qualified' : 'm21.hz.notQualified') : f.num(i.level)}</span>
                         </li>

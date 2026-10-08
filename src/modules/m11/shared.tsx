@@ -47,7 +47,7 @@ export function Radar({ title, axes, series }: { title: string; axes: string[]; 
   return (
     <figure className="space-y-2">
       <div className="flex items-center justify-between gap-2"><figcaption className="font-semibold">{title}</figcaption><SimChip /></div>
-      <svg viewBox={`0 0 ${size} ${size}`} className="mx-auto w-full max-w-[380px]" style={{ direction: 'ltr' }} role="img" aria-label={title}>
+      <svg viewBox={`-80 0 ${size + 160} ${size}`} className="mx-auto w-full max-w-[460px]" style={{ direction: 'ltr' }} role="img" aria-label={title}>
         {[25, 50, 75, 100].map((g) => (
           <polygon key={g} points={axes.map((_, i) => pt(i, g).join(',')).join(' ')} fill="none" stroke="rgb(var(--line))" strokeWidth={1} />
         ))}
@@ -70,11 +70,11 @@ export function Radar({ title, axes, series }: { title: string; axes: string[]; 
           <span key={s.name} className="inline-flex items-center gap-1.5"><span className="inline-block h-2.5 w-4 rounded-sm" style={{ background: color[s.tone] }} />{s.name}</span>
         ))}
       </div>
-      <table className="sr-only">
+      <div className="sr-only"><table>
         <caption>{title}</caption>
         <thead><tr><th scope="col">{t('m11.wf.skill')}</th>{series.map((s) => <th key={s.name} scope="col">{s.name}</th>)}</tr></thead>
         <tbody>{axes.map((a, i) => <tr key={a}><th scope="row">{a}</th>{series.map((s) => <td key={s.name}>{f.num(s.values[i])}</td>)}</tr>)}</tbody>
-      </table>
+      </table></div>
     </figure>
   );
 }

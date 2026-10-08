@@ -255,7 +255,7 @@ export function OpportunityMap({ nodes, edges, onSelect, selected }: { nodes: Ma
           </span>
         ))}
       </div>
-      <table className="sr-only">
+      <div className="sr-only"><table>
         <caption>{t('m18.map.aria')}</caption>
         <thead><tr><th>{t('m18.map.colRole')}</th><th>{t('m18.map.colSteps')}</th><th>{t('m18.map.colReadiness')}</th></tr></thead>
         <tbody>
@@ -263,7 +263,7 @@ export function OpportunityMap({ nodes, edges, onSelect, selected }: { nodes: Ma
             <tr key={n.id}><td>{n.label}</td><td>{n.steps}</td><td>{n.security ? t('m18.map.pathOnly') : n.r?.pct != null ? `${n.r.pct}%` : '—'}</td></tr>
           ))}
         </tbody>
-      </table>
+      </table></div>
     </div>
   );
 }
