@@ -1,12 +1,15 @@
 /** Render a page as a given persona (or anonymous) with the real providers and the in-memory LocalBackend. */
 import type { ReactElement } from 'react';
-import { render } from '@testing-library/react';
+import { render, cleanup } from '@testing-library/react';
+import { afterEach } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { I18nProvider } from '../../src/i18n';
 import { ToastProvider } from '../../src/ui/Toast';
 import { SessionProvider } from '../../src/auth/session';
 import { getLocalBackend } from '../../src/data';
 import { config } from '../../src/config';
+
+afterEach(() => cleanup());
 
 export async function renderPage(el: ReactElement, opts: { persona?: string | null; path?: string; route?: string } = {}) {
   const b = getLocalBackend();
