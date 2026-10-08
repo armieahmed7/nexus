@@ -1470,6 +1470,23 @@ export interface RoadmapsRow {
   created_at: string;
   updated_at: string;
 }
+export interface CoachFeedbackRow {
+  id: string;
+  person_id: string;
+  item_kind: 'course' | 'practice' | 'ojt' | 'mentor' | 'opportunity' | 'reading' | 'refresher';
+  item_id: string;
+  signal: 'saved' | 'dismissed' | 'enrolled' | 'cleared';
+  competency_ids: string[];
+  at: string;
+  hidden_until?: string | null;
+}
+export interface LearningGoalsRow {
+  id: string;
+  person_id: string;
+  hours_per_week: number;
+  focus_role_ids: string[];
+  updated_at: string;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -1584,6 +1601,8 @@ export interface Tables {
   badges: BadgesRow;
   career_targets: CareerTargetsRow;
   roadmaps: RoadmapsRow;
+  coach_feedback: CoachFeedbackRow;
+  learning_goals: LearningGoalsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];
