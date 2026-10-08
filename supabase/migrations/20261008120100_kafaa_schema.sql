@@ -3,6 +3,10 @@
 -- Additive only: creates kafaa_* objects; never alters or drops existing NEXUS objects.
 
 create table if not exists kafaa_schema_version (id int primary key, generated_at timestamptz not null default now(), tables int not null);
+alter table kafaa_schema_version enable row level security;
+drop policy if exists kafaa_read on kafaa_schema_version;
+create policy kafaa_read on kafaa_schema_version for select to anon, authenticated using (true);
+grant select on kafaa_schema_version to anon, authenticated;
 
 -- M09 · Organisations: ENEC entities, partners, suppliers, universities, regulators
 create table if not exists kafaa_organisations (
@@ -1691,7 +1695,7 @@ create index if not exists kafaa_advisor_sessions_person_id_idx on kafaa_advisor
 create index if not exists kafaa_advisor_turns_session_id_idx on kafaa_advisor_turns (session_id);
 create index if not exists kafaa_advisor_turns_person_id_idx on kafaa_advisor_turns (person_id);
 
-create or replace function kafaa_append_only() returns trigger language plpgsql as $$
+create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
   raise exception 'Kafa''a · % is append-only: corrections create a new entry with a reason', tg_table_name using errcode = '42501';
 end $$;

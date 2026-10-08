@@ -292,7 +292,7 @@ $$;
 
 -- ───────────── Append-only, hash-chained audit log (M16). Same canonical form as src/data/audit.ts.
 create or replace function kafaa_audit_canonical(p_seq integer, p_ts timestamptz, p_actor text, p_role text, p_action text, p_table text, p_entity text, p_outcome text, p_reason text)
-returns text language sql immutable as $$
+returns text language sql immutable set search_path = public as $$
   select concat_ws('|', p_seq::text, to_char(p_ts at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS"Z"'), coalesce(p_actor, ''), coalesce(p_role, ''), p_action,
                    coalesce(p_table, ''), coalesce(p_entity, ''), p_outcome, coalesce(p_reason, ''))
 $$;
@@ -339,7 +339,7 @@ end $$;
 -- Append a material action to the NEXUS evidence ledger (plane PEOPLE by default) as the caller.
 -- Uses the caller's first NEXUS role; returns the ledger seq, or null when the caller has no NEXUS profile
 -- (Kafa'a-only personas) or NEXUS refuses. Never raises: the Kafa'a audit row records the outcome.
-create or replace function kafaa_ledger(p_action text, p_reason text, p_plane text default 'PEOPLE', p_domain text default 'T')
+create or replace function kafaa_ledger(p_action text, p_reason text, p_plane text default 'PEOPLE', p_domain text default 'KAFAA')
 returns integer language plpgsql security definer set search_path = public as $$
 declare v_role text; r record;
 begin
@@ -361,5 +361,5 @@ grant execute on function kafaa_me(), kafaa_my_org(), kafaa_my_roles(), kafaa_ha
   kafaa_role_grant(text, text, text), kafaa_in_scope(text, text), kafaa_rule_read(text, text, text, boolean), kafaa_audit_verify() to anon, authenticated;
 
 -- Business constants shared with src/auth/policy.ts RULES
-create or replace function kafaa_rules() returns jsonb language sql immutable as $$ select '{"expiryNoticeDays":[90,60,30],"licenceRenewalTaskMonths":12,"fanrExamNoticeDays":60,"fanrExamReminderDays":75,"lapseReportWorkingDays":3,"withdrawalAfterYearsNonValid":2,"candidateListDaysBeforeStart":60,"trainingPlanReportMonths":6,"shiftMin8h":7,"shiftMin12h":5,"sroRoleShiftMin":2,"medicalIntervalMonths":12,"certificateYears":5,"staleSyncHours":72,"weekendDays":[0,6],"minGroupSize":10}'::jsonb $$;
+create or replace function kafaa_rules() returns jsonb language sql immutable set search_path = public as $$ select '{"expiryNoticeDays":[90,60,30],"licenceRenewalTaskMonths":12,"fanrExamNoticeDays":60,"fanrExamReminderDays":75,"lapseReportWorkingDays":3,"withdrawalAfterYearsNonValid":2,"candidateListDaysBeforeStart":60,"trainingPlanReportMonths":6,"shiftMin8h":7,"shiftMin12h":5,"sroRoleShiftMin":2,"medicalIntervalMonths":12,"certificateYears":5,"staleSyncHours":72,"weekendDays":[0,6],"minGroupSize":10}'::jsonb $$;
 grant execute on function kafaa_rules() to anon, authenticated;

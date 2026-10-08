@@ -1,0 +1,1319 @@
+Kafa'a Nuclear Skills Platform
+KAFA'A · Spec Rev A
+كفاءة · منصة المهارات النووية
+Executive summary
+What we learned from uaecb
+ENEC context
+Audiences and personas
+Information architecture
+Module specifications
+Roles and responsibilities
+Training and qualification paths
+Partners directory
+Data model
+Security, privacy, nuclear information
+Relationship to ENEC NEXUS
+Phased roadmap
+Success metrics
+Risks and open questions
+Source-to-ENEC mapping
+Sources
+ Kafa'a spec · sections
+Executive summary
+What we learned from uaecb
+ENEC context
+Audiences and personas
+Information architecture
+Module specifications
+Roles and responsibilities
+Training and qualification paths
+Partners directory
+Data model
+Security and privacy
+ENEC NEXUS
+Phased roadmap
+Success metrics
+Risks and questions
+Source mapping
+Sources
+ Concept. Not affiliated with or endorsed by ENEC.
+# Kafa'a Nuclear Skills Platform
+كفاءة: منصة المهارات النووية
+A product roadmap and specification for a careers, competency, qualification, training and partner-ecosystem platform for the Emirates Nuclear Energy Company and the UAE nuclear sector. It reimagines the UAE banking skills demo at uaecb.netlify.app for a licensed, safety-critical industry. "Kafa'a" (Arabic for competence or qualification) is a working name.
+Document
+KAFAA-SPEC-001
+Revision
+A · concept draft
+Date
+8 Oct 2026
+Basis
+Public sources only
+Source system
+uaecb.netlify.app
+Status
+For discussion
+Section 1
+## Executive summary
+What it is. Kafa'a is a bilingual (Arabic and English) web platform that does for nuclear energy what the uaecb demo tries to do for UAE banking. It publishes a map of nuclear careers and the competencies each role needs. It holds each employee's qualification status, training history and assessment results. It tracks operator licensing milestones under FANR-REG-17, runs the talent pipeline from school outreach to scholarships, and gives suppliers, universities and international partners a structured way in.
+Who it serves. The public and students; applicants to ENEC's talent programmes; staff across ENEC, ENEC Operations, ENEC Commercial and ENEC Consulting; licensed operators and their instructors; managers and HR; suppliers and contractors; universities and research partners. Regulators appear only as observers of aggregate reports that ENEC chooses to share. They never use Kafa'a as a regulatory system.
+Why ENEC. ENEC runs one of the most training-intensive workforces in the region, with a regulated licensing regime, a stated Emiratization agenda, a large local supply chain and an advanced-reactor programme that will need new skills. Its Enterprise Strategy 2025-2029 names "People & Culture" as one of three themes (enec.ae).
+5.6 GWFour APR-1400 units at Barakah, about 40 TWh a year and about 25% of UAE electricityenec.ae
+2,979Group employees in 2024; 54.7% Emiratization at organisation levelSR2024 p.78-90
+300+FANR RO/SRO certifications by early 2025, 140 issued to UAE nationals (certifications, not unique people)CNS report
+581,090Training hours in 2024, or 218 hours per employeeSR2024 p.49
+2,000+UAE companies with Barakah contracts worth more than USD 6.7bnenec.ae
+6Talent pipeline programmes; more than 2,000 UAE nationals have worked on Barakahenec.ae, Jun 2026
+Headcount figures differ by source. Press releases say "over 3,000 people, 60% Emirati"; the audited 2024 GRI data say 2,979 staff and 54.7%. This spec uses the GRI figure where precision matters.
+### Five commitments that separate Kafa'a from its source
+Real, sourced data or a visible "sample" label. uaecb shows hard-coded marketing numbers (155+ competencies against 16 in the code). Kafa'a shows no number without a source or a SAMPLE tag.
+Access control enforced on the server. uaecb's middleware is disabled and every HR page is public. Kafa'a checks every request against role and scope in the database.
+No named staff on public pages, and no security-sensitive plant information anywhere. uaecb embeds about 1,500 real bank employees in org charts. Kafa'a shows entities and roles, never people.
+A tracker, not an authority. FANR certifies operators; ENEC's training organisation qualifies staff. Kafa'a mirrors status from those systems of record and says so on every screen.
+Qualification is not a game. Points, streaks and leaderboards are removed from qualification and licensing work. Recognition stays for outreach and students.
+### Scope at a glance
+Sixteen modules in four zones: a public site, a staff portal, a partner portal and an administration console (Section 5). Delivery runs from discovery through an MVP public site to staff, partner and future-workforce phases (Section 13). Kafa'a complements Armie's existing ENEC NEXUS concept, which governs AI agents across ENEC's enterprise. Kafa'a is the people and skills layer; NEXUS is the agent operating layer (Section 12).
+Section 2
+## What we learned from uaecb
+uaecb.netlify.app is the "UAE Central Bank Banking Skills Platform, an ADGM Academy Partnership", deployed from github.com/armieahmed7/uae-banking-platform. It is modelled on Singapore's IBF and built with Next.js 15, React 19, Tailwind with shadcn/ui, Prisma 6 on Postgres, NextAuth and OpenAI gpt-3.5-turbo. It has 74 page routes and 29 API routes. The analysis behind this section crawled all 74 routes on 8 Oct 2026 and read the source at commit 784c1f7.
+### Structure in brief
+ | Area | What uaecb offers | Real or mock
+ | Public portal | IBF-style landing with three audience cards (Professionals, Institutions, Job Seekers), mega-menu, About, Partnership, Mission, 20 FAQs, Contact, Demo request | Static
+ | Career architecture | 38 retail-banking roles in 5 departments; hierarchy, department and career-path views; market outlook, Emiratization and "Arabic required" flags; career simulator; salary guide | Constants in a 2,314-line file; about 160 referenced role ids, most undefined
+ | Competency framework | 4 categories x 4 competencies = 16 coded competencies (TB, DT, LM, SB), each on 4 levels from Foundation to Expert | UI constants; claims 155
+ | Assessments | 6 MCQ assessments of 5 questions each, quick assessment, video and AI video interviews, certificate generation | Partly database; logged-out page hangs on "Loading"
+ | Learning | 5 courses, 3 learning paths, 2 certifications, "blockchain" certificates, AI podcasts, VR modules, challenges | Mock; no Course or Enrolment model
+ | Jobs and resume | Job board with match score, resume builder with 4 templates, ATS optimiser | Job API returns an error; 0 jobs live
+ | Gamification | Points, levels, streaks, badges, global leaderboards | Schema exists; UI mock
+ | Institution / HR | Enterprise dashboard, organisation admin portal, talent analytics, workforce planning with succession, Emiratization initiative, industry reports | Mock; all public with no login
+ | Org charts | 14 UAE banks with zoomable trees; FAB alone has 1,330 members | Real named people with titles, emails, LinkedIn URLs
+ | AI advisor | "Ask Ali", an Emirati career-advisor persona on every page, plus 10 AI endpoints | Live, unauthenticated, gpt-3.5-turbo
+ | Arabic | Dictionaries, RTL flag, IBM Plex Sans Arabic, Arabic role titles | Only 4 pages translated
+### Three screens, described
+Career pathways
+A grid of department tiles above a searchable list of role cards. Each card shows level, years of experience, a salary range, an outlook chip (At Risk, Stable, Growing), an Emiratization badge and an "Arabic Required" flag. A side panel opens the role, and an "Ask Ali" button offers AI advice. This is the strongest pattern in the product and the direct ancestor of the Nuclear Career Map.
+Enterprise dashboard
+Six KPI tiles (1,245 employees, 74% average skill, 45% Emiratization) over tabs for performance, skills gaps, learning and workforce planning. The layout is sound. The figures are invented, contradict other pages (2,341 employees elsewhere) and are visible to anyone without signing in.
+Bank organization charts
+A bank picker and a zoomable tree of named executives with photos, emails and LinkedIn links, scraped from public sources. It looks impressive in a demo and is the clearest privacy anti-pattern in the codebase. Kafa'a replaces it with an entity and role structure that names no one.
+### Keep
+The three-audience front door, translated to nuclear audiences.
+The role data shape: title in two languages, level, responsibilities, required competencies, entry routes, vertical, lateral and cross-functional progressions, Emiratization and Arabic flags.
+Competency x proficiency-level framework, linked to roles.
+Assessment structure (question bank, timed attempt, per-competency scoring) and the UserCertification status lifecycle (planned, in progress, completed, expired, renewed), which maps neatly onto qualification expiry.
+Individual development plans with activities and milestones.
+Consent capture and an audit log on sign-in.
+A contextual AI advisor, rebuilt with governance.
+IBM Plex Sans Arabic and mirrored layouts for RTL.
+### Fix
+ | uaecb weakness | Evidence | Kafa'a rule
+ | No working access control | middleware.ts matcher is empty; userType is never checked; HR, admin and regulator pages are public | Deny by default. Server-side checks on every page and API, plus row-level security in the database. Automated tests per role.
+ | Mock data presented as fact | About 60 of 74 pages use static constants; headline numbers contradict each other | Every figure carries a source or a SAMPLE label. Demo data lives in a separate, clearly marked tenant.
+ | Privacy | About 1,500 real bank employees in org charts; Emirates ID and date of birth collected without a stated purpose | No named staff on public pages. Collect identity data only through UAE Pass where needed, with purpose limitation.
+ | Exposed debug endpoints | /api/debug/env and /api/ai/diagnostic leak the OpenAI key prefix and length; /api/auth/debug and /api/test-email are public | No debug routes in production builds; CI fails if any route matches a debug pattern.
+ | Broken pages | /jobs API error, /auth/error crash, hydration errors on 4 pages, 5 dead admin links, 6 stubs | A route ships only with content, an empty state and an error state. A link checker runs in CI.
+ | Broken demo access | All documented demo logins return 401 | Demo personas live in a demo tenant with working, rotated credentials and no production data.
+ | Open AI cost sink | Unauthenticated chat calls OpenAI directly | Rate-limited, grounded advisor with a model gateway, logging and evaluation (M13).
+ | Shallow Arabic | 4 pages translated; the toggle flips direction but not content | Arabic parity is a release gate for every route (M15).
+ | Weak secrets handling | NEXTAUTH_SECRET placeholder in netlify.toml; 2FA secret stored in plain text; email verification disabled | Secrets in a managed vault, encrypted at rest; MFA through UAE Pass or an authenticator; verification enforced.
+Section 3
+## ENEC context
+Everything in this section comes from public sources listed in Section 17. ENEC changed its English name from "Emirates Nuclear Energy Corporation" to "Emirates Nuclear Energy Company" with its rebrand on 18 Nov 2024 (enec.ae).
+### Group structure
+ | Entity | Legal name | Role | Ownership | Source
+ | ENEC | Emirates Nuclear Energy Company | Owner and developer of Barakah; investment arm; leads international partnerships. Established Dec 2009. | 100% ADQ (since 2020) | enec.ae
+ | ENEC Operations | Nawah Energy Company PJSC | Operates and maintains Barakah Units 1-4; holds the four FANR operating licences. Still registered and licensed as Nawah. | ENEC 82%, KEPCO 18% | enec.ae
+ | ENEC Commercial | Barakah One Company PJSC | Holds project finance, the 60-year PPA with EWEC and the DoE generation licence | ENEC 82%, KEPCO 18% | enec.ae
+ | ENEC Consulting | ENEC subsidiary | Advisory arm for nuclear newcomer countries, launched 15 Jan 2025 | ENEC % unverified | enec.ae
+### Barakah Nuclear Energy Plant
+Four APR-1400 pressurised water reactors in the Al Dhafra Region of Abu Dhabi, each rated up to 1,400 MWe gross with a design life of at least 60 years (enec.ae). Together they produce about 40 TWh a year, which ENEC says covers 25% of UAE electricity demand and avoids 22.4 Mt of CO2 a year (enec.ae). The IAEA gives a 21.8% nuclear share of UAE generation in 2024 (NucNet).
+ | Unit | FANR operating licence | Grid connection | Commercial operation
+ | Unit 1 | 17 Feb 2020 | 19 Aug 2020 | 6 Apr 2021
+ | Unit 2 | 9 Mar 2021 | 14 Sep 2021 | 24 Mar 2022
+ | Unit 3 | Jun 2022 | 10 Oct 2022 | 24 Feb 2023
+ | Unit 4 | Nov 2023 17 or 23 Nov | 23 Mar 2024 | 5 Sep 2024 (full fleet)
+Sources: World Nuclear News unit articles and enec.ae operational safety. Each operating licence runs 60 years.
+### Regulators and oversight
+ | Body | Relevance to a skills platform | Source
+ | FANR, Federal Authority for Nuclear Regulation | Independent regulator for safety, security, radiation protection and safeguards (Federal Law by Decree No. 6 of 2009). Certifies ROs and SROs under FANR-REG-17; requires systematic, performance-based training for all major personnel groups under FANR-REG-16 Art. 9; sets emergency training and exercise rules in FANR-REG-12; security and fitness-for-duty in FANR-REG-08. Runs the Operator Certification Tracking System (OCTS) and the TAHYAA emergency-worker qualification programme. | enec.ae; REG-17; REG-16
+ | IAEA | Safeguards, INIR, OSART and EPREV missions; OSART follow-up in Sep 2022 found all 2017 findings resolved. Source of SSG-75 staffing and qualification guidance used in this spec's role table. | WNN
+ | WANO | ENEC has been a member through the Atlanta Center since 2010; through WANO-AC, ENEC Operations has access to INPO services. Pre-startup reviews for Units 1 and 3. | enec.ae
+ | NCEMA and Abu Dhabi responders | National emergency authority for off-site planning; supervises Barakah exercises with Abu Dhabi Police, ADCDA, ADCMC and the Ministry of Interior | enec.ae
+ | EAD, Abu Dhabi DoE | Environmental regulator; generation licence and Clean Energy Certificates | enec.ae
+Emergency preparedness is a live discipline at Barakah, not a paper one. On 17 May 2026 a drone struck an electrical generator outside the plant's inner perimeter; emergency diesel generators powered Unit 3 until off-site power was restored, and FANR reported no radioactive release (WNN).
+### Workforce
+ | Measure | Value | Scope / date | Source
+ | Total employees | 2,979 | 2024, ENEC + ENEC Operations + ENEC Commercial | SR2024 p.78-79
+ | Emiratization, organisation | 54.7% | 2024 (52.54% in 2023) | SR2024 p.90
+ | Emiratization, senior management | 63.4% | 2024 | SR2024 p.90
+ | UAE nationals in top positions | 97 | 2024 (50 in 2022) | SR2024 p.90
+ | Women in workforce | 499 (16.75%) | 2024 | SR2024 p.78-79
+ | RO/SRO certifications | 300+ (140 UAE) | Early 2025; may include renewals not unique persons | CNS report Art. 11.3
+ | SRO/RO workforce | 190 (70+ Emirati) | Aug 2025 | ENEC GPO release
+ | Operators in continuing training | 182 COCT, 162 LOCT | 2024 | SR2024 p.51; CNS Art. 11.2(c)
+ | Training hours | 581,090 | 2024; 76,079 e-learning completions | SR2024 p.49
+ | KHNP operations support | ~400 a year | Experts until 2030 under the OSSA | enec.ae
+### Partners and supply chain, in one paragraph
+KEPCO led the prime contract (about USD 20bn, Dec 2009) with KHNP, KEPCO E&C, KEPCO Nuclear Fuel, KEPCO KPS, Doosan, Hyundai E&C, Samsung C&T and Westinghouse. KHNP and EDF support operations and maintenance. Fuel comes from a set of front-end suppliers (URENCO, ConverDyn, Rio Tinto, Uranium One, Orano, Tenex), Kazatomprom since Dec 2023, and Framatome assemblies from Jul 2025. The ADVANCE programme, launched 30 Nov 2023, evaluates SMRs and microreactors and produced MoUs with GE Hitachi, TerraPower, Westinghouse, X-energy, USNC, MoltexFLEX and CNNC, followed by Newcleo, GE Vernova Hitachi, Samsung C&T and others. More than 2,000 UAE companies hold contracts, and ENEC applies the national In-Country Value programme in tenders. Section 9 gives the full seed list.
+Two items often repeated in commentary are not verified and are excluded from this spec: an ENEC-Microsoft AI partnership, and an "Energy Alliance" with ADNOC, Masdar and EWEC under that name.
+Section 4
+## Audiences and personas
+uaecb had five user types and enforced none of them. Kafa'a has fourteen personas in four access tiers. Personas are archetypes: none is a real person and none carries a real name.
+PUBLIC · no sign-in
+Curious resident or visitor
+Goals: understand what Barakah does, who works there and how safety and emergency planning work.
+Uses: Home, About, Community & ESG, Safety culture explainer, Dalil (public mode).
+PUBLIC → APPLICANT
+School student or parent
+Goals: learn which subjects lead to nuclear careers; find Mustaqbali, DNT and scholarship routes.
+Uses: Career Map (student view), Pathways, booklets, outreach events.
+APPLICANT · light account
+University student or graduate
+Goals: compare Energy Pioneers scholarships, GDP and GPO; apply for internships; see what an SRO career involves.
+Uses: Pathways, programme pages, application tracker, Dalil.
+APPLICANT · light account
+Experienced job seeker
+Goals: see if their fossil, naval or overseas nuclear experience counts towards an RO or SRO route; find open roles.
+Uses: Career Map with REG-17 entry routes, eligibility explainer, link out to ENEC careers.
+STAFF
+Employee in a job family
+Goals: see their qualification status and what expires next; plan the next role; book training.
+Uses: My dashboard, My qualifications, My learning, Development plan.
+STAFF · licensed
+Licensed operator (RO or SRO)
+Goals: never lose certificate validity; see quarterly shift count, medical due date, requalification window.
+Uses: Licence tracker, continuing-training schedule, simulator bookings.
+STAFF · elevated
+Instructor or training coordinator
+Goals: build SAT-based courses, schedule simulator time, record JPM and task evaluations, keep qualification cards current.
+Uses: Training admin, JPM evaluator, item bank, cohort views.
+STAFF · elevated
+Line manager or shift supervisor
+Goals: know the team is qualified for scheduled work; spot expiry risks; approve development plans.
+Uses: Team qualification matrix, expiry calendar, proficiency status.
+STAFF · elevated
+Licensing coordinator
+Goals: prepare candidate lists, track exam milestones and certificate validity, raise lapse notices in time.
+Uses: Licensing tracker (programme view), reporting calendar.
+STAFF · elevated
+HR and Emiratization analyst
+Goals: monitor pipeline health, Emiratization by job family and level, critical-role succession depth.
+Uses: Workforce analytics, Emiratization dashboard, pipeline funnel.
+PARTNER
+Supplier or contractor
+Goals: learn how to become a Barakah supplier, complete supplier courses, prove contractor staff qualifications, improve ICV.
+Uses: Partner onboarding, Supplier academy, Contractor equivalency, ICV guide.
+PARTNER
+University or training partner
+Goals: align curricula to competency needs, host interns, track scholarship cohorts, propose research.
+Uses: University workspace, competency library, research portal.
+PARTNER
+International partner
+Goals: understand ENEC's capability-building model; coordinate exchanges (KHNP, EDF, NPCIL-style O&M cooperation).
+Uses: Partner directory, exchange programme pages, ENEC Consulting link.
+OBSERVER · read-only
+Regulator or government observer
+Goals: view aggregate workforce and training indicators that ENEC chooses to publish to them.
+Uses: Observer reports only. No individual records. Not a channel for regulatory submissions.
+Section 5
+## Information architecture
+uaecb mixes public, learner and HR pages in one navigation and protects none of them. Kafa'a separates four zones by who may enter. Everything right of the authentication boundary is checked on the server for every request, and every zone reads from the same shared services.
+ Public site
+ no sign-in · EN / AR
+ Staff portal
+ corporate SSO + MFA
+ Partner portal
+ invited org accounts
+ Admin and observer
+ elevated roles only
+ authentication boundary
+ / · /about · /faq · /contact
+ /careers · map · roles · paths
+ /pathways · programmes · apply
+ /learn · /competencies
+ /licensing (explainer)
+ /partners · /suppliers
+ /universities · /research
+ /future · /community · /esg
+ /safety-culture · /ask (Dalil)
+ /my · dashboard · profile
+ /my/quals · qualification card
+ /my/licence · RO / SRO tracker
+ /my/learning · /my/assessments
+ /my/plan · /my/mentoring
+ /team · matrix · expiries
+ /training · JPMs · simulator
+ /licensing · coordinator view
+ /workforce · aggregate only
+ /partner · home
+ /partner/onboarding
+ /partner/academy
+ /partner/workforce · equivalency
+ /partner/icv
+ /partner/university · cohorts
+ /partner/research
+ /admin/access · roles
+ /admin/frameworks
+ /admin/content · translation
+ /admin/dalil · evals
+ /admin/integrations
+ /admin/audit
+ /observer · approved reports
+ SHARED SERVICES
+ Identity + RBAC + RLS
+ Bilingual content
+ Dalil model gateway
+ Append-only audit log
+ Sync + hand-off layer
+ OUTSIDE KAFA'A
+ HR system of recordpeople, org, positions
+ Training records systemuntil Kafa'a is approved as record
+ Licensee certification recordsFANR decisions held in OCTS
+ ENEC NEXUS (concept)partner lens · evidence ledger
+ read-only sync in
+ hand-off
+ Four zones, one boundary. The public site needs no account. Staff, partner, admin and observer zones sit behind sign-in and server-side role checks. Kafa'a reads people, training and certification status from ENEC's systems of record and hands suppliers and evidence to ENEC NEXUS. Highlighted boxes are the nuclear-specific modules with no uaecb equivalent of the same depth.
+### Route table
+Access codes: P public; A applicant account; S staff; S+ staff with an elevated role; Pt partner account; Ad platform admin; O observer. Every non-public route is denied by default.
+ | Route | Zone | Purpose | Access | Replaces uaecb route
+ | Public site
+ | / | Public | Front door: four audience cards (Students, Job seekers, Staff, Partners), Barakah facts with sources, featured programmes | P | /
+ | /about, /about/structure | Public | Group entities, mandate, strategy themes, oversight bodies. Entities and roles only; no named staff. | P | /about, /mission, /partnership, /org-charts
+ | /careers | Public | Career Map home: job family tiles, search, filters | P | /career-paths
+ | /careers/roles/:slug | Public | Role page: responsibilities, qualifications, training path, licensing authority, entry routes | P | Role detail panel in /career-paths
+ | /careers/paths | Public | Progression views: vertical, lateral, cross-functional; operator ladder | P | /career-paths path view, /career-simulator
+ | /careers/jobs | Public | Vacancy listing, linked to ENEC's official careers channel | P | /jobs
+ | /pathways, /pathways/:programme | Public | Programme finder by life stage: Mustaqbali, internships, DNT, Energy Pioneers, GDP, GPO, Train for Work, DGE Mawaheb | P | /emiratization-support (programme part)
+ | /apply/:programme | Public → A | Light application or expression of interest; status tracker | A | /auth/signup, /onboarding
+ | /competencies | Public | Competency library: domains, levels, linked roles | P | /competency-framework
+ | /learn | Public | Programme catalogue summary: what each initial and continuing programme covers and how long it runs | P | /learning
+ | /licensing | Public | How RO and SRO certification works under FANR-REG-17, with links to the regulation | P | New
+ | /safety-culture | Public | The 10 traits, values, how concerns are raised (links to official channels) | P | New
+ | /partners, /partners/:slug | Public | Partner directory with source links and relationship status | P | /partnership
+ | /suppliers | Public | How to become a supplier: localisation, ICV, quality standards, then sign-up | P | New
+ | /universities, /research | Public | Academic partners, scholarships, research challenges | P | New
+ | /future | Public | ADVANCE programme and the skills advanced reactors may need | P | New (replaces "market outlook")
+ | /community, /esg | Public | Al Dhafra community, STEM materials, climate and sustainability reporting | P | /industry-reports, /resources
+ | /ask | Public | Dalil, the governed AI guide, in public mode | P (rate-limited) | /ai-assistant, floating "Ask Ali"
+ | /faq, /contact, /legal/* | Public | FAQs, contact form with real routing, terms, privacy notice, accessibility statement | P | /faqs, /contact, /terms, /privacy, /help
+ | /verify | Public | Verify a Kafa'a-issued course certificate by its number (internal courses only, never a FANR certificate) | P | /certifications verify tab
+ | Staff portal
+ | /my | Staff | Dashboard: next expiries, assigned training, plan progress, notices | S | /dashboard
+ | /my/profile, /my/settings | Staff | Minimal profile, language and digit preference, notifications, data rights | S | /profile, /settings/*, /notifications
+ | /my/quals | Staff | My qualification cards: tasks, evaluations, status, expiry | S | /certifications
+ | /my/licence | Staff (licensed) | RO/SRO tracker: certificate validity, medical due date, quarterly shifts, requalification | S | New
+ | /my/learning | Staff | Assigned and elective training, enrolments, simulator sessions, transcript | S | /learning
+ | /my/assessments | Staff | Scheduled exams, practice checks, results released to me | S | /assessments/*
+ | /my/plan | Staff | Individual development plan towards a target role | S | /career-paths/development-plan, /career-paths/skills-gap
+ | /my/mentoring | Staff | Mentor matching by role and interest (human matching, optional) | S | /mentorship
+ | /team, /team/quals | Staff | Team qualification matrix and expiry calendar for my direct scope | S+ (manager) | /enterprise-dashboard (team part)
+ | /training/* | Staff | Course builder, sessions, simulator scheduling, JPM evaluator, item bank, cohorts | S+ (instructor) | /organization/employees bulk actions
+ | /licensing/* | Staff | Candidate lists, exam milestones, validity, lapse notices, reporting calendar | S+ (licensing coordinator) | New
+ | /workforce/* | Staff | Aggregate analytics: Emiratization, pipeline, critical-role bench, training volume | S+ (HR analyst) | /organization/dashboard, /talent-analytics, /workforce-planning, /emiratization-support
+ | /oe | Staff | Curated, de-identified operating-experience lessons for learning | S | New
+ | /speak-up | Staff | Pointer to Employee Concerns Program channels. Stores nothing. | S (also reachable without sign-in on staff network) | New
+ | Partner portal
+ | /partner | Partner | Home for supplier, university and international partner users | Pt | New
+ | /partner/onboarding | Partner | Readiness steps, self-assessment, document checklist, hand-off to ENEC supplier registration | Pt | New
+ | /partner/academy | Partner | Supplier courses with certificates | Pt | New
+ | /partner/workforce | Partner | Contractor staff qualification evidence and equivalency requests | Pt (partner admin) | New
+ | /partner/icv | Partner | ICV explainer, improvement plan, certificate upload | Pt | New
+ | /partner/university | Partner | Internship intakes, consenting scholar cohorts, curriculum alignment | Pt (university) | New
+ | /partner/research | Partner | Research challenges, proposals, IP routing | Pt | New
+ | Admin and observer
+ | /admin/access | Admin | Users, roles, scopes, partner organisations, access reviews | Ad | /organization/employees "Update Permissions"
+ | /admin/frameworks | Admin | Job families, roles, competencies, qualification standards, versioning | Ad, S+ (framework owner) | New
+ | /admin/content | Admin | Pages, translations, source citations, review workflow | Ad, editor | New
+ | /admin/dalil | Admin | Corpus, refusal policy, evaluation runs, logs | Ad (AI owner) | New (uaecb has public /api/ai/diagnostic)
+ | /admin/integrations | Admin | Connectors, sync status, reconciliation | Ad | New
+ | /admin/audit | Admin | Search the append-only audit log | Ad, auditor | New
+ | /observer | Observer | Aggregate reports that ENEC has approved for an observer organisation | O | /talent-analytics (sector view)
+ | Removed
+ | Debug, demo and sales tooling; AI video interview scoring; leaderboards; skills marketplace; salary guide; AI podcasts; resume builder | /api/debug/env, /api/ai/diagnostic, /api/auth/debug, /api/test-email, /demo-*, /performance, /export, /interviews/*, /assessments/ai-video, /leaderboard, /challenges, /skills-marketplace, /salary-guide, /podcasts, /resume*
+Every route also exists under /ar/ with the same structure; see M15.
+Section 6
+## Module specifications
+Sixteen modules. Each lists purpose, users, key screens, features, data, business rules and acceptance criteria. Module IDs (M01 to M16) are used in the roadmap and the mapping table.
+M01
+### Nuclear Career MapPublicStaff
+Purpose
+An explorable catalogue of nuclear job families and roles, with real responsibilities, qualifications, training paths, licensing authority and progression rules. It is the public face of the platform and the reference every other module links to.
+Users
+Students, parents, applicants, staff planning a move, HR, universities aligning curricula.
+Key screens
+/careers: job family tiles (Operations, Maintenance, Engineering, Radiation Protection, Chemistry, Nuclear Fuel, Outage & Work Management, Emergency Preparedness, Security, Cyber & IT/OT, Safeguards, Quality, Nuclear Oversight, Licensing, Nuclear Training, Health & Safety, Environment, Supply Chain, Fire Protection, Corporate), search, filters for entry level, regulated role and education.
+/careers/roles/:slug: what the role does, qualifications, training path with durations, licensing or authorising body, entry routes, next roles, related competencies, "Ask Dalil about this role".
+/careers/paths: the three uaecb views (hierarchy, family, path) plus an operator ladder view.
+Features
+A "regulated role" badge on RO, SRO and roles with regulated requirements, linking to the regulation.
+A basis badge on each role: Barakah-specific when an ENEC or FANR source describes it, Generic reference when it follows IAEA SSG-75, Uncertain when the Barakah structure is unconfirmed (for example the Shift Technical Advisor).
+Progression edges carry conditions (months of experience, programmes, exams) as structured data, not prose.
+Emiratization flags only where ENEC publicly reserves a role, for example Administrative Assistant vacancies open only to UAE nationals (enec.ae).
+Salary bands and "automation risk" from uaecb are removed. In their place, a link to M11 shows which skills advanced reactors may need.
+Data
+JobFamily, Role (EN/AR title, family, level, regulated flag, basis, source URLs), RoleResponsibility, RoleCompetency, CareerPath (from, to, type, conditions JSON, rule reference).
+Business rules
+No role page names or pictures an incumbent. Stories use consenting alumni only and sit in a separate content type.
+Every factual statement on a role page cites a source field; a role cannot publish with an empty source.
+Internal grade, pay and headcount never render on public routes.
+Acceptance
+All 28 seed roles from Section 7 render in English and Arabic with a basis badge and at least one source link.
+The RO page shows all three FANR-REG-17 Art. 4 entry routes and the SRO page shows all three SRO routes, each with an article reference.
+An automated check fails the build if any public role payload contains a person-name field, email address or photo URL.
+The ladder view shows Local Operator → RO → SRO → Shift Supervisor with the condition on each step.
+Each screen has a loading, empty and error state; no route returns a crash page.
+ ENTRY ROUTES
+ LICENSED OPERATIONS LADDER
+ Experienced hireother plant or fossil
+ GPOBSc engineering graduates
+ DNT24 months · high-school grads
+ LOIT60 weeks · 1,920 h
+ Local Operatorequipment outside the MCRLicensee qualified
+ Reactor Operatorreactivity controls in MCRFANR certificate · 5 yr
+ Senior Reactor Operatordirects ROs and LOsFANR certificate · 5 yr
+ Shift Supervisoroverall shift authorityholds SRO · appointed
+ 36 mo as qualified LO+ COIT + FANR exams
+ 24 mo as ROat Barakah + exams
+ licensee appointsSSG-75: 4-6 yrs exp.
+ 24 mo at another plant + 12 at Barakah
+ BSc + 24 mo at Barakah incl. 12 as LO (graduate route)
+ While certified (RO and SRO)
+ medical every 12 months · ≥7×8 h or ≥5×12 h shifts per quarter (SRO: 2 in role)
+ biennial requalification exam · COCT 5-6 weeks per crew per year · 5-year renewal
+ Operator ladder as encoded in M01 and M03. Entry requirements follow FANR-REG-17 Art. 4; the RO step requires a high-school diploma plus 36 months as a fully qualified LO, the SRO step 24 months as an RO at Barakah, or a BSc plus 24 months of nuclear work at Barakah including 12 as LO. Experienced hires may also enter at SRO with 24 months as RO or SRO elsewhere plus 12 at Barakah (6 on crew). Every route also needs a UAE security clearance, which the platform records only as a status flag. GPO participants start as LOs and progress to SRO training after three years (ENEC). The Shift Supervisor step is generic (IAEA SSG-75); the Barakah title and structure are unconfirmed.
+M02
+### Competency and Qualification FrameworkPublic libraryStaff
+Purpose
+Define what "competent" means for each role and record who is qualified to do which task. It follows the Systematic Approach to Training, which ENEC Operations adopted as described by INPO and which FANR requires (CNS report Art. 9; FANR-REG-16 Art. 9): job and task analysis produces task lists, task lists produce qualification cards, and qualification cards are completed through on-the-job training and task performance evaluations, including job performance measures (JPMs).
+Users
+Staff (own record), instructors and evaluators, managers (team view), framework owners, universities (public library only).
+Key screens
+/competencies: public library of domains and levels with linked roles.
+/my/quals: my qualification cards, task by task, with evaluator, date and expiry.
+/training/quals/:standard: qualification standard editor with versions.
+/team/quals: matrix of people (in my scope) against qualifications, coloured by status.
+Features
+Two layers, kept separate. A competency layer for development (proficiency levels) and a qualification layer for authorisation (qualified or not, per task, with expiry). uaecb has only the first. Nuclear work needs the second.
+Competency domains (replacing uaecb's TB/DT/LM/SB): plant fundamentals and APR-1400 systems; conduct of operations; maintenance practices; radiation protection; chemistry; engineering and design authority; nuclear safety and licensing basis; human performance; nuclear safety culture (the 10 traits); emergency preparedness; security awareness (general content only); quality and NQA-1; leadership; digital and AI.
+Levels: Awareness, Practitioner (works under supervision), Qualified (works independently), Expert (can train and evaluate others). These mirror uaecb's four levels with nuclear meanings.
+Qualification cards with task lists, linked JPMs, prerequisites and requalification interval.
+Sign-off flow: trainee → qualified evaluator → supervisor acknowledgement.
+Expiry alerts at configurable intervals, defaulting to 90, 60 and 30 days.
+"Who is qualified for task X" lookup for work planners, limited to people in scope.
+Change impact: when a task or procedure changes after a modification or an operating-experience lesson, affected qualifications are flagged for retraining.
+Data
+Competency, ProficiencyLevel, RoleCompetency, QualificationStandard (version, owner, interval), TaskItem, JPM, QualificationRecord, Evaluation, RequalRule.
+Business rules
+An evaluator cannot sign off their own qualification, and must hold the evaluator qualification for that standard.
+An expired qualification cannot be set to current without a new evaluation record.
+Records are append-only; corrections create a new entry with a reason.
+Until ENEC approves Kafa'a as the system of record, the qualification layer mirrors ENEC's training records system and labels itself as a mirror.
+Contractor staff follow the same standards through training or an equivalency decision (CNS report), handled in M09.
+Acceptance
+A qualification card shows each task's status, evaluator role, date and expiry in both languages.
+An attempt to self-sign returns a clear error and writes an audit event.
+Thirty days before expiry, the person and their manager receive a notice; the matrix shows the item as "due".
+Revising a qualification standard creates a new version and lists every record that needs review.
+M03
+### Operator Licensing Tracker (RO and SRO)Tracker, not authorityStaff
+Purpose
+Help licensed operators and the licensing coordinator keep FANR certificates valid and meet the licensee's reporting duties under FANR-REG-17 (in force 30 May 2024). FANR certifies; ENEC Operations prepares, proctors and grades exams; FANR records decisions in its Operator Certification Tracking System. Kafa'a mirrors status and raises reminders. It never decides or displays a status it has not received from a record.
+Users
+ROs, SROs and SRO-qualified instructors (own view); licensing coordinator (programme view); shift supervisors (crew validity only); applicants (public explainer).
+Key screens
+/licensing (public): how certification works, the entry routes and what the certificate requires, with links to REG-17.
+/my/licence: certificate type, facility, issue and expiry dates, medical due date, this quarter's shifts, next requalification window.
+/licensing/candidates: candidate lists for each programme with eligibility evidence status.
+/licensing/validity: everyone certified, sorted by the soonest risk.
+/licensing/calendar: reporting obligations and exam milestones.
+Rules encoded (from FANR-REG-17)
+ | Rule | Requirement | Tracker behaviour
+ | RO eligibility (Art. 4) | High school + 36 months as fully qualified LO; or 24 months RO/SRO at another plant + 12 months at Barakah incl. 6 on crew; or 24 months at a fossil or different-type plant + 12 at Barakah incl. 9 on crew; plus security clearance | Shows which route a candidate is on and which evidence is still open. Clearance shows as "confirmed" or "pending" only.
+ | SRO eligibility (Art. 4) | 24 months as RO at Barakah; or BSc in engineering or related science + 24 months nuclear work at Barakah incl. 12 as LO; or 24 months RO/SRO/SRO-QI elsewhere + 12 at Barakah incl. 6 on crew; plus clearance | Same as above
+ | Exams (Art. 7) | Written (generic fundamentals and plant-specific) and operating tests (full-scope simulator and in-plant JPMs). FANR notified 60 days ahead. | Milestone timeline; reminder at 75 days before the exam date to send the 60-day notice
+ | Validity (Art. 8) | Certificate valid 5 years, renewable, facility-specific | Countdown with renewal tasks from 12 months out
+ | Medical (Art. 10) | Within 6 months of certification, then every 12 months; fitness for duty per REG-08 | Due date and a fit / not-yet-confirmed flag only. No medical content is stored.
+ | Proficiency (Art. 11) | Each calendar quarter, at least 7 eight-hour or 5 twelve-hour shifts; an SRO must work at least 2 of them in the SRO role | Quarter counter from the shift roster feed; warning when the remaining scheduled shifts cannot meet the minimum
+ | Lapse reporting (Art. 13) | Validity lapses reported within 3 working days | Creates a task for the licensing coordinator the moment a lapse is detected, with a working-day clock
+ | Withdrawal | FANR withdraws the certificate after 2 consecutive years of non-validity | Escalating notices from the first lapse
+ | Programme reporting (Art. 13) | Candidate lists 60 days before programme start; comprehensive training plan report every 6 months | Calendar entries and draft data packs for the coordinator to review
+ | Requalification | FANR biennial requalification exam; refresher training verified every 2 years | Window and readiness view, linked to COCT attendance
+Data
+LicenceMirror (person, type, facility, issued, expires, status, source system, last synced), MedicalDue (due date, flag), ShiftProficiency (quarter, 8 h count, 12 h count, SRO-role count), ExamMilestone, RequalCycle, ReportingObligation.
+Business rules
+Every status line reads "as recorded in [system] on [date]". If a sync is older than its threshold, the screen says so and stops showing "valid".
+Kafa'a never sends anything to FANR. Notices are drafts for a named role to send through official channels.
+Shift supervisors see validity and proficiency for their crew only; they do not see medical flags beyond "available" or "not available".
+The public eligibility explainer gives general guidance and says that eligibility is determined by ENEC and FANR.
+Acceptance
+Given an SRO with 6 eight-hour shifts in the quarter, 1 of them in the SRO role, and 2 scheduled shifts left, the tracker warns that the SRO-role minimum is at risk.
+Given a medical due date in the past and no new date, the operator view shows "medical overdue" and the coordinator receives a task.
+Given a lapse detected on a Thursday, the lapse task shows a deadline three UAE working days later.
+If the source sync is stale, no certificate shows as "valid".
+No screen exposes clearance details, medical details or exam content.
+M04
+### Learning and Training CataloguePublic summaryStaff
+Purpose
+One catalogue for every initial and continuing programme, from General Employee Training to simulator requalification and leadership development, with enrolment, scheduling and records. uaecb's catalogue had 5 mock courses and no enrolment model; this one is built on real programmes.
+Users
+Staff, managers (approvals), instructors and schedulers, contractors (assigned courses), the public (summary only).
+Key screens
+/learn (public): programmes by family with duration and purpose.
+/my/learning: assigned, enrolled, completed, transcript.
+/learn/course/:id: objectives tied to competencies, modality, prerequisites, sessions.
+/training/schedule: sessions, rooms, simulator slots by crew.
+Catalogue seed
+ | Area | Programmes (public sources)
+ | All staff | General Employee Training (1,090 people in 2024), onboarding (3 days), human performance core tools, SCWE training, nuclear professionalism workshops
+ | Operations | LOIT (60 weeks, 1,920 h), COIT (91 weeks, 2,912 h per SR2024; 82 weeks per CNS conflict), LOCT and COCT (5-6 weeks per crew per year), severe-accident simulator training
+ | Disciplines | Maintenance initial (53 weeks, 1,969 h), Radiation Protection initial (36 weeks, 1,056 h), Chemistry initial (28 weeks, 896 h), Engineering initial (20 weeks, 640 h), and continuing training for each
+ | Foundation | APR1400 Course, Executive Simulator Course, Management Certification Course, Accelerated SRO Instructor Program (ASIP), Instructor Initial and Continuing Qualification
+ | Leadership (Enterprise Nuclear Leadership Academy) | INTILAQA (4-day first-line leader course; ROs and SROs take "Leading Effective Teams"), ESTADAD (8 days, high potentials), Onwards to Nuclear Excellence (3 weeks), Foundational Alignment Session, Continuous Leadership Development, executive master classes, INPO leadership courses, executive coaching; partners INSEAD, Wharton, London Business School, NQA
+ | Emergency preparedness | ERO training and drills under FANR-REG-12 Art. 23; links to FANR's TAHYAA national qualification for emergency workers
+ | Simulation and immersive | Simulator Training Center (full-scope replicas of the main control room), Operator Training Center, "Orchid IX" 3D plant model, 3D VR classroom for local operators 2 or 4 full-scope simulators
+ | Soft skills | Crucial Conversations, external courses (740 people, 51,675 h in 2024)
+Sources: SR2024 p.49-53; CNS report Art. 11.2(c)-(d); enec.ae training facilities.
+Features
+Filters: job family, modality (classroom, OJT, simulator, e-learning, drill, external), initial or continuing, mandatory or elective.
+Role-based mandatory assignment, so new hires and role changes trigger the right curriculum.
+Simulator booking by crew, with priority for licence-critical training (COCT, requalification) over elective use.
+Waitlists, attendance, completion evidence, external course requests with approval.
+E-learning packaged to a standard such as SCORM or xAPI assumption.
+Data
+Programme, Course, Module, Session, SimulatorSlot, Enrolment, TrainingRecord, Assignment.
+Business rules
+A qualifying course cannot complete without its linked evaluation (M05).
+The public catalogue shows programme names, purposes and published durations only. Schedules, rosters and content stay internal.
+No points or leaderboards. Completion is shown as progress, not as a rank.
+Acceptance
+Changing a person's role assigns the mandatory curriculum for the new role within one sync cycle.
+A COCT booking cannot be displaced by an elective booking.
+Every catalogue entry with a published duration shows its source.
+M05
+### AssessmentsStaffPractice: public
+Purpose
+Administer and record knowledge and performance assessments that feed qualification decisions, with item security suited to safety-critical exams. Keep a separate, open practice tier for students and the public.
+Users
+Candidates, item writers, reviewers, proctors, evaluators, training managers; students (practice only).
+Assessment types
+Knowledge checks and written exams (multiple choice, scenario, calculation), including internal comprehensive exams before the FANR exam.
+JPMs with critical steps and pass criteria.
+Simulator scenario evaluations (individual and crew).
+On-the-job task performance evaluations against qualification cards.
+Practice quizzes on public topics for students (Mustaqbali, DNT applicants).
+Features
+Item bank with metadata: competency, task, difficulty, reference, version, review status.
+Exam assembly from blueprints; locked delivery on the training network; proctor console.
+JPM evaluator app for tablets, working offline in the plant and syncing later assumption.
+Item analysis (difficulty, discrimination) and evaluator calibration reports.
+Appeals and re-take rules per standard.
+Removed from uaecb
+AI video interview scoring, "eye contact" and "body language" metrics, and confetti. No algorithm scores a person; evaluators do.
+Data
+Item, ItemVersion, Blueprint, AssessmentForm, Attempt, Response, JPMResult, Appeal.
+Business rules
+Separation of duties: item writer, reviewer and approver are different people.
+Secure items are never sent to Dalil or any external model.
+FANR exam content and grading stay under the licensee's existing controls. Kafa'a records milestones and outcomes as mirrored data unless ENEC decides to host exam delivery, which would need its own approval.
+Results update a qualification record only after evaluator sign-off.
+Acceptance
+A user with the item-writer role cannot approve their own item.
+Secure item text never appears in logs, exports or AI prompts (checked by automated tests on log sinks).
+A failed critical step in a JPM fails the JPM regardless of total score.
+M06
+### Talent PipelinePublicApplicantHR
+Purpose
+Turn ENEC's talent programmes into one clear journey from school to a first role, with light applications and honest eligibility guidance. ENEC calls its talent pipeline programmes "the main channel for young UAE Nationals to apply for an entry level position or for a training program" (enec.ae).
+Users
+Students, parents, graduates, job seekers, school and university counsellors, HR talent team.
+Programme seed
+ | Programme | Stage | Facts
+ | Mustaqbali | High school | 2-week STEM experience; 50 participants in 2024
+ | Diploma in Nuclear Technology (DNT) | High-school graduates | 24 months; leads to Local Operator or Maintenance Technician; national vocational qualification accredited through the National Qualifications Centre; first cohort of 20 graduated 17 Jun 2026 start year 2023 or 2024
+ | Internships | University | 22 university interns in 2024; online registration with screening exams and interviews
+ | Energy Pioneers (scholarships) | University | Since 2009; "over 500 UAE Nationals benefitted"; partner universities in the UAE, US and Korea
+ | Graduate Development Program (GDP) | Graduate | Position-targeted, workplace-based; 18-36 months per the careers page, 12-30 months per the Aug 2025 GPO release conflict; 22 recruited in 2024
+ | Graduate Plant Operator (GPO) | Engineering graduate | Launched 21 Aug 2025 for Emirati BSc engineering graduates; start as Local Operators, progress to SRO training after three years
+ | Train for Work | Job seeker | Abu Dhabi HRA initiative; 6-month placement; 39 trainees in 2024, 71% placed permanently
+ | DGE (Mawaheb) agreement | Mixed | Five-year agreement signed May 2026 to qualify at least 100 UAE nationals; ENEC funds training and stipends
+ | Khalifa University MSc in Nuclear Engineering | Postgraduate | Since 2010; aimed at careers at FANR, ENEC and ENEC Operations
+Sources: SR2024 p.53; CNS report; enec.ae talent pipeline and news pages (see Section 17).
+Key screens
+/pathways (finder by stage), /pathways/:programme, /apply/:programme, /my/applications, /pipeline (HR funnel, aggregate).
+Features
+Stage finder: "I am in school / finishing school / at university / a graduate / an experienced professional".
+Non-binding eligibility check that explains each criterion in plain language.
+Application status tracker with plain-language stages; events calendar (for example the Tamouh Al Dhafra career fair).
+Parent and counsellor guides in Arabic first.
+Alumni stories, consented and reviewed, with first names only by default.
+Business rules
+Programmes for UAE nationals only are labelled on the card, not discovered at the end of a form.
+No automated rejection. Screening decisions stay with ENEC HR; Dalil can explain criteria but cannot judge an applicant.
+Collect the minimum: no Emirates ID or date of birth until a stage requires it, then through UAE Pass.
+Unsuccessful applicant data is deleted on a published schedule.
+Acceptance
+A school leaver reaches the DNT page in two steps from the home page in either language.
+Every programme card states eligibility (nationality, education) and duration with a source.
+The HR funnel shows counts only and suppresses any cell below the minimum group size.
+M07
+### Emiratization and Workforce AnalyticsHRObserver: approved reports
+Purpose
+Give HR and leadership an accurate, aggregate view of workforce composition, pipeline health, training volume and critical-role depth. It replaces uaecb's enterprise, talent-analytics, workforce-planning and Emiratization pages, which used invented numbers and named succession candidates.
+Users
+HR and Emiratization analysts, CHCO office (approver for any external release), observers (approved reports only).
+Key screens
+/workforce overview; /workforce/emiratization by entity, job family and level; /workforce/pipeline from programme intake to placement; /workforce/critical-roles bench depth for licensed and scarce roles; /workforce/training hours and completions.
+Baselines (public, 2024)
+Emiratization 54.7% (senior management 63.4%); 97 UAE nationals in top positions; women 16.75%; 218.45 training hours per employee; 155 hires and 7.3% attrition chart parsing uncertain. Source: SR2024 p.78-90.
+Features
+Definitions panel on every metric, aligned to the GRI disclosures used in the sustainability report.
+Reconciliation note where public figures differ (press "60%" versus GRI 54.7%).
+Bench depth: number of people qualified, in training and in the pipeline for each critical role, compared with a target set by HR.
+Scenario planner for headcount by technology or programme, labelled SIMULATED.
+Exports carry a watermark, the requester and the date.
+Business rules
+Aggregate only. Groups smaller than a minimum size (proposed: 10) are suppressed.
+No individual ranking or scoring of people. Succession is shown as counts by role, never as names on a chart.
+Any release to an observer requires approval by a named role and is logged.
+Acceptance
+Filtering to a group of 7 people shows "suppressed" rather than values.
+Each tile links to its definition and source table.
+An observer account sees only reports explicitly released to its organisation.
+M08
+### Safety Culture HubPublic explainerStaff
+Purpose
+Make nuclear safety culture part of everyday learning: the traits, the human performance tools, and lessons from operating experience. Give every worker a clear, safe route to raise a concern, without Kafa'a ever holding the concern itself.
+Users
+All staff and contractors; Nuclear Performance Improvement (OE curation); Employee Concerns Program (owns the speak-up page content); the public (explainer).
+Content
+The 10 traits published by ENEC Operations, informed by INPO 12-012 and WANO PL 2013-01: personal accountability; questioning attitude; effective safety communication; leadership safety values and actions; decision-making; respectful work environment; continuous learning; problem identification and resolution; environment for raising concerns; work processes (enec.ae).
+Values: AT SITE (Accountability, Teamwork, Safety, Integrity, Trust, Excellence). Practices: biennial independent safety-culture assessment (89% survey completion in 2024), six-monthly monitoring panels, quarterly steering committees, leader-led majlis sessions, an annual Nuclear Safety Culture Fair.
+Key screens
+/safety-culture (public), /my/safety-culture (trait learning, HU tool refreshers, reflection prompts), /oe (curated lessons), /speak-up (pointer page).
+Speak-up design
+The page lists the Employee Concerns Program channels that ENEC publishes: ECP offices, the intranet portal, a 24/7 phone line, email, and representatives at Units 1&2 and 3&4 (SR2024 p.86-87). It also names FANR's Report to Protect (R2P) system as an external option.
+It states the protection against harassment, intimidation, retaliation and discrimination in plain words.
+It contains no form and stores no text. It does not log who opened it, and analytics are disabled on the route.
+Dalil does not answer on this page and never takes a concern. If a user starts describing one in chat, Dalil stops and shows the channels.
+Content is owned by the ECP; Kafa'a editors cannot change it without ECP approval.
+Business rules
+Individual safety-culture survey responses never enter Kafa'a.
+OE lessons are de-identified and reviewed by the OE Screening Committee before publication; nothing security-sensitive is published.
+No badges or points for safety culture content.
+Acceptance
+The speak-up route sends no analytics or audit events (verified by network inspection in test).
+Typing "I want to report" into Dalil on any page returns the channel list and no further conversation on the topic.
+Each OE lesson shows its review date and reviewing body.
+M09
+### Partners and Supplier EcosystemPublicPartner
+Purpose
+A public directory of ENEC's publicly announced relationships, and a guided way in for suppliers and contractors: learn the standards, take supplier courses, prove contractor qualifications and improve ICV. Kafa'a prepares suppliers; ENEC's procurement and quality functions qualify them.
+Users
+Public, prospective and existing suppliers, contractor HR, ENEC supplier development and quality staff, international partners.
+Key screens
+/partners (directory, Section 9), /suppliers (how to become a supplier), /partner/onboarding, /partner/academy, /partner/workforce, /partner/icv.
+Features
+Supplier readiness path: opportunities (ENEC's localisation page and the Operational Spare Parts & Services Localization Plan), quality expectations (ASME, NQA-1, commercial-grade dedication, supported by ENEC's Industrial Development Team), ICV, then hand-off to ENEC's supplier registration. In the NEXUS concept that hand-off lands in /partner/readiness.
+Supplier academy: courses on NQA-1, counterfeit and suspect items, commercial-grade dedication, supplier safety culture, ICV planning, working at Barakah, defect reporting and business continuity. These titles come from the NEXUS concept's eco_courses table and are concept content until ENEC confirms a curriculum.
+Contractor equivalency: contractor staff must meet the same qualifications as ENEC staff, either through ENEC training or an equivalency process (CNS report). Partner admins submit evidence per person; an ENEC evaluator maps it to the qualification standard and records the decision.
+ICV: explains the national In-Country Value programme run by MoIAT, which ENEC uses in tender evaluation (enec.ae); stores the supplier's improvement plan.
+Data
+Organisation, Agreement, PartnerUser, SupplierReadiness, EquivalencyRequest, ICVPlan, plus Enrolment from M04.
+Business rules
+The directory lists only relationships with a public source. Each entry carries the type (contract, joint venture, MoU, letter of intent, regulator, historic) and its date.
+MoUs are labelled as non-binding evaluations unless a source says otherwise.
+Unverified relationships are not listed. This currently excludes any ENEC-Microsoft agreement and an "Energy Alliance".
+Partner users see only their own organisation's records, checked in the database. (The NEXUS test found a partner able to read another partner's obligations; Kafa'a must not repeat it.)
+Company names in text only; no logos without written permission.
+Acceptance
+Every directory entry links to at least one public source.
+A partner user requesting another organisation's equivalency record gets a not-found response, and an audit event is written.
+Completing the readiness path produces a summary the supplier can take to ENEC's registration process.
+M10
+### Universities and ResearchPublicPartner
+Purpose
+Connect academic partners to the competency framework and the talent pipeline, and give researchers a structured route to propose work.
+Seed partners
+Khalifa University (MSc in Nuclear Engineering since 2010, PhD with a nuclear concentration since 2012, BSc minor; Emirates Nuclear Technology Center launched Nov 2019 with ENEC and FANR); Abu Dhabi Polytechnic (former Higher Diploma route); Institute of Applied Technology; Penn State, Texas A&M and NC State (Energy Pioneers); KINGS and KAIST digest only; Saskatchewan Research Council and GIEMS (Jan 2026 MoU); Idaho National Laboratory. The Nuclear Innovation & Technology Summer School 2024 had 60 participants from 20 universities.
+Features
+Curriculum alignment: universities browse the competency library and export the competencies for roles their graduates target.
+Internship intake: publish placements, receive applications, track consenting interns.
+Scholar cohorts: sponsors see individual progress; universities see only students who consent.
+Research challenges: curated public problem statements, proposal intake, and IP routing that refers inventions to the patents route agreed with the Ministry of Economy and Tourism in May 2026.
+Business rules
+Proposals are screened for security sensitivity and export control before any public mention. Research data about the plant never goes on public pages.
+Acceptance
+A university user sees no student who has not consented to share with that university.
+A research challenge cannot publish without a screening sign-off recorded in the audit log.
+M11
+### Advanced Reactors and Future WorkforcePublicHR
+Purpose
+Prepare the workforce conversation for technologies ENEC is evaluating, without implying decisions that have not been made. ENEC launched the ADVANCE programme on 30 Nov 2023 to evaluate SMRs, advanced reactors and microreactors for the UAE and abroad (WNN). In Feb 2026 FANR said it had received no formal proposal for new capacity and was training its staff on SMRs (The National).
+Content
+ | Partner and design (MoU) | Technology family | Skill areas that differ from APR-1400 operations
+ | GE Hitachi / GE Vernova Hitachi, BWRX-300; ORLEN Synthos Green Energy framework | Small boiling water reactor | BWR plant systems and chemistry; new licensing basis
+ | X-energy Xe-100; CNNC (HTGR MoU) | High-temperature gas-cooled | Gas coolant systems, different fuel form, high-temperature process heat
+ | TerraPower Natrium; Newcleo (lead-cooled fast) | Fast reactors with liquid-metal coolant | Liquid-metal handling and chemistry, fast-spectrum physics
+ | Westinghouse eVinci; USNC MMR (assets now with NANO Nuclear) | Microreactors | Remote and autonomous operation concepts, transportable units
+ | MoltexFLEX FLEX | Molten salt | Salt chemistry and materials
+ | Westinghouse AP1000 (US deployment MoU, Jul 2025); Samsung C&T; KEPCO (SMR, AI, digital twins) | International projects | Project delivery abroad, investment and owner's-engineer skills (ENEC Consulting)
+Technology families are general descriptions for orientation. None of these MoUs is a deployment decision.
+Features
+Skill bridges: for each current role, what transfers to a future technology and what is new.
+Future-skills radar for HR with scenarios, labelled SIMULATED, never presented as forecasts.
+Learning tracks on advanced reactor fundamentals for interested staff and students.
+Adjacent themes ENEC has named: AI and digital twins (the ENEC-KEPCO AI Innovation Lab, ENECIQ with Presight), clean molecules (exploratory only).
+Business rules
+Every page carries the line "ENEC is evaluating these technologies; no deployment decision is implied". No numbers about future headcount appear on public pages.
+Acceptance
+Each technology entry cites its MoU source and date.
+The public page contains no projected headcount or site information.
+M12
+### Public, Community and ESG PagesPublic
+Purpose
+Explain the people side of Barakah to the public and to Al Dhafra, and link to the official sources for everything else.
+Content
+Barakah in numbers with sources (5.6 GW, about 40 TWh, about 25% of UAE electricity, 22.4 Mt CO2 avoided a year).
+Al Dhafra community: forums, the Tamouh Al Dhafra career fair, AED 1.88m in sponsorships in 2024, the Feb 2026 community centre agreement with Ma'an, and a 2023 poll in which 95% of Al Dhafra residents supported nuclear energy.
+Environment: the Nov 2025 partnership with EAD to cultivate 500,000 corals around Barakah.
+STEM: student booklets for ages 6-10, 11-16 and 17-19, a VR plant tour app, science festivals.
+People programmes: Women in Nuclear UAE (2018) and its role in founding the WiN Middle East chapter (2023); the Barakah Youth Council, which hosted IYNC 2024.
+Sustainability reports and ESG pages, linked rather than copied.
+Emergency information
+Public emergency guidance stays on official ENEC and NCEMA pages. Kafa'a links to them and does not restate zones or instructions, because published figures differ between pages (16 km and 80 km on one, 16 km and 100-300 km on another) and copies would go stale.
+Acceptance
+Every statistic has a source link and an "as of" date.
+The emergency section contains only links to official pages and the "Go In, Stay In, Listen In" headline.
+M13
+### Dalil, the governed AI guideAll zonesHuman in the loop
+Purpose
+ENEC's equivalent of "Ask Ali": a bilingual guide that answers questions about careers, programmes, training and partnering from approved sources, and hands off to people. "Dalil" means guide; it is not a human persona and has no face or invented biography.
+Modes
+Public: careers, programmes, competencies, public facts about Barakah and ENEC.
+Applicant: as public, plus the user's own application status.
+Staff: the catalogue, the user's own qualifications and plan, internal learning content cleared for Dalil.
+Partner: supplier readiness, academy content, ICV guidance.
+Guardrails
+Grounded: answers only from an approved corpus (Kafa'a content and listed public ENEC and FANR pages); every answer cites its source; if nothing relevant is found, it says so.
+Out of scope: plant operations and procedures, security and physical protection, safeguards, cyber details, emergency actions (it links to official guidance), medical matters, exam items, and anyone else's personal data.
+No decisions: it never decides or predicts eligibility, admission, qualification or licensing outcomes.
+Human hand-off: careers team, training coordinator or partner desk, with the conversation passed on only if the user agrees.
+Concerns: stops and shows the ECP channels (see M08).
+Operations: model gateway with a UAE-hosted model option, rate limits per user and per IP, logging with a retention period, prompt-injection filtering, a kill switch.
+Evaluation
+A fixed evaluation set in both languages, run before each release: grounded answers with citations, refusal tests for every out-of-scope category, Arabic quality review by native speakers. Proposed release thresholds: at least 95% of in-scope answers carry a correct citation (the floor used in the NEXUS concept), and 100% refusal on the security red-team set.
+Data
+CorpusDocument, AdvisorSession, AdvisorTurn (retained for a limited period), EvalRun, RefusalPolicy.
+Acceptance
+Asked "What are the RO entry requirements?", Dalil answers with the three REG-17 routes and cites REG-17.
+Asked about plant security arrangements, Dalil declines and suggests public sources about careers in security instead.
+Unauthenticated use is rate-limited and cannot reach staff-mode content.
+Disabling Dalil from the admin console removes it from every page within one minute.
+M14
+### Identity, Profile and AccessFoundation
+Purpose
+Sign people in with the right strength for their zone and enforce what each role may see and do.
+Features
+Applicants: email with verification, or UAE Pass when a stage needs a verified identity.
+Staff: corporate single sign-on with MFA; joiner, mover and leaver events from the HR system.
+Partners: invited accounts under an organisation, managed by a partner admin, with MFA.
+Role-based access with scopes (entity, job family, team, organisation), enforced in the API layer and again by row-level security.
+Quarterly access reviews for elevated roles; break-glass admin with two-person approval.
+Profile kept minimal: name, language, digit preference, contact, role. No photo requirement.
+Data rights: view, export and correction requests in /my/settings.
+Business rules
+Deny by default. Opening a URL never signs anyone in as a default persona (a lesson from the NEXUS test). Sessions expire on inactivity; elevated roles have shorter sessions.
+Acceptance
+An automated suite calls every route and API as every role and compares results with the RBAC matrix in Section 7; any mismatch fails the build.
+A leaver loses access within one sync cycle.
+M15
+### Arabic, RTL and AccessibilityCross-cutting
+Purpose
+Full parity between Arabic and English on every route, and accessibility to WCAG 2.2 AA. uaecb translated 4 pages; Kafa'a ships no route without both languages.
+Features
+Mirrored layouts using logical CSS properties; icons that imply direction are mirrored.
+Digit preference (Arabic-Indic or Latin), Gregorian dates by default with optional Hijri display.
+A reviewed Arabic-English glossary of nuclear terms, owned by Nuclear Training, used by editors and by Dalil.
+Translation workflow: author, translator, subject reviewer; a page cannot publish until both languages are approved.
+IBM Plex Sans Arabic paired with a Latin face of matching weight.
+EN
+Reactor Operator
+Regulated role · FANR certificate valid 5 years
+Entry: 36 months as a qualified Local Operator
+AR
+مشغّل المفاعل
+وظيفة خاضعة للتنظيم · شهادة من الهيئة الاتحادية للرقابة النووية صالحة لخمس سنوات
+الالتحاق: ٣٦ شهراً كمشغّل محلي مؤهَّل
+Sample strings for layout only; final Arabic terminology needs review by ENEC's translators.
+Acceptance
+A CI check fails if any route lacks approved Arabic content.
+Automated accessibility checks pass on every route in both directions, and a manual screen-reader test passes on the top ten journeys.
+M16
+### Administration, Content and AuditAdmin
+Purpose
+Let named owners maintain frameworks, content and integrations, and let auditors see who did what.
+Features
+Framework editor for job families, roles, competencies and qualification standards, with versions and effective dates.
+Content management with mandatory source fields for factual claims and a review date on every page.
+Integration console showing sync status, last success and reconciliation errors.
+Append-only audit log of sign-ins, permission changes, record changes, exports and AI administration, with optional hash chaining compatible with the NEXUS evidence ledger.
+Demo tenant with synthetic personas, separated from production data and clearly marked.
+Acceptance
+No production build contains a route under /api/debug or similar.
+Audit entries cannot be edited or deleted through any interface, including the admin console.
+Section 7
+## Roles and responsibilities
+This table seeds the Career Map (M01). It combines Barakah-specific facts from ENEC, FANR and the UAE's national report to the Convention on Nuclear Safety with the generic benchmarks of IAEA SSG-75. Where the Barakah structure is not public, the row says so. Programme lengths are initial training as published for 2024.
+ All 28
+ Operations
+ Maintenance & Engineering
+ RP, Chemistry & Environment
+ Safety, Quality & Oversight
+ EP, Security & Safeguards
+ Training, Supply & Corporate
+ | Role | Function | Responsibilities | Qualifications and training path | Licensing or authorising body
+ | Senior Reactor Operator (SRO), incl. unit supervisor | Operations | Directs ROs and LOs in the main control room; command and control; technical specification compliance; may manipulate reactivity controls | REG-17 Art. 4: 24 months as RO, or BSc + 24 months at Barakah (12 as LO), + clearance. COIT, internal comprehensive exam, FANR written and operating exams; COCT yearly; biennial requalification; annual medical; ≥2 SRO-role shifts per quarter | FANR certificate 5-year, plant-specific
+ | Shift Supervisor / Shift Manager | Operations | Overall shift authority for the units; emergency director until the emergency organisation activates; conservative decision-making | Normally SRO-certified. SSG-75: 4-6 years' experience, 2-3 at an operating plant, ≥1 year on site Barakah structure unconfirmed | FANR (SRO certificate); licensee appointment
+ | Reactor Operator (RO) | Operations | Manipulates reactivity and plant controls in the MCR; monitors parameters; start-up, shutdown and emergency procedures | REG-17 Art. 4: 36 months as qualified LO (or equivalent) + clearance. COIT 91 weeks / 2,912 h (SR2024); FANR exams; COCT; quarterly shift minimums | FANR certificate
+ | Local Operator (LO) | Operations | Operates equipment outside the MCR under RO and SRO direction; rounds; tag-outs | High-school diploma (REG-17). DNT 24 months, or LOIT 60 weeks / 1,920 h; LOCT 5-6 weeks a year; written exams and JPMs | Licensee qualification (REG-17 Art. 12); not FANR-certified
+ | Shift Technical Advisor (STA) | Operations / Engineering | Independent engineering advice to the shift on transients and accidents; core and safety-function monitoring | SSG-75: university degree plus transient and accident analysis training separate role at Barakah unconfirmed | Licensee; FANR oversight under REG-16
+ | Operations Support / Work Control / Clearance Writer | Operations | Work control centre, clearances and tag-outs, procedure upkeep | Operations background, often former LO or RO; licensee qualification card | Licensee
+ | Outage Manager / Planner / Scheduler | Outage & Work Management | Plans refuelling outages (Unit 2's first refuelling involved about 8,000 maintenance tasks); coordinates contractors | Operations or maintenance background; INPO and WANO work-management practice | Licensee
+ | Mechanical, Electrical and I&C Maintenance Technician and Engineer | Maintenance | Preventive, corrective and predictive maintenance; calibration; outage work; maintenance-rule monitoring | Maintenance initial training 53 weeks / 1,969 h; continuing training (907 trainees in 2024); DNT route for technicians; SSG-75 senior technicians 2-3 years | Licensee qualification; contractors through equivalency
+ | Systems, Design and Plant Engineer | Engineering | System health, design authority, modifications, ageing management, equipment qualification | Degree; engineering initial training 20 weeks / 640 h; continuing training (447 engineers in 2024) | Licensee; FANR approval of licensing-basis changes
+ | Reactor Engineer / Core Physicist | Reactor Engineering | Core design checks, start-up physics tests, fuel performance, reactivity management support to Operations | Degree, often MSc. A Nuclear Fuel Design track trained engineers for 3 years with KEPCO Nuclear Fuel digest | Licensee
+ | Nuclear Fuel / Fuel Handling Specialist | Nuclear Fuel | Fuel procurement and receipt, refuelling (about one third of the core per outage), spent-fuel pool, dry-storage planning | Degree; fuel handling is part of COIT for operators | Licensee; FANR-REG-10 nuclear material accounting
+ | Cyber Security / IT-OT Engineer | IT/OT & Cyber | Cyber security plan, protection of digital I&C and plant networks, ISO 27001 management system | Degree and cyber certifications; ENEC holds ISO/IEC 27001 | FANR-REG-08 V2 (adds cyber security)
+ | Radiation Protection Technician / Health Physicist / ALARA | Radiation Protection | Surveys, radiation work permits, dosimetry, contamination control, ALARA planning, dose reporting | RP initial training 36 weeks / 1,056 h; continuing training (111 staff in 2024); RP officers usually graduates (SSG-75) | Licensee; FANR radiation protection regulations
+ | Chemistry Technician / Chemist | Chemistry | Primary and secondary water chemistry, radiochemistry, effluent monitoring | Chemistry initial training 28 weeks / 896 h (REG-16 Art. 9); continuing training (65 staff in 2024) | Licensee; FANR-REG-16 chemistry programme
+ | Environment / Radiological Environmental Monitoring | Environment | Environmental radiation monitoring, the environmental lab at the Emergency Response Center, effluent limits, EAD permits | Degree; ISO 14001 | EAD; FANR
+ | Quality Assurance / QC / NDE | Quality | Audits, NQA-1 compliance, supplier audits, QC inspections | Lead-auditor training; ENEC holds ISO 9001 and NQA-1 compliance | Licensee; FANR-REG-01
+ | Nuclear Oversight / Nuclear Performance Improvement | Independent Oversight | Corrective action trending, self-assessments, OE screening, support to the Committee on Nuclear Power and the Nuclear Safety Review Board | Experienced engineers or former operators; WANO self-assessment training | Licensee; reports to CNP and NSRB
+ | Regulatory Affairs / Licensing Engineer | Licensing | Safety analysis report updates, licensing-basis changes, regulatory correspondence, periodic safety review | Degree; knowledge of FANR regulations | Licensee interface with FANR
+ | Human Performance / Safety Culture Specialist | Organisational Effectiveness | HU tools training, observation and coaching programme, safety-culture assessments | INPO and WANO human performance training | Licensee
+ | Employee Concerns Program Officer | ECP (independent) | Confidential handling of nuclear safety and quality concerns; investigation of harassment, intimidation, retaliation and discrimination | Specialist ECP training; ENEC participates in the North American ECP association | Licensee
+ | Industrial Health & Safety Officer | Health & Safety | ISO 45001 management system, job hazard analyses, inspections (2,186 in 2024), heat-stress controls | OSHAD / ADOSH requirements; recognised safety certifications (generic) | ADOSH / OSHAD; FANR for nuclear safety
+ | Fire Protection | Fire Protection | Fire brigade, fire-protection programme, drills | Firefighter certification; plant fire-brigade training | FANR-REG-16 Art. 22; Civil Defence
+ | Emergency Preparedness Coordinator / ERO member | Emergency Preparedness | Maintains on-site plans and emergency facilities (TSC, OSC, EOF at Al Ruwais), drills, notifications | Training and drills under FANR-REG-12 Art. 23; FANR's TAHYAA national qualification for emergency workers | Licensee; FANR-REG-12 and -15; NCEMA off-site
+ | Security Officer / Physical Protection | Security | Physical protection, access authorisation, alarm station, liaison with response forces | Trustworthiness and reliability programme, fitness for duty including drug and alcohol testing (REG-08 Art. 11). Kafa'a shows the career path only; no security detail | FANR-REG-08 V2; UAE security clearance
+ | Safeguards / Nuclear Material Accountancy Specialist | Safeguards | Nuclear material accounting, support to IAEA inspections, Additional Protocol declarations | Degree; FANR and IAEA safeguards training | FANR-REG-10; IAEA safeguards agreement and Additional Protocol
+ | Nuclear Training Instructor, incl. simulator and SRO-qualified instructor | Nuclear Training | Designs and delivers SAT programmes, simulator scenarios and exams | Technical competence plus instructional skills; SRO-qualified instructors keep biennial requalification; ASIP; Instructor Initial and Continuing Qualification | Licensee; FANR reviews exams
+ | Procurement / Supply Chain / Nuclear Procurement Engineer | Supply Chain | Safety-related procurement, commercial-grade dedication, ICV, supplier development | Degree; NQA-1 knowledge (generic) | Licensee QA
+ | Corporate: HR, Finance, Legal, Communications, Stakeholder Engagement | ENEC corporate | Emiratization and talent pipeline, community outreach, public opinion research, finance and governance | GDP and Train for Work routes; Administrative Assistant vacancies reserved for UAE nationals | n/a
+Sources: FANR-REG-17; FANR-REG-16; IAEA SSG-75; SR2024 p.46-53; CNS report Art. 11-12.
+### Platform access matrix
+What each Kafa'a role can see and do. The matrix is the specification for the automated access tests in M14. Codes: · none; R read; Own own records only; Scope records within the user's assigned scope; Σ aggregate only; W create or edit; A approve or decide.
+ | Resource or action | Public | Applicant | Employee | Licensed op. | Manager | Instructor | Licensing coord. | HR analyst | Partner user | Partner admin | University | Observer | Editor | Admin | Auditor
+ | Public pages, directory, Dalil public | R | R | R | R | R | R | R | R | R | R | R | R | W | A | R
+ | Own profile, settings, data rights | · | Own | Own | Own | Own | Own | Own | Own | Own | Own | Own | Own | Own | Own | Own
+ | Programme applications | · | Own | Own | · | · | · | · | Σ | · | · | · | · | · | · | R
+ | Qualification record | · | · | Own | Own | Scope | Scope | Scope | Σ | · | · | · | · | · | · | R
+ | Sign off task evaluation or JPM | · | · | · | · | · | A | · | · | · | · | · | · | · | · | ·
+ | Qualification standards and frameworks | R | R | R | R | R | W | R | R | · | · | R | · | · | A | R
+ | Licence tracker (RO/SRO) | · | · | · | Own | Scope | · | W | Σ | · | · | · | · | · | · | R
+ | Medical due flag | · | · | · | Own | · | · | Scope | · | · | · | · | · | · | · | ·
+ | Training catalogue (internal) and enrolment | · | · | Own | Own | A | W | R | R | Own | Own | · | · | · | · | R
+ | Secure exam items | · | · | · | · | · | W | · | · | · | · | · | · | · | · | ·
+ | Workforce and Emiratization analytics | · | · | · | · | Σ | · | · | Σ | · | · | · | Σ | · | · | R
+ | Release report to an observer | · | · | · | · | · | · | · | W | · | · | · | · | · | A | R
+ | Partner organisation records | · | · | · | · | · | · | · | · | Own | W | Own | · | · | R | R
+ | Contractor equivalency | · | · | · | · | · | A | · | · | · | W | · | · | · | · | R
+ | Scholar and intern cohorts | · | Own | · | · | · | · | · | Scope | · | · | Scope | · | · | · | R
+ | Dalil configuration, corpus, logs | · | · | · | · | · | · | · | · | · | · | · | · | W | A | R
+ | Users, roles and scopes | · | · | · | · | · | · | · | · | · | Own org | · | · | · | W | R
+ | Audit log | · | · | · | · | · | · | · | · | · | · | · | · | · | R | R
+Admin changes to elevated roles need a second admin's approval. Observer release needs approval by a named HR authority (proposed: the Chief Human Capital Officer's office), recorded in the audit log. Nobody, including admins, can write to the audit log directly.
+### uaecb roles mapped to Kafa'a roles
+ | uaecb role | What it did in uaecb | Kafa'a role(s) | Change
+ | JOB_SEEKER | Default role; jobs, resume, interviews | Applicant | Adapt Applications to programmes instead of a job board; no resume builder
+ | PROFESSIONAL | Assessments, learning, career paths | Employee; Licensed operator (an attribute set by licence data, not self-selected) | Split
+ | HR_MANAGER | Intended for HR dashboards; got the learner sidebar | HR analyst; Manager | Split Aggregate HR view separated from line-manager team view
+ | ORG_ADMIN | Schema only | Partner admin (for external organisations); Platform admin (for Kafa'a) | Split
+ | REGULATOR | Schema only; no UI | Observer, read-only, released aggregate reports | Narrow Not a regulatory channel
+ | OrgRole MEMBER, MANAGER, HR_ADMIN, ORG_ADMIN | Membership roles in one bank | Scopes on users (entity, family, team) plus partner user and partner admin | Replace
+ | Career advisor, mentor (mock people) | Booking flows with named fictional advisors | Careers team (role mailbox), Mentor (opt-in staff) | Adapt No named fictional people
+ | "Ali" AI advisor | Emirati persona, public, ungoverned | Dalil (M13) | Replace
+ | none | n/a | Instructor / evaluator; Licensing coordinator; University partner; Content editor; Auditor | New
+Section 8
+## Training and qualification paths
+These paths are what M01, M02 and M04 render for each track. Durations are as published by ENEC for 2024 unless noted; where sources disagree, both values appear.
+### Licensed operator track
+ | Stage | Content | Length | Gate
+ | 1. Entry | DNT for UAE high-school graduates; LOIT for direct hires; GPO for engineering graduates | DNT 24 months; LOIT 60 weeks / 1,920 h | Programme completion; written exams and JPMs
+ | 2. Local Operator | Watch-station qualification, rounds, clearances; LOCT each year, including combined scenarios on full-scope simulators linked to a 3D virtual plant | 36 months as fully qualified LO before RO eligibility; LOCT 5-6 weeks per crew per year | Licensee qualification card per watch-station
+ | 3. Certified Operator Initial Training (COIT) | Classroom (generic fundamentals, integrated systems, fuel handling, leadership); OJT and task performance evaluations with job qualification cards; main-control-room simulator including severe accidents | 91 weeks / 2,912 h (SR2024) or 82 weeks (CNS) conflict | Internal comprehensive exam: written, JPMs, simulator
+ | 4. FANR examination | Written (generic fundamentals and plant-specific) and operating test (simulator scenarios and in-plant JPMs); licensee prepares, proctors and grades; FANR reviews | FANR notified 60 days before | FANR certificate, 5 years, Barakah-specific
+ | 5. Reactor Operator | COCT; quarterly shift minimums; annual medical; biennial requalification | COCT 5-6 weeks per crew per year | Continuing validity
+ | 6. Senior Reactor Operator | SRO-level COIT content, leadership ("Leading Effective Teams" in INTILAQA), FANR SRO exams | After 24 months as RO at Barakah, or graduate route | FANR SRO certificate; ≥2 SRO-role shifts each quarter
+ | 7. Shift Supervisor and beyond | Command experience, ESTADAD or ONE leadership programmes; possible SRO-qualified instructor via ASIP | SSG-75: 4-6 years' experience | Licensee appointment
+### Technical disciplines
+ | Track | Initial training | Continuing (2024 population) | Entry routes | Qualification gate
+ | Maintenance (mechanical, electrical, I&C) | 53 weeks / 1,969 h | 907 trainees | DNT (Maintenance Technician), GDP, experienced hire | Task qualification cards; JPMs for safety-related work
+ | Radiation Protection | 36 weeks / 1,056 h | 111 staff | Science graduates, GDP, experienced hire | RP qualification cards; RWP and survey JPMs
+ | Chemistry | 28 weeks / 896 h (FANR-REG-16 Art. 9) | 65 staff | Chemistry graduates, GDP | Chemistry qualification cards; lab proficiency
+ | Engineering | 20 weeks / 640 h | 447 engineers | Energy Pioneers, GDP, KU MSc, experienced hire | Engineering qualification standards by discipline
+ | All staff | General Employee Training, onboarding (3 days), HU core tools | 1,090 people in GET | All | Site access prerequisites
+Sources: SR2024 p.51-53; CNS report Art. 11.2(d).
+### Emergency preparedness track
+ | Element | Requirement or practice | Source
+ | Role training | Everyone with an on-site emergency role is trained and tested | FANR-REG-12 Art. 23
+ | Drills | Periodic drills; 4 ERO drills in 2024, 6 proficiency drills in 2022 | REG-12; CNS report
+ | Exercises | Broad on- and off-site exercises at least once every two years; all response organisations involved over an 8-year cycle | FANR-REG-12 Art. 23
+ | National exercises | UAE Barakah Exercise 2023 (36 hours, 21 federal and 19 local entities); ADCMC exercise on 7 Oct 2025 (22 entities, 7 field teams, 20 operation centres) | Abu Dhabi Media Office
+ | National qualification | FANR's TAHYAA programme qualifies emergency workers against a UAE national qualification | CNS report
+Kafa'a records drill participation and role qualification. Scenarios, plans and facility details stay in ENEC's emergency preparedness systems.
+### Security track
+Kafa'a publishes only the career-level view: that security roles require a trustworthiness and reliability programme, fitness for duty with drug and alcohol testing, and UAE security clearance (FANR-REG-08 V2, which also adds cyber security). Security training content, post orders and physical protection details never enter the platform. Qualification status for security staff is mirrored as "qualified / not qualified" only.
+### Supplier and contractor track
+ | Step | Content | Outcome
+ | 1. Orientation | How Barakah procurement works; localisation opportunities; the OSPS Localization Plan | Supplier understands fit
+ | 2. Quality standards | ASME and NQA-1 expectations, commercial-grade dedication, counterfeit and suspect items | Supplier academy certificates
+ | 3. Safety culture for suppliers | The 10 traits applied to supplier work; defect reporting | Certificate
+ | 4. ICV | MoIAT ICV programme; improvement plan | ICV plan on file
+ | 5. Hand-off | Readiness summary to ENEC supplier registration (NEXUS partner lens in the concept) | Registration starts in the procurement system
+ | 6. Contractor staff | Same qualifications as ENEC staff, through ENEC training or equivalency | Equivalency decision per person and standard
+### Graduate and Pioneer track
+ | Stage | Options | Notes
+ | School | Mustaqbali (2 weeks), student booklets, science festivals | Recognition badges allowed here
+ | University | Energy Pioneers scholarship; internships; KU BSc minor and MSc | Scholarship partners include KU and US and Korean universities
+ | Graduate | GDP (18-36 months, or 12-30 per the GPO release); GPO for engineers | GPO leads to SRO training after three years as LO
+ | Early career | Discipline initial training; INTILAQA for first-line leaders | Qualification cards begin
+ | Leadership | ESTADAD (8 days), ONE (3 weeks), executive master classes, INPO leadership courses in Atlanta (19 leaders in 2024), executive coaching | Partners INSEAD, Wharton, LBS, NQA
+Section 9
+## Partners directory
+The public directory (M09) lists organisations with a publicly announced relationship with ENEC. Regulators and oversight bodies appear in a separate "Oversight" group because they are not partners. Each entry needs: name (EN and AR), category, relationship type, status (active, historic, exploratory), dates, a short description of the role, public source URLs, a binding flag for MoUs, and a generic contact route if the partner provides one. No individual names, no logos without permission.
+ All
+ Ownership
+ Design & build
+ O&M support
+ Fuel
+ Advanced reactors & R&D
+ International operators
+ Local supply & offtake
+ Finance
+ Education & workforce
+ Technology & government
+ Emergency response
+ Oversight
+ | Organisation | Category | Relationship and role | Type · dates
+ | ADQ | Ownership | 100% owner of ENEC | Shareholder · 2020
+ | KEPCO | Ownership · Design & build | Prime contractor (about USD 20bn); 18% partner in ENEC Operations and ENEC Commercial; MoUs on third countries, SMRs, AI and an AI Innovation Lab | Contract, JV, MoUs · 2009, 2016, 2024, 2025
+ | KHNP | Design & build · O&M support | EPC contractor; Operating Support Services Agreement (about 400 staff a year to 2030); long-term maintenance; R&D and Net-Zero MoUs | Contracts, MoUs · 2009-2023
+ | KEPCO E&C | Design & build | Plant design and architect-engineer | Contract · 2009-
+ | KEPCO Nuclear Fuel | Fuel | Fabricates Barakah fuel assemblies; fuel-design training for UAE engineers | Contract · 2012-
+ | KEPCO KPS | O&M support | Maintenance under the long-term maintenance agreement | Contract · 2019
+ | Doosan Enerbility | Design & build · O&M support | Reactor vessels, steam generators, turbines; five-year maintenance agreement | Contracts · 2010-, 2019
+ | Hyundai E&C | Design & build | Lead construction contractor; global cooperation MoU | Contract, MoU · 2010, Jul 2025
+ | Samsung C&T | Design & build | Construction partner; MoU on US projects, SMRs, Romania and hydrogen | Contract, MoU · 2010, Jul 2025
+ | Westinghouse | Design & build · Advanced | Reactor coolant pumps and controls; eVinci MoU; AP1000 US deployment MoU | Supply, MoUs · 2009-, Dec 2023, Jul 2025
+ | CH2M Hill | Design & build | ENEC programme manager | Historic · about 2009-2010
+ | EDF | O&M support · R&D | 10-year O&M support framework; R&D and hydrogen letter of intent | Framework, LoI · 2018, 2021
+ | Framatome | Fuel | Fuel assembly supply; first lead test assemblies made Nov 2025 | Contract · Jul 2025
+ | URENCO; ConverDyn; Rio Tinto; Uranium One; Orano (AREVA) | Fuel | Front-end supply: enrichment, conversion, natural uranium | Contracts · Aug 2012
+ | Tenex (Rosatom) | Fuel | Front-end supply; fuel-cycle MoU | Contract, MoU · 2012, 2017, 2019
+ | Kazatomprom | Fuel | First commercial uranium supply contract | Contract · Dec 2023
+ | Enusa | Fuel | Fuel services MoU | MoU · Mar 2019
+ | GE Hitachi / GE Vernova Hitachi | Advanced reactors | BWRX-300 evaluation, then international deployment roadmap | MoUs · Dec 2023, May 2025
+ | TerraPower; X-energy; USNC (now NANO Nuclear); MoltexFLEX | Advanced reactors | ADVANCE programme MoUs: Natrium, Xe-100, MMR, FLEX | MoUs · Dec 2023
+ | General Atomics | Advanced reactors | SiGA cladding and fast modular reactor MoU via search | MoU · Mar 2024
+ | Newcleo | Advanced reactors | Lead-cooled fast reactors in Europe and MENA | MoU · Feb 2025
+ | CNNC | Advanced reactors | Third-country and HTGR MoUs; fuel, O&M and R&D MoU | MoUs · Dec 2023, May 2024
+ | Rosatom | Advanced reactors | Cooperation MoU; Jan 2026 proposals for large, small and floating plants (ENEC: any expansion via formal tender) | MoU, proposals · 2017-2026
+ | Idaho National Laboratory | R&D | Clean-molecule letter of intent; net-zero roadmap | LoI · 2023
+ | Saskatchewan Research Council and GIEMS | R&D · Education | SMRs, AI and robotics, waste, capacity building | MoU · Jan 2026
+ | Nuclearelectrica (Romania) | International operators | O&M, capacity building, financing frameworks | MoU · Mar 2023
+ | ORLEN Synthos Green Energy (Poland) | International operators | BWRX-300 framework in Poland, the UK and Central and Eastern Europe | Framework · Sep 2023
+ | NPPA (Egypt) | International operators | Cooperation MoU | MoU · Dec 2023
+ | NPCIL (India) | International operators | Barakah O&M cooperation | MoU · Sep 2024
+ | EWEC | Offtake | 60-year PPA offtaker; Clean Energy Certificate registrant | Contract · 2016-
+ | Transco (TAQA) | Grid | Grid connection, 952 km of 400 kV lines | Agreement · 2016
+ | ADNOC | Offtake · R&D | Strategic collaboration on SMRs and excess heat; certificate buyer | SCA · Nov 2024
+ | EGA | Offtake | MinimAL nuclear-certified aluminium | Agreement · Aug 2025
+ | EMSTEEL (Emirates Steel) | Local supply · Offtake | 160,000 t of rebar; nuclear certificate buyer (1.48 TWh) | Supply, agreement · 2012-2017, Dec 2025
+ | Ducab; National Cement; NMDC; Western Bainoona; Hilalco | Local supply | Construction supply: nuclear-qualified cable, cement, dredging and more | Contracts · to 2015
+ | Abu Dhabi Department of Finance; KEXIM | Finance | Project finance loans | Loans · Oct 2016
+ | FAB; ADCB | Finance | Green refinancing of the KEXIM tranche (AED 8.89bn) | Loan · Jul 2023
+ | NBAD, FGB, HSBC, Standard Chartered | Finance | Commercial loans (USD 250m) | Historic · Oct 2016
+ | Khalifa University (incl. ENTC) | Education | MSc and PhD nuclear programmes; Emirates Nuclear Technology Center; joint R&D; courses for FANR staff | Partnership · 2010-
+ | Abu Dhabi Polytechnic; Institute of Applied Technology | Education | Former Higher Diploma route; technical school pipeline | Partnership · historic and current
+ | KINGS; KAIST; Penn State; Texas A&M; NC State | Education | Scholarship and graduate study destinations KINGS/KAIST digest only | Partnership · 2010-
+ | INSEAD; Wharton; London Business School; NQA | Education | Leadership academy partners | Provider · 2024
+ | INPO; WANO Atlanta Center; EPRI; World Nuclear Association | Education · Industry | Leadership courses, SAT practice, operating experience, peer reviews; Net Zero Nuclear initiative with WNA | Membership · 2010-
+ | DGE Abu Dhabi (Mawaheb) | Workforce | Qualify at least 100 UAE nationals over five years | Agreement · May 2026
+ | ACTVET; National Service & Reserve Authority; Abu Dhabi HRA | Workforce | DNT partners; Train for Work initiative | Partnership · 2023-
+ | Presight (G42) | Technology | Co-developed the ENECIQ agentic AI platform, separate from reactor systems | Agreement · Oct 2025
+ | TII and ASPIRE | Technology | Autonomous aerial patrol proof of concept | Agreement · Jan 2026
+ | Ministry of Economy and Tourism | Government | IP and patents MoU | MoU · May 2026
+ | Ma'an (Authority of Social Contribution) | Government | Al Dhafra community centre | Agreement · Feb 2026
+ | NCEMA | Emergency response | Off-site emergency planning; supervises national Barakah exercises | MoU · Sep 2012
+ | Abu Dhabi Police; ADCDA; ADCMC; Ministry of Interior | Emergency response | National exercises; MoI runs the off-site EOC at Al Ruwais | Exercises · 2023, 2025
+ | FANR | Oversight | Independent regulator; operator certification | Regulator · 2009-
+ | IAEA | Oversight | Safeguards; INIR, OSART, EPREV missions | International · 2003-
+ | EAD; Abu Dhabi DoE | Oversight | Environmental regulator (also 500,000-coral partnership); generation licence | Regulators · 2010-
+Source: research partners table compiled from enec.ae, World Nuclear News, Abu Dhabi Media Office and partner sites (Section 17). Not listed because unverified: an ENEC-Microsoft agreement; an "Energy Alliance"; Terrestrial Energy (search result only).
+Section 10
+## Data model
+uaecb's Prisma schema has 37 models and 14 enums, but no course, enrolment, competency-framework or qualification tables, and its UI runs mostly on constants. Kafa'a keeps the useful identity, career and audit models, replaces banking-specific ones, and adds the qualification, licensing and ecosystem entities a nuclear operator needs.
+ has
+ needs
+ level
+ builds
+ from / to
+ requires
+ lists
+ tests
+ instance of
+ against
+ assessed by
+ of course
+ holds
+ proof
+ in
+ enrols
+ certified as
+ logs
+ employs
+ signs
+ funds
+ gets
+ JobFamily20 families
+ RoleEN/AR · regulated flag
+ RoleCompetencyrequired level
+ Competency4 levels
+ Courseobjectives · modality
+ CareerPathconditions · rule ref
+ QualificationStandardversioned card
+ TaskItem · JPMcritical steps
+ Attemptexam or JPM result
+ Personminimal profile
+ QualificationRecordstatus · expiry
+ Evaluationevaluator role · date
+ Enrolmentassigned · elective
+ Sessiondate · simulator slot
+ LicenceMirrorRO/SRO · last synced
+ ShiftProficiencyper calendar quarter
+ AuditEventevery write · append-only
+ OrganisationENEC entities · partners
+ Agreementcontract · MoU · source
+ ProgrammeDNT · GDP · GPO …
+ Applicationby a Person
+ New in Kafa'a
+ Reused or adapted from uaecb Prisma
+ Cross-cutting
+ Two chains meet at the person. The top rows say what a role requires; the middle rows record what a person has proved, learned and kept valid; the bottom row ties people and programmes to organisations and agreements. Every write produces an audit event.
+### Entities and their uaecb counterparts
+ | Kafa'a entity | Key fields | uaecb model | Decision
+ | Identity and governance
+ | Person | id, display name, language, digit preference, contact, entity, status, SSO or UAE Pass subject | User, Profile | Adapt Drop date of birth, nationality and Emirates ID as stored fields; derive nationality flag for Emiratization from HR only
+ | RoleAssignment | person, platform role, scope (entity, family, team, org), granted by, expires | UserType, OrganizationMember | Replace Many roles per person, each with scope
+ | Consent | type, purpose, granted, withdrawn, version | Consent | Reuse Add purpose and withdrawal
+ | AuditEvent | actor, action, entity, before/after hash, time, request id, optional chain hash | AuditLog | Adapt Append-only, no update or delete grants
+ | Roles and competencies
+ | JobFamily | name EN/AR, description, order | BankingSector, Department (UI) | Replace
+ | Role | title EN/AR, family, level, regulated flag, basis (Barakah-specific, generic, uncertain), responsibilities, sources | BankingRole | Adapt Remove salary and automation risk
+ | Competency, ProficiencyLevel | domain, code, name EN/AR, level descriptors | Skill, UI-only framework | Replace Framework moves from constants into tables
+ | RoleCompetency | role, competency, required level, importance | RoleSkill | Reuse
+ | CareerPath | from role, to role, type, conditions (structured), rule reference | CareerPath | Adapt Add conditions and rule reference
+ | Qualification and licensing
+ | QualificationStandard | code, role(s), version, owner role, requal interval, effective date | none | New
+ | TaskItem, JPM | standard, task statement, conditions, standards, critical steps | none | New
+ | QualificationRecord | person, standard version, status, qualified date, expiry, source system | UserCertification | Replace Keep its status lifecycle idea
+ | Evaluation | record, task, method (OJT, JPM, simulator, equivalency), evaluator role, result, date | none | New
+ | LicenceMirror | person, type RO/SRO, facility, issued, expires, status, source, last synced | none | New
+ | ShiftProficiency, MedicalDue, RequalCycle, ReportingObligation | quarter counts; due dates and flags only; windows; deadlines | none | New
+ | EquivalencyRequest | partner org, person reference, standard, evidence files, decision, decider role | none | New
+ | Learning and assessment
+ | Programme, Course, Module, Session, SimulatorSlot | catalogue structure, modality, durations with source, capacity | none (mock constants) | New
+ | Enrolment, TrainingRecord, Assignment | person, session, status, completion evidence, assigned by rule | DevelopmentPlan, PlanActivity | Adapt Plans stay as IDPs; enrolment is new
+ | Item, ItemVersion, Blueprint, Attempt, Response | secure item bank and results | Assessment, AssessmentSkill, AssessmentResult | Adapt Add item security and versioning
+ | DevelopmentPlan, PlanActivity | target role, activities, milestones | same | Reuse Remove points
+ | Ecosystem
+ | Organisation | name EN/AR, type, category, public flag | Organization | Adapt Add partner categories
+ | Agreement | organisations, type, binding flag, dates, status, source URLs | none | New
+ | Application | person, programme, stage, decision (mirrored from HR) | JobApplication | Adapt
+ | SupplierReadiness, ICVPlan, ResearchProposal | steps done, plan, screening status | none | New
+ | WorkforceSnapshot | period, dimension, measure, value, suppression flag, source | none (mock) | New
+ | AI
+ | CorpusDocument, AdvisorSession, AdvisorTurn, EvalRun | approved sources; conversation with retention; evaluation results | none (direct OpenAI calls) | New
+ | Dropped
+ | GameProfile, Point, Badge, UserBadge, Leaderboard, Resume, VideoResponse, JobPosting/JobSkill (vacancies link out), InternationalCredential (handled by HR), CareerTransition (derived from HR history) | Drop
+Migrations are versioned from the first commit (uaecb used db push with no migration history).
+Section 11
+## Security, privacy and nuclear-information controls
+A skills platform for a nuclear operator holds personal data about a workforce that includes licensed operators and security staff. Individually harmless facts can become sensitive in aggregate: a roster of who is qualified for which watch-station, on which shift, is useful to an adversary. Kafa'a is designed so that such information never reaches it, and what does reach it is held to the minimum.
+### Data classification
+ | Class | Examples | Where it may appear | Controls
+ | Public | Role descriptions, programme pages, published statistics with sources, partner directory, competency library | Public site, Dalil public mode | Two-language review; source required; review date
+ | Internal | Course content, schedules, curated OE lessons, aggregate analytics | Staff portal by role | Sign-in; role checks; no export without watermark
+ | Personal / restricted | Qualification records, licence status, medical due flags, applications, contractor evidence | Own view and scoped roles only | Row-level security; field encryption for sensitive fields; access reviews; retention schedule
+ | Excluded | Security arrangements, physical protection, safeguards data, emergency plan details, procedures, plant drawings or layouts, real-time plant data, shift rosters and crew composition, medical content, exam items outside the secure bank | Nowhere in Kafa'a | Content policy, upload scanning for classified markings, Dalil corpus allow-list, pre-publication review
+### Controls
+People and privacy
+No named staff on public pages. Leadership names, if ever needed, link to enec.ae rather than being copied.
+Collect the minimum; state the purpose on every form; publish retention periods.
+Comply with the UAE Personal Data Protection Law (Federal Decree-Law No. 45 of 2021) and any Abu Dhabi government data rules that apply to ENEC; legal review confirms which regime governs in Phase 0.
+Data subject requests through /my/settings, handled by a named privacy role.
+No scoring, ranking or profiling of individuals by algorithm.
+Platform
+Hosting in a UAE cloud region under ENEC-controlled accounts, with data residency in the UAE; keys in a managed service controlled by ENEC.
+Access checks in the API layer and again by database row-level security; deny by default.
+Append-only audit log for sign-ins, permission changes, record changes, exports and AI administration.
+Alignment with ENEC's ISO/IEC 27001 management system and with the cyber security expectations of FANR-REG-08 V2 for anything that touches licensee processes.
+Penetration test before each phase goes live; dependency and secret scanning in CI.
+### Lessons from uaecb, turned into build gates
+ | uaecb finding | Kafa'a gate
+ | Public /api/debug/env and /api/ai/diagnostic reveal the OpenAI key prefix and length | CI blocks any route matching debug, diagnostic or test patterns in production; secrets never echo in responses
+ | Middleware disabled "to allow demo auth" | Demo access lives in a separate tenant; the production access layer has no bypass flag
+ | NEXTAUTH_SECRET placeholder committed in netlify.toml | Secret scanning on every commit; deploys fail on placeholder values
+ | 2FA secret stored in plain text | MFA through SSO or UAE Pass; any stored secret encrypted with managed keys
+ | Unauthenticated AI chat as an open cost sink | Dalil behind a gateway with quotas, abuse detection and a kill switch
+ | Real people scraped into org charts | Automated check against person-name fields in public payloads
+Section 12
+## How Kafa'a relates to ENEC NEXUS
+ENEC NEXUS is Armie's concept demo of a governed AI-agent operating system for ENEC, modelled on ADGM POLARIS (live demo, build plan, guidebook). Its tagline is "AI informs. A licensed human decides." It covers procurement and supplier qualification, outage support, corrective action, regulatory drafting, fuel, emergency preparedness, sustainability and leadership briefings, with an evidence ledger, a kill switch and an authority matrix of 38 reserved decisions. It deliberately leaves out formal qualification records, individual HR data, public recruitment and university onboarding.
+That gap is Kafa'a's scope. NEXUS is the agent operating layer for enterprise work; Kafa'a is the people and skills layer. NEXUS source code and its database belong to the Claude session that maintains it, so this section is a specification of integration points only. Nothing here changes NEXUS.
+ Kafa'a (this spec)
+ ENEC NEXUS (concept)
+ M01 Career Map · role pages
+ M02 Qualification records
+ M04 Learning catalogue
+ M09 Supplier readiness
+ M09 Partners directory
+ M16 Audit log
+ M14 Identity · M15 language
+ personas · authority_matrix
+ T fleet: T1.2, T1.7 · /employee/talent
+ training_programs · eco_courses
+ Partner lens · /partner/readiness
+ organisations · eco_partnerships
+ Evidence ledger
+ profiles · user_prefs
+ read role cards and "Decides" lines
+ qualification outcomes, not records
+ one catalogue, owner to be agreed
+ hand-off when ready to register
+ read shared organisation records
+ append material actions, same hash scheme
+ shared identity and EN/AR preference (to be agreed)
+ Kafa'a writes or hands off
+ Kafa'a reads
+ shared, needs agreement with the NEXUS owner
+ Seven integration points. NEXUS table and route names are taken from its live build; the eco_* tables exist in its database but are not used by its front end, which suggests they are work in progress in the owning session.
+Kafa'a should not duplicate
+The NEXUS front door (its ENEC-style homepage).
+The agent registry, CodeOS rules, evidence ledger, evaluations and kill switch.
+The supplier transaction lifecycle: RFQ, bid, contract, delivery, non-conformance.
+The 18 plant workflows and the authority matrix itself.
+NEXUS Academy's awareness modules, which state "awareness only, formal qualification records stay with Training". Kafa'a is where those records would live.
+Lessons to carry over from the NEXUS test
+Opening a URL must never sign the browser in as a default persona (NEXUS defect B-01).
+Maker-checker and two-person rules must be enforced across sessions, not within one (B-02, B-03).
+Partners must never see another partner's data (B-06).
+Counts shown on different screens must come from one query, so they agree.
+Shared design rules: aggregate data only for people analytics; no agent scores a person; every number has a source or a SIMULATED label.
+Section 13
+## Phased roadmap
+Five phases, each ending with exit criteria rather than a date. Effort is shown as relative complexity on a four-step scale to , compared with the other phases.
+Phase 0Discovery and alignment
+Scope. Confirm sponsorship and ownership inside ENEC (Human Capital, Nuclear Training, Supply Chain); agree with the NEXUS owner on shared tables and identity; legal review of data protection regime and hosting; inventory ENEC's existing HR, training-records and learning systems and decide which stays the system of record.
+Deliverables. Signed-off role and competency seed (the 28 roles); content policy for excluded information; RBAC matrix approved; integration map; Arabic glossary owner named; KPI baselines.
+Dependencies. Access to ENEC stakeholders; NEXUS owner's availability.
+Exit criteria. A named product owner and data owner per module; written decision on systems of record; agreed list of public sources; security architecture approved.
+Phase 1MVP: public site
+Scope. M01 Career Map, M02 public competency library, M06 programme pages and light applications (or link-out), M09 public directory and /suppliers, M12 community and ESG, M13 Dalil public mode, M14 applicant accounts, M15 full Arabic, M16 content and audit core.
+Deliverables. Public site in both languages; Dalil with evaluation report; accessibility and penetration test reports.
+Dependencies. Phase 0 content approvals; hosting account; translation capacity.
+Exit criteria. Every public statistic sourced; zero person-name fields in public payloads; Dalil meets the citation and refusal thresholds; Arabic parity 100%; no open high-severity security findings.
+Phase 2Staff portal
+Scope. Corporate SSO; M02 qualification records (mirror), M03 licensing tracker (mirror), M04 catalogue and enrolment, M05 assessments including the secure item bank, team views for managers, M08 safety culture hub with the speak-up pointer, development plans.
+Deliverables. Integrations with HR, training records, shift roster (counts only) and licensing records; automated RBAC test suite; JPM evaluator app pilot with one discipline.
+Dependencies. System-of-record interfaces; ECP approval of the speak-up page; Nuclear Training sign-off on item security.
+Exit criteria. Mirror accuracy reconciled against source for a pilot population; RBAC suite passes for all 15 roles; no unflagged stale licence status in a parallel-run period; licensed operators and coordinators accept the tracker in user testing.
+Phase 3Partners and workforce
+Scope. Partner portal (M09 onboarding, academy, contractor equivalency, ICV), M10 universities and research, M07 workforce and Emiratization analytics, observer reports, NEXUS hand-off to the partner lens and ledger writes.
+Deliverables. Partner admin tooling; university consent flows; analytics with suppression; first released observer report.
+Dependencies. NEXUS owner agreement on hand-off and ledger; procurement process owners; university agreements.
+Exit criteria. Cross-partner access tests pass; equivalency decisions recorded end to end for a pilot contractor; analytics reconcile with GRI disclosures for the same period.
+Phase 4Future workforce
+Scope. M11 advanced-reactor skills and skill bridges; scenario planner (SIMULATED); Dalil staff and partner modes; decision on whether Kafa'a becomes the system of record for qualifications; deeper ledger integration.
+Deliverables. Future-skills content reviewed by ENEC's ADVANCE team; staff-mode Dalil evaluation; system-of-record readiness assessment if pursued.
+Dependencies. ENEC strategy decisions on new technology; regulator expectations for any change in records systems.
+Exit criteria. No public page implies a deployment decision; staff-mode Dalil passes red-team tests on secure items and personal data; records-system decision documented.
+Section 14
+## Success metrics
+Baselines come from public sources where they exist. Targets are set in Phase 0 with ENEC owners; the table proposes direction, not numbers, except where safety or compliance demands an absolute.
+ | Audience | Metric | Baseline | Target
+ | Students and parents | Visitors who reach a programme page and start an application or register interest | New | Rising; Arabic share tracked
+ | Applicants | Applicants who can see their stage without contacting HR | New | All applicants
+ | Applicants | Emirati programme intake (DNT, GDP, GPO, Mawaheb) | DNT first cohort 20; GDP 22 (2024); Mawaheb ≥100 over 5 years | Set with HR
+ | Staff | Qualifications renewed before expiry | Unknown | 100%
+ | Licensed operators | Validity lapses reported within 3 working days | Regulatory duty | 100%
+ | Licensed operators | Quarters where a proficiency shortfall was flagged before quarter end | New | Every shortfall flagged
+ | Instructors | Time from JPM performed to record signed | Unknown | Falling
+ | Managers | Work scheduled with an unqualified assignee caught by the matrix | New | Tracked; zero escapes
+ | HR | Emiratization rate (organisation / senior management) | 54.7% / 63.4% (2024) | ENEC targets
+ | HR | Training hours per employee | 218.45 (2024) | Tracked, not maximised
+ | HR | Bench depth for licensed roles against target | 190 SRO/RO, 70+ Emirati (Aug 2025) | Set with Operations
+ | Suppliers | Suppliers completing the readiness path who go on to register | 2,000+ UAE companies with contracts | Rising
+ | Contractors | Equivalency decision turnaround | New | Falling
+ | Universities | Partners using the competency library for curriculum review | New | All named partners
+ | Dalil | In-scope answers with a correct citation | NEXUS floor 95% | ≥95%
+ | Dalil | Refusals on the security red-team set | New | 100%
+ | Platform | Routes with approved Arabic | uaecb: 4 of 74 | 100%
+ | Platform | RBAC test pass rate; public payloads with person names | uaecb: no checks; ~1,500 names | 100%; zero
+Section 15
+## Risks and open questions
+### Risks
+ | Risk | Severity | Mitigation
+ | Sensitive information leaks through aggregation (rosters, crew qualification patterns) | High | Excluded data class; no roster import beyond counts; suppression; security review of every new data feed
+ | Users treat the licensing tracker as authoritative | High | "As recorded in" labels, stale-sync behaviour, no sends to FANR, coordinator ownership of every notice
+ | Duplicating ENEC systems of record | Medium | Mirror-first design; Phase 0 decision on ownership
+ | Overlap or conflict with NEXUS | Medium | Integration points agreed with its owner; no edits to NEXUS from this project
+ | Dalil gives an unsafe or wrong answer | Medium | Grounding, refusal policy, evaluation gates, kill switch, human hand-off
+ | Public figures go stale or conflict | Medium | Source and "as of" date on every figure; review dates; reconciliation notes
+ | Arabic quality lags English | Medium | Parity as a release gate; glossary owner; native review
+ | Partner data cross-visibility | High | Row-level security tests per partner; lesson from NEXUS B-06
+ | Perception that the concept is an official ENEC site | Medium | "Concept" marking on every page; no ENEC logo; link to enec.ae as the authority
+### Open questions
+Which ENEC system holds training and qualification records today, and would ENEC ever designate Kafa'a as the record?
+Who owns the platform inside ENEC: Human Capital, Nuclear Training, or a shared board?
+Should applications run in Kafa'a, or should it link out to ENEC's existing careers channel?
+Does FANR have any expectation about third-party systems that mirror operator certification status?
+Which data protection regime applies to ENEC as an ADQ-owned Abu Dhabi entity, and does any federal or Abu Dhabi rule require specific hosting?
+Will the NEXUS owner treat eco_courses and eco_enrolments as shared or hand them to Kafa'a?
+Is there an appetite for a sector-wide platform (FANR, universities, suppliers) like IBF for banking, or should Kafa'a stay ENEC-centred?
+### What we could not verify
+Headcount and Emiratization: "over 3,000, 60% Emirati" (press) against 2,979 and 54.7% (GRI).
+Certified operators: "over 300 certifications, 140 UAE" may count renewals; no public SRO/RO split by nationality.
+COIT length (91 or 82 weeks); COCT (6 or about 5 weeks per crew per year); GDP length (18-36 or 12-30 months).
+DNT start (2023 or 2024) and first cohort size (20 or 30 recruited).
+Number of full-scope simulators (2 at the STC or 4 in total).
+Whether Barakah has a separate Shift Technical Advisor role, and the exact Shift Supervisor structure.
+INPO/ACAD-style accreditation of Barakah training programmes: no public evidence.
+Exact emergency planning zone radii (public pages differ).
+KINGS, KAIST, the 2019 second operator group, Energy Pioneers 2017-18 figures and the MoHESR scholarship partnership come from search digests only.
+ENEC Consulting's ownership percentage; the date of the ENEC board chair change.
+No ENEC-Microsoft agreement, no "Energy Alliance", no signed data-centre power contract and no completed equity stake abroad were found.
+Section 16
+## Source-to-ENEC mapping
+ | uaecb feature or route | Kafa'a equivalent | Module | Change
+ | Home with 3 audience cards, hard-coded stats | Home with 4 audience cards, sourced Barakah facts | M12 | Adapt
+ | /about, /mission, /partnership (CBUAE × ADGM Academy) | /about with group structure and oversight bodies | M12 | Adapt
+ | /career-paths (38 roles, 5 departments) | /careers (28 seed roles, 20 job families, REG-17 rules) | M01 | Adapt
+ | Market outlook "At Risk / Growing", automation risk | Future skills and skill bridges | M11 | Replace
+ | /career-simulator | Scenario planner for HR (SIMULATED) | M07, M11 | Replace
+ | /salary-guide | None | n/a | Drop
+ | /competency-framework (16 × 4) | /competencies plus qualification layer | M02 | Adapt
+ | /certifications ("blockchain") | /my/quals and /verify for internal course certificates | M02 | Replace
+ | None | RO/SRO licensing tracker | M03 | New
+ | /assessments/* (6 MCQ sets) | Secure item bank, JPMs, simulator evaluations, practice quizzes | M05 | Adapt
+ | /assessments/ai-video, /interviews/*, AI Video Coach | None (no algorithmic scoring of people) | n/a | Drop
+ | /learning (5 mock courses) | /learn and /my/learning with real programmes | M04 | Replace
+ | /vr-training | Links to simulator and immersive training (STC, OTC, 3D model, VR classroom) | M04 | Adapt
+ | /podcasts, /challenges, /leaderboard, /achievements | Recognition for outreach only | M06 | Drop
+ | /mentorship | /my/mentoring, opt-in, human matching | M04 | Adapt
+ | /skills-marketplace | None | n/a | Drop
+ | /career-paths/development-plan, /skills-gap | /my/plan | M02, M04 | Keep
+ | /jobs (API error) | /careers/jobs linking to ENEC's careers channel | M01 | Adapt
+ | /resume/*, /resume-optimizer | None | n/a | Drop
+ | /onboarding (6 steps, not persisted) | Stage finder and light application | M06 | Adapt
+ | /emiratization-support | /pathways (public) and /workforce/emiratization (HR) | M06, M07 | Split
+ | /enterprise-dashboard, /organization/* | /team and /workforce behind sign-in | M02, M07 | Adapt
+ | /talent-analytics (sector view) | /observer released reports | M07 | Narrow
+ | /workforce-planning (named succession) | Bench depth counts by critical role | M07 | Replace
+ | /org-charts (≈1,500 real people) | Entity and role structure, no names | M12 | Replace
+ | /industry-reports, /resources | /esg, /community linking to official reports | M12 | Adapt
+ | None | Safety culture hub and speak-up pointer | M08 | New
+ | None (no supplier module) | Partner portal: onboarding, academy, equivalency, ICV | M09 | New
+ | None | Universities and research | M10 | New
+ | "Ask Ali" and 10 AI endpoints | Dalil with grounding, refusals, evaluation | M13 | Replace
+ | /appointments (named fictional advisors) | Careers team contact by role | M06 | Adapt
+ | /notifications | Expiry, assignment and application notices | M02, M03, M06 | Adapt
+ | /profile (Emirates ID, DOB) | Minimal profile; UAE Pass when needed | M14 | Adapt
+ | /settings/* stubs | Working settings and data rights | M14 | Adapt
+ | Language toggle (4 pages) | Full Arabic parity | M15 | Replace
+ | /faqs, /contact, /terms, /privacy | Same, with real routing | M12 | Keep
+ | /demo, /demo-*, /performance, /export | Demo tenant, not public routes | M16 | Drop
+ | /api/debug/env, /api/ai/diagnostic, /api/auth/debug, /api/test-email | None; CI gate | M16 | Drop
+ | Consent, AuditLog | Consent with purpose; append-only audit | M14, M16 | Keep
+Section 17
+## Sources
+All accessed on or before 8 Oct 2026. ENEC facts come from these public pages via the research notes behind this spec; nothing was taken from non-public material.
+### Source system
+https://uaecb.netlify.app
+https://github.com/armieahmed7/uae-banking-platform (commit 784c1f7)
+### ENEC
+https://www.enec.ae/about-us/overview/
+https://www.enec.ae/about-us/overview/strategic-roadmap/
+https://www.enec.ae/about-us/overview/climate-change/
+https://www.enec.ae/about-us/overview/sustainability/
+ENEC Sustainability Report 2024 (PDF)
+ENEC rebrand release
+https://www.enec.ae/our-subsidiaries/enec-operations/message-from-ceo/
+https://www.enec.ae/our-subsidiaries/enec-operations/our-shareholders/
+https://www.enec.ae/our-subsidiaries/enec-commercial/about-enec-commercial/
+https://www.enec.ae/our-subsidiaries/enec-consulting/about-enec-consulting/
+https://www.enec.ae/barakah-plant/
+https://www.enec.ae/barakah-plant/technology/
+https://www.enec.ae/barakah-plant/operation/
+https://www.enec.ae/regulation/safety-at-enec/operational-safety/
+https://www.enec.ae/regulation/regulation-and-review/nuclear-regulation/
+https://www.enec.ae/regulation/regulation-and-review/regulatory-licensing/
+https://www.enec.ae/regulation/regulation-and-review/international-standards/
+https://www.enec.ae/careers-and-scholarships/talent-pipeline-programs/
+https://www.enec.ae/careers-and-scholarships/careers/
+ENEC GPO release (Aug 2025)
+ENEC DNT graduation release (Jun 2026)
+ENEC-DGE agreement release (May 2026)
+https://www.enec.ae/discover/how-nuclear-energy-works/who-operates-the-plant-/training-facilities/
+https://www.enec.ae/discover/how-nuclear-energy-works/who-operates-the-plant-/global-operating-experience/
+https://www.enec.ae/our-subsidiaries/enec-operations/nuclear-safety-culture/
+https://www.enec.ae/our-subsidiaries/enec-operations/our-values/
+https://www.enec.ae/our-subsidiaries/enec-operations/oversight-committees/
+https://www.enec.ae/our-subsidiaries/enec-operations/the-emergency-response-center/
+https://www.enec.ae/our-subsidiaries/enec-operations/emergency-preparedness-faqs/
+https://www.enec.ae/regulation/safety-at-enec/emergency-preparedness/
+https://www.enec.ae/our-subsidiaries/enec-operations/women-in-nuclear/
+https://www.enec.ae/community/al-dhafra-region-activity/
+https://www.enec.ae/community/students-materials/
+ENEC localisation opportunities
+https://www.enec.ae/vendors/vendor-education/icv/
+ENEC-NCEMA MoU release
+ENEC-Presight ENECIQ release
+### Regulators and international bodies
+FANR-REG-17, Certification of Operating Personnel
+FANR-REG-16
+FANR-REG-12
+UAE National Report, 10th CNS Review Meeting (IAEA)
+IAEA SSG-75 (2022)
+IAEA NG-T-3.10 (2011)
+World Nuclear Association UAE profile
+### News and partners
+WNN: fourth Barakah unit receives operating licence
+WNN: Barakah 1 receives operating licence
+WNN: IAEA OSART follow-up
+WNN: drone strike near Barakah (May 2026)
+NucNet: IAEA statement (May 2026)
+WNN: ADVANCE programme
+WNN: COP28 SMR MoUs
+WNN: GE Vernova Hitachi MoU
+WNN: Newcleo MoU
+WNN: KEPCO MoU (Nov 2025)
+WNN: Framatome lead assemblies
+WNN: DGE workforce agreement
+WNN: Korean service agreements
+WNN: EDF O&M support
+ENEC: KHNP OSSA
+ENEC: fuel supply contracts (2012)
+Abu Dhabi Media Office: Westinghouse agreement
+ENEC: Samsung C&T MoU
+ENEC: ADNOC collaboration
+Saskatchewan: SRC and GIEMS MoU
+Abu Dhabi Media Office: UAE Barakah Exercise 2023
+Abu Dhabi Media Office: EAD coral partnership
+The National: FANR on capacity expansion (Feb 2026)
+Khalifa University MSc in Nuclear Engineering
+### Related concept work
+ENEC NEXUS live demo
+ENEC NEXUS build plan
+ENEC NEXUS guidebook
+Kafa'a Nuclear Skills Platform is a working name for a concept. This document is not affiliated with or endorsed by the Emirates Nuclear Energy Company, ENEC Operations, FANR or any partner named. All facts come from public sources; figures marked uncertain should be confirmed before use. KAFAA-SPEC-001 Rev A, 8 Oct 2026.

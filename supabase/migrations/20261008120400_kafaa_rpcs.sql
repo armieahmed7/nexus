@@ -6,7 +6,7 @@
 
 -- ───────────── helpers
 create or replace function kafaa_result(p_ok boolean, p_code text, p_message text, p_audit kafaa_audit_events, p_ledger integer default null, p_data jsonb default '{}'::jsonb)
-returns jsonb language sql immutable as $$
+returns jsonb language sql immutable set search_path = public as $$
   select jsonb_build_object('ok', p_ok, 'code', p_code, 'message', p_message, 'audit_seq', p_audit.seq, 'ledger_seq', p_ledger, 'data', p_data)
 $$;
 
@@ -19,7 +19,7 @@ begin
 end $$;
 
 -- UAE working days: Monday-Friday (weekend Saturday and Sunday since 2022). Public holidays are not modelled in the demo.
-create or replace function kafaa_add_working_days(p_from date, p_days integer) returns date language plpgsql immutable as $$
+create or replace function kafaa_add_working_days(p_from date, p_days integer) returns date language plpgsql immutable set search_path = public as $$
 declare d date := p_from; n integer := 0;
 begin
   while n < p_days loop
@@ -473,3 +473,14 @@ grant execute on function
   kafaa_application_funnel(), kafaa_log_denied(text, text), kafaa_add_working_days(date, integer)
 to authenticated;
 grant execute on function kafaa_verify_certificate(text), kafaa_add_working_days(date, integer), kafaa_log_denied(text, text) to anon;
+
+-- Functions are executable by PUBLIC by default: write RPCs and internal helpers must not be callable anonymously.
+revoke execute on function
+  kafaa_signoff_evaluation(jsonb), kafaa_set_licence_status(text, text, text), kafaa_detect_licensing_events(), kafaa_decide_partner_onboarding(text, text, text),
+  kafaa_decide_application(text, text, text), kafaa_triage_concern(text, text, text), kafaa_decide_equivalency(text, text, text), kafaa_get_equivalency(text),
+  kafaa_observer_report_action(text, text, text[]), kafaa_screen_research_challenge(text, boolean, boolean), kafaa_set_dalil_enabled(boolean),
+  kafaa_revise_standard(text, text), kafaa_grant_role(text, text, text, text), kafaa_approve_role(text), kafaa_revoke_role(text, text), kafaa_item_review(text, text),
+  kafaa_record_jpm(text, text, jsonb), kafaa_book_simulator(text, text, text), kafaa_assign_curriculum(text), kafaa_workforce_aggregate(text, text),
+  kafaa_application_funnel(), kafaa_acting_role(text, text[]), kafaa_result(boolean, text, text, kafaa_audit_events, integer, jsonb)
+from public, anon;
+grant execute on function kafaa_result(boolean, text, text, kafaa_audit_events, integer, jsonb) to authenticated;

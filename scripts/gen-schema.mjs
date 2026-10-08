@@ -23,7 +23,7 @@ function sqlDefault(c) {
 
 const tables = Object.entries(SCHEMA).filter(([, t]) => !t.localOnly);
 let ddl = HEAD("Kafa'a schema: every kafaa_* table");
-ddl += `create table if not exists kafaa_schema_version (id int primary key, generated_at timestamptz not null default now(), tables int not null);\n\n`;
+ddl += `create table if not exists kafaa_schema_version (id int primary key, generated_at timestamptz not null default now(), tables int not null);\nalter table kafaa_schema_version enable row level security;\ndrop policy if exists kafaa_read on kafaa_schema_version;\ncreate policy kafaa_read on kafaa_schema_version for select to anon, authenticated using (true);\ngrant select on kafaa_schema_version to anon, authenticated;\n\n`;
 let fks = '';
 let idx = '';
 for (const [name, t] of tables) {
@@ -51,7 +51,7 @@ for (const [name, t] of tables) {
 ddl += `-- Foreign keys (deferrable so seed data can load in any order inside one transaction)\n${fks}\n-- Indexes\n${idx}\n`;
 
 // Append-only tables: no update/delete through any interface, including SECURITY DEFINER functions.
-ddl += `create or replace function kafaa_append_only() returns trigger language plpgsql as $$
+ddl += `create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
   raise exception 'Kafa''a · % is append-only: corrections create a new entry with a reason', tg_table_name using errcode = '42501';
 end $$;\n`;

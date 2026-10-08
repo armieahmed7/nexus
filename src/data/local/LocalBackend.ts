@@ -254,7 +254,7 @@ export class LocalBackend implements Repository {
     return p;
   }
   /** Mirror of kafaa_ledger(): NEXUS personas get a local ledger entry (same hash scheme); Kafa'a-only personas are skipped. */
-  async ledger(action: string, reason: string, plane = 'PEOPLE', domain = 'T'): Promise<number | null> {
+  async ledger(action: string, reason: string, plane = 'PEOPLE', domain = 'KAFAA'): Promise<number | null> {
     const who = this.identity();
     if (!this.isNexusPersona(who.personaId)) return null;
     const list = this.tables.ledger_local;
