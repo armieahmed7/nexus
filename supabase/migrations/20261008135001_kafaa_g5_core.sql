@@ -46,6 +46,11 @@ alter table kafaa_eval_runs add column if not exists security_correct integer no
 alter table kafaa_dalil_settings add column if not exists signed_in_rate_limit_per_hour integer not null default 60;
 alter table kafaa_dalil_settings add column if not exists engine text not null default 'retrieval-v1';
 
+-- The global Dalil settings row (kill switch). The live seed is partial; without this row kafaa_dalil_turn reports "switched off".
+insert into kafaa_dalil_settings (id, enabled, public_rate_limit_per_hour, staff_mode, model_gateway, retention_days, signed_in_rate_limit_per_hour, engine)
+values ('global', true, 20, true, 'Grounded retrieval over the approved corpus (demo); UAE-hosted model option in production', 30, 60, 'retrieval-v1')
+on conflict (id) do nothing;
+
 -- ───────────── Dalil logs are written only through kafaa_dalil_turn (server-side kill switch, mode gate and rate limit)
 revoke insert, update on kafaa_advisor_sessions, kafaa_advisor_turns from anon, authenticated;
 do $$ begin
