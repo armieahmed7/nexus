@@ -1612,6 +1612,181 @@ export interface FutureGoalsRow {
   created_at: string;
   updated_at: string;
 }
+export interface LeadershipProgrammesRow {
+  id: string;
+  code: string;
+  kind: 'course' | 'programme' | 'coaching' | 'mentoring' | 'external';
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  audience_en: string;
+  audience_ar: string;
+  duration_en: string;
+  duration_ar: string;
+  duration_days?: number | null;
+  completions?: number | null;
+  completions_year?: number | null;
+  fact_en: string;
+  fact_ar: string;
+  steps: string[];
+  mandatory_steps: string[];
+  required_tracks: string[];
+  skill_ids: string[];
+  behaviour_ids: string[];
+  nominable: boolean;
+  course_id?: string | null;
+  link_route?: string | null;
+  sources: any;
+  sort: number;
+}
+export interface LeadershipNominationsRow {
+  id: string;
+  person_id: string;
+  programme_id: string;
+  nominated_by: string;
+  reason: string;
+  cycle: string;
+  status: 'nominated' | 'approved' | 'declined' | 'completed';
+  person_name: string;
+  person_name_ar: string;
+  person_role_id?: string | null;
+  person_family_id?: string | null;
+  nominator_name: string;
+  nominator_name_ar: string;
+  decided_by?: string | null;
+  decided_at?: string | null;
+  decision_note?: string | null;
+  history: any;
+  created_at: string;
+  updated_at: string;
+}
+export interface Leadership360RequestsRow {
+  id: string;
+  cycle: string;
+  subject_id: string;
+  rater_id: string;
+  rater_kind: 'self' | 'manager' | 'peer' | 'report';
+  status: 'invited' | 'submitted';
+  subject_name: string;
+  subject_name_ar: string;
+  invited_at: string;
+  submitted_at?: string | null;
+}
+export interface Leadership360Row {
+  id: string;
+  cycle: string;
+  subject_id: string;
+  rater_kind: 'self' | 'manager' | 'peer' | 'report';
+  scores: any;
+  submitted_at: string;
+  open_read: boolean;
+}
+export interface CommunitiesRow {
+  id: string;
+  code: string;
+  discipline: 'operations' | 'maintenance' | 'chemistry' | 'radiation_protection' | 'engineering' | 'digital_ai' | 'human_performance';
+  name_en: string;
+  name_ar: string;
+  charter_en: string;
+  charter_ar: string;
+  steward_role_en: string;
+  steward_role_ar: string;
+  skill_ids: string[];
+  open: boolean;
+  sort: number;
+}
+export interface CommunityMembersRow {
+  id: string;
+  community_id: string;
+  person_id: string;
+  role: 'member' | 'steward';
+  active: boolean;
+  person_name: string;
+  person_name_ar: string;
+  person_role_id?: string | null;
+  joined_at: string;
+  updated_at: string;
+}
+export interface ThreadsRow {
+  id: string;
+  community_id: string;
+  title: string;
+  lang: 'en' | 'ar';
+  author_id: string;
+  author_name: string;
+  author_name_ar: string;
+  first_post_id?: string | null;
+  status: 'open' | 'closed';
+  visible: boolean;
+  reply_count: number;
+  last_post_at: string;
+  skill_ids: string[];
+  created_at: string;
+}
+export interface PostsRow {
+  id: string;
+  thread_id: string;
+  community_id: string;
+  author_id: string;
+  author_name: string;
+  author_name_ar: string;
+  body: string;
+  lang: 'en' | 'ar';
+  status: 'published' | 'held' | 'hidden';
+  visible: boolean;
+  moderated_by?: string | null;
+  moderated_at?: string | null;
+  moderation_note?: string | null;
+  created_at: string;
+}
+export interface ExpertOptinRow {
+  id: string;
+  person_id: string;
+  skill_ids: string[];
+  visible: boolean;
+  headline: string;
+  person_name: string;
+  person_name_ar: string;
+  role_id?: string | null;
+  family_id?: string | null;
+  team_id?: string | null;
+  updated_at: string;
+}
+export interface ExpertRequestsRow {
+  id: string;
+  expert_id: string;
+  requester_id: string;
+  skill_id: string;
+  message: string;
+  status: 'sent' | 'accepted' | 'declined';
+  reply?: string | null;
+  requester_name: string;
+  requester_name_ar: string;
+  expert_name: string;
+  expert_name_ar: string;
+  created_at: string;
+  answered_at?: string | null;
+}
+export interface KsSessionsRow {
+  id: string;
+  community_id?: string | null;
+  topic: 'proficiency' | 'outage_lessons' | 'project_management' | 'ai' | 'mcr_overview' | 'radiation_safety' | 'data_analytics' | 'human_performance' | 'chemistry' | 'maintenance';
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  presenter_role_en: string;
+  presenter_role_ar: string;
+  held_on: string;
+  status: 'held' | 'upcoming';
+  duration_min: number;
+  recording_ref?: string | null;
+  keywords: string[];
+  skill_ids: string[];
+  synthetic: boolean;
+  sources: any;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -1735,6 +1910,17 @@ export interface Tables {
   future_resources: FutureResourcesRow;
   future_interest: FutureInterestRow;
   future_goals: FutureGoalsRow;
+  leadership_programmes: LeadershipProgrammesRow;
+  leadership_nominations: LeadershipNominationsRow;
+  leadership_360_requests: Leadership360RequestsRow;
+  leadership_360: Leadership360Row;
+  communities: CommunitiesRow;
+  community_members: CommunityMembersRow;
+  threads: ThreadsRow;
+  posts: PostsRow;
+  expert_optin: ExpertOptinRow;
+  expert_requests: ExpertRequestsRow;
+  ks_sessions: KsSessionsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];

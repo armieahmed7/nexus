@@ -1964,6 +1964,214 @@ create table if not exists kafaa_future_goals (
 );
 comment on table kafaa_future_goals is '[M21] Future Me learning goals handed to the Learning Coach as coach targets (F09 -> F07)';
 
+-- M22 · Enterprise Nuclear Leadership Academy programmes with published facts and sources (F16)
+create table if not exists kafaa_leadership_programmes (
+  id text primary key,
+  code text not null unique,
+  kind text not null check (kind in ('course', 'programme', 'coaching', 'mentoring', 'external')),
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  audience_en text not null,
+  audience_ar text not null,
+  duration_en text not null,
+  duration_ar text not null,
+  duration_days numeric,
+  completions integer,
+  completions_year integer,
+  fact_en text not null default '',
+  fact_ar text not null default '',
+  steps text[] not null default '{}'::text[],
+  mandatory_steps text[] not null default '{}'::text[],
+  required_tracks text[] not null default '{}'::text[],
+  skill_ids text[] not null default '{}'::text[],
+  behaviour_ids text[] not null default '{}'::text[],
+  nominable boolean not null default true,
+  course_id text,
+  link_route text,
+  sources jsonb not null default '[]'::jsonb,
+  sort integer not null default 0
+);
+comment on table kafaa_leadership_programmes is '[M22] Enterprise Nuclear Leadership Academy programmes with published facts and sources (F16)';
+
+-- M22 · Nomination of a person to a leadership programme: manager nominates, HR decides (maker-checker) (F16)
+create table if not exists kafaa_leadership_nominations (
+  id text primary key,
+  person_id text not null,
+  programme_id text not null,
+  nominated_by text not null,
+  reason text not null,
+  cycle text not null,
+  status text not null default 'nominated' check (status in ('nominated', 'approved', 'declined', 'completed')),
+  person_name text not null default '',
+  person_name_ar text not null default '',
+  person_role_id text,
+  person_family_id text,
+  nominator_name text not null default '',
+  nominator_name_ar text not null default '',
+  decided_by text,
+  decided_at timestamptz,
+  decision_note text,
+  history jsonb not null default '[]'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_leadership_nominations is '[M22] Nomination of a person to a leadership programme: manager nominates, HR decides (maker-checker) (F16)';
+
+-- M22 · Leadership behaviours 360: an invitation to rate a colleague (rater-only rows) (F16)
+create table if not exists kafaa_leadership_360_requests (
+  id text primary key,
+  cycle text not null,
+  subject_id text not null,
+  rater_id text not null,
+  rater_kind text not null check (rater_kind in ('self', 'manager', 'peer', 'report')),
+  status text not null default 'invited' check (status in ('invited', 'submitted')),
+  subject_name text not null default '',
+  subject_name_ar text not null default '',
+  invited_at timestamptz not null default now(),
+  submitted_at timestamptz
+);
+comment on table kafaa_leadership_360_requests is '[M22] Leadership behaviours 360: an invitation to rate a colleague (rater-only rows) (F16)';
+
+-- M22 · Leadership behaviours 360 responses: anonymous scores, read only as aggregates through RPCs (F16)
+create table if not exists kafaa_leadership_360 (
+  id text primary key,
+  cycle text not null,
+  subject_id text not null,
+  rater_kind text not null check (rater_kind in ('self', 'manager', 'peer', 'report')),
+  scores jsonb not null default '{}'::jsonb,
+  submitted_at timestamptz not null default now(),
+  open_read boolean not null default false
+);
+comment on table kafaa_leadership_360 is '[M22] Leadership behaviours 360 responses: anonymous scores, read only as aggregates through RPCs (F16)';
+
+-- M22 · Communities of practice by discipline: charter, steward role card (F17)
+create table if not exists kafaa_communities (
+  id text primary key,
+  code text not null unique,
+  discipline text not null check (discipline in ('operations', 'maintenance', 'chemistry', 'radiation_protection', 'engineering', 'digital_ai', 'human_performance')),
+  name_en text not null,
+  name_ar text not null,
+  charter_en text not null,
+  charter_ar text not null,
+  steward_role_en text not null,
+  steward_role_ar text not null,
+  skill_ids text[] not null default '{}'::text[],
+  open boolean not null default true,
+  sort integer not null default 0
+);
+comment on table kafaa_communities is '[M22] Communities of practice by discipline: charter, steward role card (F17)';
+
+-- M22 · Community membership (member or steward) (F17)
+create table if not exists kafaa_community_members (
+  id text primary key,
+  community_id text not null,
+  person_id text not null,
+  role text not null default 'member' check (role in ('member', 'steward')),
+  active boolean not null default true,
+  person_name text not null default '',
+  person_name_ar text not null default '',
+  person_role_id text,
+  joined_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_community_members is '[M22] Community membership (member or steward) (F17)';
+
+-- M22 · Community Q&A thread (moderated) (F17)
+create table if not exists kafaa_threads (
+  id text primary key,
+  community_id text not null,
+  title text not null,
+  lang text not null default 'en' check (lang in ('en', 'ar')),
+  author_id text not null,
+  author_name text not null default '',
+  author_name_ar text not null default '',
+  first_post_id text,
+  status text not null default 'open' check (status in ('open', 'closed')),
+  visible boolean not null default true,
+  reply_count integer not null default 0,
+  last_post_at timestamptz not null default now(),
+  skill_ids text[] not null default '{}'::text[],
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_threads is '[M22] Community Q&A thread (moderated) (F17)';
+
+-- M22 · Community post with moderation status (F17)
+create table if not exists kafaa_posts (
+  id text primary key,
+  thread_id text not null,
+  community_id text not null,
+  author_id text not null,
+  author_name text not null default '',
+  author_name_ar text not null default '',
+  body text not null,
+  lang text not null default 'en' check (lang in ('en', 'ar')),
+  status text not null default 'published' check (status in ('published', 'held', 'hidden')),
+  visible boolean not null default true,
+  moderated_by text,
+  moderated_at timestamptz,
+  moderation_note text,
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_posts is '[M22] Community post with moderation status (F17)';
+
+-- M22 · Expert finder opt-in: skills I am happy to be found for (level 3 or above), visible or hidden (F17)
+create table if not exists kafaa_expert_optin (
+  id text primary key,
+  person_id text not null unique,
+  skill_ids text[] not null default '{}'::text[],
+  visible boolean not null default true,
+  headline text not null default '',
+  person_name text not null default '',
+  person_name_ar text not null default '',
+  role_id text,
+  family_id text,
+  team_id text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_expert_optin is '[M22] Expert finder opt-in: skills I am happy to be found for (level 3 or above), visible or hidden (F17)';
+
+-- M22 · In-app request to an opted-in expert (no contact details are exchanged) (F17)
+create table if not exists kafaa_expert_requests (
+  id text primary key,
+  expert_id text not null,
+  requester_id text not null,
+  skill_id text not null,
+  message text not null,
+  status text not null default 'sent' check (status in ('sent', 'accepted', 'declined')),
+  reply text,
+  requester_name text not null default '',
+  requester_name_ar text not null default '',
+  expert_name text not null default '',
+  expert_name_ar text not null default '',
+  created_at timestamptz not null default now(),
+  answered_at timestamptz
+);
+comment on table kafaa_expert_requests is '[M22] In-app request to an opted-in expert (no contact details are exchanged) (F17)';
+
+-- M22 · Knowledge-sharing session catalogue: held sessions with recordings (synthetic links) and upcoming events (F17)
+create table if not exists kafaa_ks_sessions (
+  id text primary key,
+  community_id text,
+  topic text not null check (topic in ('proficiency', 'outage_lessons', 'project_management', 'ai', 'mcr_overview', 'radiation_safety', 'data_analytics', 'human_performance', 'chemistry', 'maintenance')),
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  presenter_role_en text not null,
+  presenter_role_ar text not null,
+  held_on date not null,
+  status text not null check (status in ('held', 'upcoming')),
+  duration_min integer not null default 60,
+  recording_ref text,
+  keywords text[] not null default '{}'::text[],
+  skill_ids text[] not null default '{}'::text[],
+  synthetic boolean not null default true,
+  sources jsonb not null default '[]'::jsonb
+);
+comment on table kafaa_ks_sessions is '[M22] Knowledge-sharing session catalogue: held sessions with recordings (synthetic links) and upcoming events (F17)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -2118,6 +2326,25 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_fu
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_goals_person_id_fk') then alter table kafaa_future_goals add constraint kafaa_future_goals_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_goals_tech_id_fk') then alter table kafaa_future_goals add constraint kafaa_future_goals_tech_id_fk foreign key (tech_id) references kafaa_adv_technologies(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_goals_lane_id_fk') then alter table kafaa_future_goals add constraint kafaa_future_goals_lane_id_fk foreign key (lane_id) references kafaa_horizon_lanes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_leadership_programmes_course_id_fk') then alter table kafaa_leadership_programmes add constraint kafaa_leadership_programmes_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_leadership_nominations_person_id_fk') then alter table kafaa_leadership_nominations add constraint kafaa_leadership_nominations_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_leadership_nominations_programme_id_fk') then alter table kafaa_leadership_nominations add constraint kafaa_leadership_nominations_programme_id_fk foreign key (programme_id) references kafaa_leadership_programmes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_leadership_nominations_nominated_by_fk') then alter table kafaa_leadership_nominations add constraint kafaa_leadership_nominations_nominated_by_fk foreign key (nominated_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_leadership_360_requests_subject_id_fk') then alter table kafaa_leadership_360_requests add constraint kafaa_leadership_360_requests_subject_id_fk foreign key (subject_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_leadership_360_requests_rater_id_fk') then alter table kafaa_leadership_360_requests add constraint kafaa_leadership_360_requests_rater_id_fk foreign key (rater_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_leadership_360_subject_id_fk') then alter table kafaa_leadership_360 add constraint kafaa_leadership_360_subject_id_fk foreign key (subject_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_community_members_community_id_fk') then alter table kafaa_community_members add constraint kafaa_community_members_community_id_fk foreign key (community_id) references kafaa_communities(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_community_members_person_id_fk') then alter table kafaa_community_members add constraint kafaa_community_members_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_threads_community_id_fk') then alter table kafaa_threads add constraint kafaa_threads_community_id_fk foreign key (community_id) references kafaa_communities(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_threads_author_id_fk') then alter table kafaa_threads add constraint kafaa_threads_author_id_fk foreign key (author_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_posts_thread_id_fk') then alter table kafaa_posts add constraint kafaa_posts_thread_id_fk foreign key (thread_id) references kafaa_threads(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_posts_community_id_fk') then alter table kafaa_posts add constraint kafaa_posts_community_id_fk foreign key (community_id) references kafaa_communities(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_posts_author_id_fk') then alter table kafaa_posts add constraint kafaa_posts_author_id_fk foreign key (author_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_expert_optin_person_id_fk') then alter table kafaa_expert_optin add constraint kafaa_expert_optin_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_expert_requests_expert_id_fk') then alter table kafaa_expert_requests add constraint kafaa_expert_requests_expert_id_fk foreign key (expert_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_expert_requests_requester_id_fk') then alter table kafaa_expert_requests add constraint kafaa_expert_requests_requester_id_fk foreign key (requester_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_expert_requests_skill_id_fk') then alter table kafaa_expert_requests add constraint kafaa_expert_requests_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ks_sessions_community_id_fk') then alter table kafaa_ks_sessions add constraint kafaa_ks_sessions_community_id_fk foreign key (community_id) references kafaa_communities(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -2315,6 +2542,28 @@ create index if not exists kafaa_future_goals_person_id_idx on kafaa_future_goal
 create index if not exists kafaa_future_goals_ref_id_idx on kafaa_future_goals (ref_id);
 create index if not exists kafaa_future_goals_tech_id_idx on kafaa_future_goals (tech_id);
 create index if not exists kafaa_future_goals_lane_id_idx on kafaa_future_goals (lane_id);
+create index if not exists kafaa_leadership_programmes_course_id_idx on kafaa_leadership_programmes (course_id);
+create index if not exists kafaa_leadership_nominations_person_id_idx on kafaa_leadership_nominations (person_id);
+create index if not exists kafaa_leadership_nominations_programme_id_idx on kafaa_leadership_nominations (programme_id);
+create index if not exists kafaa_leadership_nominations_nominated_by_idx on kafaa_leadership_nominations (nominated_by);
+create index if not exists kafaa_leadership_nominations_status_idx on kafaa_leadership_nominations (status);
+create index if not exists kafaa_leadership_360_requests_cycle_idx on kafaa_leadership_360_requests (cycle);
+create index if not exists kafaa_leadership_360_requests_subject_id_idx on kafaa_leadership_360_requests (subject_id);
+create index if not exists kafaa_leadership_360_requests_rater_id_idx on kafaa_leadership_360_requests (rater_id);
+create index if not exists kafaa_leadership_360_cycle_idx on kafaa_leadership_360 (cycle);
+create index if not exists kafaa_leadership_360_subject_id_idx on kafaa_leadership_360 (subject_id);
+create index if not exists kafaa_community_members_community_id_idx on kafaa_community_members (community_id);
+create index if not exists kafaa_community_members_person_id_idx on kafaa_community_members (person_id);
+create index if not exists kafaa_threads_community_id_idx on kafaa_threads (community_id);
+create index if not exists kafaa_threads_author_id_idx on kafaa_threads (author_id);
+create index if not exists kafaa_posts_thread_id_idx on kafaa_posts (thread_id);
+create index if not exists kafaa_posts_community_id_idx on kafaa_posts (community_id);
+create index if not exists kafaa_posts_author_id_idx on kafaa_posts (author_id);
+create index if not exists kafaa_posts_status_idx on kafaa_posts (status);
+create index if not exists kafaa_expert_requests_expert_id_idx on kafaa_expert_requests (expert_id);
+create index if not exists kafaa_expert_requests_requester_id_idx on kafaa_expert_requests (requester_id);
+create index if not exists kafaa_expert_requests_skill_id_idx on kafaa_expert_requests (skill_id);
+create index if not exists kafaa_ks_sessions_community_id_idx on kafaa_ks_sessions (community_id);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -2327,4 +2576,4 @@ create trigger kafaa_evaluations_append_only before update or delete on kafaa_ev
 drop trigger if exists kafaa_evaluation_acks_append_only on kafaa_evaluation_acks;
 create trigger kafaa_evaluation_acks_append_only before update or delete on kafaa_evaluation_acks for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 120) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 131) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
