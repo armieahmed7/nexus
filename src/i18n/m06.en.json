@@ -24,6 +24,18 @@
     "workforce-talent": {
       "title": "Talent content",
       "purpose": "Vacancies (linked to ENEC's official careers channel), outreach events, internship placements and programme intake."
+    },
+    "pathways-journey": {
+      "title": "Your journey: school to Barakah",
+      "purpose": "A personal journey from interests and STEM experiences to Mustaqbali, DNT, Energy Pioneers or GDP and a first role, with sourced facts, a non-scoring interest explorer and a readiness checklist."
+    },
+    "pathways-journey-parents": {
+      "title": "For parents and families",
+      "purpose": "The student journey explained for parents, in Arabic first, with sources, questions to ask and upcoming events."
+    },
+    "workforce-journeys": {
+      "title": "Student journey insights",
+      "purpose": "Aggregate counts of saved student journeys by stage, route and interest family (cells under 10 suppressed), and Mustaqbali starter credentials."
     }
   },
   "pathways": {
@@ -395,5 +407,261 @@
     "intake": "Intake",
     "intakeTitle": "Change the intake?",
     "intakeBody": "{name} will show \"{mode}\" on every public page."
+  },
+  "journey": {
+    "eyebrow": "Student-to-career journey",
+    "intro": "Follow one continuous path: discover your interests, try a STEM experience, choose a route (DNT, Energy Pioneers, GDP or GPO) and see the first roles it leads to. Every fact shows its source and date.",
+    "whereNow": "Where are you now?",
+    "stage": {
+      "school": "I am in school",
+      "finishing_school": "I am finishing school",
+      "university": "I am at university",
+      "graduate": "I am a graduate"
+    },
+    "here": {
+      "school": "You are at the start: explore your interests and look out for Mustaqbali.",
+      "finishing_school": "You are at the route step: the Diploma in Nuclear Technology or an Energy Pioneers scholarship come next.",
+      "university": "You are at the route step: Energy Pioneers and university internships fit you now.",
+      "graduate": "You are at the route step: the Graduate Development Program or Graduate Plant Operator fit you now."
+    },
+    "pickStage": "Pick where you are to see \"You are here\" on the board.",
+    "storeSignedIn": "Signed in: press Save to keep your journey. Only you can see it.",
+    "storeNothing": "Nothing on this page is stored or sent while you are not signed in.",
+    "jump": "Jump to",
+    "nav": {
+      "board": "Journey board",
+      "explore": "Interest explorer",
+      "ready": "Readiness checklist",
+      "practice": "Practice quizzes",
+      "parents": "For parents",
+      "portfolio": "My portfolio"
+    },
+    "boardTitle": "Your journey board",
+    "boardHint": "Four stations from school to your first role. Every programme fact links its public source and the date it refers to.",
+    "noFacts": "Journey facts are not available right now.",
+    "asOf": "as of {date}",
+    "step": {
+      "explore": "Explore at school",
+      "mustaqbali": "Mustaqbali",
+      "route": "Choose your route",
+      "first_role": "Your first role"
+    },
+    "exploreSub": "Interests, STEM and practice",
+    "exploreBody": "Find out which kinds of nuclear work fit you, try the free practice quizzes and go to events.",
+    "takeExplorer": "Take the interest explorer",
+    "youAreHere": "You are here",
+    "open": "Open {name}",
+    "routeSub": "Diploma, scholarship or graduate programme",
+    "suggested": "Suggested for you",
+    "yourRoute": "Your route",
+    "choose": "Choose this route",
+    "chosen": "Chosen",
+    "firstRoleFor": "Where {route} leads",
+    "firstRoleAll": "Where the routes lead",
+    "firstRoleNote": "Roles open on the career map. Licensed roles follow later, after training and FANR certification.",
+    "exploreTitle": "Interest explorer",
+    "exploreHint": "Ten quick questions. Answer as many as you like: your matches update as you go. It is not a test and there are no right answers.",
+    "noQuestions": "The explorer is not available right now.",
+    "reset": "Clear my answers",
+    "matchesTitle": "Job families that match your answers",
+    "matchesEyebrow": "Roles like this",
+    "matchesEmpty": "Answer a few questions to see job families and roles like this.",
+    "matchesNone": "Your answers so far do not point to one family yet. Try a few more questions.",
+    "rolesLike": "Roles like this",
+    "pathOnly": "career path only",
+    "noScore": "The explorer only shows which of your answers point where. It does not grade you or compare you with anyone, and every route stays open to you.",
+    "readyTitle": "Readiness checklist",
+    "readyHint": "Check the published eligibility for your route and tick off the steps to get ready. Nothing here is a decision.",
+    "readyPick": "Choose a route on the board to see its checklist.",
+    "readyEyebrow": "Readiness (non-binding)",
+    "eligibility": "Published eligibility",
+    "elig": {
+      "meets": "From your answers you appear to meet the published criteria",
+      "check": "One answer does not match the published criteria: check with ENEC before applying",
+      "unsure": "Some answers are unsure: check them at an information session"
+    },
+    "prepTitle": "Steps to get ready",
+    "nextStep": "Next step:",
+    "allSet": "You have done every step on this list. Apply when the intake opens.",
+    "readyNote": "The checklist is for you. It never decides anything, and ENEC HR makes every decision through its official process.",
+    "prep": {
+      "school_ok": "I am a high-school student",
+      "family": "I talked about this route with my family",
+      "practice": "I tried a practice quiz",
+      "register": "I registered my interest for the next edition",
+      "finish_g12": "I am on track to finish Grade 12",
+      "certificate": "I know where my high-school certificate and documents are",
+      "info_session": "I attended an information session or open day",
+      "apply": "I applied when the intake opened",
+      "subjects": "I am taking maths and science subjects",
+      "university": "I checked the partner universities and their admission requirements",
+      "degree": "I have, or will soon have, a bachelor's degree",
+      "cv": "My CV is up to date",
+      "degree_eng": "I have, or will soon have, an engineering degree",
+      "shift": "I understand that operators work shifts"
+    },
+    "saveHint": "Save your journey to pick it up later. Only you can see it, and you can clear it at any time.",
+    "saveNotForRole": "Saving a journey is for students and applicants with a Kafa'a account. You can still use every part of this page.",
+    "saveAnon": "You can use everything here without an account, and nothing is stored. Sign in if you want to save your journey.",
+    "save": "Save my journey",
+    "saved": "Journey saved. Only you can see it.",
+    "signInToSave": "Sign in to save",
+    "clear": "Clear my saved journey",
+    "clearTitle": "Clear your saved journey?",
+    "clearConsequence": "Your answers, route and checklist are emptied. Your applications are not affected.",
+    "cleared": "Your saved journey was cleared",
+    "practiceTitle": "Practice quizzes",
+    "practiceHint": "Free public practice. No grade is kept and nothing counts towards an application.",
+    "practiceNone": "No practice quiz is available right now.",
+    "practiceStart": "Start practising",
+    "parentsTitle": "Show your family",
+    "parentsHint": "A page for parents, in Arabic first, that explains the journey you are looking at.",
+    "parentsAr": {
+      "title": "دليل الأسرة لرحلة ابنكم أو ابنتكم",
+      "body": "صفحة تشرح المسار من المدرسة إلى أول وظيفة في براكة، مع المصادر الرسمية والأسئلة التي يمكنكم طرحها."
+    },
+    "parentsOpen": "Open the parent view",
+    "parentsPrivacy": "The link carries only your stage, route and interest families. Nothing is saved.",
+    "portfolioTitle": "My starter portfolio",
+    "portfolioHint": "Your STEM experiences and the Mustaqbali starter credential, in one place.",
+    "starterTitle": "Mustaqbali starter credential",
+    "starterPending": "Earned when you take part in Mustaqbali. It appears here once ENEC HR confirms your participation.",
+    "synthetic": "Synthetic record",
+    "kind": {
+      "microcred": "Starter credential",
+      "experience": "Experience",
+      "practice": "Practice",
+      "event": "Event"
+    },
+    "notFanrTitle": "A record for your portfolio, not a certification",
+    "notFanrBody": "Kafa'a keeps these records so you can show your experiences. They are not a FANR certification, not an ENEC qualification and not a condition for any programme.",
+    "print": "Print my portfolio",
+    "rulesTitle": "How Kafa'a treats students",
+    "rulesBody": "Kafa'a never compares students with each other and never turns anyone down automatically. It mirrors ENEC's official programmes; every decision is made by ENEC HR through its official process.",
+    "teaserTitle": "Plan your own journey",
+    "teaserBody": "Answer ten quick questions, see where they point and follow one path from school to your first role at Barakah, in English or Arabic.",
+    "teaserOpen": "Start my journey"
+  },
+  "reasons": {
+    "answer": "You chose \"{a}\" for \"{q}\"",
+    "route_chosen": "You chose this route on the board",
+    "route_study": "Your answer about study length: \"{a}\"",
+    "route_stage": "It fits where you are now: {stage}",
+    "route_family": "It leads to families you matched: {families}"
+  },
+  "jparents": {
+    "eyebrow": "Student-to-career journey",
+    "intro": "The journey your son or daughter is exploring, explained for families. The Arabic text comes first.",
+    "back": "Back to the journey",
+    "linksTitle": "Programmes and official sources",
+    "privacyTitle": "Privacy",
+    "privacyBody": "This page stores nothing and sends nothing. Any choices shown above come only from the link your child shared.",
+    "eventsTitle": "Upcoming events for families",
+    "eventsHint": "Information sessions and fairs where you can ask questions in person. Sample dates are marked.",
+    "ar": {
+      "yourChild": "ما يستكشفه ابنكم أو ابنتكم",
+      "stage": {
+        "school": "ما زال في المدرسة ويستكشف اهتماماته.",
+        "finishing_school": "على وشك إنهاء المدرسة ويفكر في الخطوة التالية.",
+        "university": "يدرس في الجامعة.",
+        "graduate": "تخرّج أو على وشك التخرج."
+      },
+      "families": "مجالات العمل التي تناسب إجاباته: {families}.",
+      "route": "المسار الذي يفكر فيه: {route}.",
+      "noScore": "لا تقيّم كفاءة الطلاب ولا تقارن بينهم. هذه الصفحة للتوضيح فقط.",
+      "journeyTitle": "الرحلة في أربع خطوات",
+      "step": {
+        "explore": "الاستكشاف في المدرسة",
+        "mustaqbali": "برنامج مستقبلي: أسبوعان من التجربة العملية",
+        "route": "اختيار المسار: دبلوم أو منحة أو برنامج للخريجين",
+        "first_role": "أول وظيفة في براكة"
+      },
+      "helpTitle": "كيف يمكنكم المساعدة",
+      "tips": {
+        "t1": "تحدثوا مع ابنكم أو ابنتكم عمّا يستمتع به في المدرسة وخارجها.",
+        "t2": "احضروا معاً جلسة تعريفية أو معرضاً للتوظيف.",
+        "t3": "شجعوه على تجربة الاختبارات التدريبية المجانية دون ضغط.",
+        "t4": "اطّلعوا على شروط الأهلية والمدة في المصادر الرسمية.",
+        "t5": "تذكّروا أن كل المسارات مفتوحة، ويمكن تغيير الاختيار لاحقاً."
+      },
+      "askTitle": "أسئلة يمكنكم طرحها",
+      "ask": {
+        "a1": "ما مدة البرنامج، وهل تُصرف مكافأة شهرية خلاله؟",
+        "a2": "ما الوظيفة الأولى بعد التخرج، وأين يكون مكان العمل؟",
+        "a3": "هل يتطلب العمل نظام المناوبات؟",
+        "a4": "ما فرص التطور المهني والتدريب بعد الوظيفة الأولى؟"
+      }
+    },
+    "en": {
+      "yourChild": "What your child is exploring",
+      "stage": {
+        "school": "Still at school and exploring their interests.",
+        "finishing_school": "Finishing school and thinking about the next step.",
+        "university": "Studying at university.",
+        "graduate": "A graduate, or about to graduate."
+      },
+      "families": "Job families that match their answers: {families}.",
+      "route": "The route they are considering: {route}.",
+      "noScore": "Kafa'a does not grade or compare students. This page only explains.",
+      "journeyTitle": "The journey in four steps",
+      "step": {
+        "explore": "Exploring at school",
+        "mustaqbali": "Mustaqbali: two weeks of hands-on experience",
+        "route": "Choosing a route: a diploma, a scholarship or a graduate programme",
+        "first_role": "A first role at Barakah"
+      },
+      "helpTitle": "How you can help",
+      "tips": {
+        "t1": "Talk with your son or daughter about what they enjoy, in and out of school.",
+        "t2": "Go to an information session or a careers fair together.",
+        "t3": "Encourage them to try the free practice quizzes, without pressure.",
+        "t4": "Check eligibility and duration in the official sources.",
+        "t5": "Remember that every route stays open and choices can change later."
+      },
+      "askTitle": "Questions you can ask",
+      "ask": {
+        "a1": "How long is the programme, and is a monthly stipend paid?",
+        "a2": "What is the first role after graduation, and where is the workplace?",
+        "a3": "Does the work involve shifts?",
+        "a4": "What training and career growth follow the first role?"
+      }
+    }
+  },
+  "jinsights": {
+    "eyebrow": "Talent pipeline",
+    "intro": "How students use the journey: counts only, from saved journeys. Every cell with fewer than 10 people is suppressed. No student is listed, compared or turned down here.",
+    "refused": "Journey insights are not available to you",
+    "suppressed": "Suppressed",
+    "undecided": "Still undecided",
+    "tile": {
+      "total": "Saved journeys",
+      "routed": "With a route chosen",
+      "applied": "Applied to their route",
+      "credentials": "Starter credentials issued"
+    },
+    "tileSub": {
+      "total": "Distinct people (synthetic data)",
+      "routed": "Saved journeys with a route",
+      "applied": "Have an application to the route they saved",
+      "credentials": "Mustaqbali participants (synthetic)"
+    },
+    "byStage": "By life stage",
+    "byRoute": "By route",
+    "byFamily": "Interest families from the explorer",
+    "byFamilyHint": "People whose saved answers point to each job family (up to three families each).",
+    "allSuppressed": "Every family is under the minimum group size.",
+    "familyTable": "All families",
+    "group": "Group",
+    "people": "People",
+    "credTitle": "Mustaqbali starter credentials",
+    "credEyebrow": "HR director",
+    "credBody": "Accepted Mustaqbali participants receive a synthetic starter credential in their portfolio. It is a portfolio record, not a FANR certification or an ENEC qualification.",
+    "pending": "Waiting for a credential: {n}",
+    "issue": "Issue starter credentials",
+    "issueTitle": "Issue Mustaqbali starter credentials?",
+    "issueConsequence": "{n} accepted participants receive the starter credential in their portfolio and a notice. This is recorded in the audit log and the NEXUS ledger.",
+    "rulesTitle": "Aggregate only",
+    "rulesBody": "Individual journeys stay private to each student. HR sees counts of 10 or more; application decisions stay in the funnel and ENEC HR's official process.",
+    "funnelLink": "Open the application funnel"
   }
 }

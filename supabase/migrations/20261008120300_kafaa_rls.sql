@@ -1292,6 +1292,34 @@ create policy kafaa_read on kafaa_crew_debrief_members for select to anon, authe
 grant select on kafaa_crew_debrief_members to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- journey_questions
+alter table kafaa_journey_questions enable row level security;
+drop policy if exists kafaa_read on kafaa_journey_questions;
+create policy kafaa_read on kafaa_journey_questions for select to anon, authenticated using (kafaa_rule_read('talent_content', null::text, null::text, true));
+grant select on kafaa_journey_questions to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- journey_facts
+alter table kafaa_journey_facts enable row level security;
+drop policy if exists kafaa_read on kafaa_journey_facts;
+create policy kafaa_read on kafaa_journey_facts for select to anon, authenticated using (kafaa_rule_read('talent_content', null::text, null::text, true));
+grant select on kafaa_journey_facts to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- student_journeys
+alter table kafaa_student_journeys enable row level security;
+drop policy if exists kafaa_read on kafaa_student_journeys;
+create policy kafaa_read on kafaa_student_journeys for select to anon, authenticated using (kafaa_rule_read('applications', person_id, null::text, open_read));
+grant select on kafaa_student_journeys to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- student_portfolio
+alter table kafaa_student_portfolio enable row level security;
+drop policy if exists kafaa_read on kafaa_student_portfolio;
+create policy kafaa_read on kafaa_student_portfolio for select to anon, authenticated using (kafaa_rule_read('applications', person_id, null::text, open_read));
+grant select on kafaa_student_portfolio to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- external_cover
 alter table kafaa_external_cover enable row level security;
 drop policy if exists kafaa_read on kafaa_external_cover;
