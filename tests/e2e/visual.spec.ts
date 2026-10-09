@@ -74,6 +74,23 @@ const RTL: Shot[] = [
   { name: 'w2-leadership-360', path: '/leadership/360', persona: 'sro' },
   { name: 'w2-communities', path: '/communities', persona: 'qc-inspector' },
   { name: 'w2-experts', path: '/communities/experts', persona: 'qc-inspector' },
+  // wave 3 (F18-F24)
+  { name: 'w3-talent-review', path: '/talent/review', persona: 'chco' },
+  { name: 'w3-cycle', path: '/talent/review/trc-2026h2-ops', persona: 'ops-ceo' },
+  { name: 'w3-calibration', path: '/talent/review/trc-2026h2-mne/calibration', persona: 'chco' },
+  { name: 'w3-succession', path: '/talent/succession', persona: 'chco' },
+  { name: 'w3-slate', path: '/talent/succession/ss-shift-supervisor-2026h2', persona: 'chco' },
+  { name: 'w3-my-priorities', path: '/my/development-priorities', persona: 'qc-inspector' },
+  { name: 'w3-klra', path: '/knowledge/klra', persona: 'training-mgr' },
+  { name: 'w3-klra-position', path: '/knowledge/klra/pos-w-sro-02', persona: 'training-mgr' },
+  { name: 'w3-knowledge', path: '/knowledge', persona: 'qc-inspector' },
+  { name: 'w3-capture', path: '/knowledge/capture', persona: 'training-mgr' },
+  { name: 'w3-handover', path: '/workforce/handover', persona: 'chco' },
+  { name: 'w3-reserve', path: '/opportunities/reserve', persona: 'qc-inspector' },
+  { name: 'w3-reserve-me', path: '/opportunities/reserve/me', persona: 'sme-reviewer' },
+  { name: 'w3-reserve-desk', path: '/opportunities/reserve/hr', persona: 'chco' },
+  { name: 'w3-ai-transparency', path: '/admin/ai-transparency', persona: 'ai-governance' },
+  { name: 'w3-settings-reco', path: '/my/settings', persona: 'nse' },
 ];
 for (const s of RTL) {
   test(`rtl ${s.name}`, async ({ page }) => {
@@ -126,6 +143,28 @@ const MOBILE: Shot[] = [
   { name: 'w2-mentoring-programme', path: '/my/mentoring/programme', persona: 'training-mgr' },
   { name: 'w2-refresher-insights', path: '/training/refreshers', persona: 'training-mgr' },
   { name: 'w2-validate-ops', path: '/team/skills/validate', persona: 'ops-ceo' },
+  // wave 3 (F18-F24)
+  { name: 'w3-talent-review', path: '/talent/review', persona: 'chco' },
+  { name: 'w3-cycle', path: '/talent/review/trc-2026h2-ops', persona: 'ops-ceo' },
+  { name: 'w3-calibration', path: '/talent/review/trc-2026h2-mne/calibration', persona: 'chco' },
+  { name: 'w3-insights', path: '/talent/review/insights', persona: 'chco' },
+  { name: 'w3-succession', path: '/talent/succession', persona: 'chco' },
+  { name: 'w3-slate', path: '/talent/succession/ss-shift-supervisor-2026h2', persona: 'chco' },
+  { name: 'w3-my-priorities', path: '/my/development-priorities', persona: 'qc-inspector' },
+  { name: 'w3-klra', path: '/knowledge/klra', persona: 'training-mgr' },
+  { name: 'w3-klra-position', path: '/knowledge/klra/pos-w-sro-02', persona: 'training-mgr' },
+  { name: 'w3-knowledge', path: '/knowledge', persona: 'qc-inspector' },
+  { name: 'w3-asset', path: '/knowledge/assets/kas-001', persona: 'qc-inspector' },
+  { name: 'w3-capture', path: '/knowledge/capture', persona: 'training-mgr' },
+  { name: 'w3-session', path: '/knowledge/capture/cs-001', persona: 'training-mgr' },
+  { name: 'w3-review', path: '/knowledge/review', persona: 'training-mgr' },
+  { name: 'w3-handover', path: '/workforce/handover', persona: 'chco' },
+  { name: 'w3-reserve', path: '/opportunities/reserve', persona: 'qc-inspector' },
+  { name: 'w3-reserve-me', path: '/opportunities/reserve/me', persona: 'sme-reviewer' },
+  { name: 'w3-reserve-request', path: '/opportunities/reserve/request', persona: 'outage-manager' },
+  { name: 'w3-reserve-desk', path: '/opportunities/reserve/hr', persona: 'chco' },
+  { name: 'w3-ai-transparency', path: '/admin/ai-transparency', persona: 'ai-governance' },
+  { name: 'w3-settings-reco', path: '/my/settings', persona: 'nse' },
 ];
 for (const s of MOBILE) {
   test(`mobile ${s.name}`, async ({ page }) => {
@@ -207,5 +246,28 @@ for (const s of SET_W2) {
     await page.setViewportSize({ width: 1440, height: 900 });
     await open(page, s);
     await page.screenshot({ path: join(SHOTS_W2, `${s.name}.png`), fullPage: false });
+  });
+}
+
+// Wave 3 feature set (F18-F24): saved to KAFAA_SHOTS_W3.
+const SHOTS_W3 = process.env.KAFAA_SHOTS_W3 || 'test-results/shots_w3';
+mkdirSync(SHOTS_W3, { recursive: true });
+const SET_W3: Shot[] = [
+  { name: '01-talent-review-board-en', path: '/talent/review/trc-2026h2-ops', persona: 'ops-ceo' },
+  { name: '02-succession-slate-en', path: '/talent/succession/ss-shift-supervisor-2026h2', persona: 'chco' },
+  { name: '03-knowledge-loss-risk-en', path: '/knowledge/klra', persona: 'training-mgr' },
+  { name: '04-knowledge-base-search-en', path: '/knowledge', persona: 'qc-inspector', then: async (p) => { await p.locator('[data-testid="m24-kb-search"]').fill('peer check redundant train'); await p.waitForTimeout(500); } },
+  { name: '05-handover-2030-board-en', path: '/workforce/handover', persona: 'chco' },
+  { name: '06-expert-reserve-en', path: '/opportunities/reserve/me', persona: 'sme-reviewer' },
+  { name: '07-ai-fairness-monitor-en', path: '/admin/ai-transparency', persona: 'ai-governance', then: async (p) => { await p.getByRole('tab', { name: /Fairness monitor/ }).click(); } },
+  { name: '08-recommendation-controls-en', path: '/my/settings', persona: 'nse', then: async (p) => { await p.locator('[data-testid="m16-reco-card"]').scrollIntoViewIfNeeded(); } },
+  { name: '09-handover-2030-board-ar', path: '/workforce/handover', persona: 'chco', ar: true },
+  { name: '10-succession-mobile', path: '/talent/succession', persona: 'chco', mobile: true },
+];
+for (const s of SET_W3) {
+  test(`shot w3 ${s.name}`, async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await open(page, s);
+    await page.screenshot({ path: join(SHOTS_W3, `${s.name}.png`), fullPage: false });
   });
 }

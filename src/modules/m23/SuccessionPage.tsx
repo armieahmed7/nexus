@@ -47,7 +47,7 @@ function Board({ b, lab }: { b: SuccessionBoard; lab: Labels }) {
       {b.view === 'function' && <Callout title={t('m23.sx.functionView')}>{t('m23.sx.functionViewBody')}</Callout>}
       <Grid cols={4}>
         <StatTile label={t('m23.sx.slates')} value={f.num(b.slates.length)} sub={t('m23.sx.confirmed', { n: f.num(b.slates.filter((s) => s.status === 'confirmed').length) })} />
-        <StatTile label={t('m23.sx.withReady')} value={`${f.num(withReady)} / ${f.num(b.slates.length)}`} tone={withReady === b.slates.length ? 'ok' : 'bad'} />
+        <StatTile label={t('m23.sx.withReady')} value={t('m23.sx.withReadyOf', { n: f.num(withReady), total: f.num(b.slates.length) })} tone={withReady === b.slates.length ? 'ok' : 'bad'} />
         <StatTile label={t('m23.sx.atRisk')} value={f.num(b.slates.filter(risky).length)} tone={b.slates.some(risky) ? 'bad' : 'ok'} sub={t('m23.sx.atRiskSub')} />
         <StatTile label={t('m23.sx.successors')} value={f.num(new Set(b.slates.flatMap((s) => s.successors.filter((x) => x.person_id).map((x) => x.person_id))).size)} sub={t('m23.sx.successorsSub')} />
       </Grid>
@@ -57,13 +57,13 @@ function Board({ b, lab }: { b: SuccessionBoard; lab: Labels }) {
             <div className="space-y-2">
               {READINESS.map((r) => (
                 <div key={r}>
-                  <div className="flex justify-between text-[12.5px]"><span>{t(`m23.readiness.${r}`)}</span><span className="num">{f.num(b.aggregates!.by_readiness[r])}</span></div>
-                  <ProgressBar value={(b.aggregates!.by_readiness[r] / Math.max(1, b.aggregates!.successors)) * 100} tone={r === 'ready_now' ? 'ok' : r === '1_2y' ? 'accent' : 'sim'} label={t(`m23.readiness.${r}`)} />
+                  <div className="flex justify-between text-[12.5px]"><span>{t(`m23.readiness.${r}`)}</span>{b.aggregates!.by_readiness[r] == null ? <span className="text-ink-3" data-testid="m23-sx-agg-suppressed">{t('m23.ins.suppressed')}</span> : <span className="num">{f.num(b.aggregates!.by_readiness[r]!)}</span>}</div>
+                  <ProgressBar value={b.aggregates!.by_readiness[r] == null || b.aggregates!.successors == null ? 0 : (b.aggregates!.by_readiness[r]! / Math.max(1, b.aggregates!.successors)) * 100} tone={r === 'ready_now' ? 'ok' : r === '1_2y' ? 'accent' : 'sim'} label={t(`m23.readiness.${r}`)} />
                 </div>
               ))}
             </div>
-            <StatTile label={t('m23.sx.emiratiShare')} value={b.aggregates.emirati_pct == null ? t('m23.ins.suppressed') : f.pct(b.aggregates.emirati_pct, 0)} sub={t('m23.sx.ofSuccessors', { n: f.num(b.aggregates.successors) })} />
-            <StatTile label={t('m23.sx.womenShare')} value={b.aggregates.women_pct == null ? t('m23.ins.suppressed') : f.pct(b.aggregates.women_pct, 0)} sub={t('m23.sx.ofSuccessors', { n: f.num(b.aggregates.successors) })} />
+            <StatTile label={t('m23.sx.emiratiShare')} value={b.aggregates.emirati_pct == null ? t('m23.ins.suppressed') : f.pct(b.aggregates.emirati_pct, 0)} sub={b.aggregates.successors == null ? t('m23.ins.suppressed') : t('m23.sx.ofSuccessors', { n: f.num(b.aggregates.successors) })} />
+            <StatTile label={t('m23.sx.womenShare')} value={b.aggregates.women_pct == null ? t('m23.ins.suppressed') : f.pct(b.aggregates.women_pct, 0)} sub={b.aggregates.successors == null ? t('m23.ins.suppressed') : t('m23.sx.ofSuccessors', { n: f.num(b.aggregates.successors) })} />
           </div>
         </Card>
       )}

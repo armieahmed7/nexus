@@ -485,6 +485,7 @@
     "successorsTitle": "الخلفاء",
     "toBench": "فتح العمق الوظيفي",
     "withReady": "بها خلف جاهز الآن",
+    "withReadyOf": "{n} من {total}",
     "withdraw": "سحب",
     "withdrawBody": "سحب هذا المدخل من القائمة؟ اذكر سبباً من 10 أحرف أو أكثر؛ يُسجّل في سجل التدقيق.",
     "withdrawReason": "السبب (10 أحرف أو أكثر)",

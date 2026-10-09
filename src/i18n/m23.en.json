@@ -485,6 +485,7 @@
     "successorsTitle": "Successors",
     "toBench": "Open bench depth",
     "withReady": "With a ready-now successor",
+    "withReadyOf": "{n} of {total}",
     "withdraw": "Withdraw",
     "withdrawBody": "Withdraw this entry from the slate? Give a reason of 10 characters or more; it is audited.",
     "withdrawReason": "Reason (10 characters or more)",

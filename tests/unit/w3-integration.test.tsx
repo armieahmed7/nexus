@@ -17,6 +17,9 @@ import { renderPage } from './g1-harness';
 import TrainingQualsStandardPage from '../../src/modules/m02/TrainingQualsStandardPage';
 import ExpertsPage from '../../src/modules/m22/ExpertsPage';
 import { KlraRoleLinks, ReadBeforeRequal } from '../../src/modules/m24/links';
+import { successionAggregatesOf } from '../../src/modules/m23/domain';
+import { render } from '@testing-library/react';
+import { StatTile } from '../../src/ui';
 
 type Rows = Record<string, any>[];
 const T = (seed as unknown as { tables: Record<string, Rows> }).tables;
@@ -109,5 +112,26 @@ describe('F23 -> F17: the expert finder points to the alumni reserve', () => {
     expect(note.textContent).toContain(String(n));
     expect(note.querySelector('a')?.getAttribute('href')).toContain('/opportunities/reserve');
     expect(note.textContent).not.toMatch(/@|\+971/);
+  });
+});
+
+describe('W3 QA fix: F19 bench aggregates suppress every cell under 10', () => {
+  it('counts by readiness and the successor count are null below 10, never a small number', () => {
+    const a = successionAggregatesOf(T.succession_slates as never, T.successors as never, T.people as never);
+    for (const v of [a.successors, a.emirati, a.women, ...Object.values(a.by_readiness)]) expect(v === null || v >= 10, String(v)).toBe(true);
+    expect(Object.values(a.by_readiness).some((v) => v === null)).toBe(true);
+    const few = successionAggregatesOf([{ id: 's1', status: 'confirmed' }], [{ id: 'x1', slate_id: 's1', person_id: 'w-ro-01', readiness: 'ready_now', status: 'confirmed', cover_source: 'internal' }] as never, T.people as never);
+    expect(few.successors).toBeNull();
+    expect(few.by_readiness.ready_now).toBeNull();
+  });
+});
+
+describe('W3 QA fix: numeric ratios stay left-to-right in Arabic', () => {
+  it('a StatTile value like "7 / 11" is isolated LTR; text values are untouched', () => {
+    const { container, unmount } = render(<div dir="rtl"><StatTile label="x" value="7 / 11" /><StatTile label="y" value="محجوب" /></div>);
+    const bdis = container.querySelectorAll('bdi[dir="ltr"]');
+    expect(bdis).toHaveLength(1);
+    expect(bdis[0].textContent).toBe('7 / 11');
+    unmount();
   });
 });

@@ -71,12 +71,14 @@ export function StatTile({ label, value, sub, tone, sim, source }: { label: Reac
         <div className="caps">{label}</div>
         {sim && <SimChip />}
       </div>
-      <div className={`num mt-1 text-[26px] font-semibold leading-tight ${toneCls}`}>{value}</div>
+      <div className={`num mt-1 text-[26px] font-semibold leading-tight ${toneCls}`}>{typeof value === 'string' && NUMERIC_EXPR.test(value) ? <bdi dir="ltr">{value}</bdi> : value}</div>
       {sub && <div className="mt-0.5 text-[12.5px] text-ink-2">{sub}</div>}
       {source && <div className="mt-2 text-[11.5px] text-ink-3">{source}</div>}
     </div>
   );
 }
+/** A purely numeric expression ("7 / 11", "12 – 15"): kept left-to-right inside Arabic pages so it never reads "11 / 7". */
+const NUMERIC_EXPR = /^[\d\u0660-\u0669\s.,٫٬%+\-–/×]+$/;
 
 export type PillTone = 'ok' | 'bad' | 'info' | 'sim' | 'reserved' | 'neutral' | 'accent';
 const pillCls: Record<PillTone, string> = {

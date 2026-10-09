@@ -293,15 +293,16 @@ export interface SuccessionAggregates {
   slates: number;
   confirmed: number;
   with_ready_now: number;
-  successors: number;
+  successors: number | null;
   emirati: number | null;
   women: number | null;
   emirati_pct: number | null;
   women_pct: number | null;
-  by_readiness: Record<Readiness, number>;
+  by_readiness: Record<Readiness, number | null>;
   min_group: number;
 }
-/** Distinct internal successors (active), Emirati and women shares suppressed below MIN_GROUP_SIZE (count and base). */
+/** Distinct internal successors (active), Emirati and women shares suppressed below MIN_GROUP_SIZE (count and base); the
+ *  successor count and the counts by readiness are suppressed below MIN_GROUP_SIZE too (W3 QA; same as kafaa_sx_aggregates). */
 export function successionAggregatesOf(slates: { id: string; status: string }[], all: SuccessorLite[], people: PersonAttrs[]): SuccessionAggregates {
   const pp = new Map(people.map((p) => [p.id, p]));
   const act = all.filter((s) => active(s) && s.cover_source === 'internal' && s.person_id);
@@ -316,12 +317,12 @@ export function successionAggregatesOf(slates: { id: string; status: string }[],
     slates: slates.length,
     confirmed: slates.filter((s) => s.status === 'confirmed').length,
     with_ready_now: slates.filter((s) => act.some((x) => x.slate_id === s.id && x.readiness === 'ready_now')).length,
-    successors: n,
+    successors: n >= MIN_GROUP_SIZE ? n : null,
     emirati: ok(emi) ? emi : null,
     women: ok(wom) ? wom : null,
     emirati_pct: ok(emi) ? Math.round((emi * 100) / n) : null,
     women_pct: ok(wom) ? Math.round((wom * 100) / n) : null,
-    by_readiness: by,
+    by_readiness: { ready_now: by.ready_now >= MIN_GROUP_SIZE ? by.ready_now : null, '1_2y': by['1_2y'] >= MIN_GROUP_SIZE ? by['1_2y'] : null, '3_5y': by['3_5y'] >= MIN_GROUP_SIZE ? by['3_5y'] : null },
     min_group: MIN_GROUP_SIZE,
   };
 }

@@ -114,7 +114,7 @@ w('w-instr-02', 'nuclear-training-instructor', 'training', null, 'training', 'se
 for (let i = 1; i <= 8; i++) w(`w-mnt-0${i}`, 'maintenance-technician-engineer', 'maintenance', null, `mnt-${['mech', 'elec', 'ic'][i % 3]}`, i < 3 ? 'senior' : 'professional', i % 4 !== 0, i === 6, `20${15 + i}-0${(i % 9) + 1}-01`, i === 8 ? { status: 'leaver' } : {});
 for (let i = 1; i <= 4; i++) w(`w-rp-0${i}`, 'radiation-protection-technician', 'radiation-protection', null, 'rp', 'professional', i !== 3, i === 2, `201${8 + (i % 2)}-03-01`);
 for (let i = 1; i <= 3; i++) w(`w-chem-0${i}`, 'chemistry-technician', 'chemistry', null, 'chem', 'professional', true, i === 1, `2019-0${i + 2}-01`);
-for (let i = 1; i <= 5; i++) w(`w-eng-0${i}`, i === 5 ? 'reactor-engineer-core-physicist' : 'systems-design-plant-engineer', 'engineering', null, 'eng', i === 1 ? 'senior' : 'professional', i !== 4, i === 3, `201${5 + i}-09-01`);
+for (let i = 1; i <= 5; i++) w(`w-eng-0${i}`, i === 5 ? 'reactor-engineer-core-physicist' : 'systems-design-plant-engineer', 'engineering', null, 'eng', i === 1 ? 'senior' : 'professional', i !== 4, i === 3, `${2015 + i}-09-01`);
 for (let i = 1; i <= 2; i++) w(`w-ep-0${i}`, 'emergency-preparedness-coordinator', 'emergency-preparedness', null, 'ep', 'professional', true, i === 2, '2019-01-01');
 for (let i = 1; i <= 2; i++) w(`w-fire-0${i}`, 'fire-protection', 'fire-protection', null, 'fire', 'professional', true, false, '2018-01-01');
 for (let i = 1; i <= 2; i++) w(`w-qa-0${i}`, 'quality-assurance-qc', 'quality', null, 'qa', 'professional', i === 1, i === 2, '2017-01-01');
