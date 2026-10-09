@@ -30,7 +30,8 @@ export default function MyMentoringPage() {
   const [respond, setRespond] = useState<{ r: Request; decision: 'matched' | 'declined' | 'closed' } | null>(null);
   const [offer, setOffer] = useState(false);
   const [type, setType] = useState<MentoringType | ''>('');
-  const [focus, setFocus] = useState<string[]>([]);
+  // W2 integration (F11 -> F13): the team heatmap's "request mentoring" action passes ?skill=<id> as the focus skill.
+  const [focus, setFocus] = useState<string[]>(() => (params.get('skill') ?? '').split(',').filter(Boolean).slice(0, 5));
 
   return (
     <Page title={t('m04.routes.my-mentoring.title')} intro={t('m04.mtr.intro')} wide
@@ -49,9 +50,11 @@ export default function MyMentoringPage() {
           const open = d.agreements.filter((a) => a.person_id === me && ['proposed', 'active', 'closing'].includes(a.status)).map((a) => a.mentor_id);
           const match = rankMentors({
             me: me ?? '', roleId: person?.job_role_id ?? null, targets: d.targets, have: derived.have, roleComps: d.roleComps as never, competencies: d.comps as never, roles: d.roles as never,
-            skills: d.skills, mentors: d.mentors, requests: d.requests, openWithMentorIds: open, lineManager: d.line.line_manager, chain: d.line.chain, type, focusSkillIds: focus, weights: eng.weights,
+            skills: d.skills, mentors: d.mentors, requests: d.requests, openWithMentorIds: open, lineManager: d.line.line_manager, chain: d.line.chain, type, focusSkillIds: focus.filter((id) => d.skills.some((s) => s.id === id && s.area !== 'security')), weights: eng.weights,
           });
-          const gapSkills = d.skills.filter((s) => match.needs.some((n) => n.key === s.competency_id) && s.area !== 'security' && (derived.myLevel.get(s.id) ?? 0) < MENTOR_LEVEL).slice(0, 12);
+          const gapSkills0 = d.skills.filter((s) => match.needs.some((n) => n.key === s.competency_id) && s.area !== 'security' && (derived.myLevel.get(s.id) ?? 0) < MENTOR_LEVEL).slice(0, 12);
+          // a focus skill passed in the link (?skill=) stays visible so it can be cleared, even when it is not one of my gaps
+          const gapSkills = [...gapSkills0, ...d.skills.filter((s) => focus.includes(s.id) && s.area !== 'security' && !gapSkills0.includes(s))];
           const ownManager = match.excluded.find((x) => x.code === 'own_manager');
           const waiting = toMe.filter((r) => r.status === 'requested').length;
           const proposedToMe = d.agreements.filter((a) => a.status === 'proposed' && a.proposed_by !== me && (a.person_id === me || a.mentor_person_id === me));

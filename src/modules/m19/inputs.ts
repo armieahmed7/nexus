@@ -15,7 +15,7 @@ export interface CoachTables {
   person_skills: Rows; skills: Rows; job_roles: Rows; role_competencies: Rows; competencies: Rows; courses: Rows; sessions: Rows;
   enrolments: Rows; training_records: Rows; qual_records: Rows; qual_standards: Rows; requal_rules: Rows; curriculum_rules: Rows;
   assessment_forms: Rows; items: Rows; task_items: Rows; evaluations: Rows; mentors: Rows; mentoring_requests: Rows; oe_lessons: Rows;
-  dev_plans: Rows; coach_feedback: Rows; learning_goals: Rows; career_targets?: Rows; opportunities?: Rows; future_goals?: Rows;
+  dev_plans: Rows; coach_feedback: Rows; learning_goals: Rows; career_targets?: Rows; opportunities?: Rows; future_goals?: Rows; career_conversations?: Rows;
   programmes?: Rows; faqs?: Rows; course_modules?: Rows;
 }
 const PLAN_OPEN = ['draft', 'submitted', 'approved', 'active'];
@@ -41,7 +41,20 @@ export function coachInputFrom(t: CoachTables, now: string, extra: { availabilit
     standards: t.qual_standards as never, requalRules: t.requal_rules as never, curriculum: t.curriculum_rules as never, forms: t.assessment_forms as never, items: t.items as never,
     tasks: t.task_items as never, evaluations: mine(t.evaluations) as never, mentors: t.mentors as never, mentorRequests: mine(t.mentoring_requests) as never, lessons: t.oe_lessons as never,
     opportunities: (t.opportunities ?? []).filter((o) => o.listed !== false && (o.seats == null || Number(o.seats_taken ?? 0) < Number(o.seats))) as never,
-    futureGoals: mine(t.future_goals ?? []).filter((g) => (g.status ?? 'active') === 'active') as never, skills: t.skills as never, feedback: mine(t.coach_feedback) as never, weights: extra.weights,
+    futureGoals: mine(t.future_goals ?? []).filter((g) => (g.status ?? 'active') === 'active') as never,
+    agreedCourses: agreedCourses(mine(t.career_conversations ?? [])), skills: t.skills as never, feedback: mine(t.coach_feedback) as never, weights: extra.weights,
     excludeMentorPersons: extra.lineManager ? [extra.lineManager] : [],
   };
+}
+
+/** W2 integration (F12 -> F07): employee-owned course actions of held or acknowledged career conversations (not disagreed). */
+export function agreedCourses(rows: Rows): NonNullable<CoachInput['agreedCourses']> {
+  const out: NonNullable<CoachInput['agreedCourses']> = [];
+  for (const c of rows) {
+    if (!['held', 'acknowledged'].includes(String(c.status)) || c.employee_agrees === false || !c.held_on) continue;
+    for (const a of (Array.isArray(c.actions) ? c.actions : []) as { kind?: string; course_id?: string | null; owner?: string }[]) {
+      if (a.kind === 'course' && a.course_id && (a.owner ?? 'employee') === 'employee') out.push({ course_id: a.course_id, conversation_id: String(c.id), held_on: String(c.held_on).slice(0, 10) });
+    }
+  }
+  return out;
 }

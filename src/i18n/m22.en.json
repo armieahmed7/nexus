@@ -230,7 +230,8 @@
     "myCultureLink": "My safety culture",
     "mentoringLink": "Find a leadership mentor",
     "mirrorTitle": "A pathway view, not an HR record",
-    "mirrorBody": "Kafa'a shows the academy as a pathway with published facts. Places, nominations and completions are decided and recorded by the leadership development team and HR; readiness is a planning aid only."
+    "mirrorBody": "Kafa'a shows the academy as a pathway with published facts. Places, nominations and completions are decided and recorded by the leadership development team and HR; readiness is a planning aid only.",
+    "askCheckin": "Ask my manager to validate these (skill check-in)"
   },
   "checkin": {
     "title": "Check in: {skill}",

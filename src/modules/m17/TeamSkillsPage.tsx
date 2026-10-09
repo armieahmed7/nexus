@@ -372,8 +372,8 @@ function ActionsView({ cov, cat, rows, states, courses }: { cov: TeamCoverage; c
             <div className="flex items-center gap-2">
               <WhyThis reasons={a.reasons} />
               {it.kind === 'course' && course && <L to={`/learn/course/${course.id}`} className="btn-outline btn-sm no-underline">{t('m17.tm.openCourse')}</L>}
-              {it.kind === 'opportunity' && <L to="/opportunities/post" className="btn-outline btn-sm no-underline">{t('m17.tm.postGig')}</L>}
-              {it.kind === 'mentoring' && <L to="/my/mentoring" className="btn-outline btn-sm no-underline">{t('m17.tm.requestMentoring')}</L>}
+              {it.kind === 'opportunity' && <L to={`/opportunities/post?skill=${encodeURIComponent(it.skill_id)}`} className="btn-outline btn-sm no-underline">{t('m17.tm.postGig')}</L>}
+              {it.kind === 'mentoring' && <L to={`/my/mentoring?skill=${encodeURIComponent(it.skill_id)}`} className="btn-outline btn-sm no-underline">{t('m17.tm.requestMentoring')}</L>}
             </div>
           </li>
         );

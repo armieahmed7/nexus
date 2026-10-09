@@ -72,6 +72,10 @@ function Body({ d, me, person, canSelf }: { d: LeadData; me: string | null; pers
               ))}
             </ul>
             <p className="mt-3 text-[12px] text-ink-3">{t('m22.leadership.checkInNote')}</p>
+            {/* W2 integration (F16 -> F10): ask the line manager and peers to validate the leadership skills still short of the target */}
+            {ready.rows.some((r) => !r.met) && (
+              <L to={`/my/skills/checkins?skills=${ready.rows.filter((r) => !r.met).slice(0, 5).map((r) => encodeURIComponent(r.skill_id)).join(',')}`} className="btn-outline btn-sm mt-2 no-underline" data-testid="m22-ask-checkin">{t('m22.leadership.askCheckin')}</L>
+            )}
           </Card>
         </div>
       )}

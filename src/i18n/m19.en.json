@@ -186,7 +186,8 @@
     "refresh_new": "New to you: not practised yet",
     "refresh_role": "{skill} is a competency of your current role",
     "refresh_requal": "Your {qual} expires in {n} days: requalification is coming up",
-    "refresh_bank": "From the open practice bank only, never exam items"
+    "refresh_bank": "From the open practice bank only, never exam items",
+    "agreed": "Agreed in your career conversation on {date}"
   },
   "insights": {
     "intro": "How staff respond to Learning Coach suggestions: saved, enrolled and marked not relevant. Counts only, from the coach's feedback records. No names and no individual choices.",

@@ -3,6 +3,7 @@
 // Peers see only the skills named for them, never my self levels, my other skills or other raters' answers (RLS + RPC).
 // Qualification-standard skills are "verified by qualification only" and security competencies are status only.
 import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Page, Async, Card, Callout, ConfirmDialog, EmptyState, Tabs, TextArea, CheckboxField, Icon, StatusPill } from '../../ui';
 import { useAction, useQuery, useRepo } from '../../data';
 import { useT, useFormat, usePick, L } from '../../i18n';
@@ -55,7 +56,10 @@ function Checkins({ d, me }: { d: Data; me: string }) {
   const open = d.checkins.filter((c) => c.status === 'open');
   const waiting = d.inbox.filter((i) => i.status === 'open' && i.items.some((x) => x.status === 'pending'));
   const validatedLevels = d.checkins.flatMap((c) => (c.skills ?? []) as CheckinSkill[]).filter((s) => s.outcome === 'validate' || s.outcome === 'adjust').length;
-  const [tab, setTab] = useState(waiting.length ? 'asked' : 'mine');
+  // W2 integration (F16 -> F10 and other pages): ?skills=a,b opens "New check-in" with those skills pre-selected
+  const [params] = useSearchParams();
+  const preset = useMemo(() => (params.get('skills') ?? '').split(',').filter(Boolean).slice(0, CHECKIN.MAX_SKILLS), [params]);
+  const [tab, setTab] = useState(preset.length ? 'new' : waiting.length ? 'asked' : 'mine');
   return (
     <div className="space-y-5">
       <div className="grid grid-cols-2 gap-2 lg:grid-cols-4" data-testid="m17-ci-stats">
@@ -66,7 +70,7 @@ function Checkins({ d, me }: { d: Data; me: string }) {
       </div>
       <Tabs value={tab} onChange={setTab} tabs={[
         { id: 'mine', label: t('m17.ci.tab.mine'), badge: open.length ? f.num(open.length) : undefined, content: <MyCheckins d={d} me={me} onNew={() => setTab('new')} /> },
-        { id: 'new', label: t('m17.ci.tab.new'), content: <NewCheckin d={d} me={me} onDone={() => setTab('mine')} /> },
+        { id: 'new', label: t('m17.ci.tab.new'), content: <NewCheckin d={d} me={me} preset={preset} onDone={() => setTab('mine')} /> },
         { id: 'asked', label: t('m17.ci.tab.asked'), badge: waiting.length ? f.num(waiting.length) : undefined, content: <AskedOfMe d={d} /> },
       ]} />
     </div>
@@ -151,15 +155,15 @@ function MyCheckins({ d, me, onNew }: { d: Data; me: string; onNew: () => void }
 }
 
 // ───────────── new check-in
-function NewCheckin({ d, me, onDone }: { d: Data; me: string; onDone: () => void }) {
+function NewCheckin({ d, me, preset = [], onDone }: { d: Data; me: string; preset?: string[]; onDone: () => void }) {
   const t = useT();
   const pick = usePick();
   const name = useName();
   const repo = useRepo();
   const act = useAction();
   const f = useFormat();
-  const [chosen, setChosen] = useState<string[]>([]);
-  const [levels, setLevels] = useState<Record<string, number>>({});
+  const [chosen, setChosen] = useState<string[]>(() => preset.filter((id) => presetOk(d, me, id)));
+  const [levels, setLevels] = useState<Record<string, number>>(() => Object.fromEntries(preset.filter((id) => presetOk(d, me, id)).map((id) => [id, presetLevel(d, id)])));
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [peers, setPeers] = useState<string[]>([]);
   const [message, setMessage] = useState('');
@@ -330,4 +334,18 @@ function PeerForm({ item, cat }: { item: InboxItem; cat: Catalogue }) {
         }} />
     </div>
   );
+}
+
+// W2 integration: a pre-selected skill is kept only when it could be picked by hand (not blocked, not already in an open check-in)
+function presetOk(d: Data, me: string, id: string) {
+  const s = d.cat.skills.find((x) => x.id === id);
+  if (!s) return false;
+  const std = new Set(d.cat.standards.map((x) => String(x.id)));
+  if (checkinBlock(s, { secComps: securityComps(d.cat.comps), standardIds: std, evidence: d.evidence, person: me })) return false;
+  return !d.checkins.some((c) => c.status === 'open' && (c.skills ?? []).some((x: CheckinSkill) => x.skill_id === id));
+}
+function presetLevel(d: Data, id: string) {
+  const claim = d.claims.find((c) => c.skill_id === id);
+  const st = d.states.find((x) => x.skill_id === id);
+  return claim?.level ?? Math.max(1, Math.min(4, Number(st?.level ?? 2)));
 }

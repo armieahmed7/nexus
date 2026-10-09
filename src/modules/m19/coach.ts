@@ -59,6 +59,8 @@ export interface OpportunityLite { id: string; kind: string; title_en: string; t
 export interface SkillLite { id: string; competency_id: string; area?: string | null; evidence_keys?: string[] | null }
 /** F09 hand-off: an active Future Me goal (future_goals) is a coach target: grow `skill_ids` to `target_level`. */
 export interface FutureGoalLite { id: string; kind: string; ref_id?: string | null; skill_ids: string[]; target_level?: number | null; title_en: string; title_ar?: string | null }
+/** W2 integration (F12 -> F07): a course agreed as an employee action in a held or acknowledged career conversation. */
+export interface AgreedCourseLite { course_id: string; conversation_id: string; held_on: string }
 export interface FeedbackLite { item_kind: string; item_id: string; signal: string; competency_ids?: string[] | null; hidden_until?: string | null }
 
 export interface CoachInput {
@@ -92,6 +94,7 @@ export interface CoachInput {
   lessons: LessonLite[];
   opportunities?: OpportunityLite[];
   futureGoals?: FutureGoalLite[];
+  agreedCourses?: AgreedCourseLite[];
   skills?: SkillLite[];
   feedback: FeedbackLite[];
   weights?: Weights;
@@ -348,6 +351,24 @@ export function buildCoachFeed(input: CoachInput): CoachResult {
     ranked.course.push(card({
       id: `course:${c.id}`, kind: 'course', itemId: c.id, title: bi(c as never, 'title'), meta: courseMeta(c), hours: c.duration_hours != null ? Number(c.duration_hours) : null, pinned: null,
       score: x.score, reasons: [...x.reasons, ...sessionReason(s), ...(s ? [] : [r('no_session')]), ...fbReasons('course', c.competency_ids)], competencyIds: c.competency_ids, link: `/learn/course/${c.id}`,
+      action: { type: 'enrol', courseId: c.id, sessionId: s?.id ?? null, full: !!s && s.left <= 0 }, session: s, days: null,
+    }));
+  }
+
+  // W2 integration (F12 -> F07): courses agreed in my career conversation rank first among courses and say so; an agreed
+  // course that closes no current gap still appears, with the agreement as its reason.
+  const agreed = new Map<string, AgreedCourseLite>();
+  for (const a of [...(input.agreedCourses ?? [])].sort((x, y) => (x.held_on < y.held_on ? 1 : x.held_on > y.held_on ? -1 : 0))) if (!agreed.has(a.course_id)) agreed.set(a.course_id, a);
+  for (const [cid, a] of agreed) {
+    const c = courseCands.find((x) => x.id === cid);
+    if (!c) continue;
+    const why = r('agreed', { date: a.held_on }, { table: 'career_conversations', id: a.conversation_id });
+    const at = ranked.course.findIndex((x) => x.itemId === cid);
+    if (at >= 0) { const x = ranked.course[at]; ranked.course[at] = { ...x, score: r4(x.score + 100), reasons: [why, ...x.reasons] }; continue; }
+    const s = nextSession(c.id);
+    ranked.course.push(card({
+      id: `course:${c.id}`, kind: 'course', itemId: c.id, title: bi(c as never, 'title'), meta: courseMeta(c), hours: c.duration_hours != null ? Number(c.duration_hours) : null, pinned: null,
+      score: 100, reasons: [why, ...sessionReason(s), ...(s ? [] : [r('no_session')])], competencyIds: c.competency_ids, link: `/learn/course/${c.id}`,
       action: { type: 'enrol', courseId: c.id, sessionId: s?.id ?? null, full: !!s && s.left <= 0 }, session: s, days: null,
     }));
   }

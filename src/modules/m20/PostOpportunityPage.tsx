@@ -1,6 +1,7 @@
 // /opportunities/post (M20 · F08): managers and the training manager post a stretch assignment. Security, cyber, safeguards
 // and protected-area work is never offered here, and the RPC refuses it (restricted_kind, audited) if anyone tries.
 import { useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Page, Card, Async, Callout, Icon, ConfirmDialog, TextField, TextArea, SelectField, CheckboxField, RadioGroup } from '../../ui';
 import { useAction, useQuery, useRepo } from '../../data';
 import { useFormat, useNav, usePick, useT } from '../../i18n';
@@ -33,8 +34,12 @@ function PostForm({ skills, families }: { skills: SkillsRow[]; families: JobFami
   const nav = useNav();
   const s = useSession();
   const [v, setV] = useState({ kind: 'project', title_en: '', title_ar: '', summary_en: '', summary_ar: '', hours_week: '4', start_on: addDays(14), end_on: addDays(70), seats: '1', location_type: 'office' });
+  // W2 integration (F11 -> F08): the team heatmap's "post an opportunity" action passes ?skill=<id>; the gig is pre-filled to
+  // develop that skill (restricted areas are never pre-filled).
+  const [params] = useSearchParams();
+  const preset = (params.get('skill') ?? '').split(',').filter((id) => skills.some((x) => x.id === id && !RESTRICTED_SKILL_AREAS.includes(x.area))).slice(0, MAX_SKILLS);
   const [need, setNeed] = useState<string[]>([]);
-  const [gain, setGain] = useState<string[]>([]);
+  const [gain, setGain] = useState<string[]>(preset);
   const [fams, setFams] = useState<string[]>([]);
   const [flags, setFlags] = useState<string[]>([]);
   const [confirm, setConfirm] = useState<'draft' | 'open' | null>(null);
