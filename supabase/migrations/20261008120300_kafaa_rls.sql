@@ -1762,3 +1762,81 @@ create policy kafaa_read on kafaa_session_proposals for select to anon, authenti
 grant select on kafaa_session_proposals to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- jta_analyses
+alter table kafaa_jta_analyses enable row level security;
+drop policy if exists kafaa_read on kafaa_jta_analyses;
+create policy kafaa_read on kafaa_jta_analyses for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_jta_analyses to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- jta_tasks
+alter table kafaa_jta_tasks enable row level security;
+drop policy if exists kafaa_read on kafaa_jta_tasks;
+create policy kafaa_read on kafaa_jta_tasks for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_jta_tasks to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- dif_ratings
+alter table kafaa_dif_ratings enable row level security;
+drop policy if exists kafaa_read on kafaa_dif_ratings;
+create policy kafaa_read on kafaa_dif_ratings for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true)
+    or kafaa_rule_read('own_profile', rater_person_id, null::text, true));
+grant select on kafaa_dif_ratings to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- sat_objectives
+alter table kafaa_sat_objectives enable row level security;
+drop policy if exists kafaa_read on kafaa_sat_objectives;
+create policy kafaa_read on kafaa_sat_objectives for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_sat_objectives to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- task_objectives
+alter table kafaa_task_objectives enable row level security;
+drop policy if exists kafaa_read on kafaa_task_objectives;
+create policy kafaa_read on kafaa_task_objectives for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_task_objectives to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- sat_changes
+alter table kafaa_sat_changes enable row level security;
+drop policy if exists kafaa_read on kafaa_sat_changes;
+create policy kafaa_read on kafaa_sat_changes for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_sat_changes to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- sat_change_items
+alter table kafaa_sat_change_items enable row level security;
+drop policy if exists kafaa_read on kafaa_sat_change_items;
+create policy kafaa_read on kafaa_sat_change_items for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_sat_change_items to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- accr_criteria
+alter table kafaa_accr_criteria enable row level security;
+drop policy if exists kafaa_read on kafaa_accr_criteria;
+create policy kafaa_read on kafaa_accr_criteria for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_accr_criteria to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- accr_programmes
+alter table kafaa_accr_programmes enable row level security;
+drop policy if exists kafaa_read on kafaa_accr_programmes;
+create policy kafaa_read on kafaa_accr_programmes for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_accr_programmes to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- accr_selfevals
+alter table kafaa_accr_selfevals enable row level security;
+drop policy if exists kafaa_read on kafaa_accr_selfevals;
+create policy kafaa_read on kafaa_accr_selfevals for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_accr_selfevals to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- accr_assessments
+alter table kafaa_accr_assessments enable row level security;
+drop policy if exists kafaa_read on kafaa_accr_assessments;
+create policy kafaa_read on kafaa_accr_assessments for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_accr_assessments to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
