@@ -3065,6 +3065,130 @@ create table if not exists kafaa_asset_uses (
 );
 comment on table kafaa_asset_uses is '[M24] A person marked a knowledge asset as used (feeds the "used by N" count, shown from 10) (F21)';
 
+-- M25 · Evaluation design per course: L1 form items, L2 pre/post knowledge checks, L3 checklist and timing, committee (F25)
+create table if not exists kafaa_eval_surveys (
+  id text primary key,
+  course_id text not null unique,
+  committee text not null check (committee in ('all_staff', 'operations', 'maintenance', 'rp_chem', 'engineering', 'emergency', 'leadership', 'training')),
+  l1_items text[] not null default '{}'::text[],
+  pre_form_id text,
+  post_form_id text,
+  l3_days integer not null default 90,
+  l3_items jsonb not null default '[]'::jsonb,
+  active boolean not null default true,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_eval_surveys is '[M25] Evaluation design per course: L1 form items, L2 pre/post knowledge checks, L3 checklist and timing, committee (F25)';
+
+-- M25 · L1 reaction response (anonymous to instructors and managers; person id kept only for duplicates and L3 scheduling) (F25)
+create table if not exists kafaa_eval_responses (
+  id text primary key,
+  course_id text not null,
+  person_id text not null,
+  completion_ref text not null unique,
+  completed_on date not null,
+  ratings jsonb not null default '{}'::jsonb,
+  recommend boolean not null default false,
+  submitted_at timestamptz not null default now(),
+  open_read boolean not null default false
+);
+comment on table kafaa_eval_responses is '[M25] L1 reaction response (anonymous to instructors and managers; person id kept only for duplicates and L3 scheduling) (F25)';
+
+-- M25 · L3 behaviour observation: supervisor checklist tied to the course objectives, due 90 days after completion (F25)
+create table if not exists kafaa_l3_observations (
+  id text primary key,
+  person_id text not null,
+  course_id text not null,
+  completion_ref text not null unique,
+  completed_on date not null,
+  observer_person_id text,
+  due_on date not null,
+  items jsonb not null default '[]'::jsonb,
+  status text not null default 'scheduled' check (status in ('scheduled', 'done', 'cancelled')),
+  note text,
+  recorded_by text,
+  recorded_at timestamptz,
+  scheduled_at timestamptz not null default now(),
+  open_read boolean not null default false
+);
+comment on table kafaa_l3_observations is '[M25] L3 behaviour observation: supervisor checklist tied to the course objectives, due 90 days after completion (F25)';
+
+-- M25 · L4 results: a SAMPLE plant KPI linked to a course (association, not causation) (F25)
+create table if not exists kafaa_course_kpi_links (
+  id text primary key,
+  course_id text not null,
+  kpi text not null check (kpi in ('rework_rate', 'hu_event_rate', 'first_time_pass')),
+  label_en text not null,
+  label_ar text not null,
+  unit text not null,
+  direction text not null check (direction in ('lower_better', 'higher_better')),
+  series jsonb not null default '[]'::jsonb,
+  note_en text not null default '',
+  note_ar text not null default '',
+  sample boolean not null default true
+);
+comment on table kafaa_course_kpi_links is '[M25] L4 results: a SAMPLE plant KPI linked to a course (association, not causation) (F25)';
+
+-- M25 · Course flagged for redesign by the training manager, with the evidence; feeds the F27 SAT workbench (F25)
+create table if not exists kafaa_redesign_flags (
+  id text primary key,
+  course_id text not null,
+  reasons jsonb not null default '[]'::jsonb,
+  note text not null default '',
+  status text not null default 'open' check (status in ('open', 'in_sat', 'closed')),
+  raised_by text not null,
+  raised_by_name text not null default '',
+  raised_at timestamptz not null default now(),
+  sat_ref text
+);
+comment on table kafaa_redesign_flags is '[M25] Course flagged for redesign by the training manager, with the evidence; feeds the F27 SAT workbench (F25)';
+
+-- M25 · Training needs mapping: requalification course per standard, cross-training course per job family (F26)
+create table if not exists kafaa_needs_links (
+  id text primary key,
+  kind text not null check (kind in ('requal', 'family')),
+  from_id text not null,
+  course_id text not null,
+  note text not null default ''
+);
+comment on table kafaa_needs_links is '[M25] Training needs mapping: requalification course per standard, cross-training course per job family (F26)';
+
+-- M25 · Demand per course, quarter and source with its role drill-down (exact; served suppressed to aggregate viewers) (F26)
+create table if not exists kafaa_demand_snapshots (
+  id text primary key,
+  period text not null,
+  course_id text not null,
+  source text not null check (source in ('expiry', 'mandatory', 'klra', 'roadmap', 'coach', 'future')),
+  count integer not null default 0,
+  suppressed boolean not null default false,
+  detail jsonb not null default '[]'::jsonb,
+  computed_at timestamptz not null default now(),
+  computed_by text,
+  open_read boolean not null default false
+);
+comment on table kafaa_demand_snapshots is '[M25] Demand per course, quarter and source with its role drill-down (exact; served suppressed to aggregate viewers) (F26)';
+
+-- M25 · Draft session proposal for the scheduler (never published; sessions are created through the M04 schedule) (F26)
+create table if not exists kafaa_session_proposals (
+  id text primary key,
+  period text not null,
+  course_id text not null,
+  kind text not null check (kind in ('class', 'simulator', 'drill', 'elearning', 'clinic')),
+  sessions integer not null,
+  seats_each integer not null,
+  dates text[] not null default '{}'::text[],
+  demand integer not null default 0,
+  shortfall integer not null default 0,
+  status text not null default 'draft' check (status in ('draft', 'scheduled', 'withdrawn')),
+  session_id text,
+  note text not null default '',
+  created_by text not null,
+  created_at timestamptz not null default now(),
+  decided_by text,
+  decided_at timestamptz
+);
+comment on table kafaa_session_proposals is '[M25] Draft session proposal for the scheduler (never published; sessions are created through the M04 schedule) (F26)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -3346,6 +3470,20 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_as
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_asset_reviews_reviewer_id_fk') then alter table kafaa_asset_reviews add constraint kafaa_asset_reviews_reviewer_id_fk foreign key (reviewer_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_asset_uses_asset_id_fk') then alter table kafaa_asset_uses add constraint kafaa_asset_uses_asset_id_fk foreign key (asset_id) references kafaa_knowledge_assets(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_asset_uses_person_id_fk') then alter table kafaa_asset_uses add constraint kafaa_asset_uses_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_eval_surveys_course_id_fk') then alter table kafaa_eval_surveys add constraint kafaa_eval_surveys_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_eval_surveys_pre_form_id_fk') then alter table kafaa_eval_surveys add constraint kafaa_eval_surveys_pre_form_id_fk foreign key (pre_form_id) references kafaa_assessment_forms(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_eval_surveys_post_form_id_fk') then alter table kafaa_eval_surveys add constraint kafaa_eval_surveys_post_form_id_fk foreign key (post_form_id) references kafaa_assessment_forms(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_eval_responses_course_id_fk') then alter table kafaa_eval_responses add constraint kafaa_eval_responses_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_eval_responses_person_id_fk') then alter table kafaa_eval_responses add constraint kafaa_eval_responses_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_l3_observations_person_id_fk') then alter table kafaa_l3_observations add constraint kafaa_l3_observations_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_l3_observations_course_id_fk') then alter table kafaa_l3_observations add constraint kafaa_l3_observations_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_l3_observations_observer_person_id_fk') then alter table kafaa_l3_observations add constraint kafaa_l3_observations_observer_person_id_fk foreign key (observer_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_course_kpi_links_course_id_fk') then alter table kafaa_course_kpi_links add constraint kafaa_course_kpi_links_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_redesign_flags_course_id_fk') then alter table kafaa_redesign_flags add constraint kafaa_redesign_flags_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_needs_links_course_id_fk') then alter table kafaa_needs_links add constraint kafaa_needs_links_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_demand_snapshots_course_id_fk') then alter table kafaa_demand_snapshots add constraint kafaa_demand_snapshots_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_session_proposals_course_id_fk') then alter table kafaa_session_proposals add constraint kafaa_session_proposals_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_session_proposals_session_id_fk') then alter table kafaa_session_proposals add constraint kafaa_session_proposals_session_id_fk foreign key (session_id) references kafaa_sessions(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -3706,6 +3844,27 @@ create index if not exists kafaa_asset_reviews_asset_author_id_idx on kafaa_asse
 create index if not exists kafaa_asset_reviews_reviewer_id_idx on kafaa_asset_reviews (reviewer_id);
 create index if not exists kafaa_asset_uses_asset_id_idx on kafaa_asset_uses (asset_id);
 create index if not exists kafaa_asset_uses_person_id_idx on kafaa_asset_uses (person_id);
+create index if not exists kafaa_eval_surveys_committee_idx on kafaa_eval_surveys (committee);
+create index if not exists kafaa_eval_surveys_pre_form_id_idx on kafaa_eval_surveys (pre_form_id);
+create index if not exists kafaa_eval_surveys_post_form_id_idx on kafaa_eval_surveys (post_form_id);
+create index if not exists kafaa_eval_responses_course_id_idx on kafaa_eval_responses (course_id);
+create index if not exists kafaa_eval_responses_person_id_idx on kafaa_eval_responses (person_id);
+create index if not exists kafaa_l3_observations_person_id_idx on kafaa_l3_observations (person_id);
+create index if not exists kafaa_l3_observations_course_id_idx on kafaa_l3_observations (course_id);
+create index if not exists kafaa_l3_observations_observer_person_id_idx on kafaa_l3_observations (observer_person_id);
+create index if not exists kafaa_l3_observations_due_on_idx on kafaa_l3_observations (due_on);
+create index if not exists kafaa_l3_observations_status_idx on kafaa_l3_observations (status);
+create index if not exists kafaa_course_kpi_links_course_id_idx on kafaa_course_kpi_links (course_id);
+create index if not exists kafaa_redesign_flags_course_id_idx on kafaa_redesign_flags (course_id);
+create index if not exists kafaa_redesign_flags_status_idx on kafaa_redesign_flags (status);
+create index if not exists kafaa_needs_links_from_id_idx on kafaa_needs_links (from_id);
+create index if not exists kafaa_needs_links_course_id_idx on kafaa_needs_links (course_id);
+create index if not exists kafaa_demand_snapshots_period_idx on kafaa_demand_snapshots (period);
+create index if not exists kafaa_demand_snapshots_course_id_idx on kafaa_demand_snapshots (course_id);
+create index if not exists kafaa_session_proposals_period_idx on kafaa_session_proposals (period);
+create index if not exists kafaa_session_proposals_course_id_idx on kafaa_session_proposals (course_id);
+create index if not exists kafaa_session_proposals_status_idx on kafaa_session_proposals (status);
+create index if not exists kafaa_session_proposals_session_id_idx on kafaa_session_proposals (session_id);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -3718,4 +3877,4 @@ create trigger kafaa_evaluations_append_only before update or delete on kafaa_ev
 drop trigger if exists kafaa_evaluation_acks_append_only on kafaa_evaluation_acks;
 create trigger kafaa_evaluation_acks_append_only before update or delete on kafaa_evaluation_acks for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 172) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 180) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
