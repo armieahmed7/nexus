@@ -37,6 +37,7 @@ export function finalize(T, ctx) {
   const P = (id) => { const p = people.get(id); if (!p) throw new Error(`f20: unknown person ${id}`); return p; };
   const nm = (id) => { const p = P(id); return { en: p.display_name, ar: p.display_name_ar || p.display_name }; };
   const roles = new Map(T.job_roles.map((r) => [r.id, r]));
+  const fam = new Map((T.job_families ?? []).map((f) => [f.id, f]));
   const skills = new Map(T.skills.map((s) => [s.id, s]));
   const secComps = new Set(T.competencies.filter((c) => c.domain === 'security').map((c) => c.id));
   const isSecSkill = (id) => { const s = skills.get(id); return !s || s.area === 'security' || secComps.has(s.competency_id); };
@@ -96,8 +97,8 @@ export function finalize(T, ctx) {
     positions.push({
       id: `pos-${p.id}`, person_id: p.id, role_id: p.job_role_id ?? null, family_id: p.job_family_id, entity_id: p.entity_id ?? null, team_id: p.team_id ?? null, crew: p.crew ?? null,
       department: departmentOf(p.job_family_id), kind: contractor ? 'contractor' : 'staff',
-      title_en: role ? `${role.title_en}${p.crew ? ` · Crew ${p.crew}` : ''}` : p.display_name.replace(/ \(role card\)$/, ''),
-      title_ar: role ? `${role.title_ar}${p.crew ? ` · الطاقم ${p.crew}` : ''}` : (p.display_name_ar || p.display_name).replace(/ \(بطاقة دور\)$/, ''),
+      title_en: role ? `${role.title_en}${p.crew ? ` · Crew ${p.crew}` : ''}` : !contractor ? p.display_name.replace(/ \(role card\)$/, '') : `${fam.get(p.job_family_id)?.name_en ?? p.job_family_id} · Contractor`,
+      title_ar: role ? `${role.title_ar}${p.crew ? ` · الطاقم ${p.crew}` : ''}` : !contractor ? (p.display_name_ar || p.display_name).replace(/ \(بطاقة دور\)$/, '') : `${fam.get(p.job_family_id)?.name_ar ?? p.job_family_id} · متعاقد`,
       holder_en: p.display_name, holder_ar: p.display_name_ar || p.display_name,
       retirement_band, contract_kind, contract_end_band, criticality: contractor ? (role?.critical ? 'qualified' : 'general') : crit(p.job_role_id, lvl),
       spof_skill_ids: (spof.get(p.id) ?? []).slice(0, 6), codified_base: contractor ? 20 + (hv % 25) : codifiedBase(p.job_role_id, hv),
