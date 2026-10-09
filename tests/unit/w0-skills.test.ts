@@ -22,9 +22,9 @@ beforeEach(async () => {
 });
 
 describe('F01 seeded skill state', () => {
-  it('all 345 synthetic people have a skill state, and each state lists at least one reason that links to its evidence row', () => {
+  it('all 368 synthetic people (345 + 23 F33 contractors) have a skill state, and each state lists at least one reason that links to its evidence row', () => {
     const people = new Set(T.people.map((p) => p.id));
-    expect(people.size).toBe(345);
+    expect(people.size).toBe(368); // W5E2 (F33): 23 synthetic contractor staff added
     const withState = new Set(T.person_skills.map((s) => s.person_id));
     expect([...people].filter((p) => !withState.has(p))).toEqual([]);
     const ev = new Map(T.skill_evidence.map((e) => [e.id, e]));
@@ -127,7 +127,7 @@ describe('F01 rpc.recomputeSkills', () => {
     expect(JSON.stringify(r2.data)).toBe(JSON.stringify(r1.data));
     expect(JSON.stringify(b.raw('person_skills'))).toBe(rows1);
     expect(JSON.stringify(b.raw('skill_evidence'))).toBe(ev1);
-    expect(r1.data!.people).toBe(345);
+    expect(r1.data!.people).toBe(368); // W5E2 (F33)
   });
   it('local recompute at the demo date reproduces the seeded states (digest)', async () => {
     const r = await applySkills(b, null, NOW);
@@ -174,10 +174,15 @@ describe('F01 rpc.recomputeSkills', () => {
     expect(sro.every((r) => r.person_id === 'p-sro' || crew.get(r.person_id) === 'B')).toBe(true);
     await as('k-hr-analyst');
     expect((await b.list('person_skills')).every((r) => r.person_id === 'p-k-hr-analyst')).toBe(true);
-    for (const p of ['alnoor-gm', 'k-auditor', null]) {
-      await as(p);
-      expect(await b.list('skill_evidence')).toEqual([]);
-    }
+    // W5E2 (F33): a partner admin reads only their organisation's contractor rows; an auditor contractor rows and their own; anonymous nothing
+    await as('alnoor-gm');
+    const pa = await b.list('skill_evidence');
+    expect(pa.length).toBeGreaterThan(0);
+    expect(pa.every((r) => r.org_id === 'org-alnoor' && r.contractor === true)).toBe(true);
+    await as('k-auditor');
+    expect((await b.list('skill_evidence')).every((r) => r.contractor === true || r.person_id === 'p-k-auditor')).toBe(true);
+    await as(null);
+    expect(await b.list('skill_evidence')).toEqual([]);
     await as(null);
     expect((await b.list('skills')).length).toBe(T.skills.length);
     expect((await b.insert('person_skills', { id: 'x' } as never)).ok).toBe(false);

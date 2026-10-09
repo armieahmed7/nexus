@@ -1381,6 +1381,8 @@ export interface SkillEvidenceRow {
   recorded_by?: string | null;
   active: boolean;
   created_at: string;
+  org_id?: string | null;
+  contractor: boolean;
 }
 export interface PersonSkillsRow {
   id: string;
@@ -1393,6 +1395,8 @@ export interface PersonSkillsRow {
   evidence_count: number;
   active: boolean;
   updated_at: string;
+  org_id?: string | null;
+  contractor: boolean;
 }
 export interface EngineSettingsRow {
   id: string;
@@ -1703,6 +1707,45 @@ export interface HandoverCohortsRow {
   emirati: number;
   source: string;
   sample: boolean;
+}
+export interface ContractRoleTargetsRow {
+  id: string;
+  org_id: string;
+  role_id: string;
+  headcount_band: '1-4' | '5-9' | '10-24' | '25+';
+  contract_ref: string;
+  scope_en: string;
+  scope_ar: string;
+  valid_from?: string | null;
+  valid_to?: string | null;
+  active: boolean;
+  set_by?: string | null;
+  updated_at: string;
+}
+export interface TaskSkillLinksRow {
+  id: string;
+  standard_id: string;
+  task_id: string;
+  skill_id: string;
+  need_level: number;
+  sort: number;
+}
+export interface ContractorEngagementsRow {
+  id: string;
+  person_id: string;
+  org_id: string;
+  ref_code: string;
+  title_en: string;
+  title_ar: string;
+  role_id?: string | null;
+  started_on: string;
+  ended_on?: string | null;
+  status: 'in_progress' | 'signed_off';
+  supervisor_role_en: string;
+  supervisor_role_ar: string;
+  skills: any;
+  source: 'mirror';
+  created_at: string;
 }
 export interface EngineCardsRow {
   id: string;
@@ -3226,6 +3269,9 @@ export interface Tables {
   crew_debrief_members: CrewDebriefMembersRow;
   external_cover: ExternalCoverRow;
   handover_cohorts: HandoverCohortsRow;
+  contract_role_targets: ContractRoleTargetsRow;
+  task_skill_links: TaskSkillLinksRow;
+  contractor_engagements: ContractorEngagementsRow;
   engine_cards: EngineCardsRow;
   reco_optouts: RecoOptoutsRow;
   fairness_snapshots: FairnessSnapshotsRow;

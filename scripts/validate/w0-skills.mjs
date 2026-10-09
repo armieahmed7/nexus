@@ -53,7 +53,9 @@ export default async function w0Checks({ db, as, one, count, ok }) {
   const sroOthers = await as('sro', `select distinct p.crew from kafaa_person_skills s join kafaa_people p on p.id = s.person_id where p.id <> kafaa_me()`);
   ok(sroOthers.length > 0 && sroOthers.every((r) => r.crew === 'B'), 'a shift supervisor reads skill states of crew B only (Scope)');
   ok((await count('k-hr-analyst', 'kafaa_person_skills', 'person_id <> kafaa_me()')) === 0, 'HR analysts read no individual skill states (aggregate only)');
-  ok((await count('gulfhydro-qa', 'kafaa_person_skills')) === 0 && (await count('k-auditor', 'kafaa_person_skills')) === 0, 'partners and auditors read no skill states');
+  // W5E2 (F33): partners read only their own organisation's contractor passports; auditors (equivalency R) contractor rows and their own row only.
+  ok((await count('gulfhydro-qa', 'kafaa_person_skills', `org_id is distinct from 'org-gulfhydro'`)) === 0 && (await count('gulfhydro-qa', 'kafaa_person_skills')) > 0
+    && (await count('k-auditor', 'kafaa_person_skills', 'not contractor and person_id <> kafaa_me()')) === 0, 'partners read only their organisation\'s contractor skill states; auditors read no staff skill states (F33)');
   let direct = false;
   try { await as('training-mgr', `insert into kafaa_person_skills (id, person_id, skill_id, level, confidence, basis) values ('x', 'p-k-ro', 'sk-pf-01', 4, 1, 'verified')`); } catch { direct = true; }
   ok(direct, 'skill states cannot be written directly (RPC only)');
