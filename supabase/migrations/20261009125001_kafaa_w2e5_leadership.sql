@@ -329,7 +329,7 @@ $$;
 
 -- Same normalisation as normPost(): lower case, Arabic diacritics and tatweel removed, letter forms unified, spaces collapsed.
 create or replace function kafaa_cop_norm(p text) returns text language sql immutable set search_path = public as $$
-  select btrim(regexp_replace(translate(regexp_replace(lower(coalesce(p, '')), '[ً-ٰٟـ]', '', 'g'), 'إأآٱىةؤئ', 'اااايهوي'), '\s+', ' ', 'g'))
+  select btrim(regexp_replace(translate(regexp_replace(lower(coalesce(p, '')), '[' || chr(1611) || '-' || chr(1631) || chr(1648) || chr(1600) || ']', '', 'g'), 'إأآٱىةؤئ', 'اااايهوي'), '\s+', ' ', 'g'))
 $$;
 -- Posting blocker: the G5 Dalil refusal floor (strong patterns) for security, safeguards and cyber, plus enabled
 -- kafaa_refusal_policies patterns for the same categories. Returns the first blocked category or null (postGuard()).
