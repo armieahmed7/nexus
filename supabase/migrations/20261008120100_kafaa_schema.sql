@@ -1760,6 +1760,53 @@ create table if not exists kafaa_badges (
 );
 comment on table kafaa_badges is '[M17] Signed Open Badges 3.0-shaped credentials for Kafa''a course certificates and completions (F04); public verify via RPC';
 
+-- M17 · Skill check-ins: self, manager and peer validation requests (F10)
+create table if not exists kafaa_skill_checkins (
+  id text primary key,
+  person_id text not null,
+  manager_id text,
+  peer_ids text[] not null default '{}'::text[],
+  skills jsonb not null default '[]'::jsonb,
+  message text,
+  status text not null default 'open' check (status in ('open', 'validated', 'adjusted', 'withdrawn')),
+  requested_at timestamptz not null default now(),
+  due_on date not null,
+  decided_by text,
+  decided_at timestamptz,
+  decision_note text
+);
+comment on table kafaa_skill_checkins is '[M17] Skill check-ins: self, manager and peer validation requests (F10)';
+
+-- M17 · Check-in ratings per rater and skill: self, manager, peer (F10)
+create table if not exists kafaa_skill_ratings (
+  id text primary key,
+  checkin_id text not null,
+  subject_id text not null,
+  rater_person_id text not null,
+  rater_kind text not null check (rater_kind in ('self', 'manager', 'peer')),
+  skill_id text not null,
+  level integer,
+  example text,
+  status text not null default 'pending' check (status in ('pending', 'submitted', 'not_observed', 'closed')),
+  requested_at timestamptz not null default now(),
+  at timestamptz
+);
+comment on table kafaa_skill_ratings is '[M17] Check-in ratings per rater and skill: self, manager, peer (F10)';
+
+-- M17 · Team skill coverage targets set by managers (F11)
+create table if not exists kafaa_team_skill_targets (
+  id text primary key,
+  team_id text not null,
+  skill_id text not null,
+  min_people integer not null default 2,
+  min_level integer not null default 3,
+  note text,
+  active boolean not null default true,
+  set_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_team_skill_targets is '[M17] Team skill coverage targets set by managers (F11)';
+
 -- M18 · Career Navigator shortlist: up to three target roles per person, optionally shared with the line manager (F05)
 create table if not exists kafaa_career_targets (
   id text primary key,
@@ -2092,6 +2139,13 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sk
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_claims_skill_id_fk') then alter table kafaa_skill_claims add constraint kafaa_skill_claims_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_badges_person_id_fk') then alter table kafaa_badges add constraint kafaa_badges_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_badges_course_id_fk') then alter table kafaa_badges add constraint kafaa_badges_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_checkins_person_id_fk') then alter table kafaa_skill_checkins add constraint kafaa_skill_checkins_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_checkins_manager_id_fk') then alter table kafaa_skill_checkins add constraint kafaa_skill_checkins_manager_id_fk foreign key (manager_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_ratings_checkin_id_fk') then alter table kafaa_skill_ratings add constraint kafaa_skill_ratings_checkin_id_fk foreign key (checkin_id) references kafaa_skill_checkins(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_ratings_subject_id_fk') then alter table kafaa_skill_ratings add constraint kafaa_skill_ratings_subject_id_fk foreign key (subject_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_ratings_rater_person_id_fk') then alter table kafaa_skill_ratings add constraint kafaa_skill_ratings_rater_person_id_fk foreign key (rater_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_ratings_skill_id_fk') then alter table kafaa_skill_ratings add constraint kafaa_skill_ratings_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_team_skill_targets_skill_id_fk') then alter table kafaa_team_skill_targets add constraint kafaa_team_skill_targets_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_career_targets_person_id_fk') then alter table kafaa_career_targets add constraint kafaa_career_targets_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_career_targets_role_id_fk') then alter table kafaa_career_targets add constraint kafaa_career_targets_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_roadmaps_person_id_fk') then alter table kafaa_roadmaps add constraint kafaa_roadmaps_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -2282,6 +2336,17 @@ create index if not exists kafaa_badges_person_id_idx on kafaa_badges (person_id
 create index if not exists kafaa_badges_source_id_idx on kafaa_badges (source_id);
 create index if not exists kafaa_badges_course_id_idx on kafaa_badges (course_id);
 create index if not exists kafaa_badges_status_idx on kafaa_badges (status);
+create index if not exists kafaa_skill_checkins_person_id_idx on kafaa_skill_checkins (person_id);
+create index if not exists kafaa_skill_checkins_manager_id_idx on kafaa_skill_checkins (manager_id);
+create index if not exists kafaa_skill_checkins_status_idx on kafaa_skill_checkins (status);
+create index if not exists kafaa_skill_ratings_checkin_id_idx on kafaa_skill_ratings (checkin_id);
+create index if not exists kafaa_skill_ratings_subject_id_idx on kafaa_skill_ratings (subject_id);
+create index if not exists kafaa_skill_ratings_rater_person_id_idx on kafaa_skill_ratings (rater_person_id);
+create index if not exists kafaa_skill_ratings_rater_kind_idx on kafaa_skill_ratings (rater_kind);
+create index if not exists kafaa_skill_ratings_skill_id_idx on kafaa_skill_ratings (skill_id);
+create index if not exists kafaa_skill_ratings_status_idx on kafaa_skill_ratings (status);
+create index if not exists kafaa_team_skill_targets_team_id_idx on kafaa_team_skill_targets (team_id);
+create index if not exists kafaa_team_skill_targets_skill_id_idx on kafaa_team_skill_targets (skill_id);
 create index if not exists kafaa_career_targets_person_id_idx on kafaa_career_targets (person_id);
 create index if not exists kafaa_career_targets_role_id_idx on kafaa_career_targets (role_id);
 create index if not exists kafaa_career_targets_shared_person_id_idx on kafaa_career_targets (shared_person_id);
@@ -2327,4 +2392,4 @@ create trigger kafaa_evaluations_append_only before update or delete on kafaa_ev
 drop trigger if exists kafaa_evaluation_acks_append_only on kafaa_evaluation_acks;
 create trigger kafaa_evaluation_acks_append_only before update or delete on kafaa_evaluation_acks for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 120) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 123) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

@@ -27,6 +27,9 @@ function Exports({ d }: { d: PassportData }) {
   const model = useExportModel(d, vm);
   return (
     <div className="flex flex-wrap gap-2">
+      <L to="/my/skills/checkins" className="btn-outline btn-sm no-underline" data-testid="m17-to-checkins">
+        <Icon name="users" size={14} /> {t('m17.ci.toCheckins')}
+      </L>
       <L to="/my/skills/wallet" className="btn-outline btn-sm no-underline" data-testid="m17-to-wallet">
         <Icon name="shield" size={14} /> {t('m17.passport.wallet')}
       </L>
@@ -57,6 +60,7 @@ function TeamPicker({ me }: { me: string | null }) {
             options={list.map((p) => ({ value: p.id, label: `${pick(p, 'display_name')} · ${p.job_role_id ?? ''}` }))} />
         </div>
         <button type="button" className="btn-primary" disabled={!who} onClick={() => nav(`/team/passport/${who}`)}>{t('m17.team.open')}</button>
+        <L to="/team/skills" className="btn-outline no-underline" data-testid="m17-to-team-skills">{t('m17.tm.toHeatmap')}</L>
       </div>
     </Card>
   );
