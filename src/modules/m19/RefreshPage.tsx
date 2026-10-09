@@ -32,7 +32,7 @@ export default function RefreshPage() {
     <Page title={t('m19.routes.my-coach-refresh.title')} intro={t('m19.refresh.intro')} eyebrow={<L to="/my/coach">{t('m19.refresh.back')}</L>}
       actions={<L to="/learn/practice" className="btn-outline btn-sm"><Icon name="check" size={14} />{t('m19.refresh.quizzes')}</L>}>
       <div className="space-y-6">
-        <div className="grid gap-4 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <Async state={ctx} isEmpty={() => false}>{(c) => <CadenceCard pref={c.pref} me={me} />}</Async>
           <Card eyebrow={t('m19.refresh.howEyebrow')} title={t('m19.refresh.howTitle')}>
             <ol className="flex items-end gap-1" aria-label={t('m19.refresh.howTitle')} data-testid="m19-boxes">
@@ -197,7 +197,7 @@ function ConfidenceSection({ ctx }: { ctx: Ctx }) {
   return (
     <Section title={t('m19.refresh.confidenceTitle')} description={t('m19.refresh.confidenceBody', { max: MAX_BOX })}>
       {conf.length === 0 ? <Skeleton lines={3} /> : (
-        <ul className="grid gap-3 md:grid-cols-2" data-testid="m19-confidence">
+        <ul className="grid grid-cols-1 gap-3 md:grid-cols-2" data-testid="m19-confidence">
           {conf.map((c) => {
             const comp = ctx.comps.find((x) => x.id === c.competency_id);
             return (

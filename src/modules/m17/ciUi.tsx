@@ -37,7 +37,7 @@ export function LevelDots({ level, of = 4, tone = 'accent', label }: { level: nu
   const on = { accent: 'bg-accent', sim: 'bg-sim', info: 'bg-info', ok: 'bg-ok', bad: 'bg-bad' }[tone];
   if (level == null) return <span className="text-[12px] text-ink-3">—</span>;
   return (
-    <span className="inline-flex items-center gap-1.5" title={label ?? t('common.skills.level', { level: f.num(level) })}>
+    <span className="relative inline-flex items-center gap-1.5" title={label ?? t('common.skills.level', { level: f.num(level) })}>
       <span className="inline-flex gap-0.5" aria-hidden>
         {Array.from({ length: of }, (_, i) => <span key={i} className={`h-2 w-2 rounded-full ${i < level ? on : 'bg-sunken ring-1 ring-inset ring-line'}`} />)}
       </span>
@@ -102,7 +102,7 @@ export function RaterFlag({ flag }: { flag: string }) {
 }
 export function PersonName({ name, sub }: { name: string; sub?: string | null }) {
   return (
-    <span className="inline-flex min-w-0 items-center gap-2">
+    <span className="inline-flex min-w-0 max-w-full items-center gap-2" title={sub ? `${name} · ${sub}` : name}>
       <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-sunken text-[11px] font-semibold text-ink-2" aria-hidden>
         {name.split(/\s+/).map((x) => x[0]).slice(0, 2).join('')}
       </span>

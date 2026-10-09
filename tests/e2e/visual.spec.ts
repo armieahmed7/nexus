@@ -59,6 +59,21 @@ const RTL: Shot[] = [
   { name: 'w1-opportunity', path: '/opportunities/opp-u3-outage-valve-walkdowns', persona: 'qc-inspector' },
   { name: 'w1-my-future', path: '/my/future', persona: 'qc-inspector' },
   { name: 'w1-future-interest', path: '/workforce/future/interest', persona: 'chco' },
+  // wave 2 (F10-F17)
+  { name: 'w2-checkins', path: '/my/skills/checkins', persona: 'nse' },
+  { name: 'w2-validate', path: '/team/skills/validate', persona: 'cpo' },
+  { name: 'w2-team-skills', path: '/team/skills', persona: 'sro' },
+  { name: 'w2-conversations', path: '/my/career/conversations', persona: 'qc-inspector' },
+  { name: 'w2-team-conversations', path: '/team/conversations', persona: 'head-sq' },
+  { name: 'w2-mentoring', path: '/my/mentoring', persona: 'qc-inspector' },
+  { name: 'w2-mentoring-agreement', path: '/my/mentoring/ma-mr-f13-001', persona: 'qc-inspector' },
+  { name: 'w2-refresh', path: '/my/coach/refresh', persona: 'nse' },
+  { name: 'w2-rotations', path: '/opportunities/rotations', persona: 'qc-inspector' },
+  { name: 'w2-rotation-board', path: '/opportunities/rotations/board', persona: 'chco' },
+  { name: 'w2-leadership', path: '/leadership', persona: 'sro' },
+  { name: 'w2-leadership-360', path: '/leadership/360', persona: 'sro' },
+  { name: 'w2-communities', path: '/communities', persona: 'qc-inspector' },
+  { name: 'w2-experts', path: '/communities/experts', persona: 'qc-inspector' },
 ];
 for (const s of RTL) {
   test(`rtl ${s.name}`, async ({ page }) => {
@@ -97,6 +112,20 @@ const MOBILE: Shot[] = [
   { name: 'w1-my-coach', path: '/my/coach', persona: 'qc-inspector' },
   { name: 'w1-opportunities', path: '/opportunities', persona: 'qc-inspector' },
   { name: 'w1-my-future', path: '/my/future', persona: 'qc-inspector' },
+  // wave 2 (F10-F17)
+  { name: 'w2-checkins', path: '/my/skills/checkins', persona: 'nse' },
+  { name: 'w2-validate', path: '/team/skills/validate', persona: 'cpo' },
+  { name: 'w2-team-skills', path: '/team/skills', persona: 'sro' },
+  { name: 'w2-conversations', path: '/my/career/conversations', persona: 'qc-inspector' },
+  { name: 'w2-mentoring', path: '/my/mentoring', persona: 'qc-inspector' },
+  { name: 'w2-refresh', path: '/my/coach/refresh', persona: 'nse' },
+  { name: 'w2-rotations-my', path: '/opportunities/rotations/my', persona: 'qc-inspector' },
+  { name: 'w2-leadership', path: '/leadership', persona: 'sro' },
+  { name: 'w2-communities', path: '/communities/cop-eng', persona: 'qc-inspector' },
+  { name: 'w2-sessions', path: '/communities/sessions', persona: 'qc-inspector' },
+  { name: 'w2-mentoring-programme', path: '/my/mentoring/programme', persona: 'training-mgr' },
+  { name: 'w2-refresher-insights', path: '/training/refreshers', persona: 'training-mgr' },
+  { name: 'w2-validate-ops', path: '/team/skills/validate', persona: 'ops-ceo' },
 ];
 for (const s of MOBILE) {
   test(`mobile ${s.name}`, async ({ page }) => {
@@ -155,5 +184,28 @@ for (const s of SET_W1) {
     await page.setViewportSize({ width: 1440, height: 900 });
     await open(page, s);
     await page.screenshot({ path: join(SHOTS_W1, `${s.name}.png`), fullPage: false });
+  });
+}
+
+// Wave 2 feature set (F10-F17): saved to KAFAA_SHOTS_W2.
+const SHOTS_W2 = process.env.KAFAA_SHOTS_W2 || 'test-results/shots_w2';
+mkdirSync(SHOTS_W2, { recursive: true });
+const SET_W2: Shot[] = [
+  { name: '01-skill-checkins-en', path: '/my/skills/checkins', persona: 'nse' },
+  { name: '02-team-heatmap-en', path: '/team/skills', persona: 'sro' },
+  { name: '03-career-conversation-en', path: '/team/conversations?person=p-qc-inspector', persona: 'head-sq' },
+  { name: '04-mentoring-matches-en', path: '/my/mentoring', persona: 'qc-inspector' },
+  { name: '05-knowledge-refresher-en', path: '/my/coach/refresh', persona: 'nse' },
+  { name: '06-rotations-en', path: '/opportunities/rotations', persona: 'qc-inspector' },
+  { name: '07-leadership-academy-en', path: '/leadership', persona: 'sro' },
+  { name: '08-communities-experts-en', path: '/communities/experts', persona: 'qc-inspector' },
+  { name: '09-leadership-academy-ar', path: '/leadership', persona: 'sro', ar: true },
+  { name: '10-team-heatmap-mobile', path: '/team/skills', persona: 'sro', mobile: true },
+];
+for (const s of SET_W2) {
+  test(`shot w2 ${s.name}`, async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await open(page, s);
+    await page.screenshot({ path: join(SHOTS_W2, `${s.name}.png`), fullPage: false });
   });
 }

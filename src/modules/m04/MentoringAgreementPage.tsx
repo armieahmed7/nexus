@@ -75,7 +75,7 @@ export default function MentoringAgreementPage() {
                 <StatTile label={t('m04.mtr.attainment')} value={a.status === 'closed' && a.attainment_pct != null ? `${f.num(Number(a.attainment_pct))}%` : '—'} sub={a.status === 'closed' ? t('m04.mtr.attainmentSub') : t('m04.mtr.attainmentLater')} />
               </Grid>
 
-              <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)]">
                 <Section title={t('m04.mtr.goals')} description={t('m04.mtr.goalsBody')}>
                   <ol className="space-y-2" data-testid="m04-goals">
                     {a.goals.map((g, i) => {

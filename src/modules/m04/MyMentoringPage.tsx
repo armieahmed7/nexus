@@ -78,7 +78,7 @@ export default function MyMentoringPage() {
                   id: 'suggested', label: t('m04.mtr.tabSuggested'), badge: match.ranked.length, content: (
                     <div className="space-y-4">
                       <Callout title={t('m04.mtr.humanTitle')}>{t('m04.mtr.humanBody')}</Callout>
-                      <div className="grid gap-3 md:grid-cols-[16rem_1fr]">
+                      <div className="grid grid-cols-1 gap-3 md:grid-cols-[16rem_minmax(0,1fr)]">
                         <SelectField label={t('m04.mtr.typeLabel')} name="type" value={type} onChange={(v) => setType(v as MentoringType | '')} placeholder={t('m04.mtr.anyType')} options={MENTORING_TYPES.map((x) => ({ value: x, label: t(`m04.mtr.type.${x}`) }))} />
                         <fieldset>
                           <legend className="mb-1 text-[13px] font-semibold">{t('m04.mtr.focusLabel')}</legend>
@@ -93,7 +93,7 @@ export default function MyMentoringPage() {
                       </div>
                       {ownManager && <p className="flex items-center gap-2 text-[12.5px] text-ink-3" data-testid="m04-own-manager-note"><Icon name="info" size={14} />{t('m04.mtr.ownManagerNote', { role: mentorLabel(ownManager.mentor) })}</p>}
                       {ranked.length === 0 ? <EmptyState icon="users" title={t('m04.mtr.noMatches')}>{t('m04.mtr.noMatchesBody')}</EmptyState> : (
-                        <ol className="grid gap-3 lg:grid-cols-2" data-testid="m04-mentor-matches">
+                        <ol className="grid grid-cols-1 gap-3 lg:grid-cols-2" data-testid="m04-mentor-matches">
                           {ranked.slice(0, 10).map((r, i) => {
                             const m = r.item!.mentor;
                             return (

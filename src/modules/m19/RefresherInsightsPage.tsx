@@ -50,7 +50,7 @@ export default function RefresherInsightsPage() {
                 <StatTile label={t('m19.rstats.tooEasy')} value={f.num(flagged.filter((i) => i.flag === 'too_easy').length)} sub={t('m19.rstats.tooEasySub', { p: f.num(TOO_EASY * 100) })} tone="sim" />
                 <StatTile label={t('m19.rstats.tooHard')} value={f.num(flagged.filter((i) => i.flag === 'too_hard').length)} sub={t('m19.rstats.tooHardSub', { p: f.num(TOO_HARD * 100) })} tone="bad" />
               </Grid>
-              <div className="grid gap-6 lg:grid-cols-[1fr_1.2fr]">
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
                 <Section title={t('m19.rstats.byCompetency')}>
                   <Card><BarChart title={t('m19.rstats.byCompetency')} unit="%" max={100} data={d.by_competency.map((c) => ({ label: compName(c.competency_id), value: c.p_value == null ? null : Math.round(c.p_value * 100), suppressed: c.suppressed }))} /></Card>
                 </Section>

@@ -64,7 +64,7 @@ const MODS = process.env.E2E_MODULES ? new Set(process.env.E2E_MODULES.split(','
 const VISIT = MODS ? ROUTES.filter((r) => MODS.has(r.module)) : ROUTES;
 
 test('route registry loaded', () => {
-  expect(ROUTES.length).toBe(118); // 98 + 20 wave-1 routes (M17 6, M18 3, M19 2, M20 6, M21 3)
+  expect(ROUTES.length).toBe(145); // 98 + 20 wave-1 routes (M17 6, M18 3, M19 2, M20 6, M21 3) + 27 wave-2 routes (M04 2, M17 3, M18 3, M19 2, M20 7, M22 10)
 });
 
 for (const m of MATRIX) {

@@ -53,7 +53,7 @@ function Dashboard() {
               <StatTile label={t('m04.prog.attainment')} value={val(d.total, 'attainment_pct', true)} sub={t('m04.prog.attainmentSub')} tone="ok" />
               <StatTile label={t('m04.prog.ktValidated')} value={d.kt_validated == null ? t('common.suppressed') : f.num(d.kt_validated)} sub={t('m04.prog.ktValidatedSub')} />
             </Grid>
-            <div className="grid gap-6 lg:grid-cols-[1.3fr_1fr]">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
               <Section title={t('m04.prog.byType')} description={t('m04.prog.byTypeBody', { n: f.num(d.min_group) })}>
                 <DataTable rows={[...d.by_type, d.total]} columns={cols} rowKey={(c) => c.key} searchable={false} csvName="kafaa-mentoring-programme.csv" caption={t('m04.prog.byType')} dense />
               </Section>
