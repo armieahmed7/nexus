@@ -376,8 +376,11 @@ export function makeLocalM24(b: LocalBackend, h: LocalRpcHelpers): M24Rpc {
       const who = me();
       if (!who) return refuse('not_signed_in', KC_MSG.not_signed_in);
       if (!has(['R'])) return refuse('forbidden', KC_MSG.forbidden);
-      const isSme = !!get('sme_profiles', `sme:${who}`);
-      const role = has(['W', 'A']) ? ctx().actingRole('knowledge', ['W', 'A']) : isSme ? ctx().actingRole('knowledge', ['R']) : null;
+      // authors: SMEs (opt-in profile), interviewers (knowledge W/A), the session's own interviewer or SME, or the draft's author
+      const sIn = str(input?.session_id) ? get('capture_sessions', str(input.session_id)) : undefined;
+      const exIn = str(input?.id) ? get('knowledge_assets', str(input.id)) : undefined;
+      const allowed = !!get('sme_profiles', `sme:${who}`) || (!!sIn && (sIn.interviewer_id === who || sIn.sme_id === who)) || exIn?.author_id === who;
+      const role = has(['W', 'A']) ? ctx().actingRole('knowledge', ['W', 'A']) : allowed ? ctx().actingRole('knowledge', ['R']) : null;
       if (!role) return refuse('forbidden', KC_MSG.forbidden_author);
       const existing = str(input?.id) ? get('knowledge_assets', str(input.id)) : undefined;
       if (str(input?.id) && !existing) return refuse('not_found', KC_MSG.asset_not_found, role);

@@ -759,7 +759,9 @@ begin
   if me is null then return kafaa_refuse('knowledge.asset.submit', 'knowledge_assets', v_ent, 'not_signed_in', 'Sign in to use the knowledge capture studio'); end if;
   if not kafaa_has_grant('knowledge', array['R']) then return kafaa_refuse('knowledge.asset.submit', 'knowledge_assets', v_ent, 'forbidden', 'Knowledge capture is open to staff'); end if;
   v_role := case when kafaa_has_grant('knowledge', array['W', 'A']) then kafaa_acting_role('knowledge', array['W', 'A'])
-    when exists (select 1 from kafaa_sme_profiles where id = 'sme:' || me) then kafaa_acting_role('knowledge', array['R']) end;
+    when exists (select 1 from kafaa_sme_profiles where id = 'sme:' || me)
+      or exists (select 1 from kafaa_capture_sessions cs where cs.id = nullif(btrim(coalesce(p->>'session_id', '')), '') and (cs.interviewer_id = me or cs.sme_id = me))
+      or exists (select 1 from kafaa_knowledge_assets ka where ka.id = nullif(btrim(coalesce(p->>'id', '')), '') and ka.author_id = me) then kafaa_acting_role('knowledge', array['R']) end;
   if v_role is null then return kafaa_refuse('knowledge.asset.submit', 'knowledge_assets', v_ent, 'forbidden', 'Only subject-matter experts and interviewers draft knowledge assets'); end if;
   if nullif(btrim(coalesce(p->>'id', '')), '') is not null then
     select * into ex from kafaa_knowledge_assets where id = btrim(p->>'id');
