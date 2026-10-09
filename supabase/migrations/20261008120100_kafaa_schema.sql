@@ -2015,6 +2015,26 @@ create table if not exists kafaa_handover_cohorts (
 );
 comment on table kafaa_handover_cohorts is '[M07] Handover 2030: trainee cohorts earmarked to replace external cover, with projected ready dates (SAMPLE/SIMULATED) (F22)';
 
+-- M07 · Saved skills supply-and-demand outlooks (SIMULATED; aggregate, suppressed results) (F35)
+create table if not exists kafaa_skill_outlooks (
+  id text primary key,
+  name text not null,
+  params jsonb not null default '{}'::jsonb,
+  results jsonb not null default '{}'::jsonb,
+  status text not null default 'draft' check (status in ('draft', 'released', 'withdrawn')),
+  summary_en text not null default '',
+  summary_ar text not null default '',
+  created_by text not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  computed_at timestamptz not null default now(),
+  released_by text,
+  released_at timestamptz,
+  withdrawn_reason text,
+  simulated boolean not null default true
+);
+comment on table kafaa_skill_outlooks is '[M07] Saved skills supply-and-demand outlooks (SIMULATED; aggregate, suppressed results) (F35)';
+
 -- M16 · Model and engine card per recommendation surface: inputs used and never used, weights, owner, oversight, last change (F24)
 create table if not exists kafaa_engine_cards (
   id text primary key,
@@ -4167,6 +4187,7 @@ create index if not exists kafaa_handover_cohorts_period_idx on kafaa_handover_c
 create index if not exists kafaa_handover_cohorts_role_id_idx on kafaa_handover_cohorts (role_id);
 create index if not exists kafaa_handover_cohorts_programme_id_idx on kafaa_handover_cohorts (programme_id);
 create index if not exists kafaa_handover_cohorts_talent_programme_id_idx on kafaa_handover_cohorts (talent_programme_id);
+create index if not exists kafaa_skill_outlooks_status_idx on kafaa_skill_outlooks (status);
 create index if not exists kafaa_engine_cards_engine_surface_idx on kafaa_engine_cards (engine_surface);
 create index if not exists kafaa_reco_optouts_person_id_idx on kafaa_reco_optouts (person_id);
 create index if not exists kafaa_reco_optouts_surface_idx on kafaa_reco_optouts (surface);
@@ -4424,4 +4445,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 201) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 202) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

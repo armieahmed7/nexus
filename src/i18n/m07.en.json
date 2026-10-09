@@ -36,6 +36,10 @@
     "workforce-handover": {
       "title": "Handover 2030 readiness",
       "purpose": "Which functions depend on KHNP and partner cover, and how fast ENEC successors become ready before the OSSA ends in 2030. Counts only; groups under 10 suppressed."
+    },
+    "workforce-skills-outlook": {
+      "title": "Skills supply-and-demand outlook",
+      "purpose": "Skills supply and demand by skill family over 5 to 10 years: attrition, the KHNP handover, ADVANCE adoption, pipeline intakes and reskilling. SIMULATED, aggregate only; small groups suppressed."
     }
   },
   "noData": "No aggregate data for this selection.",
@@ -109,7 +113,11 @@
     "handover_ready_end": "Ready successors by 2030",
     "handover_functions_at_risk": "Functions with a shortfall",
     "handover_first_shortfall": "First shortfall year",
-    "handover_emirati_share": "Emirati share of ready successors"
+    "handover_emirati_share": "Emirati share of ready successors",
+    "outlook_supply": "Skills supply (outlook)",
+    "outlook_demand": "Skills demand (outlook)",
+    "outlook_gap": "Skills gap by family (outlook)",
+    "outlook_tornado": "What changes the gap most (outlook)"
   },
   "def": {
     "emiratization": "UAE nationals as a share of all employees of ENEC, ENEC Operations and ENEC Commercial at year end.",
@@ -142,7 +150,11 @@
     "handover_pipeline": "Trainees in COIT, LOIT, GPO, DNT and discipline cohorts earmarked to replace external cover (SAMPLE). For every critical role the earmarked trainees never exceed the role's in-training plus pipeline bench count.",
     "handover_burndown": "Per year: external cover, ready successors (cumulative) and the positions to hand over (the cover in the as-of year). A shortfall year is one where positions already handed over exceed ready successors. SIMULATED; what-if settings move the OSSA end and delay the pipeline.",
     "handover_risk": "Number of functions with a shortfall in any plan year. A count of functions, not of people.",
-    "handover_emirati": "UAE nationals among the successors ready by the OSSA end, shown only when both the Emirati count and the total are at least 10. National direction (quality of Emiratisation), not a quota."
+    "handover_emirati": "UAE nationals among the successors ready by the OSSA end, shown only when both the Emirati count and the total are at least 10. National direction (quality of Emiratisation), not a quota.",
+    "outlook_supply": "People holding a skill family at Practitioner level or above (F01 skill states of active staff), scaled from the measured staff sample to the organisation headcount, then projected: minus general attrition and known retirements and contract ends (F20 KLRA, weighted by risk band), plus trainees ready from the pipeline (F22 cohorts, DNT intake) and reskilled staff. SIMULATED, people-equivalents.",
+    "outlook_demand": "People whose role profile needs the skill family (M01 role competencies), scaled to the organisation, plus positions returning from KHNP OSSA and contractor cover as the handover plan steps down, times the chosen staffing scenario's growth and the ADVANCE adoption uplift (M11 adjustDemand). SIMULATED, people-equivalents.",
+    "outlook_gap": "Demand minus supply for a skill family and year: positive is a shortfall, negative a surplus. Families with fewer than 10 measured holders or role holders are suppressed and never added into a total. SIMULATED: a planning aid, not a forecast.",
+    "outlook_tornado": "Cumulative shortfall (people-years summed over the shown families from the base year to the horizon) with each assumption moved to the low and the high end of a fixed range while the others stay where they are. The longest bar changes the gap most. SIMULATED."
   },
   "reconcile": {
     "title": "Why do public figures differ?",
@@ -190,6 +202,10 @@
       "handover": {
         "title": "Handover 2030",
         "body": "External cover vs ready ENEC successors to 2030 (SIMULATED)"
+      },
+      "skills-outlook": {
+        "title": "Skills outlook",
+        "body": "Skills supply and demand to 2036 by skill family (SIMULATED)."
       }
     }
   },
@@ -531,5 +547,227 @@
       "pipeline_small": "Fewer than 10 trainees in earmarked cohorts",
       "slip": "What-if: the pipeline is {months} months late (SIMULATED)"
     }
+  },
+  "reasons": {
+    "so_suppressed": "Fewer than {n} people measured in this skill family: suppressed",
+    "so_first_gap": "Demand first exceeds supply in {year}",
+    "so_no_gap": "Supply covers demand through {year}",
+    "so_attrition_widens": "General attrition: {band} effect, widens the gap",
+    "so_klra_widens": "Known retirements and contract ends (KLRA): {band} effect, widens the gap",
+    "so_handover_widens": "Positions coming back from KHNP and contractor cover: {band} effect, widens the gap",
+    "so_growth_widens": "Staffing scenario growth: {band} effect, widens the gap",
+    "so_advance_widens": "ADVANCE adoption: {band} effect, widens the gap",
+    "so_intake_narrows": "Pipeline intakes: {band} effect, narrows the gap",
+    "so_reskill_narrows": "Reskilling conversions: {band} effect, narrows the gap",
+    "so_basis": "Measured on {n} staff holding the family today, scaled to the organisation"
+  },
+  "so": {
+    "intro": "Skills supply and demand by skill family over the next 5 to 10 years, combining attrition, the KHNP handover, ADVANCE adoption, pipeline intakes and the reskilling effect of training. Move the assumptions and see what changes the gap most.",
+    "labels": "SIMULATED · aggregate only · skill families with fewer than {n} people measured are suppressed · people-equivalents",
+    "simTitle": "SIMULATED: a planning aid, not a forecast",
+    "simBody": "Assumptions are inputs you control. Results come from today's skill states of the demo tenant, scaled to the organisation, and from SAMPLE plans. Nothing here names or ranks a person, and nothing here is for public release without the HR director's sign-off.",
+    "managerTitle": "Released outlooks only",
+    "managerBody": "Line managers see the outlooks the HR director has released. The live workbench is for HR and auditors.",
+    "assumptions": "Assumptions",
+    "baseline": "Baseline",
+    "whatIf": "What-if",
+    "baselineMark": "Baseline value",
+    "baselineIs": "baseline {v}",
+    "scenario": "Staffing scenario",
+    "currentFleet": "Current fleet (no new units)",
+    "scenarioHint": "Saved scenarios from the scenario planner scale demand (headcount) or set the ADVANCE technology (technology).",
+    "scenarioLink": "Scenario planner",
+    "param": {
+      "horizon": "Horizon year",
+      "attrition_pct": "General attrition",
+      "klra_weight": "Known departures (KLRA)",
+      "pipeline_factor": "Pipeline delivery",
+      "annual_intake": "DNT graduate intake",
+      "reskill_rate": "Reskilling conversion",
+      "adv_factor": "ADVANCE adoption",
+      "adv_start": "ADVANCE adoption starts",
+      "ossa_end": "KHNP OSSA support ends"
+    },
+    "hint": {
+      "attrition_pct": "Share of holders leaving each year for any reason",
+      "klra_weight": "Share of KLRA retirements and contract ends that take the skill with them",
+      "pipeline_factor": "Share of the F22 cohort plan delivered on time",
+      "annual_intake": "New Local Operators a year from 2028 (24-month DNT)",
+      "reskill_rate": "Share of awareness-level staff reaching Practitioner each year",
+      "adv_factor": "Scales the M11 future-skills index (0.5 to 1.5)",
+      "adv_start": "Demand uplift ramps up over five years from this year",
+      "ossa_end": "KHNP cover steps down to zero after this year"
+    },
+    "pctYear": "{n}% a year",
+    "perYear": "{n} a year",
+    "overrides": "Per-family reskilling rates",
+    "overridesBody": "Leave a family empty to use the general rate ({n}% a year). Rates run from 0 to 40%.",
+    "overrideFor": "Reskilling rate for {family}",
+    "clearOverrides": "Clear all",
+    "done": "Done",
+    "reset": "Reset to baseline",
+    "loadedTitle": "Loaded: {name}",
+    "loadedBody": "Change any assumption to explore from here. Saving updates your own draft or saves a new outlook.",
+    "tile": {
+      "short": "Families short in {year}",
+      "shortSub": "{n} more suppressed (fewer than 10 people measured)",
+      "shortfall": "Shortfall in {year}",
+      "peopleEq": "people-equivalents, shown families only",
+      "vsBaseline": "{delta} vs the baseline",
+      "first": "First shortfall year",
+      "firstSub": "earliest year any shown family falls short",
+      "cumulative": "Cumulative shortfall",
+      "cumulativeSub": "people-years, {from} to {to}"
+    },
+    "none": "None",
+    "gapTitle": "Gap by skill family in {year}",
+    "gapNote": "Bars to the end side are shortfalls, to the start side surpluses. Hatched rows have fewer than {n} people measured and are suppressed. Select a family to see its trend.",
+    "suppressed": "Suppressed",
+    "short": "{n} short",
+    "surplus": "{n} spare",
+    "balanced": "Balanced",
+    "surplusAxis": "surplus",
+    "shortAxis": "shortfall",
+    "family": "Skill family",
+    "gapCol": "Gap in {year}",
+    "trendTitle": "Supply and demand: {family}",
+    "trendTitleNone": "Supply and demand",
+    "allSuppressed": "Every family is suppressed.",
+    "demand": "Demand",
+    "supply": "Supply",
+    "whyGap": "Why this gap?",
+    "drivers": "What drives this family",
+    "driver": {
+      "attrition": "Attrition",
+      "klra": "Known departures",
+      "handover": "KHNP handover",
+      "growth": "Scenario growth",
+      "advance": "ADVANCE",
+      "intake": "Pipeline",
+      "reskill": "Reskilling"
+    },
+    "band": {
+      "high": "major",
+      "medium": "moderate",
+      "low": "minor"
+    },
+    "tornadoTitle": "What changes the gap most",
+    "tornadoEyebrow": "Cumulative shortfall {from} to {to}",
+    "tornadoNote": "Today the biggest lever is: {top}. Each bar moves one assumption across a fixed range and holds the others.",
+    "tornadoLow": "Low end of the range",
+    "tornadoHigh": "High end of the range",
+    "tornadoNow": "Current assumptions: {n}",
+    "swing": "swing {n}",
+    "assumption": "Assumption",
+    "atLow": "Low end",
+    "atHigh": "High end",
+    "swingCol": "Swing",
+    "byYearTitle": "Shortfall by year (shown families)",
+    "byYearNote": "Sum of the shortfalls of the shown families each year; surpluses do not offset shortfalls.",
+    "tableTitle": "Outlook by skill family",
+    "tableDesc": "People-equivalents. Suppressed families show no value.",
+    "col": {
+      "supplyNow": "Supply {year}",
+      "demandNow": "Demand {year}",
+      "supplyH": "Supply {year}",
+      "demandH": "Demand {year}",
+      "gapH": "Gap {year}",
+      "first": "First shortfall"
+    },
+    "status": "Status",
+    "shortPill": "Shortfall",
+    "coveredPill": "Covered",
+    "save": "Save outlook",
+    "update": "Update my outlook",
+    "saveHint": "Saved with \"(SIMULATED)\"; the server recomputes the results.",
+    "name": "Name",
+    "nameHint": "3 to 120 characters. \"(SIMULATED)\" is added.",
+    "savedTitle": "Saved outlooks",
+    "savedDesc": "HR saves outlooks; the HR director releases one to line managers or withdraws it.",
+    "noneSaved": "No saved outlooks yet.",
+    "shortCol": "Families short",
+    "created": "Saved",
+    "releasedOn": "Released",
+    "load": "Load",
+    "st": {
+      "draft": "Draft",
+      "released": "Released",
+      "withdrawn": "Withdrawn"
+    },
+    "release": "Release",
+    "withdraw": "Withdraw",
+    "releaseTitle": "Release {name}",
+    "releaseBody": "Line managers will see this outlook with your summary. Describe it in words: no headcounts, no site information (M11 rule).",
+    "summaryEn": "Summary (English)",
+    "summaryAr": "Summary (Arabic)",
+    "summaryHint": "10 to 600 characters.",
+    "cleanOk": "Release text is clean",
+    "cleanBad": "Headcount or site wording found",
+    "cleanRule": "Checked with the M11 public-text guard.",
+    "releaseConfirmTitle": "Release this outlook?",
+    "releaseConfirmBody": "\"{name}\" becomes visible to line managers as a SIMULATED outlook. The release is recorded in the audit log and the NEXUS ledger.",
+    "asDirector": "Acting as HR director",
+    "withdrawTitle": "Withdraw this outlook?",
+    "withdrawBody": "\"{name}\" stops being visible to line managers. The withdrawal is recorded in the audit log and the NEXUS ledger.",
+    "withdrawReason": "Reason",
+    "releasedTitle": "Released outlooks",
+    "releasedDesc": "Outlooks the HR director has released to line managers. SIMULATED, aggregate only.",
+    "noneReleased": "No outlook released yet.",
+    "noneReleasedBody": "The HR director releases outlooks from the saved list.",
+    "releasedOnX": "Released {date}",
+    "horizonTo": "to {year}",
+    "openInWorkbench": "Open in the workbench",
+    "howTitle": "How the outlook is calculated",
+    "how": {
+      "demand": {
+        "t": "Demand.",
+        "b": "Active staff whose role profile needs the skill family (M01 role competencies), times the chosen staffing scenario's growth from its start year."
+      },
+      "handover": {
+        "t": "KHNP handover.",
+        "b": "Positions held today by KHNP OSSA experts or contractors in roles that need the family come back to ENEC staff as the F22 cover plan steps down, all of them after the OSSA end year."
+      },
+      "advance": {
+        "t": "ADVANCE.",
+        "b": "The family's share of skills mapped to ADVANCE technologies times the M11 future-skills index (adjustDemand with the adoption factor), ramping up over five years from the start year."
+      },
+      "supply": {
+        "t": "Supply.",
+        "b": "Active staff holding the family at Practitioner level or above in their F01 skill state, less general attrition each year."
+      },
+      "klra": {
+        "t": "Known departures.",
+        "b": "Retirements and contract ends within five years in F20 KLRA positions, spread over their band's years and weighted by risk band (high 1.0, medium 0.7, low 0.4)."
+      },
+      "pipeline": {
+        "t": "Pipeline.",
+        "b": "F22 cohorts earmarked for roles that need the family arrive at their ready year; DNT graduates join the Local Operator families from 2028."
+      },
+      "reskill": {
+        "t": "Reskilling.",
+        "b": "Staff at awareness level in the family reach Practitioner at the reskilling rate each year (per family if set)."
+      },
+      "scale": {
+        "t": "Scale.",
+        "b": "The demo tenant's staff are a sample: counts are scaled to the organisation headcount (SAMPLE workforce snapshot) and shown as people-equivalents."
+      },
+      "suppression": {
+        "t": "Suppression.",
+        "b": "A family with fewer than {n} people measured (holders or role holders) returns only its name and \"suppressed\"; totals add up shown families only. Security is out of scope (career path only)."
+      },
+      "tornado": {
+        "t": "Tornado.",
+        "b": "Each assumption is moved across a fixed plausible range with the others held; the bar shows how much the cumulative shortfall moves. Resetting the assumptions reproduces the baseline exactly."
+      }
+    },
+    "links": {
+      "scenarios": "Scenario planner (M07)",
+      "handover": "Handover 2030 board (F22)",
+      "klra": "Knowledge loss risk (F20)",
+      "future": "Future skills (M11)",
+      "skills": "Team capability (F01/F11)",
+      "definitions": "Definitions"
+    },
+    "notOpen": "not open to your role"
   }
 }

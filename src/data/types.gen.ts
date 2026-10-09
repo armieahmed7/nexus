@@ -1660,6 +1660,23 @@ export interface HandoverCohortsRow {
   source: string;
   sample: boolean;
 }
+export interface SkillOutlooksRow {
+  id: string;
+  name: string;
+  params: any;
+  results: any;
+  status: 'draft' | 'released' | 'withdrawn';
+  summary_en: string;
+  summary_ar: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  computed_at: string;
+  released_by?: string | null;
+  released_at?: string | null;
+  withdrawn_reason?: string | null;
+  simulated: boolean;
+}
 export interface EngineCardsRow {
   id: string;
   engine_surface: 'skills' | 'recommend' | 'match' | 'search';
@@ -3129,6 +3146,7 @@ export interface Tables {
   crew_debrief_members: CrewDebriefMembersRow;
   external_cover: ExternalCoverRow;
   handover_cohorts: HandoverCohortsRow;
+  skill_outlooks: SkillOutlooksRow;
   engine_cards: EngineCardsRow;
   reco_optouts: RecoOptoutsRow;
   fairness_snapshots: FairnessSnapshotsRow;

@@ -39,6 +39,7 @@ export default function WorkforcePage() {
     ['training', 'book', true],
     ['scenarios', 'sparkle', canScenarios],
     ['handover', 'calendar', true], // [W3E3] F22
+    ['skills-outlook', 'chart', true], // [W5E4] F35
     ['applications', 'users', canFunnel],
     ['definitions', 'info', true],
   ] as const).filter((x) => x[2]);

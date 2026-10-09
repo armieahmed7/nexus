@@ -1284,6 +1284,13 @@ create policy kafaa_read on kafaa_handover_cohorts for select to anon, authentic
 grant select on kafaa_handover_cohorts to anon, authenticated;
 -- writes: reference data, no client writes
 
+-- skill_outlooks
+alter table kafaa_skill_outlooks enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_outlooks;
+create policy kafaa_read on kafaa_skill_outlooks for select to anon, authenticated using (kafaa_rule_read('observer_release', null::text, null::text, true));
+grant select on kafaa_skill_outlooks to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- engine_cards
 alter table kafaa_engine_cards enable row level security;
 drop policy if exists kafaa_read on kafaa_engine_cards;
