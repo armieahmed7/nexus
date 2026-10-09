@@ -8,6 +8,7 @@ import { useFormat, useT } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { bookingPriority, canDisplace } from '../../domain/rules';
 import { Chip, G2Pill, useLabels, usePeople } from './ui';
+import { SimulatorScenariosTab } from './SimulatorScenariosTab'; // W4E3 (F28)
 
 const KINDS = ['coct', 'requal', 'initial', 'maintenance', 'elective'] as const;
 const CREWS = ['A', 'B', 'C', 'D', 'E'];
@@ -102,6 +103,8 @@ export default function TrainingSimulatorPage() {
                   <Card title={t('m04.sim.byCrew')}><Donut title={t('m04.sim.byCrew')} data={CREWS.map((c) => ({ label: `${t('m04.common.crew')} ${c}`, value: booked.filter((r) => r.crew === c).length }))} /></Card>
                 </Grid>
               ) },
+              // W4E3 (F28): scenario library, coverage and crew debriefs
+              { id: 'scenarios', label: t('m04.scn.tab2.label'), content: <SimulatorScenariosTab slots={rows} /> },
             ]} />
           );
         }}

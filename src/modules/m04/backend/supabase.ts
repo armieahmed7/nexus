@@ -3,6 +3,7 @@
 import type { SupabaseExtCtx } from '../../../data/ext/types';
 import type { ProgrammeStats } from '../mentoring';
 import type { CloseOutResult, M04Rpc, ReportingLine, SmeNominee } from './rpc';
+import type { DebriefResult, SimDebriefView } from './simulator.rpc';
 
 export function makeSupabaseM04(x: SupabaseExtCtx): M04Rpc {
   return {
@@ -16,5 +17,12 @@ export function makeSupabaseM04(x: SupabaseExtCtx): M04Rpc {
     smeNominees: async () => (await x.rpc<SmeNominee[]>('kafaa_sme_nominees')) ?? [],
     myReportingLine: async () => (await x.rpc<ReportingLine>('kafaa_my_reporting_line')) ?? { line_manager: null, chain: [] },
     mentoringProgramme: () => x.call<ProgrammeStats>('kafaa_mentoring_programme', {}, []),
+    // W4E3 (F28) simulator scenario library: SQL in supabase/migrations/20261009143001_kafaa_w4e3_simulator.sql
+    saveSimScenario: (input) => x.call('kafaa_save_sim_scenario', { p: input }, ['sim_scenarios']),
+    reviewSimScenario: (scenarioId, decision, note) => x.call('kafaa_review_sim_scenario', { p_scenario_id: scenarioId, p_decision: decision, p_note: note ?? null }, ['sim_scenarios', 'notifications']),
+    planCycle: (cycleId, items, submit) => x.call('kafaa_plan_cycle', { p_cycle_id: cycleId, p_items: items, p_submit: submit === true }, ['sim_cycles', 'sim_cycle_items']),
+    approveCycle: (cycleId, gapNote) => x.call('kafaa_approve_cycle', { p_cycle_id: cycleId, p_gap_note: gapNote ?? null }, ['sim_cycles', 'notifications']),
+    recordDebrief: (input) => x.call<DebriefResult>('kafaa_record_debrief', { p: input }, ['crew_debriefs', 'crew_debrief_members', 'sim_scenarios', 'skill_evidence', 'person_skills', 'notifications']),
+    simDebriefs: async () => (await x.rpc<SimDebriefView[]>('kafaa_sim_debriefs')) ?? [],
   };
 }

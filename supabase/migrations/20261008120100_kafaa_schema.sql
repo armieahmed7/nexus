@@ -1790,6 +1790,130 @@ create table if not exists kafaa_mentoring_private_notes (
 );
 comment on table kafaa_mentoring_private_notes is '[M04] Private mentoring session note: readable by its author only (F13)';
 
+-- M04 · Simulator training objective catalogue (generic, sourced to IAEA SAT and simulator guidance) (F28)
+create table if not exists kafaa_sim_objectives (
+  id text primary key,
+  code text not null unique,
+  title_en text not null,
+  title_ar text not null,
+  category text not null check (category in ('normal', 'abnormal', 'emergency', 'severe_accident', 'team')),
+  competency_id text not null,
+  programmes text[] not null default '{}'::text[],
+  active boolean not null default true,
+  sort integer not null default 0,
+  sources jsonb not null default '[]'::jsonb
+);
+comment on table kafaa_sim_objectives is '[M04] Simulator training objective catalogue (generic, sourced to IAEA SAT and simulator guidance) (F28)';
+
+-- M04 · Simulator training scenario (metadata only; never exam content): objectives, competencies, positions, fidelity, revision (F28)
+create table if not exists kafaa_sim_scenarios (
+  id text primary key,
+  code text not null unique,
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  events_en text not null default '',
+  events_ar text not null default '',
+  category text not null check (category in ('normal', 'abnormal', 'emergency', 'severe_accident')),
+  purpose text not null default 'training' check (purpose in ('training')),
+  objective_ids text[] not null default '{}'::text[],
+  competency_ids text[] not null default '{}'::text[],
+  positions text[] not null default '{}'::text[],
+  duration_min integer not null,
+  fidelity text not null check (fidelity in ('full_scope', 'limited_scope', 'desktop')),
+  programmes text[] not null default '{}'::text[],
+  status text not null default 'draft' check (status in ('draft', 'in_review', 'approved', 'retired')),
+  revision integer not null default 1,
+  author_person_id text,
+  last_edited_by text,
+  submitted_at timestamptz,
+  approved_by text,
+  approved_at timestamptz,
+  review_note text,
+  last_run_on date,
+  run_count integer not null default 0,
+  history jsonb not null default '[]'::jsonb,
+  sources jsonb not null default '[]'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_sim_scenarios is '[M04] Simulator training scenario (metadata only; never exam content): objectives, competencies, positions, fidelity, revision (F28)';
+
+-- M04 · COCT/LOCT simulator cycle plan (two years in segments) with required objectives and competencies (F28)
+create table if not exists kafaa_sim_cycles (
+  id text primary key,
+  programme text not null check (programme in ('coct', 'loct')),
+  label_en text not null,
+  label_ar text not null,
+  starts_on date not null,
+  ends_on date not null,
+  segments integer not null default 8,
+  requirements jsonb not null default '[]'::jsonb,
+  required_competency_ids text[] not null default '{}'::text[],
+  status text not null default 'draft' check (status in ('draft', 'submitted', 'approved', 'closed')),
+  planned_by text,
+  planned_at timestamptz,
+  approved_by text,
+  approved_at timestamptz,
+  gap_note text,
+  sources jsonb not null default '[]'::jsonb
+);
+comment on table kafaa_sim_cycles is '[M04] COCT/LOCT simulator cycle plan (two years in segments) with required objectives and competencies (F28)';
+
+-- M04 · Scenario planned in a cycle segment (inactive when removed from the plan) (F28)
+create table if not exists kafaa_sim_cycle_items (
+  id text primary key,
+  cycle_id text not null,
+  scenario_id text not null,
+  segment integer not null,
+  active boolean not null default true,
+  added_by text,
+  added_at timestamptz not null default now()
+);
+comment on table kafaa_sim_cycle_items is '[M04] Scenario planned in a cycle segment (inactive when removed from the plan) (F28)';
+
+-- M04 · Structured crew debrief after a simulator scenario: instructor team ratings, crew self-ratings and self-critique (F28)
+create table if not exists kafaa_crew_debriefs (
+  id text primary key,
+  slot_id text not null,
+  scenario_id text not null,
+  cycle_id text,
+  crew text not null,
+  simulator text not null,
+  held_on date not null,
+  instructor_person_id text not null,
+  ratings jsonb not null default '{}'::jsonb,
+  self_ratings jsonb,
+  strengths_en text,
+  strengths_ar text,
+  improvements_en text,
+  improvements_ar text,
+  critique_en text,
+  critique_ar text,
+  present_count integer not null default 0,
+  absent_count integer not null default 0,
+  evidence_count integer not null default 0,
+  xapi jsonb not null default '[]'::jsonb,
+  recorded_at timestamptz not null default now(),
+  source text not null default 'kafaa' check (source in ('kafaa', 'import'))
+);
+comment on table kafaa_crew_debriefs is '[M04] Structured crew debrief after a simulator scenario: instructor team ratings, crew self-ratings and self-critique (F28)';
+
+-- M04 · Crew member on a debrief: position, present or absent, and the F01 evidence written for them (F28)
+create table if not exists kafaa_crew_debrief_members (
+  id text primary key,
+  debrief_id text not null,
+  person_id text not null,
+  crew text not null,
+  position text not null check (position in ('ss', 'sro', 'ro', 'sta', 'lo')),
+  present boolean not null,
+  scenario_id text not null,
+  held_on date not null,
+  evidence_ids text[] not null default '{}'::text[]
+);
+comment on table kafaa_crew_debrief_members is '[M04] Crew member on a debrief: position, present or absent, and the F01 evidence written for them (F28)';
+
 -- M07 · Handover 2030: positions with external or partner cover by role and plan year (SAMPLE, counts only) (F22)
 create table if not exists kafaa_external_cover (
   id text primary key,
@@ -3525,6 +3649,22 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_me
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_mentoring_private_notes_session_id_fk') then alter table kafaa_mentoring_private_notes add constraint kafaa_mentoring_private_notes_session_id_fk foreign key (session_id) references kafaa_mentoring_sessions(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_mentoring_private_notes_agreement_id_fk') then alter table kafaa_mentoring_private_notes add constraint kafaa_mentoring_private_notes_agreement_id_fk foreign key (agreement_id) references kafaa_mentoring_agreements(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_mentoring_private_notes_author_person_id_fk') then alter table kafaa_mentoring_private_notes add constraint kafaa_mentoring_private_notes_author_person_id_fk foreign key (author_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sim_objectives_competency_id_fk') then alter table kafaa_sim_objectives add constraint kafaa_sim_objectives_competency_id_fk foreign key (competency_id) references kafaa_competencies(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sim_scenarios_author_person_id_fk') then alter table kafaa_sim_scenarios add constraint kafaa_sim_scenarios_author_person_id_fk foreign key (author_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sim_scenarios_last_edited_by_fk') then alter table kafaa_sim_scenarios add constraint kafaa_sim_scenarios_last_edited_by_fk foreign key (last_edited_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sim_scenarios_approved_by_fk') then alter table kafaa_sim_scenarios add constraint kafaa_sim_scenarios_approved_by_fk foreign key (approved_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sim_cycles_planned_by_fk') then alter table kafaa_sim_cycles add constraint kafaa_sim_cycles_planned_by_fk foreign key (planned_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sim_cycles_approved_by_fk') then alter table kafaa_sim_cycles add constraint kafaa_sim_cycles_approved_by_fk foreign key (approved_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sim_cycle_items_cycle_id_fk') then alter table kafaa_sim_cycle_items add constraint kafaa_sim_cycle_items_cycle_id_fk foreign key (cycle_id) references kafaa_sim_cycles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sim_cycle_items_scenario_id_fk') then alter table kafaa_sim_cycle_items add constraint kafaa_sim_cycle_items_scenario_id_fk foreign key (scenario_id) references kafaa_sim_scenarios(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sim_cycle_items_added_by_fk') then alter table kafaa_sim_cycle_items add constraint kafaa_sim_cycle_items_added_by_fk foreign key (added_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_crew_debriefs_slot_id_fk') then alter table kafaa_crew_debriefs add constraint kafaa_crew_debriefs_slot_id_fk foreign key (slot_id) references kafaa_simulator_slots(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_crew_debriefs_scenario_id_fk') then alter table kafaa_crew_debriefs add constraint kafaa_crew_debriefs_scenario_id_fk foreign key (scenario_id) references kafaa_sim_scenarios(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_crew_debriefs_cycle_id_fk') then alter table kafaa_crew_debriefs add constraint kafaa_crew_debriefs_cycle_id_fk foreign key (cycle_id) references kafaa_sim_cycles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_crew_debriefs_instructor_person_id_fk') then alter table kafaa_crew_debriefs add constraint kafaa_crew_debriefs_instructor_person_id_fk foreign key (instructor_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_crew_debrief_members_debrief_id_fk') then alter table kafaa_crew_debrief_members add constraint kafaa_crew_debrief_members_debrief_id_fk foreign key (debrief_id) references kafaa_crew_debriefs(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_crew_debrief_members_person_id_fk') then alter table kafaa_crew_debrief_members add constraint kafaa_crew_debrief_members_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_crew_debrief_members_scenario_id_fk') then alter table kafaa_crew_debrief_members add constraint kafaa_crew_debrief_members_scenario_id_fk foreign key (scenario_id) references kafaa_sim_scenarios(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_external_cover_role_id_fk') then alter table kafaa_external_cover add constraint kafaa_external_cover_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_external_cover_function_fk') then alter table kafaa_external_cover add constraint kafaa_external_cover_function_fk foreign key (function) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_handover_cohorts_role_id_fk') then alter table kafaa_handover_cohorts add constraint kafaa_handover_cohorts_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
@@ -3881,6 +4021,28 @@ create index if not exists kafaa_mentoring_sessions_logged_by_idx on kafaa_mento
 create index if not exists kafaa_mentoring_private_notes_session_id_idx on kafaa_mentoring_private_notes (session_id);
 create index if not exists kafaa_mentoring_private_notes_agreement_id_idx on kafaa_mentoring_private_notes (agreement_id);
 create index if not exists kafaa_mentoring_private_notes_author_person_id_idx on kafaa_mentoring_private_notes (author_person_id);
+create index if not exists kafaa_sim_objectives_category_idx on kafaa_sim_objectives (category);
+create index if not exists kafaa_sim_objectives_competency_id_idx on kafaa_sim_objectives (competency_id);
+create index if not exists kafaa_sim_scenarios_category_idx on kafaa_sim_scenarios (category);
+create index if not exists kafaa_sim_scenarios_status_idx on kafaa_sim_scenarios (status);
+create index if not exists kafaa_sim_scenarios_author_person_id_idx on kafaa_sim_scenarios (author_person_id);
+create index if not exists kafaa_sim_scenarios_last_edited_by_idx on kafaa_sim_scenarios (last_edited_by);
+create index if not exists kafaa_sim_scenarios_approved_by_idx on kafaa_sim_scenarios (approved_by);
+create index if not exists kafaa_sim_cycles_programme_idx on kafaa_sim_cycles (programme);
+create index if not exists kafaa_sim_cycles_status_idx on kafaa_sim_cycles (status);
+create index if not exists kafaa_sim_cycles_planned_by_idx on kafaa_sim_cycles (planned_by);
+create index if not exists kafaa_sim_cycles_approved_by_idx on kafaa_sim_cycles (approved_by);
+create index if not exists kafaa_sim_cycle_items_cycle_id_idx on kafaa_sim_cycle_items (cycle_id);
+create index if not exists kafaa_sim_cycle_items_scenario_id_idx on kafaa_sim_cycle_items (scenario_id);
+create index if not exists kafaa_sim_cycle_items_added_by_idx on kafaa_sim_cycle_items (added_by);
+create index if not exists kafaa_crew_debriefs_slot_id_idx on kafaa_crew_debriefs (slot_id);
+create index if not exists kafaa_crew_debriefs_scenario_id_idx on kafaa_crew_debriefs (scenario_id);
+create index if not exists kafaa_crew_debriefs_cycle_id_idx on kafaa_crew_debriefs (cycle_id);
+create index if not exists kafaa_crew_debriefs_held_on_idx on kafaa_crew_debriefs (held_on);
+create index if not exists kafaa_crew_debriefs_instructor_person_id_idx on kafaa_crew_debriefs (instructor_person_id);
+create index if not exists kafaa_crew_debrief_members_debrief_id_idx on kafaa_crew_debrief_members (debrief_id);
+create index if not exists kafaa_crew_debrief_members_person_id_idx on kafaa_crew_debrief_members (person_id);
+create index if not exists kafaa_crew_debrief_members_scenario_id_idx on kafaa_crew_debrief_members (scenario_id);
 create index if not exists kafaa_external_cover_period_idx on kafaa_external_cover (period);
 create index if not exists kafaa_external_cover_role_id_idx on kafaa_external_cover (role_id);
 create index if not exists kafaa_external_cover_function_idx on kafaa_external_cover (function);
@@ -4137,4 +4299,4 @@ create trigger kafaa_evaluations_append_only before update or delete on kafaa_ev
 drop trigger if exists kafaa_evaluation_acks_append_only on kafaa_evaluation_acks;
 create trigger kafaa_evaluation_acks_append_only before update or delete on kafaa_evaluation_acks for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 191) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 197) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
