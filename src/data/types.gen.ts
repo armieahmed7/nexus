@@ -2930,6 +2930,22 @@ export interface AccrAssessmentsRow {
   rated_at: string;
   history: any;
 }
+export interface XapiStatementsRow {
+  id: string;
+  actor_person_id: string;
+  verb: 'completed' | 'passed' | 'failed' | 'answered' | 'attended' | 'experienced' | 'attempted' | 'progressed';
+  object_type: 'course' | 'module' | 'scenario' | 'task' | 'refresher' | 'opportunity' | 'rotation' | 'shadowing' | 'jpm' | 'mentoring' | 'knowledge_asset' | 'activity';
+  object_id: string;
+  object_name: any;
+  result?: any | null;
+  context: any;
+  occurred_at: string;
+  stored_at: string;
+  source: 'm04_course' | 'f14_refresher' | 'f08_opportunity' | 'f15_rotation' | 'f15_shadowing' | 'm05_jpm' | 'f13_mentoring' | 'f21_knowledge' | 'f28_simulator' | 'f38_ojt' | 'console';
+  source_ref: string;
+  stored_by?: string | null;
+  version: string;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -3130,6 +3146,7 @@ export interface Tables {
   accr_programmes: AccrProgrammesRow;
   accr_selfevals: AccrSelfevalsRow;
   accr_assessments: AccrAssessmentsRow;
+  xapi_statements: XapiStatementsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];

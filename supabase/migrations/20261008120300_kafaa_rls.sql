@@ -1887,3 +1887,10 @@ create policy kafaa_read on kafaa_accr_assessments for select to anon, authentic
 grant select on kafaa_accr_assessments to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- xapi_statements
+alter table kafaa_xapi_statements enable row level security;
+drop policy if exists kafaa_read on kafaa_xapi_statements;
+create policy kafaa_read on kafaa_xapi_statements for select to anon, authenticated using (kafaa_rule_read('lrs', actor_person_id, null::text, true));
+grant select on kafaa_xapi_statements to anon, authenticated;
+-- writes: append-only, through kafaa_audit() / RPCs
+

@@ -3513,6 +3513,25 @@ create table if not exists kafaa_accr_assessments (
 );
 comment on table kafaa_accr_assessments is '[M26] Self-rating of one criterion for a programme with evidence links, and a gap owner and due date when not met (F29)';
 
+-- M27 · xAPI statement (learning record store; append-only; actor by Kafa'a account, no email) (F30)
+create table if not exists kafaa_xapi_statements (
+  id text primary key,
+  actor_person_id text not null,
+  verb text not null check (verb in ('completed', 'passed', 'failed', 'answered', 'attended', 'experienced', 'attempted', 'progressed')),
+  object_type text not null check (object_type in ('course', 'module', 'scenario', 'task', 'refresher', 'opportunity', 'rotation', 'shadowing', 'jpm', 'mentoring', 'knowledge_asset', 'activity')),
+  object_id text not null,
+  object_name jsonb not null default '{}'::jsonb,
+  result jsonb,
+  context jsonb not null default '{}'::jsonb,
+  occurred_at timestamptz not null,
+  stored_at timestamptz not null default now(),
+  source text not null check (source in ('m04_course', 'f14_refresher', 'f08_opportunity', 'f15_rotation', 'f15_shadowing', 'm05_jpm', 'f13_mentoring', 'f21_knowledge', 'f28_simulator', 'f38_ojt', 'console')),
+  source_ref text not null,
+  stored_by text,
+  version text not null default '2.0.0'
+);
+comment on table kafaa_xapi_statements is '[M27] xAPI statement (learning record store; append-only; actor by Kafa''a account, no email) (F30)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -3851,6 +3870,7 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ac
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_accr_assessments_programme_id_fk') then alter table kafaa_accr_assessments add constraint kafaa_accr_assessments_programme_id_fk foreign key (programme_id) references kafaa_accr_programmes(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_accr_assessments_criterion_id_fk') then alter table kafaa_accr_assessments add constraint kafaa_accr_assessments_criterion_id_fk foreign key (criterion_id) references kafaa_accr_criteria(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_accr_assessments_rated_by_fk') then alter table kafaa_accr_assessments add constraint kafaa_accr_assessments_rated_by_fk foreign key (rated_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_xapi_statements_actor_person_id_fk') then alter table kafaa_xapi_statements add constraint kafaa_xapi_statements_actor_person_id_fk foreign key (actor_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -4287,6 +4307,12 @@ create index if not exists kafaa_accr_assessments_selfeval_id_idx on kafaa_accr_
 create index if not exists kafaa_accr_assessments_programme_id_idx on kafaa_accr_assessments (programme_id);
 create index if not exists kafaa_accr_assessments_criterion_id_idx on kafaa_accr_assessments (criterion_id);
 create index if not exists kafaa_accr_assessments_rated_by_idx on kafaa_accr_assessments (rated_by);
+create index if not exists kafaa_xapi_statements_actor_person_id_idx on kafaa_xapi_statements (actor_person_id);
+create index if not exists kafaa_xapi_statements_verb_idx on kafaa_xapi_statements (verb);
+create index if not exists kafaa_xapi_statements_object_type_idx on kafaa_xapi_statements (object_type);
+create index if not exists kafaa_xapi_statements_object_id_idx on kafaa_xapi_statements (object_id);
+create index if not exists kafaa_xapi_statements_occurred_at_idx on kafaa_xapi_statements (occurred_at);
+create index if not exists kafaa_xapi_statements_source_idx on kafaa_xapi_statements (source);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -4298,5 +4324,7 @@ drop trigger if exists kafaa_evaluations_append_only on kafaa_evaluations;
 create trigger kafaa_evaluations_append_only before update or delete on kafaa_evaluations for each row execute function kafaa_append_only();
 drop trigger if exists kafaa_evaluation_acks_append_only on kafaa_evaluation_acks;
 create trigger kafaa_evaluation_acks_append_only before update or delete on kafaa_evaluation_acks for each row execute function kafaa_append_only();
+drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
+create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 197) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 198) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

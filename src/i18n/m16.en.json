@@ -374,6 +374,11 @@
         "name": "UAE Pass (concept)",
         "domain": "verified identity when a stage needs it",
         "notes": "Not connected in the demo tenant."
+      },
+      "int-lrs": {
+        "name": "External learning record store (xAPI 2.0)",
+        "domain": "xAPI statements forwarded from the Kafa'a store",
+        "notes": "Adapter described in Training > Learning record store > Adapters. No public endpoint in the demo; statements stay in Kafa'a (https://kafaa.example accounts, no email)."
       }
     }
   },
