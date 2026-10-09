@@ -11,10 +11,12 @@ export const DIM_COL: Record<Dim, 'family_id' | 'level' | 'entity_id'> = { famil
 /** Metric registry: every tile links to /workforce/definitions#<key>, which names the definition, GRI disclosure and source table. */
 export interface MetricDef {
   key: string;
-  table: 'kafaa_kpi_series' | 'kafaa_workforce_snapshots' | 'kafaa_critical_roles' | 'kafaa_scholar_cohorts' | 'kafaa_training_records' | 'kafaa_applications';
+  table: 'kafaa_kpi_series' | 'kafaa_workforce_snapshots' | 'kafaa_critical_roles' | 'kafaa_scholar_cohorts' | 'kafaa_training_records' | 'kafaa_applications' | 'kafaa_external_cover' | 'kafaa_handover_cohorts';
   kpi?: string; // kpi_series.metric
   gri?: string;
   unit: '%' | 'people' | 'h' | 'count' | 'days';
+  /** [W3E3] SAMPLE or SIMULATED figure (the definitions panel shows the chip). */
+  sim?: boolean;
 }
 export const METRICS: MetricDef[] = [
   { key: 'emiratization', table: 'kafaa_kpi_series', kpi: 'emiratization', gri: 'GRI 405-1', unit: '%' },
@@ -42,6 +44,13 @@ export const METRICS: MetricDef[] = [
   { key: 'cohort_progress', table: 'kafaa_scholar_cohorts', unit: 'people' },
   { key: 'completions', table: 'kafaa_training_records', unit: 'count' },
   { key: 'funnel', table: 'kafaa_applications', unit: 'count' },
+  // [W3E3] F22 Handover 2030 board (/workforce/handover)
+  { key: 'handover_cover', table: 'kafaa_external_cover', unit: 'people', sim: true },
+  { key: 'handover_ready', table: 'kafaa_handover_cohorts', unit: 'people', sim: true },
+  { key: 'handover_pipeline', table: 'kafaa_handover_cohorts', unit: 'people', sim: true },
+  { key: 'handover_burndown', table: 'kafaa_external_cover', unit: 'people', sim: true },
+  { key: 'handover_risk', table: 'kafaa_external_cover', unit: 'count', sim: true },
+  { key: 'handover_emirati', table: 'kafaa_handover_cohorts', gri: 'GRI 405-1', unit: '%', sim: true },
 ];
 export const metricByKey = (k: string) => METRICS.find((m) => m.key === k);
 

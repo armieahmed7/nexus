@@ -1790,6 +1790,39 @@ create table if not exists kafaa_mentoring_private_notes (
 );
 comment on table kafaa_mentoring_private_notes is '[M04] Private mentoring session note: readable by its author only (F13)';
 
+-- M07 · Handover 2030: positions with external or partner cover by role and plan year (SAMPLE, counts only) (F22)
+create table if not exists kafaa_external_cover (
+  id text primary key,
+  period text not null,
+  role_id text not null,
+  function text not null,
+  year integer not null,
+  partner text not null default 'khnp_ossa' check (partner in ('khnp_ossa', 'contractor', 'vendor')),
+  cover_count integer not null,
+  source text not null,
+  sample boolean not null default true
+);
+comment on table kafaa_external_cover is '[M07] Handover 2030: positions with external or partner cover by role and plan year (SAMPLE, counts only) (F22)';
+
+-- M07 · Handover 2030: trainee cohorts earmarked to replace external cover, with projected ready dates (SAMPLE/SIMULATED) (F22)
+create table if not exists kafaa_handover_cohorts (
+  id text primary key,
+  period text not null,
+  role_id text not null,
+  route text not null check (route in ('coit', 'loit', 'gpo', 'dnt', 'discipline')),
+  programme_id text,
+  talent_programme_id text,
+  label_en text not null,
+  label_ar text not null,
+  starts_on date not null,
+  ready_on date not null,
+  trainees integer not null,
+  emirati integer not null default 0,
+  source text not null,
+  sample boolean not null default true
+);
+comment on table kafaa_handover_cohorts is '[M07] Handover 2030: trainee cohorts earmarked to replace external cover, with projected ready dates (SAMPLE/SIMULATED) (F22)';
+
 -- M17 · Self-claimed skill levels with a note (F03); claimed until validated (F10)
 create table if not exists kafaa_skill_claims (
   id text primary key,
@@ -2610,6 +2643,11 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_me
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_mentoring_private_notes_session_id_fk') then alter table kafaa_mentoring_private_notes add constraint kafaa_mentoring_private_notes_session_id_fk foreign key (session_id) references kafaa_mentoring_sessions(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_mentoring_private_notes_agreement_id_fk') then alter table kafaa_mentoring_private_notes add constraint kafaa_mentoring_private_notes_agreement_id_fk foreign key (agreement_id) references kafaa_mentoring_agreements(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_mentoring_private_notes_author_person_id_fk') then alter table kafaa_mentoring_private_notes add constraint kafaa_mentoring_private_notes_author_person_id_fk foreign key (author_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_external_cover_role_id_fk') then alter table kafaa_external_cover add constraint kafaa_external_cover_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_external_cover_function_fk') then alter table kafaa_external_cover add constraint kafaa_external_cover_function_fk foreign key (function) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_handover_cohorts_role_id_fk') then alter table kafaa_handover_cohorts add constraint kafaa_handover_cohorts_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_handover_cohorts_programme_id_fk') then alter table kafaa_handover_cohorts add constraint kafaa_handover_cohorts_programme_id_fk foreign key (programme_id) references kafaa_programmes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_handover_cohorts_talent_programme_id_fk') then alter table kafaa_handover_cohorts add constraint kafaa_handover_cohorts_talent_programme_id_fk foreign key (talent_programme_id) references kafaa_talent_programmes(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_claims_person_id_fk') then alter table kafaa_skill_claims add constraint kafaa_skill_claims_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_claims_skill_id_fk') then alter table kafaa_skill_claims add constraint kafaa_skill_claims_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_badges_person_id_fk') then alter table kafaa_badges add constraint kafaa_badges_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -2861,6 +2899,13 @@ create index if not exists kafaa_mentoring_sessions_logged_by_idx on kafaa_mento
 create index if not exists kafaa_mentoring_private_notes_session_id_idx on kafaa_mentoring_private_notes (session_id);
 create index if not exists kafaa_mentoring_private_notes_agreement_id_idx on kafaa_mentoring_private_notes (agreement_id);
 create index if not exists kafaa_mentoring_private_notes_author_person_id_idx on kafaa_mentoring_private_notes (author_person_id);
+create index if not exists kafaa_external_cover_period_idx on kafaa_external_cover (period);
+create index if not exists kafaa_external_cover_role_id_idx on kafaa_external_cover (role_id);
+create index if not exists kafaa_external_cover_function_idx on kafaa_external_cover (function);
+create index if not exists kafaa_handover_cohorts_period_idx on kafaa_handover_cohorts (period);
+create index if not exists kafaa_handover_cohorts_role_id_idx on kafaa_handover_cohorts (role_id);
+create index if not exists kafaa_handover_cohorts_programme_id_idx on kafaa_handover_cohorts (programme_id);
+create index if not exists kafaa_handover_cohorts_talent_programme_id_idx on kafaa_handover_cohorts (talent_programme_id);
 create index if not exists kafaa_skill_claims_person_id_idx on kafaa_skill_claims (person_id);
 create index if not exists kafaa_skill_claims_skill_id_idx on kafaa_skill_claims (skill_id);
 create index if not exists kafaa_skill_claims_status_idx on kafaa_skill_claims (status);
@@ -2977,4 +3022,4 @@ create trigger kafaa_evaluations_append_only before update or delete on kafaa_ev
 drop trigger if exists kafaa_evaluation_acks_append_only on kafaa_evaluation_acks;
 create trigger kafaa_evaluation_acks_append_only before update or delete on kafaa_evaluation_acks for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 145) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 147) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

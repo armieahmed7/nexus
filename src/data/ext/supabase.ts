@@ -2,6 +2,7 @@
 import type { SupabaseExtCtx } from './types';
 import type { ExtRpc } from './rpc';
 import { makeSupabaseM04 } from '../../modules/m04/backend/supabase'; // W2E3 (F13)
+import { makeSupabaseM07 } from '../../modules/m07/backend/supabase'; // W3E3 (F22)
 import { makeSupabaseM17 } from '../../modules/m17/backend/supabase';
 import { makeSupabaseM18 } from '../../modules/m18/backend/supabase';
 import { makeSupabaseM19 } from '../../modules/m19/backend/supabase';
@@ -15,5 +16,5 @@ import { makeSupabaseM26 } from '../../modules/m26/backend/supabase';
 import { makeSupabaseM27 } from '../../modules/m27/backend/supabase';
 
 export function makeExtSupabaseRpc(x: SupabaseExtCtx): ExtRpc {
-  return { ...makeSupabaseM04(x), ...makeSupabaseM17(x), ...makeSupabaseM18(x), ...makeSupabaseM19(x), ...makeSupabaseM20(x), ...makeSupabaseM21(x), ...makeSupabaseM22(x), ...makeSupabaseM23(x), ...makeSupabaseM24(x), ...makeSupabaseM25(x), ...makeSupabaseM26(x), ...makeSupabaseM27(x) };
+  return { ...makeSupabaseM04(x), ...makeSupabaseM07(x), ...makeSupabaseM17(x), ...makeSupabaseM18(x), ...makeSupabaseM19(x), ...makeSupabaseM20(x), ...makeSupabaseM21(x), ...makeSupabaseM22(x), ...makeSupabaseM23(x), ...makeSupabaseM24(x), ...makeSupabaseM25(x), ...makeSupabaseM26(x), ...makeSupabaseM27(x) };
 }

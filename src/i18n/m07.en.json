@@ -32,6 +32,10 @@
     "observer": {
       "title": "Observer reports",
       "purpose": "Aggregate reports that ENEC has approved for release to your organisation. Not a regulatory channel."
+    },
+    "workforce-handover": {
+      "title": "Handover 2030 readiness",
+      "purpose": "Which functions depend on KHNP and partner cover, and how fast ENEC successors become ready before the OSSA ends in 2030. Counts only; groups under 10 suppressed."
     }
   },
   "noData": "No aggregate data for this selection.",
@@ -93,7 +97,19 @@
     "cohort_progress": "Scholar cohort progress",
     "completions": "Course completions",
     "funnel": "Application funnel",
-    "bench_sro": "SRO bench depth"
+    "bench_sro": "SRO bench depth",
+    "handover_cover": "Positions with external cover",
+    "handover_ready": "Successors ready by the OSSA end",
+    "handover_pipeline": "Pipeline in training",
+    "handover_burndown": "Handover burn-down",
+    "handover_risk": "Functions at risk",
+    "handover_emirati": "Emirati share of ready successors",
+    "handover_cover_2028": "External cover in 2028",
+    "handover_ready_2028": "Ready successors by 2028",
+    "handover_ready_end": "Ready successors by 2030",
+    "handover_functions_at_risk": "Functions with a shortfall",
+    "handover_first_shortfall": "First shortfall year",
+    "handover_emirati_share": "Emirati share of ready successors"
   },
   "def": {
     "emiratization": "UAE nationals as a share of all employees of ENEC, ENEC Operations and ENEC Commercial at year end.",
@@ -120,7 +136,13 @@
     "bench_depth": "For each critical role: people qualified now, people in training, people in the pipeline, against a target set by HR. Counts only.",
     "cohort_progress": "Scholar and intern cohorts from intake to study, graduation and placement. Cohorts under the minimum group size are suppressed.",
     "completions": "Completed training records per course. Courses with fewer than the minimum group size are suppressed.",
-    "funnel": "Applications currently at each stage, by programme. Cells under the minimum group size are suppressed."
+    "funnel": "Applications currently at each stage, by programme. Cells under the minimum group size are suppressed.",
+    "handover_cover": "Positions held by KHNP experts under the Operating Support Services Agreement (OSSA) or by contractors, per role and plan year. A SAMPLE plan for the demo tenant, sized to the roughly 400 KHNP experts a year the OSSA provides until 2030. After the OSSA end year the cover is zero.",
+    "handover_ready": "ENEC people projected ready to take over a covered position by the end of the OSSA year: named successors on F19 succession slates (or, for roles without a slate, staff who shortlisted the role, with their F05 readiness) plus trainees in earmarked cohorts. Projected dates are SIMULATED from the F05/F06 estimate and programme lengths.",
+    "handover_pipeline": "Trainees in COIT, LOIT, GPO, DNT and discipline cohorts earmarked to replace external cover (SAMPLE). For every critical role the earmarked trainees never exceed the role's in-training plus pipeline bench count.",
+    "handover_burndown": "Per year: external cover, ready successors (cumulative) and the positions to hand over (the cover in the as-of year). A shortfall year is one where positions already handed over exceed ready successors. SIMULATED; what-if settings move the OSSA end and delay the pipeline.",
+    "handover_risk": "Number of functions with a shortfall in any plan year. A count of functions, not of people.",
+    "handover_emirati": "UAE nationals among the successors ready by the OSSA end, shown only when both the Emirati count and the total are at least 10. National direction (quality of Emiratisation), not a quota."
   },
   "reconcile": {
     "title": "Why do public figures differ?",
@@ -164,6 +186,10 @@
       "definitions": {
         "title": "Definitions",
         "body": "Every metric, its source table and GRI disclosure."
+      },
+      "handover": {
+        "title": "Handover 2030",
+        "body": "External cover vs ready ENEC successors to 2030 (SIMULATED)"
       }
     }
   },
@@ -385,5 +411,125 @@
     "people": "people",
     "days": "days",
     "h": "h"
+  },
+  "ho": {
+    "intro": "One view of the KHNP handover: which functions still rely on external or partner cover, how many ENEC successors are ready now, in 1 to 2 years and in 3 to 5 years, what is in the training pipeline, and where ready successors fall short of the positions to hand over before 2030.",
+    "labels": "Cover plan SAMPLE · projections SIMULATED · groups under {n} suppressed · no names",
+    "mirrorTitle": "Counts only, and not an authority",
+    "mirrorBody": "Kafa'a mirrors HR and training records for planning. It names no person, issues no qualification or licence status, and every cell under 10 people reads \"suppressed\". The OSSA brings about 400 KHNP experts a year until 2030.",
+    "ossaSource": "WNN: KHNP OSSA",
+    "view": "View by",
+    "dim": {
+      "functions": "Function",
+      "roles": "Role"
+    },
+    "ossaEnd": "OSSA ends",
+    "plan": "plan",
+    "slip": "Pipeline delay",
+    "months": "{n} months",
+    "reset": "Back to the plan",
+    "whatIfTitle": "What-if (SIMULATED)",
+    "whatIfBody": "External cover ends after {year} and every successor not yet ready is {months} months later than projected. This is a scenario, not a forecast.",
+    "release": {
+      "title": "Observer-safe release",
+      "hint": "HR prepares; the CHCO office approves (maker-checker) on Workforce analytics.",
+      "body": "Drafts an aggregate report from the baseline plan: eight tiles and the burn-down, suppressed below 10, with no what-if settings and no names. Observers see it only after approval.",
+      "prepare": "Prepare release draft",
+      "saved": "Draft {id} saved.",
+      "open": "Submit it from Workforce analytics",
+      "confirmTitle": "Prepare an observer-safe release?",
+      "confirmBody": "A draft aggregate report for {period} is added to the observer releases. Nothing is released until the CHCO office approves it."
+    },
+    "footer": "National context: Nafis 2026 moves the focus to the quality and impact of Emiratisation; shown as national direction, not a quota on ENEC.",
+    "nafisSource": "Gulf News: Nafis 2026",
+    "total": "All covered roles",
+    "tile": {
+      "coverSub": "in {year}",
+      "planSource": "SAMPLE plan",
+      "readySub": "cumulative, by {year}",
+      "pipelineSub": "COIT, LOIT, GPO, DNT and discipline cohorts",
+      "firstShort": "first shortfall in {year}",
+      "noShort": "no shortfall in any year"
+    },
+    "burndown": {
+      "title": "Burn-down to the OSSA end",
+      "eyebrow": "OSSA ends {year}",
+      "cover": "External cover",
+      "ready": "Ready ENEC successors (cumulative)",
+      "need": "Positions to hand over",
+      "note": "Ready successors should meet the positions to hand over before the cover ends.",
+      "gaps": "Gaps in a line are suppressed values (under 10)."
+    },
+    "risk": {
+      "title": "Risk list",
+      "none": "No shortfall in any year",
+      "noneBody": "Ready successors cover every handed-over position under these settings.",
+      "from": "Shortfall from {year}",
+      "max": "Largest shortfall:",
+      "years": "Years:"
+    },
+    "links": {
+      "klra": "Knowledge loss risk (KLRA)",
+      "capture": "Knowledge capture plan",
+      "succession": "Succession slates",
+      "bench": "Critical-role bench",
+      "notYet": "not available to you yet"
+    },
+    "matrix": {
+      "title": "Shortfall by year",
+      "short": "short",
+      "ok": "ok",
+      "note": "\"short\": positions already handed over exceed ready successors that year. Rows whose cover is under {n} are suppressed."
+    },
+    "table": {
+      "caption": "Handover readiness by group (counts only)",
+      "cover": "Cover {year}",
+      "pipeline": "Pipeline",
+      "readyBy": "Ready by {year}",
+      "emirati": "Emirati share",
+      "source": "Successors from",
+      "status": "Status"
+    },
+    "band": {
+      "now": "Ready now",
+      "y1_2": "1 to 2 years",
+      "y3_5": "3 to 5 years"
+    },
+    "source": {
+      "f19": "Succession slates",
+      "f05": "Career shortlists (F05)",
+      "mixed": "Slates and shortlists"
+    },
+    "onTrack": "On track",
+    "pipeline": {
+      "title": "Pipeline in training",
+      "note": "GPO and DNT are UAE-national programmes. Cohort counts exclude people already named on a succession slate."
+    },
+    "route": {
+      "coit": "COIT (certified operators)",
+      "loit": "LOIT (local operators)",
+      "gpo": "GPO (graduate plant operators)",
+      "dnt": "DNT (diploma)",
+      "discipline": "Discipline programmes"
+    },
+    "emirati": {
+      "title": "Emirati share of ready successors",
+      "of": "of successors ready by {year}",
+      "body": "Successors who are UAE nationals, over all successors ready by the OSSA end. Shown only at 10 or more people on both sides."
+    },
+    "suppressed": "suppressed",
+    "reason": {
+      "cover": "{n} positions held by external or partner staff in {year}",
+      "cover_suppressed": "External cover in {year} is under 10 positions (suppressed)",
+      "ossa": "The cover ends after {year} (OSSA end)",
+      "shortfall": "Ready successors fall short of the positions handed over from {year}",
+      "on_track": "Ready successors cover every handed-over position through {year}",
+      "source_f19": "Named successors come from HR-confirmed succession slates",
+      "source_f05": "No succession slate yet: successors come from career shortlists and F05 readiness",
+      "source_mixed": "Successors come from succession slates for some roles and career shortlists for others",
+      "pipeline": "{n} trainees in earmarked cohorts",
+      "pipeline_small": "Fewer than 10 trainees in earmarked cohorts",
+      "slip": "What-if: the pipeline is {months} months late (SIMULATED)"
+    }
   }
 }
