@@ -6,7 +6,7 @@
 import { useMemo } from 'react';
 import { useRepo, useQuery } from '../../data';
 import { SourceLink } from '../../ui';
-import { L, useFormat, useLang, usePick, useT } from '../../i18n';
+import { L, translate, useFormat, useLang, usePick, useT } from '../../i18n';
 import type { Ranked, Reason } from '../../domain/engines';
 import { exploreInterests, optionsOf, suggestRoute, type Answers, type Exploration, type JourneyQuestionRow, type RouteSuggestion } from './journey';
 
@@ -51,13 +51,17 @@ export function useJourneyRefs() {
   };
 }
 
-/** As-of date at the fact's precision, in the reader's language and digits. */
-export function useAsOf() {
+/** As-of date at the fact's precision, in the reader's language and digits (or in a forced language: the parent view's Arabic block
+ *  on the English page reads "حتى ..." in Arabic, W5 QA). */
+export function useAsOf(forceLang?: 'en' | 'ar') {
   const f = useFormat();
+  const lang = useLang();
+  const locale = forceLang && forceLang !== lang ? f.locale.replace(/^(ar-AE|en-GB)/, forceLang === 'ar' ? 'ar-AE' : 'en-GB') : f.locale;
   return (iso: string, precision: string) => {
-    if (precision === 'year') return new Intl.DateTimeFormat(f.locale, { year: 'numeric', timeZone: 'UTC' }).format(new Date(`${iso.slice(0, 10)}T00:00:00Z`));
-    if (precision === 'month') return new Intl.DateTimeFormat(f.locale, { year: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(`${iso.slice(0, 10)}T00:00:00Z`));
-    return f.date(iso);
+    const d = new Date(`${iso.slice(0, 10)}T00:00:00Z`);
+    if (precision === 'year') return new Intl.DateTimeFormat(locale, { year: 'numeric', timeZone: 'UTC' }).format(d);
+    if (precision === 'month') return new Intl.DateTimeFormat(locale, { year: 'numeric', month: 'long', timeZone: 'UTC' }).format(d);
+    return locale === f.locale ? f.date(iso) : new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(d);
   };
 }
 
@@ -65,8 +69,9 @@ export function useAsOf() {
 export function FactList({ facts, sources, testId = 'm06-journey-facts', forceLang }: { facts: FactRow[]; sources: Map<string, SourceRow>; testId?: string; forceLang?: 'en' | 'ar' }) {
   const t = useT();
   const lang = useLang();
-  const asOf = useAsOf();
   const l = forceLang ?? lang;
+  const asOf = useAsOf(l);
+  const tl = (key: string, vars: Record<string, string>) => (l === lang ? t(key, vars) : translate(l, key, vars));
   if (!facts.length) return null;
   return (
     <ul className="space-y-2 text-[13px]" data-testid={testId}>
@@ -77,11 +82,11 @@ export function FactList({ facts, sources, testId = 'm06-journey-facts', forceLa
             <div className="text-ink">{l === 'ar' ? x.text_ar : x.text_en}</div>
             <div className="mt-0.5">
               {s ? (
-                <SourceLink href={s.url} date={t('m06.journey.asOf', { date: asOf(x.as_of, x.precision) })}>
+                <SourceLink href={s.url} date={tl('m06.journey.asOf', { date: asOf(x.as_of, x.precision) })}>
                   <span data-testid="m06-journey-fact-source">{s.label}</span>
                 </SourceLink>
               ) : (
-                <span className="text-ink-3">{t('m06.journey.asOf', { date: asOf(x.as_of, x.precision) })}</span>
+                <span className="text-ink-3">{tl('m06.journey.asOf', { date: asOf(x.as_of, x.precision) })}</span>
               )}
             </div>
           </li>

@@ -355,7 +355,9 @@
     "status": {
       "active": "Active",
       "expired": "Expired",
-      "revoked": "Revoked"
+      "revoked": "Revoked",
+      "renewal_due": "Renewal due",
+      "superseded": "Superseded"
     },
     "issued": "Issued",
     "validTo": "Valid until",

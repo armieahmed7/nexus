@@ -355,7 +355,9 @@
     "status": {
       "active": "سارية",
       "expired": "منتهية",
-      "revoked": "ملغاة"
+      "revoked": "ملغاة",
+      "renewal_due": "التجديد مستحق",
+      "superseded": "حلّ محلّه إصدار أحدث"
     },
     "issued": "تاريخ الإصدار",
     "validTo": "سارية حتى",

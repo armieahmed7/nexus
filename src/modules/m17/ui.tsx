@@ -161,7 +161,7 @@ function Swatch({ cls, label }: { cls: string; label: string }) {
 
 // ───────────── badge medal (decorative)
 export function BadgeMedal({ code, status, size = 64 }: { code: string; status: string; size?: number }) {
-  const tone = status === 'active' ? 'var(--accent)' : status === 'expired' ? 'var(--sim)' : 'var(--bad)';
+  const tone = status === 'active' ? 'var(--accent)' : status === 'expired' || status === 'renewal_due' ? 'var(--sim)' : 'var(--bad)'; // W5 QA: a micro-credential due for renewal is still valid (amber, not red)
   const pts = Array.from({ length: 6 }, (_, i) => {
     const a = (Math.PI / 3) * i - Math.PI / 2;
     return `${32 + Math.cos(a) * 28},${32 + Math.sin(a) * 28}`;
@@ -170,7 +170,7 @@ export function BadgeMedal({ code, status, size = 64 }: { code: string; status: 
     <svg viewBox="0 0 64 64" width={size} height={size} aria-hidden className="shrink-0">
       <polygon points={pts} fill={`rgb(${tone} / .14)`} stroke={`rgb(${tone})`} strokeWidth={2.5} />
       <circle cx={32} cy={32} r={17} fill="rgb(var(--panel))" stroke={`rgb(${tone})`} strokeWidth={1.5} strokeDasharray={status === 'active' ? undefined : '3 2'} />
-      <text x={32} y={35} textAnchor="middle" fontSize={code.length > 6 ? 7.5 : 9} fontWeight={700} fill={`rgb(${tone})`} style={{ direction: 'ltr' }}>
+      <text x={32} y={35} textAnchor="middle" fontSize={code.length > 6 ? 7.5 : 9} fontWeight={700} fill={`rgb(${tone})`} style={{ direction: 'ltr' }} {...(code.length > 7 ? { textLength: 30, lengthAdjust: 'spacingAndGlyphs' } : {})}>
         {code}
       </text>
     </svg>

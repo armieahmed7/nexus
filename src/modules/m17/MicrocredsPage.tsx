@@ -98,7 +98,7 @@ function StackParts({ def, d, e }: { def: DefRow; d: McData; e?: Eligibility }) 
       {parts.map((p) => {
         const c = e?.components.find((x) => x.code === p.code);
         return (
-          <li key={p.code} className={`chip ${c?.met ? 'border-ok/40 bg-ok/10 text-ok' : c && c.status !== 'none' ? 'border-sim/40 bg-sim/10 text-sim' : 'border-line text-ink-3'}`} data-met={c?.met ? 'yes' : 'no'}>
+          <li key={p.code} className={`chip max-w-full whitespace-normal ${c?.met ? 'border-ok/40 bg-ok/10 text-ok' : c && c.status !== 'none' ? 'border-sim/40 bg-sim/10 text-sim' : 'border-line text-ink-3'}`} data-met={c?.met ? 'yes' : 'no'}>
             <Icon name={c?.met ? 'check' : 'info'} size={12} /> {pick(p, 'title')}
           </li>
         );
@@ -187,7 +187,7 @@ function McDrawer({ d, def, e, st, onClose }: { d: McData; def: DefRow; e?: Elig
         </div>
         <div>
           <h3 className="caps mb-2">{t('m17.mc.unlocksTitle')}</h3>
-          {roles.length ? <ul className="flex flex-wrap gap-1.5">{roles.map((r) => <li key={r.id}><L to={`/careers/roles/${r.id}`} className="chip border-line text-ink-2 no-underline hover:border-accent">{pick(r, 'title')}</L></li>)}</ul> : <p className="text-[13px] text-ink-3">{t('m17.mc.unlocksNone')}</p>}
+          {roles.length ? <ul className="flex flex-wrap gap-1.5">{roles.map((r) => <li key={r.id}><L to={`/careers/roles/${r.id}`} className="chip max-w-full whitespace-normal border-line text-ink-2 no-underline hover:border-accent">{pick(r, 'title')}</L></li>)}</ul> : <p className="text-[13px] text-ink-3">{t('m17.mc.unlocksNone')}</p>}
           <p className="mt-1 text-[12px] text-ink-3">{t('m17.mc.unlocksNote')} <L to="/my/career">{t('m17.mc.toNavigator')}</L></p>
         </div>
         {award && cred && check && (

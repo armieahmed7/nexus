@@ -3,6 +3,7 @@
  *   1. The local demo tenant persists only the tables changed since the seed: the whole tenant (about 11.6 million characters after
  *      wave 5) exceeded the localStorage quota, so every local change was silently lost on reload (F36 nudges-off journey).
  *   2. F38: the log form offers the preceptors kept on the device when offline (the preceptor list is an RPC).
+ *   4. F34: in the parent view's Arabic block on the English page, every as-of date reads in Arabic ("حتى"), not "as of".
  *   3. F36: the digest period label prints the year without a thousands separator ("Week 41, 2026", not "2,026"). */
 import { describe, expect, it } from 'vitest';
 import { renderHook } from '@testing-library/react';
@@ -13,6 +14,9 @@ import { config } from '../../src/config';
 import { I18nProvider } from '../../src/i18n';
 import { cachePreceptors, cachedPreceptors, preceptorKey } from '../../src/modules/m02/ojtQueue';
 import { usePeriodLabel } from '../../src/shell/digest/DigestPanel';
+import { screen, waitFor, within } from '@testing-library/react';
+import { renderPage } from './g1-harness';
+import JourneyParentsPage from '../../src/modules/m06/JourneyParentsPage';
 
 describe('local demo tenant persistence', () => {
   it('a change survives a reload (new backend instance) and the stored payload stays far below the quota', async () => {
@@ -77,4 +81,17 @@ describe('F36 period label', () => {
     const ar = renderHook(() => usePeriodLabel(), { wrapper: wrapAr });
     expect(ar.result.current('2026-W41')).not.toMatch(/2,026|٢٬٠٢٦/);
   });
+});
+
+describe('F34 parent view: Arabic block dates in Arabic', () => {
+  it('on the English page the Arabic block says حتى and the English block says as of', async () => {
+    await renderPage(createElement(JourneyParentsPage), { path: '/pathways/journey/parents?stage=finishing_school&route=dnt' });
+    const ar = await screen.findByTestId('m06-parents-ar', {}, { timeout: 20000 });
+    await waitFor(() => expect(within(ar).getAllByTestId('m06-journey-fact').length).toBeGreaterThan(5), { timeout: 20000 });
+    for (const li of within(ar).getAllByTestId('m06-journey-fact')) {
+      expect(li.textContent).toMatch(/حتى/);
+      expect(li.textContent).not.toMatch(/as of/);
+    }
+    for (const li of within(screen.getByTestId('m06-parents-en')).getAllByTestId('m06-journey-fact')) expect(li.textContent).toMatch(/as of/);
+  }, 60000);
 });

@@ -27,7 +27,7 @@ export function DigestStats() {
                 <StatTile label={t('digest.admin.off')} value={s.off != null ? f.num(s.off) : t('digest.admin.lt10')} sub={t('digest.admin.offSub')} />
                 <StatTile label={t('digest.admin.quiet')} value={s.quiet != null ? f.num(s.quiet) : t('digest.admin.lt10')} sub={t('digest.admin.quietSub')} />
               </div>
-              <div className="grid gap-4 lg:grid-cols-2">
+              <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 <Card title={t('digest.admin.byPeriod')}>
                   <BarChart title={t('digest.admin.openRate')} unit="%" data={s.periods.filter((p) => p.rate != null).reverse().map((p) => ({ label: label(p.period), value: Math.round((p.rate ?? 0) * 1000) / 10 }))} />
                   <DataTable rows={s.periods} rowKey={(r) => r.period} dense csvName="digest-open-rate" columns={[

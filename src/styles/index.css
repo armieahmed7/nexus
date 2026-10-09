@@ -65,3 +65,14 @@
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
+
+/* W5 QA: a visually hidden label inside a horizontally scrolled table (DataTable, team matrices) is absolutely positioned against
+   the page, not the scroll box, so its static position far to the right widened the whole page at 390 px. Anchoring it to the
+   inline start keeps it out of the page's scroll width; vertical position (and focus scrolling) is unchanged. */
+.overflow-x-auto .sr-only {
+  left: 0;
+}
+[dir='rtl'] .overflow-x-auto .sr-only {
+  left: auto;
+  right: 0;
+}
