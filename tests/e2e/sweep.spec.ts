@@ -64,7 +64,7 @@ const MODS = process.env.E2E_MODULES ? new Set(process.env.E2E_MODULES.split(','
 const VISIT = MODS ? ROUTES.filter((r) => MODS.has(r.module)) : ROUTES;
 
 test('route registry loaded', () => {
-  expect(ROUTES.length).toBe(196); // W5E1: + 3 wave-5 routes (M17 my-skills-credentials, M02 my-ojt, team-ojt). 98 + 20 wave-1 routes (M17 6, M18 3, M19 2, M20 6, M21 3) + 27 wave-2 routes (M04 2, M17 3, M18 3, M19 2, M20 7, M22 10) + 21 wave-3 routes (M23 8, M24 7, M07 1, M20 4, M16 1) + 27 wave-4 routes (M25 5, M26 9, M04 3, M27 6, M02 4)
+  expect(ROUTES.length).toBe(206); // W5 QA: + 13 wave-5 routes (M17 my-skills-credentials, M02 my-ojt, team-ojt, M09 passport 3 + equivalency passport + contract roles, M06 journey, parents, workforce journeys, M07 skills outlook, admin digest). 98 + 20 wave-1 routes (M17 6, M18 3, M19 2, M20 6, M21 3) + 27 wave-2 routes (M04 2, M17 3, M18 3, M19 2, M20 7, M22 10) + 21 wave-3 routes (M23 8, M24 7, M07 1, M20 4, M16 1) + 27 wave-4 routes (M25 5, M26 9, M04 3, M27 6, M02 4)
 });
 
 for (const m of MATRIX) {

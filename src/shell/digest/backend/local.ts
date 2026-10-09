@@ -15,7 +15,7 @@ import type { DigestBuildResult, DigestRpc } from './rpc';
 const TABLES: (keyof DigestData)[] = [
   'people', 'qual_records', 'qual_standards', 'licences', 'skill_checkins', 'skill_ratings', 'mentoring_requests', 'mentoring_agreements', 'mentoring_sessions', 'opportunities',
   'opportunity_applications', 'career_conversations', 'refresh_state', 'refresh_prefs', 'enrolments', 'courses', 'person_skills', 'skills', 'role_competencies', 'career_paths',
-  'career_targets', 'engine_settings', 'reco_optouts',
+  'career_targets', 'engine_settings', 'reco_optouts', 'ojt_logs', 'ojt_eval_requests', // W5 integration (F38)
 ];
 /** Everything the digest reads, straight from the in-memory tables (no RLS: the RPC is the gate and reads only the caller's items). */
 export function localDigestData(b: LocalBackend): DigestData {

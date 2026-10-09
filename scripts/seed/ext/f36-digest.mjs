@@ -67,6 +67,7 @@ export function finalize(T, ctx) {
     opportunity_applications: T.opportunity_applications ?? [], career_conversations: T.career_conversations ?? [], refresh_state: T.refresh_state ?? [], refresh_prefs: T.refresh_prefs ?? [],
     enrolments: T.enrolments, courses: T.courses, person_skills: T.person_skills ?? [], skills: T.skills ?? [], role_competencies: T.role_competencies, career_paths: T.career_paths,
     career_targets: T.career_targets ?? [], engine_settings: T.engine_settings ?? [], reco_optouts: T.reco_optouts ?? [],
+    ojt_logs: T.ojt_logs ?? [], ojt_eval_requests: T.ojt_eval_requests ?? [], // W5 integration (F38)
   };
   T.digest_runs = [];
   const prefsBy = new Map(T.digest_prefs.map((p) => [p.person_id, p]));

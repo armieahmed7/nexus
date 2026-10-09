@@ -113,6 +113,24 @@ const RTL: Shot[] = [
   { name: 'w4-instructor-track', path: '/training/instructors/it-w-rp-02', persona: 'training-mgr' },
   { name: 'w4-my-instructor', path: '/my/instructor', persona: 'sme-reviewer' },
   { name: 'w4-team-instructors', path: '/team/instructors', persona: 'chem-sup' },
+  // wave 5 (F32-F38): every new route
+  { name: 'w5-credentials', path: '/my/skills/credentials', persona: 'qc-inspector' },
+  { name: 'w5-frameworks-mc', path: '/admin/frameworks?tab=microcredentials', persona: 'training-mgr' },
+  { name: 'w5-verify-mc', path: '/verify/badge/mcbee68fc86569' },
+  { name: 'w5-my-ojt', path: '/my/ojt', persona: 'qc-inspector' },
+  { name: 'w5-team-ojt', path: '/team/ojt', persona: 'head-sq' },
+  { name: 'w5-passport', path: '/partner/workforce/passport', persona: 'alnoor-gm' },
+  { name: 'w5-passport-person', path: '/partner/workforce/passport/c-alnoor-02', persona: 'alnoor-gm' },
+  { name: 'w5-precheck', path: '/partner/workforce/precheck?person=c-alnoor-06&standard=qs-elec', persona: 'alnoor-gm' },
+  { name: 'w5-eq-passport', path: '/training/equivalency/passport/c-alnoor-02', persona: 'training-mgr' },
+  { name: 'w5-contract-roles', path: '/admin/suppliers/contract-roles', persona: 'ai-governance' },
+  { name: 'w5-journey', path: '/pathways/journey' },
+  { name: 'w5-journey-parents', path: '/pathways/journey/parents?stage=finishing_school&route=dnt&families=operations' },
+  { name: 'w5-workforce-journeys', path: '/workforce/journeys', persona: 'chco' },
+  { name: 'w5-skills-outlook', path: '/workforce/skills-outlook', persona: 'chco' },
+  { name: 'w5-admin-digest', path: '/admin/digest', persona: 'ai-governance' },
+  { name: 'w5-my-digest', path: '/my', persona: 'sq-lead' },
+  { name: 'w5-ask-career', path: '/ask?mode=career', persona: 'nse' },
 ];
 for (const s of RTL) {
   test(`rtl ${s.name}`, async ({ page }) => {
@@ -214,6 +232,24 @@ const MOBILE: Shot[] = [
   { name: 'w4-instructor-track', path: '/training/instructors/it-w-rp-02', persona: 'training-mgr' },
   { name: 'w4-my-instructor', path: '/my/instructor', persona: 'sme-reviewer' },
   { name: 'w4-team-instructors', path: '/team/instructors', persona: 'chem-sup' },
+  // wave 5 (F32-F38): every new route
+  { name: 'w5-credentials', path: '/my/skills/credentials', persona: 'qc-inspector' },
+  { name: 'w5-frameworks-mc', path: '/admin/frameworks?tab=microcredentials', persona: 'training-mgr' },
+  { name: 'w5-verify-mc', path: '/verify/badge/mcbee68fc86569' },
+  { name: 'w5-my-ojt', path: '/my/ojt', persona: 'qc-inspector' },
+  { name: 'w5-team-ojt', path: '/team/ojt', persona: 'head-sq' },
+  { name: 'w5-passport', path: '/partner/workforce/passport', persona: 'alnoor-gm' },
+  { name: 'w5-passport-person', path: '/partner/workforce/passport/c-alnoor-02', persona: 'alnoor-gm' },
+  { name: 'w5-precheck', path: '/partner/workforce/precheck?person=c-alnoor-06&standard=qs-elec', persona: 'alnoor-gm' },
+  { name: 'w5-eq-passport', path: '/training/equivalency/passport/c-alnoor-02', persona: 'training-mgr' },
+  { name: 'w5-contract-roles', path: '/admin/suppliers/contract-roles', persona: 'ai-governance' },
+  { name: 'w5-journey', path: '/pathways/journey' },
+  { name: 'w5-journey-parents', path: '/pathways/journey/parents?stage=finishing_school&route=dnt&families=operations' },
+  { name: 'w5-workforce-journeys', path: '/workforce/journeys', persona: 'chco' },
+  { name: 'w5-skills-outlook', path: '/workforce/skills-outlook', persona: 'chco' },
+  { name: 'w5-admin-digest', path: '/admin/digest', persona: 'ai-governance' },
+  { name: 'w5-my-digest', path: '/my', persona: 'sq-lead' },
+  { name: 'w5-ask-career', path: '/ask?mode=career', persona: 'nse' },
 ];
 for (const s of MOBILE) {
   test(`mobile ${s.name}`, async ({ page }) => {
@@ -341,5 +377,28 @@ for (const s of SET_W4) {
     await page.setViewportSize({ width: 1440, height: 900 });
     await open(page, s);
     await page.screenshot({ path: join(SHOTS_W4, `${s.name}.png`), fullPage: false });
+  });
+}
+
+// Wave 5 feature set (F32-F38): saved to KAFAA_SHOTS_W5.
+const SHOTS_W5 = process.env.KAFAA_SHOTS_W5 || 'test-results/shots_w5';
+mkdirSync(SHOTS_W5, { recursive: true });
+const SET_W5: Shot[] = [
+  { name: '01-micro-credentials-en', path: '/my/skills/credentials', persona: 'qc-inspector' },
+  { name: '02-ojt-logbook-en', path: '/my/ojt', persona: 'qc-inspector' },
+  { name: '03-contractor-passport-matrix-en', path: '/partner/workforce/passport', persona: 'alnoor-gm' },
+  { name: '04-equivalency-precheck-en', path: '/partner/workforce/precheck?person=c-alnoor-06&standard=qs-elec', persona: 'alnoor-gm', then: async (p) => { await p.locator('[data-testid="m09-pc-run"]').click(); await p.locator('[data-testid="m09-pc-result"]').waitFor(); } },
+  { name: '05-student-journey-en', path: '/pathways/journey', then: async (p) => { await p.locator('[data-testid="m06-journey-stage-finishing_school"]').click(); } },
+  { name: '06-skills-outlook-simulated-en', path: '/workforce/skills-outlook', persona: 'chco' },
+  { name: '07-weekly-digest-en', path: '/my', persona: 'sq-lead', then: async (p) => { await p.locator('[data-testid="digest-panel"]').scrollIntoViewIfNeeded(); } },
+  { name: '08-dalil-career-mode-en', path: '/ask?mode=career', persona: 'nse', then: async (p) => { await p.locator('[data-testid="m13-input"]').fill('What do I need for SRO?'); await p.locator('[data-testid="m13-send"]').click(); await expect(p.locator('[data-testid="m13-answer"]').last()).toBeVisible(); } },
+  { name: '09-student-journey-parents-ar', path: '/pathways/journey/parents?stage=finishing_school&route=dnt&families=operations', ar: true },
+  { name: '10-ojt-logbook-mobile', path: '/my/ojt', persona: 'qc-inspector', mobile: true },
+];
+for (const s of SET_W5) {
+  test(`shot w5 ${s.name}`, async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await open(page, s);
+    await page.screenshot({ path: join(SHOTS_W5, `${s.name}.png`), fullPage: false });
   });
 }

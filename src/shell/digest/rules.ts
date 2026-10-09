@@ -112,6 +112,9 @@ export interface DigestData {
   career_targets: Row[];
   engine_settings: Row[];
   reco_optouts: Row[];
+  /** W5 integration (F38): OJT practice entries and evaluation requests that name me (optional: older callers omit them). */
+  ojt_logs?: Row[];
+  ojt_eval_requests?: Row[];
 }
 
 // ───────────── dates (ISO yyyy-mm-dd, UTC)
@@ -301,6 +304,22 @@ export function gatherDigest(d: DigestData, me: string, today: string, hints: Di
     const held = c.held_on ? String(c.held_on).slice(0, 10) : null;
     out.push(item({ id: `approval:career_conversations:${c.id}`, kind: 'approval', ref_table: 'career_conversations', ref_id: c.id, title_en: 'Acknowledge your career conversation record', title_ar: 'أكّد سجل حوارك المهني',
       link: '/my/career/conversations', why: [{ code: 'approval_ack', vars: held ? { date: held } : {} }] }));
+  }
+  // approvals (W5 integration, F38): practice entries naming me as preceptor, logged by today and waiting for my acknowledgement
+  for (const l of d.ojt_logs ?? []) {
+    const on = String(l.on_date).slice(0, 10);
+    if (l.preceptor_person_id !== me || l.status !== 'pending_ack' || l.person_id === me || on > today) continue;
+    const [en, ar] = nameOf(d.people, l.person_id);
+    out.push(item({ id: `approval:ojt_logs:${l.id}`, kind: 'approval', ref_table: 'ojt_logs', ref_id: l.id, title_en: `OJT practice to acknowledge: ${en}`, title_ar: `تدريب عملي بانتظار إقرارك: ${ar}`, meta_en: en, meta_ar: ar,
+      link: '/my/ojt?tab=acknowledge', why: [{ code: 'approval_ojt_ack', vars: { date: on } }] }));
+  }
+  // approvals (W5 integration, F38): OJT evaluation requests addressed to me as evaluator, made by today
+  for (const r of d.ojt_eval_requests ?? []) {
+    const at = String(r.requested_at).slice(0, 10);
+    if (r.evaluator_person_id !== me || r.status !== 'requested' || r.person_id === me || at > today) continue;
+    const [en, ar] = nameOf(d.people, r.person_id);
+    out.push(item({ id: `approval:ojt_eval_requests:${r.id}`, kind: 'approval', ref_table: 'ojt_eval_requests', ref_id: r.id, title_en: `OJT evaluation requested: ${en}`, title_ar: `طلب تقييم تدريب عملي: ${ar}`, meta_en: en, meta_ar: ar,
+      link: '/my/ojt?tab=evaluate', why: [{ code: 'approval_ojt_eval', vars: { date: at } }] }));
   }
   // coach: the F07 top card (hint), else my soonest mandatory training due within 60 days
   const coachOff = optedOut(d, me, 'coach');
