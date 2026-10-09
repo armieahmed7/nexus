@@ -996,16 +996,22 @@ export const SCHEMA: Record<string, TableDef> = {
       kind: 'text enum:qual|course|assessment|jpm|rating|ojt|credential idx', ref_table: 'text', ref_id: 'text idx', level: 'int',
       basis: 'text enum:verified|evidenced|validated|claimed', status: 'text enum:current|lapsed =\'current\'', observed_on: 'date',
       note: 'text?', recorded_by: 'text?', active: 'bool =true', created_at: 'ts =now',
+      org_id: 'text? idx', contractor: 'bool =false', // W5E2 (F33): stamped for contractor people (supplier organisations) by kafaa_cp_stamp
     },
-    read: [{ res: 'skills_profile', person: 'person_id' }], write: { mode: 'rpc', res: 'skills_profile' },
+    // W5E2 (F33): contractors read their own rows (own_profile Own); partner admins their organisation's (equivalency OwnOrg);
+    // ENEC evaluators and auditors (equivalency A/R) contractor rows only (where contractor). No cross-org reads.
+    read: [{ res: 'skills_profile', person: 'person_id' }, { res: 'own_profile', person: 'person_id' }, { res: 'equivalency', org: 'org_id', where: 'contractor' }],
+    write: { mode: 'rpc', res: 'skills_profile' },
   },
   person_skills: {
     module: 'M17', label: 'Derived skill state per person: level 0-4, confidence, basis and reasons (F01)',
     cols: {
       id: 'text pk', person_id: 'text ref:people idx', skill_id: 'text ref:skills idx', level: 'int', confidence: 'num',
       basis: 'text enum:verified|evidenced|validated|claimed|none', reasons: 'json =[]', evidence_count: 'int =0', active: 'bool =true', updated_at: 'ts =now',
+      org_id: 'text? idx', contractor: 'bool =false', // W5E2 (F33): see skill_evidence
     },
-    read: [{ res: 'skills_profile', person: 'person_id' }], write: { mode: 'rpc', res: 'skills_profile' },
+    read: [{ res: 'skills_profile', person: 'person_id' }, { res: 'own_profile', person: 'person_id' }, { res: 'equivalency', org: 'org_id', where: 'contractor' }],
+    write: { mode: 'rpc', res: 'skills_profile' },
   },
   // F02 (wave 0) · which engine serves each AI-flavoured surface, and its weights. Readable by everyone (transparency);
   // changed only by platform admins through rpc.setEngineWeights (audited).

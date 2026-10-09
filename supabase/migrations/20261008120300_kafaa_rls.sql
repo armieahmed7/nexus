@@ -1155,14 +1155,18 @@ create trigger kafaa_skills_audit after insert or update on kafaa_skills for eac
 -- skill_evidence
 alter table kafaa_skill_evidence enable row level security;
 drop policy if exists kafaa_read on kafaa_skill_evidence;
-create policy kafaa_read on kafaa_skill_evidence for select to anon, authenticated using (kafaa_rule_read('skills_profile', person_id, null::text, true));
+create policy kafaa_read on kafaa_skill_evidence for select to anon, authenticated using (kafaa_rule_read('skills_profile', person_id, null::text, true)
+    or kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('equivalency', null::text, org_id, contractor));
 grant select on kafaa_skill_evidence to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
 -- person_skills
 alter table kafaa_person_skills enable row level security;
 drop policy if exists kafaa_read on kafaa_person_skills;
-create policy kafaa_read on kafaa_person_skills for select to anon, authenticated using (kafaa_rule_read('skills_profile', person_id, null::text, true));
+create policy kafaa_read on kafaa_person_skills for select to anon, authenticated using (kafaa_rule_read('skills_profile', person_id, null::text, true)
+    or kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('equivalency', null::text, org_id, contractor));
 grant select on kafaa_person_skills to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
@@ -1282,6 +1286,29 @@ alter table kafaa_handover_cohorts enable row level security;
 drop policy if exists kafaa_read on kafaa_handover_cohorts;
 create policy kafaa_read on kafaa_handover_cohorts for select to anon, authenticated using (kafaa_rule_read('observer_release', null::text, null::text, true));
 grant select on kafaa_handover_cohorts to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- contract_role_targets
+alter table kafaa_contract_role_targets enable row level security;
+drop policy if exists kafaa_read on kafaa_contract_role_targets;
+create policy kafaa_read on kafaa_contract_role_targets for select to anon, authenticated using (kafaa_rule_read('partner_org', null::text, org_id, true)
+    or kafaa_rule_read('equivalency', null::text, null::text, true));
+grant select on kafaa_contract_role_targets to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- task_skill_links
+alter table kafaa_task_skill_links enable row level security;
+drop policy if exists kafaa_read on kafaa_task_skill_links;
+create policy kafaa_read on kafaa_task_skill_links for select to anon, authenticated using (kafaa_rule_read('frameworks', null::text, null::text, true));
+grant select on kafaa_task_skill_links to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- contractor_engagements
+alter table kafaa_contractor_engagements enable row level security;
+drop policy if exists kafaa_read on kafaa_contractor_engagements;
+create policy kafaa_read on kafaa_contractor_engagements for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('equivalency', null::text, org_id, true));
+grant select on kafaa_contractor_engagements to anon, authenticated;
 -- writes: reference data, no client writes
 
 -- engine_cards

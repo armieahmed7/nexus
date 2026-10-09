@@ -27,7 +27,7 @@ export default function AdminSuppliersPage() {
     return { cases, orgs, steps, docs, icv };
   });
   return (
-    <Page title={t('m09.routes.admin-suppliers.title')} intro={t('m09.adm.intro')} wide>
+    <Page title={t('m09.routes.admin-suppliers.title')} intro={t('m09.adm.intro')} wide actions={<L to="/admin/suppliers/contract-roles" className="btn-outline" data-testid="m09-adm-contract-roles">{t('m09.cp.adm.link')}</L>} /* W5E2 (F33) */>
       <Callout tone="info" title={t('m09.sup.prepTitle')}>{t('m09.adm.prepBody')}</Callout>
       <Async state={q} isEmpty={(d) => d.cases.length === 0} empty={<EmptyState title={t('m09.adm.empty')} />}>{(d) => <Queue d={d} />}</Async>
       <Interest />

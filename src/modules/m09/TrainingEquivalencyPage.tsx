@@ -3,7 +3,7 @@
 // are final and need a note; only a holder of the evaluator qualification for the standard (or the training manager) decides.
 import { useEffect, useMemo, useState } from 'react';
 import { Page, Section, Card, Callout, Async, EmptyState, Grid, StatTile, DataTable, Drawer, ConfirmDialog, FilterBar, useFilters, KeyValue, CheckboxField, TextField, Icon, type Column } from '../../ui';
-import { useT, usePick, useFormat } from '../../i18n';
+import { useT, usePick, useFormat, L } from '../../i18n';
 import { useAction, useQuery, useRepo, type RowOf } from '../../data';
 import { useSession } from '../../auth/session';
 import { equivalencyCoverage, type MappingRow } from '../../domain/partners';
@@ -118,6 +118,8 @@ function Review({ e, d, orgName }: { e: Eq; d: Data; orgName: string }) {
         [t('m09.wf.col.submitted'), f.dateTime(e.submitted_at)],
         [t('m09.wf.decision'), e.decision_note || '—'],
       ]} />
+      {/* W5E2 (F33): the contractor's passport and the read-only pre-check for this standard */}
+      {e.person_id && <L to={`/training/equivalency/passport/${e.person_id}?standard=${e.standard_id}`} className="btn-outline btn-sm" data-testid="m09-eqr-passport"><Icon name="shield" size={14} />{t('m09.cp.openPassport')}</L>}
       {!decided && (
         qualified
           ? <p className="flex items-center gap-2 text-[12.5px] text-ok"><Icon name="check" size={14} />{t('m09.eqr.qualified')}</p>

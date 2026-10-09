@@ -4,7 +4,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Page, Section, Card, Callout, Async, EmptyState, ErrorState, Skeleton, Drawer, DataTable, ConfirmDialog, SelectField, TextField, Grid, StatTile, KeyValue, Icon, type Column } from '../../ui';
-import { useT, usePick, useFormat } from '../../i18n';
+import { useT, usePick, useFormat, L } from '../../i18n';
 import { useAction, useQuery, useRepo, type Result, type RowOf } from '../../data';
 import { EVIDENCE_KINDS, equivalencyCoverage, type MappingRow } from '../../domain/partners';
 import { HistoryTimeline, MStatus, fileFingerprint, shortHash, useMyOrg } from './shared';
@@ -28,7 +28,7 @@ export default function PartnerWorkforcePage() {
     return { eq, people, standards, tasks, enrol, courses };
   }, [orgId]);
   return (
-    <Page title={t('m09.routes.partner-workforce.title')} intro={t('m09.wf.intro')}>
+    <Page title={t('m09.routes.partner-workforce.title')} intro={t('m09.wf.intro')} actions={<L to="/partner/workforce/passport" className="btn-outline" data-testid="m09-wf-passport">{t('m09.cp.wfLink')}</L>} /* W5E2 (F33) */>
       <Callout tone="info" title={t('m09.wf.ruleTitle')}>{t('m09.wf.ruleBody')}</Callout>
       <Async state={q} isEmpty={() => false}>{(d) => <Workforce {...d} />}</Async>
     </Page>

@@ -1702,7 +1702,9 @@ create table if not exists kafaa_skill_evidence (
   note text,
   recorded_by text,
   active boolean not null default true,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  org_id text,
+  contractor boolean not null default false
 );
 comment on table kafaa_skill_evidence is '[M17] Skill evidence per person (derived from records, or recorded by later features) (F01)';
 
@@ -1717,7 +1719,9 @@ create table if not exists kafaa_person_skills (
   reasons jsonb not null default '[]'::jsonb,
   evidence_count integer not null default 0,
   active boolean not null default true,
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  org_id text,
+  contractor boolean not null default false
 );
 comment on table kafaa_person_skills is '[M17] Derived skill state per person: level 0-4, confidence, basis and reasons (F01)';
 
@@ -2014,6 +2018,54 @@ create table if not exists kafaa_handover_cohorts (
   sample boolean not null default true
 );
 comment on table kafaa_handover_cohorts is '[M07] Handover 2030: trainee cohorts earmarked to replace external cover, with projected ready dates (SAMPLE/SIMULATED) (F22)';
+
+-- M09 · ENEC role profiles a contractor organisation is contracted to staff, with a headcount band (F33)
+create table if not exists kafaa_contract_role_targets (
+  id text primary key,
+  org_id text not null,
+  role_id text not null,
+  headcount_band text not null check (headcount_band in ('1-4', '5-9', '10-24', '25+')),
+  contract_ref text not null default '',
+  scope_en text not null default '',
+  scope_ar text not null default '',
+  valid_from date,
+  valid_to date,
+  active boolean not null default true,
+  set_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_contract_role_targets is '[M09] ENEC role profiles a contractor organisation is contracted to staff, with a headcount band (F33)';
+
+-- M09 · Skills (and level) that evidence each task of a qualification standard; used by the equivalency pre-check (F33)
+create table if not exists kafaa_task_skill_links (
+  id text primary key,
+  standard_id text not null,
+  task_id text not null,
+  skill_id text not null,
+  need_level integer not null,
+  sort integer not null default 0
+);
+comment on table kafaa_task_skill_links is '[M09] Skills (and level) that evidence each task of a qualification standard; used by the equivalency pre-check (F33)';
+
+-- M09 · SIMULATED mirror of contractor work history at ENEC with supervisor skill sign-offs (F33)
+create table if not exists kafaa_contractor_engagements (
+  id text primary key,
+  person_id text not null,
+  org_id text not null,
+  ref_code text not null,
+  title_en text not null,
+  title_ar text not null,
+  role_id text,
+  started_on date not null,
+  ended_on date,
+  status text not null check (status in ('in_progress', 'signed_off')),
+  supervisor_role_en text not null default '',
+  supervisor_role_ar text not null default '',
+  skills jsonb not null default '[]'::jsonb,
+  source text not null default 'mirror' check (source in ('mirror')),
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_contractor_engagements is '[M09] SIMULATED mirror of contractor work history at ENEC with supervisor skill sign-offs (F33)';
 
 -- M16 · Model and engine card per recommendation surface: inputs used and never used, weights, owner, oversight, last change (F24)
 create table if not exists kafaa_engine_cards (
@@ -3770,6 +3822,14 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ex
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_handover_cohorts_role_id_fk') then alter table kafaa_handover_cohorts add constraint kafaa_handover_cohorts_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_handover_cohorts_programme_id_fk') then alter table kafaa_handover_cohorts add constraint kafaa_handover_cohorts_programme_id_fk foreign key (programme_id) references kafaa_programmes(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_handover_cohorts_talent_programme_id_fk') then alter table kafaa_handover_cohorts add constraint kafaa_handover_cohorts_talent_programme_id_fk foreign key (talent_programme_id) references kafaa_talent_programmes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_contract_role_targets_org_id_fk') then alter table kafaa_contract_role_targets add constraint kafaa_contract_role_targets_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_contract_role_targets_role_id_fk') then alter table kafaa_contract_role_targets add constraint kafaa_contract_role_targets_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_task_skill_links_standard_id_fk') then alter table kafaa_task_skill_links add constraint kafaa_task_skill_links_standard_id_fk foreign key (standard_id) references kafaa_qual_standards(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_task_skill_links_task_id_fk') then alter table kafaa_task_skill_links add constraint kafaa_task_skill_links_task_id_fk foreign key (task_id) references kafaa_task_items(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_task_skill_links_skill_id_fk') then alter table kafaa_task_skill_links add constraint kafaa_task_skill_links_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_contractor_engagements_person_id_fk') then alter table kafaa_contractor_engagements add constraint kafaa_contractor_engagements_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_contractor_engagements_org_id_fk') then alter table kafaa_contractor_engagements add constraint kafaa_contractor_engagements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_contractor_engagements_role_id_fk') then alter table kafaa_contractor_engagements add constraint kafaa_contractor_engagements_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_reco_optouts_person_id_fk') then alter table kafaa_reco_optouts add constraint kafaa_reco_optouts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_claims_person_id_fk') then alter table kafaa_skill_claims add constraint kafaa_skill_claims_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_claims_skill_id_fk') then alter table kafaa_skill_claims add constraint kafaa_skill_claims_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
@@ -4107,8 +4167,10 @@ create index if not exists kafaa_skill_evidence_person_id_idx on kafaa_skill_evi
 create index if not exists kafaa_skill_evidence_skill_id_idx on kafaa_skill_evidence (skill_id);
 create index if not exists kafaa_skill_evidence_kind_idx on kafaa_skill_evidence (kind);
 create index if not exists kafaa_skill_evidence_ref_id_idx on kafaa_skill_evidence (ref_id);
+create index if not exists kafaa_skill_evidence_org_id_idx on kafaa_skill_evidence (org_id);
 create index if not exists kafaa_person_skills_person_id_idx on kafaa_person_skills (person_id);
 create index if not exists kafaa_person_skills_skill_id_idx on kafaa_person_skills (skill_id);
+create index if not exists kafaa_person_skills_org_id_idx on kafaa_person_skills (org_id);
 create index if not exists kafaa_instructor_tracks_person_id_idx on kafaa_instructor_tracks (person_id);
 create index if not exists kafaa_instructor_tracks_stage_idx on kafaa_instructor_tracks (stage);
 create index if not exists kafaa_instructor_tracks_status_idx on kafaa_instructor_tracks (status);
@@ -4167,6 +4229,16 @@ create index if not exists kafaa_handover_cohorts_period_idx on kafaa_handover_c
 create index if not exists kafaa_handover_cohorts_role_id_idx on kafaa_handover_cohorts (role_id);
 create index if not exists kafaa_handover_cohorts_programme_id_idx on kafaa_handover_cohorts (programme_id);
 create index if not exists kafaa_handover_cohorts_talent_programme_id_idx on kafaa_handover_cohorts (talent_programme_id);
+create index if not exists kafaa_contract_role_targets_org_id_idx on kafaa_contract_role_targets (org_id);
+create index if not exists kafaa_contract_role_targets_role_id_idx on kafaa_contract_role_targets (role_id);
+create index if not exists kafaa_contract_role_targets_active_idx on kafaa_contract_role_targets (active);
+create index if not exists kafaa_task_skill_links_standard_id_idx on kafaa_task_skill_links (standard_id);
+create index if not exists kafaa_task_skill_links_task_id_idx on kafaa_task_skill_links (task_id);
+create index if not exists kafaa_task_skill_links_skill_id_idx on kafaa_task_skill_links (skill_id);
+create index if not exists kafaa_contractor_engagements_person_id_idx on kafaa_contractor_engagements (person_id);
+create index if not exists kafaa_contractor_engagements_org_id_idx on kafaa_contractor_engagements (org_id);
+create index if not exists kafaa_contractor_engagements_role_id_idx on kafaa_contractor_engagements (role_id);
+create index if not exists kafaa_contractor_engagements_status_idx on kafaa_contractor_engagements (status);
 create index if not exists kafaa_engine_cards_engine_surface_idx on kafaa_engine_cards (engine_surface);
 create index if not exists kafaa_reco_optouts_person_id_idx on kafaa_reco_optouts (person_id);
 create index if not exists kafaa_reco_optouts_surface_idx on kafaa_reco_optouts (surface);
@@ -4424,4 +4496,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 201) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 204) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
