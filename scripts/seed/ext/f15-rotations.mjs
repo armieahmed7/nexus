@@ -328,7 +328,10 @@ export default function build(T, ctx) {
     const lm = lineManagerOf(pid, T.people, T.role_assignments, today);
     if (!p || !hp || !host || !lm || pid === hid || skills.some((s) => !host.skill_ids.includes(s))) throw new Error(`f15: bad shadow request ${n}`);
     const id = `sr-${String(n).padStart(3, '0')}-${pid}`;
-    const created = addDays(start, -21);
+    // requested about three weeks ahead, but never after the demo's today (history steps run up to five days later)
+    const ahead = addDays(start, -21);
+    const latest = addDays(today, -6 - (n % 4));
+    const created = ahead < latest ? ahead : latest;
     const hist = [{ at: at(created, 9), status: 'requested', by: pid, note: purpose }];
     const same = lm === hid;
     const hc = consent.h;
