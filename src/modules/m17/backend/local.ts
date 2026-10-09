@@ -18,6 +18,7 @@ import { edSign, fromHex } from '../badgeCrypto';
 import { buildCredential, signingBytes, withProof, NOTICE_EN } from '../issuer';
 import { badgeSourceCheck, badgeView, courseAlignment, isHttpUrl, isSecuritySkill, securityComps, type CourseRow, type SkillRow } from '../badgeRules';
 import { CLAIMS_PER_DAY, LEVEL_MAX, NOTE_MAX } from '../passport';
+import { makeLocalM17W2 } from './local.w2'; // W2 · w2e1: F10 check-ins, F11 team heatmap
 
 /** Offline demo key (in-browser backend only; see the file header). Not the server key. */
 const OFFLINE_SEED = '80df5566f0f615286d25a424ee54b2c33e94253912786453b748dd943143864d';
@@ -28,6 +29,7 @@ const randomSlug = () => `kb${crypto.randomUUID().replace(/-/g, '').slice(0, 12)
 export function makeLocalM17(b: LocalBackend, h: LocalRpcHelpers): M17Rpc {
   const comps = () => b.raw('competencies') as unknown as { id: string; domain: string }[];
   return {
+    ...makeLocalM17W2(b, h),
     async claimSkill(input) {
       await b.whenReady();
       type R = { id: string; level: number; state_level: number };

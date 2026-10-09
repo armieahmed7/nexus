@@ -29,4 +29,40 @@ export const TABLES_M17: Record<string, TableDef> = {
     },
     read: [{ res: 'skills_profile', person: 'person_id' }], write: { mode: 'rpc', res: 'skills_profile' },
   },
+  // ───────────── W2 · E1 · F10 Skill check-ins (360) and F11 Team capability heatmap
+  // F10 · A check-in asks the line manager (and up to two same-team peers) to confirm up to five self-rated skills.
+  // `skills` holds [{skill_id, self_level, note, outcome?, final_level?, reason?}]. Readable by the person (Own), by managers
+  // and instructors in scope (Scope) and by the addressed manager; never by peers (they read only their own rating rows).
+  skill_checkins: {
+    module: 'M17', label: 'Skill check-ins: self, manager and peer validation requests (F10)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', manager_id: 'text? ref:people idx', peer_ids: 'text[] =[]', skills: 'json =[]', message: 'text?',
+      status: 'text enum:open|validated|adjusted|withdrawn =\'open\' idx', requested_at: 'ts =now', due_on: 'date',
+      decided_by: 'text?', decided_at: 'ts?', decision_note: 'text?',
+    },
+    read: [{ res: 'skills_profile', person: 'person_id' }, { res: 'skills_profile', person: 'manager_id' }], write: { mode: 'rpc', res: 'skills_profile' },
+  },
+  // F10 · One row per rater x skill (self, manager, peer). Peers read and answer only the rows addressed to them; the person
+  // and managers in scope read every row of the check-in. HR (Agg) reads none. Written only through the RPCs.
+  skill_ratings: {
+    module: 'M17', label: 'Check-in ratings per rater and skill: self, manager, peer (F10)',
+    cols: {
+      id: 'text pk', checkin_id: 'text ref:skill_checkins idx', subject_id: 'text ref:people idx', rater_person_id: 'text ref:people idx',
+      rater_kind: 'text enum:self|manager|peer idx', skill_id: 'text ref:skills idx', level: 'int?', example: 'text?',
+      status: 'text enum:pending|submitted|not_observed|closed =\'pending\' idx', requested_at: 'ts =now', at: 'ts?',
+    },
+    read: [{ res: 'skills_profile', person: 'subject_id' }, { res: 'skills_profile', person: 'rater_person_id' }], write: { mode: 'rpc', res: 'skills_profile' },
+  },
+  // F11 · Manager-set coverage minimum per group and skill ("at least 3 people at level >= 3"). team_id is a group key:
+  // team:<people.team_id>, family:<people.job_family_id> or crew:profile (the crew profile used by the crew view).
+  // Managers read targets through rpc.teamCoverage; the table itself is readable only with R/W/A (training manager).
+  team_skill_targets: {
+    module: 'M17', label: 'Team skill coverage targets set by managers (F11)',
+    cols: {
+      id: 'text pk', team_id: 'text idx', skill_id: 'text ref:skills idx', min_people: 'int =2', min_level: 'int =3', note: 'text?',
+      active: 'bool =true', set_by: 'text?', updated_at: 'ts =now',
+    },
+    read: [{ res: 'skills_profile' }], write: { mode: 'rpc', res: 'skills_profile' },
+  },
 };
+

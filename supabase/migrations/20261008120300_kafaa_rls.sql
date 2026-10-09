@@ -1187,6 +1187,29 @@ create policy kafaa_read on kafaa_badges for select to anon, authenticated using
 grant select on kafaa_badges to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- skill_checkins
+alter table kafaa_skill_checkins enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_checkins;
+create policy kafaa_read on kafaa_skill_checkins for select to anon, authenticated using (kafaa_rule_read('skills_profile', person_id, null::text, true)
+    or kafaa_rule_read('skills_profile', manager_id, null::text, true));
+grant select on kafaa_skill_checkins to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- skill_ratings
+alter table kafaa_skill_ratings enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_ratings;
+create policy kafaa_read on kafaa_skill_ratings for select to anon, authenticated using (kafaa_rule_read('skills_profile', subject_id, null::text, true)
+    or kafaa_rule_read('skills_profile', rater_person_id, null::text, true));
+grant select on kafaa_skill_ratings to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- team_skill_targets
+alter table kafaa_team_skill_targets enable row level security;
+drop policy if exists kafaa_read on kafaa_team_skill_targets;
+create policy kafaa_read on kafaa_team_skill_targets for select to anon, authenticated using (kafaa_rule_read('skills_profile', null::text, null::text, true));
+grant select on kafaa_team_skill_targets to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- career_targets
 alter table kafaa_career_targets enable row level security;
 drop policy if exists kafaa_read on kafaa_career_targets;

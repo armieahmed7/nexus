@@ -1441,6 +1441,44 @@ export interface BadgesRow {
   revoke_reason?: string | null;
   created_at: string;
 }
+export interface SkillCheckinsRow {
+  id: string;
+  person_id: string;
+  manager_id?: string | null;
+  peer_ids: string[];
+  skills: any;
+  message?: string | null;
+  status: 'open' | 'validated' | 'adjusted' | 'withdrawn';
+  requested_at: string;
+  due_on: string;
+  decided_by?: string | null;
+  decided_at?: string | null;
+  decision_note?: string | null;
+}
+export interface SkillRatingsRow {
+  id: string;
+  checkin_id: string;
+  subject_id: string;
+  rater_person_id: string;
+  rater_kind: 'self' | 'manager' | 'peer';
+  skill_id: string;
+  level?: number | null;
+  example?: string | null;
+  status: 'pending' | 'submitted' | 'not_observed' | 'closed';
+  requested_at: string;
+  at?: string | null;
+}
+export interface TeamSkillTargetsRow {
+  id: string;
+  team_id: string;
+  skill_id: string;
+  min_people: number;
+  min_level: number;
+  note?: string | null;
+  active: boolean;
+  set_by?: string | null;
+  updated_at: string;
+}
 export interface CareerTargetsRow {
   id: string;
   person_id: string;
@@ -1724,6 +1762,9 @@ export interface Tables {
   ledger_local: LedgerLocalRow;
   skill_claims: SkillClaimsRow;
   badges: BadgesRow;
+  skill_checkins: SkillCheckinsRow;
+  skill_ratings: SkillRatingsRow;
+  team_skill_targets: TeamSkillTargetsRow;
   career_targets: CareerTargetsRow;
   roadmaps: RoadmapsRow;
   coach_feedback: CoachFeedbackRow;
