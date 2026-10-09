@@ -124,4 +124,61 @@ export const TABLES_M20: Record<string, TableDef> = {
     ],
     write: { mode: 'rpc', res: 'opportunities' },
   },
+  // ───────────── F23 Alumni and expert reserve (W3 · E4). Members read their own row; staff R reads a member only while they
+  // opted into the expert finder (`finder_visible`, false once consent is withdrawn). Requests and engagements are private to
+  // the people named on the row (`open_read` always false); the poster reads an engagement only after HR hands it over
+  // (`poster_read_id`). Alumni see requests through rpc.reserveBoard (HR-approved requests only), HR through rpc.reserveDesk.
+  // No contact data is stored anywhere (no email, phone or address column; free text with contact details is refused).
+  alumni: {
+    module: 'M20', label: 'Alumni and expert reserve: opt-in members (departed staff, ended partner secondments, pre-departure staff) with a frozen skill snapshot (F23)',
+    cols: {
+      id: 'text pk', person_id: 'text? ref:people idx', kind: 'text enum:alumni|partner_alumni|pre_departure idx', name: 'text', name_ar: 'text',
+      former_role_id: 'text? ref:job_roles', former_family_id: 'text? ref:job_families idx', former_org: 'text? ref:organisations',
+      departed_on: 'date?', departure_reason: 'text enum:retired|secondment_ended|moved_on|planned', departed_band: 'text enum:departing|lt_1y|y1_3|y3_5|gt_5y', years_service: 'int?',
+      skill_snapshot: 'json =[]', snapshot_on: 'date',
+      availability: 'text enum:open|limited|outage_only|paused =\'open\'', hours_month: 'int =8', engagement_prefs: 'text[] =[]',
+      finder_optin: 'bool =false', finder_visible: 'bool =false', headline_en: 'text?', headline_ar: 'text?',
+      consent_on: 'date?', consent_version: 'text =\'1\'', status: 'text enum:active|withdrawn =\'active\' idx', withdrawn_on: 'date?', erase_after: 'date?',
+      created_at: 'ts =now', updated_at: 'ts =now',
+    },
+    read: [{ res: 'opportunities', person: 'person_id', where: 'finder_visible' }],
+    write: { mode: 'rpc', res: 'opportunities' },
+  },
+  reserve_requests: {
+    module: 'M20', label: 'Reserve requests: short mentoring, capture-interview, instructor or reviewer help from the reserve; HR approves before alumni see them (F23)',
+    cols: {
+      id: 'text pk', posted_by: 'text ref:people idx', poster_name: 'text =\'\'', poster_name_ar: 'text =\'\'', family_id: 'text? ref:job_families idx', host_team_en: 'text', host_team_ar: 'text',
+      engagement: 'text enum:mentor|capture_interview|instructor|reviewer idx', title_en: 'text', title_ar: 'text', summary_en: 'text', summary_ar: 'text',
+      skills_needed: 'text[] =[]', hours_total: 'int', seats: 'int =1', seats_taken: 'int =0', interest_count: 'int =0',
+      location_type: 'text enum:remote|office|site_non_protected', start_on: 'date', end_on: 'date',
+      status: 'text enum:pending_hr|open|filled|closed|declined =\'pending_hr\' idx', hr_by: 'text? ref:people', hr_at: 'ts?', hr_note: 'text?',
+      open_read: 'bool =false', created_at: 'ts =now', updated_at: 'ts =now',
+    },
+    read: [{ res: 'opportunities', person: 'posted_by', where: 'open_read' }, { res: 'audit_log' }],
+    write: { mode: 'rpc', res: 'opportunities' },
+  },
+  reserve_engagements: {
+    module: 'M20', label: 'Reserve engagements: interest or HR invitation, HR approval ("handed to HR"), completion. No contract, payment or contact data (F23)',
+    cols: {
+      id: 'text pk', request_id: 'text ref:reserve_requests idx', alumni_id: 'text ref:alumni idx', person_id: 'text? ref:people idx', poster_id: 'text ref:people idx', poster_read_id: 'text? ref:people idx',
+      status: 'text enum:invited|interested|handed_to_hr|declined|withdrawn|completed =\'interested\' idx', engagement: 'text enum:mentor|capture_interview|instructor|reviewer',
+      alumni_name: 'text =\'\'', alumni_name_ar: 'text =\'\'', note: 'text?', hr_by: 'text? ref:people', hr_at: 'ts?', hr_note: 'text?', outcome_note: 'text?', completed_at: 'ts?',
+      history: 'json =[]', open_read: 'bool =false', created_at: 'ts =now', updated_at: 'ts =now',
+    },
+    read: [
+      { res: 'opportunities', person: 'person_id', where: 'open_read' },
+      { res: 'opportunities', person: 'poster_read_id', where: 'open_read' },
+      { res: 'audit_log' },
+    ],
+    write: { mode: 'rpc', res: 'opportunities' },
+  },
+  alumni_stories: {
+    module: 'M20', label: 'Alumni stories: consented, synthetic and labelled; hidden when the alumnus withdraws consent (F23)',
+    cols: {
+      id: 'text pk', alumni_id: 'text ref:alumni idx', engagement: 'text enum:mentor|capture_interview|instructor|reviewer', title_en: 'text', title_ar: 'text', body_en: 'text', body_ar: 'text',
+      quote_en: 'text?', quote_ar: 'text?', author_en: 'text', author_ar: 'text', consent_on: 'date', published_on: 'date', synthetic: 'bool =true', listed: 'bool =true', sort: 'int =0',
+    },
+    read: [{ res: 'opportunities', where: 'listed' }],
+    write: { mode: 'rpc', res: 'opportunities' },
+  },
 };

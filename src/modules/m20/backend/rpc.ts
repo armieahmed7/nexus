@@ -4,8 +4,9 @@
 import type { Result } from '../../../data/types';
 import type { OpportunityInput, OppStats } from '../domain';
 import type { HostInput, RotationBoard, RotationCandidate, ShadowInput, TemplateInput } from '../rotation';
+import type { JoinInput, RequestInput, ReserveBoard, ReserveDesk } from '../reserve';
 
-export type { OpportunityInput, OppStats, HostInput, RotationBoard, RotationCandidate, ShadowInput, TemplateInput };
+export type { OpportunityInput, OppStats, HostInput, RotationBoard, RotationCandidate, ShadowInput, TemplateInput, JoinInput, RequestInput, ReserveBoard, ReserveDesk };
 export interface CohortInput { id?: string | null; template_id: string; name_en: string; name_ar: string; intake_on: string; status?: 'planned' | 'running' | 'completed' }
 
 /** F15 Rotations and job shadowing (W2 · E4). SQL: supabase/migrations/20261009124001_kafaa_w2e4_rotations.sql. Rules: src/modules/m20/rotation.ts. */
@@ -36,7 +37,33 @@ export interface F15Rpc {
   rotationCandidates(templateId: string | null): Promise<RotationCandidate[] | null>;
 }
 
-export interface M20Rpc extends F15Rpc {
+/** F23 Alumni and expert reserve (W3 · E4). SQL: supabase/migrations/20261009134001_kafaa_w3e4_reserve.sql. Rules: src/modules/m20/reserve.ts. */
+export interface F23Rpc {
+  /** F23 consent RPC. consent = true joins (or updates) my reserve membership: availability, hours a month, preferred engagements,
+   *  expert-finder opt-in; my F01 skill state is frozen into the snapshot. consent = false withdraws: I am hidden everywhere at once,
+   *  open engagements end, my stories are unlisted and deletion is scheduled after six months. Staff only; security, cyber and
+   *  safeguards roles are refused (restricted_kind); contact details are refused (contact_data). Audited, ledger row. */
+  joinReserve(input: JoinInput): Promise<Result<{ id: string; status: string; erase_after: string | null; skills: number }>>;
+  /** F23: a manager (W) asks the reserve for short help (mentor, capture interview, instructor, reviewer). Waits for HR approval
+   *  (pending_hr) before any alumnus sees it. Security, cyber, safeguards and protected-area work is refused. Audited. */
+  requestReserve(input: RequestInput): Promise<Result<{ id: string; status: string }>>;
+  /** F23: HR approves (opens the request to alumni; ledger) or declines (reason) a pending request; the poster or HR closes it.
+   *  maker_checker: HR never approves their own request. */
+  decideReserveRequest(requestId: string, decision: 'approve' | 'decline' | 'close', note?: string): Promise<Result<{ status: string }>>;
+  /** F23: an active member expresses interest in an open request (or accepts an HR invitation). */
+  reserveInterest(requestId: string, note?: string): Promise<Result<{ id: string; status: string }>>;
+  /** F23: HR invites a matched member to an open request. */
+  inviteReserve(requestId: string, alumniId: string, note?: string): Promise<Result<{ id: string; status: string }>>;
+  /** F23: HR approves an interested member ("handed to HR"; the poster now sees the alumnus; ledger) or declines; the poster or HR
+   *  confirms completion (ledger); the alumnus withdraws. */
+  decideReserveEngagement(engagementId: string, decision: 'approve' | 'decline' | 'complete' | 'withdraw', note?: string): Promise<Result<{ status: string }>>;
+  /** F23: the alumni board for the signed-in member: HR-approved open requests (never the poster's identity) and my engagements. Null when I am not a member. */
+  reserveBoard(): Promise<ReserveBoard | null>;
+  /** F23: the HR reserve desk (hr_analyst, hr_director): active members, all requests and engagements, erasures due, suppressed stats. Null otherwise. */
+  reserveDesk(): Promise<ReserveDesk | null>;
+}
+
+export interface M20Rpc extends F15Rpc, F23Rpc {
   /** F08: post an opportunity (draft or open). Managers and the training manager (W). Security, cyber, safeguards and
    *  protected-area work is refused (restricted_kind) and audited. */
   postOpportunity(input: OpportunityInput): Promise<Result<{ id: string; status: string }>>;
