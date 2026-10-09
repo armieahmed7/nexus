@@ -1196,6 +1196,20 @@ create policy kafaa_read on kafaa_mentoring_private_notes for select to anon, au
 grant select on kafaa_mentoring_private_notes to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- external_cover
+alter table kafaa_external_cover enable row level security;
+drop policy if exists kafaa_read on kafaa_external_cover;
+create policy kafaa_read on kafaa_external_cover for select to anon, authenticated using (kafaa_rule_read('observer_release', null::text, null::text, true));
+grant select on kafaa_external_cover to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- handover_cohorts
+alter table kafaa_handover_cohorts enable row level security;
+drop policy if exists kafaa_read on kafaa_handover_cohorts;
+create policy kafaa_read on kafaa_handover_cohorts for select to anon, authenticated using (kafaa_rule_read('observer_release', null::text, null::text, true));
+grant select on kafaa_handover_cohorts to anon, authenticated;
+-- writes: reference data, no client writes
+
 -- skill_claims
 alter table kafaa_skill_claims enable row level security;
 drop policy if exists kafaa_read on kafaa_skill_claims;

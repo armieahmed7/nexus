@@ -34,7 +34,7 @@ export default function WorkforceDefinitionsPage() {
               const k = m.kpi ? kpiLatest(rows, m.kpi) : null;
               return (
                 <section key={m.key} id={m.key} tabIndex={-1} className="scroll-mt-24 outline-none focus-visible:ring-2 focus-visible:ring-accent">
-                  <Card title={t(`m07.metric.${m.key}`)} eyebrow={m.gri ?? t('m07.defs.internal')} actions={k?.sample || m.table === 'kafaa_workforce_snapshots' || m.table === 'kafaa_critical_roles' || m.table === 'kafaa_scholar_cohorts' ? <SimChip label={t('common.sample')} /> : undefined}>
+                  <Card title={t(`m07.metric.${m.key}`)} eyebrow={m.gri ?? t('m07.defs.internal')} actions={k?.sample || m.sim || m.table === 'kafaa_workforce_snapshots' || m.table === 'kafaa_critical_roles' || m.table === 'kafaa_scholar_cohorts' ? <SimChip label={t('common.sample')} /> : undefined}>
                     <p className="text-[14px]">{t(`m07.def.${m.key}`)}</p>
                     <dl className="mt-3 grid grid-cols-1 gap-x-6 gap-y-1.5 text-[13px] sm:grid-cols-[minmax(140px,max-content)_1fr]">
                       <dt className="caps pt-0.5">{t('m07.defs.unit')}</dt>

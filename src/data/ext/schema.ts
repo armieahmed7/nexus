@@ -1,6 +1,7 @@
 // F01: table blocks of the M17-M27 modules, merged into SCHEMA by src/data/schema.ts. Import-free apart from .ts module files
 // (node scripts load this through src/data/schema.ts). Each module owns src/modules/<m>/backend/schema.ts.
 import { TABLES_M04 } from '../../modules/m04/backend/schema.ts'; // W2E3 (F13): M04 mentoring extension tables
+import { TABLES_M07 } from '../../modules/m07/backend/schema.ts'; // W3E3 (F22): M07 handover board tables
 import { TABLES_M17 } from '../../modules/m17/backend/schema.ts';
 import { TABLES_M18 } from '../../modules/m18/backend/schema.ts';
 import { TABLES_M19 } from '../../modules/m19/backend/schema.ts';
@@ -13,4 +14,4 @@ import { TABLES_M25 } from '../../modules/m25/backend/schema.ts';
 import { TABLES_M26 } from '../../modules/m26/backend/schema.ts';
 import { TABLES_M27 } from '../../modules/m27/backend/schema.ts';
 
-export const EXT_TABLES = { ...TABLES_M04, ...TABLES_M17, ...TABLES_M18, ...TABLES_M19, ...TABLES_M20, ...TABLES_M21, ...TABLES_M22, ...TABLES_M23, ...TABLES_M24, ...TABLES_M25, ...TABLES_M26, ...TABLES_M27 };
+export const EXT_TABLES = { ...TABLES_M04, ...TABLES_M07, ...TABLES_M17, ...TABLES_M18, ...TABLES_M19, ...TABLES_M20, ...TABLES_M21, ...TABLES_M22, ...TABLES_M23, ...TABLES_M24, ...TABLES_M25, ...TABLES_M26, ...TABLES_M27 };

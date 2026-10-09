@@ -1468,6 +1468,33 @@ export interface MentoringPrivateNotesRow {
   note: string;
   updated_at: string;
 }
+export interface ExternalCoverRow {
+  id: string;
+  period: string;
+  role_id: string;
+  function: string;
+  year: number;
+  partner: 'khnp_ossa' | 'contractor' | 'vendor';
+  cover_count: number;
+  source: string;
+  sample: boolean;
+}
+export interface HandoverCohortsRow {
+  id: string;
+  period: string;
+  role_id: string;
+  route: 'coit' | 'loit' | 'gpo' | 'dnt' | 'discipline';
+  programme_id?: string | null;
+  talent_programme_id?: string | null;
+  label_en: string;
+  label_ar: string;
+  starts_on: string;
+  ready_on: string;
+  trainees: number;
+  emirati: number;
+  source: string;
+  sample: boolean;
+}
 export interface SkillClaimsRow {
   id: string;
   person_id: string;
@@ -2473,6 +2500,8 @@ export interface Tables {
   mentoring_agreements: MentoringAgreementsRow;
   mentoring_sessions: MentoringSessionsRow;
   mentoring_private_notes: MentoringPrivateNotesRow;
+  external_cover: ExternalCoverRow;
+  handover_cohorts: HandoverCohortsRow;
   skill_claims: SkillClaimsRow;
   badges: BadgesRow;
   skill_checkins: SkillCheckinsRow;

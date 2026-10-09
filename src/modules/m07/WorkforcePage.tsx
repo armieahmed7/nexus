@@ -7,6 +7,7 @@ import { useSession } from '../../auth/session';
 import { Page, Section, Grid, Card, Async, EmptyState, Callout, LineChart, StatTile, DataTable, StatusPill, Modal, ConfirmDialog, SourceLink, Icon, KeyValue } from '../../ui';
 import { L, hasKey, useFormat, usePick, useT } from '../../i18n';
 import { shareRows, valueRows } from './metrics';
+import { HandoverBurndown } from './handoverUi'; // [W3E3] F22
 import { KpiTile, SampleBanner, SR2024, kpiLatest, kpiSeries, useAggregates, useKpis, usePeriods } from './shared';
 
 export default function WorkforcePage() {
@@ -37,6 +38,7 @@ export default function WorkforcePage() {
     ['critical-roles', 'shield', true],
     ['training', 'book', true],
     ['scenarios', 'sparkle', canScenarios],
+    ['handover', 'calendar', true], // [W3E3] F22
     ['applications', 'users', canFunnel],
     ['definitions', 'info', true],
   ] as const).filter((x) => x[2]);
@@ -207,7 +209,7 @@ function Releases({ kpiRows }: { kpiRows: ReturnType<typeof useKpis>['data'] }) 
 export function ReportBody({ r, orgName }: { r: ObserverReportsRow; orgName?: (id: string) => string }) {
   const t = useT();
   const f = useFormat();
-  const body = (r.body ?? {}) as { tiles?: { k: string; v: string; src: string }[]; note?: string };
+  const body = (r.body ?? {}) as { tiles?: { k: string; v: string; src: string }[]; note?: string; burndown?: { years: number[]; cover: (number | null)[]; ready: (number | null)[] } };
   return (
     <div className="space-y-3">
       <Grid cols={3}>
@@ -216,6 +218,7 @@ export function ReportBody({ r, orgName }: { r: ObserverReportsRow; orgName?: (i
         ))}
       </Grid>
       {!(body.tiles ?? []).length && <EmptyState title={t('m07.releases.emptyBody')} />}
+      {body.burndown && <HandoverBurndown years={body.burndown.years} cover={body.burndown.cover} ready={body.burndown.ready} />}{/* [W3E3] F22 released burn-down */}
       <KeyValue
         items={[
           [t('m07.period'), r.period],

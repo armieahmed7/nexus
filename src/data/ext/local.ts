@@ -3,6 +3,7 @@ import type { LocalBackend } from '../local/LocalBackend';
 import type { LocalRpcHelpers } from './types';
 import type { ExtRpc } from './rpc';
 import { makeLocalM04 } from '../../modules/m04/backend/local'; // W2E3 (F13)
+import { makeLocalM07 } from '../../modules/m07/backend/local'; // W3E3 (F22)
 import { makeLocalM17 } from '../../modules/m17/backend/local';
 import { makeLocalM18 } from '../../modules/m18/backend/local';
 import { makeLocalM19 } from '../../modules/m19/backend/local';
@@ -16,5 +17,5 @@ import { makeLocalM26 } from '../../modules/m26/backend/local';
 import { makeLocalM27 } from '../../modules/m27/backend/local';
 
 export function makeExtLocalRpc(b: LocalBackend, h: LocalRpcHelpers): ExtRpc {
-  return { ...makeLocalM04(b, h), ...makeLocalM17(b, h), ...makeLocalM18(b, h), ...makeLocalM19(b, h), ...makeLocalM20(b, h), ...makeLocalM21(b, h), ...makeLocalM22(b, h), ...makeLocalM23(b, h), ...makeLocalM24(b, h), ...makeLocalM25(b, h), ...makeLocalM26(b, h), ...makeLocalM27(b, h) };
+  return { ...makeLocalM04(b, h), ...makeLocalM07(b, h), ...makeLocalM17(b, h), ...makeLocalM18(b, h), ...makeLocalM19(b, h), ...makeLocalM20(b, h), ...makeLocalM21(b, h), ...makeLocalM22(b, h), ...makeLocalM23(b, h), ...makeLocalM24(b, h), ...makeLocalM25(b, h), ...makeLocalM26(b, h), ...makeLocalM27(b, h) };
 }
