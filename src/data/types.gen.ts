@@ -1468,6 +1468,112 @@ export interface MentoringPrivateNotesRow {
   note: string;
   updated_at: string;
 }
+export interface SimObjectivesRow {
+  id: string;
+  code: string;
+  title_en: string;
+  title_ar: string;
+  category: 'normal' | 'abnormal' | 'emergency' | 'severe_accident' | 'team';
+  competency_id: string;
+  programmes: string[];
+  active: boolean;
+  sort: number;
+  sources: any;
+}
+export interface SimScenariosRow {
+  id: string;
+  code: string;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  events_en: string;
+  events_ar: string;
+  category: 'normal' | 'abnormal' | 'emergency' | 'severe_accident';
+  purpose: 'training';
+  objective_ids: string[];
+  competency_ids: string[];
+  positions: string[];
+  duration_min: number;
+  fidelity: 'full_scope' | 'limited_scope' | 'desktop';
+  programmes: string[];
+  status: 'draft' | 'in_review' | 'approved' | 'retired';
+  revision: number;
+  author_person_id?: string | null;
+  last_edited_by?: string | null;
+  submitted_at?: string | null;
+  approved_by?: string | null;
+  approved_at?: string | null;
+  review_note?: string | null;
+  last_run_on?: string | null;
+  run_count: number;
+  history: any;
+  sources: any;
+  created_at: string;
+  updated_at: string;
+}
+export interface SimCyclesRow {
+  id: string;
+  programme: 'coct' | 'loct';
+  label_en: string;
+  label_ar: string;
+  starts_on: string;
+  ends_on: string;
+  segments: number;
+  requirements: any;
+  required_competency_ids: string[];
+  status: 'draft' | 'submitted' | 'approved' | 'closed';
+  planned_by?: string | null;
+  planned_at?: string | null;
+  approved_by?: string | null;
+  approved_at?: string | null;
+  gap_note?: string | null;
+  sources: any;
+}
+export interface SimCycleItemsRow {
+  id: string;
+  cycle_id: string;
+  scenario_id: string;
+  segment: number;
+  active: boolean;
+  added_by?: string | null;
+  added_at: string;
+}
+export interface CrewDebriefsRow {
+  id: string;
+  slot_id: string;
+  scenario_id: string;
+  cycle_id?: string | null;
+  crew: string;
+  simulator: string;
+  held_on: string;
+  instructor_person_id: string;
+  ratings: any;
+  self_ratings?: any | null;
+  strengths_en?: string | null;
+  strengths_ar?: string | null;
+  improvements_en?: string | null;
+  improvements_ar?: string | null;
+  critique_en?: string | null;
+  critique_ar?: string | null;
+  present_count: number;
+  absent_count: number;
+  evidence_count: number;
+  xapi: any;
+  recorded_at: string;
+  source: 'kafaa' | 'import';
+}
+export interface CrewDebriefMembersRow {
+  id: string;
+  debrief_id: string;
+  person_id: string;
+  crew: string;
+  position: 'ss' | 'sro' | 'ro' | 'sta' | 'lo';
+  present: boolean;
+  scenario_id: string;
+  held_on: string;
+  evidence_ids: string[];
+}
 export interface ExternalCoverRow {
   id: string;
   period: string;
@@ -2670,6 +2776,12 @@ export interface Tables {
   mentoring_agreements: MentoringAgreementsRow;
   mentoring_sessions: MentoringSessionsRow;
   mentoring_private_notes: MentoringPrivateNotesRow;
+  sim_objectives: SimObjectivesRow;
+  sim_scenarios: SimScenariosRow;
+  sim_cycles: SimCyclesRow;
+  sim_cycle_items: SimCycleItemsRow;
+  crew_debriefs: CrewDebriefsRow;
+  crew_debrief_members: CrewDebriefMembersRow;
   external_cover: ExternalCoverRow;
   handover_cohorts: HandoverCohortsRow;
   engine_cards: EngineCardsRow;

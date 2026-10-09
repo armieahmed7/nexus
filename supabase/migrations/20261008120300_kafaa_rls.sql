@@ -1196,6 +1196,53 @@ create policy kafaa_read on kafaa_mentoring_private_notes for select to anon, au
 grant select on kafaa_mentoring_private_notes to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- sim_objectives
+alter table kafaa_sim_objectives enable row level security;
+drop policy if exists kafaa_read on kafaa_sim_objectives;
+create policy kafaa_read on kafaa_sim_objectives for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, true)
+    or kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_sim_objectives to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- sim_scenarios
+alter table kafaa_sim_scenarios enable row level security;
+drop policy if exists kafaa_read on kafaa_sim_scenarios;
+create policy kafaa_read on kafaa_sim_scenarios for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true)
+    or kafaa_rule_read('training', null::text, null::text, true));
+grant select on kafaa_sim_scenarios to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- sim_cycles
+alter table kafaa_sim_cycles enable row level security;
+drop policy if exists kafaa_read on kafaa_sim_cycles;
+create policy kafaa_read on kafaa_sim_cycles for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true)
+    or kafaa_rule_read('training', null::text, null::text, true));
+grant select on kafaa_sim_cycles to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- sim_cycle_items
+alter table kafaa_sim_cycle_items enable row level security;
+drop policy if exists kafaa_read on kafaa_sim_cycle_items;
+create policy kafaa_read on kafaa_sim_cycle_items for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true)
+    or kafaa_rule_read('training', null::text, null::text, true));
+grant select on kafaa_sim_cycle_items to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- crew_debriefs
+alter table kafaa_crew_debriefs enable row level security;
+drop policy if exists kafaa_read on kafaa_crew_debriefs;
+create policy kafaa_read on kafaa_crew_debriefs for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_crew_debriefs to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- crew_debrief_members
+alter table kafaa_crew_debrief_members enable row level security;
+drop policy if exists kafaa_read on kafaa_crew_debrief_members;
+create policy kafaa_read on kafaa_crew_debrief_members for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true)
+    or kafaa_rule_read('skills_profile', person_id, null::text, true));
+grant select on kafaa_crew_debrief_members to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- external_cover
 alter table kafaa_external_cover enable row level security;
 drop policy if exists kafaa_read on kafaa_external_cover;

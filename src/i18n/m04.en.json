@@ -56,6 +56,18 @@
     "my-mentoring-programme": {
       "title": "Mentoring programme",
       "purpose": "Programme dashboard for the training manager (aggregates only) and subject-matter expert nominations for line managers."
+    },
+    "training-sim-scenarios": {
+      "title": "Simulator scenarios",
+      "purpose": "Training scenario library, COCT/LOCT cycle coverage and crew debriefs"
+    },
+    "training-sim-scenario": {
+      "title": "Simulator scenario",
+      "purpose": "One training scenario: objectives, competencies, cycles, revisions and debriefs"
+    },
+    "my-simulator": {
+      "title": "My simulator debriefs",
+      "purpose": "Crew debriefs from my simulator sessions and the skills evidence they added"
     }
   },
   "common": {
@@ -772,7 +784,12 @@
     "sme": "Manager-nominated subject-matter expert in {skills}",
     "khnp_paired": "Works alongside a KHNP counterpart: good for Handover 2030 knowledge transfer",
     "capacity": "{n} of {cap} mentoring places free",
-    "capacity_full": "No free places right now ({cap} in use)"
+    "capacity_full": "No free places right now ({cap} in use)",
+    "scn_missing": "Trains {objective}, which no planned scenario covers yet",
+    "scn_under": "Trains {objective}: planned {planned} of {min} times",
+    "scn_comp": "Exercises {competency}, a required competency not covered yet",
+    "scn_category": "Adds {category}, a category missing from the cycle",
+    "scn_duration": "Takes {minutes} minutes of simulator time"
   },
   "mtr": {
     "intro": "Find a mentor who has the skills you need, agree goals together, log your sessions and close out with both of you rating what you achieved.",
@@ -1021,5 +1038,274 @@
     "withdrawConsequence": "{name} stops being a subject-matter expert mentor. Validations already made stay on record.",
     "smeSkills": "Nominated skills",
     "smeSkillsHint": "Leave all unticked to cover every skill the mentor offers."
+  },
+  "scn": {
+    "intro": "Training scenarios for the full-scope simulators: what each one trains, which crew positions and competencies it exercises, where it sits in the COCT and LOCT cycles, and how crews performed in the debrief.",
+    "rule": {
+      "title": "Training scenarios only",
+      "body": "Kafa'a stores scenario metadata for training. Exam scenarios are managed outside Kafa'a and cannot be created here, and every text is checked: no exam material, no security or safeguards content, and malfunctions stay generic (no equipment tags, setpoints or malfunction codes)."
+    },
+    "tiles": {
+      "approved": "Approved scenarios",
+      "approvedSub": "of {n} in the library",
+      "review": "Awaiting review",
+      "reviewSub": "Training manager approval (not by the author)",
+      "coverage": "Current cycle coverage",
+      "coverageSub": "{cycle}: {gaps} required objectives not fully covered",
+      "debriefs": "Crew debriefs",
+      "debriefsSub": "{n} recorded in Kafa'a"
+    },
+    "tab": {
+      "library": "Scenario library",
+      "planner": "Cycle planner",
+      "debriefs": "Crew debriefs",
+      "insights": "Team insights"
+    },
+    "tab2": {
+      "label": "Scenarios and debriefs",
+      "pending": "Awaiting debrief",
+      "pendingSub": "Booked crew slots that have run",
+      "last": "Latest: {date}",
+      "awaiting": "Crew slots awaiting a debrief",
+      "open": "Open the scenario library",
+      "none": "Every crew slot that has run has a debrief."
+    },
+    "cat": {
+      "normal": "Normal evolution",
+      "abnormal": "Abnormal",
+      "emergency": "Emergency",
+      "severe_accident": "Severe accident",
+      "team": "Team skills"
+    },
+    "pos": {
+      "ss": "Shift supervisor",
+      "sro": "Senior reactor operator",
+      "ro": "Reactor operator",
+      "sta": "Shift technical advisor",
+      "lo": "Local operator"
+    },
+    "fid": {
+      "full_scope": "Full-scope simulator",
+      "limited_scope": "Limited-scope simulator",
+      "desktop": "Desktop simulator"
+    },
+    "prog": {
+      "coct": "COCT",
+      "loct": "LOCT"
+    },
+    "st": {
+      "draft": "Draft",
+      "in_review": "In review",
+      "approved": "Approved",
+      "retired": "Retired",
+      "submitted": "Submitted",
+      "closed": "Closed"
+    },
+    "dim": {
+      "communication": "Communication",
+      "procedure_use": "Procedure use",
+      "diagnosis": "Diagnosis",
+      "leadership": "Leadership"
+    },
+    "cover": {
+      "covered": "Covered",
+      "under": "Under-covered",
+      "missing": "Not covered"
+    },
+    "minutes": "{n} min",
+    "revShort": "rev {n}",
+    "f": {
+      "code": "Code",
+      "title": "Scenario",
+      "category": "Category",
+      "objectives": "Training objectives",
+      "objective": "Required objective",
+      "competencies": "Competencies",
+      "positions": "Crew positions",
+      "duration": "Duration",
+      "fidelity": "Simulator fidelity",
+      "programmes": "Programmes",
+      "lastRun": "Last run"
+    },
+    "lib": {
+      "queue": "Review queue ({n})",
+      "byRev": "Revision {n} by {who}",
+      "approve": "Approve",
+      "return": "Return",
+      "ownRevision": "You edited this revision, so someone else must approve it",
+      "new": "New scenario",
+      "approveTitle": "Approve {code}",
+      "approveBody": "The scenario becomes available for cycle plans and debriefs. The approval is recorded in the audit log and the evidence ledger.",
+      "returnTitle": "Return {code} to its author",
+      "returnBody": "The scenario goes back to draft with your reason (at least 10 characters).",
+      "reason": "Reason"
+    },
+    "edit": {
+      "titleNew": "New training scenario",
+      "titleEdit": "Edit {code}",
+      "purposeTitle": "Purpose: training",
+      "purposeBody": "Exam scenarios cannot be created in Kafa'a. Keep malfunctions generic: describe what the crew faces, not equipment tags, setpoints or malfunction codes.",
+      "revisionTitle": "This creates a new revision",
+      "revisionBody": "Saving an approved scenario creates revision {n}, which needs the training manager's approval again.",
+      "titleEn": "Title (English)",
+      "titleAr": "Title (Arabic)",
+      "summaryEn": "Summary (English)",
+      "summaryAr": "Summary (Arabic)",
+      "eventsEn": "Generic malfunctions (English)",
+      "eventsAr": "Generic malfunctions (Arabic)",
+      "eventsHint": "For example: \"one standby pump does not start automatically\"",
+      "durationHint": "30 to 480 minutes, in steps of 15",
+      "picked": "{n} picked",
+      "compHint": "Competencies of the chosen objectives are included automatically; add others the scenario exercises.",
+      "saveDraft": "Save draft",
+      "submit": "Submit for review"
+    },
+    "issue": {
+      "title": "This text cannot be saved",
+      "exam_content": "It reads like exam material. Exam scenarios are managed outside Kafa'a.",
+      "security_content": "It mentions security, safeguards or cyber content, which is not allowed in simulator scenarios.",
+      "specific_content": "It contains plant specifics (an equipment tag, a setpoint or a malfunction code). Describe the malfunction generically."
+    },
+    "plan": {
+      "cycle": "Cycle",
+      "dates": "Dates",
+      "segments": "Segments",
+      "segmentsN": "{n} segments, {h} simulator hours per crew each",
+      "plannedBy": "Planned by",
+      "approvedBy": "Approved by",
+      "gapNote": "Approved with coverage gaps",
+      "coverage": "Objective coverage",
+      "coverageSub": "{covered} of {required} required objectives",
+      "underSub": "Planned fewer times than required",
+      "missingSub": "Required but in no planned scenario",
+      "runs": "Runs",
+      "runsSub": "Debriefed runs; {n} scenarios planned",
+      "board": "Segment plan",
+      "reset": "Undo changes",
+      "save": "Save plan",
+      "submit": "Submit for approval",
+      "approve": "Approve cycle",
+      "dirty": "Unsaved changes: the coverage below already reflects them.",
+      "segmentOf": "Segment {n} · from {date}",
+      "remove": "Remove {code}",
+      "emptySegment": "No scenario planned yet",
+      "addTo": "Add to segment {n}",
+      "addToN": "Add to segment {n}",
+      "matrix": "Coverage matrix",
+      "matrixHint": "Dots mark the segments that train an objective",
+      "plannedMin": "Planned / required",
+      "inSegment": "Planned in segment {n}",
+      "suggest": "Scenarios that close the gaps",
+      "noSuggest": "No approved scenario would close a remaining gap.",
+      "competencies": "Competency coverage",
+      "categories": "Category balance",
+      "categoryGap": "No scenario planned for: {list}",
+      "saveBody": "Save {n} planned scenarios as a draft ({gaps} coverage gaps).",
+      "submitBody": "Submit {n} planned scenarios to the training manager ({gaps} coverage gaps).",
+      "approveBody": "Every required objective is covered. The approval is recorded in the evidence ledger.",
+      "approveGaps": "{gaps} required objectives are not fully covered. Give a reason (at least 10 characters) to approve with gaps.",
+      "gapReason": "Why approve with gaps"
+    },
+    "deb": {
+      "intro": "Structured debriefs after each simulator scenario: the instructor rates the crew's team competencies, the crew rates itself and records its own critique. Crew members marked present get skills evidence (evidenced, never verified).",
+      "new": "Record a debrief",
+      "pendingTitle": "{n} crew slots have run without a debrief",
+      "pendingBody": "Record the debrief while it is fresh: it feeds each crew member's skills passport.",
+      "empty": "No debriefs yet.",
+      "scenario": "Scenario",
+      "instructor": "Instructor",
+      "self": "Crew self-rating",
+      "present": "Present",
+      "absent": "Absent",
+      "mean": "Team rating",
+      "meanN": "team {n} / 5",
+      "source": "Record",
+      "imported": "Imported history",
+      "importHint": "Imported from the training records system before debriefs were captured in Kafa'a; no skills evidence",
+      "recorded": "Recorded in Kafa'a · {n} evidence",
+      "evidenceN": "{n} evidence rows",
+      "crewList": "Crew",
+      "strengths": "Strengths",
+      "improvements": "To improve",
+      "critique": "Crew self-critique",
+      "critiqueHint": "In the crew's own words",
+      "formTitle": "Record a crew debrief",
+      "noSlotsTitle": "No crew slot to debrief",
+      "noSlots": "Debriefs are recorded for booked crew slots that have started.",
+      "slot": "Simulator slot",
+      "cycleAuto": "Counts towards {cycle}",
+      "cycleNone": "Not part of a planned cycle",
+      "attendance": "Crew {crew}: who was present",
+      "attendanceHint": "Only the crew booked in this slot can be named. Absent members get no evidence.",
+      "instructorRatings": "Instructor ratings (1 to 5)",
+      "withSelf": "Record the crew's self-ratings",
+      "preview": "{n} skills evidence rows will be written for the {people} crew members present (none for {absent} absent). Ratings of 3 or more count; never 'verified'.",
+      "record": "Record debrief",
+      "confirmTitle": "Record this debrief?",
+      "confirmBody": "This writes skills evidence for {people} crew members ({n} rows) and records the debrief in the audit log and the evidence ledger.",
+      "saved": "Debrief recorded: {n} skills evidence rows written"
+    },
+    "ins": {
+      "title": "Team-level ratings",
+      "body": "Ratings describe the crew as a team, never one person. Use them to plan the next segment's focus, not to rank people.",
+      "heat": "Instructor rating by crew and team competency",
+      "gap": "Self-rating minus instructor rating",
+      "gapHint": "Positive: the crew rates itself higher than the instructor does.",
+      "trend": "Team competency trend (all crews, by quarter)"
+    },
+    "detail": {
+      "notFound": "Scenario not found",
+      "back": "Back to the library",
+      "revise": "Revise",
+      "edit": "Edit",
+      "retire": "Retire",
+      "trainingOnly": "Training only",
+      "reviewNote": "Review note",
+      "summary": "What the crew faces",
+      "events": "Generic malfunctions",
+      "runs": "Runs ({n})",
+      "noRuns": "Not run yet.",
+      "facts": "Facts",
+      "runCount": "Runs",
+      "author": "Author",
+      "approvedBy": "Approved by",
+      "cycles": "Planned in",
+      "noCycles": "Not in any cycle plan.",
+      "segmentsList": "segments {list}",
+      "history": "Revision history",
+      "approveTitle": "Approve {code}",
+      "approveBody": "The scenario becomes available for cycle plans and debriefs.",
+      "returnTitle": "Return {code}",
+      "returnBody": "The scenario goes back to draft with your reason (at least 10 characters).",
+      "retireTitle": "Retire {code}",
+      "retireBody": "A retired scenario stays in the history but cannot be planned, run or changed. Give a reason (at least 10 characters)."
+    },
+    "hist": {
+      "created": "Created (rev {n})",
+      "edited": "Edited (rev {n})",
+      "revised": "Revised (rev {n})",
+      "approve": "Approved (rev {n})",
+      "return": "Returned to draft (rev {n})",
+      "retire": "Retired (rev {n})"
+    },
+    "my": {
+      "intro": "Debriefs from your crew's simulator sessions: how the instructor rated the crew's teamwork, how the crew rated itself, and what it added to your skills passport.",
+      "ruleTitle": "How debriefs feed your passport",
+      "ruleBody": "When an instructor records a debrief in Kafa'a, each team competency rated 3 or more adds 'evidenced' skills evidence for the crew members present. It is never 'verified': qualification stays with the licensee's records.",
+      "passport": "Open my skills passport",
+      "sessions": "My sessions",
+      "sessionsSub": "present at {n}",
+      "strongest": "Crew strength",
+      "focus": "Crew focus",
+      "avg": "average {n} / 5",
+      "evidence": "Evidence added",
+      "evidenceSub": "From debriefs recorded in Kafa'a",
+      "mine": "My debriefs",
+      "scope": "Crews in my scope ({n})",
+      "open": "Details",
+      "addedEvidence": "Added {n} evidence rows to your skills passport",
+      "emptyTitle": "No simulator debriefs yet",
+      "empty": "Debriefs appear here after a simulator session your crew attended."
+    }
   }
 }

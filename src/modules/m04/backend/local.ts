@@ -15,6 +15,7 @@ import {
   type AgreementLite, type Goal, type MentoringCode, type MentorRowLite, type Rating, type SkillLite,
 } from '../mentoring';
 import type { CloseOutResult, M04Rpc, SmeNominee } from './rpc';
+import { makeLocalM04Sim } from './simulator.local'; // W4E3 (F28)
 
 type Row = Record<string, any>;
 
@@ -32,6 +33,7 @@ export function makeLocalM04(b: LocalBackend, h: LocalRpcHelpers): M04Rpc {
   const party = (a: Row | undefined, who: string) => !!a && (a.person_id === who || a.mentor_person_id === who);
 
   return {
+    ...makeLocalM04Sim(b, h), // W4E3 (F28) simulator scenario library
     async requestMentoring(input) {
       await b.whenReady();
       type R = { id: string };
