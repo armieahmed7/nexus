@@ -20,6 +20,7 @@ import {
   qualifyingSet, reinstateObservation, scoreObservation, sessionHours, standardSkills, validateHours, validateNomination, validateObservation, type ObsRow,
 } from '../instructors';
 import type { M02Rpc } from './rpc';
+import { makeLocalM02Ojt } from './local.ojt'; // W5 · E1 (F38 OJT logbook)
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 const rid = (p: string) => `${p}-${Array.from(crypto.getRandomValues(new Uint8Array(12)), (x) => x.toString(16).padStart(2, '0')).join('')}`;
@@ -64,6 +65,7 @@ export function makeLocalM02(b: LocalBackend, h: LocalRpcHelpers): M02Rpc {
   };
 
   return {
+    ...makeLocalM02Ojt(b, h),
     async nominateInstructor(p) {
       await b.whenReady();
       type R = { id: string; status: string };

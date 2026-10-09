@@ -18,5 +18,15 @@ export function makeSupabaseM17(x: SupabaseExtCtx): M17Rpc {
     checkinCalibration: (g) => x.rpc('kafaa_checkin_calibration', { p_group: g }),
     teamCoverage: (g) => x.rpc('kafaa_team_coverage', { p_group: g }),
     setTeamTarget: (i) => x.call('kafaa_set_team_target', { p: i }, ['team_skill_targets']),
+    // W5 · w5e1 · F32 (supabase/migrations/20261009151001_kafaa_w5e1_microcred_ojt.sql)
+    microcredEligibility: (personId, code) => x.rpc('kafaa_microcred_eligibility', { p_person: personId ?? null, p_code: code ?? null }),
+    awardMicrocred: (code) => x.call('kafaa_award_microcred', { p_code: code }, ['microcred_awards', 'skill_evidence', 'person_skills', 'notifications']),
+    decideMicrocredAward: (id, decision, note) => x.call('kafaa_decide_microcred_award', { p_award: id, p_decision: decision, p_note: note }, ['microcred_awards', 'skill_evidence', 'person_skills', 'notifications']),
+    revokeMicrocred: (id, reason) => x.call('kafaa_revoke_microcred', { p_award: id, p_reason: reason }, ['microcred_awards', 'skill_evidence', 'person_skills']),
+    verifyMicrocred: (slug) => x.call('kafaa_verify_microcred', { p_slug: slug }, ['audit_events']),
+    saveMicrocredDef: (input) => x.call('kafaa_save_microcred_def', { p: input }, ['microcred_defs']),
+    setMicrocredDefStatus: (id, status, note) => x.call('kafaa_set_microcred_def_status', { p_def: id, p_status: status, p_note: note ?? null }, ['microcred_defs']),
+    microcredSweep: () => x.call('kafaa_microcred_sweep', {}, ['notifications']),
+    microcredStats: () => x.rpc('kafaa_microcred_stats'),
   };
 }

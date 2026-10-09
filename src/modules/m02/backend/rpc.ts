@@ -2,6 +2,9 @@
 // Every RPC exists three times and they must agree: this signature, backend/local.ts and SQL kafaa_<name> (+ backend/supabase.ts).
 import type { Result } from '../../../data/types';
 import type { HoursInput, NominationInput, ObservationInput } from '../instructors';
+import type { AckInput, LogInput, Readiness } from '../ojt'; // W5 · E1 (F38)
+
+export interface PreceptorCard { id: string; name_en: string; name_ar: string; job_role_id: string | null; same_team: boolean; evaluator: boolean }
 
 export interface M02Rpc {
   /** F31: nominate an SME for the instructor track: yourself (volunteer), a person in your team (line manager or qual_records Scope) or anyone (training manager, sat A). */
@@ -20,4 +23,15 @@ export interface M02Rpc {
   syncTeachingHours(personId: string | null): Promise<Result<{ added: number; hours: number }>>;
   /** F31: close a track (the person or the training manager); a qualified instructor's evaluator rows end today. */
   withdrawInstructorTrack(trackId: string, note: string): Promise<Result<{ id: string; status: string }>>;
+  // W5 · E1 · F38 OJT practice logbook (SQL: supabase/migrations/20261009151001_kafaa_w5e1_microcred_ojt.sql; rules: src/modules/m02/ojt.ts)
+  /** F38: log a practice of a qualification task (own). Idempotent by client_key (offline re-sync records once). Never changes a qualification record. Refused for security-restricted tasks. */
+  logPractice(input: LogInput): Promise<Result<{ id: string; duplicate: boolean; status: string }>>;
+  /** F38: the preceptor named on an entry acknowledges it (feedback, "ready for evaluation") or returns it. */
+  ackPractice(input: AckInput): Promise<Result<{ id: string; status: string; readiness: Readiness }>>;
+  /** F38: hand a ready task to a qualified evaluator (own; a qualification record on the standard is needed). */
+  requestEvaluation(taskId: string, evaluatorId: string, note?: string | null): Promise<Result<{ id: string }>>;
+  /** F38: close a request: the evaluator completes it after signing the task off in M02 (or declines it); the trainee cancels it. */
+  closeEvaluationRequest(requestId: string, action: 'complete' | 'decline' | 'cancel', note?: string | null): Promise<Result<{ id: string; status: string; evaluation_id: string | null; result: string | null }>>;
+  /** F38: who can precept (or evaluate) a task for me (read): qualified on the standard or an evaluator for it. */
+  ojtPreceptors(taskId: string): Promise<PreceptorCard[]>;
 }

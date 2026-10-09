@@ -10,7 +10,10 @@ import { useT, useLang, useFormat, L } from '../../i18n';
 import { verifyCredential, ISSUER_KEYS, NOTICE_AR, NOTICE_EN, type CredentialCheck } from './issuer';
 import { BadgeMedal, BadgeStatusPill } from './ui';
 import { SignatureChip, issuerKeyUrl } from './WalletPage';
-import type { BadgeCheck } from './backend/rpc';
+import type { BadgeCheck, MicrocredCheck } from './backend/rpc';
+import { McStatusPill } from './mcUi'; // W5E1 (F32)
+
+export const isMicrocredSlug = (slug: string) => /^mc[0-9a-f]{6,}$/.test(slug);
 
 type Cred = Record<string, any>;
 
@@ -37,10 +40,12 @@ export default function VerifyBadgePage() {
 function Lookup({ slug }: { slug: string }) {
   const t = useT();
   const repo = useRepo();
-  const [res, setRes] = useState<Result<BadgeCheck> | null>(null);
+  const [res, setRes] = useState<Result<BadgeCheck & Pick<MicrocredCheck, 'components'>> | null>(null);
   useEffect(() => {
     let live = true;
-    repo.rpc.verifyBadge(slug).then((r) => live && setRes(r), (e: unknown) => live && setRes({ ok: false, code: 'error', message: e instanceof Error ? e.message : String(e) }));
+    // W5E1 (F32): micro-credential share links start with "mc" and are checked against the micro-credential register
+    const look = isMicrocredSlug(slug) ? repo.rpc.verifyMicrocred(slug) : repo.rpc.verifyBadge(slug);
+    (look as Promise<Result<BadgeCheck & Pick<MicrocredCheck, 'components'>>>).then((r) => live && setRes(r), (e: unknown) => live && setRes({ ok: false, code: 'error', message: e instanceof Error ? e.message : String(e) }));
     return () => { live = false; };
   }, [repo, slug]);
   if (!res) return <Skeleton lines={5} />;
@@ -50,7 +55,12 @@ function Lookup({ slug }: { slug: string }) {
         <span data-testid="m17-verify-result" data-outcome={res.code}>{res.code === 'rate_limited' ? res.message : t('m17.verify.notFoundBody')}</span>
       </Callout>
     );
-  return <CredentialCard cred={res.data.credential as Cred} status={res.data.status ?? 'active'} check={verifyCredential(res.data.credential)} checkedOn={res.data.checked_on} />;
+  return (
+    <>
+      <CredentialCard cred={res.data.credential as Cred} status={res.data.status ?? 'active'} check={verifyCredential(res.data.credential)} checkedOn={res.data.checked_on} />
+      {res.data.components && res.data.components.length > 0 && <McComponents parts={res.data.components} />}
+    </>
+  );
 }
 
 export function CredentialCard({ cred, status, check, checkedOn }: { cred: Cred; status: string | null; check: CredentialCheck; checkedOn?: string }) {
@@ -69,7 +79,7 @@ export function CredentialCard({ cred, status, check, checkedOn }: { cred: Cred;
       <div className="flex flex-col gap-4 p-4 sm:flex-row" data-testid="m17-verify-result" data-outcome={check.outcome} data-status={status ?? ''}>
         <BadgeMedal code={String(a.humanCode ?? '')} status={ok ? (status ?? 'active') : 'revoked'} size={88} />
         <div className="min-w-0 flex-1 space-y-2">
-          <div className="caps">{t(`m17.badge.kind.${a.achievementType === 'Certificate' ? 'certificate' : 'completion'}`)} · {String(a.humanCode ?? '')}</div>
+          <div className="caps">{t(`m17.badge.kind.${a.achievementType === 'Certificate' ? 'certificate' : a.achievementType === 'MicroCredential' ? 'microcredential' : 'completion'}`)} · {String(a.humanCode ?? '')}</div>
           <div className="text-[18px] font-semibold leading-snug">{lang === 'ar' ? a.nameAr ?? a.name : a.name}</div>
           <div className="flex flex-wrap items-center gap-1.5">
             {status && <BadgeStatusPill status={status} />}
@@ -120,7 +130,7 @@ export function CheckFile() {
     const check = verifyCredential(cred);
     let status: string | null = null;
     if (check.outcome === 'valid' && check.slug) {
-      const r = await repo.rpc.verifyBadge(check.slug).catch(() => null);
+      const r = await (isMicrocredSlug(check.slug) ? repo.rpc.verifyMicrocred(check.slug) : repo.rpc.verifyBadge(check.slug)).catch(() => null);
       status = r?.ok ? r.data?.status ?? null : r?.code === 'not_found' ? 'unknown' : null;
     }
     setOut({ cred, check, status });
@@ -148,6 +158,24 @@ export function CheckFile() {
         </div>
         <p className="text-[12px] text-ink-3">{t('m17.verify.privacy')} <L to="/verify">{t('m17.verify.certLink')}</L></p>
       </div>
+    </Card>
+  );
+}
+
+/** W5E1 (F32): components of a stacked micro-credential, each with its own status and verify link (no person data). */
+function McComponents({ parts }: { parts: NonNullable<MicrocredCheck['components']> }) {
+  const t = useT();
+  const lang = useLang();
+  return (
+    <Card title={t('m17.mc.verifyParts')}>
+      <ul className="divide-y divide-line" data-testid="m17-verify-parts">
+        {parts.map((p) => (
+          <li key={p.code + (p.slug ?? '')} className="flex flex-wrap items-center justify-between gap-2 py-2 text-[13px]">
+            <span><span className="num">{p.code}</span> · {lang === 'ar' ? p.title_ar || p.title_en : p.title_en}</span>
+            <span className="flex items-center gap-2"><McStatusPill status={p.status} />{p.slug && <L to={`/verify/badge/${p.slug}`}>{t('m17.mc.verifyLink')}</L>}</span>
+          </li>
+        ))}
+      </ul>
     </Card>
   );
 }

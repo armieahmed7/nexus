@@ -44,6 +44,14 @@
     "team-instructors": {
       "title": "Grow instructors",
       "purpose": "Find subject-matter experts in your team and nominate them for the instructor track."
+    },
+    "my-ojt": {
+      "title": "OJT practice logbook",
+      "purpose": "Log supervised practice on your qualification tasks, get preceptor feedback and ask for an evaluation when you are ready."
+    },
+    "team-ojt": {
+      "title": "Team practice readiness",
+      "purpose": "See how the people you support are practising their qualification tasks and who is ready for evaluation."
     }
   },
   "status": {
@@ -364,7 +372,12 @@
     "ins_sme_profile": "Has a subject-matter expert profile in the knowledge capture studio",
     "ins_sme_mentor": "Nominated as an SME mentor (Mentoring 2.0)",
     "ins_tenure": "{years} years of service",
-    "ins_obs": "{kind} observed by {name}: {score}% on {date}"
+    "ins_obs": "{kind} observed by {name}: {score}% on {date}",
+    "ojt_supervised": "{n} supervised performances acknowledged ({needed} needed)",
+    "ojt_ready_ack": "Preceptor marked ready on {date}",
+    "ojt_no_ready": "No preceptor has marked this task ready yet",
+    "ojt_pending": "{n} entries waiting for the preceptor",
+    "ojt_not_signoff": "Practice is not a sign-off: only an evaluator's sign-off changes the qualification"
   },
   "ins": {
     "eyebrow": "Instructor and SME pipeline",
@@ -646,6 +659,158 @@
       "find": "Find SMEs in my team",
       "findIntro": "Ranked from the skills profile, SME profiles and SME mentor nominations. No personal attributes are used.",
       "how": "Your nomination goes to the training manager. Accepted candidates take the instructor initial training, co-teach twice and deliver solo before they qualify."
+    }
+  },
+  "ojt": {
+    "eyebrow": "Qualification · Practice",
+    "intro": "Record each practice of a qualification task with the preceptor who watched you. When you have enough supervised performances and your preceptor says you are ready, ask an evaluator to sign the task off.",
+    "noticeTitle": "Practice, not a sign-off",
+    "notice": "Logbook entries and preceptor acknowledgements are practice records. They never change your qualification status: only an evaluator's sign-off in the qualification record does.",
+    "mode": {
+      "walkthrough": "Walk-through",
+      "simulate": "Simulated",
+      "perform": "Performed"
+    },
+    "modeHint": {
+      "walkthrough": "talked through the steps with the preceptor",
+      "simulate": "practised on the simulator or a mock-up",
+      "perform": "performed the task under supervision"
+    },
+    "status": {
+      "pending_ack": "Waiting for preceptor",
+      "acknowledged": "Acknowledged",
+      "returned": "Returned"
+    },
+    "reqStatus": {
+      "requested": "Requested",
+      "completed": "Evaluated",
+      "declined": "Declined",
+      "cancelled": "Cancelled"
+    },
+    "result": {
+      "pass": "Pass",
+      "fail": "Not yet"
+    },
+    "conf": {
+      "1": "1 · Not confident",
+      "2": "2 · Needed a lot of help",
+      "3": "3 · Needed some help",
+      "4": "4 · Mostly on my own",
+      "5": "5 · Confident on my own"
+    },
+    "supervised": "Supervised",
+    "readyYes": "Ready for evaluation",
+    "readyPreceptor": "Preceptor says ready",
+    "readyNo": "Keep practising",
+    "tab": {
+      "practice": "My practice",
+      "acknowledge": "To acknowledge",
+      "evaluate": "To evaluate"
+    },
+    "tile": {
+      "entries": "Entries",
+      "entriesSub": "{n} in the last 30 days",
+      "pending": "Waiting for preceptor",
+      "pendingSub": "Acknowledgement pending",
+      "ready": "Tasks ready",
+      "readySub": "Enough supervised practice",
+      "requests": "Evaluations requested",
+      "requestsSub": "With an evaluator"
+    },
+    "standards": "Qualification standards",
+    "toQuals": "My qualifications",
+    "critical": "Critical task",
+    "log": "Log practice",
+    "logTitle": "Log practice",
+    "save": "Save entry",
+    "date": "Date",
+    "dateHint": "Up to 180 days back, never in the future.",
+    "preceptor": "Preceptor",
+    "choosePreceptor": "Choose the preceptor who watched",
+    "noPreceptor": "No qualified preceptor for this task",
+    "preceptorHint": "Someone qualified on this standard, not yourself.",
+    "sameTeam": "your team",
+    "evaluator": "evaluator",
+    "conditions": "How you practised",
+    "confidence": "Your confidence",
+    "where": "Where and when",
+    "whereHint": "For example: Unit 2 turbine hall, night shift.",
+    "note": "Note",
+    "noteHint": "What went well, what to work on (up to 500 characters).",
+    "request": "Request evaluation",
+    "requestBody": "The evaluator receives your practice record and readiness. Their sign-off goes into your qualification record as usual.",
+    "requestSend": "Send request",
+    "requestNote": "Note",
+    "chooseEvaluator": "Choose an evaluator",
+    "noEvaluator": "No evaluator available for this task",
+    "noRecord": "You need a qualification record for this standard first.",
+    "requestOpen": "Evaluation requested from {name} on {date}.",
+    "requestDone": "Evaluated: {result}.",
+    "cancelRequest": "Cancel request",
+    "cancelBody": "The evaluator is told the request was withdrawn. Your practice entries stay.",
+    "entries": "{n} entries",
+    "readyMark": "Ready",
+    "offlineMark": "Logged offline",
+    "withPreceptor": "With {name}",
+    "confShort": "Confidence {n}/5",
+    "feedback": "Feedback",
+    "feedbackHint": "At least 3 characters. The trainee sees this.",
+    "noTasks": "No practice tasks",
+    "noTasksBody": "Practice tasks appear here when you have a qualification standard in progress or required by your role.",
+    "offlineTitle": "You are offline",
+    "offlineBody": "You can keep logging practice. Entries stay on this device and are sent once when you are back online.",
+    "queued": "{n} entries waiting to sync",
+    "syncNow": "Sync now",
+    "discard": "Discard",
+    "synced": "Synced {n}, already recorded {d}, refused {f}, still waiting {k}.",
+    "ackIntro": "Entries that name you as preceptor. Acknowledging is feedback on practice; it is not a sign-off.",
+    "ackEmpty": "Nothing to acknowledge",
+    "ackEmptyBody": "Entries that name you as preceptor appear here.",
+    "ackRecent": "Recently answered",
+    "ack": "Acknowledge",
+    "return": "Return",
+    "ackTitle": "Acknowledge practice",
+    "returnTitle": "Return entry",
+    "ackNotSignoff": "Practice, not a sign-off: your acknowledgement does not change the person's qualification.",
+    "readyCheck": "Ready for evaluation",
+    "readyHint": "Tick when you would be comfortable with an evaluator assessing this task now.",
+    "evalIntro": "Requests that name you as evaluator. Sign the task off in the qualification record; the request closes with it.",
+    "evalEmpty": "No evaluation requests",
+    "evalEmptyBody": "Requests that name you as evaluator appear here.",
+    "evalRecent": "Recently closed",
+    "evalReadiness": "{n} of {needed} supervised performances",
+    "signoff": "Evaluate and sign off",
+    "signoffTitle": "Sign off the task",
+    "signoffBody": "This is the qualification sign-off: it is recorded as an evaluation on the person's qualification record.",
+    "signoffConfirm": "Record evaluation",
+    "resultLabel": "Result",
+    "decline": "Decline",
+    "declineBody": "The person is told you declined, with your reason.",
+    "team": {
+      "intro": "Practice and readiness for the people in your scope. Read only: acknowledgements stay with the named preceptor and sign-offs with the evaluator.",
+      "people": "People practising",
+      "peopleSub": "In your scope",
+      "ready": "Tasks ready",
+      "readySub": "Enough supervised practice and a ready",
+      "pendingAck": "Waiting for preceptor",
+      "pendingAckSub": "Entries not yet acknowledged",
+      "openReq": "Evaluations requested",
+      "openReqSub": "Open requests",
+      "allStandards": "All standards",
+      "caption": "Practice readiness by person and task",
+      "col": {
+        "person": "Person",
+        "task": "Task",
+        "pending": "Pending",
+        "last": "Last practice",
+        "request": "Evaluation",
+        "why": "Why"
+      },
+      "requestedTo": "Requested from {name}",
+      "requests": "Open evaluation requests",
+      "toEvaluate": "Evaluate",
+      "empty": "No practice logged yet",
+      "emptyBody": "When people in your scope log practice, their readiness appears here."
     }
   }
 }

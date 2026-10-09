@@ -1800,6 +1800,56 @@ create table if not exists kafaa_teaching_hours (
 );
 comment on table kafaa_teaching_hours is '[M02] Instructor teaching hours (from attended M04 sessions or the scheduling-system mirror) and continuing development (F31)';
 
+-- M02 · OJT practice log entries acknowledged by a preceptor; practice, not a qualification sign-off (F38)
+create table if not exists kafaa_ojt_logs (
+  id text primary key,
+  client_key text not null unique,
+  person_id text not null,
+  person_name text not null default '',
+  person_name_ar text not null default '',
+  task_id text not null,
+  standard_id text not null,
+  on_date date not null,
+  mode text not null check (mode in ('walkthrough', 'simulate', 'perform')),
+  preceptor_person_id text not null,
+  preceptor_name text not null default '',
+  preceptor_name_ar text not null default '',
+  confidence integer not null default 3,
+  conditions text,
+  note text,
+  status text not null default 'pending_ack' check (status in ('pending_ack', 'acknowledged', 'returned')),
+  feedback text,
+  preceptor_ready boolean not null default false,
+  ack_at timestamptz,
+  synced text not null default 'online' check (synced in ('online', 'offline')),
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_ojt_logs is '[M02] OJT practice log entries acknowledged by a preceptor; practice, not a qualification sign-off (F38)';
+
+-- M02 · OJT evaluation requests: a ready task handed to a qualified evaluator (F38)
+create table if not exists kafaa_ojt_eval_requests (
+  id text primary key,
+  person_id text not null,
+  person_name text not null default '',
+  person_name_ar text not null default '',
+  task_id text not null,
+  standard_id text not null,
+  record_id text not null,
+  evaluator_person_id text not null,
+  evaluator_name text not null default '',
+  evaluator_name_ar text not null default '',
+  status text not null default 'requested' check (status in ('requested', 'completed', 'declined', 'cancelled')),
+  readiness jsonb not null default '{}'::jsonb,
+  note text,
+  requested_at timestamptz not null default now(),
+  closed_at timestamptz,
+  closed_by text,
+  close_note text,
+  evaluation_id text,
+  result text check (result in ('pass', 'fail'))
+);
+comment on table kafaa_ojt_eval_requests is '[M02] OJT evaluation requests: a ready task handed to a qualified evaluator (F38)';
+
 -- M04 · Mentoring agreement: skill goals, cadence and duration, close-out ratings (F13; the pair only)
 create table if not exists kafaa_mentoring_agreements (
   id text primary key,
@@ -2181,6 +2231,63 @@ create table if not exists kafaa_team_skill_targets (
   updated_at timestamptz not null default now()
 );
 comment on table kafaa_team_skill_targets is '[M17] Team skill coverage targets set by managers (F11)';
+
+-- M17 · Micro-credential definitions: criteria over skills evidence, validity, stacking; versioned (F32)
+create table if not exists kafaa_microcred_defs (
+  id text primary key,
+  code text not null,
+  version integer not null default 1,
+  kind text not null default 'micro' check (kind in ('micro', 'stack')),
+  area text not null,
+  level text not null default 'foundation' check (level in ('foundation', 'practitioner', 'advanced')),
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null default '',
+  summary_ar text not null default '',
+  criteria jsonb not null default '[]'::jsonb,
+  stacks_into text,
+  alignment jsonb not null default '[]'::jsonb,
+  role_ids text[] not null default '{}'::text[],
+  validity_months integer not null default 24,
+  hours integer,
+  status text not null default 'draft' check (status in ('draft', 'current', 'superseded', 'retired')),
+  effective_date date,
+  supersedes_id text,
+  change_reason text,
+  sort integer not null default 0,
+  updated_by text,
+  updated_at timestamptz not null default now(),
+  published_by text,
+  published_at timestamptz
+);
+comment on table kafaa_microcred_defs is '[M17] Micro-credential definitions: criteria over skills evidence, validity, stacking; versioned (F32)';
+
+-- M17 · Micro-credential awards with the evidence snapshot and the signed credential (F32)
+create table if not exists kafaa_microcred_awards (
+  id text primary key,
+  def_id text not null,
+  def_code text not null,
+  def_version integer not null default 1,
+  person_id text not null,
+  holder_initials text not null default '',
+  status text not null default 'pending_approval' check (status in ('pending_approval', 'awarded', 'declined', 'revoked', 'superseded')),
+  requested_at timestamptz not null default now(),
+  issued_on date,
+  valid_to date,
+  evidence jsonb not null default '[]'::jsonb,
+  component_award_ids text[] not null default '{}'::text[],
+  credential jsonb not null default '{}'::jsonb,
+  key_id text check (key_id in ('key-1', 'key-offline')),
+  public_slug text unique,
+  renewed_from text,
+  decided_by text,
+  decided_at timestamptz,
+  decision_note text,
+  revoked_at timestamptz,
+  revoke_reason text,
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_microcred_awards is '[M17] Micro-credential awards with the evidence snapshot and the signed credential (F32)';
 
 -- M18 · Career Navigator shortlist: up to three target roles per person, optionally shared with the line manager (F05)
 create table if not exists kafaa_career_targets (
@@ -3737,6 +3844,16 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_te
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_teaching_hours_track_id_fk') then alter table kafaa_teaching_hours add constraint kafaa_teaching_hours_track_id_fk foreign key (track_id) references kafaa_instructor_tracks(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_teaching_hours_session_id_fk') then alter table kafaa_teaching_hours add constraint kafaa_teaching_hours_session_id_fk foreign key (session_id) references kafaa_sessions(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_teaching_hours_course_id_fk') then alter table kafaa_teaching_hours add constraint kafaa_teaching_hours_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ojt_logs_person_id_fk') then alter table kafaa_ojt_logs add constraint kafaa_ojt_logs_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ojt_logs_task_id_fk') then alter table kafaa_ojt_logs add constraint kafaa_ojt_logs_task_id_fk foreign key (task_id) references kafaa_task_items(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ojt_logs_standard_id_fk') then alter table kafaa_ojt_logs add constraint kafaa_ojt_logs_standard_id_fk foreign key (standard_id) references kafaa_qual_standards(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ojt_logs_preceptor_person_id_fk') then alter table kafaa_ojt_logs add constraint kafaa_ojt_logs_preceptor_person_id_fk foreign key (preceptor_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ojt_eval_requests_person_id_fk') then alter table kafaa_ojt_eval_requests add constraint kafaa_ojt_eval_requests_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ojt_eval_requests_task_id_fk') then alter table kafaa_ojt_eval_requests add constraint kafaa_ojt_eval_requests_task_id_fk foreign key (task_id) references kafaa_task_items(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ojt_eval_requests_standard_id_fk') then alter table kafaa_ojt_eval_requests add constraint kafaa_ojt_eval_requests_standard_id_fk foreign key (standard_id) references kafaa_qual_standards(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ojt_eval_requests_record_id_fk') then alter table kafaa_ojt_eval_requests add constraint kafaa_ojt_eval_requests_record_id_fk foreign key (record_id) references kafaa_qual_records(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ojt_eval_requests_evaluator_person_id_fk') then alter table kafaa_ojt_eval_requests add constraint kafaa_ojt_eval_requests_evaluator_person_id_fk foreign key (evaluator_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ojt_eval_requests_evaluation_id_fk') then alter table kafaa_ojt_eval_requests add constraint kafaa_ojt_eval_requests_evaluation_id_fk foreign key (evaluation_id) references kafaa_evaluations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_mentoring_agreements_request_id_fk') then alter table kafaa_mentoring_agreements add constraint kafaa_mentoring_agreements_request_id_fk foreign key (request_id) references kafaa_mentoring_requests(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_mentoring_agreements_mentor_id_fk') then alter table kafaa_mentoring_agreements add constraint kafaa_mentoring_agreements_mentor_id_fk foreign key (mentor_id) references kafaa_mentors(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_mentoring_agreements_person_id_fk') then alter table kafaa_mentoring_agreements add constraint kafaa_mentoring_agreements_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -3782,6 +3899,8 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sk
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_ratings_rater_person_id_fk') then alter table kafaa_skill_ratings add constraint kafaa_skill_ratings_rater_person_id_fk foreign key (rater_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_ratings_skill_id_fk') then alter table kafaa_skill_ratings add constraint kafaa_skill_ratings_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_team_skill_targets_skill_id_fk') then alter table kafaa_team_skill_targets add constraint kafaa_team_skill_targets_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_microcred_awards_def_id_fk') then alter table kafaa_microcred_awards add constraint kafaa_microcred_awards_def_id_fk foreign key (def_id) references kafaa_microcred_defs(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_microcred_awards_person_id_fk') then alter table kafaa_microcred_awards add constraint kafaa_microcred_awards_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_career_targets_person_id_fk') then alter table kafaa_career_targets add constraint kafaa_career_targets_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_career_targets_role_id_fk') then alter table kafaa_career_targets add constraint kafaa_career_targets_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_roadmaps_person_id_fk') then alter table kafaa_roadmaps add constraint kafaa_roadmaps_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -4125,6 +4244,19 @@ create index if not exists kafaa_teaching_hours_track_id_idx on kafaa_teaching_h
 create index if not exists kafaa_teaching_hours_session_id_idx on kafaa_teaching_hours (session_id);
 create index if not exists kafaa_teaching_hours_course_id_idx on kafaa_teaching_hours (course_id);
 create index if not exists kafaa_teaching_hours_delivered_on_idx on kafaa_teaching_hours (delivered_on);
+create index if not exists kafaa_ojt_logs_person_id_idx on kafaa_ojt_logs (person_id);
+create index if not exists kafaa_ojt_logs_task_id_idx on kafaa_ojt_logs (task_id);
+create index if not exists kafaa_ojt_logs_standard_id_idx on kafaa_ojt_logs (standard_id);
+create index if not exists kafaa_ojt_logs_on_date_idx on kafaa_ojt_logs (on_date);
+create index if not exists kafaa_ojt_logs_preceptor_person_id_idx on kafaa_ojt_logs (preceptor_person_id);
+create index if not exists kafaa_ojt_logs_status_idx on kafaa_ojt_logs (status);
+create index if not exists kafaa_ojt_eval_requests_person_id_idx on kafaa_ojt_eval_requests (person_id);
+create index if not exists kafaa_ojt_eval_requests_task_id_idx on kafaa_ojt_eval_requests (task_id);
+create index if not exists kafaa_ojt_eval_requests_standard_id_idx on kafaa_ojt_eval_requests (standard_id);
+create index if not exists kafaa_ojt_eval_requests_record_id_idx on kafaa_ojt_eval_requests (record_id);
+create index if not exists kafaa_ojt_eval_requests_evaluator_person_id_idx on kafaa_ojt_eval_requests (evaluator_person_id);
+create index if not exists kafaa_ojt_eval_requests_status_idx on kafaa_ojt_eval_requests (status);
+create index if not exists kafaa_ojt_eval_requests_evaluation_id_idx on kafaa_ojt_eval_requests (evaluation_id);
 create index if not exists kafaa_mentoring_agreements_mentor_id_idx on kafaa_mentoring_agreements (mentor_id);
 create index if not exists kafaa_mentoring_agreements_person_id_idx on kafaa_mentoring_agreements (person_id);
 create index if not exists kafaa_mentoring_agreements_mentor_person_id_idx on kafaa_mentoring_agreements (mentor_person_id);
@@ -4191,6 +4323,13 @@ create index if not exists kafaa_skill_ratings_skill_id_idx on kafaa_skill_ratin
 create index if not exists kafaa_skill_ratings_status_idx on kafaa_skill_ratings (status);
 create index if not exists kafaa_team_skill_targets_team_id_idx on kafaa_team_skill_targets (team_id);
 create index if not exists kafaa_team_skill_targets_skill_id_idx on kafaa_team_skill_targets (skill_id);
+create index if not exists kafaa_microcred_defs_code_idx on kafaa_microcred_defs (code);
+create index if not exists kafaa_microcred_defs_stacks_into_idx on kafaa_microcred_defs (stacks_into);
+create index if not exists kafaa_microcred_defs_status_idx on kafaa_microcred_defs (status);
+create index if not exists kafaa_microcred_awards_def_id_idx on kafaa_microcred_awards (def_id);
+create index if not exists kafaa_microcred_awards_def_code_idx on kafaa_microcred_awards (def_code);
+create index if not exists kafaa_microcred_awards_person_id_idx on kafaa_microcred_awards (person_id);
+create index if not exists kafaa_microcred_awards_status_idx on kafaa_microcred_awards (status);
 create index if not exists kafaa_career_targets_person_id_idx on kafaa_career_targets (person_id);
 create index if not exists kafaa_career_targets_role_id_idx on kafaa_career_targets (role_id);
 create index if not exists kafaa_career_targets_shared_person_id_idx on kafaa_career_targets (shared_person_id);
@@ -4424,4 +4563,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 201) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 205) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

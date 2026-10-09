@@ -1478,6 +1478,50 @@ export interface TeachingHoursRow {
   recorded_by?: string | null;
   created_at: string;
 }
+export interface OjtLogsRow {
+  id: string;
+  client_key: string;
+  person_id: string;
+  person_name: string;
+  person_name_ar: string;
+  task_id: string;
+  standard_id: string;
+  on_date: string;
+  mode: 'walkthrough' | 'simulate' | 'perform';
+  preceptor_person_id: string;
+  preceptor_name: string;
+  preceptor_name_ar: string;
+  confidence: number;
+  conditions?: string | null;
+  note?: string | null;
+  status: 'pending_ack' | 'acknowledged' | 'returned';
+  feedback?: string | null;
+  preceptor_ready: boolean;
+  ack_at?: string | null;
+  synced: 'online' | 'offline';
+  created_at: string;
+}
+export interface OjtEvalRequestsRow {
+  id: string;
+  person_id: string;
+  person_name: string;
+  person_name_ar: string;
+  task_id: string;
+  standard_id: string;
+  record_id: string;
+  evaluator_person_id: string;
+  evaluator_name: string;
+  evaluator_name_ar: string;
+  status: 'requested' | 'completed' | 'declined' | 'cancelled';
+  readiness: any;
+  note?: string | null;
+  requested_at: string;
+  closed_at?: string | null;
+  closed_by?: string | null;
+  close_note?: string | null;
+  evaluation_id?: string | null;
+  result?: 'pass' | 'fail' | null;
+}
 export interface MentoringAgreementsRow {
   id: string;
   request_id: string;
@@ -1799,6 +1843,57 @@ export interface TeamSkillTargetsRow {
   active: boolean;
   set_by?: string | null;
   updated_at: string;
+}
+export interface MicrocredDefsRow {
+  id: string;
+  code: string;
+  version: number;
+  kind: 'micro' | 'stack';
+  area: string;
+  level: 'foundation' | 'practitioner' | 'advanced';
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  criteria: any;
+  stacks_into?: string | null;
+  alignment: any;
+  role_ids: string[];
+  validity_months: number;
+  hours?: number | null;
+  status: 'draft' | 'current' | 'superseded' | 'retired';
+  effective_date?: string | null;
+  supersedes_id?: string | null;
+  change_reason?: string | null;
+  sort: number;
+  updated_by?: string | null;
+  updated_at: string;
+  published_by?: string | null;
+  published_at?: string | null;
+}
+export interface MicrocredAwardsRow {
+  id: string;
+  def_id: string;
+  def_code: string;
+  def_version: number;
+  person_id: string;
+  holder_initials: string;
+  status: 'pending_approval' | 'awarded' | 'declined' | 'revoked' | 'superseded';
+  requested_at: string;
+  issued_on?: string | null;
+  valid_to?: string | null;
+  evidence: any;
+  component_award_ids: string[];
+  credential: any;
+  key_id?: 'key-1' | 'key-offline' | null;
+  public_slug?: string | null;
+  renewed_from?: string | null;
+  decided_by?: string | null;
+  decided_at?: string | null;
+  decision_note?: string | null;
+  revoked_at?: string | null;
+  revoke_reason?: string | null;
+  created_at: string;
 }
 export interface CareerTargetsRow {
   id: string;
@@ -3118,6 +3213,8 @@ export interface Tables {
   instructor_tracks: InstructorTracksRow;
   instructor_observations: InstructorObservationsRow;
   teaching_hours: TeachingHoursRow;
+  ojt_logs: OjtLogsRow;
+  ojt_eval_requests: OjtEvalRequestsRow;
   mentoring_agreements: MentoringAgreementsRow;
   mentoring_sessions: MentoringSessionsRow;
   mentoring_private_notes: MentoringPrivateNotesRow;
@@ -3138,6 +3235,8 @@ export interface Tables {
   skill_checkins: SkillCheckinsRow;
   skill_ratings: SkillRatingsRow;
   team_skill_targets: TeamSkillTargetsRow;
+  microcred_defs: MicrocredDefsRow;
+  microcred_awards: MicrocredAwardsRow;
   career_targets: CareerTargetsRow;
   roadmaps: RoadmapsRow;
   career_conversations: CareerConversationsRow;
