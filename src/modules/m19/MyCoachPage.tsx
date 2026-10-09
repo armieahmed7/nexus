@@ -10,6 +10,7 @@ import { useCoachData } from './useCoachData';
 import { AskCoach } from './AskCoach';
 import { GoalCard, FocusCard } from './GoalCard';
 import type { EngineKind, EngineStatus } from '../../domain/engines/types';
+import { RecoOptedOut, UnrankedCatalogue, useRecoOptOut } from '../m16/optout'; // W3E5 (F24): per-surface opt-out
 
 export const KIND_ICON: Record<string, string> = { refresher: 'shield', course: 'book', practice: 'check', ojt: 'briefcase', mentor: 'users', opportunity: 'sparkle', reading: 'info' };
 
@@ -38,6 +39,12 @@ export default function MyCoachPage() {
   const savedIds = new Set(result?.input.feedback.filter((x) => x.signal === 'saved').map((x) => `${x.item_kind}:${x.item_id}`) ?? []);
   const saved = result ? [...savedIds].map((id) => result.pool.get(id)).filter((c): c is CoachCard => !!c) : [];
   const hours = feed.reduce((n, c) => n + (c.hours != null && c.hours <= 80 ? c.hours : 0), 0);
+  const optOut = useRecoOptOut('coach'); // W3E5 (F24): opted out -> no ranked cards, the unranked catalogue instead
+  if (optOut.optedOut) return (
+    <Page title={t('m19.routes.my-coach.title')} intro={t('m19.coach.intro')} eyebrow={t('m19.coach.eyebrow')} actions={<L to="/my/learning" className="btn-outline btn-sm"><Icon name="book" size={14} />{t('m19.coach.myLearning')}</L>}>
+      <div className="space-y-5"><RecoOptedOut surface="coach" /><UnrankedCatalogue /></div>
+    </Page>
+  );
 
   return (
     <Page title={t('m19.routes.my-coach.title')} intro={t('m19.coach.intro')} eyebrow={t('m19.coach.eyebrow')}

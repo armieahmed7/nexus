@@ -152,7 +152,7 @@ export class SupabaseBackend implements Repository {
       }),
       // F01/F02 (wave 0): 20261009101001_kafaa_w0e1_skills_core.sql
       recomputeSkills: (personId = null) => this.call('kafaa_recompute_skills', { p_person: personId }, ['person_skills', 'skill_evidence']),
-      setEngineWeights: (surface, engine, weights = null) => this.call('kafaa_set_engine_weights', { p_surface: surface, p_engine: engine, p_weights: weights }, ['engine_settings']),
+      setEngineWeights: (surface, engine, weights = null) => this.call('kafaa_set_engine_weights', { p_surface: surface, p_engine: engine, p_weights: weights }, ['engine_settings', 'engine_changes', 'engine_cards']), // W3E5 (F24): the change log and cards refetch too
       signoffEvaluation: (p: SignoffInput) => this.call('kafaa_signoff_evaluation', { p }, ['evaluations', 'qual_records']),
       setLicenceStatus: (id, status, reason) => this.call('kafaa_set_licence_status', { p_licence_id: id, p_status: status, p_reason: reason }, ['licences', 'licensing_tasks', 'reporting_obligations']),
       detectLicensingEvents: () => this.call('kafaa_detect_licensing_events', {}, ['licences', 'licensing_tasks']),

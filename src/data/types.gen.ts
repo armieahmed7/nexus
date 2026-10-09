@@ -1468,6 +1468,77 @@ export interface MentoringPrivateNotesRow {
   note: string;
   updated_at: string;
 }
+export interface EngineCardsRow {
+  id: string;
+  engine_surface: 'skills' | 'recommend' | 'match' | 'search';
+  module: string;
+  route: string;
+  feature: string;
+  title_en: string;
+  title_ar: string;
+  purpose_en: string;
+  purpose_ar: string;
+  owner_en: string;
+  owner_ar: string;
+  inputs_used: any;
+  inputs_excluded: string[];
+  scoring_functions: string[];
+  weight_keys: string[];
+  output_en: string;
+  output_ar: string;
+  oversight_en: string;
+  oversight_ar: string;
+  limitations_en: string;
+  limitations_ar: string;
+  opt_out: boolean;
+  version: number;
+  last_changed_at: string;
+  last_change_id?: string | null;
+  sources: any;
+  sort: number;
+}
+export interface RecoOptoutsRow {
+  id: string;
+  person_id: string;
+  surface: 'navigator' | 'coach' | 'marketplace';
+  opted_out: boolean;
+  reason?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+export interface FairnessSnapshotsRow {
+  id: string;
+  period: string;
+  as_of: string;
+  surface: 'navigator' | 'marketplace' | 'mentoring' | 'talent_evidence';
+  metric: 'navigator_ready' | 'opportunity_selected' | 'mentoring_matched' | 'hipo_pool';
+  dimension: 'gender' | 'nationality';
+  group_key: 'f' | 'm' | 'uae' | 'other';
+  n?: number | null;
+  positives?: number | null;
+  rate?: number | null;
+  ratio?: number | null;
+  suppressed: boolean;
+  flagged: boolean;
+  source: string;
+  run_by?: string | null;
+  created_at: string;
+}
+export interface EngineChangesRow {
+  id: string;
+  surface: 'skills' | 'recommend' | 'match' | 'search';
+  engine_before?: string | null;
+  engine_after: string;
+  weights_before: any;
+  weights_after: any;
+  rationale?: string | null;
+  card_ids: string[];
+  changed_by?: string | null;
+  changed_by_role?: string | null;
+  changed_at: string;
+  audit_seq?: number | null;
+  ledger_seq?: number | null;
+}
 export interface SkillClaimsRow {
   id: string;
   person_id: string;
@@ -2160,6 +2231,10 @@ export interface Tables {
   mentoring_agreements: MentoringAgreementsRow;
   mentoring_sessions: MentoringSessionsRow;
   mentoring_private_notes: MentoringPrivateNotesRow;
+  engine_cards: EngineCardsRow;
+  reco_optouts: RecoOptoutsRow;
+  fairness_snapshots: FairnessSnapshotsRow;
+  engine_changes: EngineChangesRow;
   skill_claims: SkillClaimsRow;
   badges: BadgesRow;
   skill_checkins: SkillCheckinsRow;
