@@ -21,8 +21,8 @@ export function usePeriodLabel() {
   return (period: string) => {
     const [y, rest] = period.split('-');
     const n = Number(rest.slice(1));
-    if (rest[0] === 'W') return t('digest.period.weekly', { w: f.num(n), y: f.num(Number(y)) });
-    if (rest[0] === 'F') return t('digest.period.fortnightly', { a: f.num(2 * n - 1), b: f.num(2 * n), y: f.num(Number(y)) });
+    if (rest[0] === 'W') return t('digest.period.weekly', { w: f.num(n), y: f.num(Number(y), { useGrouping: false }) });
+    if (rest[0] === 'F') return t('digest.period.fortnightly', { a: f.num(2 * n - 1), b: f.num(2 * n), y: f.num(Number(y), { useGrouping: false }) });
     return t('digest.period.monthly', { date: f.date(`${y}-${rest.slice(1)}-01`, 'long') });
   };
 }

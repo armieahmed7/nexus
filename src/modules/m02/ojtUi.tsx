@@ -8,6 +8,7 @@ import { todayIso } from '../../domain/rules';
 import { useSession } from '../../auth/session';
 import { OJT_MODES, OJT_RULES, PRACTICE_METHODS, addDays, myStandards, newClientKey, readiness, type LogInput, type LogRow, type Readiness } from './ojt';
 import type { PreceptorCard } from './backend/rpc';
+import { cachePreceptors, cachedPreceptors } from './ojtQueue';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = any;
@@ -74,7 +75,14 @@ export function LogPracticeModal({ task, std, onClose, onSubmit }: { task: Row; 
   const [pre, setPre] = useState<PreceptorCard[] | null>(null);
   const [x, setX] = useState({ on_date: today, mode: 'perform', preceptor: '', confidence: '3', conditions: '', note: '' });
   const [busy, setBusy] = useState(false);
-  useEffect(() => { let live = true; repo.rpc.ojtPreceptors(task.id).then((r) => live && setPre(r), () => live && setPre([])); return () => { live = false; }; }, [repo, task.id]);
+  useEffect(() => {
+    // Offline the RPC cannot run: use the list kept on this device when the logbook was last open online (W5 QA).
+    let live = true;
+    const cached = cachedPreceptors<PreceptorCard>(me, task.id);
+    if (typeof navigator !== 'undefined' && navigator.onLine === false) { setPre(cached ?? []); return () => { live = false; }; }
+    repo.rpc.ojtPreceptors(task.id).then((r) => { if (r.length) cachePreceptors(me, task.id, r); if (live) setPre(r.length ? r : cached ?? r); }, () => live && setPre(cached ?? []));
+    return () => { live = false; };
+  }, [repo, task.id, me]);
   const set = (k: string) => (v: string) => setX((p) => ({ ...p, [k]: v }));
   const valid = !!x.preceptor && x.on_date <= today && x.on_date >= addDays(today, -OJT_RULES.backdateDays) && x.note.length <= OJT_RULES.noteMax;
   const submit = async () => {

@@ -12,7 +12,7 @@ import { useAction, useRepo, type Result } from '../../data';
 import { useT, usePick, useFormat, useLang, L } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { readinessReasons, type LogInput, type LogRow } from './ojt';
-import { OJT_SW_FILE, OJT_SYNC_TAG, enqueue, discard, flushQueue, ojtSwScope, readQueue, type Queued } from './ojtQueue';
+import { OJT_SW_FILE, OJT_SYNC_TAG, cachePreceptors, enqueue, discard, flushQueue, ojtSwScope, readQueue, type Queued } from './ojtQueue';
 import { LogPracticeModal, LogStatus, ModeChip, PracticeNotice, ReadyRing, myTasks, readinessFor, useOjtData, type OjtData } from './ojtUi';
 import type { PreceptorCard } from './backend/rpc';
 
@@ -117,6 +117,19 @@ function MyPractice({ d, online, onQueued }: { d: OjtData; online: boolean; onQu
   const [log, setLog] = useState<{ task: Row; std: Row } | null>(null);
   const [req, setReq] = useState<{ task: Row; std: Row } | null>(null);
   const [cancel, setCancel] = useState<Row | null>(null);
+  // W5 QA: while online, keep each practice task's preceptor choices on the device so the log form works offline too.
+  useEffect(() => {
+    const me = d.person?.id;
+    if (!online || !me) return;
+    let live = true;
+    (async () => {
+      for (const x of groups) for (const task of x.tasks) {
+        if (!live) return;
+        try { const r = await repo.rpc.ojtPreceptors(task.id); if (r.length) cachePreceptors(me, task.id, r); } catch { /* next time */ }
+      }
+    })();
+    return () => { live = false; };
+  }, [online, groups, repo, d.person?.id]);
   if (!d.person || d.person.kind !== 'staff' || !groups.length) return <EmptyState title={t('m02.ojt.noTasks')}>{t('m02.ojt.noTasksBody')}</EmptyState>;
   const g = groups.find((x) => x.std.id === stdId) ?? groups[0];
   const mine = d.logs.filter((l) => l.person_id === d.me);

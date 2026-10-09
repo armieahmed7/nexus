@@ -17,8 +17,10 @@ import { directWriteGuard } from './guards';
 import nexusSnapshot from '../../seed/nexus_snapshot.json';
 
 type Rows = Record<string, Record<string, unknown>[]>;
+/** v2 (W5 QA): only the tables changed since the seed are stored. The whole tenant (about 11.6 million characters after wave 5) no
+ *  longer fits the browser's localStorage quota, so v1 snapshots failed silently and local-demo changes were lost on reload. */
 interface Persisted {
-  v: 1;
+  v: 2;
   seedStamp: string;
   tables: Rows;
 }
@@ -62,7 +64,11 @@ export class LocalBackend implements Repository {
     } catch {
       persisted = null;
     }
-    const base = persisted && persisted.v === 1 && persisted.seedStamp === stamp ? persisted.tables : structuredClone(seed.tables);
+    const base = structuredClone(seed.tables);
+    this.dirty = new Set();
+    if (persisted && persisted.v === 2 && persisted.seedStamp === stamp && persisted.tables && typeof persisted.tables === 'object') {
+      for (const [t, rows] of Object.entries(persisted.tables)) if (Array.isArray(rows)) { base[t] = rows; this.dirty.add(t); }
+    }
     this.load(base);
     this.seedStamp = stamp;
   }
@@ -88,12 +94,14 @@ export class LocalBackend implements Repository {
     }
   }
   private flushOnHide = false;
+  /** Tables changed since the seed (persisted on their own; see Persisted). */
+  private dirty = new Set<string>();
   private flush() {
     if (!this.saveTimer) return;
     clearTimeout(this.saveTimer);
     this.saveTimer = null;
     try {
-      const payload: Persisted = { v: 1, seedStamp: this.seedStamp, tables: this.tables };
+      const payload: Persisted = { v: 2, seedStamp: this.seedStamp, tables: Object.fromEntries([...this.dirty].map((t) => [t, this.tables[t] ?? []])) };
       localStorage.setItem(config.localStorageKey, JSON.stringify(payload));
     } catch {
       /* storage full or blocked: keep working in memory */
@@ -102,6 +110,7 @@ export class LocalBackend implements Repository {
   async reset() {
     const seed = await loadSeed();
     this.load(structuredClone(seed.tables));
+    this.dirty = new Set();
     try {
       localStorage.removeItem(config.localStorageKey);
     } catch {
@@ -247,13 +256,16 @@ export class LocalBackend implements Repository {
     const full = this.withDefaults(table, row as Record<string, unknown>);
     this.tables[table].push(full);
     this.byId[table].set(String(full.id), full);
+    this.dirty.add(table);
     return full as unknown as RowOf<K>;
   }
   rawUpdate<K extends Table>(table: K, id: string, patch: Partial<RowOf<K>>) {
     const r = this.byId[table]?.get(id);
     if (r) Object.assign(r, patch);
+    this.dirty.add(table);
   }
   changed(tables: Table[]) {
+    for (const t of tables) this.dirty.add(t);
     this.persist();
     this.emit(tables);
   }
@@ -291,6 +303,7 @@ export class LocalBackend implements Repository {
     const row = { id: `LG-${seq}`, ...entry, prev_hash: prev, hash, actor_persona_id: who.personaId };
     list.push(row);
     this.byId.ledger_local.set(row.id, row);
+    this.dirty.add('ledger_local');
     return seq;
   }
 

@@ -26,6 +26,24 @@ export function readQueue(person: string, s: Store | null = storage()): Queued[]
 export function writeQueue(person: string, q: Queued[], s: Store | null = storage()): void {
   try { s?.setItem(queueKey(person), JSON.stringify(q)); } catch { /* storage unavailable: the entry stays in memory only */ }
 }
+// W5 QA: the preceptor choices per task are kept on the device too, so the log form still offers them while offline (the list comes
+// from an RPC that cannot run without a connection). Refreshed whenever the logbook is open online; never sent anywhere.
+export const preceptorKey = (person: string) => `kafaa.ojt.preceptors.v1:${person}`;
+export function cachedPreceptors<T>(person: string, taskId: string, s: Store | null = storage()): T[] | null {
+  try {
+    const raw = s?.getItem(preceptorKey(person));
+    const v = raw ? JSON.parse(raw) : null;
+    return v && Array.isArray(v[taskId]) ? (v[taskId] as T[]) : null;
+  } catch { return null; }
+}
+export function cachePreceptors<T>(person: string, taskId: string, list: T[], s: Store | null = storage()): void {
+  try {
+    const raw = s?.getItem(preceptorKey(person));
+    const v = (raw ? JSON.parse(raw) : null) ?? {};
+    v[taskId] = list;
+    s?.setItem(preceptorKey(person), JSON.stringify(v));
+  } catch { /* storage unavailable */ }
+}
 /** Add an entry (same client key = replaced, never duplicated). */
 export function enqueue(person: string, input: LogInput, s: Store | null = storage(), now = new Date().toISOString()): Queued[] {
   const q = readQueue(person, s).filter((x) => x.input.client_key !== input.client_key);
