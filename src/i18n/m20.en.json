@@ -789,7 +789,7 @@
     "handoffNote": "Kafa'a records only that an engagement was handed to HR. Contracts, payment and contact details stay outside Kafa'a.",
     "hoursMonth": "{n} h/month",
     "hoursTotal": "{n} hours in total",
-    "seatsLeft": "{n} places left",
+    "seatsLeft": "Places left: {n}",
     "noSnapshot": "No skills recorded yet.",
     "levelBasis": "Level {level} ({basis})",
     "levelOf": "Level {n} of 4",

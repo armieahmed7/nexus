@@ -395,6 +395,11 @@ test('Y6 F23 reserve: HR approval before the team shows, contact data refused, c
   await hr2.close();
   await staff.close();
   await nse.close();
+  // tidy up: the poster closes every open E2E-QA request (audited), so the members' boards hold demo requests only
+  const mine = await rest(page, `kafaa_reserve_requests?select=id,status&title_en=like.${encodeURIComponent(E2E_TAG)}*`);
+  for (const r of mine.filter((x: any) => ['pending_hr', 'open', 'filled'].includes(x.status))) {
+    expect((await rpc(page, 'kafaa_decide_reserve_request', { p_request_id: r.id, p_decision: 'close', p_note: `${E2E_TAG} done` })).ok).toBe(true);
+  }
 });
 
 test('Y7 F24 transparency: coach opt-out, engine cards, fairness, audited weight change, HR and auditor views', async ({ page }) => {
