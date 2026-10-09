@@ -105,3 +105,24 @@ describe('F05 -> F08: marketplace target role', () => {
     expect(defaultTarget(paths, null, [])).toBeNull();
   });
 });
+
+describe('F06 send to plan (W1 QA): a second saved scenario for the same target does not duplicate plan activities', () => {
+  it('local backend: the same development blocks count as existing', async () => {
+    const { LocalBackend } = await import('../../src/data/local/LocalBackend');
+    const b = new LocalBackend() as any;
+    await b.whenReady();
+    await b.reset();
+    b.setPersona('qc-inspector');
+    await b.whenReady();
+    const repo = b;
+    const first = await repo.rpc.roadmapToPlan('rm-qc-procurement');
+    expect(first.ok).toBe(true);
+    const src = b.rawGet('roadmaps', 'rm-qc-procurement');
+    b.rawInsert('roadmaps', { ...structuredClone(src), id: 'rm-qc-copy', sent_plan_id: null, sent_at: null });
+    const second = await repo.rpc.roadmapToPlan('rm-qc-copy');
+    expect(second.ok).toBe(true);
+    expect(second.data.plan_id).toBe(first.data.plan_id);
+    expect(second.data.created).toBe(0);
+    expect(second.data.existing).toBe(first.data.created);
+  });
+});

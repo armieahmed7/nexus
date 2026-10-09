@@ -98,6 +98,12 @@ export default async function w1e2Checks({ db, as, one, count, ok, uid }) {
   const audits = await db.query(`select count(*)::int n from kafaa_audit_events where action = 'roadmap.to_plan' and outcome = 'ok'`);
   ok(q1.ok && q1.data.plan_created && planRow.rows[0]?.status === 'draft' && acts.rows[0].n === q1.data.created && audits.rows[0].n >= 3,
     'with no open plan for the target, roadmapToPlan creates a draft plan with one activity per development block, and each call writes an audit row');
+  // a second saved scenario for the same target with the same development blocks adds nothing to that plan (W1 QA)
+  await db.query(`insert into kafaa_roadmaps (id, person_id, target_role_id, name, scenario, plan, earliest_on, end_on, shared, active) select 'rm-qc-copy', person_id, target_role_id, 'copy', scenario, plan, earliest_on, end_on, false, true from kafaa_roadmaps where id = 'rm-qc-procurement'`);
+  const q2 = (await one('qc-inspector', `select kafaa_roadmap_to_plan('rm-qc-copy') as r`)).r;
+  const acts2 = await db.query(`select count(*)::int n from kafaa_plan_activities where plan_id = $1`, [q1.data?.plan_id]);
+  ok(q2.ok && q2.data.plan_id === q1.data?.plan_id && q2.data.created === 0 && q2.data.existing === q1.data.created && acts2.rows[0].n === acts.rows[0].n,
+    'sending a second saved scenario for the same target does not duplicate the development blocks already in the plan');
   const steal = (await one('sro', `select kafaa_roadmap_to_plan('rm-k-ro-sro') as r`)).r;
   ok(!steal.ok && steal.code === 'not_found', 'another person (even the line manager) cannot send someone else\'s roadmap');
   void before;

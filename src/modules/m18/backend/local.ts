@@ -86,8 +86,11 @@ export function makeLocalM18(b: LocalBackend, h: LocalRpcHelpers): M18Rpc {
       let created = 0, existing = 0;
       for (const x of dev) {
         const id = `pa-rm-${rm.id}-${x.id}`;
-        if (b.rawGet('plan_activities', id)) { existing++; continue; }
         const t = x.title as { en: string; ar: string };
+        // same block already in the plan (this roadmap, or another saved scenario for the same target): never duplicate
+        const same = (b.raw('plan_activities') as unknown as { plan_id: string; kind: string; title_en: string; course_id: string | null }[])
+          .some((a) => a.plan_id === planId && a.kind === x.plan_kind && a.title_en === t.en && (a.course_id ?? '') === ((x.course_id as string) ?? ''));
+        if (b.rawGet('plan_activities', id) || same) { existing++; continue; }
         b.rawInsert('plan_activities', { id, plan_id: planId, person_id: who.personId, kind: x.plan_kind as never, title_en: t.en, title_ar: t.ar, due_on: (x.end as string) ?? null, status: 'planned', course_id: (x.course_id as string) ?? null } as never);
         created++;
       }

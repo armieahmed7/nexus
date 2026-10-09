@@ -236,6 +236,17 @@ Need a foundation change (shared UI component, new rule in `rules.ts`, a field i
   - Routes: `my-future` (`/my/future`), `my-future-tech` (`/my/future/:tech`), `workforce-future-interest` (`/workforce/future/interest`, parent `workforce-future`).
   - SQL `supabase/migrations/20261009115001_kafaa_w1e5_future.sql`; PGlite checks `scripts/validate/w1e5-future.mjs`; seed `scripts/seed/ext/f09-future.mjs`. Applied live to `hlirqxoddysxtdezwcgv` as `kafaa_w1e5_future`, seed rows loaded with `on conflict do nothing` (5 lanes, 17 resources, 192 interest rows, 42 goals; goal rows md5-identical to `seed.json`).
 
+- **2026-10-09 · W1 integration and QA (master)** Merged `w1e1`..`w1e5` (generated files regenerated with `npm run gen` after each merge). Cross-feature hand-offs wired on master:
+  - F05 → F07: the coach plans for the *active* shortlist only (`career_targets.active`).
+  - F09 → F07: active `future_goals` rows are coach targets: their non-security skills become needs at the target-role weight, labelled with the goal title; the "Planning for" card lists them.
+  - F08 → F07: opportunity cards use listed, open rows with seats left and open `/opportunities/:id`.
+  - F05 → F08: the marketplace's default target role is the top shortlisted role (a "My Career Navigator shortlist" group in the selector).
+  - F05 → F07: navigator role cards link to `/my/coach`.
+  - Shared fixes: screen-reader tables (`src/ui/charts.tsx`, M11 radar, M18 map) sit inside a `div.sr-only` (a `table.sr-only` widened the page at 390 px); the M11 radar viewBox leaves room for axis labels.
+  - Smoke loader: guards given by a named constant (`guard: OWN`) are inlined, so all 118 routes are swept.
+  - F06 fix: `kafaa_roadmap_to_plan` (and the local mirror) treat a development block already in the target plan (same kind, title and course, from any saved scenario) as existing, so sending a second scenario for the same target never duplicates plan activities. Migration `20261009119001_kafaa_w1qa_roadmap_plan_dedupe.sql`, applied live as `kafaa_w1qa_roadmap_plan_dedupe` (function body md5-identical).
+  - Live: the 12 unshared synthetic `roadmaps` rows were loaded (`on conflict do nothing`), so every wave-1 table matches `seed.json` by id digest.
+
 ## 11. Acceptance checklists per module
 
 Each group's hand-off lists every box below as done, or explains why not. These are the spec's acceptance criteria plus the contract's own items.

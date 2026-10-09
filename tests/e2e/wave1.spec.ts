@@ -118,8 +118,18 @@ test('W4 F06 roadmap: what-if moves the end date, then send to my development pl
   await expect(end).not.toHaveText(before);
   await slider.fill('0');
   await expect(end).toHaveText(before);
-  await page.locator('[data-testid="m18-rm-send"]').click();
-  await confirmOk(page);
+  // send: the scenario is saved first ("Scenario saved"), then the RPC reports the plan outcome; wait for that toast
+  const sendAndRead = async () => {
+    await page.locator('[data-testid="m18-rm-send"]').click();
+    await page.locator('[role="dialog"]').last().locator('[data-testid="confirm-action"]').click();
+    const toast = page.locator('[data-testid="toast"]', { hasText: /development plan/i }).last();
+    await expect(toast).toBeVisible();
+    expect(await toast.getAttribute('data-tone')).toBe('ok');
+    return toast.innerText();
+  };
+  expect(await sendAndRead()).toMatch(/(Added to|Already in) your development plan/);
+  // re-sending never duplicates the plan activities
+  expect(await sendAndRead()).toMatch(/Already in your development plan/);
   await clean(page, w);
 });
 
