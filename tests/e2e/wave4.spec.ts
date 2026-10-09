@@ -251,14 +251,15 @@ test('Z4 F28 simulator: training only, exam refused, coverage gaps, live debrief
   await ins.keyboard.press('Escape');
   const base = { purpose: 'exam', title_en: 'Loss of instrument air to one header', title_ar: 'فقدان هواء الأجهزة لأحد الخطوط', summary_en: 'The crew responds to a loss of instrument air.', summary_ar: 'يستجيب الطاقم لفقدان هواء الأجهزة.', category: 'abnormal', objective_ids: ['so-a1'], positions: ['ss', 'sro', 'ro'], duration_min: 90, fidelity: 'full_scope', programmes: ['coct'] };
   expect((await rpc(ins, 'kafaa_save_sim_scenario', { p: base })).code).toBe('exam_content');
-  // A3: a live debrief on a past crew-B slot writes evidence only for members present, and F30 statements for them
+  // A3: a live debrief on a past crew-B slot writes evidence only for members present, and F30 statements for them (rerunnable:
+  // the probe uses another scenario, the recorded debrief is reused when it already exists)
   const people = SEED.people.filter((p) => p.crew === 'B'); // synthetic people, identical live (seed digest)
   const slot = SEED.simulator_slots.find((s) => s.id === 'sim-h7-b');
   const roster = crewRoster(slot, people);
   expect(roster.length).toBeGreaterThan(3);
   const absent = roster[0].person_id;
   const att = roster.map((r) => ({ person_id: r.person_id, present: r.person_id !== absent }));
-  expect((await rpc(ins, 'kafaa_record_debrief', { p: { slot_id: 'sim-h7-b', scenario_id: 'scn-012', attendance: [...att, { person_id: 'w-ro-03', present: true }], ratings: { communication: 4, procedure_use: 3, diagnosis: 2, leadership: 5 } } })).code).toBe('not_in_slot');
+  expect((await rpc(ins, 'kafaa_record_debrief', { p: { slot_id: 'sim-h7-b', scenario_id: 'scn-001', attendance: [...att, { person_id: 'w-ro-03', present: true }], ratings: { communication: 4, procedure_use: 3, diagnosis: 2, leadership: 5 } } })).code).toBe('not_in_slot');
   const r = await rpc(ins, 'kafaa_record_debrief', { p: { slot_id: 'sim-h7-b', scenario_id: 'scn-012', cycle_id: null, attendance: att, ratings: { communication: 4, procedure_use: 3, diagnosis: 2, leadership: 5 }, lang: 'en' } });
   expect(r.ok || r.code === 'already_recorded', JSON.stringify(r)).toBe(true);
   const id = 'cd:sim-h7-b:scn-012';
