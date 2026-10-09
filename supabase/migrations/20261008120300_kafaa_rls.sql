@@ -1173,6 +1173,33 @@ create policy kafaa_read on kafaa_engine_settings for select to anon, authentica
 grant select on kafaa_engine_settings to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- instructor_tracks
+alter table kafaa_instructor_tracks enable row level security;
+drop policy if exists kafaa_read on kafaa_instructor_tracks;
+create policy kafaa_read on kafaa_instructor_tracks for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('qual_records', person_id, null::text, true)
+    or kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_instructor_tracks to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- instructor_observations
+alter table kafaa_instructor_observations enable row level security;
+drop policy if exists kafaa_read on kafaa_instructor_observations;
+create policy kafaa_read on kafaa_instructor_observations for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('qual_records', person_id, null::text, true)
+    or kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_instructor_observations to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- teaching_hours
+alter table kafaa_teaching_hours enable row level security;
+drop policy if exists kafaa_read on kafaa_teaching_hours;
+create policy kafaa_read on kafaa_teaching_hours for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('qual_records', person_id, null::text, true)
+    or kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_teaching_hours to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- mentoring_agreements
 alter table kafaa_mentoring_agreements enable row level security;
 drop policy if exists kafaa_read on kafaa_mentoring_agreements;

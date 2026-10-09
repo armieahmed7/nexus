@@ -1419,6 +1419,65 @@ export interface LedgerLocalRow {
   hash: string;
   actor_persona_id?: string | null;
 }
+export interface InstructorTracksRow {
+  id: string;
+  person_id: string;
+  person_name: string;
+  person_name_ar: string;
+  route: 'sme' | 'asip';
+  discipline: string;
+  standard_ids: string[];
+  skill_ids: string[];
+  stage: 'nominated' | 'initial_training' | 'co_teach' | 'solo' | 'ready' | 'qualified';
+  status: 'active' | 'qualified' | 'lapsed' | 'withdrawn' | 'declined';
+  started_on: string;
+  nominated_by?: string | null;
+  nomination_kind: 'self' | 'manager' | 'training_manager';
+  motivation?: string | null;
+  accepted_on?: string | null;
+  accepted_by?: string | null;
+  initial_done_on?: string | null;
+  qualified_on?: string | null;
+  first_qualified_on?: string | null;
+  qualified_by?: string | null;
+  currency_due?: string | null;
+  currency_status?: 'current' | 'due' | 'at_risk' | 'lapsed' | null;
+  lapsed_on?: string | null;
+  decision_note?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+export interface InstructorObservationsRow {
+  id: string;
+  track_id: string;
+  person_id: string;
+  observer_person_id: string;
+  observer_name: string;
+  observer_name_ar: string;
+  kind: 'co_teach' | 'solo' | 'currency';
+  observed_on: string;
+  items: any;
+  score: number;
+  result: 'pass' | 'fail';
+  session_id?: string | null;
+  course_id?: string | null;
+  note?: string | null;
+  created_at: string;
+}
+export interface TeachingHoursRow {
+  id: string;
+  person_id: string;
+  track_id?: string | null;
+  kind: 'delivery' | 'cpd';
+  source: 'session' | 'mirror' | 'self';
+  session_id?: string | null;
+  course_id?: string | null;
+  delivered_on: string;
+  hours: number;
+  note?: string | null;
+  recorded_by?: string | null;
+  created_at: string;
+}
 export interface MentoringAgreementsRow {
   id: string;
   request_id: string;
@@ -2667,6 +2726,9 @@ export interface Tables {
   person_skills: PersonSkillsRow;
   engine_settings: EngineSettingsRow;
   ledger_local: LedgerLocalRow;
+  instructor_tracks: InstructorTracksRow;
+  instructor_observations: InstructorObservationsRow;
+  teaching_hours: TeachingHoursRow;
   mentoring_agreements: MentoringAgreementsRow;
   mentoring_sessions: MentoringSessionsRow;
   mentoring_private_notes: MentoringPrivateNotesRow;
