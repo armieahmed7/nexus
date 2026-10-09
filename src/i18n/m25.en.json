@@ -303,7 +303,7 @@
       "shortfall": "Shortfall",
       "shortfallSub": "{n} courses short of seats",
       "instructors": "Instructors",
-      "instructorsSub": "Active instructor role holders"
+      "instructorsSub": "Qualified instructor pool with current currency (F31)"
     },
     "empty": "No demand computed for this quarter",
     "emptyCompute": "Use \"Recompute demand\" to build it from the six sources.",

@@ -91,6 +91,28 @@ const RTL: Shot[] = [
   { name: 'w3-reserve-desk', path: '/opportunities/reserve/hr', persona: 'chco' },
   { name: 'w3-ai-transparency', path: '/admin/ai-transparency', persona: 'ai-governance' },
   { name: 'w3-settings-reco', path: '/my/settings', persona: 'nse' },
+  // wave 4 (F25-F31)
+  { name: 'w4-effectiveness', path: '/training/effectiveness', persona: 'training-mgr' },
+  { name: 'w4-effectiveness-course', path: '/training/effectiveness/c-hu', persona: 'training-mgr' },
+  { name: 'w4-observations', path: '/training/observations', persona: 'sro' },
+  { name: 'w4-my-feedback', path: '/my/learning/feedback', persona: 'sro' },
+  { name: 'w4-needs', path: '/training/needs', persona: 'training-mgr' },
+  { name: 'w4-sat', path: '/training/sat', persona: 'training-mgr' },
+  { name: 'w4-sat-role', path: '/training/sat/roles/local-operator', persona: 'training-mgr' },
+  { name: 'w4-sat-task', path: '/training/sat/tasks/jt-qs-ro-t1', persona: 'training-mgr' },
+  { name: 'w4-sat-changes', path: '/training/sat/changes', persona: 'training-mgr' },
+  { name: 'w4-accreditation', path: '/training/accreditation', persona: 'training-mgr' },
+  { name: 'w4-self-eval', path: '/training/accreditation/ase-coit-2026-H2', persona: 'training-mgr' },
+  { name: 'w4-scenarios', path: '/training/simulator/scenarios', persona: 'training-mgr' },
+  { name: 'w4-scenario', path: '/training/simulator/scenarios/scn-012', persona: 'training-mgr' },
+  { name: 'w4-my-simulator', path: '/my/simulator', persona: 'sro' },
+  { name: 'w4-my-learning-record', path: '/my/learning-record', persona: 'nse' },
+  { name: 'w4-lrs', path: '/training/lrs', persona: 'training-mgr' },
+  { name: 'w4-lrs-adapters', path: '/training/lrs/adapters', persona: 'ai-governance' },
+  { name: 'w4-instructors', path: '/training/instructors', persona: 'training-mgr' },
+  { name: 'w4-instructor-track', path: '/training/instructors/it-w-rp-02', persona: 'training-mgr' },
+  { name: 'w4-my-instructor', path: '/my/instructor', persona: 'sme-reviewer' },
+  { name: 'w4-team-instructors', path: '/team/instructors', persona: 'chem-sup' },
 ];
 for (const s of RTL) {
   test(`rtl ${s.name}`, async ({ page }) => {
@@ -165,6 +187,33 @@ const MOBILE: Shot[] = [
   { name: 'w3-reserve-desk', path: '/opportunities/reserve/hr', persona: 'chco' },
   { name: 'w3-ai-transparency', path: '/admin/ai-transparency', persona: 'ai-governance' },
   { name: 'w3-settings-reco', path: '/my/settings', persona: 'nse' },
+  // wave 4 (F25-F31): every new route
+  { name: 'w4-effectiveness', path: '/training/effectiveness', persona: 'training-mgr' },
+  { name: 'w4-effectiveness-course', path: '/training/effectiveness/c-hu', persona: 'training-mgr' },
+  { name: 'w4-observations', path: '/training/observations', persona: 'sro' },
+  { name: 'w4-my-feedback', path: '/my/learning/feedback', persona: 'sro' },
+  { name: 'w4-needs', path: '/training/needs', persona: 'training-mgr' },
+  { name: 'w4-sat', path: '/training/sat', persona: 'training-mgr' },
+  { name: 'w4-sat-role', path: '/training/sat/roles/local-operator', persona: 'training-mgr' },
+  { name: 'w4-sat-task', path: '/training/sat/tasks/jt-qs-ro-t1', persona: 'training-mgr' },
+  { name: 'w4-sat-changes', path: '/training/sat/changes', persona: 'training-mgr' },
+  { name: 'w4-sat-report', path: '/training/sat/roles/local-operator/report', persona: 'training-mgr' },
+  { name: 'w4-sat-survey', path: '/training/sat/survey', persona: 'sme-reviewer' },
+  { name: 'w4-accreditation', path: '/training/accreditation', persona: 'training-mgr' },
+  { name: 'w4-self-eval', path: '/training/accreditation/ase-coit-2026-H2', persona: 'training-mgr' },
+  { name: 'w4-accr-report', path: '/training/accreditation/ase-coit-2026-H1/report', persona: 'presenter' },
+  { name: 'w4-scenarios', path: '/training/simulator/scenarios', persona: 'training-mgr' },
+  { name: 'w4-scenario', path: '/training/simulator/scenarios/scn-012', persona: 'training-mgr' },
+  { name: 'w4-my-simulator', path: '/my/simulator', persona: 'sro' },
+  { name: 'w4-my-learning-record', path: '/my/learning-record', persona: 'nse' },
+  { name: 'w4-lrs', path: '/training/lrs', persona: 'training-mgr' },
+  { name: 'w4-lrs-person', path: '/training/lrs/people/p-sro', persona: 'sro' },
+  { name: 'w4-lrs-adapters', path: '/training/lrs/adapters', persona: 'ai-governance' },
+  { name: 'w4-lrs-console', path: '/training/lrs/console', persona: 'ai-governance' },
+  { name: 'w4-instructors', path: '/training/instructors', persona: 'training-mgr' },
+  { name: 'w4-instructor-track', path: '/training/instructors/it-w-rp-02', persona: 'training-mgr' },
+  { name: 'w4-my-instructor', path: '/my/instructor', persona: 'sme-reviewer' },
+  { name: 'w4-team-instructors', path: '/team/instructors', persona: 'chem-sup' },
 ];
 for (const s of MOBILE) {
   test(`mobile ${s.name}`, async ({ page }) => {
@@ -269,5 +318,28 @@ for (const s of SET_W3) {
     await page.setViewportSize({ width: 1440, height: 900 });
     await open(page, s);
     await page.screenshot({ path: join(SHOTS_W3, `${s.name}.png`), fullPage: false });
+  });
+}
+
+// Wave 4 feature set (F25-F31): saved to KAFAA_SHOTS_W4.
+const SHOTS_W4 = process.env.KAFAA_SHOTS_W4 || 'test-results/shots_w4';
+mkdirSync(SHOTS_W4, { recursive: true });
+const SET_W4: Shot[] = [
+  { name: '01-training-effectiveness-en', path: '/training/effectiveness/c-hu', persona: 'training-mgr' },
+  { name: '02-training-needs-forecast-en', path: '/training/needs', persona: 'training-mgr' },
+  { name: '03-sat-training-matrix-en', path: '/training/sat/roles/local-operator', persona: 'training-mgr', then: async (p) => { await p.getByRole('tab', { name: /Training matrix/ }).click(); } },
+  { name: '04-simulator-coverage-en', path: '/training/simulator/scenarios', persona: 'training-mgr', then: async (p) => { await p.getByRole('tab', { name: /Cycle planner/ }).click(); } },
+  { name: '05-accreditation-self-eval-en', path: '/training/accreditation/ase-coit-2026-H2', persona: 'training-mgr' },
+  { name: '06-learning-record-store-en', path: '/training/lrs', persona: 'training-mgr' },
+  { name: '07-my-learning-record-en', path: '/my/learning-record', persona: 'nse' },
+  { name: '08-instructor-pipeline-en', path: '/training/instructors', persona: 'training-mgr' },
+  { name: '09-sat-workbench-ar', path: '/training/sat', persona: 'training-mgr', ar: true },
+  { name: '10-instructor-track-mobile', path: '/my/instructor', persona: 'sme-reviewer', mobile: true },
+];
+for (const s of SET_W4) {
+  test(`shot w4 ${s.name}`, async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await open(page, s);
+    await page.screenshot({ path: join(SHOTS_W4, `${s.name}.png`), fullPage: false });
   });
 }

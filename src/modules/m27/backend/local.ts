@@ -20,6 +20,7 @@ export function localLookups(b: LocalBackend): EmitLookups {
     course: (id) => get('courses', id) as never, competency: (id) => get('competencies', id) as never, opportunity: (id) => get('opportunities', id) as never,
     template: (id) => get('rotation_templates', id) as never, role: (id) => get('job_roles', id) as never, jpm: (id) => get('jpms', id) as never,
     standard: (id) => get('qual_standards', id) as never, asset: (id) => get('knowledge_assets', id) as never, agreement: (id) => get('mentoring_agreements', id) as never,
+    scenario: (id) => get('sim_scenarios', id) as never, debrief: (id) => get('crew_debriefs', id) as never,
   };
 }
 
@@ -49,6 +50,10 @@ export function installLrsEmitters(b: LocalBackend) {
     jpm_results: (r) => emit('m05_jpm', r),
     mentoring_sessions: (r) => emit('f13_mentoring', r),
     asset_uses: (r) => emit('f21_knowledge', r),
+    // F28 (W4 integration): the debrief row is written after its member rows; one statement per member marked present.
+    crew_debriefs: (r) => {
+      for (const m of b.raw('crew_debrief_members' as Table) as unknown as Row[]) if (m.debrief_id === r.id && m.present === true) emit('f28_simulator', m);
+    },
   };
   const onUpdate: Record<string, (n: Row, o: Row) => void> = {
     refresh_state: (n, o) => { if (Number(n.attempts) > Number(o.attempts)) emit('f14_refresher', n); },

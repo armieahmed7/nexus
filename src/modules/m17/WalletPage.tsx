@@ -13,7 +13,9 @@ import { BadgeMedal, BadgeStatusPill, Stat, usePassportData, type PassportData }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = any;
-export const issuerKeyUrl = () => `${import.meta.env.BASE_URL ?? '/kafaa/'}.well-known/kafaa-issuer.json`;
+// The issuer keys link points at a copy outside any dot-directory (/kafaa/issuer/), which every static host serves. The URL inside
+// signed credentials stays /kafaa/.well-known/kafaa-issuer.json; on Netlify, _redirects rewrites it to the deploy-root /.well-known/.
+export const issuerKeyUrl = () => `${import.meta.env.BASE_URL ?? '/kafaa/'}issuer/kafaa-issuer.json`;
 export const shareUrl = (slug: string) => `${typeof window !== 'undefined' ? window.location.origin : ''}${import.meta.env.BASE_URL ?? '/kafaa/'}verify/badge/${slug}`;
 
 export default function WalletPage() {

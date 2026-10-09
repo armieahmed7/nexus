@@ -181,7 +181,7 @@
       "peopleSub": "with statements in this view"
     },
     "emittersBody": "Each Kafa'a event below appends exactly one statement when it happens. Emitters never change the source record and never block it.",
-    "plannedChip": "F28 and F38 planned"
+    "plannedChip": "F38 planned"
   },
   "scope": {
     "own": "your own",
@@ -330,7 +330,7 @@
     "verbsTitle": "Verbs",
     "typesTitle": "Activity types",
     "emittersTitle": "Emitters",
-    "emittersBody": "Simulator debriefs (F28) and OJT practice logs (F38) emit through the same function when those features go live.",
+    "emittersBody": "Simulator crew debriefs (F28) emit one statement per crew member present. OJT practice logs (F38) will emit through the same function when that feature goes live.",
     "sourcesTitle": "Sources",
     "src": {
       "adl": "ADL · Experience API (xAPI 2.0, IEEE 9274.1.1-2023)",

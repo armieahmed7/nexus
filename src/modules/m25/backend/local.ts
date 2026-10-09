@@ -231,7 +231,8 @@ export function makeLocalM25(b: LocalBackend, h: LocalRpcHelpers): M25Rpc {
       const at = snaps.map((s) => String(s.computed_at)).sort().pop() ?? null;
       const exact = ctx().has(LA, ['R', 'A']);
       const rep = needsReport(snaps, { sessions: raw('sessions'), simulator_slots: raw('simulator_slots'), proposals: raw('session_proposals'), courses: raw('courses') }, p, exact, at);
-      const instructors = new Set(raw('role_assignments').filter((a) => a.role === 'instructor' && a.status === 'active').map((a) => a.person_id)).size;
+      // W4 integration (F31 -> F26): instructor capacity is the qualified F31 pool (kafaa_instructor_tracks, status qualified).
+      const instructors = new Set(raw('instructor_tracks').filter((x) => x.status === 'qualified').map((x) => x.person_id)).size;
       return ok('Training needs', { ...rep, periods, can_compute: ctx().has(LA, ['A']), instructors });
     },
 

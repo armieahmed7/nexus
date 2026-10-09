@@ -43,7 +43,7 @@ export const ACTIVITY_TYPE_IRI: Record<ObjectType, string | null> = {
 
 export const SOURCES = ['m04_course', 'f14_refresher', 'f08_opportunity', 'f15_rotation', 'f15_shadowing', 'm05_jpm', 'f13_mentoring', 'f21_knowledge', 'f28_simulator', 'f38_ojt', 'console'] as const;
 export type Source = (typeof SOURCES)[number];
-/** The emitter registry: which Kafa'a event writes which statement. `planned` emitters belong to features not built yet (F28, F38). */
+/** The emitter registry: which Kafa'a event writes which statement. `planned` emitters belong to features not built yet (F38). */
 export const EMITTERS: { source: Source; module: string; feature: string; table: string; verbs: Verb[]; object_type: ObjectType; status: 'live' | 'planned' | 'console'; route: string | null }[] = [
   { source: 'm04_course', module: 'M04', feature: 'M04', table: 'training_records', verbs: ['completed', 'failed'], object_type: 'course', status: 'live', route: '/my/learning' },
   { source: 'f14_refresher', module: 'M19', feature: 'F14', table: 'refresh_state', verbs: ['answered'], object_type: 'refresher', status: 'live', route: '/my/coach/refresh' },
@@ -53,7 +53,7 @@ export const EMITTERS: { source: Source; module: string; feature: string; table:
   { source: 'm05_jpm', module: 'M05', feature: 'M05', table: 'jpm_results', verbs: ['passed', 'failed'], object_type: 'jpm', status: 'live', route: '/training/jpm' },
   { source: 'f13_mentoring', module: 'M04', feature: 'F13', table: 'mentoring_sessions', verbs: ['attended'], object_type: 'mentoring', status: 'live', route: '/my/mentoring' },
   { source: 'f21_knowledge', module: 'M24', feature: 'F21', table: 'asset_uses', verbs: ['experienced'], object_type: 'knowledge_asset', status: 'live', route: '/knowledge' },
-  { source: 'f28_simulator', module: 'M04', feature: 'F28', table: 'crew_debriefs', verbs: ['completed', 'attended'], object_type: 'scenario', status: 'planned', route: null },
+  { source: 'f28_simulator', module: 'M04', feature: 'F28', table: 'crew_debriefs', verbs: ['completed'], object_type: 'scenario', status: 'live', route: '/my/simulator' },
   { source: 'f38_ojt', module: 'M02', feature: 'F38', table: 'ojt_logs', verbs: ['attempted'], object_type: 'task', status: 'planned', route: null },
   { source: 'console', module: 'M27', feature: 'F30', table: '—', verbs: [...VERBS], object_type: 'activity', status: 'console', route: '/training/lrs/console' },
 ];
@@ -141,7 +141,12 @@ export interface EmitLookups {
   standard(id: string): { security_restricted?: boolean | null } | undefined;
   asset(id: string): Titled | undefined;
   agreement(id: string): { mentoring_type?: string | null } | undefined;
+  /** F28 simulator scenario (title) and crew debrief (instructor ratings), W4 integration. */
+  scenario(id: string): Titled | undefined;
+  debrief(id: string): { ratings?: Record<string, unknown> | null } | undefined;
 }
+/** The four F28 team competencies an instructor rates 1 to 5 on a crew debrief. */
+export const SIM_DIMENSIONS = ['communication', 'procedure_use', 'diagnosis', 'leadership'] as const;
 export const MENTORING_NAMES: Record<string, LangMap> = {
   career: { en: 'Career mentoring', ar: 'إرشاد مهني' },
   knowledge_transfer: { en: 'Knowledge-transfer mentoring', ar: 'إرشاد لنقل المعرفة' },
@@ -214,6 +219,19 @@ export function draftFor(source: Source, row: R, L: EmitLookups, stored?: string
     case 'f21_knowledge':
       return make(s(row.id), s(row.person_id), 'experienced', 'knowledge_asset', s(row.asset_id), titled(L.asset(s(row.asset_id)), s(row.asset_id)), null,
         record('asset_uses', s(row.id)), noonOf(s(row.used_on)));
+    case 'f28_simulator': {
+      // One statement per crew member marked present on an F28 debrief (row = kafaa_crew_debrief_members). Score = mean of the
+      // instructor's four team-competency ratings (1 to 5); success when the mean is 3 or more. No scenario content, only its title.
+      if (row.present !== true) return null;
+      const d = L.debrief(s(row.debrief_id));
+      if (!d) return null;
+      const r = (d.ratings ?? {}) as Record<string, unknown>;
+      const sum = SIM_DIMENSIONS.reduce((t, k) => t + (Number(r[k]) || 0), 0);
+      if (sum < 4) return null;
+      return make(s(row.id), s(row.person_id), 'completed', 'scenario', s(row.scenario_id), titled(L.scenario(s(row.scenario_id)), s(row.scenario_id)),
+        { completion: true, success: sum >= 12, score: { scaled: sum / 20, raw: sum / 4, min: 1, max: 5 } },
+        { extensions: { [`${EXT}record`]: `crew_debrief_members/${s(row.id)}`, [`${EXT}crew`]: s(row.crew), [`${EXT}crew-position`]: s(row.position) } }, noonOf(s(row.held_on)));
+    }
     default:
       return null;
   }
@@ -223,11 +241,12 @@ export function draftFor(source: Source, row: R, L: EmitLookups, stored?: string
 export function lookupsFrom(T: Record<string, R[]>): EmitLookups {
   const idx = (t: string) => new Map((T[t] ?? []).map((r) => [String(r.id), r]));
   const m = { course: idx('courses'), competency: idx('competencies'), opportunity: idx('opportunities'), template: idx('rotation_templates'), role: idx('job_roles'),
-    jpm: idx('jpms'), standard: idx('qual_standards'), asset: idx('knowledge_assets'), agreement: idx('mentoring_agreements') };
+    jpm: idx('jpms'), standard: idx('qual_standards'), asset: idx('knowledge_assets'), agreement: idx('mentoring_agreements'), scenario: idx('sim_scenarios'), debrief: idx('crew_debriefs') };
   return {
     course: (id) => m.course.get(id) as Titled, competency: (id) => m.competency.get(id) as never, opportunity: (id) => m.opportunity.get(id) as Titled,
     template: (id) => m.template.get(id) as Titled, role: (id) => m.role.get(id) as Titled, jpm: (id) => m.jpm.get(id) as never, standard: (id) => m.standard.get(id) as never,
     asset: (id) => m.asset.get(id) as Titled, agreement: (id) => m.agreement.get(id) as never,
+    scenario: (id) => m.scenario.get(id) as Titled, debrief: (id) => m.debrief.get(id) as never,
   };
 }
 
@@ -242,6 +261,7 @@ export function sourceRows(T: Record<string, R[]>): [Source, R][] {
   for (const r of T.jpm_results ?? []) out.push(['m05_jpm', r]);
   for (const r of T.mentoring_sessions ?? []) out.push(['f13_mentoring', r]);
   for (const r of T.asset_uses ?? []) out.push(['f21_knowledge', r]);
+  for (const r of T.crew_debrief_members ?? []) if (r.present === true) out.push(['f28_simulator', r]);
   return out;
 }
 /** Every statement the emitters would have stored for the given tables (stored = experience time). SQL: kafaa_xapi_source_rows(). */

@@ -15,15 +15,31 @@ cpSync(DIST, `${OUT}/kafaa`, { recursive: true });
 if (existsSync(`${OUT}/kafaa/_redirects`)) renameSync(`${OUT}/kafaa/_redirects`, `${OUT}/_redirects`);
 else writeFileSync(`${OUT}/_redirects`, readFileSync('public/_redirects'));
 
+// Netlify does not publish dot-directories below the deploy root, so /kafaa/.well-known/ is never served there. Publish the issuer
+// profile at the deploy root (/.well-known/kafaa-issuer.json, which Netlify does serve); _redirects rewrites /kafaa/.well-known/* to it.
+if (existsSync(`${OUT}/kafaa/.well-known`)) cpSync(`${OUT}/kafaa/.well-known`, `${OUT}/.well-known`, { recursive: true });
+for (const f of ['.well-known/kafaa-issuer.json', 'kafaa/issuer/kafaa-issuer.json']) {
+  if (!existsSync(`${OUT}/${f}`)) {
+    console.error(`make-deploy: ${OUT}/${f} is missing`);
+    process.exit(1);
+  }
+}
+
 // A zip upload (Netlify MCP deploy-site) triggers a remote build: publish the folder as is, with no build command.
 writeFileSync(`${OUT}/netlify.toml`, '[build]\n  publish = "."\n  command = ""\n');
 
 const redirects = readFileSync(`${OUT}/_redirects`, 'utf8');
-for (const line of ['/ /kafaa/ 302', '/kafaa /kafaa/ 301', '/kafaa/* /kafaa/index.html 200']) {
-  if (!redirects.split('\n').map((l) => l.trim().replace(/\s+/g, ' ')).includes(line)) {
+const rules = redirects.split('\n').map((l) => l.trim().replace(/\s+/g, ' '));
+for (const line of ['/ /kafaa/ 302', '/kafaa /kafaa/ 301', '/kafaa/.well-known/* /.well-known/:splat 200!', '/kafaa/* /kafaa/index.html 200']) {
+  if (!rules.includes(line)) {
     console.error(`make-deploy: _redirects is missing "${line}"`);
     process.exit(1);
   }
+}
+// Netlify applies the first matching rule: the issuer rewrite must sit above the SPA fallback.
+if (rules.indexOf('/kafaa/.well-known/* /.well-known/:splat 200!') > rules.indexOf('/kafaa/* /kafaa/index.html 200')) {
+  console.error('make-deploy: the /kafaa/.well-known/* rewrite must come before the /kafaa/* SPA rule in _redirects');
+  process.exit(1);
 }
 const html = readFileSync(`${OUT}/kafaa/index.html`, 'utf8');
 if (!html.includes('/kafaa/assets/')) {

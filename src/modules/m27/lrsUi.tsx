@@ -9,7 +9,7 @@ import type { PersonLabel } from './backend/rpc';
 
 export const SOURCE_TONE: Record<Source, PillTone> = {
   m04_course: 'accent', f14_refresher: 'info', f08_opportunity: 'ok', f15_rotation: 'ok', f15_shadowing: 'ok', m05_jpm: 'reserved',
-  f13_mentoring: 'sim', f21_knowledge: 'neutral', f28_simulator: 'reserved', f38_ojt: 'reserved', console: 'bad',
+  f13_mentoring: 'sim', f21_knowledge: 'neutral', f28_simulator: 'accent', f38_ojt: 'reserved', console: 'bad',
 };
 const VERB_TONE: Record<string, PillTone> = { completed: 'ok', passed: 'ok', failed: 'bad', answered: 'info', attended: 'accent', experienced: 'accent', attempted: 'neutral', progressed: 'neutral' };
 
@@ -215,7 +215,7 @@ export function StatementTimeline({ rows, whoOf, onOpen, pageSize = 40 }: { rows
   );
 }
 
-/** The emitter registry: which Kafa'a events write which statements; live, planned (F28, F38) or the admin console. */
+/** The emitter registry: which Kafa'a events write which statements; live, planned (F38) or the admin console. */
 export function EmittersTable({ counts }: { counts?: Record<string, number | null> }) {
   const t = useT();
   const f = useFormat();

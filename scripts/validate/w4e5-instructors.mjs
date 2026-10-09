@@ -12,6 +12,10 @@ export default async function w4e5Checks({ db, as, count, ok, uid }) {
   const seed = JSON.parse(readFileSync('src/seed/seed.json', 'utf8'));
   const T = seed.tables;
   const q = async (sql, p = []) => (await db.query(sql, p)).rows;
+  // W4 integration: the shared PGlite database runs the W4E2 checks first, which revise qs-ro (kafaa_revise_standard). These checks
+  // are written against the seeded revision, so make it the current one again for this file (scratch database only).
+  await db.query(`update kafaa_qual_standards set status = 'superseded' where supersedes_id = 'qs-ro' and status = 'current'`);
+  await db.query(`update kafaa_qual_standards set status = 'current' where id = 'qs-ro'`);
   let n = 4500;
   for (const [persona, role] of [['k-ro', 'Reactor Operator'], ['sq-lead', 'Supplier Quality Lead'], ['head-sq', 'Head of Supplier Quality'], ['ep-manager', 'EP Manager'],
     ['rp-lead', 'RP Lead'], ['sme-reviewer', 'SME reviewer'], ['qc-inspector', 'QC Receiving Inspector']]) {
