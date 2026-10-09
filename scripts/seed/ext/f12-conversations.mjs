@@ -66,7 +66,7 @@ export function finalize(T, ctx) {
   const stdTitle = (id) => title(stdById, id);
   const staffCourses = T.courses.filter((c) => c.audience === 'staff');
   const plans = [], acts = [], notes = [];
-  const reach = (p) => (T.career_paths.find((e) => e.from_role_id === p.job_role_id && !roleById.get(e.to_role_id)?.security_sensitive)?.to_role_id) ?? null;
+  const reach = (p) => (p.job_role_id ? T.career_paths.find((e) => e.from_role_id === p.job_role_id && !roleById.get(e.to_role_id)?.security_sensitive)?.to_role_id : null) ?? null;
 
   const prepOf = (p, h, asp, mob, include = { targets: true, roadmap: true, coach: true }) => {
     const ar = p.language === 'ar' ? 1 : 0;
@@ -118,9 +118,10 @@ export function finalize(T, ctx) {
       const prep = withPrep ? prepOf(p, hh, asp, mob) : {};
       const agenda = buildAgenda(data(person_id), person_id, withPrep ? { targets: true, roadmap: true, coach: true, sharedOnly: false } : { targets: true, roadmap: true, coach: false, sharedOnly: true }, withPrep ? prepOn : heldOn);
       const sugg = suggestActions(agenda, prep, staffCourses, roleTitle, compName, stdTitle, done, heldOn).slice(0, 2 + (hh % 2));
-      const actions = sugg.map((s, i) => ({ id: `a${i + 1}`, ...s.item }));
       const focus = target && !roleById.get(target)?.security_sensitive ? target : null;
       const planTarget = focus ?? p.job_role_id;
+      // no focus role and no current role: nothing can go into a plan (the RPC refuses that too), so notes only
+      const actions = planTarget ? sugg.map((s, i) => ({ id: `a${i + 1}`, ...s.item })) : [];
       Object.assign(row, {
         status: 'held', prep, prep_submitted_at: withPrep ? ts(prepOn, '15') : null, agenda, held_on: heldOn, notes: pick(NOTES, hh)[m.language === 'ar' ? 1 : 0], actions,
         focus_role_id: focus, coach_hours: (hh >>> 3) % 3 === 0 ? null : [2, 3, 4][(hh >>> 5) % 3], manager_read_id: manager_id, recorded_at: ts(heldOn, '13'), updated_at: ts(heldOn, '13'), created_at: ts(withPrep ? prepOn : heldOn, '07'),
