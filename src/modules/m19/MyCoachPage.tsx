@@ -3,7 +3,7 @@
 // Progress, not rank: this page has no points, streaks, badges or leaderboards (spec commitment 5).
 import { useEffect, useMemo, useState } from 'react';
 import { Page, Card, Tabs, Async, EmptyState, Callout, Icon, StatusPill, WhyThis, EngineBadge, ConfirmDialog, useReasonText } from '../../ui';
-import { useAction, useRepo } from '../../data';
+import { useAction, useQuery, useRepo } from '../../data';
 import { L, useFormat, useLang, useT } from '../../i18n';
 import { asRanked, type CoachCard } from './coach';
 import { useCoachData } from './useCoachData';
@@ -56,6 +56,7 @@ export default function MyCoachPage() {
                 </ul>
               </Card>
             </div>
+            <RefreshTeaser />
             <Tabs initial="feed" tabs={[
               { id: 'feed', label: t('m19.coach.tabFeed'), badge: feed.length, content: <Feed cards={feed} /> },
               { id: 'saved', label: t('m19.coach.tabSaved'), badge: saved.length, content: saved.length ? <CardList cards={saved} testId="m19-saved" /> : <EmptyState icon="book" title={t('m19.coach.savedEmpty')}>{t('m19.coach.savedEmptyBody')}</EmptyState> },
@@ -67,6 +68,27 @@ export default function MyCoachPage() {
         )}
       </Async>
     </Page>
+  );
+}
+
+/** W2 · E3 · F14: today's knowledge refresher (counts only; questions are served on /my/coach/refresh). No streaks or points. */
+function RefreshTeaser() {
+  const t = useT();
+  const f = useFormat();
+  const repo = useRepo();
+  const q = useQuery(['refresh_state', 'refresh_prefs'], () => repo.rpc.nextRefresher(false), []);
+  const d = q.data?.ok ? q.data.data : null;
+  if (!d || d.cadence === 'paused') return null;
+  const ready = d.items.length;
+  return (
+    <div className="card flex flex-wrap items-center gap-3 border-s-4 border-info-line p-3" data-testid="m19-refresh-teaser">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-accent-soft text-eyebrow" aria-hidden><Icon name="reset" size={16} /></div>
+      <div className="min-w-0 flex-1">
+        <div className="font-semibold">{ready ? t('m19.refresh.teaserReady', { n: f.num(ready) }) : t(`m19.refresh.done.${d.window}`)}</div>
+        <div className="text-[12.5px] text-ink-3">{t('m19.refresh.teaserBody', { due: f.num(d.due_count) })}</div>
+      </div>
+      <L to="/my/coach/refresh" className={ready ? 'btn-primary btn-sm' : 'btn-outline btn-sm'}>{ready ? t('m19.refresh.start') : t('m19.refresh.open')}<Icon name="chevron" size={14} className="rtl:-scale-x-100" /></L>
+    </div>
   );
 }
 

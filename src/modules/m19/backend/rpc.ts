@@ -2,6 +2,7 @@
 // Every RPC exists three times and they agree: this signature, backend/local.ts and SQL kafaa_<name>
 // (supabase/migrations/20261009113001_kafaa_w1e3_coach.sql) + backend/supabase.ts mapping.
 import type { Result } from '../../../data/types';
+import type { Pick, RefresherItemStats } from '../refresh';
 
 export type CoachItemKind = 'course' | 'practice' | 'ojt' | 'mentor' | 'opportunity' | 'reading' | 'refresher';
 export type CoachSignal = 'saved' | 'dismissed' | 'enrolled' | 'cleared';
@@ -42,4 +43,50 @@ export interface M19Rpc {
   coachFeedback(itemKind: CoachItemKind, itemId: string, signal: CoachSignal, competencyIds?: string[]): Promise<Result<CoachFeedbackResult>>;
   /** F07: aggregated acceptance rates of coach suggestions for HR (skills_profile Agg) and the training manager (A). Counts only; cells under 10 people are suppressed. */
   coachInsights(): Promise<Result<CoachInsights>>;
+  /**
+   * F14: the server picks today's refresher (due items first, then new items weighted to my role and upcoming requalification)
+   * from approved practice-bank items only. Questions come without answer keys or rationales. Read only, not audited.
+   * `extra` ignores the daily or weekly quota of five.
+   */
+  nextRefresher(extra?: boolean): Promise<Result<RefresherSet>>;
+  /** F14: answers are checked server-side; each item moves up one box (correct) or back to box 1 (wrong). Returns keys and explanations. Audited. */
+  submitRefresher(answers: RefresherAnswer[]): Promise<Result<RefresherOutcome>>;
+  /** F14: item difficulty from refreshers for instructors and the training manager; items answered by fewer than 10 people are suppressed. */
+  refresherItemStats(): Promise<Result<RefresherItemStats>>;
 }
+
+export interface RefresherOption { id: string; en: string; ar: string }
+export interface RefresherQuestion extends Pick {
+  version: number;
+  topic: string;
+  difficulty: string;
+  stem_en: string;
+  stem_ar: string;
+  options: RefresherOption[];
+}
+export interface RefresherSet {
+  served_on: string;
+  cadence: 'daily' | 'weekly' | 'paused';
+  window: 'day' | 'week';
+  used: number;
+  limit: number;
+  due_count: number;
+  new_count: number;
+  next_due_on: string | null;
+  items: RefresherQuestion[];
+}
+export interface RefresherAnswer { item_id: string; answer: string }
+export interface RefresherResultItem {
+  item_id: string;
+  answer: string;
+  correct: boolean;
+  key: string;
+  rationale_en: string;
+  rationale_ar: string;
+  reference: string | null;
+  competency_id: string;
+  box_before: number;
+  box_after: number;
+  due_on: string;
+}
+export interface RefresherOutcome { results: RefresherResultItem[]; correct: number; total: number }

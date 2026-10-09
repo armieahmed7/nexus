@@ -10,6 +10,14 @@
     "coach-insights": {
       "title": "Coach insights",
       "purpose": "Aggregated acceptance of Learning Coach suggestions. Counts only; groups under 10 people are suppressed."
+    },
+    "my-coach-refresh": {
+      "title": "Knowledge refresher",
+      "purpose": "Five questions a day or a week from the open practice bank, spaced by how well you know them. Private, no scores."
+    },
+    "training-refreshers": {
+      "title": "Refresher item difficulty",
+      "purpose": "How hard each practice question is in real refresher use, as aggregates only (suppressed under 10 people)."
     }
   },
   "coach": {
@@ -173,7 +181,12 @@
     "opportunity_hours": "About {hours} h a week",
     "feedback_up": "Ranked higher because you saved or enrolled on similar suggestions",
     "feedback_down": "Ranked lower because you marked similar suggestions not relevant",
-    "general": "Relevant to your role"
+    "general": "Relevant to your role",
+    "refresh_due": "Due for review: last left in box {box} (due {date})",
+    "refresh_new": "New to you: not practised yet",
+    "refresh_role": "{skill} is a competency of your current role",
+    "refresh_requal": "Your {qual} expires in {n} days: requalification is coming up",
+    "refresh_bank": "From the open practice bank only, never exam items"
   },
   "insights": {
     "intro": "How staff respond to Learning Coach suggestions: saved, enrolled and marked not relevant. Counts only, from the coach's feedback records. No names and no individual choices.",
@@ -196,5 +209,104 @@
     "dismissed": "Not relevant",
     "acceptance": "Acceptance",
     "unassigned": "No job family"
+  },
+  "refresh": {
+    "intro": "Short, spaced practice between continuing-training cycles. Questions you know come back less often; questions you miss come back sooner. Only you see your progress.",
+    "back": "Back to the Learning Coach",
+    "quizzes": "Practice quizzes",
+    "cadenceEyebrow": "How often",
+    "cadence": {
+      "daily": "Five questions a day",
+      "weekly": "Five questions a week",
+      "paused": "Paused"
+    },
+    "cadenceLabel": "Refresher cadence",
+    "cadenceOpt": {
+      "daily": "Every day",
+      "weekly": "Every week",
+      "paused": "Pause (no reminders on the coach page)"
+    },
+    "cadenceSaved": "Refresher cadence saved.",
+    "howEyebrow": "How it works",
+    "howTitle": "Spaced review in five boxes",
+    "box": "Box {n}",
+    "days": "{n} d",
+    "howBody": "A correct answer moves a question up one box and it comes back later; a wrong answer sends it back to box 1, due tomorrow.",
+    "privateEyebrow": "Private",
+    "privateTitle": "Only you see this",
+    "privateBody": "Your answers and boxes are visible to you alone. Instructors only see how hard each question is across at least 10 people.",
+    "bankOnly": "Questions come from the open practice bank, never from exams.",
+    "todayTitle": "Your refresher",
+    "todayBody": "{due} questions due for review, {fresh} not yet practised.",
+    "quota": {
+      "day": "{used} of {n} answered today",
+      "week": "{used} of {n} answered this week"
+    },
+    "qOf": "Question {n} of {total}",
+    "diff": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "dueBox": "Review · box {n}",
+    "new": "New",
+    "check": "Check {n} answers",
+    "checked": "Answers checked.",
+    "partial": "You can check the questions you have answered; the others stay for next time.",
+    "correct": "Correct.",
+    "wrong": "Not quite. The answer is: {key}",
+    "moved": "Box {from} → {to}; next review on {date}",
+    "reference": "Reference: {ref}",
+    "readCompetency": "About {name}",
+    "readCourse": "Related course: {name}",
+    "summary": "{n} of {total} correct. Each question is now scheduled for its next review.",
+    "nextSet": "Next questions",
+    "extra": "Practise a few more (optional)",
+    "done": {
+      "day": "Today’s refresher is done",
+      "week": "This week’s refresher is done"
+    },
+    "nothing": "Nothing to review right now",
+    "nextDue": "Your next review is due on {date}.",
+    "noneDue": "No reviews are scheduled yet.",
+    "confidenceTitle": "Confidence by competency",
+    "confidenceBody": "How far up the {max} boxes the practice questions of each competency are. For your own planning only.",
+    "confidenceLine": "{seen} of {items} questions practised · {mastered} in box 4 or 5",
+    "noGamesTitle": "Progress, not a game",
+    "noGamesBody": "There are no streaks, points, badges or rankings here. Qualification is not a game: refreshers only help you keep knowledge fresh.",
+    "teaserReady": "{n} refresher questions ready",
+    "teaserBody": "Spaced practice from the open practice bank · {due} due for review",
+    "start": "Start",
+    "open": "Open"
+  },
+  "rstats": {
+    "intro": "How often practice-bank questions are answered correctly in knowledge refreshers. Aggregates only: an item or competency answered by fewer than 10 people is suppressed. Use it alongside item analysis in the item bank.",
+    "itemBank": "Item bank",
+    "items": "Practice items",
+    "itemsSub": "{n} with enough answers to show",
+    "suppressed": "Suppressed",
+    "suppressedSub": "answered by fewer than {n} people",
+    "tooEasy": "Very easy",
+    "tooEasySub": "more than {p}% correct",
+    "tooHard": "Very hard",
+    "tooHardSub": "fewer than {p}% correct",
+    "byCompetency": "Share correct by competency",
+    "byCompetencyTable": "By competency",
+    "itemsTitle": "Item difficulty from refreshers",
+    "itemsBody": "Share correct (p) across all refresher answers, beside the item bank’s own p-value when it has one.",
+    "colItem": "Item",
+    "colCompetency": "Competency",
+    "colDifficulty": "Written as",
+    "colPeople": "People",
+    "colAttempts": "Answers",
+    "colP": "Correct (p)",
+    "colBankP": "Item bank p",
+    "colFlag": "Review",
+    "flag": {
+      "too_easy": "Very easy",
+      "too_hard": "Very hard"
+    },
+    "privacyTitle": "No individual results",
+    "privacyBody": "Refresher answers are private to each person. This view counts people and answers only, and hides any cell with fewer than {n} people."
   }
 }

@@ -38,6 +38,8 @@ export function useCoachData() {
     const now = todayIso();
     const upcoming = [...new Set(sessions.filter((x) => x.status === 'scheduled' && x.starts_at > `${now}T00:00:00Z`).map((x) => x.course_id))];
     const avail = await Promise.all(upcoming.map((c) => repo.rpc.sessionAvailability(c).catch(() => null)));
+    // W2E3 (F13): my line manager is never suggested as a mentor
+    const line = await repo.rpc.myReportingLine().catch(() => ({ line_manager: null, chain: [] as string[] }));
     const availability: Record<string, { taken: number; waiting: number }> = {};
     for (const a of avail) for (const x of a?.ok ? a.data ?? [] : []) availability[x.session_id] = { taken: x.taken, waiting: x.waiting };
     const t: CoachTables = {
@@ -45,11 +47,11 @@ export function useCoachData() {
       assessment_forms, items, task_items, evaluations, mentors, mentoring_requests, oe_lessons, dev_plans, coach_feedback, learning_goals, career_targets, opportunities,
       programmes, faqs, course_modules, future_goals,
     } as never;
-    return { t, availability, now };
+    return { t, availability, now, lineManager: line.line_manager };
   }, [me]);
   const result = useMemo((): (CoachResult & { input: NonNullable<ReturnType<typeof coachInputFrom>>; t: CoachTables }) | null => {
     if (!q.data) return null;
-    const input = coachInputFrom(q.data.t, q.data.now, { availability: q.data.availability, weights: eng.weights });
+    const input = coachInputFrom(q.data.t, q.data.now, { availability: q.data.availability, weights: eng.weights, lineManager: q.data.lineManager });
     if (!input) return null;
     return { ...buildCoachFeed(input), input, t: q.data.t };
   }, [q.data, eng.weights]);

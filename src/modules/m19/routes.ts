@@ -10,4 +10,8 @@ export const routes: RouteDef[] = [
   { id: 'my-coach', path: '/my/coach', module: 'M19', zone: 'staff', guard: { signedIn: true, grant: { res: 'skills_profile', levels: ['Own'] } }, nav: { lens: 'my', section: 'growth', order: 19 }, parent: 'my', spec: 'BACKLOG F07 /my/coach', component: lazy(() => import('./MyCoachPage')) },
   // F07 · aggregated acceptance rates for HR (skills_profile Agg) and the training manager (A); counts only, suppressed under 10
   { id: 'coach-insights', path: '/my/coach/insights', module: 'M19', zone: 'staff', guard: { signedIn: true, grant: { res: 'skills_profile', levels: ['Agg', 'A'] } }, nav: { lens: 'my', section: 'growth', order: 20 }, parent: 'my-coach', spec: 'BACKLOG F07 RBAC (HR aggregates)', component: lazy(() => import('./CoachInsightsPage')) },
+  // F14 (W2 · E3) · knowledge refreshers: five spaced questions from the open practice bank, private progress only
+  { id: 'my-coach-refresh', path: '/my/coach/refresh', module: 'M19', zone: 'staff', guard: { signedIn: true, grant: { res: 'skills_profile', levels: ['Own'] } }, nav: { lens: 'my', section: 'growth', order: 21 }, parent: 'my-coach', spec: 'BACKLOG F14 /my/coach/refresh', component: lazy(() => import('./RefreshPage')) },
+  // F14 · instructor view: item difficulty from refreshers, aggregates only (suppressed under 10 people)
+  { id: 'training-refreshers', path: '/training/refreshers', module: 'M19', zone: 'staff', guard: { signedIn: true, anyRole: ['instructor', 'training_manager'] }, nav: { lens: 'my', section: 'training', order: 47 }, parent: 'training', spec: 'BACKLOG F14 instructor aggregate', component: lazy(() => import('./RefresherInsightsPage')) },
 ];

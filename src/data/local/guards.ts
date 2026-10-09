@@ -30,6 +30,10 @@ export function directWriteGuard(table: string, before: Row | null, next: Row, c
     case 'mentoring_requests':
       if (statusTo(before, next, before ? ['closed'] : ['requested']) || changed(before, next, 'responded_at')) return 'Only the mentor accepts or declines a request';
       return null;
+    case 'mentors': // W2E3 (F13): SME nomination is recorded only through rpc.nominateSme (mirror: kafaa_w2e3_mentor_guard)
+      if (['sme', 'sme_skill_ids', 'sme_nominated_by', 'sme_nominated_on'].some((k) => changed(before, next, k) && !(before == null && (next[k] == null || next[k] === false || (Array.isArray(next[k]) && !(next[k] as unknown[]).length)))))
+        return 'Subject-matter expert nominations are recorded by the line manager';
+      return null;
     case 'courses':
       if (next.qualifying === true && !next.evaluation_form_id) return 'A qualifying course needs a linked evaluation form';
       return null;

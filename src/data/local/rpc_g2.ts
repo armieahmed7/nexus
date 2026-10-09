@@ -13,6 +13,7 @@ import {
   nextCertificateNo, retakeEligibility, scoreAnswers, seatDecision,
 } from '../../domain/learning';
 import { newId } from './store';
+import { lineManagerOf } from '../../modules/m20/domain'; // W2E3 (F13): own-line-manager rule for mentoring matches
 
 const addMonths = (d: string, m: number) => {
   const x = new Date(`${d}T00:00:00Z`);
@@ -348,6 +349,9 @@ export function makeG2LocalRpc(b: LocalBackend): G2Rpc {
       } else if (decision === 'matched' || decision === 'declined') {
         if (caller !== mentorPerson) return refuse('mentoring.respond', 'mentoring_requests', requestId, 'forbidden', 'Only the mentor can accept or decline', role);
         if (r.status !== 'requested') return refuse('mentoring.respond', 'mentoring_requests', requestId, 'invalid', 'This request is not waiting for a response', role);
+        // W2E3 (F13): never matched to the requester's own line manager (mirror: kafaa_respond_mentoring in the W2E3 migration)
+        if (decision === 'matched' && mentorPerson && lineManagerOf(r.person_id, b.raw('people') as never, b.raw('role_assignments') as never, todayIso()) === mentorPerson)
+          return refuse('mentoring.respond', 'mentoring_requests', requestId, 'own_manager', 'A line manager cannot mentor their own team member: mentoring works across reporting lines', role);
         if (decision === 'matched' && mentor && b.raw('mentoring_requests').filter((x) => x.mentor_id === mentor.id && x.status === 'matched').length >= mentor.capacity)
           return refuse('mentoring.respond', 'mentoring_requests', requestId, 'conflict', 'You have no free mentoring capacity; raise it or close a match first', role);
       } else return refuse('mentoring.respond', 'mentoring_requests', requestId, 'invalid', 'Unknown decision', role);

@@ -549,6 +549,10 @@ export const SCHEMA: Record<string, TableDef> = {
     cols: {
       id: 'text pk', person_id: 'text ref:people idx', role_id: 'text? ref:job_roles', interests: 'text[] =[]', capacity: 'int =2', opt_in: 'bool =true',
       bio_en: 'text =\'\'', bio_ar: 'text =\'\'',
+      // W2E3 (F13 Mentoring 2.0): mentoring types and offered skills (shown to colleagues and used for skills-based matching);
+      // sme* is a line-manager (or training-manager) nomination recorded only through rpc.nominateSme (SQL trigger + local guard)
+      types: 'text[] =[]', skill_ids: 'text[] =[]', khnp_paired: 'bool =false',
+      sme: 'bool =false', sme_skill_ids: 'text[] =[]', sme_nominated_by: 'text?', sme_nominated_on: 'date?',
     },
     // G2: second rule gives the mentor's own row a person column, so staff can opt in and edit their own offer
     read: [{ res: 'internal_content' }, { res: 'dev_plans', person: 'person_id' }], write: { mode: 'direct', res: 'dev_plans', own: true },
@@ -558,6 +562,8 @@ export const SCHEMA: Record<string, TableDef> = {
     cols: {
       id: 'text pk', person_id: 'text ref:people idx', mentor_id: 'text? ref:mentors', interest: 'text', status: 'text enum:requested|matched|declined|closed =\'requested\'', created_at: 'ts =now',
       mentor_person_id: 'text? idx', message: 'text =\'\'', responded_at: 'ts?', // G2 additions: the mentor sees requests addressed to them
+      // W2E3 (F13): the mentoring type and up to five skills the mentee wants help with (rpc.requestMentoring)
+      mentoring_type: 'text? enum:career|knowledge_transfer|leadership|reverse|peer_onboarding', skill_ids: 'text[] =[]',
     },
     read: [{ res: 'dev_plans', person: 'person_id' }, { res: 'dev_plans', person: 'mentor_person_id' }], write: { mode: 'direct', res: 'dev_plans', own: true },
   },

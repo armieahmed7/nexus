@@ -21,4 +21,22 @@ export const TABLES_M19: Record<string, TableDef> = {
     read: [{ res: 'own_profile', person: 'person_id' }],
     write: { mode: 'direct', res: 'own_profile', own: true },
   },
+  // W2 · E3 · F14 Knowledge refreshers: one Leitner state per person and practice item (written only by rpc.submitRefresher; an SQL
+  // trigger refuses any item that is not an approved practice-bank item). Private: own rows only. Instructors see item difficulty
+  // only as aggregates through rpc.refresherItemStats (suppressed under 10 people).
+  refresh_state: {
+    module: 'M19', label: 'Knowledge refresher state per person and practice item: Leitner box 1-5, due date, counts (F14; private)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', item_id: 'text ref:items idx', competency_id: 'text? ref:competencies', box: 'int =1', due_on: 'date',
+      last_result: 'text? enum:correct|wrong', last_at: 'ts?', attempts: 'int =0', correct: 'int =0', created_at: 'ts =now',
+    },
+    read: [{ res: 'own_profile', person: 'person_id' }],
+    write: { mode: 'rpc', res: 'own_profile' },
+  },
+  refresh_prefs: {
+    module: 'M19', label: 'Knowledge refresher cadence: five questions a day or a week, or paused (F14; private, no streaks)',
+    cols: { id: 'text pk', person_id: 'text ref:people uniq', cadence: 'text enum:daily|weekly|paused =\'weekly\'', updated_at: 'ts =now' },
+    read: [{ res: 'own_profile', person: 'person_id' }],
+    write: { mode: 'direct', res: 'own_profile', own: true },
+  },
 };

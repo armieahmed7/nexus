@@ -730,6 +730,13 @@ export interface MentorsRow {
   opt_in: boolean;
   bio_en: string;
   bio_ar: string;
+  types: string[];
+  skill_ids: string[];
+  khnp_paired: boolean;
+  sme: boolean;
+  sme_skill_ids: string[];
+  sme_nominated_by?: string | null;
+  sme_nominated_on?: string | null;
 }
 export interface MentoringRequestsRow {
   id: string;
@@ -741,6 +748,8 @@ export interface MentoringRequestsRow {
   mentor_person_id?: string | null;
   message: string;
   responded_at?: string | null;
+  mentoring_type?: 'career' | 'knowledge_transfer' | 'leadership' | 'reverse' | 'peer_onboarding' | null;
+  skill_ids: string[];
 }
 export interface TalentProgrammesRow {
   id: string;
@@ -1410,6 +1419,55 @@ export interface LedgerLocalRow {
   hash: string;
   actor_persona_id?: string | null;
 }
+export interface MentoringAgreementsRow {
+  id: string;
+  request_id: string;
+  mentor_id: string;
+  person_id: string;
+  mentor_person_id: string;
+  mentoring_type: 'career' | 'knowledge_transfer' | 'leadership' | 'reverse' | 'peer_onboarding';
+  goals: any;
+  cadence: 'weekly' | 'fortnightly' | 'monthly';
+  starts_on: string;
+  ends_on: string;
+  status: 'proposed' | 'active' | 'closing' | 'closed' | 'declined';
+  proposed_by: string;
+  proposed_at: string;
+  responded_at?: string | null;
+  decline_note?: string | null;
+  mentee_ratings?: any | null;
+  mentor_ratings?: any | null;
+  mentee_note?: string | null;
+  mentor_note?: string | null;
+  mentee_closed_at?: string | null;
+  mentor_closed_at?: string | null;
+  closed_at?: string | null;
+  attainment_pct?: number | null;
+  validated_skill_ids: string[];
+  validated_claim_ids: string[];
+  updated_at: string;
+}
+export interface MentoringSessionsRow {
+  id: string;
+  agreement_id: string;
+  person_id: string;
+  mentor_person_id: string;
+  held_on: string;
+  minutes: number;
+  skill_ids: string[];
+  topics: string;
+  note_shared: string;
+  logged_by: string;
+  logged_at: string;
+}
+export interface MentoringPrivateNotesRow {
+  id: string;
+  session_id: string;
+  agreement_id: string;
+  author_person_id: string;
+  note: string;
+  updated_at: string;
+}
 export interface SkillClaimsRow {
   id: string;
   person_id: string;
@@ -1551,6 +1609,25 @@ export interface LearningGoalsRow {
   person_id: string;
   hours_per_week: number;
   focus_role_ids: string[];
+  updated_at: string;
+}
+export interface RefreshStateRow {
+  id: string;
+  person_id: string;
+  item_id: string;
+  competency_id?: string | null;
+  box: number;
+  due_on: string;
+  last_result?: 'correct' | 'wrong' | null;
+  last_at?: string | null;
+  attempts: number;
+  correct: number;
+  created_at: string;
+}
+export interface RefreshPrefsRow {
+  id: string;
+  person_id: string;
+  cadence: 'daily' | 'weekly' | 'paused';
   updated_at: string;
 }
 export interface OpportunitiesRow {
@@ -1788,6 +1865,9 @@ export interface Tables {
   person_skills: PersonSkillsRow;
   engine_settings: EngineSettingsRow;
   ledger_local: LedgerLocalRow;
+  mentoring_agreements: MentoringAgreementsRow;
+  mentoring_sessions: MentoringSessionsRow;
+  mentoring_private_notes: MentoringPrivateNotesRow;
   skill_claims: SkillClaimsRow;
   badges: BadgesRow;
   skill_checkins: SkillCheckinsRow;
@@ -1798,6 +1878,8 @@ export interface Tables {
   career_conversations: CareerConversationsRow;
   coach_feedback: CoachFeedbackRow;
   learning_goals: LearningGoalsRow;
+  refresh_state: RefreshStateRow;
+  refresh_prefs: RefreshPrefsRow;
   opportunities: OpportunitiesRow;
   opportunity_applications: OpportunityApplicationsRow;
   opportunity_saves: OpportunitySavesRow;
