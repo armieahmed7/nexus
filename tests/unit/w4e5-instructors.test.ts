@@ -332,7 +332,8 @@ describe('F31 wiring, routes and i18n', () => {
     const calls: string[] = [];
     const m = makeSupabaseM02({ call: async (fn) => { calls.push(fn); return { ok: true, code: 'ok', message: '', data: null } as never; }, rpc: async () => null as never });
     for (const k of Object.keys(m)) (m as any)[k]({ person_id: 'x' }, 'accept', null);
-    expect(calls.sort()).toEqual(['kafaa_decide_instructor_nomination', 'kafaa_instructor_currency_sweep', 'kafaa_log_teaching_hours', 'kafaa_nominate_instructor', 'kafaa_qualify_instructor', 'kafaa_record_instructor_observation', 'kafaa_sync_teaching_hours', 'kafaa_withdraw_instructor_track']);
+    expect(calls.filter((c) => !['kafaa_log_practice', 'kafaa_ack_practice', 'kafaa_request_evaluation', 'kafaa_close_evaluation_request'].includes(c)).sort()).toEqual(['kafaa_decide_instructor_nomination', // W5E1: F38 calls checked in w5e1-ojt.test.ts
+      'kafaa_instructor_currency_sweep', 'kafaa_log_teaching_hours', 'kafaa_nominate_instructor', 'kafaa_qualify_instructor', 'kafaa_record_instructor_observation', 'kafaa_sync_teaching_hours', 'kafaa_withdraw_instructor_track']);
     const sql = readFileSync('supabase/migrations/20261009145001_kafaa_w4e5_instructors.sql', 'utf8');
     expect(/\b(drop|delete|truncate)\b/i.test(sql)).toBe(false);
     for (const msg of Object.values(INSMSG)) expect(sql.includes(`'${msg.replace(/'/g, "''")}'`), msg).toBe(true);

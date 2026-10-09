@@ -3,6 +3,7 @@
 // kafaa_<name> in supabase/migrations/20261009111001_kafaa_w1e1_passport.sql (+ backend/supabase.ts mapping).
 import type { Result } from '../../../data/types';
 import type { CheckinSkill, CoverageRow, CrewRow, Distribution, Group, RaterOffset, TargetRow } from '../checkins';
+import type { AwardView, DefInput, Eligibility } from '../microcred'; // W5 · E1 (F32)
 
 export interface ClaimInput {
   skill_id: string;
@@ -80,6 +81,23 @@ export interface CheckinCalibration {
   raters: (RaterOffset & { name_en: string; name_ar: string })[];
 }
 export type { CheckinSkill };
+
+// ───────────── W5 · E1 · F32 Stackable micro-credentials
+// SQL: supabase/migrations/20261009151001_kafaa_w5e1_microcred_ojt.sql. Rules: src/modules/m17/microcred.ts.
+export interface MicrocredCheck {
+  found: boolean;
+  slug: string;
+  status?: AwardView;
+  /** The signed OpenBadgeCredential (holder initials only, never a name). */
+  credential?: Record<string, unknown>;
+  key_id?: string;
+  checked_on?: string;
+  notice?: string;
+  /** Components of a stacked credential with their status (public, no person data). */
+  components?: { code: string; title_en: string; title_ar: string; slug: string | null; status: AwardView | 'none' }[];
+}
+export interface MicrocredStat { code: string; title_en: string; title_ar: string; kind: string; holders: number | null; pending: number | null; renewal_due: number | null; suppressed: boolean }
+export type EligibilityResult = { allowed: true; person_id: string; items: Eligibility[] } | { allowed: false; code: 'not_signed_in' | 'forbidden' | 'not_found'; items: [] };
 export interface M17Rpc {
   /** F03: self-claim a skill level. Own only; 20 claims a day; refused for security competencies (security_restricted). */
   claimSkill(input: ClaimInput): Promise<Result<{ id: string; level: number; state_level: number }>>;
@@ -107,4 +125,23 @@ export interface M17Rpc {
   teamCoverage(groupKey: string | null): Promise<TeamCoverage>;
   /** F11: set (or clear with active=false) a group's coverage target for a skill. Scope over the group or A; audited. */
   setTeamTarget(input: TargetInput): Promise<Result<{ id: string }>>;
+  // W5 · E1 · F32 Stackable micro-credentials
+  /** F32: eligibility for every published micro-credential (or one code) from F01 evidence (read): yourself, a person in your scope, or anyone (training manager). */
+  microcredEligibility(personId: string | null, code?: string | null): Promise<EligibilityResult>;
+  /** F32: earn a micro-credential (own): issued and signed when every criterion is met; sent for training-manager approval when it has manual criteria; renews an award due for renewal. */
+  awardMicrocred(code: string): Promise<Result<{ id: string; status: string; slug: string | null }>>;
+  /** F32: a training manager approves (re-checks the evidence, signs) or declines a request; never their own (maker_checker). Ledger. */
+  decideMicrocredAward(awardId: string, decision: 'approve' | 'decline', note: string): Promise<Result<{ id: string; status: string; slug: string | null }>>;
+  /** F32: withdraw (holder) or revoke (training manager) an award; stacked credentials that use it become "renewal due". Ledger. */
+  revokeMicrocred(awardId: string, reason: string): Promise<Result>;
+  /** F32: public verification by share slug (anyone; rate-limited; audited). */
+  verifyMicrocred(slug: string): Promise<Result<MicrocredCheck>>;
+  /** F32: framework owners save a draft definition (new code, or a new version of a published one). Copy check: no FANR certificate or licence wording. */
+  saveMicrocredDef(input: DefInput): Promise<Result<{ id: string; version: number }>>;
+  /** F32: publish a draft (the previous version is superseded) or retire a published definition. Ledger. */
+  setMicrocredDefStatus(defId: string, status: 'current' | 'retired', note?: string | null): Promise<Result<{ id: string; status: string }>>;
+  /** F32: training manager renewal sweep: notices for awards inside the renewal window, stacks with lapsed components, and expiries. */
+  microcredSweep(): Promise<Result<{ checked: number; notices: number }>>;
+  /** F32: holders, requests and renewals per micro-credential (read; exact for the training manager, under 10 suppressed for HR aggregates). */
+  microcredStats(): Promise<{ allowed: boolean; exact: boolean; rows: MicrocredStat[] }>;
 }

@@ -8,6 +8,7 @@ import { L, useFormat, usePick, useT } from '../../i18n';
 import { Async, Callout, DataTable, Drawer, EmptyState, FilterBar, KeyValue, Modal, Page, SelectField, StatusPill, Tabs, TextArea, Timeline, minLen, required, useFilters, useForm, type Column } from '../../ui';
 import type { JobRolesRow, QualStandardsRow } from '../../data/types';
 import { Metric } from './parts';
+import MicrocredAdminTab from '../m17/MicrocredAdminTab'; // W5E1 (F32): micro-credentials tab
 
 export default function AdminFrameworksPage() {
   const t = useT();
@@ -41,7 +42,9 @@ export default function AdminFrameworksPage() {
                 { id: 'roles', label: t('m16.fw.tabRoles'), content: <RolesTab d={d} canEdit={canEdit} /> },
                 { id: 'competencies', label: t('m16.fw.tabCompetencies'), content: <CompetenciesTab d={d} /> },
                 { id: 'standards', label: t('m16.fw.tabStandards'), content: <StandardsTab standards={d.standards} roles={d.roles} canEdit={canEdit} /> },
+                { id: 'microcredentials', label: t('m17.mc.admin.tab'), content: <MicrocredAdminTab /> }, // W5E1 (F32)
               ]}
+              initial={typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('tab') === 'microcredentials' ? 'microcredentials' : undefined}
             />
           </div>
         )}

@@ -38,6 +38,10 @@
     "team-skills-validate": {
       "title": "Validate skill check-ins",
       "purpose": "Validate or adjust your team's self-rated skills, and calibrate raters against the evidence."
+    },
+    "my-skills-credentials": {
+      "title": "Micro-credentials",
+      "purpose": "Small, signed credentials for skills you have shown at work: see what each one asks for, what it unlocks, and claim it."
     }
   },
   "mirror": "Mirror",
@@ -55,7 +59,15 @@
     "team_gig": "A stretch assignment lets someone practise {skill} on real work",
     "team_mentor": "{name} holds level {level} and can pass it on",
     "cal_offset": "{n} ratings compared with independent evidence: mean offset {offset} levels",
-    "cal_rule": "Flagged when the mean offset is {flag} levels or more over at least {min} ratings"
+    "cal_rule": "Flagged when the mean offset is {flag} levels or more over at least {min} ratings",
+    "mc_met": "Met: {label}",
+    "mc_missing": "Not yet: {label}",
+    "mc_lapsed": "Lapsed (outside the validity window): {label}",
+    "mc_claimed": "Self-assessed only, needs evidence or validation: {label}",
+    "mc_manual": "Needs a training manager's approval: {label}",
+    "mc_part_ok": "Part held and valid: {code}",
+    "mc_part_missing": "Part not held or not valid: {code}",
+    "mc_none": "No criteria to check yet"
   },
   "passport": {
     "intro": "Your skills as Kafa'a derives them from recorded evidence: qualification records, courses, assessments, JPMs, validated ratings and credentials. Every level shows how it was evidenced.",
@@ -337,7 +349,8 @@
   "badge": {
     "kind": {
       "certificate": "Course certificate",
-      "completion": "Course completion"
+      "completion": "Course completion",
+      "microcredential": "Micro-credential"
     },
     "status": {
       "active": "Active",
@@ -376,11 +389,19 @@
     "invalidBody": "This file was changed after it was issued, or it was not issued by Kafa'a. Do not rely on it.",
     "status": {
       "expired": "This badge has expired",
-      "revoked": "This badge has been revoked"
+      "revoked": "This badge has been revoked",
+      "renewal_due": "Renewal due",
+      "superseded": "Replaced by a renewal",
+      "pending_approval": "Awaiting approval",
+      "declined": "Not awarded"
     },
     "statusBody": {
       "expired": "The signature is genuine, but the badge or its certificate is past its validity date.",
-      "revoked": "The signature is genuine, but the badge or its certificate has been revoked."
+      "revoked": "The signature is genuine, but the badge or its certificate has been revoked.",
+      "renewal_due": "This micro-credential is still valid but is due for renewal, or one of its parts has lapsed.",
+      "superseded": "The holder renewed this micro-credential; the newer credential replaces this one.",
+      "pending_approval": "This micro-credential has been requested and is waiting for a training manager.",
+      "declined": "This micro-credential was not awarded."
     },
     "issuer": "Issuer",
     "criteria": "Criteria",
@@ -709,5 +730,210 @@
       "cyber": "Cyber security"
     },
     "toHeatmap": "Team capability heatmap"
+  },
+  "mc": {
+    "eyebrow": "Skills · Micro-credentials",
+    "intro": "Short, stackable credentials earned from evidence already in Kafa'a: courses, assessments, opportunities and validated skills. Each one is signed, shareable and checked again whenever you open this page.",
+    "noticeTitle": "Development recognition only",
+    "notice": "Kafa'a micro-credentials recognise learning and practice. They are not FANR licences, operator certifications or qualifications, and they never change a qualification or licence record.",
+    "status": {
+      "active": "Active",
+      "renewal_due": "Renewal due",
+      "expired": "Expired",
+      "pending_approval": "Awaiting approval",
+      "declined": "Declined",
+      "revoked": "Withdrawn",
+      "superseded": "Renewed",
+      "eligible": "Ready to claim",
+      "progress": "In progress",
+      "none": "Not started",
+      "stored": "Stored"
+    },
+    "area": {
+      "human_performance": "Human performance",
+      "digital": "Digital",
+      "project": "Projects",
+      "operations": "Operations",
+      "leadership": "Leadership",
+      "quality": "Quality",
+      "maintenance": "Maintenance",
+      "safety": "Safety culture"
+    },
+    "level": {
+      "foundation": "Foundation",
+      "practitioner": "Practitioner",
+      "advanced": "Advanced"
+    },
+    "kind": {
+      "micro": "Micro-credential",
+      "stack": "Stacked credential"
+    },
+    "critKind": {
+      "course": "Course",
+      "assessment": "Assessment",
+      "opportunity": "Opportunity",
+      "skill": "Skill",
+      "manual": "Manual check"
+    },
+    "defStatus": {
+      "draft": "Draft",
+      "current": "Published",
+      "superseded": "Earlier version",
+      "retired": "Retired"
+    },
+    "table": {
+      "training_records": "course record",
+      "attempts": "assessment",
+      "opportunity_applications": "opportunity",
+      "person_skills": "skills profile",
+      "microcred_awards": "approval"
+    },
+    "crit": {
+      "met": "Met",
+      "metOn": "Met on {date} ({table})",
+      "lapsed": "Completed on {date}, now outside the validity window",
+      "none": "No criteria",
+      "manualNote": "Checked by a training manager when you request it",
+      "component": "Part: {code} {title}",
+      "missing_course": "Course not completed yet",
+      "missing_assessment": "Assessment not passed yet",
+      "missing_opportunity": "Opportunity not completed yet",
+      "missing_skill": "Skill not at the level yet",
+      "missing_manual": "Needs approval",
+      "skill_met": "Level {level} of {min} needed, with evidence",
+      "skill_missing": "Level {level} of {min} needed",
+      "skill_claimed": "Level {level} is self-assessed: needs evidence or a validation"
+    },
+    "tile": {
+      "held": "Held",
+      "heldSub": "{n} due for renewal",
+      "ready": "Ready to claim",
+      "readySub": "All automatic criteria met",
+      "pending": "Awaiting approval",
+      "pendingSub": "With a training manager",
+      "renew": "Renewal due",
+      "renewSub": "Renew within the window"
+    },
+    "act": {
+      "claim": "Claim",
+      "claimBody": "Kafa'a checks the listed evidence again and, if every criterion is met, issues a signed micro-credential to your wallet.",
+      "request": "Request",
+      "requestBody": "The automatic criteria are checked now; a training manager then confirms the manual criteria before the micro-credential is issued.",
+      "renew": "Renew",
+      "renewBody": "Your evidence is checked again and a new credential replaces the current one, with a new validity period.",
+      "cancel": "Cancel request"
+    },
+    "col": {
+      "credential": "Micro-credential",
+      "status": "Status"
+    },
+    "stacksTitle": "Stacked credentials",
+    "stacksBody": "A stacked credential is issued only when every part is held and valid. If a part expires, the stack is flagged for renewal.",
+    "stacksInto": "Part of: {title}",
+    "stackComponentDue": "A part of this stack has lapsed: renew the part to keep the stack current.",
+    "catalogueTitle": "Catalogue",
+    "catalogueBody": "Every published micro-credential, what it asks for and what it unlocks. Your progress is worked out from the evidence listed.",
+    "filterArea": "Area",
+    "allAreas": "All areas",
+    "progress": "{met} of {total} criteria met",
+    "progressLabel": "Progress",
+    "daysLeft": "{n} days left",
+    "requestedOn": "Requested {date}",
+    "criteriaTitle": "What it asks for",
+    "unlocksTitle": "What it unlocks",
+    "unlocksShort": "Helps towards: {roles}",
+    "unlocksNone": "Recognises the skill; no specific role linked yet.",
+    "unlocksNote": "Aligned skills count towards these roles in your career navigator.",
+    "toNavigator": "Open the career navigator",
+    "validity": "Valid for",
+    "months": "{n} months",
+    "hours": "Effort",
+    "hoursN": "about {n} hours",
+    "effective": "Effective from",
+    "versions": "Versions",
+    "credentialTitle": "Your credential",
+    "verifyLink": "Verify",
+    "verifyParts": "Parts of this stacked credential",
+    "mineTitle": "My micro-credentials",
+    "mineBody": "Everything you have claimed, requested or renewed, including earlier versions.",
+    "mineEmpty": "No micro-credentials yet",
+    "mineEmptyBody": "Pick one from the catalogue: the ones marked Ready to claim can be issued straight away.",
+    "withdrawTitle": "Withdraw this micro-credential?",
+    "withdrawBody": "It stops verifying for anyone you shared it with. The evidence it was built from stays on your profile.",
+    "noEligibility": "Eligibility could not be checked just now. Try again in a moment.",
+    "toWallet": "Credential wallet",
+    "admin": {
+      "tab": "Micro-credentials",
+      "title": "Micro-credential definitions",
+      "notice": "Definitions must not use licence, certification or qualification wording: micro-credentials recognise development only and never stand in for FANR or ENEC qualification decisions.",
+      "holders": "Holders",
+      "exact": "Exact count",
+      "suppressed": "Fewer than 10, not shown",
+      "suppressedNote": "Counts below 10 are not shown to protect privacy.",
+      "pending": "Awaiting approval",
+      "published": "Published",
+      "publishedSub": "{stacks} stacked",
+      "drafts": "Drafts",
+      "approvalsTitle": "Approvals",
+      "approvalsTmOnly": "Only a training manager can approve manual criteria.",
+      "noPending": "Nothing waiting for approval.",
+      "ownRequest": "Your own request: another training manager decides.",
+      "approve": "Approve",
+      "approveTitle": "Approve and issue",
+      "approveBody": "You confirm the manual criteria are met. The micro-credential is signed and issued to the holder.",
+      "decline": "Decline",
+      "declineTitle": "Decline request",
+      "declineBody": "The person is told the request was declined, with your note.",
+      "note": "Note",
+      "sweep": "Check renewals now",
+      "defsTitle": "Definitions",
+      "empty": "No definitions yet.",
+      "new": "New micro-credential",
+      "newTitle": "New micro-credential",
+      "edit": "Edit draft",
+      "revise": "Revise",
+      "reviseTitle": "Revise {code}",
+      "publish": "Publish",
+      "publishTitle": "Publish {code}?",
+      "publishBody": "The new version becomes the one people earn. Earlier versions stay valid for those who hold them.",
+      "retire": "Retire",
+      "retireTitle": "Retire {code}?",
+      "retireBody": "Nobody can earn it any more. Credentials already issued stay valid until they expire.",
+      "saveDraft": "Save draft",
+      "changeReason": "Reason for the change",
+      "codeHint": "MC- followed by capitals, digits or hyphens.",
+      "kind": "Type",
+      "area": "Area",
+      "level": "Level",
+      "version": "Version",
+      "titleEn": "Title (English)",
+      "titleAr": "Title (Arabic)",
+      "summaryEn": "Summary (English)",
+      "summaryAr": "Summary (Arabic)",
+      "validityHint": "Between {min} and {max} months.",
+      "stacksInto": "Part of stack",
+      "noStack": "Standalone",
+      "stackHelp": "A stack has no criteria of its own: it is issued when every published part is held and valid.",
+      "parts": "{n} parts",
+      "criteriaTitle": "Criteria",
+      "criteria": "Criteria",
+      "addCrit": "Add criterion",
+      "critKind": "Kind",
+      "critRef": "Course, assessment or opportunity",
+      "oppKind": "Any completed opportunity of type {kind}",
+      "skill": "Skill",
+      "minLevel": "Minimum level",
+      "labelEn": "Label (English)",
+      "labelAr": "Label (Arabic)",
+      "remove": "Remove",
+      "manualHelp": "A manual criterion is confirmed by a training manager when the person requests the micro-credential.",
+      "manualOpen": "Manual criteria open",
+      "alignTitle": "Aligned skills",
+      "addAlign": "Add skill",
+      "rolesTitle": "Roles it helps towards",
+      "wordingTitle": "Wording not allowed",
+      "wordingBody": "Remove licence, certification, qualification or regulator wording: micro-credentials must not imply a FANR certification.",
+      "statsTitle": "Holders by micro-credential"
+    }
   }
 }

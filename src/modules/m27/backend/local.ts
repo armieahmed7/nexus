@@ -21,6 +21,7 @@ export function localLookups(b: LocalBackend): EmitLookups {
     template: (id) => get('rotation_templates', id) as never, role: (id) => get('job_roles', id) as never, jpm: (id) => get('jpms', id) as never,
     standard: (id) => get('qual_standards', id) as never, asset: (id) => get('knowledge_assets', id) as never, agreement: (id) => get('mentoring_agreements', id) as never,
     scenario: (id) => get('sim_scenarios', id) as never, debrief: (id) => get('crew_debriefs', id) as never,
+    task: (id) => get('task_items', id) as never, // W5E1 (F38)
   };
 }
 
@@ -51,6 +52,7 @@ export function installLrsEmitters(b: LocalBackend) {
     mentoring_sessions: (r) => emit('f13_mentoring', r),
     asset_uses: (r) => emit('f21_knowledge', r),
     // F28 (W4 integration): the debrief row is written after its member rows; one statement per member marked present.
+    ojt_logs: (r) => emit('f38_ojt', r), // W5E1 (F38): one statement per practice entry
     crew_debriefs: (r) => {
       for (const m of b.raw('crew_debrief_members' as Table) as unknown as Row[]) if (m.debrief_id === r.id && m.present === true) emit('f28_simulator', m);
     },

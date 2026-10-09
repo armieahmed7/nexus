@@ -31,11 +31,11 @@ beforeEach(async () => {
 const sumOf = (r: Record<string, number>) => SIM_DIMENSIONS.reduce((t, k) => t + Number(r[k] ?? 0), 0);
 
 describe('F28 -> F30: simulator debriefs in the learning record store', () => {
-  it('the registry marks the F28 emitter live; F38 stays planned', () => {
+  it('the registry marks the F28 emitter live; F38 is live since W5E1', () => {
     const e = EMITTERS.find((x) => x.source === 'f28_simulator')!;
     expect(e).toMatchObject({ status: 'live', route: '/my/simulator', object_type: 'scenario', verbs: ['completed'] });
-    expect(EMITTERS.find((x) => x.source === 'f38_ojt')!.status).toBe('planned');
-    expect(translate('en', 'm27.ex.plannedChip')).toBe('F38 planned');
+    expect(EMITTERS.find((x) => x.source === 'f38_ojt')).toMatchObject({ status: 'live', route: '/my/ojt' }); // W5E1 (F38 live)
+    expect(translate('en', 'm27.ex.plannedChip')).toBe('F38 live');
   });
   it('the seed holds exactly one statement per present crew member of every debrief, none for absentees', () => {
     const present = T.crew_debrief_members.filter((m) => m.present === true);
@@ -156,7 +156,7 @@ describe('E2E route sweep input', () => {
   it('every route guard (including the M25 constants) parses for the sweep', async () => {
     const { loadRoutes } = await import('../smoke/routes');
     const R = loadRoutes();
-    expect(R.length).toBe(193);
+    expect(R.length).toBe(196); // W5E1: + my-skills-credentials, my-ojt, team-ojt
     for (const r of R) {
       let d = 0, e = 0;
       for (let i = 0; i < r.guard.length; i++) { if (r.guard[i] === '{') d++; else if (r.guard[i] === '}' && --d === 0) { e = i + 1; break; } }

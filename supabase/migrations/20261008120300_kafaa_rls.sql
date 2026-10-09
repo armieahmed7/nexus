@@ -1200,6 +1200,24 @@ create policy kafaa_read on kafaa_teaching_hours for select to anon, authenticat
 grant select on kafaa_teaching_hours to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- ojt_logs
+alter table kafaa_ojt_logs enable row level security;
+drop policy if exists kafaa_read on kafaa_ojt_logs;
+create policy kafaa_read on kafaa_ojt_logs for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('own_profile', preceptor_person_id, null::text, true)
+    or kafaa_rule_read('qual_records', person_id, null::text, true));
+grant select on kafaa_ojt_logs to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- ojt_eval_requests
+alter table kafaa_ojt_eval_requests enable row level security;
+drop policy if exists kafaa_read on kafaa_ojt_eval_requests;
+create policy kafaa_read on kafaa_ojt_eval_requests for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('own_profile', evaluator_person_id, null::text, true)
+    or kafaa_rule_read('qual_records', person_id, null::text, true));
+grant select on kafaa_ojt_eval_requests to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- mentoring_agreements
 alter table kafaa_mentoring_agreements enable row level security;
 drop policy if exists kafaa_read on kafaa_mentoring_agreements;
@@ -1348,6 +1366,20 @@ alter table kafaa_team_skill_targets enable row level security;
 drop policy if exists kafaa_read on kafaa_team_skill_targets;
 create policy kafaa_read on kafaa_team_skill_targets for select to anon, authenticated using (kafaa_rule_read('skills_profile', null::text, null::text, true));
 grant select on kafaa_team_skill_targets to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- microcred_defs
+alter table kafaa_microcred_defs enable row level security;
+drop policy if exists kafaa_read on kafaa_microcred_defs;
+create policy kafaa_read on kafaa_microcred_defs for select to anon, authenticated using (kafaa_rule_read('frameworks', null::text, null::text, true));
+grant select on kafaa_microcred_defs to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- microcred_awards
+alter table kafaa_microcred_awards enable row level security;
+drop policy if exists kafaa_read on kafaa_microcred_awards;
+create policy kafaa_read on kafaa_microcred_awards for select to anon, authenticated using (kafaa_rule_read('skills_profile', person_id, null::text, true));
+grant select on kafaa_microcred_awards to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
 -- career_targets

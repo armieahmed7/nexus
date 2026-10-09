@@ -15,6 +15,12 @@ export function makeSupabaseM02(x: SupabaseExtCtx): M02Rpc {
     instructorCurrencySweep: () => x.call('kafaa_instructor_currency_sweep', {}, ['instructor_tracks', 'evaluator_quals', 'skill_evidence', 'person_skills', 'notifications']),
     logTeachingHours: (input) => x.call('kafaa_log_teaching_hours', { p: input }, ['teaching_hours']),
     syncTeachingHours: (personId) => x.call('kafaa_sync_teaching_hours', { p_person: personId }, ['teaching_hours']),
+    // W5 · E1 · F38 (supabase/migrations/20261009151001_kafaa_w5e1_microcred_ojt.sql)
+    logPractice: (input) => x.call('kafaa_log_practice', { p: input }, ['ojt_logs', 'notifications', 'xapi_statements']),
+    ackPractice: (input) => x.call('kafaa_ack_practice', { p: input }, ['ojt_logs', 'notifications']),
+    requestEvaluation: (taskId, evaluatorId, note) => x.call('kafaa_request_evaluation', { p_task: taskId, p_evaluator: evaluatorId, p_note: note ?? null }, ['ojt_eval_requests', 'notifications']),
+    closeEvaluationRequest: (id, action, note) => x.call('kafaa_close_evaluation_request', { p_request: id, p_action: action, p_note: note ?? null }, ['ojt_eval_requests', 'notifications']),
+    ojtPreceptors: (taskId) => x.rpc('kafaa_ojt_preceptors', { p_task: taskId }),
     withdrawInstructorTrack: (trackId, note) => x.call('kafaa_withdraw_instructor_track', { p_track: trackId, p_note: note }, [...T, 'evaluator_quals', 'skill_evidence', 'person_skills']),
   };
 }

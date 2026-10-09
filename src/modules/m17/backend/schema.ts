@@ -64,5 +64,32 @@ export const TABLES_M17: Record<string, TableDef> = {
     },
     read: [{ res: 'skills_profile' }], write: { mode: 'rpc', res: 'skills_profile' },
   },
+  // ───────────── W5 · E1 · F32 Stackable micro-credentials
+  // Versioned definitions (like qualification standards): criteria over F01 evidence (course, assessment, opportunity, skill,
+  // manual), a validity period, and `stacks_into` (the code of a stacked credential this one counts towards). Readable as the
+  // frameworks catalogue; changed only by framework owners through rpc.saveMicrocredDef / setMicrocredDefStatus.
+  microcred_defs: {
+    module: 'M17', label: 'Micro-credential definitions: criteria over skills evidence, validity, stacking; versioned (F32)',
+    cols: {
+      id: 'text pk', code: 'text idx', version: 'int =1', kind: 'text enum:micro|stack =\'micro\'', area: 'text', level: 'text enum:foundation|practitioner|advanced =\'foundation\'',
+      title_en: 'text', title_ar: 'text', summary_en: 'text =\'\'', summary_ar: 'text =\'\'', criteria: 'json =[]', stacks_into: 'text? idx', alignment: 'json =[]',
+      role_ids: 'text[] =[]', validity_months: 'int =24', hours: 'int?', status: 'text enum:draft|current|superseded|retired =\'draft\' idx',
+      effective_date: 'date?', supersedes_id: 'text?', change_reason: 'text?', sort: 'int =0',
+      updated_by: 'text?', updated_at: 'ts =now', published_by: 'text?', published_at: 'ts?',
+    },
+    read: [{ res: 'frameworks' }], write: { mode: 'rpc', res: 'frameworks' },
+  },
+  // F32 · Awards: requested (manual criteria wait for a training manager), awarded (signed Open Badges 3.0-shaped credential,
+  // F04 issuer), declined, revoked or superseded by a renewal. Holders read their own; managers their scope; the training
+  // manager (A) all. Public verification only through rpc.verifyMicrocred (initials, never a name).
+  microcred_awards: {
+    module: 'M17', label: 'Micro-credential awards with the evidence snapshot and the signed credential (F32)',
+    cols: {
+      id: 'text pk', def_id: 'text ref:microcred_defs idx', def_code: 'text idx', def_version: 'int =1', person_id: 'text ref:people idx', holder_initials: 'text =\'\'',
+      status: 'text enum:pending_approval|awarded|declined|revoked|superseded =\'pending_approval\' idx', requested_at: 'ts =now', issued_on: 'date?', valid_to: 'date?',
+      evidence: 'json =[]', component_award_ids: 'text[] =[]', credential: 'json ={}', key_id: 'text? enum:key-1|key-offline', public_slug: 'text? uniq',
+      renewed_from: 'text?', decided_by: 'text?', decided_at: 'ts?', decision_note: 'text?', revoked_at: 'ts?', revoke_reason: 'text?', created_at: 'ts =now',
+    },
+    read: [{ res: 'skills_profile', person: 'person_id' }], write: { mode: 'rpc', res: 'skills_profile' },
+  },
 };
-

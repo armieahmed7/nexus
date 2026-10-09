@@ -54,7 +54,7 @@ export const EMITTERS: { source: Source; module: string; feature: string; table:
   { source: 'f13_mentoring', module: 'M04', feature: 'F13', table: 'mentoring_sessions', verbs: ['attended'], object_type: 'mentoring', status: 'live', route: '/my/mentoring' },
   { source: 'f21_knowledge', module: 'M24', feature: 'F21', table: 'asset_uses', verbs: ['experienced'], object_type: 'knowledge_asset', status: 'live', route: '/knowledge' },
   { source: 'f28_simulator', module: 'M04', feature: 'F28', table: 'crew_debriefs', verbs: ['completed'], object_type: 'scenario', status: 'live', route: '/my/simulator' },
-  { source: 'f38_ojt', module: 'M02', feature: 'F38', table: 'ojt_logs', verbs: ['attempted'], object_type: 'task', status: 'planned', route: null },
+  { source: 'f38_ojt', module: 'M02', feature: 'F38', table: 'ojt_logs', verbs: ['attempted'], object_type: 'task', status: 'live', route: '/my/ojt' }, // W5E1 (F38): live
   { source: 'console', module: 'M27', feature: 'F30', table: '—', verbs: [...VERBS], object_type: 'activity', status: 'console', route: '/training/lrs/console' },
 ];
 
@@ -144,6 +144,8 @@ export interface EmitLookups {
   /** F28 simulator scenario (title) and crew debrief (instructor ratings), W4 integration. */
   scenario(id: string): Titled | undefined;
   debrief(id: string): { ratings?: Record<string, unknown> | null } | undefined;
+  /** W5E1 (F38): qualification task (code and statement) for OJT practice statements. */
+  task?(id: string): { code?: string | null; statement_en?: string | null; statement_ar?: string | null } | undefined;
 }
 /** The four F28 team competencies an instructor rates 1 to 5 on a crew debrief. */
 export const SIM_DIMENSIONS = ['communication', 'procedure_use', 'diagnosis', 'leadership'] as const;
@@ -232,6 +234,15 @@ export function draftFor(source: Source, row: R, L: EmitLookups, stored?: string
         { completion: true, success: sum >= 12, score: { scaled: sum / 20, raw: sum / 4, min: 1, max: 5 } },
         { extensions: { [`${EXT}record`]: `crew_debrief_members/${s(row.id)}`, [`${EXT}crew`]: s(row.crew), [`${EXT}crew-position`]: s(row.position) } }, noonOf(s(row.held_on)));
     }
+    case 'f38_ojt': {
+      // W5E1 (F38): one `attempted` statement per OJT practice entry (object = the qualification task; never a security-restricted
+      // task, which cannot be logged). No free text: the trainee's note and the preceptor's feedback stay in Kafa'a.
+      const t = L.task?.(s(row.task_id));
+      const tid = s(row.task_id);
+      const name: LangMap = t ? { en: `${s(t.code)} ${s(t.statement_en)}`, ar: `${s(t.code)} ${s(t.statement_ar) || s(t.statement_en)}` } : { en: tid, ar: tid };
+      return make(s(row.id), s(row.person_id), 'attempted', 'task', tid, name, { completion: true },
+        { extensions: { [`${EXT}record`]: `ojt_logs/${s(row.id)}`, [`${EXT}ojt-mode`]: s(row.mode) } }, noonOf(s(row.on_date)));
+    }
     default:
       return null;
   }
@@ -241,12 +252,14 @@ export function draftFor(source: Source, row: R, L: EmitLookups, stored?: string
 export function lookupsFrom(T: Record<string, R[]>): EmitLookups {
   const idx = (t: string) => new Map((T[t] ?? []).map((r) => [String(r.id), r]));
   const m = { course: idx('courses'), competency: idx('competencies'), opportunity: idx('opportunities'), template: idx('rotation_templates'), role: idx('job_roles'),
-    jpm: idx('jpms'), standard: idx('qual_standards'), asset: idx('knowledge_assets'), agreement: idx('mentoring_agreements'), scenario: idx('sim_scenarios'), debrief: idx('crew_debriefs') };
+    jpm: idx('jpms'), standard: idx('qual_standards'), asset: idx('knowledge_assets'), agreement: idx('mentoring_agreements'), scenario: idx('sim_scenarios'), debrief: idx('crew_debriefs'),
+    task: idx('task_items') /* W5E1 (F38) */ };
   return {
     course: (id) => m.course.get(id) as Titled, competency: (id) => m.competency.get(id) as never, opportunity: (id) => m.opportunity.get(id) as Titled,
     template: (id) => m.template.get(id) as Titled, role: (id) => m.role.get(id) as Titled, jpm: (id) => m.jpm.get(id) as never, standard: (id) => m.standard.get(id) as never,
     asset: (id) => m.asset.get(id) as Titled, agreement: (id) => m.agreement.get(id) as never,
     scenario: (id) => m.scenario.get(id) as Titled, debrief: (id) => m.debrief.get(id) as never,
+    task: (id) => m.task.get(id) as never, // W5E1 (F38)
   };
 }
 
@@ -262,6 +275,7 @@ export function sourceRows(T: Record<string, R[]>): [Source, R][] {
   for (const r of T.mentoring_sessions ?? []) out.push(['f13_mentoring', r]);
   for (const r of T.asset_uses ?? []) out.push(['f21_knowledge', r]);
   for (const r of T.crew_debrief_members ?? []) if (r.present === true) out.push(['f28_simulator', r]);
+  for (const r of T.ojt_logs ?? []) out.push(['f38_ojt', r]); // W5E1 (F38)
   return out;
 }
 /** Every statement the emitters would have stored for the given tables (stored = experience time). SQL: kafaa_xapi_source_rows(). */

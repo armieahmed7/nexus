@@ -47,4 +47,32 @@ export const TABLES_M02: Record<string, TableDef> = {
     },
     read: READ as TableDef['read'], write: { mode: 'rpc', res: 'sat' },
   },
+  // ───────────── W5 · E1 · F38 OJT practice logbook
+  // Practice entries per qualification task (never security-restricted): the trainee (own_profile Own), the preceptor named on the
+  // entry (own_profile Own on preceptor_person_id), managers, instructors and evaluators in scope (qual_records Scope), auditors
+  // (qual_records R). Practice, never a qualification sign-off: no qualification record or evaluation is written. RPC writes only;
+  // client_key makes offline re-syncs idempotent.
+  ojt_logs: {
+    module: 'M02', label: 'OJT practice log entries acknowledged by a preceptor; practice, not a qualification sign-off (F38)',
+    cols: {
+      id: 'text pk', client_key: 'text uniq', person_id: 'text ref:people idx', person_name: 'text =\'\'', person_name_ar: 'text =\'\'', task_id: 'text ref:task_items idx', standard_id: 'text ref:qual_standards idx',
+      on_date: 'date idx', mode: 'text enum:walkthrough|simulate|perform', preceptor_person_id: 'text ref:people idx', preceptor_name: 'text =\'\'', preceptor_name_ar: 'text =\'\'', confidence: 'int =3',
+      conditions: 'text?', note: 'text?', status: 'text enum:pending_ack|acknowledged|returned =\'pending_ack\' idx', feedback: 'text?', preceptor_ready: 'bool =false',
+      ack_at: 'ts?', synced: 'text enum:online|offline =\'online\'', created_at: 'ts =now',
+    },
+    read: [{ res: 'own_profile', person: 'person_id' }, { res: 'own_profile', person: 'preceptor_person_id' }, { res: 'qual_records', person: 'person_id' }],
+    write: { mode: 'rpc', res: 'qual_records' },
+  },
+  // F38 · "Request evaluation": hands a ready task to a qualified evaluator, who signs it off through M02 signoffEvaluation and then
+  // closes the request with the recorded evaluation.
+  ojt_eval_requests: {
+    module: 'M02', label: 'OJT evaluation requests: a ready task handed to a qualified evaluator (F38)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', person_name: 'text =\'\'', person_name_ar: 'text =\'\'', task_id: 'text ref:task_items idx', standard_id: 'text ref:qual_standards idx', record_id: 'text ref:qual_records idx',
+      evaluator_person_id: 'text ref:people idx', evaluator_name: 'text =\'\'', evaluator_name_ar: 'text =\'\'', status: 'text enum:requested|completed|declined|cancelled =\'requested\' idx', readiness: 'json ={}', note: 'text?',
+      requested_at: 'ts =now', closed_at: 'ts?', closed_by: 'text?', close_note: 'text?', evaluation_id: 'text? ref:evaluations', result: 'text? enum:pass|fail',
+    },
+    read: [{ res: 'own_profile', person: 'person_id' }, { res: 'own_profile', person: 'evaluator_person_id' }, { res: 'qual_records', person: 'person_id' }],
+    write: { mode: 'rpc', res: 'qual_records' },
+  },
 };

@@ -15,4 +15,7 @@ export const routes: RouteDef[] = [
   { id: 'training-instructor', path: '/training/instructors/:trackId', module: 'M02', zone: 'staff', guard: { signedIn: true, grant: { res: 'sat', levels: ['R', 'W', 'A'] } }, parent: 'training-instructors', spec: 'F31 instructor track', component: lazy(() => import('./InstructorTrackPage')) },
   { id: 'my-instructor', path: '/my/instructor', module: 'M02', zone: 'staff', guard: { signedIn: true, grant: { res: 'skills_profile', levels: ['Own'] } }, nav: { lens: 'my', section: 'growth', order: 22 }, parent: 'my', spec: 'F31 my instructor track', component: lazy(() => import('./MyInstructorPage')) },
   { id: 'team-instructors', path: '/team/instructors', module: 'M02', zone: 'staff', guard: { signedIn: true, anyRole: ['manager'] }, nav: { lens: 'my', section: 'team', order: 34 }, parent: 'team', spec: 'F31 grow instructors from the team', component: lazy(() => import('./TeamInstructorsPage')) },
+  // W5E1 (F38 OJT practice logbook)
+  { id: 'my-ojt', path: '/my/ojt', module: 'M02', zone: 'staff', guard: { signedIn: true, grant: { res: 'qual_records', levels: ['Own'] } }, nav: { lens: 'my', section: 'growth', order: 23 }, parent: 'my', spec: 'F38 OJT practice logbook', component: lazy(() => import('./OjtLogbookPage')) },
+  { id: 'team-ojt', path: '/team/ojt', module: 'M02', zone: 'staff', guard: { signedIn: true, grant: { res: 'qual_records', levels: ['Scope'] } }, nav: { lens: 'my', section: 'team', order: 35 }, parent: 'team', spec: 'F38 team practice readiness', component: lazy(() => import('./TeamOjtPage')) },
 ];
