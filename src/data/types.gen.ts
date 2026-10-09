@@ -2557,6 +2557,173 @@ export interface AssetUsesRow {
   person_id: string;
   used_on: string;
 }
+export interface JtaAnalysesRow {
+  id: string;
+  role_id: string;
+  status: 'draft' | 'survey' | 'approved';
+  version: number;
+  owner_id?: string | null;
+  survey_opened_on?: string | null;
+  approved_by?: string | null;
+  approved_on?: string | null;
+  restricted: boolean;
+  notes_en: string;
+  notes_ar: string;
+  history: any;
+  updated_at: string;
+}
+export interface JtaTasksRow {
+  id: string;
+  role_id: string;
+  code: string;
+  title_en: string;
+  title_ar: string;
+  duty_en: string;
+  duty_ar: string;
+  source: 'qual_card' | 'jta_survey' | 'oe' | 'change';
+  task_item_id?: string | null;
+  standard_id?: string | null;
+  critical: boolean;
+  restricted: boolean;
+  status: 'active' | 'retired';
+  decision: 'pending' | 'train' | 'no_train' | 'overtrain';
+  decision_by?: string | null;
+  decision_on?: string | null;
+  decision_note?: string | null;
+  override: boolean;
+  version: number;
+  created_by?: string | null;
+  created_at: string;
+  changed_at: string;
+  sort: number;
+}
+export interface DifRatingsRow {
+  id: string;
+  task_id: string;
+  rater_person_id: string;
+  d: number;
+  i: number;
+  f: number;
+  note: string;
+  rater_kind: 'sme' | 'instructor' | 'developer';
+  rated_on: string;
+  active: boolean;
+}
+export interface SatObjectivesRow {
+  id: string;
+  code: string;
+  kind: 'terminal' | 'enabling';
+  text_en: string;
+  text_ar: string;
+  course_id?: string | null;
+  module_id?: string | null;
+  competency_id?: string | null;
+  role_id?: string | null;
+  source: 'course' | 'sat';
+  status: 'active' | 'retired';
+  created_by?: string | null;
+  updated_at: string;
+}
+export interface TaskObjectivesRow {
+  id: string;
+  task_id: string;
+  objective_ref: string;
+  course_id?: string | null;
+  module_id?: string | null;
+  jpm_id?: string | null;
+  active: boolean;
+  linked_by?: string | null;
+  linked_at: string;
+}
+export interface SatChangesRow {
+  id: string;
+  task_id: string;
+  role_id: string;
+  kind: 'modified' | 'retired';
+  trigger: 'task_change' | 'effectiveness' | 'oe' | 'regulatory';
+  summary: string;
+  before: any;
+  after: any;
+  impact: any;
+  status: 'open' | 'closed';
+  opened_by: string;
+  opened_by_name: string;
+  opened_by_name_ar: string;
+  opened_at: string;
+  closed_at?: string | null;
+}
+export interface SatChangeItemsRow {
+  id: string;
+  change_id: string;
+  kind: 'course' | 'standard';
+  ref_id: string;
+  title_en: string;
+  title_ar: string;
+  status: 'open' | 'updated' | 'revised' | 'no_change';
+  note: string;
+  revision_id?: string | null;
+  closed_by?: string | null;
+  closed_at?: string | null;
+  sort: number;
+}
+export interface AccrCriteriaRow {
+  id: string;
+  code: string;
+  area: 'performance' | 'environment' | 'process' | 'instructors' | 'examinations';
+  phase?: 'analysis' | 'design' | 'development' | 'implementation' | 'evaluation' | null;
+  title_en: string;
+  title_ar: string;
+  guidance_en: string;
+  guidance_ar: string;
+  evidence_kinds: string[];
+  sources: any;
+  sort: number;
+}
+export interface AccrProgrammesRow {
+  id: string;
+  role_ids: string[];
+  standard_ids: string[];
+  course_ids: string[];
+  owner_role: string;
+  active: boolean;
+  sort: number;
+}
+export interface AccrSelfevalsRow {
+  id: string;
+  programme_id: string;
+  cycle: string;
+  status: 'draft' | 'finalised';
+  opened_by: string;
+  opened_on: string;
+  finalised_by?: string | null;
+  finalised_by_name: string;
+  finalised_by_name_ar: string;
+  finalised_at?: string | null;
+  readiness?: number | null;
+  rated: number;
+  gaps: number;
+  authors: string[];
+  summary_en: string;
+  summary_ar: string;
+  updated_at: string;
+}
+export interface AccrAssessmentsRow {
+  id: string;
+  selfeval_id: string;
+  programme_id: string;
+  criterion_id: string;
+  rating: number;
+  evidence: any;
+  gap_en: string;
+  owner_role?: 'training_manager' | 'programme_lead' | 'instructors' | 'quality' | 'line_management' | 'hr' | null;
+  due_on?: string | null;
+  note: string;
+  rated_by: string;
+  rated_by_name: string;
+  rated_by_name_ar: string;
+  rated_at: string;
+  history: any;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -2732,6 +2899,17 @@ export interface Tables {
   knowledge_assets: KnowledgeAssetsRow;
   asset_reviews: AssetReviewsRow;
   asset_uses: AssetUsesRow;
+  jta_analyses: JtaAnalysesRow;
+  jta_tasks: JtaTasksRow;
+  dif_ratings: DifRatingsRow;
+  sat_objectives: SatObjectivesRow;
+  task_objectives: TaskObjectivesRow;
+  sat_changes: SatChangesRow;
+  sat_change_items: SatChangeItemsRow;
+  accr_criteria: AccrCriteriaRow;
+  accr_programmes: AccrProgrammesRow;
+  accr_selfevals: AccrSelfevalsRow;
+  accr_assessments: AccrAssessmentsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];

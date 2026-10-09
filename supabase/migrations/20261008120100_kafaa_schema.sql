@@ -3065,6 +3065,206 @@ create table if not exists kafaa_asset_uses (
 );
 comment on table kafaa_asset_uses is '[M24] A person marked a knowledge asset as used (feeds the "used by N" count, shown from 10) (F21)';
 
+-- M26 · Job analysis of a role (SAT analysis phase): draft, DIF survey open, approved (F27)
+create table if not exists kafaa_jta_analyses (
+  id text primary key,
+  role_id text not null unique,
+  status text not null default 'draft' check (status in ('draft', 'survey', 'approved')),
+  version integer not null default 1,
+  owner_id text,
+  survey_opened_on date,
+  approved_by text,
+  approved_on date,
+  restricted boolean not null default false,
+  notes_en text not null default '',
+  notes_ar text not null default '',
+  history jsonb not null default '[]'::jsonb,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_jta_analyses is '[M26] Job analysis of a role (SAT analysis phase): draft, DIF survey open, approved (F27)';
+
+-- M26 · Task inventory of a role: from qualification cards and the job analysis; restricted tasks are placeholders (F27)
+create table if not exists kafaa_jta_tasks (
+  id text primary key,
+  role_id text not null,
+  code text not null,
+  title_en text not null,
+  title_ar text not null,
+  duty_en text not null default '',
+  duty_ar text not null default '',
+  source text not null default 'jta_survey' check (source in ('qual_card', 'jta_survey', 'oe', 'change')),
+  task_item_id text,
+  standard_id text,
+  critical boolean not null default false,
+  restricted boolean not null default false,
+  status text not null default 'active' check (status in ('active', 'retired')),
+  decision text not null default 'pending' check (decision in ('pending', 'train', 'no_train', 'overtrain')),
+  decision_by text,
+  decision_on date,
+  decision_note text,
+  override boolean not null default false,
+  version integer not null default 1,
+  created_by text,
+  created_at timestamptz not null default now(),
+  changed_at timestamptz not null default now(),
+  sort integer not null default 0
+);
+comment on table kafaa_jta_tasks is '[M26] Task inventory of a role: from qualification cards and the job analysis; restricted tasks are placeholders (F27)';
+
+-- M26 · DIF survey rating of a task by a subject-matter expert: difficulty, importance, frequency 1-5 (F27)
+create table if not exists kafaa_dif_ratings (
+  id text primary key,
+  task_id text not null,
+  rater_person_id text not null,
+  d integer not null,
+  i integer not null,
+  f integer not null,
+  note text not null default '',
+  rater_kind text not null default 'sme' check (rater_kind in ('sme', 'instructor', 'developer')),
+  rated_on date not null,
+  active boolean not null default true
+);
+comment on table kafaa_dif_ratings is '[M26] DIF survey rating of a task by a subject-matter expert: difficulty, importance, frequency 1-5 (F27)';
+
+-- M26 · Learning objective: terminal or enabling, from a course or written in the SAT design phase (F27)
+create table if not exists kafaa_sat_objectives (
+  id text primary key,
+  code text not null,
+  kind text not null default 'terminal' check (kind in ('terminal', 'enabling')),
+  text_en text not null,
+  text_ar text not null,
+  course_id text,
+  module_id text,
+  competency_id text,
+  role_id text,
+  source text not null default 'course' check (source in ('course', 'sat')),
+  status text not null default 'active' check (status in ('active', 'retired')),
+  created_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_sat_objectives is '[M26] Learning objective: terminal or enabling, from a course or written in the SAT design phase (F27)';
+
+-- M26 · Task-to-training link: task -> learning objective -> course, module or JPM (F27)
+create table if not exists kafaa_task_objectives (
+  id text primary key,
+  task_id text not null,
+  objective_ref text not null,
+  course_id text,
+  module_id text,
+  jpm_id text,
+  active boolean not null default true,
+  linked_by text,
+  linked_at timestamptz not null default now()
+);
+comment on table kafaa_task_objectives is '[M26] Task-to-training link: task -> learning objective -> course, module or JPM (F27)';
+
+-- M26 · SAT change: a task changed or was retired; lists the affected courses, standards, JPMs and items (metadata only) (F27)
+create table if not exists kafaa_sat_changes (
+  id text primary key,
+  task_id text not null,
+  role_id text not null,
+  kind text not null check (kind in ('modified', 'retired')),
+  trigger text not null default 'task_change' check (trigger in ('task_change', 'effectiveness', 'oe', 'regulatory')),
+  summary text not null,
+  before jsonb not null default '{}'::jsonb,
+  after jsonb not null default '{}'::jsonb,
+  impact jsonb not null default '{}'::jsonb,
+  status text not null default 'open' check (status in ('open', 'closed')),
+  opened_by text not null,
+  opened_by_name text not null default '',
+  opened_by_name_ar text not null default '',
+  opened_at timestamptz not null default now(),
+  closed_at timestamptz
+);
+comment on table kafaa_sat_changes is '[M26] SAT change: a task changed or was retired; lists the affected courses, standards, JPMs and items (metadata only) (F27)';
+
+-- M26 · Review item of a SAT change: one per affected course and qualification standard (F27)
+create table if not exists kafaa_sat_change_items (
+  id text primary key,
+  change_id text not null,
+  kind text not null check (kind in ('course', 'standard')),
+  ref_id text not null,
+  title_en text not null default '',
+  title_ar text not null default '',
+  status text not null default 'open' check (status in ('open', 'updated', 'revised', 'no_change')),
+  note text not null default '',
+  revision_id text,
+  closed_by text,
+  closed_at timestamptz,
+  sort integer not null default 0
+);
+comment on table kafaa_sat_change_items is '[M26] Review item of a SAT change: one per affected course and qualification standard (F27)';
+
+-- M26 · Accreditation-readiness criterion: generic, paraphrased SAT-based objective sourced to public IAEA SAT guidance (F29)
+create table if not exists kafaa_accr_criteria (
+  id text primary key,
+  code text not null unique,
+  area text not null check (area in ('performance', 'environment', 'process', 'instructors', 'examinations')),
+  phase text check (phase in ('analysis', 'design', 'development', 'implementation', 'evaluation')),
+  title_en text not null,
+  title_ar text not null,
+  guidance_en text not null,
+  guidance_ar text not null,
+  evidence_kinds text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb,
+  sort integer not null default 0
+);
+comment on table kafaa_accr_criteria is '[M26] Accreditation-readiness criterion: generic, paraphrased SAT-based objective sourced to public IAEA SAT guidance (F29)';
+
+-- M26 · Training programme in the accreditation-readiness scope: its roles, standards and courses (F29)
+create table if not exists kafaa_accr_programmes (
+  id text primary key,
+  role_ids text[] not null default '{}'::text[],
+  standard_ids text[] not null default '{}'::text[],
+  course_ids text[] not null default '{}'::text[],
+  owner_role text not null default 'training',
+  active boolean not null default true,
+  sort integer not null default 0
+);
+comment on table kafaa_accr_programmes is '[M26] Training programme in the accreditation-readiness scope: its roles, standards and courses (F29)';
+
+-- M26 · Self-evaluation of a programme for a half-year cycle; finalised by the training manager, never by its sole author (F29)
+create table if not exists kafaa_accr_selfevals (
+  id text primary key,
+  programme_id text not null,
+  cycle text not null,
+  status text not null default 'draft' check (status in ('draft', 'finalised')),
+  opened_by text not null,
+  opened_on date not null,
+  finalised_by text,
+  finalised_by_name text not null default '',
+  finalised_by_name_ar text not null default '',
+  finalised_at timestamptz,
+  readiness integer,
+  rated integer not null default 0,
+  gaps integer not null default 0,
+  authors text[] not null default '{}'::text[],
+  summary_en text not null default '',
+  summary_ar text not null default '',
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_accr_selfevals is '[M26] Self-evaluation of a programme for a half-year cycle; finalised by the training manager, never by its sole author (F29)';
+
+-- M26 · Self-rating of one criterion for a programme with evidence links, and a gap owner and due date when not met (F29)
+create table if not exists kafaa_accr_assessments (
+  id text primary key,
+  selfeval_id text not null,
+  programme_id text not null,
+  criterion_id text not null,
+  rating integer not null,
+  evidence jsonb not null default '[]'::jsonb,
+  gap_en text not null default '',
+  owner_role text check (owner_role in ('training_manager', 'programme_lead', 'instructors', 'quality', 'line_management', 'hr')),
+  due_on date,
+  note text not null default '',
+  rated_by text not null,
+  rated_by_name text not null default '',
+  rated_by_name_ar text not null default '',
+  rated_at timestamptz not null default now(),
+  history jsonb not null default '[]'::jsonb
+);
+comment on table kafaa_accr_assessments is '[M26] Self-rating of one criterion for a programme with evidence links, and a gap owner and due date when not met (F29)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -3346,6 +3546,33 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_as
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_asset_reviews_reviewer_id_fk') then alter table kafaa_asset_reviews add constraint kafaa_asset_reviews_reviewer_id_fk foreign key (reviewer_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_asset_uses_asset_id_fk') then alter table kafaa_asset_uses add constraint kafaa_asset_uses_asset_id_fk foreign key (asset_id) references kafaa_knowledge_assets(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_asset_uses_person_id_fk') then alter table kafaa_asset_uses add constraint kafaa_asset_uses_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_jta_analyses_role_id_fk') then alter table kafaa_jta_analyses add constraint kafaa_jta_analyses_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_jta_analyses_owner_id_fk') then alter table kafaa_jta_analyses add constraint kafaa_jta_analyses_owner_id_fk foreign key (owner_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_jta_tasks_role_id_fk') then alter table kafaa_jta_tasks add constraint kafaa_jta_tasks_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_jta_tasks_task_item_id_fk') then alter table kafaa_jta_tasks add constraint kafaa_jta_tasks_task_item_id_fk foreign key (task_item_id) references kafaa_task_items(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_jta_tasks_standard_id_fk') then alter table kafaa_jta_tasks add constraint kafaa_jta_tasks_standard_id_fk foreign key (standard_id) references kafaa_qual_standards(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_dif_ratings_task_id_fk') then alter table kafaa_dif_ratings add constraint kafaa_dif_ratings_task_id_fk foreign key (task_id) references kafaa_jta_tasks(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_dif_ratings_rater_person_id_fk') then alter table kafaa_dif_ratings add constraint kafaa_dif_ratings_rater_person_id_fk foreign key (rater_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sat_objectives_course_id_fk') then alter table kafaa_sat_objectives add constraint kafaa_sat_objectives_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sat_objectives_module_id_fk') then alter table kafaa_sat_objectives add constraint kafaa_sat_objectives_module_id_fk foreign key (module_id) references kafaa_course_modules(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sat_objectives_competency_id_fk') then alter table kafaa_sat_objectives add constraint kafaa_sat_objectives_competency_id_fk foreign key (competency_id) references kafaa_competencies(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sat_objectives_role_id_fk') then alter table kafaa_sat_objectives add constraint kafaa_sat_objectives_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_task_objectives_task_id_fk') then alter table kafaa_task_objectives add constraint kafaa_task_objectives_task_id_fk foreign key (task_id) references kafaa_jta_tasks(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_task_objectives_objective_ref_fk') then alter table kafaa_task_objectives add constraint kafaa_task_objectives_objective_ref_fk foreign key (objective_ref) references kafaa_sat_objectives(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_task_objectives_course_id_fk') then alter table kafaa_task_objectives add constraint kafaa_task_objectives_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_task_objectives_module_id_fk') then alter table kafaa_task_objectives add constraint kafaa_task_objectives_module_id_fk foreign key (module_id) references kafaa_course_modules(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_task_objectives_jpm_id_fk') then alter table kafaa_task_objectives add constraint kafaa_task_objectives_jpm_id_fk foreign key (jpm_id) references kafaa_jpms(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sat_changes_task_id_fk') then alter table kafaa_sat_changes add constraint kafaa_sat_changes_task_id_fk foreign key (task_id) references kafaa_jta_tasks(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sat_changes_role_id_fk') then alter table kafaa_sat_changes add constraint kafaa_sat_changes_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sat_changes_opened_by_fk') then alter table kafaa_sat_changes add constraint kafaa_sat_changes_opened_by_fk foreign key (opened_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sat_change_items_change_id_fk') then alter table kafaa_sat_change_items add constraint kafaa_sat_change_items_change_id_fk foreign key (change_id) references kafaa_sat_changes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_accr_programmes_id_fk') then alter table kafaa_accr_programmes add constraint kafaa_accr_programmes_id_fk foreign key (id) references kafaa_programmes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_accr_selfevals_programme_id_fk') then alter table kafaa_accr_selfevals add constraint kafaa_accr_selfevals_programme_id_fk foreign key (programme_id) references kafaa_accr_programmes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_accr_selfevals_opened_by_fk') then alter table kafaa_accr_selfevals add constraint kafaa_accr_selfevals_opened_by_fk foreign key (opened_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_accr_assessments_selfeval_id_fk') then alter table kafaa_accr_assessments add constraint kafaa_accr_assessments_selfeval_id_fk foreign key (selfeval_id) references kafaa_accr_selfevals(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_accr_assessments_programme_id_fk') then alter table kafaa_accr_assessments add constraint kafaa_accr_assessments_programme_id_fk foreign key (programme_id) references kafaa_accr_programmes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_accr_assessments_criterion_id_fk') then alter table kafaa_accr_assessments add constraint kafaa_accr_assessments_criterion_id_fk foreign key (criterion_id) references kafaa_accr_criteria(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_accr_assessments_rated_by_fk') then alter table kafaa_accr_assessments add constraint kafaa_accr_assessments_rated_by_fk foreign key (rated_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -3706,6 +3933,39 @@ create index if not exists kafaa_asset_reviews_asset_author_id_idx on kafaa_asse
 create index if not exists kafaa_asset_reviews_reviewer_id_idx on kafaa_asset_reviews (reviewer_id);
 create index if not exists kafaa_asset_uses_asset_id_idx on kafaa_asset_uses (asset_id);
 create index if not exists kafaa_asset_uses_person_id_idx on kafaa_asset_uses (person_id);
+create index if not exists kafaa_jta_analyses_status_idx on kafaa_jta_analyses (status);
+create index if not exists kafaa_jta_analyses_owner_id_idx on kafaa_jta_analyses (owner_id);
+create index if not exists kafaa_jta_tasks_role_id_idx on kafaa_jta_tasks (role_id);
+create index if not exists kafaa_jta_tasks_task_item_id_idx on kafaa_jta_tasks (task_item_id);
+create index if not exists kafaa_jta_tasks_standard_id_idx on kafaa_jta_tasks (standard_id);
+create index if not exists kafaa_jta_tasks_status_idx on kafaa_jta_tasks (status);
+create index if not exists kafaa_jta_tasks_decision_idx on kafaa_jta_tasks (decision);
+create index if not exists kafaa_dif_ratings_task_id_idx on kafaa_dif_ratings (task_id);
+create index if not exists kafaa_dif_ratings_rater_person_id_idx on kafaa_dif_ratings (rater_person_id);
+create index if not exists kafaa_sat_objectives_course_id_idx on kafaa_sat_objectives (course_id);
+create index if not exists kafaa_sat_objectives_module_id_idx on kafaa_sat_objectives (module_id);
+create index if not exists kafaa_sat_objectives_competency_id_idx on kafaa_sat_objectives (competency_id);
+create index if not exists kafaa_sat_objectives_role_id_idx on kafaa_sat_objectives (role_id);
+create index if not exists kafaa_task_objectives_task_id_idx on kafaa_task_objectives (task_id);
+create index if not exists kafaa_task_objectives_objective_ref_idx on kafaa_task_objectives (objective_ref);
+create index if not exists kafaa_task_objectives_course_id_idx on kafaa_task_objectives (course_id);
+create index if not exists kafaa_task_objectives_module_id_idx on kafaa_task_objectives (module_id);
+create index if not exists kafaa_task_objectives_jpm_id_idx on kafaa_task_objectives (jpm_id);
+create index if not exists kafaa_sat_changes_task_id_idx on kafaa_sat_changes (task_id);
+create index if not exists kafaa_sat_changes_role_id_idx on kafaa_sat_changes (role_id);
+create index if not exists kafaa_sat_changes_status_idx on kafaa_sat_changes (status);
+create index if not exists kafaa_sat_changes_opened_by_idx on kafaa_sat_changes (opened_by);
+create index if not exists kafaa_sat_change_items_change_id_idx on kafaa_sat_change_items (change_id);
+create index if not exists kafaa_sat_change_items_status_idx on kafaa_sat_change_items (status);
+create index if not exists kafaa_accr_criteria_area_idx on kafaa_accr_criteria (area);
+create index if not exists kafaa_accr_selfevals_programme_id_idx on kafaa_accr_selfevals (programme_id);
+create index if not exists kafaa_accr_selfevals_cycle_idx on kafaa_accr_selfevals (cycle);
+create index if not exists kafaa_accr_selfevals_status_idx on kafaa_accr_selfevals (status);
+create index if not exists kafaa_accr_selfevals_opened_by_idx on kafaa_accr_selfevals (opened_by);
+create index if not exists kafaa_accr_assessments_selfeval_id_idx on kafaa_accr_assessments (selfeval_id);
+create index if not exists kafaa_accr_assessments_programme_id_idx on kafaa_accr_assessments (programme_id);
+create index if not exists kafaa_accr_assessments_criterion_id_idx on kafaa_accr_assessments (criterion_id);
+create index if not exists kafaa_accr_assessments_rated_by_idx on kafaa_accr_assessments (rated_by);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -3718,4 +3978,4 @@ create trigger kafaa_evaluations_append_only before update or delete on kafaa_ev
 drop trigger if exists kafaa_evaluation_acks_append_only on kafaa_evaluation_acks;
 create trigger kafaa_evaluation_acks_append_only before update or delete on kafaa_evaluation_acks for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 172) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 183) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
