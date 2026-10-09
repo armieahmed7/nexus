@@ -69,13 +69,21 @@ test('X1 F10 skill check-ins: peer, self-validation blocked, manager validates, 
   expect(await items.count()).toBe(2);
   const askedText = await asked.innerText();
   expect(askedText).not.toMatch(/Self level|My level|self-rated/i);
-  await items.nth(0).locator('[data-testid$="-3"]').first().click();
-  const ex = items.nth(0).locator('textarea, input[type="text"]').first();
-  if (await ex.count()) await ex.fill(`${E2E_TAG} saw this in a design review`);
-  await items.nth(1).locator('[data-testid$="-0"]').first().click();
-  await page.locator('[data-testid="m17-ci-rate"]').click();
-  await page.locator('[role="dialog"]').last().getByRole('button', { name: /Send ratings|Update ratings/ }).click();
-  expect((await lastToast(page)).tone).toBe('ok');
+  // One-shot: once the manager has decided the check-in (an earlier run), the peer's answers are read-only.
+  // A rerun then asserts the decided state instead of rating again.
+  const stillOpen = (await items.nth(0).locator('[data-testid$="-3"]').count()) > 0;
+  if (stillOpen) {
+    await items.nth(0).locator('[data-testid$="-3"]').first().click();
+    const ex = items.nth(0).locator('textarea, input[type="text"]').first();
+    if (await ex.count()) await ex.fill(`${E2E_TAG} saw this in a design review`);
+    await items.nth(1).locator('[data-testid$="-0"]').first().click();
+    await page.locator('[data-testid="m17-ci-rate"]').click();
+    await page.locator('[role="dialog"]').last().getByRole('button', { name: /Send ratings|Update ratings/ }).click();
+    expect((await lastToast(page)).tone).toBe('ok');
+  } else {
+    await expect(asked).toContainText(/Validated|Adjusted/);
+    await expect(asked).toContainText(`${E2E_TAG} saw this in a design review`);
+  }
   await clean(page, w);
 
   // the person cannot reach validation, and the form offers no security or qualification-only skill
@@ -88,7 +96,8 @@ test('X1 F10 skill check-ins: peer, self-validation blocked, manager validates, 
   const list = p2.locator('[data-testid="m17-ci-skills"]');
   await expect(list).toBeVisible();
   expect(await list.locator('[data-testid="m17-ci-skill-sk-sa-01"]').count()).toBe(0);
-  expect(await list.locator('[data-testid="m17-ci-skill-sk-qa-02"]').count()).toBe(0); // already in the open check-in
+  // While the check-in is open its skills are not offered again; once decided (a rerun) they may be asked again.
+  if (stillOpen) expect(await list.locator('[data-testid="m17-ci-skill-sk-qa-02"]').count()).toBe(0);
   await clean(p2, w2);
   await p2.close();
 
@@ -200,6 +209,9 @@ test('X3 F12 career conversation: manager records (cannot acknowledge), employee
     const t = await lastToast(p2);
     expect(t.tone, t.text).toBe('ok');
   }
+  // After acknowledgement (this run or an earlier one) the cycle tab moves on to the next preparation; the
+  // acknowledged conversation and its plan link are in History (latest selected).
+  if (!(await p2.locator('[data-testid="m18-cc-plan-link"]').count())) await p2.getByRole('tab', { name: /History/ }).click();
   await expect(p2.locator('[data-testid="m18-cc-plan-link"]').first()).toBeVisible();
   await clean(p2, w2);
   await p2.close();

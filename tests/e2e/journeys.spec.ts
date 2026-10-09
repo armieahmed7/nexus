@@ -127,18 +127,39 @@ async function cleanupE2eSessions(page: Page) {
   }
 }
 
+// Operations role cards with a NEXUS demo account, in the order J4 uses them as the learner.
+const J4_LEARNERS = ['outage-planner', 'qc-inspector', 'cap-coord', 'sec-compliance', 'work-control', 'cap-chair', 'ep-manager', 'rp-lead', 'outage-manager', 'nuc-security', 'emergency-director', 'dra'];
+const CONFIG = readFileSync('src/config.ts', 'utf8');
+const SB_URL = CONFIG.match(/'(https:\/\/[a-z0-9]+\.supabase\.co)'/)![1];
+const ANON = CONFIG.match(/'(eyJ[A-Za-z0-9._-]+)'/)![1];
+/** HU-101 passes visible to the signed-in user (REST, supabase mode). */
+async function passedHu101(page: Page): Promise<{ person_id: string }[]> {
+  const rows = await page.evaluate(async ([url, anon]) => {
+    const sessions = JSON.parse(localStorage.getItem('nexus.auth.v1.sessions') || '{}');
+    const tok = sessions[localStorage.getItem('nexus.active') || '']?.access_token;
+    const r = await fetch(`${url}/rest/v1/kafaa_attempts?form_id=eq.form-c-hu&passed=is.true&select=person_id`, { headers: { apikey: anon, Authorization: `Bearer ${tok || anon}` } });
+    return r.json();
+  }, [SB_URL, ANON] as const);
+  expect(Array.isArray(rows), JSON.stringify(rows)).toBe(true);
+  return rows as { person_id: string }[];
+}
+
 test('J4 course enrol → attend → assessment → pass → certificate', async ({ page }) => {
   test.setTimeout(15 * 60_000);
   const w = watchErrors(page);
   await pinBackend(page, 'supabase');
   const tag = `${E2E_TAG} room ${Date.now().toString(36)}`;
-  // An operations employee who has not yet passed HU-101 (each run issues a real certificate, so rerun with another).
-  const learner = process.env.E2E_LEARNER || 'outage-planner';
-  const learnerId = `p-${learner}`;
-  const learnerName = String((T.people as { id: string; display_name: string }[]).find((x) => x.id === learnerId)?.display_name ?? learner);
   // 0. Clean up sessions left by an earlier, interrupted run (remove the learner, cancel the session).
   await signIn(page, 'training-mgr');
   await cleanupE2eSessions(page);
+  // An operations employee who has not yet passed HU-101. Each run issues a real certificate, so a rerun picks the
+  // next role card that has not passed (read as the training manager, whose scope is ENEC Operations).
+  const passed = new Set((await passedHu101(page)).map((r) => r.person_id));
+  const pick = process.env.E2E_LEARNER || J4_LEARNERS.find((x) => !passed.has(`p-${x}`));
+  expect(pick, 'an operations role card that has not passed HU-101').toBeTruthy();
+  const learner = pick!;
+  const learnerId = `p-${learner}`;
+  const learnerName = String((T.people as { id: string; display_name: string }[]).find((x) => x.id === learnerId)?.display_name ?? learner);
   // 1. Training manager schedules a short HU-101 session starting in two minutes. The learner is an operations
   //    employee: the training manager's scope is ENEC Operations, so the exam can be scheduled for them.
   await go(page, '/training/schedule');

@@ -95,3 +95,11 @@ describe('F34 parent view: Arabic block dates in Arabic', () => {
     for (const li of within(screen.getByTestId('m06-parents-en')).getAllByTestId('m06-journey-fact')) expect(li.textContent).toMatch(/as of/);
   }, 60000);
 });
+
+describe('F12 team career conversations: share held in the last 6 months', () => {
+  it('passes a 0-100 value to f.pct (3 of 4 held reads 75%, not 1%)', () => {
+    const src = require('node:fs').readFileSync('src/modules/m18/TeamConversationsPage.tsx', 'utf8') as string;
+    expect(src).toContain('f.pct((counts.held * 100) / Math.max(1, team.length), 0)');
+    expect(src).not.toMatch(/f\.pct\(counts\.held \/ team\.length/);
+  });
+});

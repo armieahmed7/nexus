@@ -63,7 +63,7 @@ function TeamBody({ team, convs, cat }: { team: TeamRow[]; convs: Row[]; cat: Cc
     <>
       <Grid cols={4}>
         <StatTile label={t('m18.cc.team.reports')} value={f.num(team.length)} sub={t('m18.cc.team.reportsSub')} />
-        <StatTile label={t('m18.cc.team.held')} value={f.pct(counts.held / team.length, 0)} tone={counts.held === team.length ? 'ok' : undefined} sub={t('m18.cc.team.heldSub', { n: f.num(counts.held) })} />
+        <StatTile label={t('m18.cc.team.held')} value={f.pct((counts.held * 100) / Math.max(1, team.length), 0)} tone={counts.held === team.length ? 'ok' : undefined} sub={t('m18.cc.team.heldSub', { n: f.num(counts.held) })} />
         <StatTile label={t('m18.cc.team.overdue')} value={f.num(counts.overdue)} tone={counts.overdue ? 'bad' : 'ok'} sub={t('m18.cc.team.overdueSub')} />
         <StatTile label={t('m18.cc.team.waiting')} value={f.num(counts.waiting)} tone={counts.waiting ? 'info' : undefined} sub={t('m18.cc.team.waitingSub', { n: f.num(counts.awaiting) })} />
       </Grid>

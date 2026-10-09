@@ -135,16 +135,21 @@ test('W4 F06 roadmap: what-if moves the end date, then send to my development pl
 
 test('W5 F07 coach: a recommendation explains itself, then enrol', async ({ page }) => {
   const w = watchErrors(page);
-  await as(page, 'outage-planner'); // a staff persona whose feed has bookable courses
-  await go(page, '/my/coach');
+  // Staff personas whose feed has bookable courses. Each run enrols once, so a rerun moves on to the next
+  // persona once a feed has no bookable course left.
   const feed = page.locator('[data-testid="m19-feed"]');
-  await expect(feed).toBeVisible();
+  const enrolCard = feed.locator('[data-testid="m19-card"]:has([data-testid="m19-enrol"])').first();
+  for (const persona of ['outage-planner', 'work-control', 'cap-coord', 'rp-lead', 'chem-sup', 'ep-manager']) {
+    await as(page, persona);
+    await go(page, '/my/coach');
+    await expect(feed).toBeVisible();
+    if (await enrolCard.count()) break;
+  }
   const cards = feed.locator('[data-testid="m19-card"]');
   expect(await cards.count()).toBeGreaterThanOrEqual(5);
   const first = cards.first();
   await first.locator('[data-testid="why-this"]').click();
   expect(await first.locator('[data-testid="why-this-panel"] li').count()).toBeGreaterThan(0);
-  const enrolCard = feed.locator('[data-testid="m19-card"]:has([data-testid="m19-enrol"])').first();
   await expect(enrolCard).toBeVisible();
   await enrolCard.locator('[data-testid="m19-enrol"]').click();
   await confirmOk(page);
