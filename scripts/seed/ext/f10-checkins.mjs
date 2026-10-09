@@ -87,7 +87,9 @@ export default function build(T, ctx) {
     const person = st.person;
     const mgr = lineManagerOf(person, people, asg, today);
     if (!mgr) return;
-    const items = st.skills.filter(([s]) => eligible(person, s)).slice(0, 5).map(([s, lvl], i) => ({ skill_id: s, self_level: lvl, note: NOTES[h32(`${st.id}${s}`) % NOTES.length] }));
+    // decided seed check-ins never name a skill with a pending F03 claim, so the seed only adds rows (claims stay as W1 seeded them)
+    const pendingClaim = (s) => st.status === 'decided' && (T.skill_claims ?? []).some((x) => x.person_id === person && x.skill_id === s && x.status === 'claimed');
+    const items = st.skills.filter(([s]) => eligible(person, s) && !pendingClaim(s)).slice(0, 5).map(([s, lvl], i) => ({ skill_id: s, self_level: lvl, note: NOTES[h32(`${st.id}${s}`) % NOTES.length] }));
     if (!items.length) return;
     const pool = new Set(peerPool(person, people, asg, today).peers.map((p) => p.id));
     const peers = st.peers.filter((p) => pool.has(p)).slice(0, 2);
