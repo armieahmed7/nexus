@@ -86,7 +86,7 @@
     "assets": "{n} published knowledge assets already capture part of this knowledge", "adjusted": "Assessor changed the proposal {pa} x {pp} to {a} x {p}",
     "kc_terms": "Matched terms: {terms}", "kc_score": "BM25 match score {score}"
   },
-  "link": { "capture": "Plan a capture interview", "mentoring": "Set up knowledge-transfer mentoring", "rotations": "Open rotations and shadowing", "succession": "Open succession planning", "successionLater": "Succession planning link appears when that feature is available" },
+  "link": { "capture": "Plan a capture interview", "mentoring": "Set up knowledge-transfer mentoring", "rotations": "Open rotations and shadowing", "succession": "Open succession planning", "successionLater": "Succession planning link appears when that feature is available", "requalTitle": "Read before requalification", "requalBody": "Knowledge assets the knowledge-management owner attached to this qualification standard.", "klraTitle": "Knowledge loss risk for this role", "klraNone": "No assessed KLRA position you can see for this role this quarter.", "klraOpen": "Open the knowledge loss risk assessment" },
   "klra": {
     "intro": "Where critical knowledge is about to walk out. Each position gets an attrition factor and a position factor (1 to 5); total = attrition x position. High-risk positions need a mitigation plan before the quarter closes.",
     "simFeed": "Synthetic HR feed · bands only", "noAccess": "No access to the knowledge loss risk assessment", "noAccessBody": "It is open to the knowledge-management owner, department heads for their scope and HR as aggregates.",

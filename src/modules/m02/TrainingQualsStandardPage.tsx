@@ -10,6 +10,7 @@ import { useT, usePick, useFormat, L, useNav } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { useCrumbLabel } from '../../shell/crumbs';
 import { todayIso } from '../../domain/rules';
+import { ReadBeforeRequal } from '../m24/links'; // W3 integration: F21 assets read before requalification
 import { useQualData, TaskTable, QualPill, ExpiryText, PersonName, EvaluationForm, MirrorNote, type QualData, type Std, type Task, type Rec } from './shared';
 
 export default function TrainingQualsStandardPage() {
@@ -65,6 +66,7 @@ function StandardView({ d, std }: { d: QualData; std: Std }) {
   };
   return (
     <>
+      <ReadBeforeRequal standardIds={[...allVersionIds]} />
       {std.status === 'superseded' && current && (
         <Callout tone="sim" title={t('m02.std.supersededTitle')}>
           {t('m02.std.supersededBody', { v: current.version })} <L to={`/training/quals/${current.id}`}>{t('m02.std.openCurrent')}</L>

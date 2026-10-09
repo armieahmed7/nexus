@@ -347,7 +347,7 @@ export function makeLocalM18(b: LocalBackend, h: LocalRpcHelpers): M18Rpc {
       const ids = [...new Set((Array.isArray(personIds) ? personIds : []).filter((x) => typeof x === 'string' && x))].slice(0, MAX_PEOPLE);
       const all = ctx.has('talent_review', ['R', 'W', 'A']);
       const out = ids.filter((pid) => b.rawGet('people', pid) && (all || (ctx.has('talent_review', ['Scope']) && ctx.inScope('talent_review', pid)))).map((pid) => aspirationOf(convs(), pid));
-      return h.done<R>('conversation.aspirations_read', 'career_conversations', null, `${out.length} people, ${out.filter((x) => x.shared).length} shared`, role, null, '', '', out, []);
+      return h.done<R>('conversation.aspirations_read', 'career_conversations', null, `${out.length} people, ${out.filter((x) => x.shared).length} shared`, role, null, '', '', out, ['audit_events']);
     },
 
     async conversationInsights() {

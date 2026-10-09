@@ -90,8 +90,14 @@ export default async function w3e3Checks({ db, as, one, count, ok, uid }) {
   const slate = { id: 'ss-w3e3-sro', role_id: 'senior-reactor-operator', period: '2026', status: 'confirmed' };
   const succ = ops.map((p, i) => ({ id: `su-w3e3-${i}`, slate_id: slate.id, person_id: p.id, readiness: i < 11 ? 'ready_now' : i < 13 ? '1_2y' : '3_5y', status: 'proposed' }));
   try {
-    await fresh.query('insert into kafaa_succession_slates (id, role_id, period, status) values ($1,$2,$3,$4)', [slate.id, slate.role_id, slate.period, slate.status]);
-    for (const s of succ) await fresh.query('insert into kafaa_successors (id, slate_id, person_id, readiness, status) values ($1,$2,$3,$4,$5)', [s.id, s.slate_id, s.person_id, s.readiness, s.status]);
+    if (stubbed) {
+      await fresh.query('insert into kafaa_succession_slates (id, role_id, period, status) values ($1,$2,$3,$4)', [slate.id, slate.role_id, slate.period, slate.status]);
+      for (const s of succ) await fresh.query('insert into kafaa_successors (id, slate_id, person_id, readiness, status) values ($1,$2,$3,$4,$5)', [s.id, s.slate_id, s.person_id, s.readiness, s.status]);
+    } else {
+      // W3 integration: the merged F19 tables have more (required) columns; copy a seeded row and override the test fields.
+      await fresh.query("insert into kafaa_succession_slates select (jsonb_populate_record(null::kafaa_succession_slates, to_jsonb(x) || $1::jsonb)).* from kafaa_succession_slates x where x.id = (select min(id) from kafaa_succession_slates)", [JSON.stringify(slate)]);
+      for (const s of succ) await fresh.query("insert into kafaa_successors select (jsonb_populate_record(null::kafaa_successors, to_jsonb(x) || $1::jsonb)).* from kafaa_successors x where x.id = (select min(id) from kafaa_successors where person_id is not null)", [JSON.stringify({ ...s, cover_source: 'internal' })]);
+    }
     const slatesTs = [...(T.succession_slates ?? []), slate], succTs = [...(T.successors ?? []), ...succ];
     const a1 = await sqlBoard('2026-Q3', scen[0]), b1 = tsBoard('2026-Q3', scen[0], slatesTs, succTs);
     const sroRole = b1.roles.find((g) => g.key === 'senior-reactor-operator');
@@ -104,9 +110,10 @@ export default async function w3e3Checks({ db, as, one, count, ok, uid }) {
     const r1 = a1.roles.find((g) => g.key === 'senior-reactor-operator'), r2 = a2.roles.find((g) => g.key === 'senior-reactor-operator');
     ok(norm(a2) === norm(b2) && norm(r1.ready) !== norm(r2.ready) && norm(a1.total.ready) !== norm(a2.total.ready) && (r1.bands.now ?? 0) - (r2.bands.now ?? 0) === 6,
       'F19 readiness change (6 successors from ready now to 3-5 years) recomputes the burn-down in SQL and TS');
-    await fresh.query("update kafaa_succession_slates set status = 'archived' where id = $1", [slate.id]);
+    if (stubbed) await fresh.query("update kafaa_succession_slates set status = 'archived' where id = $1", [slate.id]);
+    else await fresh.query("update kafaa_successors set status = 'withdrawn' where slate_id = $1", [slate.id]); // F19 slates have no archived status; withdrawn successors drop out
     const a3 = await sqlBoard('2026-Q3', scen[0]);
-    ok(norm(a3) === norm(tsBoard('2026-Q3', scen[0])), 'an archived slate drops out: the role falls back to F05 shortlists');
+    ok(norm(a3) === norm(tsBoard('2026-Q3', scen[0])), stubbed ? 'an archived slate drops out: the role falls back to F05 shortlists' : 'an archived slate drops out: the board equals the seeded F19 board again');
   } catch (e) {
     ok(!stubbed, `F19 slate path skipped: the merged F19 schema needs other columns (${String(e.message).slice(0, 80)}); integration lead to re-run with F19 seed rows`);
   }

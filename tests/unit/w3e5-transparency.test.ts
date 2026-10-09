@@ -24,7 +24,7 @@ const seedData = (): FairnessData => ({
   people: T.people, roles: T.job_roles, edges: T.career_paths, roleComps: T.role_competencies, competencies: T.competencies, skills: T.skills, states: T.person_skills,
   licences: T.licences, standards: T.qual_standards, qualRecords: T.qual_records, programmes: T.programmes, courses: T.courses, trainingRecords: T.training_records, enrolments: T.enrolments,
   weights: T.engine_settings.find((s) => s.id === 'recommend')?.weights, optouts: T.reco_optouts, applications: T.opportunity_applications, mentoring: T.mentoring_requests, nominations: T.leadership_nominations,
-  placements: null,
+  placements: T.review_placements ?? null, // W3 integration: F18 placements feed the HiPo metric once merged
 });
 
 /** Synthetic population for the pure rules: n people per group with k positives each (navigator data left empty). */

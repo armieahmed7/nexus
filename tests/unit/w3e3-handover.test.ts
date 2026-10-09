@@ -295,6 +295,10 @@ describe('F22 local backend', () => {
   });
   it('the F05 path also recomputes: removing shortlists changes the named successors', async () => {
     await as('chco');
+    // W3 integration: SRO now has an F19 slate, which takes precedence; hide the F19 tables to exercise the F05 shortlist path.
+    const tables = (b as any).tables as Record<string, any[]>;
+    tables.succession_slates = [];
+    tables.successors = [];
     const r1 = (await b.rpc.handoverAggregate('2026-Q3')).data!;
     for (const t of b.raw('career_targets').filter((x) => x.role_id === 'senior-reactor-operator')) b.rawUpdate('career_targets', t.id, { active: false });
     const r2 = (await b.rpc.handoverAggregate('2026-Q3')).data!;

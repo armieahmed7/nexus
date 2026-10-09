@@ -9,6 +9,7 @@ import { useSession } from '../../auth/session';
 import { L, useFormat, usePick, useT } from '../../i18n';
 import { EXPERT_MIN_LEVEL, rankExperts, type ExpertRow } from './domain';
 import { useLabels, M22Pill, LevelDots } from './ui';
+import { ReserveExpertsNote } from '../m20/ReserveExpertsNote'; // W3 integration: F23 alumni experts who opted into the finder
 
 export default function ExpertsPage() {
   const t = useT();
@@ -29,6 +30,7 @@ export default function ExpertsPage() {
   const experts = useQuery(['expert_optin', 'person_skills'], () => repo.rpc.findExperts(skill || null), [skill, me]);
   return (
     <Page title={t('m22.routes.communities-experts.title')} intro={t('m22.experts.intro')} eyebrow={<L to="/communities">{t('m22.cop.back')}</L>} wide>
+      <ReserveExpertsNote skillId={skill || null} />
       <Async state={base}>
         {(b) => (
           <Tabs tabs={[

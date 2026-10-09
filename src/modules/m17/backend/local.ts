@@ -134,7 +134,7 @@ export function makeLocalM17(b: LocalBackend, h: LocalRpcHelpers): M17Rpc {
       if (!bd) return refuse('not_found', 'No Kafa\'a badge has this link');
       const status = badgeView(bd, todayIso(), b.raw('certificates'));
       const data: BadgeCheck = { found: true, slug, status, credential: bd.credential as Record<string, unknown>, key_id: bd.key_id, checked_on: todayIso(), notice: NOTICE_EN };
-      return h.done<BadgeCheck>('badge.verify', 'badges', slug, status, null, null, '', 'Badge found', data, []);
+      return h.done<BadgeCheck>('badge.verify', 'badges', slug, status, null, null, '', 'Badge found', data, ['audit_events']);
     },
   };
 }

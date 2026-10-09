@@ -217,5 +217,7 @@ export default async function w2e5Checks({ db, as, one, count, ok, uid }) {
     ...(await q(`select to_jsonb(x)::text j from kafaa_threads x union all select to_jsonb(x)::text from kafaa_posts x union all select to_jsonb(x)::text from kafaa_expert_optin x union all select to_jsonb(x)::text from kafaa_expert_requests x union all select to_jsonb(x)::text from kafaa_community_members x union all select to_jsonb(x)::text from kafaa_leadership_nominations x union all select to_jsonb(x)::text from kafaa_ks_sessions x`)).map((x) => x.j),
     JSON.stringify(all), JSON.stringify(sroMine), JSON.stringify(queueSteward),
   ];
-  ok(payloads.every((p) => !/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/.test(p) && !/(\+|00)[0-9]{8,}/.test(p.replace(/[\s()-]/g, ''))), `no email address or phone number in any M22 row or RPC payload (${payloads.length} payloads)`);
+  // Generated ids (kafaa_lead_rid: random hex) can contain "00" plus 8 digits by chance: drop id values before the phone test.
+  const noIds = (p) => p.replace(/"(?:id|[a-z_]+_id)"\s*:\s*"[^"]*"/g, '""');
+  ok(payloads.every((p) => !/[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/.test(p) && !/(\+|00)[0-9]{8,}/.test(noIds(p).replace(/[\s()-]/g, ''))), `no email address or phone number in any M22 row or RPC payload (${payloads.length} payloads)`);
 }

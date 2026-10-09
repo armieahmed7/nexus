@@ -7,6 +7,7 @@ import { useQuery, useRepo } from '../../data';
 import { useT, usePick, useFormat, L } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { displayView } from './quals';
+import { ReadBeforeRequal } from '../m24/links'; // W3 integration: F21 assets read before requalification
 import { useQualData, QualPill, MirrorNote, ExpiryText, TaskTable, QualGapTable, NoticeChip, type QualData } from './shared';
 
 export default function MyQualsPage() {
@@ -57,6 +58,7 @@ function MyQuals({ d, me, roleId }: { d: QualData; me: string; roleId: string | 
       <Callout tone="sim" title={t('m02.mirror.title')}>
         {t('m02.mirror.body')}
       </Callout>
+      <ReadBeforeRequal standardIds={d.stds.filter((x) => recs.some((r) => d.stdById.get(r.standard_id)?.code === x.code)).map((x) => x.id)} />
       <Tabs
         tabs={[
           {

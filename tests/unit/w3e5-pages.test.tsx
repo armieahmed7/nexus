@@ -101,7 +101,7 @@ describe('F24 /admin/ai-transparency', () => {
     fireEvent.click(screen.getByRole('tab', { name: /Fairness monitor/ }));
     const comps = await screen.findByTestId('m16-fair-comparisons', {}, W);
     const flagged = within(comps).getAllByTestId('m16-fair-comparison').filter((x) => x.getAttribute('data-flagged') === 'true');
-    expect(flagged.map((x) => `${x.getAttribute('data-metric')}:${x.getAttribute('data-dimension')}`)).toEqual(['opportunity_selected:gender']);
+    expect(flagged.map((x) => `${x.getAttribute('data-metric')}:${x.getAttribute('data-dimension')}`)).toEqual(['opportunity_selected:gender', 'hipo_pool:gender', 'hipo_pool:nationality']); // W3 integration: F18 placements now feed the HiPo pool metric
     expect(within(comps).getAllByTestId('m16-fair-suppressed').length).toBeGreaterThan(0);
     expect(screen.getByTestId('m16-fair-run')).toBeTruthy();
     expect(screen.getByRole('tab', { name: /Change log/ })).toBeTruthy();

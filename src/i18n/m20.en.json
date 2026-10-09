@@ -1064,6 +1064,12 @@
       "openEngNote": "{n} engagements are open (invited, interested or handed to HR).",
       "noteTitle": "Kafa'a is not the contract system",
       "noteBody": "This desk records consent, requests and approvals only. Contracts, payment and contact details are handled by HR outside Kafa'a. All people shown are synthetic."
+    },
+    "finderNote": {
+      "title": "Also in the alumni and expert reserve",
+      "body": "{n} alumni and partner experts have opted into the expert finder. Requests go through HR; no contact details are shared.",
+      "bodySkill": "{n} alumni and partner experts in the reserve list this skill in their frozen skill snapshot. Requests go through HR; no contact details are shared.",
+      "open": "Open the expert reserve"
     }
   }
 }

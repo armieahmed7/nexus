@@ -10,6 +10,7 @@ import { useAction, useQuery, useRepo, type RowOf } from '../../data';
 import { L, useFormat, useLang, usePick, useT } from '../../i18n';
 import { NOTE_MIN, READINESS, READY_RANK, type DevAction, type Readiness } from './domain';
 import { ActionKindPill, ConfidentialNote, FlagPills, GateChips, ReadinessPill, unwrap, useCatalogue, useLabels, type Labels } from './ui';
+import { KlraRoleLinks } from '../m24/links'; // W3 integration: F20 knowledge-loss risk for the slate's role
 import type { Candidate, SlateView, SuccessionBoard, SuccessorView } from './backend/rpc';
 
 export default function SlatePage() {
@@ -62,6 +63,7 @@ function Slate({ s, canEdit, lab }: { s: SlateView; canEdit: boolean; lab: Label
       </div>
       {s.status === 'confirmed' && <Callout tone="ok" title={t('m23.sx.confirmedTitle', { date: f.date(s.confirmed_at), name: s.confirmed_name ?? '' })}>{t('m23.sx.confirmedBody')}</Callout>}
       {s.flags.map((x) => <Callout key={x} tone={x === 'no_emergency' ? 'sim' : 'bad'} title={t(`m23.flag.${x}`)}>{t(`m23.flagHelp.${x}`)}</Callout>)}
+      <KlraRoleLinks roleId={s.role_id} />
       <Section title={t('m23.sx.successorsTitle')} description={t('m23.sx.successorsDesc')}>
         {internal.length === 0 ? <EmptyState icon="users" title={t('m23.sx.noSuccessors')} /> : (
           <ul className="space-y-3" data-testid="m23-successors">
