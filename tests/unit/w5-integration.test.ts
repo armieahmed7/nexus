@@ -1,7 +1,7 @@
 /** Wave-5 integration on master: the cross-feature wiring done by the integration lead.
  *   F38 -> F36  the personal digest's "approvals I owe" lists OJT practice entries waiting for my acknowledgement (named preceptor)
  *               and OJT evaluation requests addressed to me, each deep-linked to the logbook tab, never future-dated
- *   Routes      206 routes after wave 5 (193 + M17/M02 3, M09 5, M06 3, M07 1, M14 admin digest 1)
+ *   Routes      206 routes after wave 5 (193 + M17/M02 3, M09 5, M06 3, M07 1, M13 admin digest 1)
  * The SQL side (kafaa_dg_gather in 20261009159001_kafaa_w5qa_integration.sql) is proved equal to the TS rules for every seeded
  * person by scripts/validate/w5e5-digest-dalil.mjs and checked live-flow by scripts/validate/w5qa-integration.mjs (PGlite). */
 import { readFileSync } from 'node:fs';
