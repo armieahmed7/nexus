@@ -1982,6 +1982,69 @@ create table if not exists kafaa_crew_debrief_members (
 );
 comment on table kafaa_crew_debrief_members is '[M04] Crew member on a debrief: position, present or absent, and the F01 evidence written for them (F28)';
 
+-- M06 · Student journey interest explorer: 10 questions mapping answers to job families (public, non-scoring) (F34)
+create table if not exists kafaa_journey_questions (
+  id text primary key,
+  sort integer not null,
+  prompt_en text not null,
+  prompt_ar text not null,
+  hint_en text not null default '',
+  hint_ar text not null default '',
+  options jsonb not null default '[]'::jsonb
+);
+comment on table kafaa_journey_questions is '[M06] Student journey interest explorer: 10 questions mapping answers to job families (public, non-scoring) (F34)';
+
+-- M06 · Student journey board facts, each with a public source and an as-of date (F34)
+create table if not exists kafaa_journey_facts (
+  id text primary key,
+  step text not null check (step in ('explore', 'mustaqbali', 'route', 'first_role')),
+  programme_id text,
+  role_id text,
+  text_en text not null,
+  text_ar text not null,
+  source_id text not null,
+  as_of date not null,
+  precision text not null default 'day' check (precision in ('day', 'month', 'year')),
+  sort integer not null default 0
+);
+comment on table kafaa_journey_facts is '[M06] Student journey board facts, each with a public source and an as-of date (F34)';
+
+-- M06 · Saved student journey: interests, stage, route and readiness checklist (own rows only; HR aggregate >= 10) (F34)
+create table if not exists kafaa_student_journeys (
+  id text primary key,
+  person_id text not null unique,
+  stage text check (stage in ('school', 'finishing_school', 'university', 'graduate')),
+  route text,
+  interests jsonb not null default '{}'::jsonb,
+  milestones jsonb not null default '{}'::jsonb,
+  saved_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  cleared_at timestamptz,
+  open_read boolean not null default false
+);
+comment on table kafaa_student_journeys is '[M06] Saved student journey: interests, stage, route and readiness checklist (own rows only; HR aggregate >= 10) (F34)';
+
+-- M06 · Student starter portfolio: synthetic Mustaqbali starter credential and experiences (own rows only; not a FANR certification) (F34)
+create table if not exists kafaa_student_portfolio (
+  id text primary key,
+  person_id text not null,
+  kind text not null check (kind in ('microcred', 'experience', 'practice', 'event')),
+  title_en text not null,
+  title_ar text not null,
+  issuer_en text not null default '',
+  issuer_ar text not null default '',
+  programme_id text,
+  microcred_def_id text,
+  status text not null default 'issued' check (status in ('issued', 'in_progress')),
+  issued_on date,
+  evidence_en text not null default '',
+  evidence_ar text not null default '',
+  sample boolean not null default true,
+  open_read boolean not null default false,
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_student_portfolio is '[M06] Student starter portfolio: synthetic Mustaqbali starter credential and experiences (own rows only; not a FANR certification) (F34)';
+
 -- M07 · Handover 2030: positions with external or partner cover by role and plan year (SAMPLE, counts only) (F22)
 create table if not exists kafaa_external_cover (
   id text primary key,
@@ -3765,6 +3828,13 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_cr
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_crew_debrief_members_debrief_id_fk') then alter table kafaa_crew_debrief_members add constraint kafaa_crew_debrief_members_debrief_id_fk foreign key (debrief_id) references kafaa_crew_debriefs(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_crew_debrief_members_person_id_fk') then alter table kafaa_crew_debrief_members add constraint kafaa_crew_debrief_members_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_crew_debrief_members_scenario_id_fk') then alter table kafaa_crew_debrief_members add constraint kafaa_crew_debrief_members_scenario_id_fk foreign key (scenario_id) references kafaa_sim_scenarios(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_journey_facts_programme_id_fk') then alter table kafaa_journey_facts add constraint kafaa_journey_facts_programme_id_fk foreign key (programme_id) references kafaa_talent_programmes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_journey_facts_role_id_fk') then alter table kafaa_journey_facts add constraint kafaa_journey_facts_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_journey_facts_source_id_fk') then alter table kafaa_journey_facts add constraint kafaa_journey_facts_source_id_fk foreign key (source_id) references kafaa_sources(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_student_journeys_person_id_fk') then alter table kafaa_student_journeys add constraint kafaa_student_journeys_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_student_journeys_route_fk') then alter table kafaa_student_journeys add constraint kafaa_student_journeys_route_fk foreign key (route) references kafaa_talent_programmes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_student_portfolio_person_id_fk') then alter table kafaa_student_portfolio add constraint kafaa_student_portfolio_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_student_portfolio_programme_id_fk') then alter table kafaa_student_portfolio add constraint kafaa_student_portfolio_programme_id_fk foreign key (programme_id) references kafaa_talent_programmes(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_external_cover_role_id_fk') then alter table kafaa_external_cover add constraint kafaa_external_cover_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_external_cover_function_fk') then alter table kafaa_external_cover add constraint kafaa_external_cover_function_fk foreign key (function) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_handover_cohorts_role_id_fk') then alter table kafaa_handover_cohorts add constraint kafaa_handover_cohorts_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
@@ -4160,6 +4230,13 @@ create index if not exists kafaa_crew_debriefs_instructor_person_id_idx on kafaa
 create index if not exists kafaa_crew_debrief_members_debrief_id_idx on kafaa_crew_debrief_members (debrief_id);
 create index if not exists kafaa_crew_debrief_members_person_id_idx on kafaa_crew_debrief_members (person_id);
 create index if not exists kafaa_crew_debrief_members_scenario_id_idx on kafaa_crew_debrief_members (scenario_id);
+create index if not exists kafaa_journey_facts_step_idx on kafaa_journey_facts (step);
+create index if not exists kafaa_journey_facts_programme_id_idx on kafaa_journey_facts (programme_id);
+create index if not exists kafaa_journey_facts_role_id_idx on kafaa_journey_facts (role_id);
+create index if not exists kafaa_journey_facts_source_id_idx on kafaa_journey_facts (source_id);
+create index if not exists kafaa_student_journeys_route_idx on kafaa_student_journeys (route);
+create index if not exists kafaa_student_portfolio_person_id_idx on kafaa_student_portfolio (person_id);
+create index if not exists kafaa_student_portfolio_programme_id_idx on kafaa_student_portfolio (programme_id);
 create index if not exists kafaa_external_cover_period_idx on kafaa_external_cover (period);
 create index if not exists kafaa_external_cover_role_id_idx on kafaa_external_cover (role_id);
 create index if not exists kafaa_external_cover_function_idx on kafaa_external_cover (function);
@@ -4424,4 +4501,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 201) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 205) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

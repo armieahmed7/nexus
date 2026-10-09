@@ -1633,6 +1633,57 @@ export interface CrewDebriefMembersRow {
   held_on: string;
   evidence_ids: string[];
 }
+export interface JourneyQuestionsRow {
+  id: string;
+  sort: number;
+  prompt_en: string;
+  prompt_ar: string;
+  hint_en: string;
+  hint_ar: string;
+  options: any;
+}
+export interface JourneyFactsRow {
+  id: string;
+  step: 'explore' | 'mustaqbali' | 'route' | 'first_role';
+  programme_id?: string | null;
+  role_id?: string | null;
+  text_en: string;
+  text_ar: string;
+  source_id: string;
+  as_of: string;
+  precision: 'day' | 'month' | 'year';
+  sort: number;
+}
+export interface StudentJourneysRow {
+  id: string;
+  person_id: string;
+  stage?: 'school' | 'finishing_school' | 'university' | 'graduate' | null;
+  route?: string | null;
+  interests: any;
+  milestones: any;
+  saved_at: string;
+  updated_at: string;
+  cleared_at?: string | null;
+  open_read: boolean;
+}
+export interface StudentPortfolioRow {
+  id: string;
+  person_id: string;
+  kind: 'microcred' | 'experience' | 'practice' | 'event';
+  title_en: string;
+  title_ar: string;
+  issuer_en: string;
+  issuer_ar: string;
+  programme_id?: string | null;
+  microcred_def_id?: string | null;
+  status: 'issued' | 'in_progress';
+  issued_on?: string | null;
+  evidence_en: string;
+  evidence_ar: string;
+  sample: boolean;
+  open_read: boolean;
+  created_at: string;
+}
 export interface ExternalCoverRow {
   id: string;
   period: string;
@@ -3127,6 +3178,10 @@ export interface Tables {
   sim_cycle_items: SimCycleItemsRow;
   crew_debriefs: CrewDebriefsRow;
   crew_debrief_members: CrewDebriefMembersRow;
+  journey_questions: JourneyQuestionsRow;
+  journey_facts: JourneyFactsRow;
+  student_journeys: StudentJourneysRow;
+  student_portfolio: StudentPortfolioRow;
   external_cover: ExternalCoverRow;
   handover_cohorts: HandoverCohortsRow;
   engine_cards: EngineCardsRow;

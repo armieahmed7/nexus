@@ -5,6 +5,7 @@ import { Page, Section, Grid, Card, Async, EmptyState, SimChip, SourceLink, Call
 import { L, useFormat, usePick, useT, useLang } from '../../i18n';
 import { todayIso } from '../../domain/rules';
 import { FINDER_MATCH, FINDER_STAGES, ProgrammeCard, SourceList, type FinderStage } from './shared';
+import { JourneyTeaser } from './journeyUi'; // W5E3 (F34)
 
 export default function PathwaysPage() {
   const t = useT();
@@ -31,6 +32,7 @@ export default function PathwaysPage() {
           {t('m06.pathways.showing', { n: shown.length })}
         </p>
       </Section>
+      <JourneyTeaser />
 
       <Async state={programmes} empty={<EmptyState title={t('m06.pathways.none')} />}>
         {() =>
