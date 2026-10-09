@@ -1502,3 +1502,60 @@ create policy kafaa_read on kafaa_ks_sessions for select to anon, authenticated 
 grant select on kafaa_ks_sessions to anon, authenticated;
 -- writes: reference data, no client writes
 
+-- review_cycles
+alter table kafaa_review_cycles enable row level security;
+drop policy if exists kafaa_read on kafaa_review_cycles;
+create policy kafaa_read on kafaa_review_cycles for select to anon, authenticated using (kafaa_rule_read('talent_review', null::text, null::text, listed));
+grant select on kafaa_review_cycles to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- perf_ratings
+alter table kafaa_perf_ratings enable row level security;
+drop policy if exists kafaa_read on kafaa_perf_ratings;
+create policy kafaa_read on kafaa_perf_ratings for select to anon, authenticated using (kafaa_rule_read('talent_review', null::text, null::text, listed));
+grant select on kafaa_perf_ratings to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- review_placements
+alter table kafaa_review_placements enable row level security;
+drop policy if exists kafaa_read on kafaa_review_placements;
+create policy kafaa_read on kafaa_review_placements for select to anon, authenticated using (kafaa_rule_read('talent_review', null::text, null::text, listed));
+grant select on kafaa_review_placements to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- talent_priorities
+alter table kafaa_talent_priorities enable row level security;
+drop policy if exists kafaa_read on kafaa_talent_priorities;
+create policy kafaa_read on kafaa_talent_priorities for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('talent_review', null::text, null::text, listed));
+grant select on kafaa_talent_priorities to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- talent_pool
+alter table kafaa_talent_pool enable row level security;
+drop policy if exists kafaa_read on kafaa_talent_pool;
+create policy kafaa_read on kafaa_talent_pool for select to anon, authenticated using (kafaa_rule_read('talent_review', null::text, null::text, listed));
+grant select on kafaa_talent_pool to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- succession_slates
+alter table kafaa_succession_slates enable row level security;
+drop policy if exists kafaa_read on kafaa_succession_slates;
+create policy kafaa_read on kafaa_succession_slates for select to anon, authenticated using (kafaa_rule_read('talent_review', null::text, null::text, listed));
+grant select on kafaa_succession_slates to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- successors
+alter table kafaa_successors enable row level security;
+drop policy if exists kafaa_read on kafaa_successors;
+create policy kafaa_read on kafaa_successors for select to anon, authenticated using (kafaa_rule_read('talent_review', null::text, null::text, listed));
+grant select on kafaa_successors to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- bench_rollups
+alter table kafaa_bench_rollups enable row level security;
+drop policy if exists kafaa_read on kafaa_bench_rollups;
+create policy kafaa_read on kafaa_bench_rollups for select to anon, authenticated using (kafaa_rule_read('talent_review', null::text, null::text, listed));
+grant select on kafaa_bench_rollups to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
