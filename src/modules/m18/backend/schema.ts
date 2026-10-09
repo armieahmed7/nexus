@@ -25,4 +25,21 @@ export const TABLES_M18: Record<string, TableDef> = {
     read: [{ res: 'own_profile', person: 'person_id' }, { res: 'skills_profile', person: 'shared_person_id', where: 'shared' }],
     write: { mode: 'direct', res: 'own_profile', own: true },
   },
+  // [W2 · E2] F12 Career conversations. Private to the person (own_profile Own: nobody holds Scope, R or A on it) and to the
+  // line manager of record once the person shares the preparation or the manager records the conversation: manager_read_id is
+  // set by the RPCs only then (the second rule matches nothing before). HR sees aggregates only (rpc.conversationInsights);
+  // talent review reads the aspiration through rpc.talentAspirations, and only with share_with_talent_review on. RPC writes only.
+  career_conversations: {
+    module: 'M18', label: 'Career conversation: employee preparation, pre-filled agenda, manager notes and agreed actions, acknowledgement (F12)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', manager_person_id: 'text? ref:people idx', manager_read_id: 'text? idx', cycle: 'text =\'\'',
+      status: 'text enum:draft|held|acknowledged =\'draft\' idx', person_name: 'text =\'\'', person_name_ar: 'text =\'\'', manager_name: 'text =\'\'', manager_name_ar: 'text =\'\'',
+      prep: 'json ={}', prep_submitted_at: 'ts?', agenda: 'json ={}', held_on: 'date?', notes: 'text?', actions: 'json =[]',
+      focus_role_id: 'text? ref:job_roles', coach_hours: 'num?', plan_id: 'text?', recorded_at: 'ts?',
+      employee_agrees: 'bool?', employee_comment: 'text?', acknowledged_at: 'ts?', share_with_talent_review: 'bool =false',
+      created_at: 'ts =now', updated_at: 'ts =now',
+    },
+    read: [{ res: 'own_profile', person: 'person_id' }, { res: 'own_profile', person: 'manager_read_id' }],
+    write: { mode: 'rpc', res: 'own_profile' },
+  },
 };

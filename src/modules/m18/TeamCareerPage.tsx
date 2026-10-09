@@ -4,7 +4,7 @@
 import { useMemo } from 'react';
 import { Page, Section, Async, EmptyState, StatusPill, Card, WhyThis, Callout } from '../../ui';
 import { useQuery, useRepo } from '../../data';
-import { useT, usePick, useFormat } from '../../i18n';
+import { useT, usePick, useFormat, L } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { BandPill, GatePill, GateRoutes, ReadinessRing, useReadiness, type Role, type Target, type RoadmapRow } from './shared';
 
@@ -24,7 +24,7 @@ export default function TeamCareerPage() {
     return { targets: targets.filter(mine), roadmaps: roadmaps.filter(mine), people: new Map(people.map((p) => [p.id, p])), roleById: new Map(roles.map((r) => [r.id, r])) };
   }, [me]);
   return (
-    <Page title={t('m18.routes.team-career.title')} intro={t('m18.team.intro')}>
+    <Page title={t('m18.routes.team-career.title')} intro={t('m18.team.intro')} actions={<L to="/team/conversations" className="btn-outline btn-sm" data-testid="m18-to-team-conversations">{t('m18.cc.team.fromCareer')}</L>}>
       <Callout tone="info">{t('m18.team.privacy')}</Callout>
       <Async state={q}>
         {(d) => {
