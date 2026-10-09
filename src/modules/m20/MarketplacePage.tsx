@@ -23,6 +23,7 @@ export default function MarketplacePage() {
       actions={
         <>
           <L to="/opportunities/my" className="btn-outline btn-sm" data-testid="m20-my-link"><Icon name="user" size={14} />{t('m20.market.myApps')}</L>
+          <L to="/opportunities/rotations" className="btn-outline btn-sm" data-testid="m20-rotations-link"><Icon name="grad" size={14} />{t('m20.market.rotations')}</L>
           <Can res="opportunities" levels={['W', 'A']}><L to="/opportunities/manage" className="btn-outline btn-sm"><Icon name="check" size={14} />{t('m20.market.manage')}</L></Can>
           <Can res="opportunities" levels={['W']}><L to="/opportunities/post" className="btn-primary btn-sm" data-testid="m20-post-link"><Icon name="plus" size={14} />{t('m20.market.post')}</L></Can>
         </>
