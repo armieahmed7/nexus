@@ -10,6 +10,7 @@ import { nowTs } from '../../../data/audit';
 import { todayIso } from '../../../domain/rules';
 import { MSG, LIVE_APP_STATUSES, canTransition, cleanLevels, computeStats, ojtEvidence, releaserFor, validateOpportunity, type HistoryEntry, type OppStats } from '../domain';
 import type { M20Rpc } from './rpc';
+import { makeLocalF15 } from './rotation.local';
 
 type Opp = RowOf<'opportunities'>;
 type App = RowOf<'opportunity_applications'>;
@@ -29,6 +30,7 @@ export function makeLocalM20(b: LocalBackend, h: LocalRpcHelpers): M20Rpc {
   };
 
   return {
+    ...makeLocalF15(b, h),
     async postOpportunity(p) {
       await b.whenReady();
       type R = { id: string; status: string };

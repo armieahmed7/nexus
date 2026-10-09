@@ -1692,6 +1692,123 @@ export interface OpportunitySavesRow {
   open_read: boolean;
   updated_at: string;
 }
+export interface RotationTemplatesRow {
+  id: string;
+  programme: 'gdp' | 'gpo' | 'dnt' | 'cross_functional' | 'hipo';
+  owner_id: string;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  duration_min_months: number;
+  duration_max_months: number;
+  steps: any;
+  eligible_families: string[];
+  sources: any;
+  status: 'draft' | 'active' | 'retired';
+  listed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+export interface RotationCohortsRow {
+  id: string;
+  template_id: string;
+  programme: 'gdp' | 'gpo' | 'dnt' | 'cross_functional' | 'hipo';
+  owner_id: string;
+  name_en: string;
+  name_ar: string;
+  intake_on: string;
+  status: 'planned' | 'running' | 'completed';
+  listed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+export interface RotationPlacementsRow {
+  id: string;
+  enrolment_id: string;
+  person_id: string;
+  template_id: string;
+  cohort_id?: string | null;
+  seq: number;
+  family_id: string;
+  host_team_en: string;
+  host_team_ar: string;
+  host_role_id?: string | null;
+  host_manager_id: string;
+  host_name: string;
+  host_name_ar: string;
+  line_manager_id?: string | null;
+  signer_id?: string | null;
+  skip_level: boolean;
+  starts_on: string;
+  ends_on: string;
+  site_induction: boolean;
+  objectives: any;
+  status: 'planned' | 'active' | 'signed_off' | 'cancelled';
+  checkin?: any | null;
+  checkin_at?: string | null;
+  checkin_by?: string | null;
+  signed_off_by?: string | null;
+  signed_off_at?: string | null;
+  outcome_note?: string | null;
+  outcome_levels: any;
+  evidence_ids: string[];
+  enrolled_by?: string | null;
+  person_name: string;
+  person_name_ar: string;
+  person_role_id?: string | null;
+  person_family_id?: string | null;
+  open_read: boolean;
+  created_at: string;
+  updated_at: string;
+}
+export interface ShadowHostsRow {
+  id: string;
+  person_id: string;
+  name: string;
+  name_ar: string;
+  role_id?: string | null;
+  family_id?: string | null;
+  skill_ids: string[];
+  max_days_month: number;
+  note_en?: string | null;
+  note_ar?: string | null;
+  site_induction: boolean;
+  active: boolean;
+  listed: boolean;
+  updated_at: string;
+}
+export interface ShadowRequestsRow {
+  id: string;
+  person_id: string;
+  host_id: string;
+  line_manager_id?: string | null;
+  host_family_id?: string | null;
+  host_role_id?: string | null;
+  start_on: string;
+  days: number;
+  skill_ids: string[];
+  purpose: string;
+  status: 'requested' | 'approved' | 'declined' | 'withdrawn' | 'completed';
+  host_consent?: boolean | null;
+  manager_consent?: boolean | null;
+  host_note?: string | null;
+  manager_note?: string | null;
+  site_induction: boolean;
+  person_name: string;
+  person_name_ar: string;
+  person_role_id?: string | null;
+  person_family_id?: string | null;
+  host_name: string;
+  host_name_ar: string;
+  reflection?: string | null;
+  completed_at?: string | null;
+  evidence_ids: string[];
+  history: any;
+  open_read: boolean;
+  created_at: string;
+  updated_at: string;
+}
 export interface HorizonLanesRow {
   id: string;
   code: string;
@@ -1883,6 +2000,11 @@ export interface Tables {
   opportunities: OpportunitiesRow;
   opportunity_applications: OpportunityApplicationsRow;
   opportunity_saves: OpportunitySavesRow;
+  rotation_templates: RotationTemplatesRow;
+  rotation_cohorts: RotationCohortsRow;
+  rotation_placements: RotationPlacementsRow;
+  shadow_hosts: ShadowHostsRow;
+  shadow_requests: ShadowRequestsRow;
   horizon_lanes: HorizonLanesRow;
   future_resources: FutureResourcesRow;
   future_interest: FutureInterestRow;

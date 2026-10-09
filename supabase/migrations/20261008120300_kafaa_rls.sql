@@ -1335,6 +1335,51 @@ create policy kafaa_read on kafaa_opportunity_saves for select to anon, authenti
 grant select on kafaa_opportunity_saves to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- rotation_templates
+alter table kafaa_rotation_templates enable row level security;
+drop policy if exists kafaa_read on kafaa_rotation_templates;
+create policy kafaa_read on kafaa_rotation_templates for select to anon, authenticated using (kafaa_rule_read('opportunities', owner_id, null::text, listed)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_rotation_templates to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- rotation_cohorts
+alter table kafaa_rotation_cohorts enable row level security;
+drop policy if exists kafaa_read on kafaa_rotation_cohorts;
+create policy kafaa_read on kafaa_rotation_cohorts for select to anon, authenticated using (kafaa_rule_read('opportunities', owner_id, null::text, listed)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_rotation_cohorts to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- rotation_placements
+alter table kafaa_rotation_placements enable row level security;
+drop policy if exists kafaa_read on kafaa_rotation_placements;
+create policy kafaa_read on kafaa_rotation_placements for select to anon, authenticated using (kafaa_rule_read('opportunities', person_id, null::text, open_read)
+    or kafaa_rule_read('opportunities', host_manager_id, null::text, open_read)
+    or kafaa_rule_read('opportunities', signer_id, null::text, open_read)
+    or kafaa_rule_read('opportunities', line_manager_id, null::text, open_read)
+    or kafaa_rule_read('opportunities', enrolled_by, null::text, open_read)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_rotation_placements to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- shadow_hosts
+alter table kafaa_shadow_hosts enable row level security;
+drop policy if exists kafaa_read on kafaa_shadow_hosts;
+create policy kafaa_read on kafaa_shadow_hosts for select to anon, authenticated using (kafaa_rule_read('opportunities', person_id, null::text, listed));
+grant select on kafaa_shadow_hosts to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- shadow_requests
+alter table kafaa_shadow_requests enable row level security;
+drop policy if exists kafaa_read on kafaa_shadow_requests;
+create policy kafaa_read on kafaa_shadow_requests for select to anon, authenticated using (kafaa_rule_read('opportunities', person_id, null::text, open_read)
+    or kafaa_rule_read('opportunities', host_id, null::text, open_read)
+    or kafaa_rule_read('opportunities', line_manager_id, null::text, open_read)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_shadow_requests to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- horizon_lanes
 alter table kafaa_horizon_lanes enable row level security;
 drop policy if exists kafaa_read on kafaa_horizon_lanes;
