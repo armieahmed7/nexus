@@ -1702,3 +1702,63 @@ create policy kafaa_read on kafaa_asset_uses for select to anon, authenticated u
 grant select on kafaa_asset_uses to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- eval_surveys
+alter table kafaa_eval_surveys enable row level security;
+drop policy if exists kafaa_read on kafaa_eval_surveys;
+create policy kafaa_read on kafaa_eval_surveys for select to anon, authenticated using (kafaa_has_grant('learning_analytics', array['Agg','R','W','A'])
+    or kafaa_rule_read('internal_content', null::text, null::text, true));
+grant select on kafaa_eval_surveys to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- eval_responses
+alter table kafaa_eval_responses enable row level security;
+drop policy if exists kafaa_read on kafaa_eval_responses;
+create policy kafaa_read on kafaa_eval_responses for select to anon, authenticated using (kafaa_rule_read('learning_analytics', person_id, null::text, open_read));
+grant select on kafaa_eval_responses to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- l3_observations
+alter table kafaa_l3_observations enable row level security;
+drop policy if exists kafaa_read on kafaa_l3_observations;
+create policy kafaa_read on kafaa_l3_observations for select to anon, authenticated using (kafaa_rule_read('learning_analytics', person_id, null::text, open_read)
+    or kafaa_rule_read('learning_analytics', observer_person_id, null::text, open_read));
+grant select on kafaa_l3_observations to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- course_kpi_links
+alter table kafaa_course_kpi_links enable row level security;
+drop policy if exists kafaa_read on kafaa_course_kpi_links;
+create policy kafaa_read on kafaa_course_kpi_links for select to anon, authenticated using (kafaa_has_grant('learning_analytics', array['Agg','R','W','A']));
+grant select on kafaa_course_kpi_links to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- redesign_flags
+alter table kafaa_redesign_flags enable row level security;
+drop policy if exists kafaa_read on kafaa_redesign_flags;
+create policy kafaa_read on kafaa_redesign_flags for select to anon, authenticated using (kafaa_has_grant('learning_analytics', array['Agg','R','W','A'])
+    or kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_redesign_flags to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- needs_links
+alter table kafaa_needs_links enable row level security;
+drop policy if exists kafaa_read on kafaa_needs_links;
+create policy kafaa_read on kafaa_needs_links for select to anon, authenticated using (kafaa_has_grant('learning_analytics', array['Agg','R','W','A'])
+    or kafaa_rule_read('internal_content', null::text, null::text, true));
+grant select on kafaa_needs_links to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- demand_snapshots
+alter table kafaa_demand_snapshots enable row level security;
+drop policy if exists kafaa_read on kafaa_demand_snapshots;
+create policy kafaa_read on kafaa_demand_snapshots for select to anon, authenticated using (kafaa_rule_read('learning_analytics', null::text, null::text, open_read));
+grant select on kafaa_demand_snapshots to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- session_proposals
+alter table kafaa_session_proposals enable row level security;
+drop policy if exists kafaa_read on kafaa_session_proposals;
+create policy kafaa_read on kafaa_session_proposals for select to anon, authenticated using (kafaa_rule_read('training', null::text, null::text, true));
+grant select on kafaa_session_proposals to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+

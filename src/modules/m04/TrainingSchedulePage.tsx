@@ -10,6 +10,7 @@ import { useSession } from '../../auth/session';
 import { holdsSeat, isOpen } from '../../domain/learning';
 import { Chip, G2Pill, useCatalogue, useLabels, usePeople } from './ui';
 import { PerformanceModal } from './PerformanceModal';
+import { ProposedSessionsCard } from '../m25/ProposedSessionsCard'; // W4E1 (F26): draft sessions from the needs forecast
 
 export default function TrainingSchedulePage() {
   const t = useT();
@@ -37,6 +38,7 @@ export default function TrainingSchedulePage() {
         { key: 'when', label: t('m04.schedule.when'), options: [{ value: 'upcoming', label: t('m04.schedule.upcoming') }, { value: 'past', label: t('m04.schedule.past') }] },
         { key: 'mine', label: t('m04.schedule.instructor'), options: [{ value: '1', label: t('m04.schedule.mine') }] },
       ]} />
+      <ProposedSessionsCard />{/* W4E1 (F26) */}
       <Async state={q}>
         {(d) => {
           const now = new Date().toISOString();

@@ -2557,6 +2557,106 @@ export interface AssetUsesRow {
   person_id: string;
   used_on: string;
 }
+export interface EvalSurveysRow {
+  id: string;
+  course_id: string;
+  committee: 'all_staff' | 'operations' | 'maintenance' | 'rp_chem' | 'engineering' | 'emergency' | 'leadership' | 'training';
+  l1_items: string[];
+  pre_form_id?: string | null;
+  post_form_id?: string | null;
+  l3_days: number;
+  l3_items: any;
+  active: boolean;
+  updated_at: string;
+}
+export interface EvalResponsesRow {
+  id: string;
+  course_id: string;
+  person_id: string;
+  completion_ref: string;
+  completed_on: string;
+  ratings: any;
+  recommend: boolean;
+  submitted_at: string;
+  open_read: boolean;
+}
+export interface L3ObservationsRow {
+  id: string;
+  person_id: string;
+  course_id: string;
+  completion_ref: string;
+  completed_on: string;
+  observer_person_id?: string | null;
+  due_on: string;
+  items: any;
+  status: 'scheduled' | 'done' | 'cancelled';
+  note?: string | null;
+  recorded_by?: string | null;
+  recorded_at?: string | null;
+  scheduled_at: string;
+  open_read: boolean;
+}
+export interface CourseKpiLinksRow {
+  id: string;
+  course_id: string;
+  kpi: 'rework_rate' | 'hu_event_rate' | 'first_time_pass';
+  label_en: string;
+  label_ar: string;
+  unit: string;
+  direction: 'lower_better' | 'higher_better';
+  series: any;
+  note_en: string;
+  note_ar: string;
+  sample: boolean;
+}
+export interface RedesignFlagsRow {
+  id: string;
+  course_id: string;
+  reasons: any;
+  note: string;
+  status: 'open' | 'in_sat' | 'closed';
+  raised_by: string;
+  raised_by_name: string;
+  raised_at: string;
+  sat_ref?: string | null;
+}
+export interface NeedsLinksRow {
+  id: string;
+  kind: 'requal' | 'family';
+  from_id: string;
+  course_id: string;
+  note: string;
+}
+export interface DemandSnapshotsRow {
+  id: string;
+  period: string;
+  course_id: string;
+  source: 'expiry' | 'mandatory' | 'klra' | 'roadmap' | 'coach' | 'future';
+  count: number;
+  suppressed: boolean;
+  detail: any;
+  computed_at: string;
+  computed_by?: string | null;
+  open_read: boolean;
+}
+export interface SessionProposalsRow {
+  id: string;
+  period: string;
+  course_id: string;
+  kind: 'class' | 'simulator' | 'drill' | 'elearning' | 'clinic';
+  sessions: number;
+  seats_each: number;
+  dates: string[];
+  demand: number;
+  shortfall: number;
+  status: 'draft' | 'scheduled' | 'withdrawn';
+  session_id?: string | null;
+  note: string;
+  created_by: string;
+  created_at: string;
+  decided_by?: string | null;
+  decided_at?: string | null;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -2732,6 +2832,14 @@ export interface Tables {
   knowledge_assets: KnowledgeAssetsRow;
   asset_reviews: AssetReviewsRow;
   asset_uses: AssetUsesRow;
+  eval_surveys: EvalSurveysRow;
+  eval_responses: EvalResponsesRow;
+  l3_observations: L3ObservationsRow;
+  course_kpi_links: CourseKpiLinksRow;
+  redesign_flags: RedesignFlagsRow;
+  needs_links: NeedsLinksRow;
+  demand_snapshots: DemandSnapshotsRow;
+  session_proposals: SessionProposalsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];
