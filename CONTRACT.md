@@ -344,6 +344,7 @@ Need a foundation change (shared UI component, new rule in `rules.ts`, a field i
   - Optional reads, detected with `to_regclass` / `SCHEMA`: F25 `l3_observations` + `redesign_flags` (W4E1) for effectiveness evidence and the redesign hand-off card, F31 `instructor_tracks` (W4E5) for instructor-qualification evidence; both degrade to existing sources when absent.
   - Security, safeguards and cyber roles are restricted placeholders: trigger `kafaa_sat_task_guard` forces the "Restricted task — managed outside Kafa'a" title; no rating, link, change or title anywhere.
   - Self-evaluation exports (HTML EN/AR, gap CSV) carry "Demo / not an accreditation decision"; the 22 criteria are paraphrased from public IAEA SAT guidance (TRS-380) and FANR-REG-16, no INPO/ACAD text.
+  - Live (`hlirqxoddysxtdezwcgv`): applied as `kafaa_w4e2_sat_part1_tables`, `_part2_helpers`, `_part3_rpcs_a`, `_part4_rpcs_b`, `_part5_accr_grants` (same text as the repo migration, split; per-part grants so no window with API-executable helpers). Seed rows loaded with `on conflict do nothing` (11 tables, 1,367 rows, plus 3 survey notifications). Verified: all 30 function bodies md5-identical to a PGlite build; all 12 row digests identical to `seed.sql`; anon executes none, authenticated only the 14 RPCs; RLS on all 11 tables. Live evidence suggestions also see the F25 L3 and F31 track rows already present there.
 
 ## 11. Acceptance checklists per module
 
