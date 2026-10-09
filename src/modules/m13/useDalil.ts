@@ -9,10 +9,16 @@ import { useRepo, useQuery } from '../../data';
 import { useSession } from '../../auth/session';
 import type { DalilMode, Result, DalilTurnResult } from '../../data/types';
 import { buildCorpus } from './dalil/corpus';
-import { createEngine } from './dalil/engine';
+import { createEngine, GuardedEngine, ModelGatewayEngine, RetrievalEngine } from './dalil/engine';
+import { CareerEngine } from './career/engine';
+import { CAREER_TABLES, loadCareerCtx } from './career/context';
+import { todayIso } from '../../domain/rules';
 import { detectLang, type Lang } from './dalil/text';
 import type { Corpus, DalilAnswer } from './dalil/types';
-import { availableDalilModes, defaultDalilMode } from '../../domain/g5rules';
+import { availableDalilModes, dalilModeAllowed, defaultDalilMode } from '../../domain/g5rules';
+
+/** W5E5 (F37): the UI modes; 'career' is logged as mode 'staff' + submode 'career' (rpc.dalilCareerTurn). */
+export type AskMode = DalilMode | 'career';
 
 export interface Turn {
   id: string;
@@ -35,18 +41,27 @@ function clientKey(): string {
   }
 }
 
-export function useDalil(uiLang: Lang, page: string | null) {
+export function useDalil(uiLang: Lang, page: string | null, wanted: AskMode | null = null) {
   const repo = useRepo();
   const s = useSession();
   const signedIn = s.status === 'signed_in';
-  const modes = useMemo(() => availableDalilModes(s.roles, signedIn), [s.roles, signedIn]);
-  const [mode, setMode] = useState<DalilMode>(() => defaultDalilMode(s.roles, signedIn));
-  useEffect(() => setMode(defaultDalilMode(s.roles, signedIn)), [s.roles, signedIn]);
+  // W5E5 (F37): career mode for signed-in staff with a person record (skills profile); anonymous visitors keep the public mode
+  const careerOk = signedIn && !!s.identity.personId && dalilModeAllowed('staff', s.roles, signedIn);
+  const modes = useMemo<AskMode[]>(() => [...availableDalilModes(s.roles, signedIn), ...(careerOk ? (['career'] as const) : [])], [s.roles, signedIn, careerOk]);
+  const start = (): AskMode => (wanted && (wanted === 'career' ? careerOk : dalilModeAllowed(wanted, s.roles, signedIn)) ? wanted : defaultDalilMode(s.roles, signedIn));
+  const [mode, setModeRaw] = useState<AskMode>(start);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => setModeRaw(start()), [s.roles, signedIn, careerOk, wanted]);
   const settings = useQuery('dalil_settings', () => repo.list('dalil_settings'));
   const setting = settings.data?.[0];
   const enabled = settings.data ? settings.data.every((x) => x.enabled) : true;
   const corpus = useQuery(['corpus_docs', 'refusal_policies', 'job_roles', 'talent_programmes', 'faqs', 'facts'], () => buildCorpus(repo, { signedIn, personId: s.identity.personId, orgId: s.identity.orgId }), [signedIn, s.identity.personId]);
-  const engine = useMemo(() => createEngine(setting?.engine), [setting?.engine]);
+  const career = useQuery(CAREER_TABLES, () => (mode === 'career' && s.identity.personId ? loadCareerCtx(repo, s.identity.personId, todayIso()) : Promise.resolve(null)), [mode, s.identity.personId]);
+  const engine = useMemo(() => {
+    if (mode !== 'career') return createEngine(setting?.engine);
+    const inner = setting?.engine === 'model-gateway' ? new ModelGatewayEngine(new RetrievalEngine(), null) : new RetrievalEngine();
+    return new GuardedEngine(new CareerEngine(career.data ?? null, inner));
+  }, [setting?.engine, mode, career.data]);
   const [turns, setTurns] = useState<Turn[]>([]);
   const [busy, setBusy] = useState(false);
   const [quota, setQuota] = useState<{ used: number; limit: number; remaining: number } | null>(null);
@@ -57,6 +72,11 @@ export function useDalil(uiLang: Lang, page: string | null) {
   const reset = useCallback(() => {
     session.current = null;
     setTurns([]);
+  }, []);
+  /** Switching mode starts a new logged session (career turns never append to a staff-mode session and vice versa). */
+  const setMode = useCallback((m: AskMode) => {
+    session.current = null;
+    setModeRaw(m);
   }, []);
   useEffect(reset, [s.identity.personId, reset]);
 
@@ -71,11 +91,10 @@ export function useDalil(uiLang: Lang, page: string | null) {
       try {
         const lang = detectLang(question, uiLang);
         const history = turns.filter((x) => x.role !== 'system').map((x) => ({ role: x.role as 'user' | 'dalil', text: x.text, intent: x.answer?.intent, stop: x.answer?.stop }));
-        const answer = await engine.answer({ question, lang, mode, page, history }, c);
-        const r: Result<DalilTurnResult> = await repo.rpc.dalilTurn({
-          session_id: session.current, client_key: signedIn ? null : clientKey(), mode, page_context: page, question, answer: [answer.text, ...(answer.bullets ?? [])].join('\n'),
-          citations: answer.citations, refused: answer.refused, refusal_category: answer.refusalCategory ?? null, intent: answer.intent, confidence: answer.confidence, redact_question: !!answer.redact,
-        });
+        const answer = await engine.answer({ question, lang, mode: mode === 'career' ? 'staff' : mode, page, history }, c);
+        const logged = { session_id: session.current, page_context: page, question, answer: [answer.text, ...(answer.bullets ?? [])].join('\n'),
+          citations: answer.citations, refused: answer.refused, refusal_category: answer.refusalCategory ?? null, intent: answer.intent, confidence: answer.confidence, redact_question: !!answer.redact };
+        const r: Result<DalilTurnResult> = mode === 'career' ? await repo.rpc.dalilCareerTurn(logged) : await repo.rpc.dalilTurn({ ...logged, client_key: signedIn ? null : clientKey(), mode });
         if (r.data) setQuota({ used: r.data.used, limit: r.data.limit, remaining: r.data.remaining });
         if (r.ok) {
           session.current = r.data?.session_id ?? session.current;
@@ -92,5 +111,13 @@ export function useDalil(uiLang: Lang, page: string | null) {
     [busy, engine, mode, page, repo, signedIn, turns, uiLang],
   );
 
-  return { mode, setMode, modes, enabled, settings, setting, corpus, turns, ask, busy, quota, reset, sessionId: () => session.current, signedIn };
+  /** F37 role-play: log that a practice answer was checked (the answer text itself never leaves the browser). */
+  const logPractice = useCallback(async (prompt: string, result: string): Promise<Result<DalilTurnResult>> => {
+    const r = await repo.rpc.dalilCareerTurn({ session_id: session.current, page_context: page, question: prompt, answer: result, citations: [], refused: false, intent: 'career.roleplay_practice', confidence: 1 });
+    if (r.data) setQuota({ used: r.data.used, limit: r.data.limit, remaining: r.data.remaining });
+    if (r.ok) session.current = r.data?.session_id ?? session.current;
+    return r;
+  }, [repo, page]);
+
+  return { mode, setMode, modes, enabled, settings, setting, corpus, career, turns, ask, busy, quota, reset, logPractice, sessionId: () => session.current, signedIn, careerOk };
 }

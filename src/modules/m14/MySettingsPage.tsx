@@ -10,6 +10,7 @@ import type { Table, UserSettingsRow } from '../../data/types';
 import { GatedConfirm } from '../m16/parts';
 import { useFlags } from '../m16/flags';
 import { RecoControlsCard } from '../m16/RecoControlsCard'; // W3E5 (F24): recommendations and your data
+import { DigestSettingsCard } from '../../shell/digest/DigestSettingsCard'; // W5E5 (F36): nudge settings
 
 /** Tables whose own rows go into the self-service export (each is read through RLS with an explicit person filter). */
 export const EXPORT_TABLES: Table[] = ['people', 'role_assignments', 'consents', 'user_settings', 'notifications', 'data_requests', 'qual_records', 'licences', 'enrolments', 'training_records', 'dev_plans', 'plan_activities', 'applications', 'advisor_sessions'];
@@ -94,6 +95,8 @@ export default function MySettingsPage() {
                 </div>
                 <p className="mt-2 text-[12px] text-ink-3">{t('m14.settings.mandatory')}</p>
               </Card>
+
+              <DigestSettingsCard />
 
               <RecoControlsCard />
 

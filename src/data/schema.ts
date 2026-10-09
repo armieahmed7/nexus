@@ -912,6 +912,8 @@ export const SCHEMA: Record<string, TableDef> = {
       handoff: 'text enum:none|careers|training|partner_desk =\'none\'', handoff_consent: 'bool =false', turns: 'int =0',
       // G5 (M13): anonymous rate-limit key (random per browser, no identity), page the user came from, hand-off status
       client_key: 'text? idx', page_context: 'text?', handoff_status: 'text enum:none|requested|picked_up|closed =\'none\'', handoff_note: 'text?', last_turn_at: 'ts?',
+      // W5E5 (F37): career mode. The mode check cannot be widened without dropping it, so career sessions keep mode 'staff' and set submode.
+      submode: 'text? enum:career',
     },
     read: [{ res: 'own_profile', person: 'person_id' }, { res: 'dalil_config' }], write: { mode: 'rpc', res: 'dalil_config' }, // G5: writes only via rpc.dalilTurn / dalilHandoff (server-side rate limit)
   },
@@ -922,6 +924,8 @@ export const SCHEMA: Record<string, TableDef> = {
       refused: 'bool =false', refusal_category: 'text?', ts: 'ts =now',
       // G5 (M13): detected intent, retrieval confidence, and whether the user's text was withheld (concerns are never stored)
       intent: 'text?', confidence: 'num?', redacted: 'bool =false', mode: 'text? enum:public|applicant|staff|partner',
+      // W5E5 (F37): 'career' for Dalil career-mode turns (mode stays 'staff'; see advisor_sessions.submode)
+      submode: 'text? enum:career',
     },
     read: [{ res: 'own_profile', person: 'person_id' }, { res: 'dalil_config' }], write: { mode: 'rpc', res: 'dalil_config' }, // G5: writes only via rpc.dalilTurn / dalilHandoff (server-side rate limit)
   },

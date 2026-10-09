@@ -8,6 +8,10 @@
     "admin-dalil": {
       "title": "Dalil",
       "purpose": "Corpus, refusal policy, evaluation runs, logs and the kill switch."
+    },
+    "admin-digest": {
+      "title": "Digest and nudges",
+      "purpose": "Open rates and the item mix of the personal digest, aggregated: every count under 10 is suppressed."
     }
   },
   "engine": {
@@ -15,7 +19,8 @@
       "public": "I'm Dalil, Kafa'a's guide. I answer questions about nuclear careers, talent programmes, training, partnering and public facts about Barakah, only from approved sources, and I cite them. I can't take concerns, give plant operating or security details, or decide eligibility.",
       "applicant": "I'm Dalil. As well as careers and programmes, I can tell you the status of your own applications. I answer only from approved sources and cite them.",
       "staff": "I'm Dalil in staff mode. I can answer from the catalogue and internal guides cleared for me, and tell you about your own qualifications, licence, learning and plan. I never decide qualification or licensing outcomes.",
-      "partner": "I'm Dalil in partner mode. I can help with supplier readiness, the supplier academy and In-Country Value guidance, and your organisation's onboarding status."
+      "partner": "I'm Dalil in partner mode. I can help with supplier readiness, the supplier academy and In-Country Value guidance, and your organisation's onboarding status.",
+      "career": "Career mode: ask where you can go next, what you need for a role, which courses close a gap, which opportunities fit you or when you could reach a role. I answer from your own records and cite them; answers are indicative, never a decision."
     },
     "aboutDalil": "FAQ · What is Dalil?",
     "contactPage": "Contact form",
@@ -219,7 +224,8 @@
     "public": "Public",
     "applicant": "Applicant",
     "staff": "Staff",
-    "partner": "Partner"
+    "partner": "Partner",
+    "career": "Career"
   },
   "handoff": {
     "careers": "Careers team",
@@ -293,7 +299,11 @@
       "st3": "What are the human performance tools?",
       "p1": "How does a partner join the training network?",
       "p2": "What is the In-Country Value programme?",
-      "p3": "Which courses can partners deliver?"
+      "p3": "Which courses can partners deliver?",
+      "c1": "Where can I go next?",
+      "c2": "What are my gaps for my target role?",
+      "c3": "Which opportunities fit me?",
+      "c4": "Practise an interview"
     }
   },
   "admin": {
@@ -433,6 +443,266 @@
       "requested": "Requested",
       "picked_up": "Picked up",
       "closed": "Closed"
+    }
+  },
+  "career": {
+    "noProfile": "Career mode needs your staff record and skills profile. Open the Career Navigator to see what Kafa'a holds for you.",
+    "notDecision": "This is indicative guidance from your records, not an eligibility decision: ENEC and FANR decide.",
+    "cite": {
+      "navigator": "My Career Navigator",
+      "coach": "My Learning Coach",
+      "reg17": "FANR-REG-17 Art. 4",
+      "passport": "My Skills Passport (evidence)",
+      "marketplace": "Opportunity marketplace",
+      "roadmap": "My career roadmap",
+      "conversations": "My career conversations"
+    },
+    "help": {
+      "intro": "Career mode answers from your own records and cites them. Try:",
+      "notFound": "I could not answer that from your records or the approved guides. In career mode I can help with:",
+      "b1": "Where can I go next? (roles in reach and how ready you are)",
+      "b2": "What do I need for a role? (gates on your route and your top three gaps, with evidence)",
+      "b3": "Which courses improve a skill or close my gaps?",
+      "b4": "Which opportunities fit me?",
+      "b5": "When could I reach a role? (dated, indicative roadmap) and practice for an interview or career conversation"
+    },
+    "follow": {
+      "gap": "What do I need for {role}?",
+      "when": "When could I be {role}?",
+      "opps": "Which opportunities fit me?",
+      "next": "Where can I go next?",
+      "courses": "Which courses close my gaps for {role}?",
+      "practice": "Practise an interview for {role}"
+    },
+    "next": {
+      "noRole": "Your record has no current role, so I cannot list the roles in reach. The Career Navigator shows every path.",
+      "unranked": "You opted out of ranked career suggestions, so here are the {n} roles in reach from {role}, alphabetically and without readiness scores.",
+      "oneStep": "One step away",
+      "twoSteps": "Two steps away",
+      "none": "No published path leads on from {role} yet.",
+      "intro": "From {role}, the {n} closest moves on the published paths:"
+    },
+    "link": {
+      "navigator": "Open my Career Navigator",
+      "role": "About the {role} role",
+      "roadmap": "Open my roadmap",
+      "passport": "Open my Skills Passport",
+      "coach": "Open my Learning Coach",
+      "marketplace": "Open the marketplace"
+    },
+    "band": {
+      "path_only": "career path only (security role)",
+      "ready_in": "{pct}% ready, about {months} months to go",
+      "stretch": "{pct}% ready, a stretch of about {months} months",
+      "ready_now": "{pct}% ready now",
+      "current": "your current role ({pct}%)"
+    },
+    "gap": {
+      "pathOnly": "{role} is shown as a career path only: Kafa'a does not compute readiness or show gate details for security, safeguards or cyber roles. The role page explains the path and its public requirements.",
+      "route": "Your route: {route} ({ref})",
+      "evidence": "evidence: {kind} at level {level} ({date})",
+      "noEvidence": "no evidence yet",
+      "line": "{skill}: level {from} of {to}",
+      "card": "Level {from} of {to}",
+      "current": "You already hold the {role} role; {n} of its competencies are below the required level.",
+      "introNoPct": "{role}: you have {n} competency gaps (you opted out of readiness scores).",
+      "intro": "{role}: you are {pct}% ready on the required competencies, with {n} gaps.",
+      "noGates": "No published entry route applies to you yet.",
+      "gatesMet": "Every gate on your route is met in your records.",
+      "gatesNotMet": "A gate on your route is not met yet (about {months} months to go).",
+      "gatesPending": "Nothing blocks you; some gates are still to do or are checked by the licensee."
+    },
+    "gate": {
+      "met": "met",
+      "pending": "to do or checked by the licensee",
+      "not_met": "not met yet",
+      "months": "about {n} months to go"
+    },
+    "ev": {
+      "qual": "qualification",
+      "course": "course",
+      "assessment": "assessment",
+      "jpm": "job performance measure",
+      "rating": "validated rating",
+      "ojt": "on-the-job evidence",
+      "credential": "credential"
+    },
+    "why": {
+      "evidence": "Strongest evidence in your passport: {kind} at level {level} ({date})",
+      "noEvidence": "No evidence for this competency in your passport yet",
+      "importance_core": "A core competency for this role",
+      "importance_important": "An important competency for this role",
+      "importance_useful": "A useful competency for this role"
+    },
+    "courses": {
+      "hours": "About {n} hours",
+      "none": "I found no open staff course for {subject} that you have not completed.",
+      "unranked": "You opted out of ranked learning suggestions, so here are {n} courses for {subject} in code order.",
+      "noGap": "You already meet the level for {subject}; these courses keep it current.",
+      "introSkill": "The {n} courses that close the most of your gap in {subject} per hour of effort:",
+      "introRole": "The {n} courses that close the most of your gaps for {subject} per hour of effort:"
+    },
+    "opps": {
+      "none": "There are no open opportunities you have not applied to.",
+      "unranked": "You opted out of ranked opportunities, so here are {n} open ones by start date.",
+      "starts": "Starts {date}",
+      "noneEligible": "None of the open opportunities is open to your job family right now.",
+      "intro": "{n} open opportunities fit you best (eligible first):",
+      "match": "{pct}% match"
+    },
+    "roadmap": {
+      "noTarget": "Tell me which role you mean, or shortlist a target in the Career Navigator.",
+      "already": "You already hold the {role} role.",
+      "noRoute": "There is no published route from your role to {role}.",
+      "intro": "On the default plan ({route}) you could reach {role} around {quarter}, about {months} months from now.",
+      "indicative": "Dates are indicative: programme intakes and FANR exams are scheduled by ENEC and FANR.",
+      "sample": "indicative"
+    },
+    "roleplay": {
+      "offerInterview": "Let's practise an interview for {role}. I will ask five questions and check each answer against a short rubric. Your answers stay in this browser.",
+      "offerConversation": "Let's practise your career conversation with your line manager. I will ask five questions and check each answer against a short rubric. Your answers stay in this browser.",
+      "yourTarget": "your target role"
+    },
+    "ui": {
+      "banner": "Career mode answers from your own records (passport, qualifications, targets, applications) and cites them. Only you can see this conversation.",
+      "indicative": "Indicative",
+      "loading": "Loading your career records…",
+      "unranked": "Unranked (you opted out)",
+      "start": {
+        "interview": "Practise an interview",
+        "career_conversation": "Practise a career conversation"
+      },
+      "status": {
+        "met": "Met",
+        "pending": "To do",
+        "not_met": "Not met",
+        "ready_now": "Ready now",
+        "ready_in": "Ready in time",
+        "stretch": "Stretch",
+        "path_only": "Path only",
+        "current": "Current role"
+      },
+      "usesTitle": "What career mode uses",
+      "uses": {
+        "passport": {
+          "label": "Skills Passport",
+          "to": "/my/skills"
+        },
+        "navigator": {
+          "label": "Career Navigator",
+          "to": "/my/career"
+        },
+        "roadmap": {
+          "label": "Career roadmap",
+          "to": "/my/career/roadmap"
+        },
+        "coach": {
+          "label": "Learning Coach",
+          "to": "/my/coach"
+        },
+        "marketplace": {
+          "label": "Opportunity marketplace",
+          "to": "/opportunities"
+        }
+      },
+      "usesNote": "The same deterministic engines as those pages; no language model. Your opt-outs apply here too.",
+      "practiceTitle": "Role-play practice",
+      "practiceBody": "Scripted questions with a rubric checklist. Practice only: not an assessment."
+    },
+    "rp": {
+      "title": {
+        "interview": "Interview practice",
+        "career_conversation": "Career conversation practice"
+      },
+      "practiceOnly": "Practice only",
+      "close": "Back to chat",
+      "privacy": "Not an assessment and not recorded in your file. Your answers stay in this browser; Dalil logs only that you practised and how many rubric points you met.",
+      "step": "Question {n}",
+      "concern": "That sounds like a concern. Kafa'a does not handle concerns in practice: use the speak-up channels.",
+      "decline": "Keep practice examples free of security, operating, exam, medical or personal details. Try another example.",
+      "summaryTitle": "How the practice went",
+      "score": "{passed} of {total} rubric points",
+      "workOn": "To work on next",
+      "gapsHint": "Your gaps for this role: {gaps}. Bring one of them into your answers next time.",
+      "prepare": "Prepare my career conversation",
+      "again": "Practise again",
+      "answer": "Your answer",
+      "check": "Check my answer",
+      "words": "{n} words",
+      "rubric": "Rubric",
+      "next": "Next question",
+      "finish": "See the summary",
+      "anyCompetency": "a skill the role needs",
+      "interview": {
+        "why_role": "Why do you want to become {role}, and why now?",
+        "star": "Tell me about a time you used {competency}. Use the STAR shape: situation, task, action, result.",
+        "questioning": "Describe a time you stopped or questioned work because something did not look right.",
+        "procedure": "How do you make sure you follow a procedure exactly, even under time pressure?",
+        "gap_plan": "Which of your gaps for {role} are you working on, and how?"
+      },
+      "career_conversation": {
+        "goal_12m": "What would you like to achieve in the next 12 months?",
+        "goal_3y": "Where do you see yourself in three years, and why?",
+        "strengths": "What are your strengths, and what shows them?",
+        "support": "What support do you need from me to get there?",
+        "risks": "What could get in the way, and how would you handle it?"
+      },
+      "hint": {
+        "why_role": "Say why the role matters to you and what you bring.",
+        "star": "One real event, told as situation, task, action and result.",
+        "questioning": "Show the moment you paused, and what happened next.",
+        "procedure": "Concrete habits beat general statements.",
+        "gap_plan": "Name a gap and a concrete plan.",
+        "goal_12m": "Make it specific and dated.",
+        "goal_3y": "Name a role or a direction, and why.",
+        "strengths": "Back each strength with evidence.",
+        "support": "Ask for something your manager can act on.",
+        "risks": "Be honest; show a plan."
+      },
+      "crit": {
+        "length": "Between 25 and 250 words",
+        "first_person": "Speaks about what you did (I, my)",
+        "specific": "A specific moment, with a date or number",
+        "situation": "Situation: when and where it happened",
+        "task": "Task: what you were responsible for",
+        "action": "Action: what you did yourself",
+        "result": "Result: what changed, and what you learned",
+        "questioning": "Shows a questioning attitude (stop, question, check, escalate)",
+        "procedure": "Shows procedure use (place-keeping, verification, three-way communication)",
+        "plan": "Names how you will build the skill (course, mentor, practice, simulator)",
+        "support": "Names the support you need (course, mentoring, rotation, time)",
+        "evidence": "Backs strengths with evidence (qualification, course, assessment, feedback)",
+        "motivation": "Explains why (motivation or goal)",
+        "horizon": "Gives a time frame (months or years)",
+        "risk": "Names what could get in the way (shifts, outages, exams, time)",
+        "names_role": "Names the target role",
+        "names_gap": "Names one of your actual skill gaps"
+      },
+      "tip": {
+        "length": "Aim for a short story: three to six sentences.",
+        "first_person": "Say what you did: \"I checked…\", \"I stopped…\".",
+        "specific": "Anchor it in one real event: when it was, which unit or task, a number.",
+        "situation": "Start with when and where: \"During the 2025 outage on Unit 2…\".",
+        "task": "Say what you were responsible for.",
+        "action": "Describe the steps you took yourself.",
+        "result": "Close with the outcome and what you learned.",
+        "questioning": "Show the moment you paused or questioned: STAR, peer check, or escalating to your supervisor.",
+        "procedure": "Mention place-keeping, verification or three-way communication.",
+        "plan": "Name a course, a mentor, simulator practice or a rotation.",
+        "support": "Ask for something concrete: a course, a mentor, a rotation or protected time.",
+        "evidence": "Point to evidence: a qualification, a course result, feedback or a project.",
+        "motivation": "Say why this matters to you.",
+        "horizon": "Put a time on it: in 12 months, by 2028.",
+        "risk": "Name one obstacle and how you would handle it.",
+        "names_role": "Use the role's name so your goal is clear.",
+        "names_gap": "Name one of the gaps Dalil showed you for this role."
+      }
+    },
+    "admin": {
+      "evalTitle": "Career mode ({n} cases, synthetic evaluation persona)",
+      "persona": "Evaluation persona",
+      "personaValue": "RO → SRO",
+      "personaSub": "Synthetic: RO licence since 2023, SRO target, set gaps"
     }
   }
 }

@@ -9,8 +9,10 @@ import { Async, BarChart, Callout, Card, CheckboxField, DataTable, Drawer, Empty
 import type { AdvisorSessionsRow, CorpusDocsRow, EvalRunsRow, RefusalPoliciesRow } from '../../data/types';
 import { GatedConfirm, Metric } from '../m16/parts';
 import { buildCorpus } from './dalil/corpus';
-import { createEngine } from './dalil/engine';
+import { createEngine, GuardedEngine, ModelGatewayEngine, RetrievalEngine } from './dalil/engine';
 import { CITATION_FLOOR, EVAL_SET, runEval, type EvalSummary } from './dalil/evalset';
+import { CAREER_EVAL_SET, evalCareerCtx, runCareerEval, type CareerEvalSummary } from './career/evalset'; // W5E5 (F37)
+import { CareerEngine } from './career/engine';
 import { LOCKED_CATEGORIES, FLOOR_PATTERN_COUNT } from './dalil/guard';
 import { todayIso } from '../../domain/rules';
 
@@ -364,6 +366,7 @@ function EvalTab({ canEdit }: { canEdit: boolean }) {
   const s = useSession();
   const runs = useQuery('eval_runs', () => repo.list('eval_runs', { order: [['run_at', 'asc']] }));
   const [result, setResult] = useState<EvalSummary | null>(null);
+  const [career, setCareer] = useState<CareerEvalSummary | null>(null); // W5E5 (F37): the career-mode set is part of the release gate
   const [busy, setBusy] = useState(false);
   const [only, setOnly] = useState<'all' | 'fail'>('all');
   const start = async () => {
@@ -374,11 +377,23 @@ function EvalTab({ canEdit }: { canEdit: boolean }) {
       const c = await buildCorpus(repo, { signedIn: false, personId: null });
       const publicOnly = { ...c, docs: c.docs.filter((d) => d.modes.includes('public')), personal: [] };
       setResult(await runEval(createEngine(settings[0]?.engine), publicOnly, EVAL_SET));
+      // W5E5 (F37): career mode, on the fixed synthetic evaluation persona over the live catalogues (staff corpus for the fallback)
+      const [job_roles, career_paths, role_competencies, competencies, skills, qual_standards, programmes, courses, sources, opportunities, engine_settings] = await Promise.all([
+        repo.list('job_roles'), repo.list('career_paths'), repo.list('role_competencies'), repo.list('competencies'), repo.list('skills'), repo.list('qual_standards'), repo.list('programmes'),
+        repo.list('courses'), repo.list('sources'), repo.list('opportunities', { filter: { status: 'open' } }).catch(() => []), repo.list('engine_settings'),
+      ]);
+      const ctx = evalCareerCtx({ job_roles, career_paths, role_competencies, competencies, skills, qual_standards, programmes, courses, sources, opportunities, engine_settings } as never, todayIso());
+      const staffCorpus = await buildCorpus(repo, { signedIn: true, personId: s.identity.personId });
+      const inner = settings[0]?.engine === 'model-gateway' ? new ModelGatewayEngine(new RetrievalEngine(), null) : new RetrievalEngine();
+      setCareer(await runCareerEval(new GuardedEngine(new CareerEngine(ctx, inner)), { ...staffCorpus, personal: [] }, CAREER_EVAL_SET));
     } finally {
       setBusy(false);
     }
   };
   const history = (runs.data ?? []).map((r) => ({ x: r.release, cite: (r.cited_correct * 100) / Math.max(1, r.in_scope_total), ref: (r.refusal_correct * 100) / Math.max(1, r.refusal_total) }));
+  const gatePass = !!result && result.pass && (!career || career.pass);
+  const allDetails = [...(result?.details ?? []), ...(career?.details ?? [])];
+  const questionOf = (id: string) => EVAL_SET.find((c) => c.id === id)?.q ?? CAREER_EVAL_SET.find((c) => c.id === id)?.q ?? '';
   return (
     <div className="space-y-4">
       <Callout tone="info" title={t('m13.admin.evalTitle')}>{t('m13.admin.evalIntro', { floor: f.pct(CITATION_FLOOR * 100, 0), n: f.num(EVAL_SET.length) })}</Callout>
@@ -393,8 +408,11 @@ function EvalTab({ canEdit }: { canEdit: boolean }) {
               run(
                 () =>
                   repo.insert('eval_runs', {
-                    run_at: new Date().toISOString(), release: `r${todayIso()}`, lang: 'both', in_scope_total: result.in_scope_total, cited_correct: result.cited_correct, refusal_total: result.refusal_total, refusal_correct: result.refusal_correct,
-                    security_total: result.security_total, security_correct: result.security_correct, pass: result.pass, notes: result.pass ? 'Release gate passed' : 'Release gate failed', details: result.details, engine: 'retrieval-v1', run_by: s.identity.personId,
+                    run_at: new Date().toISOString(), release: `r${todayIso()}`, lang: 'both', in_scope_total: result.in_scope_total + (career?.in_scope_total ?? 0), cited_correct: result.cited_correct + (career?.cited_correct ?? 0),
+                    refusal_total: result.refusal_total + (career?.refusal_total ?? 0), refusal_correct: result.refusal_correct + (career?.refusal_correct ?? 0),
+                    security_total: result.security_total + (career?.security_total ?? 0), security_correct: result.security_correct + (career?.security_correct ?? 0), pass: gatePass,
+                    notes: `${gatePass ? 'Release gate passed' : 'Release gate failed'}${career ? ` · career mode ${Math.round(career.citationRate * 1000) / 10}% cited, security ${Math.round(career.securityRate * 100)}%` : ''}`,
+                    details: allDetails, engine: 'retrieval-v1+career-v1', run_by: s.identity.personId,
                   }),
                 { success: t('m13.admin.evalSaved') },
               )
@@ -411,20 +429,31 @@ function EvalTab({ canEdit }: { canEdit: boolean }) {
             <Metric label={t('m13.admin.citeRate')} value={f.pct(result.citationRate * 100)} tone={result.citationRate >= CITATION_FLOOR ? 'ok' : 'bad'} sub={t('m13.admin.floorSub', { floor: f.pct(CITATION_FLOOR * 100, 0) })} />
             <Metric label={t('m13.admin.securityRate')} value={f.pct(result.securityRate * 100)} tone={result.securityRate === 1 ? 'ok' : 'bad'} sub={t('m13.admin.securitySub')} />
             <Metric label={t('m13.admin.refusalRate')} value={f.pct(result.refusalRate * 100)} />
-            <Metric label={t('m13.admin.gate')} value={result.pass ? t('m13.admin.pass') : t('m13.admin.fail')} tone={result.pass ? 'ok' : 'bad'} />
+            <Metric label={t('m13.admin.gate')} value={gatePass ? t('m13.admin.pass') : t('m13.admin.fail')} tone={gatePass ? 'ok' : 'bad'} />
           </div>
+          {career && (
+            <div className="space-y-2" data-testid="m13-eval-career">
+              <div className="caps">{t('m13.career.admin.evalTitle', { n: f.num(CAREER_EVAL_SET.length) })}</div>
+              <div className="grid gap-3 sm:grid-cols-4">
+                <Metric label={t('m13.admin.citeRate')} value={f.pct(career.citationRate * 100)} tone={career.citationRate >= CITATION_FLOOR ? 'ok' : 'bad'} sub={t('m13.admin.floorSub', { floor: f.pct(CITATION_FLOOR * 100, 0) })} />
+                <Metric label={t('m13.admin.securityRate')} value={f.pct(career.securityRate * 100)} tone={career.securityRate === 1 ? 'ok' : 'bad'} sub={t('m13.admin.securitySub')} />
+                <Metric label={t('m13.admin.refusalRate')} value={f.pct(career.refusalRate * 100)} />
+                <Metric label={t('m13.career.admin.persona')} value={t('m13.career.admin.personaValue')} sub={t('m13.career.admin.personaSub')} />
+              </div>
+            </div>
+          )}
           <div className="flex gap-2">
             <button className={only === 'all' ? 'btn-primary btn-sm' : 'btn-outline btn-sm'} onClick={() => setOnly('all')}>{t('common.all')}</button>
             <button className={only === 'fail' ? 'btn-primary btn-sm' : 'btn-outline btn-sm'} onClick={() => setOnly('fail')}>{t('m13.admin.failuresOnly')}</button>
           </div>
           <DataTable
-            rows={result.details.filter((d) => only === 'all' || !d.pass)}
+            rows={allDetails.filter((d) => only === 'all' || !d.pass)}
             rowKey={(r) => r.id}
             csvName="dalil-eval"
             dense
             columns={[
               { key: 'id', header: t('m13.admin.case'), value: (r) => r.id, render: (r) => <code className="ltr text-[12px]">{r.id}</code> },
-              { key: 'q', header: t('m13.admin.question'), value: (r) => EVAL_SET.find((c) => c.id === r.id)?.q ?? '' },
+              { key: 'q', header: t('m13.admin.question'), value: (r) => questionOf(r.id) },
               { key: 'kind', header: t('m13.admin.kind'), value: (r) => (r.security ? 'security' : r.kind), render: (r) => <StatusPill tone={r.security ? 'reserved' : 'neutral'}>{r.security ? t('m13.admin.redTeam') : t(`m13.admin.${r.kind}`)}</StatusPill> },
               { key: 'got', header: t('m13.admin.got'), value: (r) => r.got },
               { key: 'pass', header: t('m13.admin.result'), value: (r) => (r.pass ? 'pass' : 'fail'), render: (r) => <StatusPill status={r.pass ? 'pass' : 'fail'} /> },
@@ -468,11 +497,12 @@ function LogsTab() {
   const [open, setOpen] = useState<AdvisorSessionsRow | null>(null);
   const today = todayIso();
   const refusedSessions = useMemo(() => new Set((data.data?.turns ?? []).filter((x) => x.refused).map((x) => x.session_id)), [data.data]);
-  const rows = (data.data?.sessions ?? []).filter((x) => (!flt.mode || x.mode === flt.mode) && (!flt.refused || refusedSessions.has(x.id) === (flt.refused === 'yes')));
+  const modeOf = (x: AdvisorSessionsRow) => (x.submode === 'career' ? 'career' : x.mode); // W5E5 (F37): career sessions keep mode staff + submode career
+  const rows = (data.data?.sessions ?? []).filter((x) => (!flt.mode || modeOf(x) === flt.mode) && (!flt.refused || refusedSessions.has(x.id) === (flt.refused === 'yes')));
   return (
     <div className="space-y-4">
       <Callout tone="info">{t('m13.admin.logsIntro')}</Callout>
-      <FilterBar value={flt} onChange={setFlt} fields={[{ key: 'mode', label: t('m13.ask.mode'), options: ['public', 'applicant', 'staff', 'partner'].map((m) => ({ value: m, label: t(`m13.modes.${m}`) })) }, { key: 'refused', label: t('m13.admin.refusedFilter'), options: [{ value: 'yes', label: t('common.yes') }, { value: 'no', label: t('common.no') }] }]} />
+      <FilterBar value={flt} onChange={setFlt} fields={[{ key: 'mode', label: t('m13.ask.mode'), options: ['public', 'applicant', 'staff', 'partner', 'career'].map((m) => ({ value: m, label: t(`m13.modes.${m}`) })) }, { key: 'refused', label: t('m13.admin.refusedFilter'), options: [{ value: 'yes', label: t('common.yes') }, { value: 'no', label: t('common.no') }] }]} />
       <Async state={data}>
         {() =>
           rows.length === 0 ? (
@@ -485,7 +515,7 @@ function LogsTab() {
               onRowClick={setOpen}
               columns={[
                 { key: 'started', header: t('m13.admin.started'), value: (r) => r.started_at, sortable: true, render: (r) => f.dateTime(r.started_at) },
-                { key: 'mode', header: t('m13.ask.mode'), value: (r) => r.mode, render: (r) => t(`m13.modes.${r.mode}`) },
+                { key: 'mode', header: t('m13.ask.mode'), value: (r) => modeOf(r), render: (r) => t(`m13.modes.${modeOf(r)}`) },
                 { key: 'who', header: t('m13.admin.who'), value: (r) => (r.person_id ? t('m13.admin.signedIn') : t('m13.admin.anonymous')) },
                 { key: 'page', header: t('m13.admin.page'), value: (r) => r.page_context ?? '', render: (r) => <code className="ltr text-[12px]">{r.page_context ?? '—'}</code> },
                 { key: 'turns', header: t('m13.admin.turns'), value: (r) => r.turns, align: 'end' },

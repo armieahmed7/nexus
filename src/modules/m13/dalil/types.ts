@@ -1,5 +1,6 @@
 /** Dalil engine types. The engine is pluggable: anything implementing AnswerEngine can sit behind the guardrails. */
 import type { DalilCitation, DalilMode } from '../../../data/types';
+import type { Reason } from '../../../domain/engines/types';
 import type { Lang } from './text';
 
 export type DocKind =
@@ -52,6 +53,18 @@ export interface DalilLink {
   label: string;
   to: string;
 }
+/** W5E5 (F37): a result card in a career-mode answer (role, gap, course, opportunity, milestone), with its reasons (<WhyThis>). */
+export interface AnswerCard {
+  id: string;
+  kind: 'role' | 'gap' | 'gate' | 'course' | 'opportunity' | 'milestone';
+  title: string;
+  sub?: string;
+  /** 0..100 (readiness or match); absent when the person opted out of ranking or the role is career-path only. */
+  pct?: number | null;
+  status?: 'met' | 'pending' | 'not_met' | 'ready_now' | 'ready_in' | 'stretch' | 'path_only' | 'current' | null;
+  to?: string;
+  reasons?: Reason[];
+}
 export interface DalilAnswer {
   intent: string;
   lang: Lang;
@@ -73,6 +86,12 @@ export interface DalilAnswer {
   personal?: boolean;
   /** The user's text must not be stored. */
   redact?: boolean;
+  /** W5E5 (F37): career-mode result cards, the "indicative, not a decision" note and an offer to start a role-play. */
+  cards?: AnswerCard[];
+  indicative?: boolean;
+  roleplay?: { scenario: 'interview' | 'career_conversation'; role_id: string | null } | null;
+  /** W5E5 (F37): the person opted out of ranked suggestions for this surface (F24), so the list is unranked. */
+  unranked?: boolean;
 }
 
 export interface AskInput {
