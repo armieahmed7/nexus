@@ -1823,6 +1823,89 @@ create table if not exists kafaa_handover_cohorts (
 );
 comment on table kafaa_handover_cohorts is '[M07] Handover 2030: trainee cohorts earmarked to replace external cover, with projected ready dates (SAMPLE/SIMULATED) (F22)';
 
+-- M16 · Model and engine card per recommendation surface: inputs used and never used, weights, owner, oversight, last change (F24)
+create table if not exists kafaa_engine_cards (
+  id text primary key,
+  engine_surface text not null check (engine_surface in ('skills', 'recommend', 'match', 'search')),
+  module text not null,
+  route text not null,
+  feature text not null,
+  title_en text not null,
+  title_ar text not null,
+  purpose_en text not null,
+  purpose_ar text not null,
+  owner_en text not null,
+  owner_ar text not null,
+  inputs_used jsonb not null default '[]'::jsonb,
+  inputs_excluded text[] not null default '{}'::text[],
+  scoring_functions text[] not null default '{}'::text[],
+  weight_keys text[] not null default '{}'::text[],
+  output_en text not null,
+  output_ar text not null,
+  oversight_en text not null,
+  oversight_ar text not null,
+  limitations_en text not null,
+  limitations_ar text not null,
+  opt_out boolean not null default false,
+  version integer not null default 1,
+  last_changed_at timestamptz not null default now(),
+  last_change_id text,
+  sources jsonb not null default '[]'::jsonb,
+  sort integer not null default 0
+);
+comment on table kafaa_engine_cards is '[M16] Model and engine card per recommendation surface: inputs used and never used, weights, owner, oversight, last change (F24)';
+
+-- M16 · Per-person, per-surface opt-out of ranked recommendations (F24; private to the person)
+create table if not exists kafaa_reco_optouts (
+  id text primary key,
+  person_id text not null,
+  surface text not null check (surface in ('navigator', 'coach', 'marketplace')),
+  opted_out boolean not null default true,
+  reason text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_reco_optouts is '[M16] Per-person, per-surface opt-out of ranked recommendations (F24; private to the person)';
+
+-- M16 · Weekly fairness monitor: outcome rate per group with suppression below 10 and the four-fifths flag (F24; aggregates only)
+create table if not exists kafaa_fairness_snapshots (
+  id text primary key,
+  period text not null,
+  as_of date not null,
+  surface text not null check (surface in ('navigator', 'marketplace', 'mentoring', 'talent_evidence')),
+  metric text not null check (metric in ('navigator_ready', 'opportunity_selected', 'mentoring_matched', 'hipo_pool')),
+  dimension text not null check (dimension in ('gender', 'nationality')),
+  group_key text not null check (group_key in ('f', 'm', 'uae', 'other')),
+  n integer,
+  positives integer,
+  rate numeric,
+  ratio numeric,
+  suppressed boolean not null default false,
+  flagged boolean not null default false,
+  source text not null,
+  run_by text,
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_fairness_snapshots is '[M16] Weekly fairness monitor: outcome rate per group with suppression below 10 and the four-fifths flag (F24; aggregates only)';
+
+-- M16 · Change log of engine settings and weights (F02 settings): before, after, rationale, audit and ledger (F24)
+create table if not exists kafaa_engine_changes (
+  id text primary key,
+  surface text not null check (surface in ('skills', 'recommend', 'match', 'search')),
+  engine_before text,
+  engine_after text not null,
+  weights_before jsonb not null default '{}'::jsonb,
+  weights_after jsonb not null default '{}'::jsonb,
+  rationale text,
+  card_ids text[] not null default '{}'::text[],
+  changed_by text,
+  changed_by_role text,
+  changed_at timestamptz not null default now(),
+  audit_seq integer,
+  ledger_seq integer
+);
+comment on table kafaa_engine_changes is '[M16] Change log of engine settings and weights (F02 settings): before, after, rationale, audit and ledger (F24)';
+
 -- M17 · Self-claimed skill levels with a note (F03); claimed until validated (F10)
 create table if not exists kafaa_skill_claims (
   id text primary key,
@@ -3123,6 +3206,7 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ex
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_handover_cohorts_role_id_fk') then alter table kafaa_handover_cohorts add constraint kafaa_handover_cohorts_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_handover_cohorts_programme_id_fk') then alter table kafaa_handover_cohorts add constraint kafaa_handover_cohorts_programme_id_fk foreign key (programme_id) references kafaa_programmes(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_handover_cohorts_talent_programme_id_fk') then alter table kafaa_handover_cohorts add constraint kafaa_handover_cohorts_talent_programme_id_fk foreign key (talent_programme_id) references kafaa_talent_programmes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_reco_optouts_person_id_fk') then alter table kafaa_reco_optouts add constraint kafaa_reco_optouts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_claims_person_id_fk') then alter table kafaa_skill_claims add constraint kafaa_skill_claims_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_claims_skill_id_fk') then alter table kafaa_skill_claims add constraint kafaa_skill_claims_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_badges_person_id_fk') then alter table kafaa_badges add constraint kafaa_badges_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -3439,6 +3523,12 @@ create index if not exists kafaa_handover_cohorts_period_idx on kafaa_handover_c
 create index if not exists kafaa_handover_cohorts_role_id_idx on kafaa_handover_cohorts (role_id);
 create index if not exists kafaa_handover_cohorts_programme_id_idx on kafaa_handover_cohorts (programme_id);
 create index if not exists kafaa_handover_cohorts_talent_programme_id_idx on kafaa_handover_cohorts (talent_programme_id);
+create index if not exists kafaa_engine_cards_engine_surface_idx on kafaa_engine_cards (engine_surface);
+create index if not exists kafaa_reco_optouts_person_id_idx on kafaa_reco_optouts (person_id);
+create index if not exists kafaa_reco_optouts_surface_idx on kafaa_reco_optouts (surface);
+create index if not exists kafaa_fairness_snapshots_period_idx on kafaa_fairness_snapshots (period);
+create index if not exists kafaa_fairness_snapshots_metric_idx on kafaa_fairness_snapshots (metric);
+create index if not exists kafaa_engine_changes_surface_idx on kafaa_engine_changes (surface);
 create index if not exists kafaa_skill_claims_person_id_idx on kafaa_skill_claims (person_id);
 create index if not exists kafaa_skill_claims_skill_id_idx on kafaa_skill_claims (skill_id);
 create index if not exists kafaa_skill_claims_status_idx on kafaa_skill_claims (status);
@@ -3628,4 +3718,4 @@ create trigger kafaa_evaluations_append_only before update or delete on kafaa_ev
 drop trigger if exists kafaa_evaluation_acks_append_only on kafaa_evaluation_acks;
 create trigger kafaa_evaluation_acks_append_only before update or delete on kafaa_evaluation_acks for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 168) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 172) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

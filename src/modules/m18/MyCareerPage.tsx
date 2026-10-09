@@ -11,6 +11,8 @@ import { useSession } from '../../auth/session';
 import { reachableRoles, type CareerReadiness, type Reason } from './career';
 import { BandPill, GatePill, GateRoutes, OpportunityMap, ReadinessRing, useArrow, useCareerBase, useReadiness, type CareerBase, type MapEdge, type MapNode } from './shared';
 
+import { RecoOptedOut, UnrankedRoles, useRecoOptOut } from '../m16/optout'; // W3E5 (F24): per-surface opt-out
+
 const MAX_TARGETS = 3;
 
 export default function MyCareerPage() {
@@ -19,6 +21,12 @@ export default function MyCareerPage() {
   const me = s.person?.id ?? null;
   const base = useCareerBase(me);
   const eng = useEngine('recommend');
+  const optOut = useRecoOptOut('navigator'); // W3E5 (F24): opted out -> no readiness ranking, the role list instead
+  if (optOut.optedOut) return (
+    <Page title={t('m18.routes.my-career.title')} intro={t('m18.nav.intro')}>
+      <div className="space-y-5"><RecoOptedOut surface="navigator" /><UnrankedRoles /></div>
+    </Page>
+  );
   return (
     <Page title={t('m18.routes.my-career.title')} intro={t('m18.nav.intro')} actions={<><EngineBadge engine={eng} /><L to="/my/career/roadmap" className="btn-outline btn-sm" data-testid="m18-to-roadmap"><Icon name="calendar" size={14} />{t('m18.nav.toRoadmap')}</L><L to="/my/career/conversations" className="btn-ghost btn-sm" data-testid="m18-to-conversations"><Icon name="chat" size={14} />{t('m18.cc.my.fromNavigator')}</L></>}>
       <Async state={base}>

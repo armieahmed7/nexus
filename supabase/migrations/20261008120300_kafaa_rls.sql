@@ -1210,6 +1210,35 @@ create policy kafaa_read on kafaa_handover_cohorts for select to anon, authentic
 grant select on kafaa_handover_cohorts to anon, authenticated;
 -- writes: reference data, no client writes
 
+-- engine_cards
+alter table kafaa_engine_cards enable row level security;
+drop policy if exists kafaa_read on kafaa_engine_cards;
+create policy kafaa_read on kafaa_engine_cards for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, true));
+grant select on kafaa_engine_cards to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- reco_optouts
+alter table kafaa_reco_optouts enable row level security;
+drop policy if exists kafaa_read on kafaa_reco_optouts;
+create policy kafaa_read on kafaa_reco_optouts for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_reco_optouts to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- fairness_snapshots
+alter table kafaa_fairness_snapshots enable row level security;
+drop policy if exists kafaa_read on kafaa_fairness_snapshots;
+create policy kafaa_read on kafaa_fairness_snapshots for select to anon, authenticated using (kafaa_rule_read('integrations', null::text, null::text, true)
+    or kafaa_has_grant('skills_profile', array['Agg','R','W','A']));
+grant select on kafaa_fairness_snapshots to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- engine_changes
+alter table kafaa_engine_changes enable row level security;
+drop policy if exists kafaa_read on kafaa_engine_changes;
+create policy kafaa_read on kafaa_engine_changes for select to anon, authenticated using (kafaa_rule_read('integrations', null::text, null::text, true));
+grant select on kafaa_engine_changes to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- skill_claims
 alter table kafaa_skill_claims enable row level security;
 drop policy if exists kafaa_read on kafaa_skill_claims;
