@@ -1394,6 +1394,37 @@ create policy kafaa_read on kafaa_shadow_requests for select to anon, authentica
 grant select on kafaa_shadow_requests to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- alumni
+alter table kafaa_alumni enable row level security;
+drop policy if exists kafaa_read on kafaa_alumni;
+create policy kafaa_read on kafaa_alumni for select to anon, authenticated using (kafaa_rule_read('opportunities', person_id, null::text, finder_visible));
+grant select on kafaa_alumni to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- reserve_requests
+alter table kafaa_reserve_requests enable row level security;
+drop policy if exists kafaa_read on kafaa_reserve_requests;
+create policy kafaa_read on kafaa_reserve_requests for select to anon, authenticated using (kafaa_rule_read('opportunities', posted_by, null::text, open_read)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_reserve_requests to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- reserve_engagements
+alter table kafaa_reserve_engagements enable row level security;
+drop policy if exists kafaa_read on kafaa_reserve_engagements;
+create policy kafaa_read on kafaa_reserve_engagements for select to anon, authenticated using (kafaa_rule_read('opportunities', person_id, null::text, open_read)
+    or kafaa_rule_read('opportunities', poster_read_id, null::text, open_read)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_reserve_engagements to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- alumni_stories
+alter table kafaa_alumni_stories enable row level security;
+drop policy if exists kafaa_read on kafaa_alumni_stories;
+create policy kafaa_read on kafaa_alumni_stories for select to anon, authenticated using (kafaa_rule_read('opportunities', null::text, null::text, listed));
+grant select on kafaa_alumni_stories to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- horizon_lanes
 alter table kafaa_horizon_lanes enable row level security;
 drop policy if exists kafaa_read on kafaa_horizon_lanes;

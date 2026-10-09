@@ -2224,6 +2224,117 @@ create table if not exists kafaa_shadow_requests (
 );
 comment on table kafaa_shadow_requests is '[M20] Job-shadowing requests (1 to 5 days) with host and line-manager consent; completion writes ojt evidence (F15)';
 
+-- M20 · Alumni and expert reserve: opt-in members (departed staff, ended partner secondments, pre-departure staff) with a frozen skill snapshot (F23)
+create table if not exists kafaa_alumni (
+  id text primary key,
+  person_id text,
+  kind text not null check (kind in ('alumni', 'partner_alumni', 'pre_departure')),
+  name text not null,
+  name_ar text not null,
+  former_role_id text,
+  former_family_id text,
+  former_org text,
+  departed_on date,
+  departure_reason text not null check (departure_reason in ('retired', 'secondment_ended', 'moved_on', 'planned')),
+  departed_band text not null check (departed_band in ('departing', 'lt_1y', 'y1_3', 'y3_5', 'gt_5y')),
+  years_service integer,
+  skill_snapshot jsonb not null default '[]'::jsonb,
+  snapshot_on date not null,
+  availability text not null default 'open' check (availability in ('open', 'limited', 'outage_only', 'paused')),
+  hours_month integer not null default 8,
+  engagement_prefs text[] not null default '{}'::text[],
+  finder_optin boolean not null default false,
+  finder_visible boolean not null default false,
+  headline_en text,
+  headline_ar text,
+  consent_on date,
+  consent_version text not null default '1',
+  status text not null default 'active' check (status in ('active', 'withdrawn')),
+  withdrawn_on date,
+  erase_after date,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_alumni is '[M20] Alumni and expert reserve: opt-in members (departed staff, ended partner secondments, pre-departure staff) with a frozen skill snapshot (F23)';
+
+-- M20 · Reserve requests: short mentoring, capture-interview, instructor or reviewer help from the reserve; HR approves before alumni see them (F23)
+create table if not exists kafaa_reserve_requests (
+  id text primary key,
+  posted_by text not null,
+  poster_name text not null default '',
+  poster_name_ar text not null default '',
+  family_id text,
+  host_team_en text not null,
+  host_team_ar text not null,
+  engagement text not null check (engagement in ('mentor', 'capture_interview', 'instructor', 'reviewer')),
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  skills_needed text[] not null default '{}'::text[],
+  hours_total integer not null,
+  seats integer not null default 1,
+  seats_taken integer not null default 0,
+  interest_count integer not null default 0,
+  location_type text not null check (location_type in ('remote', 'office', 'site_non_protected')),
+  start_on date not null,
+  end_on date not null,
+  status text not null default 'pending_hr' check (status in ('pending_hr', 'open', 'filled', 'closed', 'declined')),
+  hr_by text,
+  hr_at timestamptz,
+  hr_note text,
+  open_read boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_reserve_requests is '[M20] Reserve requests: short mentoring, capture-interview, instructor or reviewer help from the reserve; HR approves before alumni see them (F23)';
+
+-- M20 · Reserve engagements: interest or HR invitation, HR approval ("handed to HR"), completion. No contract, payment or contact data (F23)
+create table if not exists kafaa_reserve_engagements (
+  id text primary key,
+  request_id text not null,
+  alumni_id text not null,
+  person_id text,
+  poster_id text not null,
+  poster_read_id text,
+  status text not null default 'interested' check (status in ('invited', 'interested', 'handed_to_hr', 'declined', 'withdrawn', 'completed')),
+  engagement text not null check (engagement in ('mentor', 'capture_interview', 'instructor', 'reviewer')),
+  alumni_name text not null default '',
+  alumni_name_ar text not null default '',
+  note text,
+  hr_by text,
+  hr_at timestamptz,
+  hr_note text,
+  outcome_note text,
+  completed_at timestamptz,
+  history jsonb not null default '[]'::jsonb,
+  open_read boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_reserve_engagements is '[M20] Reserve engagements: interest or HR invitation, HR approval ("handed to HR"), completion. No contract, payment or contact data (F23)';
+
+-- M20 · Alumni stories: consented, synthetic and labelled; hidden when the alumnus withdraws consent (F23)
+create table if not exists kafaa_alumni_stories (
+  id text primary key,
+  alumni_id text not null,
+  engagement text not null check (engagement in ('mentor', 'capture_interview', 'instructor', 'reviewer')),
+  title_en text not null,
+  title_ar text not null,
+  body_en text not null,
+  body_ar text not null,
+  quote_en text,
+  quote_ar text,
+  author_en text not null,
+  author_ar text not null,
+  consent_on date not null,
+  published_on date not null,
+  synthetic boolean not null default true,
+  listed boolean not null default true,
+  sort integer not null default 0
+);
+comment on table kafaa_alumni_stories is '[M20] Alumni stories: consented, synthetic and labelled; hidden when the alumnus withdraws consent (F23)';
+
 -- M21 · Horizon roadmap lanes 2026-2035 with public sources (F09; no headcount, no sites)
 create table if not exists kafaa_horizon_lanes (
   id text primary key,
@@ -3065,6 +3176,20 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sh
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_shadow_requests_person_id_fk') then alter table kafaa_shadow_requests add constraint kafaa_shadow_requests_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_shadow_requests_host_id_fk') then alter table kafaa_shadow_requests add constraint kafaa_shadow_requests_host_id_fk foreign key (host_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_shadow_requests_line_manager_id_fk') then alter table kafaa_shadow_requests add constraint kafaa_shadow_requests_line_manager_id_fk foreign key (line_manager_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_alumni_person_id_fk') then alter table kafaa_alumni add constraint kafaa_alumni_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_alumni_former_role_id_fk') then alter table kafaa_alumni add constraint kafaa_alumni_former_role_id_fk foreign key (former_role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_alumni_former_family_id_fk') then alter table kafaa_alumni add constraint kafaa_alumni_former_family_id_fk foreign key (former_family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_alumni_former_org_fk') then alter table kafaa_alumni add constraint kafaa_alumni_former_org_fk foreign key (former_org) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_reserve_requests_posted_by_fk') then alter table kafaa_reserve_requests add constraint kafaa_reserve_requests_posted_by_fk foreign key (posted_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_reserve_requests_family_id_fk') then alter table kafaa_reserve_requests add constraint kafaa_reserve_requests_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_reserve_requests_hr_by_fk') then alter table kafaa_reserve_requests add constraint kafaa_reserve_requests_hr_by_fk foreign key (hr_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_reserve_engagements_request_id_fk') then alter table kafaa_reserve_engagements add constraint kafaa_reserve_engagements_request_id_fk foreign key (request_id) references kafaa_reserve_requests(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_reserve_engagements_alumni_id_fk') then alter table kafaa_reserve_engagements add constraint kafaa_reserve_engagements_alumni_id_fk foreign key (alumni_id) references kafaa_alumni(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_reserve_engagements_person_id_fk') then alter table kafaa_reserve_engagements add constraint kafaa_reserve_engagements_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_reserve_engagements_poster_id_fk') then alter table kafaa_reserve_engagements add constraint kafaa_reserve_engagements_poster_id_fk foreign key (poster_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_reserve_engagements_poster_read_id_fk') then alter table kafaa_reserve_engagements add constraint kafaa_reserve_engagements_poster_read_id_fk foreign key (poster_read_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_reserve_engagements_hr_by_fk') then alter table kafaa_reserve_engagements add constraint kafaa_reserve_engagements_hr_by_fk foreign key (hr_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_alumni_stories_alumni_id_fk') then alter table kafaa_alumni_stories add constraint kafaa_alumni_stories_alumni_id_fk foreign key (alumni_id) references kafaa_alumni(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_resources_course_id_fk') then alter table kafaa_future_resources add constraint kafaa_future_resources_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_resources_track_id_fk') then alter table kafaa_future_resources add constraint kafaa_future_resources_track_id_fk foreign key (track_id) references kafaa_adv_tracks(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_resources_org_id_fk') then alter table kafaa_future_resources add constraint kafaa_future_resources_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -3385,6 +3510,25 @@ create index if not exists kafaa_shadow_requests_person_id_idx on kafaa_shadow_r
 create index if not exists kafaa_shadow_requests_host_id_idx on kafaa_shadow_requests (host_id);
 create index if not exists kafaa_shadow_requests_line_manager_id_idx on kafaa_shadow_requests (line_manager_id);
 create index if not exists kafaa_shadow_requests_status_idx on kafaa_shadow_requests (status);
+create index if not exists kafaa_alumni_person_id_idx on kafaa_alumni (person_id);
+create index if not exists kafaa_alumni_kind_idx on kafaa_alumni (kind);
+create index if not exists kafaa_alumni_former_role_id_idx on kafaa_alumni (former_role_id);
+create index if not exists kafaa_alumni_former_family_id_idx on kafaa_alumni (former_family_id);
+create index if not exists kafaa_alumni_former_org_idx on kafaa_alumni (former_org);
+create index if not exists kafaa_alumni_status_idx on kafaa_alumni (status);
+create index if not exists kafaa_reserve_requests_posted_by_idx on kafaa_reserve_requests (posted_by);
+create index if not exists kafaa_reserve_requests_family_id_idx on kafaa_reserve_requests (family_id);
+create index if not exists kafaa_reserve_requests_engagement_idx on kafaa_reserve_requests (engagement);
+create index if not exists kafaa_reserve_requests_status_idx on kafaa_reserve_requests (status);
+create index if not exists kafaa_reserve_requests_hr_by_idx on kafaa_reserve_requests (hr_by);
+create index if not exists kafaa_reserve_engagements_request_id_idx on kafaa_reserve_engagements (request_id);
+create index if not exists kafaa_reserve_engagements_alumni_id_idx on kafaa_reserve_engagements (alumni_id);
+create index if not exists kafaa_reserve_engagements_person_id_idx on kafaa_reserve_engagements (person_id);
+create index if not exists kafaa_reserve_engagements_poster_id_idx on kafaa_reserve_engagements (poster_id);
+create index if not exists kafaa_reserve_engagements_poster_read_id_idx on kafaa_reserve_engagements (poster_read_id);
+create index if not exists kafaa_reserve_engagements_status_idx on kafaa_reserve_engagements (status);
+create index if not exists kafaa_reserve_engagements_hr_by_idx on kafaa_reserve_engagements (hr_by);
+create index if not exists kafaa_alumni_stories_alumni_id_idx on kafaa_alumni_stories (alumni_id);
 create index if not exists kafaa_future_resources_kind_idx on kafaa_future_resources (kind);
 create index if not exists kafaa_future_resources_course_id_idx on kafaa_future_resources (course_id);
 create index if not exists kafaa_future_resources_track_id_idx on kafaa_future_resources (track_id);
@@ -3484,4 +3628,4 @@ create trigger kafaa_evaluations_append_only before update or delete on kafaa_ev
 drop trigger if exists kafaa_evaluation_acks_append_only on kafaa_evaluation_acks;
 create trigger kafaa_evaluation_acks_append_only before update or delete on kafaa_evaluation_acks for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 164) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 168) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

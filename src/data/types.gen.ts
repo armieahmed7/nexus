@@ -1836,6 +1836,105 @@ export interface ShadowRequestsRow {
   created_at: string;
   updated_at: string;
 }
+export interface AlumniRow {
+  id: string;
+  person_id?: string | null;
+  kind: 'alumni' | 'partner_alumni' | 'pre_departure';
+  name: string;
+  name_ar: string;
+  former_role_id?: string | null;
+  former_family_id?: string | null;
+  former_org?: string | null;
+  departed_on?: string | null;
+  departure_reason: 'retired' | 'secondment_ended' | 'moved_on' | 'planned';
+  departed_band: 'departing' | 'lt_1y' | 'y1_3' | 'y3_5' | 'gt_5y';
+  years_service?: number | null;
+  skill_snapshot: any;
+  snapshot_on: string;
+  availability: 'open' | 'limited' | 'outage_only' | 'paused';
+  hours_month: number;
+  engagement_prefs: string[];
+  finder_optin: boolean;
+  finder_visible: boolean;
+  headline_en?: string | null;
+  headline_ar?: string | null;
+  consent_on?: string | null;
+  consent_version: string;
+  status: 'active' | 'withdrawn';
+  withdrawn_on?: string | null;
+  erase_after?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+export interface ReserveRequestsRow {
+  id: string;
+  posted_by: string;
+  poster_name: string;
+  poster_name_ar: string;
+  family_id?: string | null;
+  host_team_en: string;
+  host_team_ar: string;
+  engagement: 'mentor' | 'capture_interview' | 'instructor' | 'reviewer';
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  skills_needed: string[];
+  hours_total: number;
+  seats: number;
+  seats_taken: number;
+  interest_count: number;
+  location_type: 'remote' | 'office' | 'site_non_protected';
+  start_on: string;
+  end_on: string;
+  status: 'pending_hr' | 'open' | 'filled' | 'closed' | 'declined';
+  hr_by?: string | null;
+  hr_at?: string | null;
+  hr_note?: string | null;
+  open_read: boolean;
+  created_at: string;
+  updated_at: string;
+}
+export interface ReserveEngagementsRow {
+  id: string;
+  request_id: string;
+  alumni_id: string;
+  person_id?: string | null;
+  poster_id: string;
+  poster_read_id?: string | null;
+  status: 'invited' | 'interested' | 'handed_to_hr' | 'declined' | 'withdrawn' | 'completed';
+  engagement: 'mentor' | 'capture_interview' | 'instructor' | 'reviewer';
+  alumni_name: string;
+  alumni_name_ar: string;
+  note?: string | null;
+  hr_by?: string | null;
+  hr_at?: string | null;
+  hr_note?: string | null;
+  outcome_note?: string | null;
+  completed_at?: string | null;
+  history: any;
+  open_read: boolean;
+  created_at: string;
+  updated_at: string;
+}
+export interface AlumniStoriesRow {
+  id: string;
+  alumni_id: string;
+  engagement: 'mentor' | 'capture_interview' | 'instructor' | 'reviewer';
+  title_en: string;
+  title_ar: string;
+  body_en: string;
+  body_ar: string;
+  quote_en?: string | null;
+  quote_ar?: string | null;
+  author_en: string;
+  author_ar: string;
+  consent_on: string;
+  published_on: string;
+  synthetic: boolean;
+  listed: boolean;
+  sort: number;
+}
 export interface HorizonLanesRow {
   id: string;
   code: string;
@@ -2522,6 +2621,10 @@ export interface Tables {
   rotation_placements: RotationPlacementsRow;
   shadow_hosts: ShadowHostsRow;
   shadow_requests: ShadowRequestsRow;
+  alumni: AlumniRow;
+  reserve_requests: ReserveRequestsRow;
+  reserve_engagements: ReserveEngagementsRow;
+  alumni_stories: AlumniStoriesRow;
   horizon_lanes: HorizonLanesRow;
   future_resources: FutureResourcesRow;
   future_interest: FutureInterestRow;

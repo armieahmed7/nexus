@@ -4,6 +4,7 @@ import type { SupabaseExtCtx } from '../../../data/ext/types';
 import type { M20Rpc } from './rpc';
 import type { OppStats } from '../domain';
 import type { RotationBoard, RotationCandidate } from '../rotation';
+import type { ReserveBoard, ReserveDesk } from '../reserve';
 
 const APPS = ['opportunity_applications', 'notifications'] as const;
 export function makeSupabaseM20(x: SupabaseExtCtx): M20Rpc {
@@ -32,5 +33,15 @@ export function makeSupabaseM20(x: SupabaseExtCtx): M20Rpc {
       x.call('kafaa_decide_shadow', { p_request_id: requestId, p_decision: decision, p_note: note ?? '' }, ['shadow_requests', 'skill_evidence', 'person_skills', 'notifications']),
     rotationBoard: async () => (await x.rpc<RotationBoard | null>('kafaa_rotation_board')) ?? null,
     rotationCandidates: async (templateId) => (await x.rpc<RotationCandidate[] | null>('kafaa_rotation_candidates', { p_template_id: templateId })) ?? null,
+    // F23 Alumni and expert reserve (W3 · E4): supabase/migrations/20261009134001_kafaa_w3e4_reserve.sql
+    joinReserve: (input) => x.call('kafaa_join_reserve', { p: input }, ['alumni', 'reserve_engagements', 'reserve_requests', 'alumni_stories']),
+    requestReserve: (input) => x.call('kafaa_request_reserve', { p: input }, ['reserve_requests']),
+    decideReserveRequest: (requestId, decision, note = '') => x.call('kafaa_decide_reserve_request', { p_request_id: requestId, p_decision: decision, p_note: note ?? '' }, ['reserve_requests', 'reserve_engagements', 'notifications']),
+    reserveInterest: (requestId, note = '') => x.call('kafaa_reserve_interest', { p_request_id: requestId, p_note: note ?? '' }, ['reserve_engagements', 'reserve_requests']),
+    inviteReserve: (requestId, alumniId, note = '') => x.call('kafaa_invite_reserve', { p_request_id: requestId, p_alumni_id: alumniId, p_note: note ?? '' }, ['reserve_engagements', 'reserve_requests', 'notifications']),
+    decideReserveEngagement: (engagementId, decision, note = '') =>
+      x.call('kafaa_decide_reserve_engagement', { p_engagement_id: engagementId, p_decision: decision, p_note: note ?? '' }, ['reserve_engagements', 'reserve_requests', 'notifications']),
+    reserveBoard: async () => (await x.rpc<ReserveBoard | null>('kafaa_reserve_board')) ?? null,
+    reserveDesk: async () => (await x.rpc<ReserveDesk | null>('kafaa_reserve_desk')) ?? null,
   };
 }
