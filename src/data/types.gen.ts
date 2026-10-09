@@ -1266,6 +1266,7 @@ export interface AdvisorSessionsRow {
   handoff_status: 'none' | 'requested' | 'picked_up' | 'closed';
   handoff_note?: string | null;
   last_turn_at?: string | null;
+  submode?: 'career' | null;
 }
 export interface AdvisorTurnsRow {
   id: string;
@@ -1281,6 +1282,7 @@ export interface AdvisorTurnsRow {
   confidence?: number | null;
   redacted: boolean;
   mode?: 'public' | 'applicant' | 'staff' | 'partner' | null;
+  submode?: 'career' | null;
 }
 export interface EvalRunsRow {
   id: string;
@@ -1885,6 +1887,28 @@ export interface EngineChangesRow {
   changed_at: string;
   audit_seq?: number | null;
   ledger_seq?: number | null;
+}
+export interface DigestRunsRow {
+  id: string;
+  person_id: string;
+  period: string;
+  frequency: 'weekly' | 'fortnightly' | 'monthly';
+  as_of: string;
+  items: any;
+  item_count: number;
+  notification_id?: string | null;
+  coach_hint: boolean;
+  built_at: string;
+}
+export interface DigestPrefsRow {
+  id: string;
+  person_id: string;
+  enabled: boolean;
+  frequency: 'weekly' | 'fortnightly' | 'monthly';
+  quiet_start?: number | null;
+  quiet_end?: number | null;
+  muted_kinds: string[];
+  updated_at: string;
 }
 export interface SkillClaimsRow {
   id: string;
@@ -3349,6 +3373,8 @@ export interface Tables {
   reco_optouts: RecoOptoutsRow;
   fairness_snapshots: FairnessSnapshotsRow;
   engine_changes: EngineChangesRow;
+  digest_runs: DigestRunsRow;
+  digest_prefs: DigestPrefsRow;
   skill_claims: SkillClaimsRow;
   badges: BadgesRow;
   skill_checkins: SkillCheckinsRow;

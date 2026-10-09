@@ -4,6 +4,8 @@ import { useQuery, useRepo } from '../data';
 import { useSession } from '../auth/session';
 import { L, useFormat, usePick, useT } from '../i18n';
 import { Icon } from '../ui/Icon';
+import { DigestBellCard } from './digest/DigestBellCard'; // W5E5 (F36)
+import { useNoNudges } from './digest/useDigest';
 
 export function Notifications() {
   const t = useT();
@@ -14,7 +16,8 @@ export function Notifications() {
   const pid = s.identity.personId;
   const [open, setOpen] = useState(false);
   const q = useQuery('notifications', () => (pid ? repo.list('notifications', { filter: { person_id: pid }, order: [['created_at', 'desc']], limit: 30 }) : Promise.resolve([])), [pid]);
-  const items = q.data ?? [];
+  const noNudges = useNoNudges(); // W5E5 (F36): speak-up never shows a nudge
+  const items = (q.data ?? []).filter((n) => !(noNudges && n.kind === 'digest'));
   const unread = items.filter((n) => !n.read_at).length;
   const markAll = async () => {
     const now = new Date().toISOString();
@@ -37,6 +40,7 @@ export function Notifications() {
               </button>
             )}
           </div>
+          <DigestBellCard onNavigate={() => setOpen(false)} />
           <ul className="max-h-[60vh] overflow-auto">
             {items.length === 0 && <li className="p-4 text-center text-ink-3">{t('shell.notifications.empty')}</li>}
             {items.map((n) => (

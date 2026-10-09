@@ -10,6 +10,7 @@ import { L, useFormat, usePick, useT, systemName } from '../../i18n';
 import { Async, Card, EmptyState, Icon, Page, ProgressBar, StatTile, StatusPill } from '../../ui';
 import { licenceView, medicalView, qualView } from '../../domain/rules';
 import type { NotificationsRow } from '../../data/types';
+import { DigestPanel } from '../../shell/digest/DigestPanel'; // W5E5 (F36): personal weekly digest
 
 const ACTIVE_ENROLMENT = ['assigned', 'requested', 'approved', 'waitlisted', 'enrolled', 'in_progress'];
 const OPEN_APPLICATION = ['interest', 'submitted', 'screening', 'assessment', 'interview', 'offer'];
@@ -84,6 +85,8 @@ export default function MyPage() {
                 <StatTile label={t('m14.my.tilePlan')} value={acts.length ? f.pct((done * 100) / acts.length, 0) : '—'} sub={plan ? pick(role.get(plan.target_role_id) ?? { title_en: '', title_ar: '' }, 'title') : t('m14.my.noPlan')} />
                 <StatTile label={t('m14.my.tileNotices')} value={f.num(unread.length)} tone={unread.length ? 'info' : undefined} sub={t('m14.my.tileNoticesSub')} />
               </div>
+
+              <DigestPanel />
 
               <div className="grid gap-4 lg:grid-cols-2">
                 <Card title={t('m14.my.expiriesTitle')} actions={<L to="/my/quals" className="btn-ghost btn-sm">{t('m14.my.viewAll')}</L>}>

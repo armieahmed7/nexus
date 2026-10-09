@@ -1393,6 +1393,20 @@ create policy kafaa_read on kafaa_engine_changes for select to anon, authenticat
 grant select on kafaa_engine_changes to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- digest_runs
+alter table kafaa_digest_runs enable row level security;
+drop policy if exists kafaa_read on kafaa_digest_runs;
+create policy kafaa_read on kafaa_digest_runs for select to anon, authenticated using (kafaa_rule_read('notifications', person_id, null::text, true));
+grant select on kafaa_digest_runs to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- digest_prefs
+alter table kafaa_digest_prefs enable row level security;
+drop policy if exists kafaa_read on kafaa_digest_prefs;
+create policy kafaa_read on kafaa_digest_prefs for select to anon, authenticated using (kafaa_rule_read('notifications', person_id, null::text, true));
+grant select on kafaa_digest_prefs to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- skill_claims
 alter table kafaa_skill_claims enable row level security;
 drop policy if exists kafaa_read on kafaa_skill_claims;

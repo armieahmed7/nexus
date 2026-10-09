@@ -1563,7 +1563,8 @@ create table if not exists kafaa_advisor_sessions (
   page_context text,
   handoff_status text not null default 'none' check (handoff_status in ('none', 'requested', 'picked_up', 'closed')),
   handoff_note text,
-  last_turn_at timestamptz
+  last_turn_at timestamptz,
+  submode text check (submode in ('career'))
 );
 comment on table kafaa_advisor_sessions is '[M13] Dalil session (retained for a limited period)';
 
@@ -1581,7 +1582,8 @@ create table if not exists kafaa_advisor_turns (
   intent text,
   confidence numeric,
   redacted boolean not null default false,
-  mode text check (mode in ('public', 'applicant', 'staff', 'partner'))
+  mode text check (mode in ('public', 'applicant', 'staff', 'partner')),
+  submode text check (submode in ('career'))
 );
 comment on table kafaa_advisor_turns is '[M13] Dalil turn (question, cited answer or refusal)';
 
@@ -2282,6 +2284,34 @@ create table if not exists kafaa_engine_changes (
   ledger_seq integer
 );
 comment on table kafaa_engine_changes is '[M16] Change log of engine settings and weights (F02 settings): before, after, rationale, audit and ledger (F24)';
+
+-- M14 · Personal digest per period: up to 7 items with deep links and reasons, and the notification written (F36)
+create table if not exists kafaa_digest_runs (
+  id text primary key,
+  person_id text not null,
+  period text not null,
+  frequency text not null default 'weekly' check (frequency in ('weekly', 'fortnightly', 'monthly')),
+  as_of date not null,
+  items jsonb not null default '[]'::jsonb,
+  item_count integer not null default 0,
+  notification_id text,
+  coach_hint boolean not null default false,
+  built_at timestamptz not null default now()
+);
+comment on table kafaa_digest_runs is '[M14] Personal digest per period: up to 7 items with deep links and reasons, and the notification written (F36)';
+
+-- M14 · Nudge settings per person: on or off, frequency, quiet hours (Abu Dhabi time), muted kinds (F36)
+create table if not exists kafaa_digest_prefs (
+  id text primary key,
+  person_id text not null unique,
+  enabled boolean not null default true,
+  frequency text not null default 'weekly' check (frequency in ('weekly', 'fortnightly', 'monthly')),
+  quiet_start integer,
+  quiet_end integer,
+  muted_kinds text[] not null default '{}'::text[],
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_digest_prefs is '[M14] Nudge settings per person: on or off, frequency, quiet hours (Abu Dhabi time), muted kinds (F36)';
 
 -- M17 · Self-claimed skill levels with a note (F03); claimed until validated (F10)
 create table if not exists kafaa_skill_claims (
@@ -4038,6 +4068,8 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_co
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_contractor_engagements_org_id_fk') then alter table kafaa_contractor_engagements add constraint kafaa_contractor_engagements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_contractor_engagements_role_id_fk') then alter table kafaa_contractor_engagements add constraint kafaa_contractor_engagements_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_reco_optouts_person_id_fk') then alter table kafaa_reco_optouts add constraint kafaa_reco_optouts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_digest_runs_person_id_fk') then alter table kafaa_digest_runs add constraint kafaa_digest_runs_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_digest_prefs_person_id_fk') then alter table kafaa_digest_prefs add constraint kafaa_digest_prefs_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_claims_person_id_fk') then alter table kafaa_skill_claims add constraint kafaa_skill_claims_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_claims_skill_id_fk') then alter table kafaa_skill_claims add constraint kafaa_skill_claims_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_badges_person_id_fk') then alter table kafaa_badges add constraint kafaa_badges_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -4475,6 +4507,8 @@ create index if not exists kafaa_reco_optouts_surface_idx on kafaa_reco_optouts 
 create index if not exists kafaa_fairness_snapshots_period_idx on kafaa_fairness_snapshots (period);
 create index if not exists kafaa_fairness_snapshots_metric_idx on kafaa_fairness_snapshots (metric);
 create index if not exists kafaa_engine_changes_surface_idx on kafaa_engine_changes (surface);
+create index if not exists kafaa_digest_runs_person_id_idx on kafaa_digest_runs (person_id);
+create index if not exists kafaa_digest_runs_period_idx on kafaa_digest_runs (period);
 create index if not exists kafaa_skill_claims_person_id_idx on kafaa_skill_claims (person_id);
 create index if not exists kafaa_skill_claims_skill_id_idx on kafaa_skill_claims (skill_id);
 create index if not exists kafaa_skill_claims_status_idx on kafaa_skill_claims (status);
@@ -4733,4 +4767,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 213) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 215) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
