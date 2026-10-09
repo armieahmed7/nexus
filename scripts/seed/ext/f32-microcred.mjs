@@ -211,7 +211,7 @@ export function finalize(T, ctx) {
   }
   // one withdrawn award (holder changed role) and one declined request, for the history views
   const wd = awards.find((a) => a.status === 'awarded' && a.def_code === 'MC-SCWE' && !FIXED[a.person_id] && !awards.some((x) => x.component_award_ids.includes(a.id)));
-  if (wd) Object.assign(wd, { status: 'revoked', revoked_at: ts(addDays(wd.issued_on, 120), 12), revoke_reason: 'Withdrawn by the holder after a change of role.' });
+  if (wd) Object.assign(wd, { status: 'revoked', revoked_at: ts(addDays(wd.issued_on, 30) < addDays(today, -5) ? addDays(wd.issued_on, 30) : addDays(today, -5), 12), revoke_reason: 'Withdrawn by the holder after a change of role.' });
   const dc = staff.find((p) => !FIXED[p] && eligibility(current.find((d) => d.code === 'MC-PROJECT'), p, { ...base, today }).auto_met && !latestAward(awards, p, 'MC-PROJECT'));
   if (dc) {
     const def = current.find((d) => d.code === 'MC-PROJECT');
