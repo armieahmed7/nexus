@@ -1173,6 +1173,29 @@ create policy kafaa_read on kafaa_engine_settings for select to anon, authentica
 grant select on kafaa_engine_settings to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- mentoring_agreements
+alter table kafaa_mentoring_agreements enable row level security;
+drop policy if exists kafaa_read on kafaa_mentoring_agreements;
+create policy kafaa_read on kafaa_mentoring_agreements for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('own_profile', mentor_person_id, null::text, true));
+grant select on kafaa_mentoring_agreements to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- mentoring_sessions
+alter table kafaa_mentoring_sessions enable row level security;
+drop policy if exists kafaa_read on kafaa_mentoring_sessions;
+create policy kafaa_read on kafaa_mentoring_sessions for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('own_profile', mentor_person_id, null::text, true));
+grant select on kafaa_mentoring_sessions to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- mentoring_private_notes
+alter table kafaa_mentoring_private_notes enable row level security;
+drop policy if exists kafaa_read on kafaa_mentoring_private_notes;
+create policy kafaa_read on kafaa_mentoring_private_notes for select to anon, authenticated using (kafaa_rule_read('own_profile', author_person_id, null::text, true));
+grant select on kafaa_mentoring_private_notes to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- skill_claims
 alter table kafaa_skill_claims enable row level security;
 drop policy if exists kafaa_read on kafaa_skill_claims;
@@ -1234,6 +1257,26 @@ grant select, insert, update on kafaa_learning_goals to authenticated;
 grant select on kafaa_learning_goals to anon;
 drop trigger if exists kafaa_learning_goals_audit on kafaa_learning_goals;
 create trigger kafaa_learning_goals_audit after insert or update on kafaa_learning_goals for each row execute function kafaa_audit_row();
+
+-- refresh_state
+alter table kafaa_refresh_state enable row level security;
+drop policy if exists kafaa_read on kafaa_refresh_state;
+create policy kafaa_read on kafaa_refresh_state for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_refresh_state to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- refresh_prefs
+alter table kafaa_refresh_prefs enable row level security;
+drop policy if exists kafaa_read on kafaa_refresh_prefs;
+create policy kafaa_read on kafaa_refresh_prefs for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+drop policy if exists kafaa_insert on kafaa_refresh_prefs;
+create policy kafaa_insert on kafaa_refresh_prefs for insert to anon, authenticated with check (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope'])));
+drop policy if exists kafaa_update on kafaa_refresh_prefs;
+create policy kafaa_update on kafaa_refresh_prefs for update to authenticated using (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope']))) with check (kafaa_has_grant('own_profile', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('own_profile', array['Own','Scope'])));
+grant select, insert, update on kafaa_refresh_prefs to authenticated;
+grant select on kafaa_refresh_prefs to anon;
+drop trigger if exists kafaa_refresh_prefs_audit on kafaa_refresh_prefs;
+create trigger kafaa_refresh_prefs_audit after insert or update on kafaa_refresh_prefs for each row execute function kafaa_audit_row();
 
 -- opportunities
 alter table kafaa_opportunities enable row level security;

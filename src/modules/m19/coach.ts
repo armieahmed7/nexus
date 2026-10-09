@@ -87,6 +87,8 @@ export interface CoachInput {
   evaluations?: EvalLite[];
   mentors: MentorLite[];
   mentorRequests?: MentorRequestLite[];
+  /** W2E3 (F13): people never suggested as my mentor (my line manager: mentoring works across reporting lines). */
+  excludeMentorPersons?: string[];
   lessons: LessonLite[];
   opportunities?: OpportunityLite[];
   futureGoals?: FutureGoalLite[];
@@ -390,7 +392,8 @@ export function buildCoachFeed(input: CoachInput): CoachResult {
 
   // mentors (human matching through /my/mentoring; the coach only suggests)
   const asked = new Set((input.mentorRequests ?? []).filter((m) => ['requested', 'matched'].includes(m.status)).map((m) => m.mentor_id));
-  for (const m of input.mentors.filter((x) => x.opt_in && x.person_id !== input.personId && !asked.has(x.id))) {
+  const notMentor = new Set(input.excludeMentorPersons ?? []);
+  for (const m of input.mentors.filter((x) => x.opt_in && x.person_id !== input.personId && !asked.has(x.id) && !notMentor.has(x.person_id))) {
     const rc = m.role_id ? input.roleComps.filter((x) => x.role_id === m.role_id) : [];
     const gives = rc.map((x) => ({ key: x.competency_id, level: Math.min(x.required_level, (input.have.get(x.competency_id) ?? 0) + 1) }));
     const g = gapRank([{ id: m.id, effortHours: 2, gives }])[0];
@@ -402,7 +405,7 @@ export function buildCoachFeed(input: CoachInput): CoachResult {
       id: `mentor:${m.id}`, kind: 'mentor', itemId: m.id, title: m.role_id ? roleLabel(m.role_id) : { en: m.id, ar: m.id }, meta: { en: m.bio_en ?? '', ar: m.bio_ar || m.bio_en || '' }, hours: 2, pinned: null, score: r4(score),
       reasons: [...(isTarget ? [r('mentor_target', { role: roleLabel(m.role_id!) })] : []), ...(m.role_id && !isTarget ? [r('mentor_role', { role: roleLabel(m.role_id) })] : []), ...(g?.reasons.filter((x) => x.code !== 'effort').slice(0, 2) ?? []),
         ...(interestHit.length ? [r('mentor_interest_match', { interests: interestHit.join(', ') })] : m.interests.length ? [r('mentor_interests', { interests: m.interests.join(', ') })] : []), ...fbReasons('mentor', rc.map((x) => x.competency_id))],
-      competencyIds: rc.map((x) => x.competency_id), link: '/my/mentoring', action: { type: 'link', to: '/my/mentoring', label: 'openMentoring' }, session: null, days: null,
+      competencyIds: rc.map((x) => x.competency_id), link: `/my/mentoring?mentor=${m.id}`, action: { type: 'link', to: `/my/mentoring?mentor=${m.id}`, label: 'openMentoring' }, session: null, days: null,
     }));
   }
 

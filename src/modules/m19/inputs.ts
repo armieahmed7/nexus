@@ -28,7 +28,7 @@ export function targetCandidates(t: Pick<CoachTables, 'learning_goals' | 'career
   return [...(goal?.focus_role_ids ?? []), ...shortlist, ...plans];
 }
 
-export function coachInputFrom(t: CoachTables, now: string, extra: { availability?: CoachInput['availability']; weights?: Weights } = {}): CoachInput | null {
+export function coachInputFrom(t: CoachTables, now: string, extra: { availability?: CoachInput['availability']; weights?: Weights; lineManager?: string | null } = {}): CoachInput | null {
   if (!t.person) return null;
   const me = t.person.id;
   const mine = (rows: Rows) => rows.filter((x) => x.person_id === me);
@@ -42,5 +42,6 @@ export function coachInputFrom(t: CoachTables, now: string, extra: { availabilit
     tasks: t.task_items as never, evaluations: mine(t.evaluations) as never, mentors: t.mentors as never, mentorRequests: mine(t.mentoring_requests) as never, lessons: t.oe_lessons as never,
     opportunities: (t.opportunities ?? []).filter((o) => o.listed !== false && (o.seats == null || Number(o.seats_taken ?? 0) < Number(o.seats))) as never,
     futureGoals: mine(t.future_goals ?? []).filter((g) => (g.status ?? 'active') === 'active') as never, skills: t.skills as never, feedback: mine(t.coach_feedback) as never, weights: extra.weights,
+    excludeMentorPersons: extra.lineManager ? [extra.lineManager] : [],
   };
 }

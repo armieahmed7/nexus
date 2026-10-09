@@ -8,5 +8,9 @@ export function makeSupabaseM19(x: SupabaseExtCtx): M19Rpc {
     coachFeedback: (itemKind, itemId, signal, competencyIds = []) =>
       x.call('kafaa_coach_feedback', { p_kind: itemKind, p_item: itemId, p_signal: signal, p_competency_ids: competencyIds }, ['coach_feedback']),
     coachInsights: () => x.call('kafaa_coach_insights', {}, []),
+    // W2 · E3 · F14
+    nextRefresher: (extra = false) => x.call('kafaa_next_refresher', { p_extra: extra }, []),
+    submitRefresher: (answers) => x.call('kafaa_submit_refresher', { p_answers: answers }, ['refresh_state']),
+    refresherItemStats: () => x.call('kafaa_refresher_item_stats', {}, []),
   };
 }
