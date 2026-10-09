@@ -12,7 +12,7 @@ const ENDPOINT = 'https://lrs.example/xapi/';
 const STEPS = ['emit', 'validate', 'store', 'forward'] as const;
 const API = [
   { method: 'POST', path: 'statements', key: 'post' },
-  { method: 'PUT', path: 'statements?statementId={id}', key: 'put' },
+  { method: 'PUT', path: 'statements?statementId=<uuid>', key: 'put' },
   { method: 'GET', path: 'statements?agent=…&verb=…&activity=…&since=…', key: 'get' },
   { method: 'GET', path: 'about', key: 'about' },
 ] as const;

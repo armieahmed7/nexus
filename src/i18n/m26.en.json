@@ -392,7 +392,13 @@
     "body": "Flagged by the training-effectiveness review. Open the tasks each course trains to record a SAT change with the trigger \"effectiveness review\".",
     "course": "Course",
     "status": "Status",
-    "tasks": "Tasks it trains"
+    "tasks": "Tasks it trains",
+    "state": {
+      "open": "Open",
+      "in_sat": "In SAT review",
+      "closed": "Closed"
+    },
+    "noTasks": "No analysed task links to this course (restricted or not yet analysed)"
   },
   "report": {
     "traceIntro": "The task-to-training traceability of a role, ready to print, save as PDF or download.",

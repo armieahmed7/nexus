@@ -16,6 +16,7 @@ import { ISSUER_URL, issuerDocument } from '../../src/modules/m17/issuer';
 import { issuerKeyUrl } from '../../src/modules/m17/WalletPage';
 import type { DemandReportResult } from '../../src/modules/m25/backend/rpc';
 import { HAS_REDESIGN } from '../../src/modules/m26/ui';
+import { factLabel } from '../../src/modules/m26/accr';
 import { EMITTERS, SIM_DIMENSIONS, backfill, containsId } from '../../src/modules/m27/xapi';
 import seed from '../../src/seed/seed.json';
 
@@ -131,5 +132,22 @@ describe('Deploy: issuer profile reachable on Netlify', () => {
     const html = readFileSync('index.html', 'utf8');
     expect(html).toContain('#nl-badge-frame,#nl-hud-frame{display:none!important}');
     expect(html).toContain('<div id="nl-badge-frame" hidden></div>');
+  });
+});
+
+describe('W4 QA fixes', () => {
+  it('evidence labels use the singular for a count of one ("1 session", not "1 sessions")', () => {
+    const l = factLabel({ kind: 'programme_records', ref: 'p', route: '/training/schedule', m: { records: 1, passed: 0, sessions: 1 } } as never);
+    expect(l.en).toBe('Training records in the last 12 months: 1 completion (0 passed), 1 session');
+    expect(factLabel({ kind: 'traceability', ref: 'r', route: '/x', m: { covered: 2, selected: 3, gaps: 1, orphans: 2 } } as never).en).toMatch(/1 gap, 2 orphan objectives$/);
+    expect(JSON.stringify(T.accr_assessments)).not.toMatch(/[^0-9]1 (session|gap|course|standard|completion)s\b/);
+  });
+  it('the redesign-flag status is translated in both languages, with a note when no analysed task links the course', () => {
+    for (const k of ['open', 'in_sat', 'closed']) expect(hasKey(`m26.redesign.state.${k}`)).toBe(true);
+    expect(translate('ar', 'm26.redesign.state.open')).not.toBe('open');
+    expect(hasKey('m26.redesign.noTasks')).toBe(true);
+  });
+  it('the LRS adapters page shows no brace placeholder in the API table', () => {
+    expect(readFileSync('src/modules/m27/LrsAdaptersPage.tsx', 'utf8')).not.toMatch(/\{id\}/);
   });
 });

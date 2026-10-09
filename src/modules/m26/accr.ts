@@ -91,25 +91,28 @@ export function suggestFor(evidenceKinds: string[], facts: EvidenceFact[]): Sugg
 }
 
 /** Bilingual label of a fact (stored with the rating so the report reads the same later). */
+/** English count with a singular or plural noun ("1 session", "2 sessions"). */
+const pl = (n: unknown, one: string, many = `${one}s`) => `${n} ${Number(n) === 1 ? one : many}`;
+
 export function factLabel(f: EvidenceFact): { en: string; ar: string } {
   const m = f.m;
   switch (f.kind) {
     case 'traceability':
-      return { en: `Job analysis ${f.ref}: ${m.covered}/${m.selected} training tasks covered, ${m.gaps} gaps, ${m.orphans} orphan objectives`, ar: `تحليل الوظيفة ${f.ref}: ${m.covered}/${m.selected} مهام تدريب مغطاة، ${m.gaps} فجوات، ${m.orphans} أهداف يتيمة` };
+      return { en: `Job analysis ${f.ref}: ${m.covered}/${m.selected} training tasks covered, ${pl(m.gaps, 'gap')}, ${pl(m.orphans, 'orphan objective')}`, ar: `تحليل الوظيفة ${f.ref}: ${m.covered}/${m.selected} مهام تدريب مغطاة، ${m.gaps} فجوات، ${m.orphans} أهداف يتيمة` };
     case 'effectiveness':
       return m.l3 != null
-        ? { en: `Training effectiveness: ${m.l3} L3 observations on ${m.courses} courses`, ar: `فاعلية التدريب: ${m.l3} ملاحظات من المستوى 3 على ${m.courses} دورات` }
-        : { en: `Course evaluation forms on file for ${m.with_form}/${m.courses} courses`, ar: `نماذج تقييم الدورات متوفرة لـ ${m.with_form}/${m.courses} دورات` };
+        ? { en: `Training effectiveness: ${pl(m.l3, 'L3 observation')} on ${pl(m.courses, 'course')}`, ar: `فاعلية التدريب: ${m.l3} ملاحظات من المستوى 3 على ${m.courses} دورات` }
+        : { en: `Course evaluation forms on file for ${m.with_form}/${m.courses} ${m.courses === 1 ? 'course' : 'courses'}`, ar: `نماذج تقييم الدورات متوفرة لـ ${m.with_form}/${m.courses} دورات` };
     case 'item_analysis':
-      return { en: `Item bank: ${m.items} approved items on programme competencies, ${m.released} released attempts`, ar: `بنك الأسئلة: ${m.items} سؤالًا معتمدًا على كفاءات البرنامج، ${m.released} محاولات منشورة` };
+      return { en: `Item bank: ${pl(m.items, 'approved item')} on programme competencies, ${pl(m.released, 'released attempt')}`, ar: `بنك الأسئلة: ${m.items} سؤالًا معتمدًا على كفاءات البرنامج، ${m.released} محاولات منشورة` };
     case 'instructor_quals':
       return m.tracks != null
-        ? { en: `Instructor pipeline: ${m.tracks} instructor tracks; ${m.evaluators} current evaluators on ${m.standards} standards`, ar: `مسار المدربين: ${m.tracks} مسارات؛ ${m.evaluators} مقيّمون حاليون على ${m.standards} معايير` }
-        : { en: `${m.evaluators} current evaluators on ${m.standards} standards; ${m.instructors} qualified instructors`, ar: `${m.evaluators} مقيّمون حاليون على ${m.standards} معايير؛ ${m.instructors} مدربون مؤهلون` };
+        ? { en: `Instructor pipeline: ${pl(m.tracks, 'instructor track')}; ${pl(m.evaluators, 'current evaluator')} on ${pl(m.standards, 'standard')}`, ar: `مسار المدربين: ${m.tracks} مسارات؛ ${m.evaluators} مقيّمون حاليون على ${m.standards} معايير` }
+        : { en: `${pl(m.evaluators, 'current evaluator')} on ${pl(m.standards, 'standard')}; ${pl(m.instructors, 'qualified instructor')}`, ar: `${m.evaluators} مقيّمون حاليون على ${m.standards} معايير؛ ${m.instructors} مدربون مؤهلون` };
     case 'signoff_timeliness':
       return { en: `Task sign-offs in the last 12 months: ${m.evaluations}, ${m.acknowledged} acknowledged by a supervisor`, ar: `اعتمادات المهام خلال 12 شهرًا: ${m.evaluations}، منها ${m.acknowledged} أقرّها مشرف` };
     case 'programme_records':
-      return { en: `Training records in the last 12 months: ${m.records} completions (${m.passed} passed), ${m.sessions} sessions`, ar: `سجلات التدريب خلال 12 شهرًا: ${m.records} إتمامًا (${m.passed} نجاحًا)، ${m.sessions} جلسات` };
+      return { en: `Training records in the last 12 months: ${pl(m.records, 'completion')} (${m.passed} passed), ${pl(m.sessions, 'session')}`, ar: `سجلات التدريب خلال 12 شهرًا: ${m.records} إتمامًا (${m.passed} نجاحًا)، ${m.sessions} جلسات` };
   }
 }
 

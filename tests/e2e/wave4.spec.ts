@@ -97,7 +97,9 @@ test('Z1 F25 effectiveness: aggregates only for instructors, n >= 10, L3 at +90 
   const w2 = watchErrors(tm);
   await go(tm, '/training/effectiveness/c-hu');
   await expect(tm.locator('[data-testid="m25-l4"]')).toContainText(/HU-related event rate/);
-  await expect(tm.locator('[data-testid="m25-l4"]')).toContainText(/SAMPLE/i);
+  // the L4 card carries the SAMPLE chip in its header and the caveat above the KPIs
+  const l4card = tm.locator('section, article, div').filter({ has: tm.locator('[data-testid="m25-l4"]') }).filter({ hasText: /Association, not causation/ }).last();
+  await expect(l4card).toContainText(/SAMPLE/i);
   await expect(tm.locator('main')).toContainText(/Association, not causation/);
   await expect(tm.locator('[data-testid="m25-l2"]')).toBeVisible();
   // L3 observations are due 90 days after completion (qualifying courses only)
@@ -250,7 +252,7 @@ test('Z4 F28 simulator: training only, exam refused, coverage gaps, live debrief
   const base = { purpose: 'exam', title_en: 'Loss of instrument air to one header', title_ar: 'فقدان هواء الأجهزة لأحد الخطوط', summary_en: 'The crew responds to a loss of instrument air.', summary_ar: 'يستجيب الطاقم لفقدان هواء الأجهزة.', category: 'abnormal', objective_ids: ['so-a1'], positions: ['ss', 'sro', 'ro'], duration_min: 90, fidelity: 'full_scope', programmes: ['coct'] };
   expect((await rpc(ins, 'kafaa_save_sim_scenario', { p: base })).code).toBe('exam_content');
   // A3: a live debrief on a past crew-B slot writes evidence only for members present, and F30 statements for them
-  const people = (await rest(ins, 'kafaa_people?select=id,crew,kind,status,job_role_id&crew=eq.B')).data as any[];
+  const people = SEED.people.filter((p) => p.crew === 'B'); // synthetic people, identical live (seed digest)
   const slot = SEED.simulator_slots.find((s) => s.id === 'sim-h7-b');
   const roster = crewRoster(slot, people);
   expect(roster.length).toBeGreaterThan(3);
@@ -344,6 +346,7 @@ test('Z6 F30 LRS: own record, manager scope, aggregate only for HR, immutable, s
   // immutable: an update is refused
   const patch = await rest(page, `kafaa_xapi_statements?id=eq.${own[0].id}`, 'PATCH', { verb: 'passed' });
   expect(patch.status).toBeGreaterThanOrEqual(400);
+  w.take(); // the refused PATCH logs its 403 in the console on purpose
   await clean(page, w);
 
   // a manager queries people in scope only
@@ -368,7 +371,11 @@ test('Z6 F30 LRS: own record, manager scope, aggregate only for HR, immutable, s
   await go(hr, '/training/lrs');
   await expect(hr.locator('[data-testid="m27-top"]')).toBeVisible();
   await expect(hr.locator('[data-testid="m27-statements"]')).toHaveCount(0);
-  expect((await rpc(hr, 'kafaa_query_statements', { p: {} })).code).toBe('aggregate_only');
+  // as an employee HR still reads only their own statements; anyone else is out of scope
+  const mine = await rpc(hr, 'kafaa_query_statements', { p: {} });
+  expect(mine.ok).toBe(true);
+  expect(((mine.data.rows ?? mine.data.statements ?? []) as any[]).every((x) => x.actor_person_id === 'p-chco')).toBe(true);
+  expect((await rpc(hr, 'kafaa_query_statements', { p: { actor: 'p-nse' } })).code).toBe('not_in_scope');
   await hr.close();
 
   // the admin console: an invalid statement is refused with a schema error

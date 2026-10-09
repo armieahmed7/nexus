@@ -176,9 +176,11 @@ function RedesignFlags({ m }: { m: SatModel }) {
   const tasksFor = (courseId: string) => [...new Set(m.trace.links.filter((l) => l.active && l.course_id === courseId).map((l) => l.task_id))];
   const cols: Column<(typeof flags)[number]>[] = [
     { key: 'course', header: t('m26.redesign.course'), value: (x) => m.courseName(x.course_id), render: (x) => <span className="font-semibold">{m.courseName(x.course_id)}</span> },
-    { key: 'status', header: t('m26.redesign.status'), value: (x) => x.status },
+    { key: 'status', header: t('m26.redesign.status'), value: (x) => t(`m26.redesign.state.${x.status === 'in_sat' || x.status === 'closed' ? x.status : 'open'}`) },
     { key: 'tasks', header: t('m26.redesign.tasks'), csv: false, render: (x) => (
-      <span className="flex flex-wrap gap-1.5">{tasksFor(x.course_id).map((id) => <L key={id} to={`/training/sat/tasks/${id}`} className="link text-[12.5px]">{m.task.get(id)?.code ?? id}</L>)}</span>
+      tasksFor(x.course_id).length
+        ? <span className="flex flex-wrap gap-1.5">{tasksFor(x.course_id).map((id) => <L key={id} to={`/training/sat/tasks/${id}`} className="link text-[12.5px]">{m.task.get(id)?.code ?? id}</L>)}</span>
+        : <span className="text-[12.5px] text-ink-3">{t('m26.redesign.noTasks')}</span>
     ) },
   ];
   return (
