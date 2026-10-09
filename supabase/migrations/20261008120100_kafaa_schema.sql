@@ -2474,6 +2474,212 @@ create table if not exists kafaa_ks_sessions (
 );
 comment on table kafaa_ks_sessions is '[M22] Knowledge-sharing session catalogue: held sessions with recordings (synthetic links) and upcoming events (F17)';
 
+-- M24 · KLRA thresholds set by the knowledge-management owner (F20)
+create table if not exists kafaa_klra_settings (
+  id text primary key,
+  high_threshold integer not null default 16,
+  medium_threshold integer not null default 8,
+  updated_by text,
+  updated_at timestamptz not null default now(),
+  history jsonb not null default '[]'::jsonb,
+  open_read boolean not null default false
+);
+comment on table kafaa_klra_settings is '[M24] KLRA thresholds set by the knowledge-management owner (F20)';
+
+-- M24 · KLRA position register: synthetic HR feed bands (no dates of birth or ages) and the F11 coverage snapshot (F20)
+create table if not exists kafaa_klra_positions (
+  id text primary key,
+  person_id text,
+  role_id text,
+  family_id text,
+  entity_id text,
+  team_id text,
+  crew text,
+  department text not null check (department in ('operations', 'maintenance_engineering', 'rp_chem_ep', 'training_quality', 'corporate')),
+  kind text not null default 'staff' check (kind in ('staff', 'ossa', 'contractor')),
+  title_en text not null,
+  title_ar text not null,
+  holder_en text not null default '',
+  holder_ar text not null default '',
+  retirement_band text not null default 'na' check (retirement_band in ('within_2', '2_5', '5_plus', 'na')),
+  contract_kind text not null default 'permanent' check (contract_kind in ('permanent', 'fixed_term', 'secondment', 'ossa')),
+  contract_end_band text not null default 'none' check (contract_end_band in ('within_1', '1_2', '2_5', '5_plus', 'none')),
+  criticality text not null default 'general' check (criticality in ('critical', 'regulated', 'qualified', 'general')),
+  spof_skill_ids text[] not null default '{}'::text[],
+  codified_base integer not null default 0,
+  replace_months integer not null default 6,
+  feed_as_of date not null,
+  synthetic boolean not null default true,
+  active boolean not null default true,
+  open_read boolean not null default false
+);
+comment on table kafaa_klra_positions is '[M24] KLRA position register: synthetic HR feed bands (no dates of birth or ages) and the F11 coverage snapshot (F20)';
+
+-- M24 · Quarterly knowledge loss risk assessment of a position: total = attrition x position (F20)
+create table if not exists kafaa_klra_assessments (
+  id text primary key,
+  period text not null,
+  position_id text not null,
+  person_id text,
+  department text not null,
+  attrition_factor integer not null,
+  position_factor integer not null,
+  total integer not null,
+  proposed_attrition integer not null,
+  proposed_position integer not null,
+  adjusted boolean not null default false,
+  note text,
+  reasons jsonb not null default '[]'::jsonb,
+  drivers jsonb not null default '{}'::jsonb,
+  assessed_by text not null,
+  assessed_by_name text not null default '',
+  assessed_by_name_ar text not null default '',
+  assessed_at timestamptz not null default now(),
+  open_read boolean not null default false
+);
+comment on table kafaa_klra_assessments is '[M24] Quarterly knowledge loss risk assessment of a position: total = attrition x position (F20)';
+
+-- M24 · KLRA mitigation action for a position: capture, mentoring, successor, documentation or cross-training (F20)
+create table if not exists kafaa_klra_actions (
+  id text primary key,
+  assessment_id text not null,
+  position_id text not null,
+  person_id text,
+  period text not null,
+  kind text not null check (kind in ('capture', 'mentoring', 'successor', 'documentation', 'cross_training')),
+  owner_role text not null check (owner_role in ('km_owner', 'line_manager', 'training', 'hr', 'sme')),
+  due_on date not null,
+  status text not null default 'planned' check (status in ('planned', 'in_progress', 'done', 'cancelled')),
+  note text not null default '',
+  ref_table text,
+  ref_id text,
+  outcome text,
+  created_by text not null,
+  created_at timestamptz not null default now(),
+  closed_by text,
+  closed_at timestamptz,
+  open_read boolean not null default false
+);
+comment on table kafaa_klra_actions is '[M24] KLRA mitigation action for a position: capture, mentoring, successor, documentation or cross-training (F20)';
+
+-- M24 · Subject-matter expert opt-in profile: skills, availability and capture window band (F21)
+create table if not exists kafaa_sme_profiles (
+  id text primary key,
+  person_id text not null unique,
+  kind text not null default 'staff' check (kind in ('staff', 'retiring', 'rotating', 'visiting_khnp', 'partner')),
+  skill_ids text[] not null default '{}'::text[],
+  availability text not null default 'available' check (availability in ('available', 'limited', 'unavailable')),
+  departing_band text not null default 'unspecified' check (departing_band in ('within_2', '2_5', '5_plus', 'visiting', 'unspecified')),
+  listed boolean not null default false,
+  headline text not null default '',
+  person_name text not null default '',
+  person_name_ar text not null default '',
+  role_id text,
+  family_id text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_sme_profiles is '[M24] Subject-matter expert opt-in profile: skills, availability and capture window band (F21)';
+
+-- M24 · Structured knowledge-capture interview: plan, hold, transcribe (text upload only) (F21)
+create table if not exists kafaa_capture_sessions (
+  id text primary key,
+  sme_id text not null,
+  interviewer_id text not null,
+  created_by text not null,
+  template text not null check (template in ('critical_decisions', 'rules_of_thumb', 'war_stories', 'who_to_ask', 'documents')),
+  title text not null,
+  lang text not null default 'en' check (lang in ('en', 'ar')),
+  status text not null default 'planned' check (status in ('planned', 'held', 'transcribed', 'cancelled')),
+  planned_on date not null,
+  held_on date,
+  duration_min integer not null default 60,
+  skill_ids text[] not null default '{}'::text[],
+  standard_ids text[] not null default '{}'::text[],
+  position_id text,
+  action_id text,
+  transcript text not null default '',
+  transcript_words integer not null default 0,
+  notes text not null default '',
+  asset_id text,
+  sme_name text not null default '',
+  sme_name_ar text not null default '',
+  interviewer_name text not null default '',
+  interviewer_name_ar text not null default '',
+  history jsonb not null default '[]'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_capture_sessions is '[M24] Structured knowledge-capture interview: plan, hold, transcribe (text upload only) (F21)';
+
+-- M24 · Knowledge asset: summary, key points and links, published after a technical review and a security and content check (F21)
+create table if not exists kafaa_knowledge_assets (
+  id text primary key,
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  body text not null,
+  body_lang text not null default 'en' check (body_lang in ('en', 'ar')),
+  key_points jsonb not null default '[]'::jsonb,
+  skill_ids text[] not null default '{}'::text[],
+  standard_ids text[] not null default '{}'::text[],
+  requal_standard_ids text[] not null default '{}'::text[],
+  oe_ids text[] not null default '{}'::text[],
+  course_ids text[] not null default '{}'::text[],
+  system_family text not null check (system_family in ('reactor_core', 'primary', 'secondary', 'electrical', 'i_and_c', 'chemistry', 'radiation_protection', 'maintenance', 'outage', 'human_performance', 'emergency_preparedness', 'training')),
+  status text not null default 'draft' check (status in ('draft', 'review', 'published', 'withdrawn')),
+  published boolean not null default false,
+  reviewers text[] not null default '{}'::text[],
+  suggestions jsonb not null default '[]'::jsonb,
+  author_id text not null,
+  sme_id text not null,
+  source_session_id text,
+  position_id text,
+  author_name text not null default '',
+  author_name_ar text not null default '',
+  sme_name text not null default '',
+  sme_name_ar text not null default '',
+  template text,
+  used_by integer not null default 0,
+  version integer not null default 1,
+  submitted_at timestamptz,
+  published_at timestamptz,
+  published_by text,
+  withdrawn_at timestamptz,
+  withdrawn_reason text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_knowledge_assets is '[M24] Knowledge asset: summary, key points and links, published after a technical review and a security and content check (F21)';
+
+-- M24 · Review of a knowledge asset: technical review or security and content check (two different people, never the author) (F21)
+create table if not exists kafaa_asset_reviews (
+  id text primary key,
+  asset_id text not null,
+  asset_author_id text not null,
+  reviewer_id text not null,
+  kind text not null check (kind in ('technical', 'security')),
+  outcome text not null check (outcome in ('pass', 'changes')),
+  note text not null default '',
+  checks jsonb not null default '{}'::jsonb,
+  decisions jsonb not null default '{}'::jsonb,
+  reviewer_name text not null default '',
+  reviewer_name_ar text not null default '',
+  superseded boolean not null default false,
+  version integer not null default 1,
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_asset_reviews is '[M24] Review of a knowledge asset: technical review or security and content check (two different people, never the author) (F21)';
+
+-- M24 · A person marked a knowledge asset as used (feeds the "used by N" count, shown from 10) (F21)
+create table if not exists kafaa_asset_uses (
+  id text primary key,
+  asset_id text not null,
+  person_id text not null,
+  used_on date not null
+);
+comment on table kafaa_asset_uses is '[M24] A person marked a knowledge asset as used (feeds the "used by N" count, shown from 10) (F21)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -2691,6 +2897,28 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ex
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_expert_requests_requester_id_fk') then alter table kafaa_expert_requests add constraint kafaa_expert_requests_requester_id_fk foreign key (requester_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_expert_requests_skill_id_fk') then alter table kafaa_expert_requests add constraint kafaa_expert_requests_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ks_sessions_community_id_fk') then alter table kafaa_ks_sessions add constraint kafaa_ks_sessions_community_id_fk foreign key (community_id) references kafaa_communities(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_klra_positions_person_id_fk') then alter table kafaa_klra_positions add constraint kafaa_klra_positions_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_klra_positions_role_id_fk') then alter table kafaa_klra_positions add constraint kafaa_klra_positions_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_klra_positions_family_id_fk') then alter table kafaa_klra_positions add constraint kafaa_klra_positions_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_klra_assessments_position_id_fk') then alter table kafaa_klra_assessments add constraint kafaa_klra_assessments_position_id_fk foreign key (position_id) references kafaa_klra_positions(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_klra_assessments_person_id_fk') then alter table kafaa_klra_assessments add constraint kafaa_klra_assessments_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_klra_assessments_assessed_by_fk') then alter table kafaa_klra_assessments add constraint kafaa_klra_assessments_assessed_by_fk foreign key (assessed_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_klra_actions_assessment_id_fk') then alter table kafaa_klra_actions add constraint kafaa_klra_actions_assessment_id_fk foreign key (assessment_id) references kafaa_klra_assessments(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_klra_actions_position_id_fk') then alter table kafaa_klra_actions add constraint kafaa_klra_actions_position_id_fk foreign key (position_id) references kafaa_klra_positions(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_klra_actions_person_id_fk') then alter table kafaa_klra_actions add constraint kafaa_klra_actions_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_klra_actions_created_by_fk') then alter table kafaa_klra_actions add constraint kafaa_klra_actions_created_by_fk foreign key (created_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sme_profiles_person_id_fk') then alter table kafaa_sme_profiles add constraint kafaa_sme_profiles_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_capture_sessions_sme_id_fk') then alter table kafaa_capture_sessions add constraint kafaa_capture_sessions_sme_id_fk foreign key (sme_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_capture_sessions_interviewer_id_fk') then alter table kafaa_capture_sessions add constraint kafaa_capture_sessions_interviewer_id_fk foreign key (interviewer_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_capture_sessions_created_by_fk') then alter table kafaa_capture_sessions add constraint kafaa_capture_sessions_created_by_fk foreign key (created_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_capture_sessions_position_id_fk') then alter table kafaa_capture_sessions add constraint kafaa_capture_sessions_position_id_fk foreign key (position_id) references kafaa_klra_positions(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_knowledge_assets_author_id_fk') then alter table kafaa_knowledge_assets add constraint kafaa_knowledge_assets_author_id_fk foreign key (author_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_knowledge_assets_sme_id_fk') then alter table kafaa_knowledge_assets add constraint kafaa_knowledge_assets_sme_id_fk foreign key (sme_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_asset_reviews_asset_id_fk') then alter table kafaa_asset_reviews add constraint kafaa_asset_reviews_asset_id_fk foreign key (asset_id) references kafaa_knowledge_assets(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_asset_reviews_asset_author_id_fk') then alter table kafaa_asset_reviews add constraint kafaa_asset_reviews_asset_author_id_fk foreign key (asset_author_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_asset_reviews_reviewer_id_fk') then alter table kafaa_asset_reviews add constraint kafaa_asset_reviews_reviewer_id_fk foreign key (reviewer_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_asset_uses_asset_id_fk') then alter table kafaa_asset_uses add constraint kafaa_asset_uses_asset_id_fk foreign key (asset_id) references kafaa_knowledge_assets(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_asset_uses_person_id_fk') then alter table kafaa_asset_uses add constraint kafaa_asset_uses_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -2965,6 +3193,33 @@ create index if not exists kafaa_expert_requests_expert_id_idx on kafaa_expert_r
 create index if not exists kafaa_expert_requests_requester_id_idx on kafaa_expert_requests (requester_id);
 create index if not exists kafaa_expert_requests_skill_id_idx on kafaa_expert_requests (skill_id);
 create index if not exists kafaa_ks_sessions_community_id_idx on kafaa_ks_sessions (community_id);
+create index if not exists kafaa_klra_positions_person_id_idx on kafaa_klra_positions (person_id);
+create index if not exists kafaa_klra_positions_role_id_idx on kafaa_klra_positions (role_id);
+create index if not exists kafaa_klra_positions_family_id_idx on kafaa_klra_positions (family_id);
+create index if not exists kafaa_klra_positions_department_idx on kafaa_klra_positions (department);
+create index if not exists kafaa_klra_assessments_period_idx on kafaa_klra_assessments (period);
+create index if not exists kafaa_klra_assessments_position_id_idx on kafaa_klra_assessments (position_id);
+create index if not exists kafaa_klra_assessments_person_id_idx on kafaa_klra_assessments (person_id);
+create index if not exists kafaa_klra_assessments_assessed_by_idx on kafaa_klra_assessments (assessed_by);
+create index if not exists kafaa_klra_actions_assessment_id_idx on kafaa_klra_actions (assessment_id);
+create index if not exists kafaa_klra_actions_position_id_idx on kafaa_klra_actions (position_id);
+create index if not exists kafaa_klra_actions_person_id_idx on kafaa_klra_actions (person_id);
+create index if not exists kafaa_klra_actions_status_idx on kafaa_klra_actions (status);
+create index if not exists kafaa_klra_actions_created_by_idx on kafaa_klra_actions (created_by);
+create index if not exists kafaa_capture_sessions_sme_id_idx on kafaa_capture_sessions (sme_id);
+create index if not exists kafaa_capture_sessions_interviewer_id_idx on kafaa_capture_sessions (interviewer_id);
+create index if not exists kafaa_capture_sessions_created_by_idx on kafaa_capture_sessions (created_by);
+create index if not exists kafaa_capture_sessions_status_idx on kafaa_capture_sessions (status);
+create index if not exists kafaa_capture_sessions_position_id_idx on kafaa_capture_sessions (position_id);
+create index if not exists kafaa_knowledge_assets_system_family_idx on kafaa_knowledge_assets (system_family);
+create index if not exists kafaa_knowledge_assets_status_idx on kafaa_knowledge_assets (status);
+create index if not exists kafaa_knowledge_assets_author_id_idx on kafaa_knowledge_assets (author_id);
+create index if not exists kafaa_knowledge_assets_sme_id_idx on kafaa_knowledge_assets (sme_id);
+create index if not exists kafaa_asset_reviews_asset_id_idx on kafaa_asset_reviews (asset_id);
+create index if not exists kafaa_asset_reviews_asset_author_id_idx on kafaa_asset_reviews (asset_author_id);
+create index if not exists kafaa_asset_reviews_reviewer_id_idx on kafaa_asset_reviews (reviewer_id);
+create index if not exists kafaa_asset_uses_asset_id_idx on kafaa_asset_uses (asset_id);
+create index if not exists kafaa_asset_uses_person_id_idx on kafaa_asset_uses (person_id);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -2977,4 +3232,4 @@ create trigger kafaa_evaluations_append_only before update or delete on kafaa_ev
 drop trigger if exists kafaa_evaluation_acks_append_only on kafaa_evaluation_acks;
 create trigger kafaa_evaluation_acks_append_only before update or delete on kafaa_evaluation_acks for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 145) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 154) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

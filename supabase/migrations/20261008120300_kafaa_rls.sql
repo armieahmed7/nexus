@@ -1502,3 +1502,72 @@ create policy kafaa_read on kafaa_ks_sessions for select to anon, authenticated 
 grant select on kafaa_ks_sessions to anon, authenticated;
 -- writes: reference data, no client writes
 
+-- klra_settings
+alter table kafaa_klra_settings enable row level security;
+drop policy if exists kafaa_read on kafaa_klra_settings;
+create policy kafaa_read on kafaa_klra_settings for select to anon, authenticated using (kafaa_rule_read('knowledge', updated_by, null::text, open_read));
+grant select on kafaa_klra_settings to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- klra_positions
+alter table kafaa_klra_positions enable row level security;
+drop policy if exists kafaa_read on kafaa_klra_positions;
+create policy kafaa_read on kafaa_klra_positions for select to anon, authenticated using (kafaa_rule_read('knowledge', person_id, null::text, open_read));
+grant select on kafaa_klra_positions to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- klra_assessments
+alter table kafaa_klra_assessments enable row level security;
+drop policy if exists kafaa_read on kafaa_klra_assessments;
+create policy kafaa_read on kafaa_klra_assessments for select to anon, authenticated using (kafaa_rule_read('knowledge', person_id, null::text, open_read));
+grant select on kafaa_klra_assessments to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- klra_actions
+alter table kafaa_klra_actions enable row level security;
+drop policy if exists kafaa_read on kafaa_klra_actions;
+create policy kafaa_read on kafaa_klra_actions for select to anon, authenticated using (kafaa_rule_read('knowledge', person_id, null::text, open_read));
+grant select on kafaa_klra_actions to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- sme_profiles
+alter table kafaa_sme_profiles enable row level security;
+drop policy if exists kafaa_read on kafaa_sme_profiles;
+create policy kafaa_read on kafaa_sme_profiles for select to anon, authenticated using (kafaa_rule_read('knowledge', null::text, null::text, listed)
+    or kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_sme_profiles to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- capture_sessions
+alter table kafaa_capture_sessions enable row level security;
+drop policy if exists kafaa_read on kafaa_capture_sessions;
+create policy kafaa_read on kafaa_capture_sessions for select to anon, authenticated using (kafaa_rule_read('own_profile', sme_id, null::text, true)
+    or kafaa_rule_read('own_profile', interviewer_id, null::text, true)
+    or kafaa_rule_read('own_profile', created_by, null::text, true));
+grant select on kafaa_capture_sessions to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- knowledge_assets
+alter table kafaa_knowledge_assets enable row level security;
+drop policy if exists kafaa_read on kafaa_knowledge_assets;
+create policy kafaa_read on kafaa_knowledge_assets for select to anon, authenticated using (kafaa_rule_read('knowledge', null::text, null::text, published)
+    or kafaa_rule_read('own_profile', author_id, null::text, true)
+    or kafaa_rule_read('own_profile', sme_id, null::text, true));
+grant select on kafaa_knowledge_assets to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- asset_reviews
+alter table kafaa_asset_reviews enable row level security;
+drop policy if exists kafaa_read on kafaa_asset_reviews;
+create policy kafaa_read on kafaa_asset_reviews for select to anon, authenticated using (kafaa_rule_read('own_profile', reviewer_id, null::text, true)
+    or kafaa_rule_read('own_profile', asset_author_id, null::text, true));
+grant select on kafaa_asset_reviews to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- asset_uses
+alter table kafaa_asset_uses enable row level security;
+drop policy if exists kafaa_read on kafaa_asset_uses;
+create policy kafaa_read on kafaa_asset_uses for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_asset_uses to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+

@@ -2047,6 +2047,185 @@ export interface KsSessionsRow {
   synthetic: boolean;
   sources: any;
 }
+export interface KlraSettingsRow {
+  id: string;
+  high_threshold: number;
+  medium_threshold: number;
+  updated_by?: string | null;
+  updated_at: string;
+  history: any;
+  open_read: boolean;
+}
+export interface KlraPositionsRow {
+  id: string;
+  person_id?: string | null;
+  role_id?: string | null;
+  family_id?: string | null;
+  entity_id?: string | null;
+  team_id?: string | null;
+  crew?: string | null;
+  department: 'operations' | 'maintenance_engineering' | 'rp_chem_ep' | 'training_quality' | 'corporate';
+  kind: 'staff' | 'ossa' | 'contractor';
+  title_en: string;
+  title_ar: string;
+  holder_en: string;
+  holder_ar: string;
+  retirement_band: 'within_2' | '2_5' | '5_plus' | 'na';
+  contract_kind: 'permanent' | 'fixed_term' | 'secondment' | 'ossa';
+  contract_end_band: 'within_1' | '1_2' | '2_5' | '5_plus' | 'none';
+  criticality: 'critical' | 'regulated' | 'qualified' | 'general';
+  spof_skill_ids: string[];
+  codified_base: number;
+  replace_months: number;
+  feed_as_of: string;
+  synthetic: boolean;
+  active: boolean;
+  open_read: boolean;
+}
+export interface KlraAssessmentsRow {
+  id: string;
+  period: string;
+  position_id: string;
+  person_id?: string | null;
+  department: string;
+  attrition_factor: number;
+  position_factor: number;
+  total: number;
+  proposed_attrition: number;
+  proposed_position: number;
+  adjusted: boolean;
+  note?: string | null;
+  reasons: any;
+  drivers: any;
+  assessed_by: string;
+  assessed_by_name: string;
+  assessed_by_name_ar: string;
+  assessed_at: string;
+  open_read: boolean;
+}
+export interface KlraActionsRow {
+  id: string;
+  assessment_id: string;
+  position_id: string;
+  person_id?: string | null;
+  period: string;
+  kind: 'capture' | 'mentoring' | 'successor' | 'documentation' | 'cross_training';
+  owner_role: 'km_owner' | 'line_manager' | 'training' | 'hr' | 'sme';
+  due_on: string;
+  status: 'planned' | 'in_progress' | 'done' | 'cancelled';
+  note: string;
+  ref_table?: string | null;
+  ref_id?: string | null;
+  outcome?: string | null;
+  created_by: string;
+  created_at: string;
+  closed_by?: string | null;
+  closed_at?: string | null;
+  open_read: boolean;
+}
+export interface SmeProfilesRow {
+  id: string;
+  person_id: string;
+  kind: 'staff' | 'retiring' | 'rotating' | 'visiting_khnp' | 'partner';
+  skill_ids: string[];
+  availability: 'available' | 'limited' | 'unavailable';
+  departing_band: 'within_2' | '2_5' | '5_plus' | 'visiting' | 'unspecified';
+  listed: boolean;
+  headline: string;
+  person_name: string;
+  person_name_ar: string;
+  role_id?: string | null;
+  family_id?: string | null;
+  updated_at: string;
+}
+export interface CaptureSessionsRow {
+  id: string;
+  sme_id: string;
+  interviewer_id: string;
+  created_by: string;
+  template: 'critical_decisions' | 'rules_of_thumb' | 'war_stories' | 'who_to_ask' | 'documents';
+  title: string;
+  lang: 'en' | 'ar';
+  status: 'planned' | 'held' | 'transcribed' | 'cancelled';
+  planned_on: string;
+  held_on?: string | null;
+  duration_min: number;
+  skill_ids: string[];
+  standard_ids: string[];
+  position_id?: string | null;
+  action_id?: string | null;
+  transcript: string;
+  transcript_words: number;
+  notes: string;
+  asset_id?: string | null;
+  sme_name: string;
+  sme_name_ar: string;
+  interviewer_name: string;
+  interviewer_name_ar: string;
+  history: any;
+  created_at: string;
+  updated_at: string;
+}
+export interface KnowledgeAssetsRow {
+  id: string;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  body: string;
+  body_lang: 'en' | 'ar';
+  key_points: any;
+  skill_ids: string[];
+  standard_ids: string[];
+  requal_standard_ids: string[];
+  oe_ids: string[];
+  course_ids: string[];
+  system_family: 'reactor_core' | 'primary' | 'secondary' | 'electrical' | 'i_and_c' | 'chemistry' | 'radiation_protection' | 'maintenance' | 'outage' | 'human_performance' | 'emergency_preparedness' | 'training';
+  status: 'draft' | 'review' | 'published' | 'withdrawn';
+  published: boolean;
+  reviewers: string[];
+  suggestions: any;
+  author_id: string;
+  sme_id: string;
+  source_session_id?: string | null;
+  position_id?: string | null;
+  author_name: string;
+  author_name_ar: string;
+  sme_name: string;
+  sme_name_ar: string;
+  template?: string | null;
+  used_by: number;
+  version: number;
+  submitted_at?: string | null;
+  published_at?: string | null;
+  published_by?: string | null;
+  withdrawn_at?: string | null;
+  withdrawn_reason?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+export interface AssetReviewsRow {
+  id: string;
+  asset_id: string;
+  asset_author_id: string;
+  reviewer_id: string;
+  kind: 'technical' | 'security';
+  outcome: 'pass' | 'changes';
+  note: string;
+  checks: any;
+  decisions: any;
+  reviewer_name: string;
+  reviewer_name_ar: string;
+  superseded: boolean;
+  version: number;
+  created_at: string;
+}
+export interface AssetUsesRow {
+  id: string;
+  asset_id: string;
+  person_id: string;
+  used_on: string;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -2195,6 +2374,15 @@ export interface Tables {
   expert_optin: ExpertOptinRow;
   expert_requests: ExpertRequestsRow;
   ks_sessions: KsSessionsRow;
+  klra_settings: KlraSettingsRow;
+  klra_positions: KlraPositionsRow;
+  klra_assessments: KlraAssessmentsRow;
+  klra_actions: KlraActionsRow;
+  sme_profiles: SmeProfilesRow;
+  capture_sessions: CaptureSessionsRow;
+  knowledge_assets: KnowledgeAssetsRow;
+  asset_reviews: AssetReviewsRow;
+  asset_uses: AssetUsesRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];
