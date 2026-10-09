@@ -2047,6 +2047,140 @@ export interface KsSessionsRow {
   synthetic: boolean;
   sources: any;
 }
+export interface ReviewCyclesRow {
+  id: string;
+  code: string;
+  title_en: string;
+  title_ar: string;
+  period: string;
+  family_ids: string[];
+  status: 'open' | 'calibration' | 'locked';
+  opened_by?: string | null;
+  opened_on: string;
+  due_on?: string | null;
+  calibration_started_at?: string | null;
+  calibration_started_by?: string | null;
+  calibrated_by?: string | null;
+  calibrated_at?: string | null;
+  locked_by?: string | null;
+  locked_at?: string | null;
+  lock_note?: string | null;
+  listed: boolean;
+  created_at: string;
+  updated_at: string;
+}
+export interface PerfRatingsRow {
+  id: string;
+  person_id: string;
+  period: string;
+  rating: number;
+  source: string;
+  listed: boolean;
+}
+export interface ReviewPlacementsRow {
+  id: string;
+  cycle_id: string;
+  person_id: string;
+  perf: number;
+  potential: number;
+  anchors: any;
+  box: number;
+  hipo: boolean;
+  perf_record?: number | null;
+  evidence_snapshot: any;
+  evidence_index: number;
+  placed_by: string;
+  placed_at: string;
+  calibrated: boolean;
+  calibrated_by?: string | null;
+  calibrated_at?: string | null;
+  note?: string | null;
+  actions: any;
+  status: 'placed' | 'locked';
+  history: any;
+  listed: boolean;
+  updated_at: string;
+}
+export interface TalentPrioritiesRow {
+  id: string;
+  person_id: string;
+  cycle_id: string;
+  period: string;
+  priorities: any;
+  agreed_on: string;
+  status: 'agreed' | 'done';
+  listed: boolean;
+  created_at: string;
+}
+export interface TalentPoolRow {
+  id: string;
+  cycle_id: string;
+  person_id: string;
+  pool: 'hipo';
+  since: string;
+  programme_id?: string | null;
+  status: 'active' | 'left';
+  listed: boolean;
+}
+export interface SuccessionSlatesRow {
+  id: string;
+  role_id: string;
+  period: string;
+  status: 'draft' | 'proposed' | 'confirmed';
+  entity_id?: string | null;
+  family_id?: string | null;
+  critical: boolean;
+  leadership: boolean;
+  incumbent_en: string;
+  incumbent_ar: string;
+  target_bench: number;
+  confirmed_by?: string | null;
+  confirmed_at?: string | null;
+  confirm_note?: string | null;
+  listed: boolean;
+  sort: number;
+  updated_at: string;
+}
+export interface SuccessorsRow {
+  id: string;
+  slate_id: string;
+  person_id?: string | null;
+  cover_source: 'internal' | 'khnp' | 'contractor';
+  cover_label_en: string;
+  cover_label_ar: string;
+  readiness?: 'ready_now' | '1_2y' | '3_5y' | null;
+  computed_readiness?: 'ready_now' | '1_2y' | '3_5y' | null;
+  readiness_pct?: number | null;
+  months?: number | null;
+  gates: any;
+  gaps: any;
+  emergency: boolean;
+  actions: any;
+  note?: string | null;
+  status: 'proposed' | 'confirmed' | 'withdrawn';
+  proposed_by?: string | null;
+  proposed_at: string;
+  confirmed_by?: string | null;
+  confirmed_at?: string | null;
+  person_name: string;
+  person_name_ar: string;
+  person_role_id?: string | null;
+  listed: boolean;
+  sort: number;
+  updated_at: string;
+}
+export interface BenchRollupsRow {
+  id: string;
+  period: string;
+  role_id: string;
+  slate_id: string;
+  critical_role_id: string;
+  before: any;
+  after: any;
+  rolled_by?: string | null;
+  rolled_at: string;
+  listed: boolean;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -2195,6 +2329,14 @@ export interface Tables {
   expert_optin: ExpertOptinRow;
   expert_requests: ExpertRequestsRow;
   ks_sessions: KsSessionsRow;
+  review_cycles: ReviewCyclesRow;
+  perf_ratings: PerfRatingsRow;
+  review_placements: ReviewPlacementsRow;
+  talent_priorities: TalentPrioritiesRow;
+  talent_pool: TalentPoolRow;
+  succession_slates: SuccessionSlatesRow;
+  successors: SuccessorsRow;
+  bench_rollups: BenchRollupsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];

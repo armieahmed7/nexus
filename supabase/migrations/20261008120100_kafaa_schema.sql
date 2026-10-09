@@ -2474,6 +2474,164 @@ create table if not exists kafaa_ks_sessions (
 );
 comment on table kafaa_ks_sessions is '[M22] Knowledge-sharing session catalogue: held sessions with recordings (synthetic links) and upcoming events (F17)';
 
+-- M23 · Talent review cycle per organisation unit: open → calibration → locked (F18, confidential)
+create table if not exists kafaa_review_cycles (
+  id text primary key,
+  code text not null unique,
+  title_en text not null,
+  title_ar text not null,
+  period text not null,
+  family_ids text[] not null default '{}'::text[],
+  status text not null default 'open' check (status in ('open', 'calibration', 'locked')),
+  opened_by text,
+  opened_on date not null,
+  due_on date,
+  calibration_started_at timestamptz,
+  calibration_started_by text,
+  calibrated_by text,
+  calibrated_at timestamptz,
+  locked_by text,
+  locked_at timestamptz,
+  lock_note text,
+  listed boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_review_cycles is '[M23] Talent review cycle per organisation unit: open → calibration → locked (F18, confidential)';
+
+-- M23 · Performance rating mirror 1-5 (synthetic HR field, SIMULATED) (F18, confidential)
+create table if not exists kafaa_perf_ratings (
+  id text primary key,
+  person_id text not null,
+  period text not null,
+  rating integer not null,
+  source text not null,
+  listed boolean not null default true
+);
+comment on table kafaa_perf_ratings is '[M23] Performance rating mirror 1-5 (synthetic HR field, SIMULATED) (F18, confidential)';
+
+-- M23 · 9-box placement with evidence snapshot, calibration and development actions (F18, confidential)
+create table if not exists kafaa_review_placements (
+  id text primary key,
+  cycle_id text not null,
+  person_id text not null,
+  perf integer not null,
+  potential integer not null,
+  anchors jsonb not null default '{}'::jsonb,
+  box integer not null,
+  hipo boolean not null default false,
+  perf_record integer,
+  evidence_snapshot jsonb not null default '{}'::jsonb,
+  evidence_index integer not null default 0,
+  placed_by text not null,
+  placed_at timestamptz not null default now(),
+  calibrated boolean not null default false,
+  calibrated_by text,
+  calibrated_at timestamptz,
+  note text,
+  actions jsonb not null default '[]'::jsonb,
+  status text not null default 'placed' check (status in ('placed', 'locked')),
+  history jsonb not null default '[]'::jsonb,
+  listed boolean not null default true,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_review_placements is '[M23] 9-box placement with evidence snapshot, calibration and development actions (F18, confidential)';
+
+-- M23 · Development priorities agreed in talent review, visible to the employee (no box or rating) (F18)
+create table if not exists kafaa_talent_priorities (
+  id text primary key,
+  person_id text not null,
+  cycle_id text not null,
+  period text not null,
+  priorities jsonb not null default '[]'::jsonb,
+  agreed_on date not null,
+  status text not null default 'agreed' check (status in ('agreed', 'done')),
+  listed boolean not null default true,
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_talent_priorities is '[M23] Development priorities agreed in talent review, visible to the employee (no box or rating) (F18)';
+
+-- M23 · HiPo pool from locked review cycles (feeds ESTADAD nominations, F16) (F18, confidential)
+create table if not exists kafaa_talent_pool (
+  id text primary key,
+  cycle_id text not null,
+  person_id text not null,
+  pool text not null default 'hipo' check (pool in ('hipo')),
+  since date not null,
+  programme_id text,
+  status text not null default 'active' check (status in ('active', 'left')),
+  listed boolean not null default true
+);
+comment on table kafaa_talent_pool is '[M23] HiPo pool from locked review cycles (feeds ESTADAD nominations, F16) (F18, confidential)';
+
+-- M23 · Succession slate for a critical or leadership role and period (F19, confidential)
+create table if not exists kafaa_succession_slates (
+  id text primary key,
+  role_id text not null,
+  period text not null,
+  status text not null default 'draft' check (status in ('draft', 'proposed', 'confirmed')),
+  entity_id text,
+  family_id text,
+  critical boolean not null default false,
+  leadership boolean not null default false,
+  incumbent_en text not null,
+  incumbent_ar text not null,
+  target_bench integer not null default 3,
+  confirmed_by text,
+  confirmed_at timestamptz,
+  confirm_note text,
+  listed boolean not null default true,
+  sort integer not null default 0,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_succession_slates is '[M23] Succession slate for a critical or leadership role and period (F19, confidential)';
+
+-- M23 · Successor (or external emergency cover role card) on a slate, readiness, gates and gap actions (F19, confidential)
+create table if not exists kafaa_successors (
+  id text primary key,
+  slate_id text not null,
+  person_id text,
+  cover_source text not null default 'internal' check (cover_source in ('internal', 'khnp', 'contractor')),
+  cover_label_en text not null default '',
+  cover_label_ar text not null default '',
+  readiness text check (readiness in ('ready_now', '1_2y', '3_5y')),
+  computed_readiness text check (computed_readiness in ('ready_now', '1_2y', '3_5y')),
+  readiness_pct integer,
+  months integer,
+  gates jsonb not null default '[]'::jsonb,
+  gaps jsonb not null default '[]'::jsonb,
+  emergency boolean not null default false,
+  actions jsonb not null default '[]'::jsonb,
+  note text,
+  status text not null default 'proposed' check (status in ('proposed', 'confirmed', 'withdrawn')),
+  proposed_by text,
+  proposed_at timestamptz not null default now(),
+  confirmed_by text,
+  confirmed_at timestamptz,
+  person_name text not null default '',
+  person_name_ar text not null default '',
+  person_role_id text,
+  listed boolean not null default true,
+  sort integer not null default 0,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_successors is '[M23] Successor (or external emergency cover role card) on a slate, readiness, gates and gap actions (F19, confidential)';
+
+-- M23 · Bench roll-up from confirmed slates into M07 critical-role counts (before and after) (F19)
+create table if not exists kafaa_bench_rollups (
+  id text primary key,
+  period text not null,
+  role_id text not null,
+  slate_id text not null,
+  critical_role_id text not null,
+  before jsonb not null default '{}'::jsonb,
+  after jsonb not null default '{}'::jsonb,
+  rolled_by text,
+  rolled_at timestamptz not null default now(),
+  listed boolean not null default true
+);
+comment on table kafaa_bench_rollups is '[M23] Bench roll-up from confirmed slates into M07 critical-role counts (before and after) (F19)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -2691,6 +2849,28 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ex
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_expert_requests_requester_id_fk') then alter table kafaa_expert_requests add constraint kafaa_expert_requests_requester_id_fk foreign key (requester_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_expert_requests_skill_id_fk') then alter table kafaa_expert_requests add constraint kafaa_expert_requests_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ks_sessions_community_id_fk') then alter table kafaa_ks_sessions add constraint kafaa_ks_sessions_community_id_fk foreign key (community_id) references kafaa_communities(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_review_cycles_opened_by_fk') then alter table kafaa_review_cycles add constraint kafaa_review_cycles_opened_by_fk foreign key (opened_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_review_cycles_calibration_started_by_fk') then alter table kafaa_review_cycles add constraint kafaa_review_cycles_calibration_started_by_fk foreign key (calibration_started_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_review_cycles_calibrated_by_fk') then alter table kafaa_review_cycles add constraint kafaa_review_cycles_calibrated_by_fk foreign key (calibrated_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_review_cycles_locked_by_fk') then alter table kafaa_review_cycles add constraint kafaa_review_cycles_locked_by_fk foreign key (locked_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_perf_ratings_person_id_fk') then alter table kafaa_perf_ratings add constraint kafaa_perf_ratings_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_review_placements_cycle_id_fk') then alter table kafaa_review_placements add constraint kafaa_review_placements_cycle_id_fk foreign key (cycle_id) references kafaa_review_cycles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_review_placements_person_id_fk') then alter table kafaa_review_placements add constraint kafaa_review_placements_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_review_placements_placed_by_fk') then alter table kafaa_review_placements add constraint kafaa_review_placements_placed_by_fk foreign key (placed_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_review_placements_calibrated_by_fk') then alter table kafaa_review_placements add constraint kafaa_review_placements_calibrated_by_fk foreign key (calibrated_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_talent_priorities_person_id_fk') then alter table kafaa_talent_priorities add constraint kafaa_talent_priorities_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_talent_priorities_cycle_id_fk') then alter table kafaa_talent_priorities add constraint kafaa_talent_priorities_cycle_id_fk foreign key (cycle_id) references kafaa_review_cycles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_talent_pool_cycle_id_fk') then alter table kafaa_talent_pool add constraint kafaa_talent_pool_cycle_id_fk foreign key (cycle_id) references kafaa_review_cycles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_talent_pool_person_id_fk') then alter table kafaa_talent_pool add constraint kafaa_talent_pool_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_succession_slates_role_id_fk') then alter table kafaa_succession_slates add constraint kafaa_succession_slates_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_succession_slates_confirmed_by_fk') then alter table kafaa_succession_slates add constraint kafaa_succession_slates_confirmed_by_fk foreign key (confirmed_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_successors_slate_id_fk') then alter table kafaa_successors add constraint kafaa_successors_slate_id_fk foreign key (slate_id) references kafaa_succession_slates(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_successors_person_id_fk') then alter table kafaa_successors add constraint kafaa_successors_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_successors_proposed_by_fk') then alter table kafaa_successors add constraint kafaa_successors_proposed_by_fk foreign key (proposed_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_successors_confirmed_by_fk') then alter table kafaa_successors add constraint kafaa_successors_confirmed_by_fk foreign key (confirmed_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_bench_rollups_role_id_fk') then alter table kafaa_bench_rollups add constraint kafaa_bench_rollups_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_bench_rollups_slate_id_fk') then alter table kafaa_bench_rollups add constraint kafaa_bench_rollups_slate_id_fk foreign key (slate_id) references kafaa_succession_slates(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_bench_rollups_rolled_by_fk') then alter table kafaa_bench_rollups add constraint kafaa_bench_rollups_rolled_by_fk foreign key (rolled_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -2965,6 +3145,33 @@ create index if not exists kafaa_expert_requests_expert_id_idx on kafaa_expert_r
 create index if not exists kafaa_expert_requests_requester_id_idx on kafaa_expert_requests (requester_id);
 create index if not exists kafaa_expert_requests_skill_id_idx on kafaa_expert_requests (skill_id);
 create index if not exists kafaa_ks_sessions_community_id_idx on kafaa_ks_sessions (community_id);
+create index if not exists kafaa_review_cycles_period_idx on kafaa_review_cycles (period);
+create index if not exists kafaa_review_cycles_status_idx on kafaa_review_cycles (status);
+create index if not exists kafaa_review_cycles_opened_by_idx on kafaa_review_cycles (opened_by);
+create index if not exists kafaa_review_cycles_calibration_started_by_idx on kafaa_review_cycles (calibration_started_by);
+create index if not exists kafaa_review_cycles_calibrated_by_idx on kafaa_review_cycles (calibrated_by);
+create index if not exists kafaa_review_cycles_locked_by_idx on kafaa_review_cycles (locked_by);
+create index if not exists kafaa_perf_ratings_person_id_idx on kafaa_perf_ratings (person_id);
+create index if not exists kafaa_review_placements_cycle_id_idx on kafaa_review_placements (cycle_id);
+create index if not exists kafaa_review_placements_person_id_idx on kafaa_review_placements (person_id);
+create index if not exists kafaa_review_placements_placed_by_idx on kafaa_review_placements (placed_by);
+create index if not exists kafaa_review_placements_calibrated_by_idx on kafaa_review_placements (calibrated_by);
+create index if not exists kafaa_talent_priorities_person_id_idx on kafaa_talent_priorities (person_id);
+create index if not exists kafaa_talent_priorities_cycle_id_idx on kafaa_talent_priorities (cycle_id);
+create index if not exists kafaa_talent_pool_cycle_id_idx on kafaa_talent_pool (cycle_id);
+create index if not exists kafaa_talent_pool_person_id_idx on kafaa_talent_pool (person_id);
+create index if not exists kafaa_succession_slates_role_id_idx on kafaa_succession_slates (role_id);
+create index if not exists kafaa_succession_slates_period_idx on kafaa_succession_slates (period);
+create index if not exists kafaa_succession_slates_confirmed_by_idx on kafaa_succession_slates (confirmed_by);
+create index if not exists kafaa_successors_slate_id_idx on kafaa_successors (slate_id);
+create index if not exists kafaa_successors_person_id_idx on kafaa_successors (person_id);
+create index if not exists kafaa_successors_status_idx on kafaa_successors (status);
+create index if not exists kafaa_successors_proposed_by_idx on kafaa_successors (proposed_by);
+create index if not exists kafaa_successors_confirmed_by_idx on kafaa_successors (confirmed_by);
+create index if not exists kafaa_bench_rollups_period_idx on kafaa_bench_rollups (period);
+create index if not exists kafaa_bench_rollups_role_id_idx on kafaa_bench_rollups (role_id);
+create index if not exists kafaa_bench_rollups_slate_id_idx on kafaa_bench_rollups (slate_id);
+create index if not exists kafaa_bench_rollups_rolled_by_idx on kafaa_bench_rollups (rolled_by);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -2977,4 +3184,4 @@ create trigger kafaa_evaluations_append_only before update or delete on kafaa_ev
 drop trigger if exists kafaa_evaluation_acks_append_only on kafaa_evaluation_acks;
 create trigger kafaa_evaluation_acks_append_only before update or delete on kafaa_evaluation_acks for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 145) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 153) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
