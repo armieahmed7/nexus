@@ -151,3 +151,16 @@ describe('W4 QA fixes', () => {
     expect(readFileSync('src/modules/m27/LrsAdaptersPage.tsx', 'utf8')).not.toMatch(/\{id\}/);
   });
 });
+
+describe('E2E route sweep input', () => {
+  it('every route guard (including the M25 constants) parses for the sweep', async () => {
+    const { loadRoutes } = await import('../smoke/routes');
+    const R = loadRoutes();
+    expect(R.length).toBe(193);
+    for (const r of R) {
+      let d = 0, e = 0;
+      for (let i = 0; i < r.guard.length; i++) { if (r.guard[i] === '{') d++; else if (r.guard[i] === '}' && --d === 0) { e = i + 1; break; } }
+      expect(() => new Function(`return (${r.guard.slice(0, e)});`)(), r.id).not.toThrow();
+    }
+  });
+});

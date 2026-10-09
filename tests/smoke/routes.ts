@@ -18,8 +18,12 @@ export function loadRoutes(root = 'src/modules'): SmokeRoute[] {
       continue;
     }
     // Guards given by a named constant (`const OWN = { ... };` then `guard: OWN`) are inlined first, without TS casts.
+    // String constants used inside those guards (`const LA = 'learning_analytics' as const;`, M25) are inlined into them first.
+    const strs = [...src.matchAll(/^const (\w+) = ('[^']*')(?: as const)?;\s*$/gm)];
     for (const c of src.matchAll(/^const (\w+) = (\{.*\});\s*$/gm)) {
-      src = src.split(`guard: ${c[1]},`).join(`guard: ${c[2].replace(/ as const/g, '')},`);
+      let body = c[2].replace(/ as const/g, '');
+      for (const k of strs) body = body.replace(new RegExp(`\\b${k[1]}\\b`, 'g'), k[2]);
+      src = src.split(`guard: ${c[1]},`).join(`guard: ${body},`);
     }
     const re = /\{\s*id:\s*'([^']+)',\s*path:\s*'([^']+)',\s*module:\s*'([^']+)',\s*zone:\s*'[^']+',\s*guard:\s*(\{[^}]*\}[^}]*\}|\{[^}]*\})/g;
     let m: RegExpExecArray | null;
