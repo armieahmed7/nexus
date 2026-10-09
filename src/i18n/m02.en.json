@@ -28,6 +28,22 @@
     "training-quals-standard": {
       "title": "Qualification standard",
       "purpose": "Standard editor: revising creates a new version and lists every record that needs review."
+    },
+    "training-instructors": {
+      "title": "Instructors and SMEs",
+      "purpose": "Instructor and SME qualification pipeline: nominations, observed deliveries, qualification and annual currency."
+    },
+    "training-instructor": {
+      "title": "Instructor track",
+      "purpose": "One instructor track: stages, observations, currency, hours and evaluator rows."
+    },
+    "my-instructor": {
+      "title": "My instructor track",
+      "purpose": "Teach what you know: volunteer, follow your observed deliveries and keep your currency."
+    },
+    "team-instructors": {
+      "title": "Grow instructors",
+      "purpose": "Find subject-matter experts in your team and nominate them for the instructor track."
     }
   },
   "status": {
@@ -341,5 +357,295 @@
     "statementAr": "Task (Arabic)",
     "addTask": "Add a task",
     "createVersion": "Create new version"
+  },
+  "reasons": {
+    "ins_fit": "Has {have} of the {need} skills this standard covers at level 2 or above",
+    "ins_level": "{skill} at level {level} (skills profile)",
+    "ins_sme_profile": "Has a subject-matter expert profile in the knowledge capture studio",
+    "ins_sme_mentor": "Nominated as an SME mentor (Mentoring 2.0)",
+    "ins_tenure": "{years} years of service",
+    "ins_obs": "{kind} observed by {name}: {score}% on {date}"
+  },
+  "ins": {
+    "eyebrow": "Instructor and SME pipeline",
+    "asInstructor": "Instructor",
+    "asTm": "Training manager",
+    "mirrorTitle": "A mirror, not an authority",
+    "mirrorBody": "Kafa'a mirrors the licensee's instructor qualification records to plan the pipeline. It issues no FANR status: qualification decisions stay with the licensee's training organisation. The currency rule (40 delivery hours and 8 hours of continuing development a year) is a SAMPLE demo setting.",
+    "stage": {
+      "nominated": "Nominated",
+      "initial_training": "Initial training",
+      "co_teach": "Co-teach",
+      "solo": "Solo delivery",
+      "ready": "Ready to qualify",
+      "qualified": "Qualified"
+    },
+    "status": {
+      "declined": "Declined",
+      "withdrawn": "Closed"
+    },
+    "route": {
+      "sme": "SME instructor",
+      "asip": "ASIP (SRO-qualified)"
+    },
+    "kind": {
+      "self": "Volunteered",
+      "manager": "Nominated by the line manager",
+      "training_manager": "Nominated by the training manager"
+    },
+    "currency": {
+      "title": "Annual currency",
+      "current": "Current",
+      "due": "Currency due",
+      "at_risk": "At risk",
+      "lapsed": "Lapsed",
+      "notice": "{n}-day notice",
+      "lapsedOn": "Currency lapsed on {date}: the 12-month window ended under the minimum.",
+      "dueOn": "Currency review on {date} ({days} days).",
+      "delivery": "Delivery hours (12-month window)",
+      "cpd": "Continuing development",
+      "window": "Window {from} to {to} · renewed {renewals} times",
+      "rule": "Currency lapses when the hours in a 12-month window fall below the minimum; notices go out 90, 60 and 30 days before the review date."
+    },
+    "req": {
+      "accepted": "Nomination accepted by the training manager",
+      "acceptedWait": "Waiting for the training manager",
+      "initial": "Instructor initial training ({code}) completed",
+      "initialWait": "Assigned on acceptance; completion comes from the training records system",
+      "coTeach": "Two co-teach observations passed, by two different observers",
+      "coTeachWait": "{n} co-teach observations passed so far",
+      "solo": "One solo observed delivery passed, by a third observer",
+      "soloWait": "After the two co-teach observations",
+      "qualified": "Qualified by the training manager (maker-checker)",
+      "qualifiedOn": "Qualified on {date}",
+      "qualifiedWait": "The training manager confirms; an observer of the set cannot",
+      "byOn": "{name}, {date}, {score}%"
+    },
+    "obs": {
+      "none": "No observations yet",
+      "by": "{name} · {date}",
+      "score": "Observation score",
+      "items": "Checklist",
+      "kind": {
+        "co_teach": "Co-teach",
+        "solo": "Solo delivery",
+        "currency": "Currency observation"
+      },
+      "result": {
+        "pass": "Pass",
+        "fail": "Not yet"
+      }
+    },
+    "rating": {
+      "met": "Met",
+      "partly": "Partly",
+      "not_met": "Not met"
+    },
+    "form": {
+      "title": "Record an observation",
+      "preview": "Score {score}%",
+      "submit": "Record observation",
+      "kind": "Observation",
+      "date": "Observed on",
+      "session": "Session (optional)",
+      "noSession": "No session",
+      "checklist": "Observed behaviours",
+      "critical": "Critical",
+      "note": "Feedback for the candidate",
+      "rule": "Pass needs 75% or more and no critical item rated \"not met\". You cannot observe yourself; qualification needs three different observers.",
+      "confirmTitle": "Record this observation?",
+      "confirmBody": "{kind}: {score}%, {result}. Observations are append-only; a correction is a new observation."
+    },
+    "hours": {
+      "chart": "Delivery hours by month (last 12 months)",
+      "logTitle": "Log hours",
+      "logBody": "Records delivery or development hours for this instructor (mirror of the scheduling system).",
+      "logBodySelf": "Records your own continuing development hours.",
+      "kind": "Type",
+      "hours": "Hours",
+      "date": "Date",
+      "course": "Course",
+      "noCourse": "No course",
+      "note": "Note",
+      "kinds": {
+        "delivery": "Delivery",
+        "cpd": "Continuing development"
+      },
+      "person": "Log hours for",
+      "pickPerson": "Choose an instructor",
+      "source": "Source",
+      "sources": {
+        "session": "Attended session",
+        "mirror": "Scheduling mirror",
+        "self": "Self-recorded"
+      }
+    },
+    "nominate": {
+      "selfTitle": "Volunteer for the instructor track",
+      "title": "Nominate {name} for the instructor track",
+      "body": "The training manager decides the nomination. On acceptance the instructor initial training course is assigned.",
+      "selfSubmit": "Volunteer",
+      "submit": "Nominate",
+      "route": "Route",
+      "standard": "Qualification standard to teach",
+      "pick": "Choose a standard",
+      "standard2": "Second standard",
+      "optional": "Optional",
+      "motivation": "Why this person (or you) should teach",
+      "securityNote": "Security standards and security, cyber and safeguards roles are career-path only and never join the track."
+    },
+    "facts": {
+      "title": "Programme facts",
+      "asipTitle": "Accelerated SRO Instructor Program (ASIP)",
+      "asipBody": "Barakah foundation training includes the Accelerated SRO Instructor Program and the Instructor Initial and Continuing Training Qualification (per source).",
+      "asipSrc": "UAE National Report, 10th CNS Review Meeting (March 2026), Art. 11, p. 75",
+      "reg16Title": "Qualified instructors",
+      "reg16Body": "FANR-REG-16 Art. 9 requires systematic, performance-based training delivered by qualified instructors, including for contractors.",
+      "reg16Src": "FANR-REG-16 Operational Safety, Art. 9",
+      "fanr65Title": "Internal trainers",
+      "fanr65Body": "FANR's own Internal Trainer Qualification Programme certifies 65 subject-matter experts to deliver technical and non-technical training (the regulator's programme, per source).",
+      "fanr65Src": "UAE National Report, 10th CNS Review Meeting (March 2026), Art. 8, p. 40"
+    },
+    "board": {
+      "intro": "The pool of qualified instructors with their annual currency, the pipeline from SME nomination to qualification, the observation queue and the teaching hours log.",
+      "empty": "No instructor tracks yet",
+      "statQualified": "Qualified instructors",
+      "statQualifiedSub": "{current} current · {due} due within 90 days",
+      "statAtRisk": "Currency at risk",
+      "statAtRiskSub": "{n} lapsed",
+      "statPipeline": "In the pipeline",
+      "statPipelineSub": "{ready} ready to qualify · {nominated} nominations to decide",
+      "statHours": "Delivery hours in the current windows",
+      "statHoursSub": "Scheduling mirror and attended sessions",
+      "sync": "Sync hours from sessions",
+      "sweep": "Run currency sweep",
+      "sweepTitle": "Run the annual currency sweep?",
+      "sweepBody": "Instructors whose 12-month window ended under the minimum lapse on that date and their evaluator rows end; the others are renewed; 90, 60 and 30-day notices go to instructors short of hours.",
+      "syncTitle": "Add hours from attended sessions?",
+      "syncBody": "Delivered M04 sessions with at least one attendee marked present are added once to the instructor's hours log.",
+      "tabPool": "Instructor pool",
+      "tabPipeline": "Pipeline",
+      "tabObserve": "To observe",
+      "tabFind": "Find SMEs",
+      "tabHours": "Hours log",
+      "fStatus": "Currency",
+      "poolCaption": "Qualified instructors and their annual currency",
+      "since": "Since {date}",
+      "obsCount": "{n} passed observations",
+      "colEmpty": "Nobody at this stage",
+      "closed": "Closed and declined tracks ({n})",
+      "queueEmpty": "No candidate is waiting for an observation",
+      "queueIntro": "Candidates waiting for a co-teach or solo observation. You cannot observe your own track; the qualifying set needs three different observers.",
+      "needs": {
+        "co_teach": "Needs a co-teach observation",
+        "solo": "Needs a solo observed delivery"
+      },
+      "observers": "Observed so far by: {names}",
+      "lastObs": "Last observation: {date}"
+    },
+    "col": {
+      "name": "Name",
+      "route": "Route",
+      "standards": "Standards",
+      "due": "Currency review",
+      "hours": "Delivery",
+      "cpd": "Development",
+      "status": "Status",
+      "date": "Date"
+    },
+    "act": {
+      "accept": "Accept",
+      "decline": "Decline",
+      "qualify": "Qualify",
+      "reinstate": "Reinstate",
+      "observe": "Record observation",
+      "nominate": "Nominate",
+      "logHours": "Log hours",
+      "withdraw": "Close track",
+      "youObserved": "You observed this candidate: another training manager may need to qualify them",
+      "reason": "Reason",
+      "acceptTitle": "Accept {name}'s nomination?",
+      "acceptBody": "The instructor initial training course is assigned and the candidate is told to start.",
+      "declineTitle": "Decline {name}'s nomination?",
+      "declineBody": "The candidate sees your reason and can volunteer again later.",
+      "qualifyTitle": "Qualify {name} as an instructor?",
+      "qualifyBody": "Records the qualification (maker-checker), starts the annual currency, writes evaluator rows for the standards and adds the instructing skill to the person's skills profile.",
+      "reinstateTitle": "Reinstate {name}'s currency?",
+      "reinstateBody": "A passed currency observation after the lapse restarts the annual currency and the evaluator rows.",
+      "withdrawTitle": "Close this instructor track?",
+      "withdrawBody": "The track closes; a qualified instructor's evaluator rows end today."
+    },
+    "find": {
+      "standard": "Standard",
+      "none": "No colleague in your view matches this standard yet",
+      "fit": "Skills fit {pct}%"
+    },
+    "track": {
+      "notFound": "This instructor track is not in your view",
+      "back": "Instructor pool",
+      "intro": "Stages, observed deliveries, annual currency and teaching hours for one instructor.",
+      "ownNote": "This is your own track: you cannot observe or qualify yourself.",
+      "makerTitle": "Maker-checker",
+      "makerBody": "You observed part of this candidate's qualifying set, and no complete set exists without you. Another training manager has to decide.",
+      "requirements": "Requirements",
+      "whyReady": "Why ready?",
+      "details": "Track",
+      "discipline": "Discipline",
+      "standards": "Standards to teach",
+      "nominated": "Nomination",
+      "motivation": "Motivation",
+      "firstQualified": "First qualified",
+      "note": "Decision note",
+      "observations": "Observed deliveries",
+      "observationsIntro": "Checklist of observable behaviours tied to the course objectives (the F25 level-3 mechanics). Critical items must not be \"not met\".",
+      "evaluator": "Evaluator rows (qualification mirror)",
+      "evaluatorNone": "None yet: they are written when the instructor qualifies",
+      "validTo": "valid to {date}",
+      "evaluatorNote": "Written by the qualification and kept in step with the currency; they end when the currency lapses or the track closes."
+    },
+    "my": {
+      "intro": "Teach what you know: from SME nomination to qualified instructor, with your observed deliveries and annual currency in one place.",
+      "logCpd": "Log development hours",
+      "nextTitle": "What is next",
+      "next": {
+        "nominated": "The training manager is reviewing your nomination.",
+        "initial_training": "Complete the instructor initial training course ({code}). It is in My learning.",
+        "co_teach": "Co-teach two sessions with two different instructors observing you.",
+        "solo": "Deliver one session on your own, observed by a third instructor.",
+        "ready": "All observations are complete: the training manager will confirm your qualification.",
+        "lapsed": "Your currency lapsed. A passed currency observation lets the training manager reinstate you.",
+        "currencyShort": "Before {date} you still need {hours} delivery hours and {cpd} development hours.",
+        "currencyOk": "Your currency for this year is met. Keep teaching and logging your development."
+      },
+      "howTitle": "How the track works",
+      "how1": "Volunteer, or be nominated by your line manager or the training manager.",
+      "how2": "The training manager accepts and assigns {code}.",
+      "how3": "Co-teach twice, observed by two different instructors.",
+      "how4": "Deliver solo, observed by a third instructor.",
+      "how5": "The training manager qualifies you; keep 40 delivery and 8 development hours a year.",
+      "observations": "My observations",
+      "withdrawBody": "Your track closes. You can volunteer again later.",
+      "closed": {
+        "declined": "Your last nomination was declined",
+        "withdrawn": "Your last track was closed"
+      },
+      "teachTitle": "Teach what you know",
+      "teachBody": "Your skills profile suggests standards you could teach. Volunteer and the training manager will review it.",
+      "notStaff": "The instructor track is open to ENEC staff.",
+      "volunteer": "Volunteer",
+      "noMatch": "No standard matches your skills profile at level 2 yet. You can still volunteer.",
+      "volunteerAny": "Volunteer for another standard",
+      "pathTitle": "The path to qualified instructor",
+      "step": "Step {n}"
+    },
+    "team": {
+      "intro": "Find subject-matter experts in your team and nominate them; follow their progress on the instructor track.",
+      "tracks": "My team on the instructor track",
+      "tracksIntro": "Tracks of people in your scope.",
+      "noTracks": "Nobody in your team is on the instructor track yet",
+      "find": "Find SMEs in my team",
+      "findIntro": "Ranked from the skills profile, SME profiles and SME mentor nominations. No personal attributes are used.",
+      "how": "Your nomination goes to the training manager. Accepted candidates take the instructor initial training, co-teach twice and deliver solo before they qualify."
+    }
   }
 }
