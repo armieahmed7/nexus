@@ -9,6 +9,7 @@ import { careerReadiness } from '../../m18/career';
 import { careerDataFrom } from '../../m18/backend/local';
 import { computeHandover, gatherNamed, releaseTiles, validScenario, OSSA_END_DEFAULT, type HandoverInput } from '../handover';
 import type { HandoverResult, M07Rpc } from './rpc';
+import { makeLocalM07Outlook } from './outlook.local'; // W5E4 (F35)
 
 /** Roles that may read the board (workforce_analytics Agg/R); observers see only approved releases. */
 export const HANDOVER_ROLES = ['hr_director', 'hr_analyst', 'manager', 'auditor'] as const;
@@ -59,6 +60,7 @@ export function makeLocalM07(b: LocalBackend, h: LocalRpcHelpers): M07Rpc {
     return HANDOVER_ROLES.find((r) => roles.includes(r)) ?? null;
   };
   return {
+    ...makeLocalM07Outlook(b, h), // W5E4 (F35)
     async handoverAggregate(period, scenario) {
       await b.whenReady();
       type R = HandoverResult;

@@ -1759,6 +1759,23 @@ export interface HandoverCohortsRow {
   source: string;
   sample: boolean;
 }
+export interface SkillOutlooksRow {
+  id: string;
+  name: string;
+  params: any;
+  results: any;
+  status: 'draft' | 'released' | 'withdrawn';
+  summary_en: string;
+  summary_ar: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  computed_at: string;
+  released_by?: string | null;
+  released_at?: string | null;
+  withdrawn_reason?: string | null;
+  simulated: boolean;
+}
 export interface ContractRoleTargetsRow {
   id: string;
   org_id: string;
@@ -3324,6 +3341,7 @@ export interface Tables {
   student_portfolio: StudentPortfolioRow;
   external_cover: ExternalCoverRow;
   handover_cohorts: HandoverCohortsRow;
+  skill_outlooks: SkillOutlooksRow;
   contract_role_targets: ContractRoleTargetsRow;
   task_skill_links: TaskSkillLinksRow;
   contractor_engagements: ContractorEngagementsRow;

@@ -2,13 +2,14 @@
 // Every RPC exists three times and they must agree: this signature, backend/local.ts and SQL kafaa_<name> (+ backend/supabase.ts).
 import type { Result } from '../../../data/types';
 import type { HandoverAggregate, Scenario } from '../handover';
+import type { M07OutlookRpc } from './outlook.rpc'; // W5E4 (F35)
 
 export interface HandoverResult extends HandoverAggregate {
   /** As-of periods that have a cover plan (newest last). */
   periods: string[];
 }
 
-export interface M07Rpc {
+export interface M07Rpc extends M07OutlookRpc {
   /**
    * F22: the suppressed Handover 2030 board for one as-of period ('2026-Q3'; empty = the latest plan) and an optional SIMULATED what-if
    * (OSSA end year 2028-2032, pipeline slip 0-24 months). Counts only; cells under 10 are null. HR, managers and auditors

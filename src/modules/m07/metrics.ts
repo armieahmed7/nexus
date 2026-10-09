@@ -11,7 +11,7 @@ export const DIM_COL: Record<Dim, 'family_id' | 'level' | 'entity_id'> = { famil
 /** Metric registry: every tile links to /workforce/definitions#<key>, which names the definition, GRI disclosure and source table. */
 export interface MetricDef {
   key: string;
-  table: 'kafaa_kpi_series' | 'kafaa_workforce_snapshots' | 'kafaa_critical_roles' | 'kafaa_scholar_cohorts' | 'kafaa_training_records' | 'kafaa_applications' | 'kafaa_external_cover' | 'kafaa_handover_cohorts';
+  table: 'kafaa_kpi_series' | 'kafaa_workforce_snapshots' | 'kafaa_critical_roles' | 'kafaa_scholar_cohorts' | 'kafaa_training_records' | 'kafaa_applications' | 'kafaa_external_cover' | 'kafaa_handover_cohorts' | 'kafaa_skill_outlooks';
   kpi?: string; // kpi_series.metric
   gri?: string;
   unit: '%' | 'people' | 'h' | 'count' | 'days';
@@ -51,6 +51,11 @@ export const METRICS: MetricDef[] = [
   { key: 'handover_burndown', table: 'kafaa_external_cover', unit: 'people', sim: true },
   { key: 'handover_risk', table: 'kafaa_external_cover', unit: 'count', sim: true },
   { key: 'handover_emirati', table: 'kafaa_handover_cohorts', gri: 'GRI 405-1', unit: '%', sim: true },
+  // [W5E4] F35 skills supply-and-demand outlook (/workforce/skills-outlook), always SIMULATED
+  { key: 'outlook_supply', table: 'kafaa_skill_outlooks', unit: 'people', sim: true },
+  { key: 'outlook_demand', table: 'kafaa_skill_outlooks', unit: 'people', sim: true },
+  { key: 'outlook_gap', table: 'kafaa_skill_outlooks', unit: 'people', sim: true },
+  { key: 'outlook_tornado', table: 'kafaa_skill_outlooks', unit: 'people', sim: true },
 ];
 export const metricByKey = (k: string) => METRICS.find((m) => m.key === k);
 
