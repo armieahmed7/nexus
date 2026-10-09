@@ -1842,6 +1842,37 @@ create table if not exists kafaa_roadmaps (
 );
 comment on table kafaa_roadmaps is '[M18] Career roadmap scenario towards a target role, with its computed timeline (F06)';
 
+-- M18 · Career conversation: employee preparation, pre-filled agenda, manager notes and agreed actions, acknowledgement (F12)
+create table if not exists kafaa_career_conversations (
+  id text primary key,
+  person_id text not null,
+  manager_person_id text,
+  manager_read_id text,
+  cycle text not null default '',
+  status text not null default 'draft' check (status in ('draft', 'held', 'acknowledged')),
+  person_name text not null default '',
+  person_name_ar text not null default '',
+  manager_name text not null default '',
+  manager_name_ar text not null default '',
+  prep jsonb not null default '{}'::jsonb,
+  prep_submitted_at timestamptz,
+  agenda jsonb not null default '{}'::jsonb,
+  held_on date,
+  notes text,
+  actions jsonb not null default '[]'::jsonb,
+  focus_role_id text,
+  coach_hours numeric,
+  plan_id text,
+  recorded_at timestamptz,
+  employee_agrees boolean,
+  employee_comment text,
+  acknowledged_at timestamptz,
+  share_with_talent_review boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_career_conversations is '[M18] Career conversation: employee preparation, pre-filled agenda, manager notes and agreed actions, acknowledgement (F12)';
+
 -- M19 · Learning Coach feedback per person and suggestion: saved, dismissed (hidden 90 days), enrolled (F07)
 create table if not exists kafaa_coach_feedback (
   id text primary key,
@@ -2150,6 +2181,9 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ca
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_career_targets_role_id_fk') then alter table kafaa_career_targets add constraint kafaa_career_targets_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_roadmaps_person_id_fk') then alter table kafaa_roadmaps add constraint kafaa_roadmaps_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_roadmaps_target_role_id_fk') then alter table kafaa_roadmaps add constraint kafaa_roadmaps_target_role_id_fk foreign key (target_role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_career_conversations_person_id_fk') then alter table kafaa_career_conversations add constraint kafaa_career_conversations_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_career_conversations_manager_person_id_fk') then alter table kafaa_career_conversations add constraint kafaa_career_conversations_manager_person_id_fk foreign key (manager_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_career_conversations_focus_role_id_fk') then alter table kafaa_career_conversations add constraint kafaa_career_conversations_focus_role_id_fk foreign key (focus_role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_coach_feedback_person_id_fk') then alter table kafaa_coach_feedback add constraint kafaa_coach_feedback_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_learning_goals_person_id_fk') then alter table kafaa_learning_goals add constraint kafaa_learning_goals_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_opportunities_posted_by_fk') then alter table kafaa_opportunities add constraint kafaa_opportunities_posted_by_fk foreign key (posted_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -2353,6 +2387,11 @@ create index if not exists kafaa_career_targets_shared_person_id_idx on kafaa_ca
 create index if not exists kafaa_roadmaps_person_id_idx on kafaa_roadmaps (person_id);
 create index if not exists kafaa_roadmaps_target_role_id_idx on kafaa_roadmaps (target_role_id);
 create index if not exists kafaa_roadmaps_shared_person_id_idx on kafaa_roadmaps (shared_person_id);
+create index if not exists kafaa_career_conversations_person_id_idx on kafaa_career_conversations (person_id);
+create index if not exists kafaa_career_conversations_manager_person_id_idx on kafaa_career_conversations (manager_person_id);
+create index if not exists kafaa_career_conversations_manager_read_id_idx on kafaa_career_conversations (manager_read_id);
+create index if not exists kafaa_career_conversations_status_idx on kafaa_career_conversations (status);
+create index if not exists kafaa_career_conversations_focus_role_id_idx on kafaa_career_conversations (focus_role_id);
 create index if not exists kafaa_coach_feedback_person_id_idx on kafaa_coach_feedback (person_id);
 create index if not exists kafaa_coach_feedback_item_kind_idx on kafaa_coach_feedback (item_kind);
 create index if not exists kafaa_opportunities_posted_by_idx on kafaa_opportunities (posted_by);
@@ -2392,4 +2431,4 @@ create trigger kafaa_evaluations_append_only before update or delete on kafaa_ev
 drop trigger if exists kafaa_evaluation_acks_append_only on kafaa_evaluation_acks;
 create trigger kafaa_evaluation_acks_append_only before update or delete on kafaa_evaluation_acks for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 123) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 124) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

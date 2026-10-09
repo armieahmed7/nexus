@@ -1238,6 +1238,14 @@ grant select on kafaa_roadmaps to anon;
 drop trigger if exists kafaa_roadmaps_audit on kafaa_roadmaps;
 create trigger kafaa_roadmaps_audit after insert or update on kafaa_roadmaps for each row execute function kafaa_audit_row();
 
+-- career_conversations
+alter table kafaa_career_conversations enable row level security;
+drop policy if exists kafaa_read on kafaa_career_conversations;
+create policy kafaa_read on kafaa_career_conversations for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('own_profile', manager_read_id, null::text, true));
+grant select on kafaa_career_conversations to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- coach_feedback
 alter table kafaa_coach_feedback enable row level security;
 drop policy if exists kafaa_read on kafaa_coach_feedback;

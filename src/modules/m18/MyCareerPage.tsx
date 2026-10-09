@@ -20,7 +20,7 @@ export default function MyCareerPage() {
   const base = useCareerBase(me);
   const eng = useEngine('recommend');
   return (
-    <Page title={t('m18.routes.my-career.title')} intro={t('m18.nav.intro')} actions={<><EngineBadge engine={eng} /><L to="/my/career/roadmap" className="btn-outline btn-sm" data-testid="m18-to-roadmap"><Icon name="calendar" size={14} />{t('m18.nav.toRoadmap')}</L></>}>
+    <Page title={t('m18.routes.my-career.title')} intro={t('m18.nav.intro')} actions={<><EngineBadge engine={eng} /><L to="/my/career/roadmap" className="btn-outline btn-sm" data-testid="m18-to-roadmap"><Icon name="calendar" size={14} />{t('m18.nav.toRoadmap')}</L><L to="/my/career/conversations" className="btn-ghost btn-sm" data-testid="m18-to-conversations"><Icon name="chat" size={14} />{t('m18.cc.my.fromNavigator')}</L></>}>
       <Async state={base}>
         {(d) =>
           !d.facts?.role_id ? (

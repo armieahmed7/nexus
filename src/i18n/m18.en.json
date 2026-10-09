@@ -14,6 +14,18 @@
     "team-career": {
       "title": "Team career plans",
       "purpose": "Shortlists and roadmaps that your team members chose to share with you."
+    },
+    "my-career-conversations": {
+      "title": "Career conversations",
+      "purpose": "Prepare your six-monthly career conversation, share it with your line manager and acknowledge what was agreed."
+    },
+    "team-conversations": {
+      "title": "Team career conversations",
+      "purpose": "Hold and record career conversations with the people who report to you, with a pre-filled agenda and suggested actions."
+    },
+    "workforce-career-conversations": {
+      "title": "Career conversation insights",
+      "purpose": "Aspirations, mobility and conversation coverage by job family: aggregates of 10 or more only."
     }
   },
   "nav": {
@@ -166,7 +178,12 @@
     "gap": "Gap: {skill} at level {from} of {to}",
     "band_ready_now": "At least 85% of the required competencies and no unmet gate",
     "band_ready_in": "Indicative time to close the gaps and gates: about {months} months",
-    "band_stretch": "A stretch: about {months} months of experience and development"
+    "band_stretch": "A stretch: about {months} months of experience and development",
+    "cc_gap": "Closes {skill} from level {from} to {to}, needed for {role}",
+    "cc_target": "{role} is on the shortlist",
+    "cc_expiring": "{std} expires on {date}",
+    "cc_aspiration": "Answers the stated aspiration: {asp}",
+    "cc_support": "Support asked for: {need}"
   },
   "rm": {
     "intro": "Lay your route to a target role out quarter by quarter: programmes with their published durations, FANR milestones, experience you still need and development. Change the what-ifs and the timeline recomputes.",
@@ -278,5 +295,335 @@
     "target": "Shortlisted target",
     "roadmapOnly": "Roadmap",
     "roadmap": "Roadmap \"{name}\" reaches the target {date}"
+  },
+  "cc": {
+    "asp": {
+      "stay_deepen": "Stay and deepen",
+      "grow_vertical": "Grow into the next role",
+      "move_lateral": "Move laterally",
+      "lead": "Lead people",
+      "specialise": "Specialise"
+    },
+    "aspHint": {
+      "stay_deepen": "Become the expert in my current role",
+      "grow_vertical": "Take the next step on my ladder",
+      "move_lateral": "Try a neighbouring discipline",
+      "lead": "Supervise or lead a team",
+      "specialise": "Build deep technical expertise"
+    },
+    "mob": {
+      "current_site": "My current site only",
+      "other_sites": "Open to other ENEC sites and offices",
+      "any": "Open to any location, including assignments abroad"
+    },
+    "lead": {
+      "not_now": "Not now",
+      "curious": "Curious about leading",
+      "ready": "Ready for a leadership step"
+    },
+    "support": {
+      "course": "Courses",
+      "mentoring": "Mentoring",
+      "rotation": "Rotation or shadowing",
+      "stretch": "Stretch assignment",
+      "coaching": "Coaching",
+      "time": "Protected learning time",
+      "other": "Something else"
+    },
+    "kind": {
+      "course": "Course",
+      "ojt": "On-the-job",
+      "mentoring": "Mentoring",
+      "project": "Project",
+      "assessment": "Assessment",
+      "reading": "Reading"
+    },
+    "owner": {
+      "employee": "Employee",
+      "manager": "Line manager"
+    },
+    "status": {
+      "draft": "Preparing (private)",
+      "shared": "Preparation shared",
+      "held": "Held: waiting for acknowledgement",
+      "acknowledged": "Acknowledged",
+      "ack_comment": "Acknowledged with a comment"
+    },
+    "cadence": {
+      "ok": "Next due {date}",
+      "due_soon": "Due soon: {date}",
+      "overdue": "Overdue since {date}",
+      "never": "No conversation yet: overdue"
+    },
+    "step": {
+      "prepare": "Prepare",
+      "share": "Share with your manager",
+      "held": "Conversation held",
+      "ack": "Acknowledge"
+    },
+    "tab": {
+      "cycle": "This cycle",
+      "history": "History"
+    },
+    "privacy": {
+      "title": "Who sees what",
+      "body": "Your draft is private. When you share it, your line manager of record sees your preparation and agenda. HR only sees totals for groups of 10 or more. Talent review sees your aspiration only if you switch that on. Nobody else reads this record."
+    },
+    "refuse": {
+      "not_signed_in": "Sign in first.",
+      "forbidden": "You are not allowed to do this.",
+      "invalid": "Some answers are missing or not valid. Check the form and try again.",
+      "no_line_manager": "No line manager is recorded for you. Ask HR to update your record.",
+      "not_found": "This conversation was not found.",
+      "self_record": "You cannot record your own career conversation.",
+      "not_manager": "Only the line manager of record can record this conversation.",
+      "locked": "This conversation is already acknowledged. Start a new one next cycle.",
+      "not_person": "Only the employee can acknowledge their career conversation."
+    },
+    "my": {
+      "intro": "Every six months you and your line manager talk about where you want to go. Kafa'a fills the agenda from your own records, you add your aspirations and goals, and the agreed actions go into your development plan.",
+      "toNavigator": "Career Navigator",
+      "toPlan": "My development plan",
+      "fromNavigator": "Career conversation",
+      "next": "Next conversation",
+      "now": "Now",
+      "last": "Last conversation",
+      "noneYet": "None yet",
+      "manager": "Line manager of record",
+      "managerSub": "Holds the conversation and records the actions",
+      "talent": "Aspiration in talent review",
+      "talentSub": "Your choice, any time",
+      "on": "Shared",
+      "off": "Not shared"
+    },
+    "agenda": {
+      "title": "Pre-filled agenda",
+      "desc": "Built from your own records. Choose what to include before you share.",
+      "builtOn": "Built from your records on {date}",
+      "sharedOnly": "Your manager's view on {date}: only what you share",
+      "include": "Include",
+      "notIncluded": "Not included in this conversation.",
+      "passport": "Skills passport highlights",
+      "passportNone": "No skills on record yet.",
+      "level": "level {n}",
+      "openPassport": "Open my skills passport",
+      "targets": "Shortlisted roles and readiness",
+      "targetsNone": "No shortlist yet. Add up to three target roles in the Career Navigator.",
+      "targetsNoneShared": "No shortlist shared with you.",
+      "openNavigator": "Open the Career Navigator",
+      "roadmap": "Career roadmap",
+      "roadmapNone": "No saved roadmap.",
+      "roadmapLine": "Towards {role} · target date {date} · {n} development blocks",
+      "openRoadmap": "Open my roadmap",
+      "quals": "Qualifications expiring within a year",
+      "qualsNone": "Nothing expires in the next 12 months.",
+      "expires": "Expires {date} · {n} days",
+      "expired": "Expired {date}",
+      "mirror": "Mirrored from the licensee's training records. Kafa'a does not issue or extend qualifications.",
+      "coach": "Learning Coach progress",
+      "hours": "hours a week (goal)",
+      "enrolled": "enrolments via the coach (6 months)",
+      "passed": "courses passed (6 months)",
+      "focus": "Coach focus: {roles}",
+      "openCoach": "Open the Learning Coach",
+      "last": "Last conversation held on {date}",
+      "lastNone": "No conversation on record yet."
+    },
+    "prep": {
+      "title": "Your preparation",
+      "desc": "Your aspirations, mobility and goals. Save a draft any time; nothing is shared until you choose to share it.",
+      "aspirations": "What do you want next?",
+      "aspHint": "Choose up to {n}. The first one you pick is your main aspiration.",
+      "primary": "main",
+      "needAsp": "Choose at least one aspiration to share your preparation.",
+      "mobility": "Mobility",
+      "leadership": "Interest in leading people",
+      "shiftOk": "Open to shift work",
+      "rotationOk": "Open to a rotation or job shadowing",
+      "rotationHint": "Rotations are short placements in another team",
+      "goal12": "Goal for the next 12 months",
+      "goal12Hint": "One or two sentences in your own words",
+      "needGoal": "Write your 12-month goal (at least 3 characters).",
+      "goal3": "Where would you like to be in 3 years?",
+      "support": "Support you would like",
+      "supportNote": "Anything specific about that support?",
+      "topics": "Other topics you want to raise",
+      "shareTalent": "Show my aspiration in talent review",
+      "shareTalentHint": "Off by default. When on, talent review sees your aspirations, mobility and goals from your latest conversation. You can switch it off at any time.",
+      "save": "Save draft",
+      "share": "Share with my line manager",
+      "update": "Update what I shared",
+      "saveHint": "A draft stays private to you.",
+      "updateHint": "Your manager sees the latest version.",
+      "savedOk": "Draft saved",
+      "sharedOk": "Shared with your line manager",
+      "sharedTitle": "Shared with your line manager on {date}",
+      "sharedBody": "You can still update it until the conversation is recorded.",
+      "confirmTitle": "Share your preparation?",
+      "confirmBody": "Your line manager of record will see your aspirations, goals and the agenda items you included, and gets a notification. HR sees only totals of 10 or more.",
+      "none": "No preparation was shared for this conversation."
+    },
+    "held": {
+      "title": "Conversation held on {date}",
+      "by": "Recorded by {name}",
+      "notes": "Manager's notes",
+      "focus": "Focus role: {role}",
+      "hours": "{n} hours a week for learning",
+      "actions": "Agreed actions",
+      "prep": "Your preparation",
+      "agenda": "Agenda used"
+    },
+    "actions": {
+      "none": "No actions were agreed.",
+      "due": "due {date}",
+      "inPlan": "In your development plan as draft activities"
+    },
+    "ack": {
+      "title": "Acknowledge the record",
+      "question": "Does this record reflect the conversation?",
+      "agree": "Yes, I agree with the record",
+      "disagree": "I acknowledge it, but I disagree with part of it",
+      "comment": "Comment (optional)",
+      "commentNeeded": "What do you disagree with?",
+      "needComment": "Say briefly what you disagree with.",
+      "coach": "Add the focus role and weekly learning hours to my Learning Coach",
+      "coachHint": "The coach will plan your suggestions for this role.",
+      "button": "Acknowledge",
+      "confirmTitle": "Acknowledge this conversation?",
+      "confirmAgree": "The record is locked and your manager is notified. The agreed actions stay in your development plan.",
+      "confirmDisagree": "The record is locked with your comment and your manager is notified. The agreed actions stay in your development plan.",
+      "done": "Conversation acknowledged",
+      "doneComment": "Conversation acknowledged with your comment"
+    },
+    "history": {
+      "none": "No conversations held yet",
+      "noneBody": "Your first conversation will appear here once your line manager records it.",
+      "timeline": "Conversations",
+      "item": "Career conversation {cycle}",
+      "agreed": "Acknowledged: agreed",
+      "disagreed": "Acknowledged with a disagreement",
+      "noComment": "No comment.",
+      "employeeComment": "Employee's comment"
+    },
+    "consent": {
+      "title": "Talent review",
+      "body": "Talent review (succession and development panels) can see the aspiration from your latest conversation only if you allow it.",
+      "on": "Talent review can see your aspiration.",
+      "off": "Talent review sees \"aspiration not shared\".",
+      "confirmOn": "Talent review will see your aspirations, mobility and goals from your latest conversation. The change is recorded.",
+      "confirmOff": "Talent review will see \"aspiration not shared\". The change is recorded.",
+      "doneOn": "Your aspiration is now visible in talent review",
+      "doneOff": "Your aspiration is no longer visible in talent review"
+    },
+    "team": {
+      "intro": "The people who report to you, with the six-monthly cadence. Open a person to see what they shared, the pre-filled agenda and suggested actions, and record the conversation. Only they can acknowledge it.",
+      "toCareer": "Shared career plans",
+      "fromCareer": "Career conversations",
+      "none": "Nobody reports to you on record",
+      "noneBody": "Career conversations are held by the line manager of record. If this is wrong, ask HR to update the reporting line.",
+      "reports": "Reports of record",
+      "reportsSub": "People whose line manager you are",
+      "held": "Held in the last 6 months",
+      "heldSub": "{n} people",
+      "overdue": "Overdue",
+      "overdueSub": "No conversation in the last 6 months",
+      "waiting": "Waiting for you",
+      "waitingSub": "Preparation shared · {n} waiting for acknowledgement",
+      "list": "People",
+      "listDesc": "Shared preparations first, then by how overdue the conversation is.",
+      "filter": "Filter",
+      "f": {
+        "all": "All",
+        "overdue": "Overdue",
+        "waiting": "Preparation shared",
+        "awaiting_ack": "Waiting for acknowledgement"
+      },
+      "noneFilter": "Nobody matches this filter.",
+      "never": "No conversation yet",
+      "lastHeld": "Last held {date}",
+      "noRecord": "No conversation on record",
+      "record": "Record conversation",
+      "view": "View and amend",
+      "start": "Open",
+      "remind": "Send reminders",
+      "remindTitle": "Send six-monthly reminders?",
+      "remindBody": "Everyone in an overdue pair gets a notification ({n} overdue now). Each person is reminded at most once a month.",
+      "remindDone": "Reminders sent"
+    },
+    "ws": {
+      "now": "Conversation",
+      "prep": "What they shared",
+      "noPrep": "{name} has not shared a preparation yet. You can still record the conversation; the agenda below holds only what they share with you.",
+      "heldTitle": "Recorded on {date}",
+      "heldBody": "Waiting for {name} to acknowledge. You can amend the record until then."
+    },
+    "sugg": {
+      "title": "Suggested actions",
+      "desc": "From the agenda and the preparation: courses that close the top target's gaps, requalification, and actions that answer the stated aspirations. Each one says why.",
+      "none": "No suggestions for this agenda.",
+      "add": "Add",
+      "added": "Added"
+    },
+    "rec": {
+      "title": "Record the conversation",
+      "amend": "Amend the record",
+      "desc": "Your notes, the focus role and the agreed actions. The actions go into {name}'s development plan as draft activities.",
+      "heldOn": "Held on",
+      "focus": "Focus role",
+      "focusNone": "No focus role",
+      "hours": "Weekly learning hours",
+      "hoursHint": "0 to 40, agreed together",
+      "notes": "Notes",
+      "notesHint": "Factual and respectful: the employee reads these notes.",
+      "actions": "Agreed actions ({n} of {max})",
+      "kind": "Kind",
+      "actionTitle": "Action",
+      "due": "Due",
+      "owner": "Owner",
+      "remove": "Remove",
+      "addAction": "Add an action",
+      "save": "Record conversation",
+      "saveAmend": "Save the amended record",
+      "onlyEmployee": "Only {name} can acknowledge the record.",
+      "confirmTitle": "Record this career conversation?",
+      "confirmBody": "{name} is notified and asked to acknowledge it. The {n} agreed actions are added to their development plan as draft activities. The record is written to the NEXUS evidence ledger.",
+      "actingAs": "Line manager of record",
+      "done": "Conversation recorded",
+      "doneActions": "Conversation recorded; the agreed actions are in the development plan as draft activities"
+    },
+    "ins": {
+      "intro": "How career conversations are going across the organisation: coverage of the six-monthly cadence, and the aspiration signal by job family. Aggregates only; no individual record is shown.",
+      "synthetic": "Synthetic demo data",
+      "rule": "Groups under {n} people are suppressed",
+      "ruleBody": "A job family with fewer than 10 people in a conversation pair shows nothing. Inside a shown family, any aspiration or mobility count below 10 is suppressed too.",
+      "pairs": "People in a conversation pair",
+      "pairsSub": "Active staff with a line manager of record",
+      "coverage": "Held in the last 6 months",
+      "coverageSub": "Share of people",
+      "overdue": "Overdue",
+      "overdueSub": "No conversation in the last 6 months",
+      "disagreed": "Acknowledged with a disagreement",
+      "disagreedSub": "Out of {n} acknowledged",
+      "aspTitle": "Main aspiration",
+      "aspDesc": "From each person's latest conversation.",
+      "mobTitle": "Mobility",
+      "mobDesc": "Where people are open to work.",
+      "heatTitle": "Main aspiration by job family",
+      "heatDesc": "Hatched cells are suppressed.",
+      "heatNote": "{n} of {m} job families are large enough to show.",
+      "tableTitle": "Coverage by job family",
+      "family": "Job family",
+      "people": "People",
+      "suppressed": "suppressed",
+      "suppressedShort": "—",
+      "unassigned": "No family recorded",
+      "asOf": "As of {date}."
+    },
+    "signal": {
+      "notShared": "Aspiration not shared",
+      "none": "No career conversation on record",
+      "goal": "12-month goal: {goal}",
+      "asOf": "From the conversation of {date}"
+    }
   }
 }

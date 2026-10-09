@@ -1508,6 +1508,34 @@ export interface RoadmapsRow {
   created_at: string;
   updated_at: string;
 }
+export interface CareerConversationsRow {
+  id: string;
+  person_id: string;
+  manager_person_id?: string | null;
+  manager_read_id?: string | null;
+  cycle: string;
+  status: 'draft' | 'held' | 'acknowledged';
+  person_name: string;
+  person_name_ar: string;
+  manager_name: string;
+  manager_name_ar: string;
+  prep: any;
+  prep_submitted_at?: string | null;
+  agenda: any;
+  held_on?: string | null;
+  notes?: string | null;
+  actions: any;
+  focus_role_id?: string | null;
+  coach_hours?: number | null;
+  plan_id?: string | null;
+  recorded_at?: string | null;
+  employee_agrees?: boolean | null;
+  employee_comment?: string | null;
+  acknowledged_at?: string | null;
+  share_with_talent_review: boolean;
+  created_at: string;
+  updated_at: string;
+}
 export interface CoachFeedbackRow {
   id: string;
   person_id: string;
@@ -1767,6 +1795,7 @@ export interface Tables {
   team_skill_targets: TeamSkillTargetsRow;
   career_targets: CareerTargetsRow;
   roadmaps: RoadmapsRow;
+  career_conversations: CareerConversationsRow;
   coach_feedback: CoachFeedbackRow;
   learning_goals: LearningGoalsRow;
   opportunities: OpportunitiesRow;
