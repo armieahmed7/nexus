@@ -7,6 +7,7 @@ import { useQuery, useRepo } from '../../data';
 import { useT, usePick, useFormat, L } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { BandPill, GatePill, GateRoutes, ReadinessRing, useReadiness, type Role, type Target, type RoadmapRow } from './shared';
+import { ConceptBandPill, ConceptChip, ConceptRing, useConceptReadiness } from './futureUi'; // FS15: shared concept-role targets
 
 export default function TeamCareerPage() {
   const t = useT();
@@ -49,7 +50,9 @@ function Person({ pid, name, roleById, targets, roadmaps }: { pid: string; name?
   const pick = usePick();
   const f = useFormat();
   const roleIds = useMemo(() => [...new Set([...targets.map((x) => x.role_id), ...roadmaps.map((x) => x.target_role_id)])], [targets, roadmaps]);
-  const rd = useReadiness(pid, roleIds);
+  const conceptIds = useMemo(() => roleIds.filter((id) => (roleById.get(id) as { lifecycle?: string } | undefined)?.lifecycle === 'concept'), [roleIds, roleById]);
+  const rd = useReadiness(pid, roleIds.filter((id) => !conceptIds.includes(id)));
+  const cq = useConceptReadiness(pid, conceptIds, conceptIds.length > 0);
   return (
     <li className="card p-4" data-testid="m18-team-person" data-person={pid}>
       <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
@@ -64,10 +67,20 @@ function Person({ pid, name, roleById, targets, roadmaps }: { pid: string; name?
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
             {roleIds.map((rid) => {
               const r = m.get(rid);
+              const cr = cq.data?.get(rid);
               const rm = roadmaps.find((x) => x.target_role_id === rid);
               return (
                 <Card key={rid} title={pick(roleById.get(rid), 'title')} eyebrow={targets.some((x) => x.role_id === rid) ? t('m18.team.target') : t('m18.team.roadmapOnly')}>
-                  {r ? (
+                  {cr ? (
+                    <div className="space-y-2" data-testid="m18-team-concept">
+                      <div className="flex items-center gap-3">
+                        <ConceptRing r={cr} size={48} />
+                        <div className="flex flex-wrap gap-1.5"><ConceptChip /><ConceptBandPill r={cr} /></div>
+                      </div>
+                      {rm && <div className="text-[12.5px] text-ink-2">{t('m18.team.roadmap', { name: rm.name, date: f.date(rm.end_on) })}</div>}
+                      <WhyThis reasons={cr.reasons} testId="m18-team-why" />
+                    </div>
+                  ) : r ? (
                     <div className="space-y-2">
                       <div className="flex items-center gap-3">
                         <ReadinessRing r={r} size={48} />

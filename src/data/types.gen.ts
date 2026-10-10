@@ -2193,6 +2193,49 @@ export interface CareerConversationsRow {
   created_at: string;
   updated_at: string;
 }
+export interface RoleMovesRow {
+  id: string;
+  from_role_id: string;
+  to_role_id: string;
+  moved_on: string;
+  months_before: number;
+  kind: 'progression' | 'lateral';
+  simulated: boolean;
+  source: string;
+}
+export interface RoleOutlookCriteriaRow {
+  id: string;
+  version: number;
+  year_from: number;
+  thresholds: any;
+  precedence: string[];
+  components: string[];
+  summary_en: string;
+  summary_ar: string;
+  sources: any;
+  benchmark_ids: string[];
+  as_of: string;
+  status: 'published' | 'retired';
+}
+export interface RoleOutlookLabelsRow {
+  id: string;
+  role_id: string;
+  year: number;
+  label: 'growing' | 'stable' | 'changing';
+  criteria_id: string;
+  archived: boolean;
+  as_of: string;
+  published_by_role?: string | null;
+  published_at: string;
+}
+export interface RoleOutlookComponentsRow {
+  id: string;
+  role_id: string;
+  year: number;
+  criteria_id: string;
+  components: any;
+  computed_at: string;
+}
 export interface CoachFeedbackRow {
   id: string;
   person_id: string;
@@ -3548,6 +3591,10 @@ export interface Tables {
   career_targets: CareerTargetsRow;
   roadmaps: RoadmapsRow;
   career_conversations: CareerConversationsRow;
+  role_moves: RoleMovesRow;
+  role_outlook_criteria: RoleOutlookCriteriaRow;
+  role_outlook_labels: RoleOutlookLabelsRow;
+  role_outlook_components: RoleOutlookComponentsRow;
   coach_feedback: CoachFeedbackRow;
   learning_goals: LearningGoalsRow;
   refresh_state: RefreshStateRow;

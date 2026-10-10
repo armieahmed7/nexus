@@ -5,7 +5,7 @@
 // Two scenarios compare side by side. Saved scenarios can be shared with the line manager and sent to the development plan
 // (rpc.roadmapToPlan, behind a ConfirmDialog). Indicative durations carry a SAMPLE tag on screen, in print and in the export.
 import { useEffect, useMemo, useState } from 'react';
-import { Page, Section, Card, Async, EmptyState, Callout, StatusPill, StatTile, Grid, Icon, CheckboxField, SelectField, TextField, ConfirmDialog, SimChip, SourceLink, Timeline, downloadText, useFilters, EngineBadge } from '../../ui';
+import { Page, Section, Card, Async, EmptyState, Callout, StatusPill, StatTile, Grid, Icon, CheckboxField, SelectField, TextField, ConfirmDialog, SimChip, SourceLink, Timeline, downloadText, useFilters, EngineBadge, BenchmarkChips } from '../../ui';
 import { useAction, useRepo } from '../../data';
 import { useEngine } from '../../data/useEngine'; // direct import: avoids a circular chunk warning in the build
 import { useT, usePick, useFormat, useLang, L } from '../../i18n';
@@ -13,6 +13,8 @@ import { useSession } from '../../auth/session';
 import { buildRoadmap, developmentBlocks, routeOptions, roadmapCsv, quarterIndex, quarterStart, addMonths, DEFAULT_SCENARIO, HORIZON_QUARTERS, MAX_DELAY_Q, type Block, type Roadmap, type RoadmapInput, type Scenario, type RmEdge } from './roadmap';
 import { reachableRoles } from './career';
 import { useArrow, useCareerBase, type CareerBase, type RoadmapRow } from './shared';
+// FS15 (FS wave B · E5): a roadmap can target a concept future role (banner; bridge learning sized by my FS05 profile gaps)
+import { ConceptBanner, ConceptBandPill, ConceptChip, useConceptReadiness } from './futureUi';
 
 export default function MyRoadmapPage() {
   const t = useT();
@@ -48,22 +50,31 @@ function Planner({ d, me, canPlan }: { d: CareerBase; me: string; canPlan: boole
   const [p, setP] = useFilters({ role: '', rm: '' }, true);
   const shortlist = d.targets.filter((x) => x.active).sort((a, b) => a.rank - b.rank).map((x) => x.role_id).filter((r) => r !== myRole);
   const reach = useMemo(() => [...reachableRoles(d.edges as never, myRole, 4)].filter(([id]) => !d.roleById.get(id)?.security_sensitive).sort((a, b) => a[1] - b[1]).map(([id]) => id), [d.edges, d.roleById, myRole]);
+  const conceptIds = useMemo(() => d.roles.filter((r) => (r as { lifecycle?: string }).lifecycle === 'concept').map((r) => r.id), [d.roles]);
+  const conceptReach = useMemo(() => conceptIds.filter((id) => routeOptions(d.edges as unknown as RmEdge[], myRole, id).length > 0), [conceptIds, d.edges, myRole]);
   const saved = d.roadmaps.filter((r) => r.active).sort((a, b) => (a.updated_at < b.updated_at ? 1 : -1));
   const loaded = p.rm ? saved.find((r) => r.id === p.rm) ?? null : null;
   const target = loaded?.target_role_id ?? (p.role || shortlist[0] || reach[0] || '');
+  const isConcept = conceptIds.includes(target);
+  const cq = useConceptReadiness(me, isConcept ? [target] : [], isConcept);
+  const cr = isConcept ? cq.data?.get(target) ?? null : null;
   const routes = useMemo(() => (target ? routeOptions(d.edges as unknown as RmEdge[], myRole, target) : []), [d.edges, myRole, target]);
 
   const have = useMemo(() => eng.skills.competencyLevels(d.states as never, d.skills), [eng, d.states, d.skills]);
   const input: RoadmapInput = useMemo(() => {
     const done = new Set(d.trainingRecords.filter((x) => x.result === 'passed' || x.result === 'completed').map((x) => x.course_id));
     const courses = d.courses.filter((c) => c.audience === 'staff' && !done.has(c.id) && !String(c.programme_id ?? '').match(/^(coit|loit)$/));
-    const gap = target ? eng.rank.coursesForGaps({ have, currentRole: null, targets: [target], roleComps: d.roleComps, courses: courses as never }).slice(0, 3).map((x) => x.item as unknown as { id: string; title_en: string; title_ar: string; duration_hours: number | null }) : [];
+    // FS15: for a concept target the gaps come from its FS05 profile (skill requirements count towards their competency)
+    const skillComp = new Map(d.skills.map((x) => [x.id, x.competency_id]));
+    const conceptComps = cr ? cr.gaps.map((g) => ({ role_id: target, competency_id: g.kind === 'skill' ? skillComp.get(g.ref_id) ?? g.ref_id : g.ref_id, required_level: g.need, importance: g.importance })) : [];
+    const gap = target ? eng.rank.coursesForGaps({ have, currentRole: null, targets: [target], roleComps: cr ? conceptComps : d.roleComps, courses: courses as never }).slice(0, 3).map((x) => x.item as unknown as { id: string; title_en: string; title_ar: string; duration_hours: number | null }) : [];
     return {
       now: new Date().toISOString().slice(0, 10), roleId: myRole, monthsInRole: d.facts!.months_in_role, qualifiedInRole: d.facts!.qualified_in_role,
       edges: d.edges as unknown as RmEdge[], roles: d.roles, programmes: d.programmes as never, sources: d.sources.map((s) => ({ id: s.id, label: s.label, url: s.url })),
       gapCourses: gap, leadershipCourse: (d.courses.find((c) => c.id === 'c-intilaqa') as never) ?? null,
+      conceptRoles: conceptIds, bridgeMonths: cr?.gap_months ?? 0,
     };
-  }, [d, eng, have, myRole, target]);
+  }, [d, eng, have, myRole, target, cr, conceptIds]);
 
   const fresh = (path: string[] = routes[0]?.map((e) => e.id) ?? []): Scenario => ({ path, ...DEFAULT_SCENARIO });
   const [a, setA] = useState<Scenario>(() => fresh());
@@ -90,7 +101,7 @@ function Planner({ d, me, canPlan }: { d: CareerBase; me: string; canPlan: boole
   const dirty = !loaded || !sameScenario(loaded.scenario as Partial<Scenario>, a) || loaded.target_role_id !== target;
   const dev = developmentBlocks(ra);
 
-  const targetOpts = [...new Set([...shortlist, ...reach])].map((id) => ({ value: id, label: `${pick(d.roleById.get(id), 'title')}${shortlist.includes(id) ? ` · ${t('m18.rm.inShortlist')}` : ''}` }));
+  const targetOpts = [...new Set([...shortlist, ...reach, ...conceptReach])].map((id) => ({ value: id, label: `${pick(d.roleById.get(id), 'title')}${conceptIds.includes(id) ? ` · ${t('m18.fs15.conceptChip')}` : ''}${shortlist.includes(id) ? ` · ${t('m18.rm.inShortlist')}` : ''}` }));
   const routeLabel = (r: RmEdge[]) => [pick(d.roleById.get(myRole), 'title'), ...r.map((e) => pick(d.roleById.get(e.to_role_id), 'title'))].join(` ${arrow} `) + ` (${r.map((e) => pick(e, 'label')).join('; ')})`;
 
   const save = async (): Promise<string | null> => {
@@ -124,6 +135,17 @@ function Planner({ d, me, canPlan }: { d: CareerBase; me: string; canPlan: boole
         </div>
       </Card>
 
+      {isConcept && (
+        <div className="space-y-2" data-testid="m18-rm-concept">
+          <ConceptBanner />
+          <div className="flex flex-wrap items-center gap-2">
+            <ConceptChip />
+            {cr && <ConceptBandPill r={cr} />}
+            {cr && <span className="text-[12.5px] text-ink-2">{t('m18.fs15.rmBridge', { n: f.num(Math.max(3, cr.gap_months)), horizon: cr.horizon })}</span>}
+            <BenchmarkChips feature="FS15" />
+          </div>
+        </div>
+      )}
       {!target ? (
         <EmptyState title={t('m18.rm.pick')} icon="sparkle" />
       ) : routes.length === 0 ? (

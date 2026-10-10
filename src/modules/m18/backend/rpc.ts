@@ -3,6 +3,8 @@
 import type { Result } from '../../../data/types';
 import type { CareerReadiness } from '../career';
 import type { Agenda, AspirationSignal, ConversationInsights, PrepInput, TeamRow } from '../conversations';
+import type { ConceptReadiness, TransitionEvidence } from '../futureRoles';
+import type { Components, OutlookLabel } from '../outlookLabels';
 
 export interface RoadmapToPlanResult {
   plan_id: string;
@@ -24,6 +26,10 @@ export interface SubmitPrepResult { id: string; status: string; submitted: boole
 export interface RecordConversationResult { id: string; person_id: string; plan_id: string | null; created: number; updated: number }
 export interface AcknowledgeResult { id: string; agree: boolean; coach_updated: boolean }
 export interface ReminderResult { pairs: number; overdue: number; created: number }
+/** FS16: one computed label (preview) next to the stored one. */
+export interface OutlookPreviewRow { role_id: string; label: OutlookLabel; components: Components; stored_label: OutlookLabel | null; changed: boolean }
+export interface OutlookPreview { year: number; criteria_id: string; rows: OutlookPreviewRow[]; counts: Record<OutlookLabel, number>; changed: number }
+export interface OutlookPublishResult { year: number; criteria_id: string; published: number; changed: number; counts: Record<OutlookLabel, number> }
 export interface M18Rpc {
   /** F05: per-role readiness %, gates and reasons for a person (read-only; same computation in SQL and TS). Self, or a line manager in scope when the person shares a shortlist or roadmap. */
   careerReadiness(personId: string, roleIds: string[]): Promise<Result<CareerReadiness[]>>;
@@ -48,4 +54,15 @@ export interface M18Rpc {
   teamConversations(): Promise<Result<TeamRow[]>>;
   /** F12: six-monthly reminder sweep: notifications to both sides of each overdue pair (my reports; everyone for skills_profile A). Idempotent per month. */
   conversationReminders(): Promise<Result<ReminderResult>>;
+  /** FS15: readiness for concept future roles against their FS05 profiles (null roleIds = every concept role), with the bridge
+   *  edge from the person's own role and reasons. Read-only; same rules in TS and SQL. Self, or a line manager in scope when the
+   *  person shares a shortlist or roadmap (as careerReadiness). */
+  futureRoleReadiness(personId: string, roleIds: string[] | null): Promise<Result<ConceptReadiness[]>>;
+  /** FS15: how many colleagues moved from one role to each target and the median months in the previous role (SIMULATED
+   *  anonymised mirror); counts under 10 suppressed; concept targets show the closest family evidence. Any staff skills profile. */
+  transitionEvidence(fromRoleId: string, toRoleIds: string[]): Promise<Result<TransitionEvidence[]>>;
+  /** FS16: compute this year's labels from today's inputs (F35 released outlook, FS05 profiles) without storing them; transformation W/A. */
+  outlookLabelsPreview(year: number): Promise<Result<OutlookPreview>>;
+  /** FS16: publish this year's labels (past years are kept and locked); HR director (transformation A). Audited and ledgered. */
+  publishOutlookLabels(year: number): Promise<Result<OutlookPublishResult>>;
 }

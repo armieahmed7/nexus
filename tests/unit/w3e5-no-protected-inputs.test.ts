@@ -24,6 +24,8 @@ import { reportingChain } from '../../src/modules/m04/mentoring';
 import { rankHosts, rankProgrammes } from '../../src/modules/m20/rotationMatch';
 import { rankExperts, type ExpertRow } from '../../src/modules/m22/domain';
 import { rankBridges, rankFutureRoles, rankResources, readinessIndex } from '../../src/modules/m21/future';
+import { careerFacts } from '../../src/modules/m18/career';
+import { conceptReadiness, transitionEvidence } from '../../src/modules/m18/futureRoles';
 
 type Rows = Record<string, any>[];
 const S = seed as unknown as { tables: Record<string, Rows>; meta: { demo_today: string } };
@@ -81,6 +83,10 @@ const RUN: Record<string, () => unknown> = {
   'src/modules/m21/future.ts#readinessIndex': () => readinessIndex(T.adv_technologies as never, T.adv_skills as never, T.skills as never, statesOf(ME) as never),
   'src/modules/m21/future.ts#rankBridges': () => rankBridges({ bridges: T.skill_bridges as never, families: readinessIndex(T.adv_technologies as never, T.adv_skills as never, T.skills as never, statesOf(ME) as never).families, myRole: ROLE, edges: T.career_paths as never }),
   'src/modules/m21/future.ts#rankFutureRoles': () => rankFutureRoles({ roles: T.future_roles as never, levels: readinessIndex(T.adv_technologies as never, T.adv_skills as never, T.skills as never, statesOf(ME) as never).levels, myRole: ROLE, edges: T.career_paths as never }),
+  // FS15 (fsBe5): the Navigator card v2 lists the concept-role readiness and the transition evidence
+  'src/modules/m18/futureRoles.ts#conceptReadiness': () => conceptReadiness({ roles: T.job_roles as never, versions: T.role_profile_versions as never, edges: T.career_paths as never, skills: T.skills as never,
+    competencies: T.competencies as never, states: statesOf(ME) as never }, careerFacts(careerData() as never, ME, NOW), ME, null),
+  'src/modules/m18/futureRoles.ts#transitionEvidence': () => transitionEvidence(T.role_moves as never, T.job_roles as never, ROLE, T.job_roles.map((r) => r.id)),
   'src/modules/m21/future.ts#rankResources': () => { const r = readinessIndex(T.adv_technologies as never, T.adv_skills as never, T.skills as never, statesOf(ME) as never); return r.families.map((f) => rankResources(T.future_resources as never, f)); },
 };
 const cardFns = [...new Set(S.tables.engine_cards.flatMap((c) => c.scoring_functions as string[]))];

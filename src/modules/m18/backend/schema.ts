@@ -42,4 +42,45 @@ export const TABLES_M18: Record<string, TableDef> = {
     read: [{ res: 'own_profile', person: 'person_id' }, { res: 'own_profile', person: 'manager_read_id' }],
     write: { mode: 'rpc', res: 'own_profile' },
   },
+  // [FS wave B · E5] FS15 Future roles in the Navigator and Roadmap. SIMULATED, anonymised mirror of HR role changes (no person
+  // ids): the source of "how many colleagues made this move and the median months". Rows are read only by workforce_analytics
+  // R (auditors); everyone else gets suppressed aggregates through rpc.transitionEvidence (counts under 10 suppressed).
+  role_moves: {
+    module: 'M18', label: 'SIMULATED anonymised mirror of past role changes (from role, to role, date, months in the previous role); aggregates only (FS15)',
+    cols: {
+      id: 'text pk', from_role_id: 'text ref:job_roles idx', to_role_id: 'text ref:job_roles idx', moved_on: 'date', months_before: 'int',
+      kind: 'text enum:progression|lateral =\'progression\'', simulated: 'bool =true', source: 'text =\'SIMULATED HR mirror\'',
+    },
+    read: [{ res: 'workforce_analytics' }],
+    write: { mode: 'none' },
+  },
+  // [FS wave B · E5] FS16 Role outlook labels with published criteria. Criteria versions are public reference rows (thresholds,
+  // precedence, sources); labels are public (label only); the components behind each label are staff-readable
+  // (transformation R). Labels and components change only through rpc.publishOutlookLabels (HR director); past years are kept.
+  role_outlook_criteria: {
+    module: 'M18', label: 'Published criteria for the Growing / Stable / Changing role outlook labels, one row per criteria version (FS16)',
+    cols: {
+      id: 'text pk', version: 'int', year_from: 'int', thresholds: 'json ={}', precedence: 'text[] =[]', components: 'text[] =[]',
+      summary_en: 'text', summary_ar: 'text', sources: 'json =[]', benchmark_ids: 'text[] =[]', as_of: 'date', status: 'text enum:published|retired =\'published\'',
+    },
+    read: [{ res: 'public_content' }],
+    write: { mode: 'none' },
+  },
+  role_outlook_labels: {
+    module: 'M18', label: 'Role outlook label per role and year (Growing, Stable, Changing); public, label only; past years kept (FS16)',
+    cols: {
+      id: 'text pk', role_id: 'text ref:job_roles idx', year: 'int idx', label: 'text enum:growing|stable|changing idx', criteria_id: 'text ref:role_outlook_criteria',
+      archived: 'bool =false', as_of: 'date', published_by_role: 'text?', published_at: 'ts =now',
+    },
+    read: [{ res: 'public_content' }],
+    write: { mode: 'rpc', res: 'transformation' },
+  },
+  role_outlook_components: {
+    module: 'M18', label: 'The components behind each role outlook label (demand growth, shortfall, profile change); staff only (FS16)',
+    cols: {
+      id: 'text pk', role_id: 'text ref:job_roles idx', year: 'int idx', criteria_id: 'text ref:role_outlook_criteria', components: 'json ={}', computed_at: 'ts =now',
+    },
+    read: [{ res: 'transformation' }],
+    write: { mode: 'rpc', res: 'transformation' },
+  },
 };

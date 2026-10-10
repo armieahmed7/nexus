@@ -1532,6 +1532,34 @@ create policy kafaa_read on kafaa_career_conversations for select to anon, authe
 grant select on kafaa_career_conversations to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- role_moves
+alter table kafaa_role_moves enable row level security;
+drop policy if exists kafaa_read on kafaa_role_moves;
+create policy kafaa_read on kafaa_role_moves for select to anon, authenticated using (kafaa_rule_read('workforce_analytics', null::text, null::text, true));
+grant select on kafaa_role_moves to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- role_outlook_criteria
+alter table kafaa_role_outlook_criteria enable row level security;
+drop policy if exists kafaa_read on kafaa_role_outlook_criteria;
+create policy kafaa_read on kafaa_role_outlook_criteria for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_role_outlook_criteria to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- role_outlook_labels
+alter table kafaa_role_outlook_labels enable row level security;
+drop policy if exists kafaa_read on kafaa_role_outlook_labels;
+create policy kafaa_read on kafaa_role_outlook_labels for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_role_outlook_labels to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- role_outlook_components
+alter table kafaa_role_outlook_components enable row level security;
+drop policy if exists kafaa_read on kafaa_role_outlook_components;
+create policy kafaa_read on kafaa_role_outlook_components for select to anon, authenticated using (kafaa_rule_read('transformation', null::text, null::text, true));
+grant select on kafaa_role_outlook_components to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- coach_feedback
 alter table kafaa_coach_feedback enable row level security;
 drop policy if exists kafaa_read on kafaa_coach_feedback;

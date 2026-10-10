@@ -2638,6 +2638,61 @@ create table if not exists kafaa_career_conversations (
 );
 comment on table kafaa_career_conversations is '[M18] Career conversation: employee preparation, pre-filled agenda, manager notes and agreed actions, acknowledgement (F12)';
 
+-- M18 · SIMULATED anonymised mirror of past role changes (from role, to role, date, months in the previous role); aggregates only (FS15)
+create table if not exists kafaa_role_moves (
+  id text primary key,
+  from_role_id text not null,
+  to_role_id text not null,
+  moved_on date not null,
+  months_before integer not null,
+  kind text not null default 'progression' check (kind in ('progression', 'lateral')),
+  simulated boolean not null default true,
+  source text not null default 'SIMULATED HR mirror'
+);
+comment on table kafaa_role_moves is '[M18] SIMULATED anonymised mirror of past role changes (from role, to role, date, months in the previous role); aggregates only (FS15)';
+
+-- M18 · Published criteria for the Growing / Stable / Changing role outlook labels, one row per criteria version (FS16)
+create table if not exists kafaa_role_outlook_criteria (
+  id text primary key,
+  version integer not null,
+  year_from integer not null,
+  thresholds jsonb not null default '{}'::jsonb,
+  precedence text[] not null default '{}'::text[],
+  components text[] not null default '{}'::text[],
+  summary_en text not null,
+  summary_ar text not null,
+  sources jsonb not null default '[]'::jsonb,
+  benchmark_ids text[] not null default '{}'::text[],
+  as_of date not null,
+  status text not null default 'published' check (status in ('published', 'retired'))
+);
+comment on table kafaa_role_outlook_criteria is '[M18] Published criteria for the Growing / Stable / Changing role outlook labels, one row per criteria version (FS16)';
+
+-- M18 · Role outlook label per role and year (Growing, Stable, Changing); public, label only; past years kept (FS16)
+create table if not exists kafaa_role_outlook_labels (
+  id text primary key,
+  role_id text not null,
+  year integer not null,
+  label text not null check (label in ('growing', 'stable', 'changing')),
+  criteria_id text not null,
+  archived boolean not null default false,
+  as_of date not null,
+  published_by_role text,
+  published_at timestamptz not null default now()
+);
+comment on table kafaa_role_outlook_labels is '[M18] Role outlook label per role and year (Growing, Stable, Changing); public, label only; past years kept (FS16)';
+
+-- M18 · The components behind each role outlook label (demand growth, shortfall, profile change); staff only (FS16)
+create table if not exists kafaa_role_outlook_components (
+  id text primary key,
+  role_id text not null,
+  year integer not null,
+  criteria_id text not null,
+  components jsonb not null default '{}'::jsonb,
+  computed_at timestamptz not null default now()
+);
+comment on table kafaa_role_outlook_components is '[M18] The components behind each role outlook label (demand growth, shortfall, profile change); staff only (FS16)';
+
 -- M19 · Learning Coach feedback per person and suggestion: saved, dismissed (hidden 90 days), enrolled (F07)
 create table if not exists kafaa_coach_feedback (
   id text primary key,
@@ -4278,6 +4333,12 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ro
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_career_conversations_person_id_fk') then alter table kafaa_career_conversations add constraint kafaa_career_conversations_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_career_conversations_manager_person_id_fk') then alter table kafaa_career_conversations add constraint kafaa_career_conversations_manager_person_id_fk foreign key (manager_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_career_conversations_focus_role_id_fk') then alter table kafaa_career_conversations add constraint kafaa_career_conversations_focus_role_id_fk foreign key (focus_role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_moves_from_role_id_fk') then alter table kafaa_role_moves add constraint kafaa_role_moves_from_role_id_fk foreign key (from_role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_moves_to_role_id_fk') then alter table kafaa_role_moves add constraint kafaa_role_moves_to_role_id_fk foreign key (to_role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_outlook_labels_role_id_fk') then alter table kafaa_role_outlook_labels add constraint kafaa_role_outlook_labels_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_outlook_labels_criteria_id_fk') then alter table kafaa_role_outlook_labels add constraint kafaa_role_outlook_labels_criteria_id_fk foreign key (criteria_id) references kafaa_role_outlook_criteria(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_outlook_components_role_id_fk') then alter table kafaa_role_outlook_components add constraint kafaa_role_outlook_components_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_outlook_components_criteria_id_fk') then alter table kafaa_role_outlook_components add constraint kafaa_role_outlook_components_criteria_id_fk foreign key (criteria_id) references kafaa_role_outlook_criteria(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_coach_feedback_person_id_fk') then alter table kafaa_coach_feedback add constraint kafaa_coach_feedback_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_learning_goals_person_id_fk') then alter table kafaa_learning_goals add constraint kafaa_learning_goals_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_refresh_state_person_id_fk') then alter table kafaa_refresh_state add constraint kafaa_refresh_state_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -4752,6 +4813,15 @@ create index if not exists kafaa_career_conversations_manager_person_id_idx on k
 create index if not exists kafaa_career_conversations_manager_read_id_idx on kafaa_career_conversations (manager_read_id);
 create index if not exists kafaa_career_conversations_status_idx on kafaa_career_conversations (status);
 create index if not exists kafaa_career_conversations_focus_role_id_idx on kafaa_career_conversations (focus_role_id);
+create index if not exists kafaa_role_moves_from_role_id_idx on kafaa_role_moves (from_role_id);
+create index if not exists kafaa_role_moves_to_role_id_idx on kafaa_role_moves (to_role_id);
+create index if not exists kafaa_role_outlook_labels_role_id_idx on kafaa_role_outlook_labels (role_id);
+create index if not exists kafaa_role_outlook_labels_year_idx on kafaa_role_outlook_labels (year);
+create index if not exists kafaa_role_outlook_labels_label_idx on kafaa_role_outlook_labels (label);
+create index if not exists kafaa_role_outlook_labels_criteria_id_idx on kafaa_role_outlook_labels (criteria_id);
+create index if not exists kafaa_role_outlook_components_role_id_idx on kafaa_role_outlook_components (role_id);
+create index if not exists kafaa_role_outlook_components_year_idx on kafaa_role_outlook_components (year);
+create index if not exists kafaa_role_outlook_components_criteria_id_idx on kafaa_role_outlook_components (criteria_id);
 create index if not exists kafaa_coach_feedback_person_id_idx on kafaa_coach_feedback (person_id);
 create index if not exists kafaa_coach_feedback_item_kind_idx on kafaa_coach_feedback (item_kind);
 create index if not exists kafaa_refresh_state_person_id_idx on kafaa_refresh_state (person_id);
@@ -4979,4 +5049,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 223) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 227) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

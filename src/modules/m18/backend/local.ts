@@ -6,8 +6,10 @@ import type { LocalRpcHelpers } from '../../../data/ext/types';
 import type { Result } from '../../../data/types';
 import { nowTs } from '../../../data/audit';
 import { todayIso } from '../../../domain/rules';
-import { careerReadiness, MAX_ROLES, type CareerData, type CareerReadiness } from '../career';
-import type { M18Rpc, RoadmapToPlanResult, SubmitPrepResult, RecordConversationResult, AcknowledgeResult, ReminderResult } from './rpc';
+import { careerFacts, careerReadiness, MAX_ROLES, type CareerData, type CareerReadiness } from '../career';
+import { conceptReadiness, transitionEvidence, type ConceptData, type ConceptReadiness, type MoveRow, type TransitionEvidence } from '../futureRoles';
+import { computeLabels, criteriaFor, type CriteriaRow, type LabelData, type OutlookLabel } from '../outlookLabels';
+import type { M18Rpc, OutlookPreview, OutlookPublishResult, RoadmapToPlanResult, SubmitPrepResult, RecordConversationResult, AcknowledgeResult, ReminderResult } from './rpc';
 import {
   aspirationOf, buildAgenda, cadenceState, conversationInsightsOf, cycleOf, goalIdFor, isIsoDate, lastHeldOf, normActions, normPrep, pairsOf, planIdFor, activityId,
   teamRowsOf, addDaysIso, HELD_BACK_DAYS, MAX_COMMENT, MAX_NOTES, MAX_PEOPLE, type Agenda, type AgendaTables, type AspirationSignal, type ConvRow, type ConversationInsights, type PeopleRow, type TeamRow,
@@ -57,6 +59,19 @@ export function agendaTablesFrom(b: LocalBackend, personId: string): AgendaTable
     conversations: mine(b.raw('career_conversations')) as never,
   };
 }
+
+/** FS15: the tables concept readiness reads, as definer. */
+export function conceptDataFrom(b: LocalBackend, personId: string): ConceptData {
+  const c = careerDataFrom(b, personId);
+  return { roles: b.raw('job_roles') as never, versions: b.raw('role_profile_versions') as never, edges: b.raw('career_paths') as never, skills: b.raw('skills') as never, competencies: c.competencies, states: c.states, weights: c.weights };
+}
+/** FS16: the inputs of the outlook labels, as definer: the latest released F35 outlook and the published FS05 versions. */
+export function labelDataFrom(b: LocalBackend): LabelData {
+  const released = (b.raw('skill_outlooks') as unknown as { id: string; status: string; released_at: string | null; results: unknown }[])
+    .filter((o) => o.status === 'released').sort((x, y) => (String(y.released_at ?? '') < String(x.released_at ?? '') ? -1 : String(y.released_at ?? '') > String(x.released_at ?? '') ? 1 : x.id < y.id ? -1 : 1))[0] ?? null;
+  return { roles: b.raw('job_roles') as never, roleComps: b.raw('role_competencies') as never, skills: b.raw('skills') as never, outlook: released ? { id: released.id, results: released.results } : null, versions: b.raw('role_profile_versions') as never };
+}
+const emptyCounts = (): Record<OutlookLabel, number> => ({ growing: 0, stable: 0, changing: 0 });
 const randomId = (prefix: string) => {
   const a = new Uint8Array(8);
   globalThis.crypto.getRandomValues(a);
@@ -137,6 +152,93 @@ export function makeLocalM18(b: LocalBackend, h: LocalRpcHelpers): M18Rpc {
       return h.done<R>('roadmap.to_plan', 'plan_activities', rm.id, `${created} added, ${existing} already in plan ${planId}`, role, 'kafaa.career.roadmap_to_plan',
         `Career roadmap ${rm.id} sent to development plan ${planId} (${created} activities added)`, created ? 'Added to your development plan' : 'Already in your development plan',
         { plan_id: planId, plan_created: planCreated, created, existing }, ['roadmaps', 'dev_plans', 'plan_activities']);
+    },
+
+    // ───────────── FS15 Future roles in the Navigator and Roadmap (SQL: 20261010225001_kafaa_fs25_future_roles.sql; same checks, codes and messages)
+    async futureRoleReadiness(personId, roleIds) {
+      await b.whenReady();
+      const who = b.identity();
+      const ctx = b.access();
+      const refuse = (code: string, msg: string) => h.refuse<ConceptReadiness[]>('career.future_readiness', 'career_targets', personId ?? null, code, msg, null);
+      if (!who.personId) return refuse('not_signed_in', 'Sign in to see your career readiness');
+      if (!personId || !b.rawGet('people', personId)) return refuse('not_found', 'Person not found');
+      if (personId === who.personId) {
+        if (!ctx.has('skills_profile', ['Own', 'Scope'])) return refuse('forbidden', 'Career readiness is for staff with a skills profile');
+      } else {
+        const shared = b.raw('career_targets').some((t) => t.person_id === personId && t.shared && t.active) || b.raw('roadmaps').some((r) => r.person_id === personId && r.shared && r.active);
+        if (!(ctx.has('skills_profile', ['Scope']) && ctx.inScope('skills_profile', personId) && shared)) return refuse('forbidden', 'This person has not shared their career plans with you');
+      }
+      const ids = roleIds == null ? null : (Array.isArray(roleIds) ? roleIds : []).filter((x) => typeof x === 'string').slice(0, MAX_ROLES);
+      const today = todayIso();
+      const facts = careerFacts(careerDataFrom(b, personId), personId, today);
+      return { ok: true, code: 'ok', message: '', data: conceptReadiness(conceptDataFrom(b, personId), facts, personId, ids) } as Result<ConceptReadiness[]>;
+    },
+
+    async transitionEvidence(fromRoleId, toRoleIds) {
+      await b.whenReady();
+      const who = b.identity();
+      const ctx = b.access();
+      const refuse = (code: string, msg: string) => h.refuse<TransitionEvidence[]>('career.transitions', 'role_moves', fromRoleId ?? null, code, msg, null);
+      if (!who.personId) return refuse('not_signed_in', 'Sign in to see career moves');
+      if (!(ctx.has('skills_profile', ['Own', 'Scope', 'Agg', 'A']) || ctx.has('transformation', ['R']))) return refuse('forbidden', 'Career move evidence is for staff');
+      if (!fromRoleId || !b.rawGet('job_roles', fromRoleId)) return refuse('not_found', 'Role not found');
+      const ids = (Array.isArray(toRoleIds) ? toRoleIds : []).filter((x) => typeof x === 'string');
+      return { ok: true, code: 'ok', message: '', data: transitionEvidence(b.raw('role_moves') as unknown as MoveRow[], b.raw('job_roles') as never, fromRoleId, ids) } as Result<TransitionEvidence[]>;
+    },
+
+    // ───────────── FS16 Role outlook labels with published criteria
+    async outlookLabelsPreview(year) {
+      await b.whenReady();
+      const who = b.identity();
+      const ctx = b.access();
+      const refuse = (code: string, msg: string) => h.refuse<OutlookPreview>('outlook.preview', 'role_outlook_labels', String(year ?? ''), code, msg, null);
+      if (!who.personId) return refuse('not_signed_in', 'Sign in to preview outlook labels');
+      if (!ctx.has('transformation', ['W', 'A'])) return refuse('forbidden', 'Only the training manager or the HR director can preview outlook labels');
+      const y = Number(year);
+      if (!Number.isInteger(y) || y !== Number(todayIso().slice(0, 4))) return refuse('invalid', 'Labels are computed for the current year only');
+      const crit = criteriaFor(b.raw('role_outlook_criteria') as unknown as CriteriaRow[], y);
+      if (!crit) return refuse('not_found', 'No published criteria for this year');
+      const stored = new Map((b.raw('role_outlook_labels') as unknown as { role_id: string; year: number; label: OutlookLabel }[]).filter((r) => r.year === y).map((r) => [r.role_id, r.label]));
+      const counts = emptyCounts();
+      const rows = computeLabels(labelDataFrom(b), crit, y).map((r) => {
+        counts[r.label]++;
+        const st = stored.get(r.role_id) ?? null;
+        return { role_id: r.role_id, label: r.label, components: r.components, stored_label: st, changed: st !== r.label };
+      });
+      return { ok: true, code: 'ok', message: '', data: { year: y, criteria_id: crit.id, rows, counts, changed: rows.filter((r) => r.changed).length } } as Result<OutlookPreview>;
+    },
+
+    async publishOutlookLabels(year) {
+      await b.whenReady();
+      type R = OutlookPublishResult;
+      const who = b.identity();
+      const ctx = b.access();
+      const role = ctx.actingRole('transformation', ['A']);
+      const refuse = (code: string, msg: string) => h.refuse<R>('outlook.publish', 'role_outlook_labels', String(year ?? ''), code, msg, role);
+      if (!who.personId) return refuse('not_signed_in', 'Sign in to publish outlook labels');
+      if (!role) return refuse('forbidden', 'Only the HR director can publish outlook labels');
+      const y = Number(year);
+      const cur = Number(todayIso().slice(0, 4));
+      if (!Number.isInteger(y) || y > cur || y < 2000) return refuse('invalid', 'Labels are published for the current year only');
+      if (y < cur) return refuse('past_year_locked', 'Past years are kept as published and cannot be changed');
+      const crit = criteriaFor(b.raw('role_outlook_criteria') as unknown as CriteriaRow[], y);
+      if (!crit) return refuse('not_found', 'No published criteria for this year');
+      const rows = computeLabels(labelDataFrom(b), crit, y);
+      if (!rows.length) return refuse('invalid', 'No role could be labelled from the current inputs');
+      const counts = emptyCounts();
+      let changed = 0;
+      const ts = nowTs();
+      for (const r of rows) {
+        counts[r.label]++;
+        const old = b.rawGet('role_outlook_labels', r.id) as unknown as { label: string } | undefined;
+        const row = { id: r.id, role_id: r.role_id, year: y, label: r.label, criteria_id: crit.id, archived: false, as_of: todayIso(), published_by_role: role, published_at: ts };
+        if (!old) { b.rawInsert('role_outlook_labels', row as never); changed++; } else { if (old.label !== r.label) changed++; b.rawUpdate('role_outlook_labels', r.id, row as never); }
+        const comp = { id: r.id, role_id: r.role_id, year: y, criteria_id: crit.id, components: r.components, computed_at: ts };
+        if (b.rawGet('role_outlook_components', r.id)) b.rawUpdate('role_outlook_components', r.id, comp as never); else b.rawInsert('role_outlook_components', comp as never);
+      }
+      return h.done<R>('outlook.publish', 'role_outlook_labels', String(y), `${rows.length} labels for ${y} under ${crit.id} (${changed} changed)`, role, 'kafaa.careers.outlook_labels_publish',
+        `Role outlook labels ${y} published under ${crit.id}: ${counts.growing} growing, ${counts.changing} changing, ${counts.stable} stable`, `Outlook labels for ${y} published`,
+        { year: y, criteria_id: crit.id, published: rows.length, changed, counts }, ['role_outlook_labels', 'role_outlook_components']);
     },
 
     // ───────────── F12 Career conversations (SQL: 20261009122001_kafaa_w2e2_conversations.sql; same checks, order, codes and messages)
