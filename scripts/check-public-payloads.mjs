@@ -25,5 +25,12 @@ for (const [t] of pub) {
     }
   }
 }
+// FS01/FS02: every public benchmark row and skill definition cites at least one https source; benchmarks carry an as-of date.
+const HTTPS = /^https:\/\/[^\s/$.?#][^\s]*$/i;
+for (const b of seed.benchmarks ?? []) {
+  if (!Array.isArray(b.urls) || !b.urls.length || b.urls.some((u) => !HTTPS.test(u))) { console.error(`public benchmarks.${b.id}: every source must be https`); bad++; }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(b.as_of ?? '')) { console.error(`public benchmarks.${b.id}: no as-of date`); bad++; }
+}
+for (const k of seed.skills ?? []) if (!(k.sources ?? []).some((x) => HTTPS.test(x.url ?? ''))) { console.error(`public skills.${k.id}: no https source`); bad++; }
 if (bad) { console.error(`public payload check failed: ${bad} problem(s)`); process.exit(1); }
-console.log(`public payload check: ${pub.length} public tables, no personal columns, no emails or phone numbers`);
+console.log(`public payload check: ${pub.length} public tables, no personal columns, no emails or phone numbers; ${(seed.benchmarks ?? []).length} benchmarks and ${(seed.skills ?? []).length} skills cite https sources`);

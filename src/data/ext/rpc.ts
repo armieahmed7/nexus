@@ -18,5 +18,17 @@ import type { M24Rpc } from '../../modules/m24/backend/rpc';
 import type { M25Rpc } from '../../modules/m25/backend/rpc';
 import type { M26Rpc } from '../../modules/m26/backend/rpc';
 import type { M27Rpc } from '../../modules/m27/backend/rpc';
+// FS01 (future skills, wave A): M28-M37 module RPCs
+import type { M28Rpc } from '../../modules/m28/backend/rpc';
+import type { M29Rpc } from '../../modules/m29/backend/rpc';
+import type { M30Rpc } from '../../modules/m30/backend/rpc';
+import type { M31Rpc } from '../../modules/m31/backend/rpc';
+import type { M32Rpc } from '../../modules/m32/backend/rpc';
+import type { M33Rpc } from '../../modules/m33/backend/rpc';
+import type { M34Rpc } from '../../modules/m34/backend/rpc';
+import type { M35Rpc } from '../../modules/m35/backend/rpc';
+import type { M36Rpc } from '../../modules/m36/backend/rpc';
+import type { M37Rpc } from '../../modules/m37/backend/rpc';
 
-export interface ExtRpc extends M02Rpc, M13Rpc, DigestRpc, M04Rpc, M06Rpc, M07Rpc, M09Rpc, M16Rpc, M17Rpc, M18Rpc, M19Rpc, M20Rpc, M21Rpc, M22Rpc, M23Rpc, M24Rpc, M25Rpc, M26Rpc, M27Rpc {}
+export interface ExtRpc extends M02Rpc, M13Rpc, DigestRpc, M04Rpc, M06Rpc, M07Rpc, M09Rpc, M16Rpc, M17Rpc, M18Rpc, M19Rpc, M20Rpc, M21Rpc, M22Rpc, M23Rpc, M24Rpc, M25Rpc, M26Rpc, M27Rpc,
+  M28Rpc, M29Rpc, M30Rpc, M31Rpc, M32Rpc, M33Rpc, M34Rpc, M35Rpc, M36Rpc, M37Rpc {}

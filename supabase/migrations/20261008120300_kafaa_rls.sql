@@ -1177,6 +1177,21 @@ create policy kafaa_read on kafaa_engine_settings for select to anon, authentica
 grant select on kafaa_engine_settings to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- benchmarks
+alter table kafaa_benchmarks enable row level security;
+drop policy if exists kafaa_read on kafaa_benchmarks;
+create policy kafaa_read on kafaa_benchmarks for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, listed)
+    or kafaa_rule_read('integrations', null::text, null::text, true)
+    or kafaa_rule_read('sat', null::text, null::text, true));
+drop policy if exists kafaa_insert on kafaa_benchmarks;
+create policy kafaa_insert on kafaa_benchmarks for insert to anon, authenticated with check (kafaa_has_grant('frameworks', array['W','A']));
+drop policy if exists kafaa_update on kafaa_benchmarks;
+create policy kafaa_update on kafaa_benchmarks for update to authenticated using (kafaa_has_grant('frameworks', array['W','A'])) with check (kafaa_has_grant('frameworks', array['W','A']));
+grant select, insert, update on kafaa_benchmarks to authenticated;
+grant select on kafaa_benchmarks to anon;
+drop trigger if exists kafaa_benchmarks_audit on kafaa_benchmarks;
+create trigger kafaa_benchmarks_audit after insert or update on kafaa_benchmarks for each row execute function kafaa_audit_row();
+
 -- instructor_tracks
 alter table kafaa_instructor_tracks enable row level security;
 drop policy if exists kafaa_read on kafaa_instructor_tracks;

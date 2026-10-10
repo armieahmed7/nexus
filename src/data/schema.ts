@@ -990,6 +990,20 @@ export const SCHEMA: Record<string, TableDef> = {
       area: 'text enum:plant_systems|operations|maintenance|radiation_chemistry|engineering|safety|human_performance|emergency|security|quality|leadership|digital|project idx',
       core: 'bool =false', key_level: 'int =2', evidence_keys: 'text[] =[]', adjacent_ids: 'text[] =[]', adv_skill_ids: 'text[] =[]',
       description_en: 'text =\'\'', description_ar: 'text =\'\'', sources: 'json =[]', sort: 'int =0',
+      // FS02 (future skills, wave A): taxonomy attributes. ESCO reusability level, Lightcast skill type, lifecycle (ESCO:
+      // obsolete, never deleted), decay class (FS03 half-lives), owner function, version and review date (UPKEEP), SFIA-style
+      // level essence at the key level, ESCO alternative labels, Jahiz future group, future-skills area and the benchmark rows
+      // the skill follows. Rules and labels: src/domain/taxonomy.ts. Guard: SQL kafaa_fs_skill_guard = guards.ts 'skills'.
+      reusability: 'text enum:transversal|cross_sectoral|sector_specific|occupation_specific =\'sector_specific\'',
+      skill_type: 'text enum:common|specialised|licence_like =\'specialised\'',
+      lifecycle: 'text enum:emerging|growing|stable|declining|obsolete =\'stable\' idx',
+      decay_class: 'text enum:fast|standard|slow =\'standard\'',
+      owner_role: 'text enum:nuclear_training|operations|maintenance|engineering|radiation_chemistry|safety_licensing|human_performance|emergency_preparedness|quality|leadership_development|digital_ai_governance|sustainability|advanced_reactors|cyber_awareness =\'nuclear_training\'',
+      version: 'int =1', review_due: 'date?',
+      level_essence_en: 'text =\'\'', level_essence_ar: 'text =\'\'', alt_labels_en: 'text[] =[]', alt_labels_ar: 'text[] =[]',
+      future_group: 'text? enum:digital|ten_x|data_ai|new_economy|nuclear_excellence idx',
+      fs_area: 'text? enum:transversal|ai_data|green_energy|advanced_reactor|cyber_hygiene|digital_plant idx',
+      benchmark_ids: 'text[] =[]', obsolete_on: 'date?', replaced_by: 'text? ref:skills',
     },
     read: [{ res: 'frameworks' }, ...PUB], write: { mode: 'direct', res: 'frameworks' },
   },
@@ -1026,6 +1040,25 @@ export const SCHEMA: Record<string, TableDef> = {
       weights: 'json ={}', updated_by: 'text?', updated_at: 'ts =now',
     },
     read: PUB, write: { mode: 'rpc', res: 'integrations' },
+  },
+
+  // ───────────────────────────── FS01 (future skills, wave A) · Benchmark registry
+  // The 40 international benchmarks the future-skills features follow (PLAN.md section 4): owner, year, https sources, as-of
+  // date, the published figures (every benchmark number shown in the product comes from `figures`, never from copy) and what
+  // Kafa'a borrows. Published rows are public (<BenchmarkChip>, <BenchmarkLine> in src/ui); drafts and retired rows are read
+  // by admins, auditors and SAT staff; framework owners (frameworks W/A) edit them on /admin/frameworks?tab=benchmarks.
+  benchmarks: {
+    module: 'M28', label: 'International future-skills benchmarks: owner, year, sources, as-of date, figures, what Kafa\'a borrows (FS01)',
+    cols: {
+      id: 'text pk', name_en: 'text', name_ar: 'text', owner_en: 'text', owner_ar: 'text', country_en: 'text', country_ar: 'text',
+      category: 'text enum:global|national|uae|nuclear_energy|ai|corporate idx',
+      year_from: 'int', year_to: 'int?', year_kind: 'text enum:single|range|editions|current|reference =\'single\'',
+      urls: 'text[]', fact_en: 'text', fact_ar: 'text', borrow_en: 'text', borrow_ar: 'text', figures: 'json =[]',
+      feature_ids: 'text[] =[]', as_of: 'date', status: 'text enum:draft|published|retired =\'published\' idx', listed: 'bool =true',
+      sort: 'int =0', updated_at: 'ts =now', updated_by: 'text?',
+    },
+    read: [{ res: 'public_content', where: 'listed' }, { res: 'integrations' }, { res: 'sat' }],
+    write: { mode: 'direct', res: 'frameworks' },
   },
 
   // ───────────────────────────── Local-only mirror of the NEXUS evidence ledger

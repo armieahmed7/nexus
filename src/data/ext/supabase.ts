@@ -20,7 +20,19 @@ import { makeSupabaseM24 } from '../../modules/m24/backend/supabase';
 import { makeSupabaseM25 } from '../../modules/m25/backend/supabase';
 import { makeSupabaseM26 } from '../../modules/m26/backend/supabase';
 import { makeSupabaseM27 } from '../../modules/m27/backend/supabase';
+// FS01 (future skills, wave A): M28-M37
+import { makeSupabaseM28 } from '../../modules/m28/backend/supabase';
+import { makeSupabaseM29 } from '../../modules/m29/backend/supabase';
+import { makeSupabaseM30 } from '../../modules/m30/backend/supabase';
+import { makeSupabaseM31 } from '../../modules/m31/backend/supabase';
+import { makeSupabaseM32 } from '../../modules/m32/backend/supabase';
+import { makeSupabaseM33 } from '../../modules/m33/backend/supabase';
+import { makeSupabaseM34 } from '../../modules/m34/backend/supabase';
+import { makeSupabaseM35 } from '../../modules/m35/backend/supabase';
+import { makeSupabaseM36 } from '../../modules/m36/backend/supabase';
+import { makeSupabaseM37 } from '../../modules/m37/backend/supabase';
 
 export function makeExtSupabaseRpc(x: SupabaseExtCtx): ExtRpc {
-  return { ...makeSupabaseM02(x), ...makeSupabaseM13(x), ...makeSupabaseDigest(x), ...makeSupabaseM04(x), ...makeSupabaseM06(x), ...makeSupabaseM07(x), ...makeSupabaseM09(x), ...makeSupabaseM16(x), ...makeSupabaseM17(x), ...makeSupabaseM18(x), ...makeSupabaseM19(x), ...makeSupabaseM20(x), ...makeSupabaseM21(x), ...makeSupabaseM22(x), ...makeSupabaseM23(x), ...makeSupabaseM24(x), ...makeSupabaseM25(x), ...makeSupabaseM26(x), ...makeSupabaseM27(x) };
+  return { ...makeSupabaseM02(x), ...makeSupabaseM13(x), ...makeSupabaseDigest(x), ...makeSupabaseM04(x), ...makeSupabaseM06(x), ...makeSupabaseM07(x), ...makeSupabaseM09(x), ...makeSupabaseM16(x), ...makeSupabaseM17(x), ...makeSupabaseM18(x), ...makeSupabaseM19(x), ...makeSupabaseM20(x), ...makeSupabaseM21(x), ...makeSupabaseM22(x), ...makeSupabaseM23(x), ...makeSupabaseM24(x), ...makeSupabaseM25(x), ...makeSupabaseM26(x), ...makeSupabaseM27(x),
+    ...makeSupabaseM28(x), ...makeSupabaseM29(x), ...makeSupabaseM30(x), ...makeSupabaseM31(x), ...makeSupabaseM32(x), ...makeSupabaseM33(x), ...makeSupabaseM34(x), ...makeSupabaseM35(x), ...makeSupabaseM36(x), ...makeSupabaseM37(x) };
 }

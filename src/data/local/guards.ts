@@ -8,6 +8,8 @@
  *  - courses: a qualifying course needs a linked evaluation form (M04: it cannot complete without one)
  */
 import type { AccessContext } from '../access';
+import { skillGuard } from '../../domain/taxonomy'; // FS02: obsolete, never delete (SQL: kafaa_fs_skill_guard)
+import { benchmarkProblems } from '../../domain/benchmarks'; // FS01: https sources, as-of date, listed = published (SQL checks)
 
 type Row = Record<string, unknown>;
 const changed = (before: Row | null, next: Row, k: string) => (before ? JSON.stringify(before[k] ?? null) !== JSON.stringify(next[k] ?? null) : next[k] != null);
@@ -37,6 +39,12 @@ export function directWriteGuard(table: string, before: Row | null, next: Row, c
     case 'courses':
       if (next.qualifying === true && !next.evaluation_form_id) return 'A qualifying course needs a linked evaluation form';
       return null;
+    case 'skills': // FS02: obsolete is final, obsolete needs a date, no self-replacement, versions only go up
+      return skillGuard(before as never, next as never);
+    case 'benchmarks': { // FS01: the same rules as the SQL checks kafaa_benchmarks_*_ck
+      const p = benchmarkProblems(next as never);
+      return p.length ? `Benchmark not saved: ${p.join(', ')} (every source must be https, with an as-of date; listed only when published)` : null;
+    }
     default:
       return null;
   }

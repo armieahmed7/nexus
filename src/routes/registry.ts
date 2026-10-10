@@ -31,9 +31,21 @@ import { routes as m24 } from '../modules/m24/routes';
 import { routes as m25 } from '../modules/m25/routes';
 import { routes as m26 } from '../modules/m26/routes';
 import { routes as m27 } from '../modules/m27/routes';
+// FS01 (future skills, wave A): M28-M37 are registered here once; their owners only edit src/modules/<m>/routes.ts.
+import { routes as m28 } from '../modules/m28/routes';
+import { routes as m29 } from '../modules/m29/routes';
+import { routes as m30 } from '../modules/m30/routes';
+import { routes as m31 } from '../modules/m31/routes';
+import { routes as m32 } from '../modules/m32/routes';
+import { routes as m33 } from '../modules/m33/routes';
+import { routes as m34 } from '../modules/m34/routes';
+import { routes as m35 } from '../modules/m35/routes';
+import { routes as m36 } from '../modules/m36/routes';
+import { routes as m37 } from '../modules/m37/routes';
 
 export const ROUTES: RouteDef[] = [...m12, ...m01, ...m02, ...m03, ...m04, ...m05, ...m06, ...m07, ...m08, ...m09, ...m10, ...m11, ...m13, ...m14, ...m16,
-  ...m17, ...m18, ...m19, ...m20, ...m21, ...m22, ...m23, ...m24, ...m25, ...m26, ...m27];
+  ...m17, ...m18, ...m19, ...m20, ...m21, ...m22, ...m23, ...m24, ...m25, ...m26, ...m27,
+  ...m28, ...m29, ...m30, ...m31, ...m32, ...m33, ...m34, ...m35, ...m36, ...m37];
 
 export function validateRoutes(list: RouteDef[]): string[] {
   const errs: string[] = [];

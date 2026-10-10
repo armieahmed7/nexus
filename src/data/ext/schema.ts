@@ -18,5 +18,16 @@ import { TABLES_M24 } from '../../modules/m24/backend/schema.ts';
 import { TABLES_M25 } from '../../modules/m25/backend/schema.ts';
 import { TABLES_M26 } from '../../modules/m26/backend/schema.ts';
 import { TABLES_M27 } from '../../modules/m27/backend/schema.ts';
+// FS01 (future skills, wave A): M28-M37 module tables
+import { TABLES_M28 } from '../../modules/m28/backend/schema.ts';
+import { TABLES_M29 } from '../../modules/m29/backend/schema.ts';
+import { TABLES_M30 } from '../../modules/m30/backend/schema.ts';
+import { TABLES_M31 } from '../../modules/m31/backend/schema.ts';
+import { TABLES_M32 } from '../../modules/m32/backend/schema.ts';
+import { TABLES_M33 } from '../../modules/m33/backend/schema.ts';
+import { TABLES_M34 } from '../../modules/m34/backend/schema.ts';
+import { TABLES_M35 } from '../../modules/m35/backend/schema.ts';
+import { TABLES_M36 } from '../../modules/m36/backend/schema.ts';
+import { TABLES_M37 } from '../../modules/m37/backend/schema.ts';
 
-export const EXT_TABLES = { ...TABLES_M02, ...TABLES_M04, ...TABLES_M06, ...TABLES_M07, ...TABLES_M09, ...TABLES_M16, ...TABLES_DIGEST, ...TABLES_M17, ...TABLES_M18, ...TABLES_M19, ...TABLES_M20, ...TABLES_M21, ...TABLES_M22, ...TABLES_M23, ...TABLES_M24, ...TABLES_M25, ...TABLES_M26, ...TABLES_M27 };
+export const EXT_TABLES = { ...TABLES_M02, ...TABLES_M04, ...TABLES_M06, ...TABLES_M07, ...TABLES_M09, ...TABLES_M16, ...TABLES_DIGEST, ...TABLES_M17, ...TABLES_M18, ...TABLES_M19, ...TABLES_M20, ...TABLES_M21, ...TABLES_M22, ...TABLES_M23, ...TABLES_M24, ...TABLES_M25, ...TABLES_M26, ...TABLES_M27, ...TABLES_M28, ...TABLES_M29, ...TABLES_M30, ...TABLES_M31, ...TABLES_M32, ...TABLES_M33, ...TABLES_M34, ...TABLES_M35, ...TABLES_M36, ...TABLES_M37 };
