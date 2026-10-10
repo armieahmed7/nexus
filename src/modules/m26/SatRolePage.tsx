@@ -10,6 +10,8 @@ import { useSession } from '../../auth/session';
 import { L, useFormat, useNav, usePick, useT } from '../../i18n';
 import { RESTRICTED_FAMILIES, SELECTED } from './sat';
 import { AnalysisPill, DecisionPill, DifDots, RestrictedChip, SourceChip, useSatData, useSatModel, type SatData, type SatModel } from './ui';
+import { FutureCell, useFutureData } from './fxui'; // FS06
+import { EXPOSURES } from './future';
 
 export default function SatRolePage() {
   const t = useT();
@@ -91,7 +93,10 @@ function Inventory({ d, m, roleId }: { d: SatData; m: SatModel; roleId: string }
   const pick = usePick();
   const nav = useNav();
   const [show, setShow] = useState('active');
-  const rows = d.tasks.filter((x) => x.role_id === roleId && (show === 'all' || x.status === 'active'));
+  const [fx, setFx] = useState('');
+  const fq = useFutureData(roleId);
+  const fut = new Map((fq.data?.view?.tasks ?? []).map((x) => [x.id, x]));
+  const rows = d.tasks.filter((x) => x.role_id === roleId && (show === 'all' || x.status === 'active') && (!fx || (fx === 'unrated' ? !x.restricted && !fut.get(x.id)?.exposure : fut.get(x.id)?.exposure === fx)));
   const cols: Column<TaskRow>[] = [
     { key: 'code', header: t('m26.task.code'), value: (x) => x.code, sortable: true, width: '7rem', render: (x) => <span className="num font-semibold">{x.code}</span> },
     { key: 'title', header: t('m26.task.title'), value: (x) => (x.restricted ? t('m26.restricted.chip') : pick(x, 'title')), sortable: true, render: (x) => x.restricted ? <RestrictedChip /> : (
@@ -119,6 +124,7 @@ function Inventory({ d, m, roleId }: { d: SatData; m: SatModel; roleId: string }
       );
     } },
     { key: 'decision', header: t('m26.task.decision'), value: (x) => x.decision, sortable: true, render: (x) => (x.restricted ? '—' : <DecisionPill decision={x.decision} override={x.override} />) },
+    { key: 'future', header: t('m26.fx.col.future'), value: (x) => (x.restricted ? '' : fut.get(x.id)?.exposure ?? ''), sortable: true, render: (x) => (x.restricted ? '—' : <FutureCell task={fut.get(x.id)} />) },
   ];
   return (
     <div className="space-y-3 pt-4">
@@ -130,6 +136,15 @@ function Inventory({ d, m, roleId }: { d: SatData; m: SatModel; roleId: string }
             <option value="all">{t('m26.role.showAll')}</option>
           </select>
         </label>
+        <label className="inline-flex items-center gap-2">
+          <span className="caps">{t('m26.fx.col.future')}</span>
+          <select className="input" value={fx} onChange={(e) => setFx(e.target.value)} data-testid="m26-fx-filter">
+            <option value="">{t('common.all')}</option>
+            {EXPOSURES.map((e) => <option key={e} value={e}>{t(`m26.fx.exposure.${e}`)}</option>)}
+            <option value="unrated">{t('m26.fx.unrated')}</option>
+          </select>
+        </label>
+        <L to={`/training/sat/future?role=${roleId}`} className="link">{t('m26.fx.openLayer')}</L>
         <span className="text-ink-2">{t('m26.role.inventoryHint')}</span>
       </div>
       <div data-testid="m26-inventory">
@@ -206,6 +221,7 @@ function RoleChanges({ d, m, roleId }: { d: SatData; m: SatModel; roleId: string
               <span className="font-semibold">{m.task.get(c.task_id)?.code}</span>
               <span>{pick(c.after as never, 'title')}</span>
               <span className={`chip ${c.status === 'open' ? 'border-sim-line bg-sim-bg text-sim' : 'border-ok-line bg-ok-bg text-ok'}`}>{t(`m26.changes.status.${c.status}`)}</span>
+              {c.area === 'future' && <span className="chip border-accent bg-accent-soft text-accent-ink">{t('m26.fx.areaFuture')}</span>}
             </div>
             <p className="mt-1 text-[13px]">{c.summary}</p>
             <p className="mt-1 text-[12px] text-ink-2">{t(`m26.changes.kind.${c.kind}`)} · {t(`m26.changes.trigger.${c.trigger}`)} · {f.date(c.opened_at)} · <L to="/training/sat/changes" className="link">{t('m26.changes.review')}</L></p>

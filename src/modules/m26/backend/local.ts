@@ -13,6 +13,7 @@ import {
 import { ACCR_MSG, GAP_MAX, OWNER_ROLES, addDaysIso, cycleOf, isGap, selfEvalState, soleAuthor, validEvidence, validRating } from '../accr';
 import { evidenceFacts, type EvidenceData } from '../evidence';
 import type { M26Rpc, SurveyTask } from './rpc';
+import { makeLocalM26Future } from './future.local'; // FS06 (wave A · E5)
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 const rid = (p: string) => `${p}-${Array.from(crypto.getRandomValues(new Uint8Array(8)), (x) => x.toString(16).padStart(2, '0')).join('')}`;
@@ -53,6 +54,7 @@ export function makeLocalM26(b: LocalBackend, h: LocalRpcHelpers): M26Rpc {
   };
 
   return {
+    ...makeLocalM26Future(b, h), // FS06 task layer: setTaskFuture, taskFuture, designateSatAnalyst
     // ───────────────────────────── F27
     async saveJtaTask(input) {
       await b.whenReady();

@@ -1,10 +1,14 @@
 // M26 SupabaseBackend RPC mappings (owner: W4 · E2 · F27 SAT analysis workbench, F29 Accreditation readiness). Installed by
 // src/data/ext/supabase.ts. SQL: supabase/migrations/20261009142001_kafaa_w4e2_sat.sql. Pages never import this file.
 import type { SupabaseExtCtx } from '../../../data/ext/types';
-import type { AccrEvidence, DifSurvey, Impact, M26Rpc } from './rpc';
+import type { AccrEvidence, DifSurvey, Impact, M26Rpc, TaskFutureView } from './rpc';
 
 export function makeSupabaseM26(x: SupabaseExtCtx): M26Rpc {
   return {
+    // FS06 (wave A · E5): supabase/migrations/20261010215001_kafaa_fs15_task_future.sql
+    setTaskFuture: (input) => x.call('kafaa_set_task_future', { p: input ?? {} }, ['jta_tasks', 'jta_task_skills', 'sat_changes']),
+    taskFuture: async (roleId = null) => (await x.rpc<TaskFutureView | null>('kafaa_task_future', { p_role: roleId ?? null })) ?? null,
+    designateSatAnalyst: (personId, active) => x.call('kafaa_designate_sat_analyst', { p_person: personId, p_active: active }, ['sat_analysts']),
     saveJtaTask: (input) => x.call('kafaa_save_jta_task', { p: input ?? {} }, ['jta_tasks', 'jta_analyses']),
     rateDif: (taskId, d, i, f, note = '') => x.call('kafaa_rate_dif', { p_task: taskId, p_d: d, p_i: i, p_f: f, p_note: note ?? '' }, ['dif_ratings']),
     decideTraining: (taskId, decision, note = '') => x.call('kafaa_decide_training', { p_task: taskId, p_decision: decision, p_note: note ?? '' }, ['jta_tasks']),

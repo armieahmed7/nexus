@@ -3813,7 +3813,13 @@ create table if not exists kafaa_jta_tasks (
   created_by text,
   created_at timestamptz not null default now(),
   changed_at timestamptz not null default now(),
-  sort integer not null default 0
+  sort integer not null default 0,
+  ai_capability_needed jsonb,
+  exposure text check (exposure in ('augment', 'automate_partly', 'human_core')),
+  change_horizon text check (change_horizon in ('now', '2030', '2035')),
+  tech_driver text check (tech_driver in ('ai_assist', 'digital_ic', 'robotics', 'digital_twin', 'smr_design', 'none')),
+  future_by text,
+  future_on date
 );
 comment on table kafaa_jta_tasks is '[M26] Task inventory of a role: from qualification cards and the job analysis; restricted tasks are placeholders (F27)';
 
@@ -3880,7 +3886,8 @@ create table if not exists kafaa_sat_changes (
   opened_by_name text not null default '',
   opened_by_name_ar text not null default '',
   opened_at timestamptz not null default now(),
-  closed_at timestamptz
+  closed_at timestamptz,
+  area text not null default 'content' check (area in ('content', 'future'))
 );
 comment on table kafaa_sat_changes is '[M26] SAT change: a task changed or was retired; lists the affected courses, standards, JPMs and items (metadata only) (F27)';
 
@@ -3900,6 +3907,64 @@ create table if not exists kafaa_sat_change_items (
   sort integer not null default 0
 );
 comment on table kafaa_sat_change_items is '[M26] Review item of a SAT change: one per affected course and qualification standard (F27)';
+
+-- M26 · Skills (and level) a JTA task needs, today or at its change horizon; never for restricted tasks (FS06)
+create table if not exists kafaa_jta_task_skills (
+  id text primary key,
+  task_id text not null,
+  skill_id text not null,
+  level integer not null,
+  kind text not null default 'current' check (kind in ('current', 'future')),
+  source text not null default 'analyst' check (source in ('qual_map', 'analyst')),
+  active boolean not null default true,
+  linked_by text,
+  linked_at timestamptz not null default now(),
+  sort integer not null default 0
+);
+comment on table kafaa_jta_task_skills is '[M26] Skills (and level) a JTA task needs, today or at its change horizon; never for restricted tasks (FS06)';
+
+-- M26 · AI capability level per OECD dimension and horizon on the five-level scale: SIMULATED planning assumption, not an OECD rating (FS06)
+create table if not exists kafaa_ai_capability_levels (
+  id text primary key,
+  dimension text not null check (dimension in ('language', 'social', 'problem_solving', 'creativity', 'metacognition', 'learning_memory', 'vision', 'manipulation', 'robotic')),
+  horizon text not null check (horizon in ('now', '2030', '2035')),
+  level integer not null,
+  basis_en text not null,
+  basis_ar text not null,
+  simulated boolean not null default true,
+  sources jsonb not null default '[]'::jsonb,
+  sort integer not null default 0
+);
+comment on table kafaa_ai_capability_levels is '[M26] AI capability level per OECD dimension and horizon on the five-level scale: SIMULATED planning assumption, not an OECD rating (FS06)';
+
+-- M26 · Sourced benchmark figures shown beside the task-exposure results (stored rows, never typed into copy) (FS06)
+create table if not exists kafaa_ai_exposure_refs (
+  id text primary key,
+  benchmark_id text not null,
+  label_en text not null,
+  label_ar text not null,
+  value numeric not null,
+  unit text not null default '',
+  note_en text not null default '',
+  note_ar text not null default '',
+  sources jsonb not null default '[]'::jsonb,
+  as_of date not null,
+  sort integer not null default 0
+);
+comment on table kafaa_ai_exposure_refs is '[M26] Sourced benchmark figures shown beside the task-exposure results (stored rows, never typed into copy) (FS06)';
+
+-- M26 · Training staff designated as SAT analysts by the training manager: they may set task future attributes (FS06)
+create table if not exists kafaa_sat_analysts (
+  id text primary key,
+  person_id text not null unique,
+  active boolean not null default true,
+  name text not null default '',
+  name_ar text not null default '',
+  designated_by text,
+  designated_on date not null,
+  history jsonb not null default '[]'::jsonb
+);
+comment on table kafaa_sat_analysts is '[M26] Training staff designated as SAT analysts by the training manager: they may set task future attributes (FS06)';
 
 -- M26 · Accreditation-readiness criterion: generic, paraphrased SAT-based objective sourced to public IAEA SAT guidance (F29)
 create table if not exists kafaa_accr_criteria (
@@ -4368,6 +4433,9 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sa
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sat_changes_role_id_fk') then alter table kafaa_sat_changes add constraint kafaa_sat_changes_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sat_changes_opened_by_fk') then alter table kafaa_sat_changes add constraint kafaa_sat_changes_opened_by_fk foreign key (opened_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sat_change_items_change_id_fk') then alter table kafaa_sat_change_items add constraint kafaa_sat_change_items_change_id_fk foreign key (change_id) references kafaa_sat_changes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_jta_task_skills_task_id_fk') then alter table kafaa_jta_task_skills add constraint kafaa_jta_task_skills_task_id_fk foreign key (task_id) references kafaa_jta_tasks(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_jta_task_skills_skill_id_fk') then alter table kafaa_jta_task_skills add constraint kafaa_jta_task_skills_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sat_analysts_person_id_fk') then alter table kafaa_sat_analysts add constraint kafaa_sat_analysts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_accr_programmes_id_fk') then alter table kafaa_accr_programmes add constraint kafaa_accr_programmes_id_fk foreign key (id) references kafaa_programmes(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_accr_selfevals_programme_id_fk') then alter table kafaa_accr_selfevals add constraint kafaa_accr_selfevals_programme_id_fk foreign key (programme_id) references kafaa_accr_programmes(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_accr_selfevals_opened_by_fk') then alter table kafaa_accr_selfevals add constraint kafaa_accr_selfevals_opened_by_fk foreign key (opened_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -4860,6 +4928,7 @@ create index if not exists kafaa_jta_tasks_task_item_id_idx on kafaa_jta_tasks (
 create index if not exists kafaa_jta_tasks_standard_id_idx on kafaa_jta_tasks (standard_id);
 create index if not exists kafaa_jta_tasks_status_idx on kafaa_jta_tasks (status);
 create index if not exists kafaa_jta_tasks_decision_idx on kafaa_jta_tasks (decision);
+create index if not exists kafaa_jta_tasks_exposure_idx on kafaa_jta_tasks (exposure);
 create index if not exists kafaa_dif_ratings_task_id_idx on kafaa_dif_ratings (task_id);
 create index if not exists kafaa_dif_ratings_rater_person_id_idx on kafaa_dif_ratings (rater_person_id);
 create index if not exists kafaa_sat_objectives_course_id_idx on kafaa_sat_objectives (course_id);
@@ -4877,6 +4946,10 @@ create index if not exists kafaa_sat_changes_status_idx on kafaa_sat_changes (st
 create index if not exists kafaa_sat_changes_opened_by_idx on kafaa_sat_changes (opened_by);
 create index if not exists kafaa_sat_change_items_change_id_idx on kafaa_sat_change_items (change_id);
 create index if not exists kafaa_sat_change_items_status_idx on kafaa_sat_change_items (status);
+create index if not exists kafaa_jta_task_skills_task_id_idx on kafaa_jta_task_skills (task_id);
+create index if not exists kafaa_jta_task_skills_skill_id_idx on kafaa_jta_task_skills (skill_id);
+create index if not exists kafaa_ai_capability_levels_dimension_idx on kafaa_ai_capability_levels (dimension);
+create index if not exists kafaa_ai_exposure_refs_benchmark_id_idx on kafaa_ai_exposure_refs (benchmark_id);
 create index if not exists kafaa_accr_criteria_area_idx on kafaa_accr_criteria (area);
 create index if not exists kafaa_accr_selfevals_programme_id_idx on kafaa_accr_selfevals (programme_id);
 create index if not exists kafaa_accr_selfevals_cycle_idx on kafaa_accr_selfevals (cycle);
@@ -4906,4 +4979,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 219) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 223) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

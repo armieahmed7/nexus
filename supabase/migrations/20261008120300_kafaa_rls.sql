@@ -2032,6 +2032,34 @@ create policy kafaa_read on kafaa_sat_change_items for select to anon, authentic
 grant select on kafaa_sat_change_items to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- jta_task_skills
+alter table kafaa_jta_task_skills enable row level security;
+drop policy if exists kafaa_read on kafaa_jta_task_skills;
+create policy kafaa_read on kafaa_jta_task_skills for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_jta_task_skills to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- ai_capability_levels
+alter table kafaa_ai_capability_levels enable row level security;
+drop policy if exists kafaa_read on kafaa_ai_capability_levels;
+create policy kafaa_read on kafaa_ai_capability_levels for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_ai_capability_levels to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- ai_exposure_refs
+alter table kafaa_ai_exposure_refs enable row level security;
+drop policy if exists kafaa_read on kafaa_ai_exposure_refs;
+create policy kafaa_read on kafaa_ai_exposure_refs for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_ai_exposure_refs to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- sat_analysts
+alter table kafaa_sat_analysts enable row level security;
+drop policy if exists kafaa_read on kafaa_sat_analysts;
+create policy kafaa_read on kafaa_sat_analysts for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_sat_analysts to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- accr_criteria
 alter table kafaa_accr_criteria enable row level security;
 drop policy if exists kafaa_read on kafaa_accr_criteria;

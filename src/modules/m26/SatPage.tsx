@@ -9,6 +9,8 @@ import { useSession } from '../../auth/session';
 import { L, useFormat, usePick, useT } from '../../i18n';
 import { difDecision } from './sat';
 import { AnalysisPill, DecisionPill, HAS_REDESIGN, useSatData, useSatModel, type SatData, type SatModel } from './ui';
+import { BenchTies, ExposurePill, useFutureData } from './fxui'; // FS06
+import { EXPOSURES, futureSummary } from './future';
 
 export default function SatPage() {
   const t = useT();
@@ -95,6 +97,8 @@ function Overview({ d }: { d: SatData }) {
           ))}
         </div>
       </Section>
+
+      <FutureSummary m={m} />
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <RuleCard />
@@ -186,6 +190,48 @@ function RedesignFlags({ m }: { m: SatModel }) {
   return (
     <Section title={t('m26.redesign.title')} description={t('m26.redesign.body')}>
       <DataTable rows={flags} columns={cols} rowKey={(x) => x.id} searchable={false} />
+    </Section>
+  );
+}
+
+/** FS06: the task layer at a glance (exposure mix per role) with a link into the explorer. */
+function FutureSummary({ m }: { m: SatModel }) {
+  const t = useT();
+  const f = useFormat();
+  const q = useFutureData();
+  const v = q.data?.view;
+  if (!v) return null;
+  const rows = v.tasks.map((x) => ({ id: x.id, role_id: x.role_id, exposure: x.exposure, change_horizon: x.change_horizon, tech_driver: x.tech_driver, restricted: false, status: 'active' }));
+  const s = futureSummary(rows);
+  const roles = [...new Set(v.tasks.map((x) => x.role_id))];
+  return (
+    <Section title={t('m26.fx.satTitle')} description={t('m26.fx.satBody')}
+      actions={<L to="/training/sat/future" className="btn-outline btn-sm no-underline" data-testid="m26-fx-open">{t('m26.fx.openLayer')}</L>}>
+      <div className="mb-3"><BenchTies ids={['OECD-AICI', 'SSG-SF', 'ONET']} /></div>
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3" data-testid="m26-fx-sat">
+        <Card>
+          <div className="caps">{t('m26.fx.tileAugmentable')}</div>
+          <div className="num mt-1 text-[28px] font-semibold">{f.pct(s.augmentablePct, 0)}</div>
+          <div className="mt-2 flex flex-wrap gap-1.5">{EXPOSURES.map((e) => <span key={e} className="inline-flex items-center gap-1"><ExposurePill exposure={e} /><span className="num text-[12px]">{f.num(s.byExposure[e])}</span></span>)}</div>
+          <p className="mt-2 text-[12px] text-ink-3">{t('m26.fx.tileRatedLine', { a: f.num(s.rated), b: f.num(s.total) })}</p>
+        </Card>
+        <Card className="lg:col-span-2">
+          <ul className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2">
+            {roles.map((r) => {
+              const xs = rows.filter((x) => x.role_id === r && x.exposure);
+              const seg = (e: string) => (xs.length ? (100 * xs.filter((x) => x.exposure === e).length) / xs.length : 0);
+              return (
+                <li key={r} className="text-[12.5px]">
+                  <div className="flex justify-between gap-2"><L to={`/training/sat/future?role=${r}`} className="link min-w-0 truncate">{m.roleName(r)}</L><span className="num text-ink-3">{f.num(xs.length)}</span></div>
+                  <div className="mt-1 flex h-2 overflow-hidden rounded bg-sunken" role="img" aria-label={EXPOSURES.map((e) => `${t(`m26.fx.exposure.${e}`)} ${f.num(xs.filter((x) => x.exposure === e).length)}`).join(', ')}>
+                    <span className="bg-accent" style={{ width: `${seg('augment')}%` }} /><span className="bg-sim" style={{ width: `${seg('automate_partly')}%` }} /><span className="bg-ok" style={{ width: `${seg('human_core')}%` }} />
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </Card>
+      </div>
     </Section>
   );
 }

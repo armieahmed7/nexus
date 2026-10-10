@@ -3197,6 +3197,12 @@ export interface JtaTasksRow {
   created_at: string;
   changed_at: string;
   sort: number;
+  ai_capability_needed?: any | null;
+  exposure?: 'augment' | 'automate_partly' | 'human_core' | null;
+  change_horizon?: 'now' | '2030' | '2035' | null;
+  tech_driver?: 'ai_assist' | 'digital_ic' | 'robotics' | 'digital_twin' | 'smr_design' | 'none' | null;
+  future_by?: string | null;
+  future_on?: string | null;
 }
 export interface DifRatingsRow {
   id: string;
@@ -3252,6 +3258,7 @@ export interface SatChangesRow {
   opened_by_name_ar: string;
   opened_at: string;
   closed_at?: string | null;
+  area: 'content' | 'future';
 }
 export interface SatChangeItemsRow {
   id: string;
@@ -3266,6 +3273,52 @@ export interface SatChangeItemsRow {
   closed_by?: string | null;
   closed_at?: string | null;
   sort: number;
+}
+export interface JtaTaskSkillsRow {
+  id: string;
+  task_id: string;
+  skill_id: string;
+  level: number;
+  kind: 'current' | 'future';
+  source: 'qual_map' | 'analyst';
+  active: boolean;
+  linked_by?: string | null;
+  linked_at: string;
+  sort: number;
+}
+export interface AiCapabilityLevelsRow {
+  id: string;
+  dimension: 'language' | 'social' | 'problem_solving' | 'creativity' | 'metacognition' | 'learning_memory' | 'vision' | 'manipulation' | 'robotic';
+  horizon: 'now' | '2030' | '2035';
+  level: number;
+  basis_en: string;
+  basis_ar: string;
+  simulated: boolean;
+  sources: any;
+  sort: number;
+}
+export interface AiExposureRefsRow {
+  id: string;
+  benchmark_id: string;
+  label_en: string;
+  label_ar: string;
+  value: number;
+  unit: string;
+  note_en: string;
+  note_ar: string;
+  sources: any;
+  as_of: string;
+  sort: number;
+}
+export interface SatAnalystsRow {
+  id: string;
+  person_id: string;
+  active: boolean;
+  name: string;
+  name_ar: string;
+  designated_by?: string | null;
+  designated_on: string;
+  history: any;
 }
 export interface AccrCriteriaRow {
   id: string;
@@ -3558,6 +3611,10 @@ export interface Tables {
   task_objectives: TaskObjectivesRow;
   sat_changes: SatChangesRow;
   sat_change_items: SatChangeItemsRow;
+  jta_task_skills: JtaTaskSkillsRow;
+  ai_capability_levels: AiCapabilityLevelsRow;
+  ai_exposure_refs: AiExposureRefsRow;
+  sat_analysts: SatAnalystsRow;
   accr_criteria: AccrCriteriaRow;
   accr_programmes: AccrProgrammesRow;
   accr_selfevals: AccrSelfevalsRow;
