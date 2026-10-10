@@ -530,6 +530,7 @@ Need a foundation change (shared UI component, new rule in `rules.ts`, a field i
   - **FS07 links:** skills on FS09 ladder chips, FS11 bridge/gaps, FS12 complements and FS14 lane drawers (never security skills) link to `/skills/:id`; an AI-track skill page links to the FS09 ladder.
   - **FS14 -> F26:** the four 2027-Q1 "future" demand snapshots and session proposal `sp-2027-q1-c-mnt-ic-1` take the FS14 lane interest (guarded UPDATEs).
   - **Live:** applied as `kafaa_fs2qa_integration_part1_so_base_dg_gather`, `_part1b_so_base`, `_part2_agenda_snapshot`, `_part3_f26_rows`; the four function bodies are md5-equal to PGlite; wave-B tables equal by count and row digest.
+  - **QA fixes:** FS11 unit fixtures for k-ro moved to the 2035 horizon (FS10 fitness evidence now meets the 2030 profile: "Ready now"); `StatTile` values wrap (`break-words`) and the AI-fluency word tiles use 18 px; FS05 "from" chips on `/careers` wrap at 390 px.
 
 ## 11. Acceptance checklists per module
 

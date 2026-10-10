@@ -143,7 +143,7 @@ function CareerMap({ data }: { data: CareerData }) {
                   {data.futurePaths
                     .filter((e) => e.to_role_id === r.id)
                     .map((e) => (
-                      <span key={e.id} className="chip border-line bg-sunken">
+                      <span key={e.id} className="chip max-w-full shrink whitespace-normal border-line bg-sunken">
                         {pick(data.roleById.get(e.from_role_id!), 'title')}
                       </span>
                     ))}

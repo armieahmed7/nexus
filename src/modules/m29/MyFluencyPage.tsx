@@ -66,8 +66,8 @@ function Mine({ d, v, attempts, evidence }: { d: M29Ref; v: AiFluencyView; attem
           <p className="mt-2 text-[12.5px] text-ink-3">{t('m29.my.hero.rule')}</p>
         </Card>
         <div className="grid grid-cols-2 gap-2" data-testid="m29-my-tiles">
-          <StatTile label={t('m29.my.tile.next')} value={next ? `${f.num(nextMet)} / ${f.num(DIMENSIONS.length)}` : t('m29.my.tile.top')} sub={next ? t('m29.my.tile.nextSub', { rung: name(next.rung) }) : undefined} tone={next ? 'info' : 'ok'} />
-          <StatTile label={t('m29.my.tile.target')} value={v.target ? name(v.target.rung) : '—'} sub={v.target ? (v.target_met ? t('m29.my.tile.targetMet') : t('m29.my.tile.targetGap', { n: f.num(v.target_missing.length) })) : undefined} tone={v.target_met ? 'ok' : 'sim'} />
+          <StatTile label={t('m29.my.tile.next')} value={next ? `${f.num(nextMet)} / ${f.num(DIMENSIONS.length)}` : <span className="text-[18px]">{t('m29.my.tile.top')}</span>} sub={next ? t('m29.my.tile.nextSub', { rung: name(next.rung) }) : undefined} tone={next ? 'info' : 'ok'} />
+          <StatTile label={t('m29.my.tile.target')} value={v.target ? <span className="text-[18px]">{name(v.target.rung)}</span> : '—'} sub={v.target ? (v.target_met ? t('m29.my.tile.targetMet') : t('m29.my.tile.targetGap', { n: f.num(v.target_missing.length) })) : undefined} tone={v.target_met ? 'ok' : 'sim'} />
           <StatTile label={t('m29.my.tile.check')} value={latest ? f.num(latest.score) : '—'} sub={latest ? t('m29.my.tile.checkSub', { band: t(`m29.band.${latest.band}`), date: f.date(String(latest.completed_at).slice(0, 10)) }) : t('m29.my.tile.checkNone')} tone={latest && isAboveBasic(latest.band) ? 'ok' : 'info'} />
           <StatTile label={t('m29.my.tile.cells')} value={`${f.num(r.cells.filter((c) => c.met).length)} / ${f.num(r.cells.length)}`} sub={t('m29.my.tile.cellsSub')} />
         </div>
