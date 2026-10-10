@@ -4243,6 +4243,77 @@ create table if not exists kafaa_fitness_attempts (
 );
 comment on table kafaa_fitness_attempts is '[M29] One person''s fitness-check attempt in a quarter: answers in order, area levels, score, band and the capped evidence it wrote (FS10)';
 
+-- M30 · Role transformation map per current role: archetype, technology drivers, staff and public summaries (FS11)
+create table if not exists kafaa_role_transformations (
+  id text primary key,
+  role_id text not null unique,
+  family_id text not null,
+  archetype text check (archetype in ('mastery_builder', 'analytical_specialist', 'human_connector')),
+  drivers text[] not null default '{}'::text[],
+  summary_en text not null,
+  summary_ar text not null,
+  public_summary_en text not null,
+  public_summary_ar text not null,
+  sources jsonb not null default '[]'::jsonb,
+  as_of date not null,
+  status text not null default 'draft' check (status in ('draft', 'published')),
+  is_public boolean not null default false,
+  path_only boolean not null default false,
+  version integer not null default 0,
+  history jsonb not null default '[]'::jsonb,
+  updated_by text,
+  updated_at timestamptz not null default now(),
+  published_by text,
+  published_at timestamptz,
+  sort integer not null default 0
+);
+comment on table kafaa_role_transformations is '[M30] Role transformation map per current role: archetype, technology drivers, staff and public summaries (FS11)';
+
+-- M30 · Open draft of a role transformation map (editors read it through rpc.roleTransformation) (FS11)
+create table if not exists kafaa_transformation_drafts (
+  id text primary key,
+  role_id text not null unique,
+  content jsonb not null default '{}'::jsonb,
+  open boolean not null default true,
+  saved_by text,
+  saved_at timestamptz not null default now()
+);
+comment on table kafaa_transformation_drafts is '[M30] Open draft of a role transformation map (editors read it through rpc.roleTransformation) (FS11)';
+
+-- M30 · Role transformation timeline: OSSA support to around 2030, ADVANCE planning gates (SIMULATED), 2035 horizon (FS11)
+create table if not exists kafaa_transformation_milestones (
+  id text primary key,
+  year integer not null,
+  kind text not null check (kind in ('ossa', 'advance', 'profiles', 'horizon')),
+  title_en text not null,
+  title_ar text not null,
+  body_en text not null,
+  body_ar text not null,
+  simulated boolean not null default false,
+  families text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb,
+  as_of date not null,
+  sort integer not null default 0
+);
+comment on table kafaa_transformation_milestones is '[M30] Role transformation timeline: OSSA support to around 2030, ADVANCE planning gates (SIMULATED), 2035 horizon (FS11)';
+
+-- M30 · Role archetypes (SkillsFuture Singapore 2025): what each means for learning (FS11)
+create table if not exists kafaa_transformation_archetypes (
+  id text primary key,
+  name_en text not null,
+  name_ar text not null,
+  meaning_en text not null,
+  meaning_ar text not null,
+  learning_en text not null,
+  learning_ar text not null,
+  example_en text not null,
+  example_ar text not null,
+  sources jsonb not null default '[]'::jsonb,
+  as_of date not null,
+  sort integer not null default 0
+);
+comment on table kafaa_transformation_archetypes is '[M30] Role archetypes (SkillsFuture Singapore 2025): what each means for learning (FS11)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -4640,6 +4711,9 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ai
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ai_role_targets_family_id_fk') then alter table kafaa_ai_role_targets add constraint kafaa_ai_role_targets_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_fitness_items_area_id_fk') then alter table kafaa_fitness_items add constraint kafaa_fitness_items_area_id_fk foreign key (area_id) references kafaa_fitness_areas(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_fitness_attempts_person_id_fk') then alter table kafaa_fitness_attempts add constraint kafaa_fitness_attempts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_transformations_role_id_fk') then alter table kafaa_role_transformations add constraint kafaa_role_transformations_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_transformations_family_id_fk') then alter table kafaa_role_transformations add constraint kafaa_role_transformations_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_transformation_drafts_role_id_fk') then alter table kafaa_transformation_drafts add constraint kafaa_transformation_drafts_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -5176,6 +5250,8 @@ create index if not exists kafaa_fitness_items_status_idx on kafaa_fitness_items
 create index if not exists kafaa_fitness_attempts_person_id_idx on kafaa_fitness_attempts (person_id);
 create index if not exists kafaa_fitness_attempts_period_idx on kafaa_fitness_attempts (period);
 create index if not exists kafaa_fitness_attempts_status_idx on kafaa_fitness_attempts (status);
+create index if not exists kafaa_role_transformations_family_id_idx on kafaa_role_transformations (family_id);
+create index if not exists kafaa_role_transformations_status_idx on kafaa_role_transformations (status);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -5190,4 +5266,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 233) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 237) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
