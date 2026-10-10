@@ -4055,6 +4055,125 @@ create table if not exists kafaa_xapi_statements (
 );
 comment on table kafaa_xapi_statements is '[M27] xAPI statement (learning record store; append-only; actor by Kafa''a account, no email) (F30)';
 
+-- M29 · AI fluency ladder cell: one rung (Aware, Practitioner, Builder, Assurer) x one UNESCO dimension, with plant examples and the literacy skills that evidence it (FS09)
+create table if not exists kafaa_ai_rungs (
+  id text primary key,
+  rung integer not null,
+  rung_key text not null check (rung_key in ('aware', 'practitioner', 'builder', 'assurer')),
+  dimension text not null check (dimension in ('mindset', 'ethics', 'techniques', 'design')),
+  name_en text not null,
+  name_ar text not null,
+  essence_en text not null,
+  essence_ar text not null,
+  descriptor_en text not null,
+  descriptor_ar text not null,
+  example_en text not null,
+  example_ar text not null,
+  skill_ids text[] not null default '{}'::text[],
+  min_level integer not null,
+  learning jsonb not null default '[]'::jsonb,
+  sources jsonb not null default '[]'::jsonb,
+  sort integer not null default 0
+);
+comment on table kafaa_ai_rungs is '[M29] AI fluency ladder cell: one rung (Aware, Practitioner, Builder, Assurer) x one UNESCO dimension, with plant examples and the literacy skills that evidence it (FS09)';
+
+-- M29 · Whether an AI or digital skill counts as AI literacy (everyone, raises the rung) or AI engineering (specialists, shown apart) (FS09)
+create table if not exists kafaa_ai_skill_tracks (
+  id text primary key,
+  skill_id text not null unique,
+  track text not null check (track in ('literacy', 'engineering')),
+  rationale_en text not null,
+  rationale_ar text not null,
+  sort integer not null default 0
+);
+comment on table kafaa_ai_skill_tracks is '[M29] Whether an AI or digital skill counts as AI literacy (everyone, raises the rung) or AI engineering (specialists, shown apart) (FS09)';
+
+-- M29 · AI fluency target per job family: a rung plus optional cells from a higher rung, and the fitness-check score the family aims for (FS09/FS10)
+create table if not exists kafaa_ai_role_targets (
+  id text primary key,
+  family_id text not null unique,
+  rung integer not null,
+  plus_cells text[] not null default '{}'::text[],
+  fitness_target integer not null,
+  rationale_en text not null,
+  rationale_ar text not null,
+  sort integer not null default 0
+);
+comment on table kafaa_ai_role_targets is '[M29] AI fluency target per job family: a rung plus optional cells from a higher rung, and the fitness-check score the family aims for (FS09/FS10)';
+
+-- M29 · Dated organisation AI-fluency target set by leadership: a demo parameter shown beside the measured value, never a claim (FS09)
+create table if not exists kafaa_ai_org_targets (
+  id text primary key,
+  metric text not null check (metric in ('practitioner_or_above', 'above_basic')),
+  pct numeric not null,
+  due_on date not null,
+  basis_en text not null,
+  basis_ar text not null,
+  set_by_en text not null,
+  set_by_ar text not null,
+  benchmark_ids text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb,
+  as_of date not null
+);
+comment on table kafaa_ai_org_targets is '[M29] Dated organisation AI-fluency target set by leadership: a demo parameter shown beside the measured value, never a claim (FS09)';
+
+-- M29 · Fitness-check area: the five DigComp areas and the four AI dimensions, with weight and the skills its evidence goes to (FS10)
+create table if not exists kafaa_fitness_areas (
+  id text primary key,
+  framework text not null check (framework in ('digcomp', 'ai')),
+  code text not null,
+  name_en text not null,
+  name_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  weight numeric not null default 1,
+  skill_ids text[] not null default '{}'::text[],
+  dimension text check (dimension in ('mindset', 'ethics', 'techniques', 'design')),
+  sources jsonb not null default '[]'::jsonb,
+  sort integer not null default 0
+);
+comment on table kafaa_fitness_areas is '[M29] Fitness-check area: the five DigComp areas and the four AI dimensions, with weight and the skills its evidence goes to (FS10)';
+
+-- M29 · Fitness-check item bank (EN/AR, difficulty 1-3, answer key): read by training staff only, served to takers without the key by the RPCs (FS10)
+create table if not exists kafaa_fitness_items (
+  id text primary key,
+  area_id text not null,
+  difficulty integer not null,
+  stem_en text not null,
+  stem_ar text not null,
+  options_en text[] not null default '{}'::text[],
+  options_ar text[] not null default '{}'::text[],
+  correct integer not null,
+  explain_en text not null default '',
+  explain_ar text not null default '',
+  status text not null default 'active' check (status in ('active', 'retired')),
+  version integer not null default 1,
+  sort integer not null default 0,
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_fitness_items is '[M29] Fitness-check item bank (EN/AR, difficulty 1-3, answer key): read by training staff only, served to takers without the key by the RPCs (FS10)';
+
+-- M29 · One person's fitness-check attempt in a quarter: answers in order, area levels, score, band and the capped evidence it wrote (FS10)
+create table if not exists kafaa_fitness_attempts (
+  id text primary key,
+  person_id text not null,
+  period text not null,
+  attempt_no integer not null,
+  status text not null default 'in_progress' check (status in ('in_progress', 'completed')),
+  started_at timestamptz not null default now(),
+  completed_at timestamptz,
+  responses jsonb not null default '[]'::jsonb,
+  current_item_id text,
+  item_count integer not null default 0,
+  area_levels jsonb not null default '{}'::jsonb,
+  score integer,
+  band text check (band in ('limited', 'basic', 'above_basic', 'advanced')),
+  reasons jsonb not null default '[]'::jsonb,
+  evidence jsonb not null default '[]'::jsonb
+);
+comment on table kafaa_fitness_attempts is '[M29] One person''s fitness-check attempt in a quarter: answers in order, area levels, score, band and the capped evidence it wrote (FS10)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -4444,6 +4563,10 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ac
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_accr_assessments_criterion_id_fk') then alter table kafaa_accr_assessments add constraint kafaa_accr_assessments_criterion_id_fk foreign key (criterion_id) references kafaa_accr_criteria(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_accr_assessments_rated_by_fk') then alter table kafaa_accr_assessments add constraint kafaa_accr_assessments_rated_by_fk foreign key (rated_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_xapi_statements_actor_person_id_fk') then alter table kafaa_xapi_statements add constraint kafaa_xapi_statements_actor_person_id_fk foreign key (actor_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ai_skill_tracks_skill_id_fk') then alter table kafaa_ai_skill_tracks add constraint kafaa_ai_skill_tracks_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ai_role_targets_family_id_fk') then alter table kafaa_ai_role_targets add constraint kafaa_ai_role_targets_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_fitness_items_area_id_fk') then alter table kafaa_fitness_items add constraint kafaa_fitness_items_area_id_fk foreign key (area_id) references kafaa_fitness_areas(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_fitness_attempts_person_id_fk') then alter table kafaa_fitness_attempts add constraint kafaa_fitness_attempts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -4965,6 +5088,13 @@ create index if not exists kafaa_xapi_statements_object_type_idx on kafaa_xapi_s
 create index if not exists kafaa_xapi_statements_object_id_idx on kafaa_xapi_statements (object_id);
 create index if not exists kafaa_xapi_statements_occurred_at_idx on kafaa_xapi_statements (occurred_at);
 create index if not exists kafaa_xapi_statements_source_idx on kafaa_xapi_statements (source);
+create index if not exists kafaa_ai_rungs_dimension_idx on kafaa_ai_rungs (dimension);
+create index if not exists kafaa_ai_skill_tracks_track_idx on kafaa_ai_skill_tracks (track);
+create index if not exists kafaa_fitness_items_area_id_idx on kafaa_fitness_items (area_id);
+create index if not exists kafaa_fitness_items_status_idx on kafaa_fitness_items (status);
+create index if not exists kafaa_fitness_attempts_person_id_idx on kafaa_fitness_attempts (person_id);
+create index if not exists kafaa_fitness_attempts_period_idx on kafaa_fitness_attempts (period);
+create index if not exists kafaa_fitness_attempts_status_idx on kafaa_fitness_attempts (status);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -4979,4 +5109,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 223) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 230) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
