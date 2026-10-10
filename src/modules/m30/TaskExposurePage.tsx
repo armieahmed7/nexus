@@ -98,7 +98,7 @@ function Bands({ map, d }: { map: RoleMap; d: RefData }) {
             {map.complements.map((c) => (
               <li key={c.skill_id} className="flex items-start gap-2 rounded-card border border-ok-line bg-ok-bg/40 p-2.5 text-[13px]">
                 <div className="min-w-0 flex-1">
-                  <div className="font-semibold">{label('skill', c.skill_id)}</div>
+                  <div className="font-semibold"><L to={`/skills/${c.skill_id}`} data-testid="m30-comp-link">{label('skill', c.skill_id)}</L></div>
                   <div className="text-[12px] text-ink-2">{c.source === 'tasks' ? t('m30.tx.compTasks', { n: f.num(c.tasks), level: f.num(c.level) }) : t('m30.tx.compProfile', { level: f.num(c.level) })}</div>
                 </div>
                 <WhyThis reasons={c.reasons} testId="m30-comp-why" />

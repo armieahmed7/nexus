@@ -359,5 +359,9 @@
     "gigs": "Open gigs",
     "roles": "Roles",
     "sources": "Sources ({n})"
+  },
+  "wb": {
+    "profileReadiness": "Profile readiness {pct}",
+    "planRoadmap": "Plan a roadmap"
   }
 }

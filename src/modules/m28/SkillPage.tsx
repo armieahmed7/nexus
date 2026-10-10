@@ -85,6 +85,7 @@ function SkillView({ s, c }: { s: SkillsRow; c: Catalogue }) {
       )}
       {s.fs_area === 'advanced_reactor' && <Callout tone="sim">{t('m28.skill.noDeployment')}</Callout>}
       <Mine s={s} />
+      <AiTrack skillId={s.id} />
       <Tabs
         value={tab}
         onChange={(v) => { const n = new URLSearchParams(sp); n.set('tab', v); setSp(n, { replace: true }); }}
@@ -281,3 +282,24 @@ function Mine({ s }: { s: SkillsRow }) {
   );
 }
 
+
+/** FS wave-B integration: FS09 tie. A skill on the AI fluency ladder links to the ladder (literacy: everyone; engineering:
+ * specialists, never part of the literacy rung). Reads the public ai_skill_tracks rows. */
+function AiTrack({ skillId }: { skillId: string }) {
+  const t = useT();
+  const pick = usePick();
+  const repo = useRepo();
+  const s = useSession();
+  const q = useQuery(['ai_skill_tracks'], () => repo.list('ai_skill_tracks', { filter: { skill_id: skillId } }).catch(() => []), [skillId]);
+  const row = q.data?.[0];
+  if (!row) return null;
+  return (
+    <div data-testid="m28-ai-track" data-track={row.track}>
+      <Callout tone="info" title={t(`m28.wb.aiTitle.${row.track === 'engineering' ? 'engineering' : 'literacy'}`)}>
+        {pick(row, 'rationale')}{' '}
+        <L to="/learn/ai-fluency" data-testid="m28-to-ai-ladder">{t('m28.wb.aiLadder')}</L>
+        {s.identity.personId && <>{' · '}<L to="/my/ai-fluency" data-testid="m28-to-my-ai">{t('m28.wb.aiMine')}</L></>}
+      </Callout>
+    </div>
+  );
+}

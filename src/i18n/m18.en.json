@@ -782,5 +782,9 @@
       "archived": "Archived label: kept as it was published that year",
       "simulated": "Inputs are SIMULATED planning numbers, not forecasts"
     }
+  },
+  "wb": {
+    "outlook": "Role outlook",
+    "criteria": "How labels are set"
   }
 }

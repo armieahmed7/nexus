@@ -57,6 +57,7 @@ export function agendaTablesFrom(b: LocalBackend, personId: string): AgendaTable
     feedback: mine(b.raw('coach_feedback')) as never,
     training: mine(b.raw('training_records')) as never,
     conversations: mine(b.raw('career_conversations')) as never,
+    versions: b.raw('role_profile_versions') as never, // FS wave B: concept targets (FS15)
   };
 }
 

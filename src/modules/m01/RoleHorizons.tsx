@@ -1,6 +1,6 @@
 // FS05 (wave A · E4) role page additions: the "Now, 2030, 2035" tab of a current role and the page of a concept future role
 // (profile, inbound "future" edges, no vacancy and no deployment decision). Public: shows published versions only (RLS).
-import { Page, Section, Card, Grid, Async, Icon, StatusPill } from '../../ui';
+import { Page, Section, Card, Grid, Async, Icon, StatusPill, Callout } from '../../ui';
 import { useQuery, useRepo } from '../../data';
 import { useT, usePick, L } from '../../i18n';
 import { useCrumbLabel } from '../../shell/crumbs';
@@ -14,6 +14,11 @@ export function RoleHorizonsTab({ role, data }: { role: Role; data: CareerData }
   const leadsTo = data.futurePaths.filter((e) => e.from_role_id === role.id);
   return (
     <div className="space-y-6">
+      {/* FS wave B: FS11 role transformation map (public summary) */}
+      <Callout tone="info" title={t('m01.wb.tfTitle')}>
+        {t('m01.wb.tfBody')}{' '}
+        <L to={`/careers/roles/${role.id}/transformation`} data-testid="m01-to-transformation">{t('m01.wb.tfLink')}</L>
+      </Callout>
       <Async state={q}>{(d) => <HorizonPanel roleId={role.id} pathOnly={!!role.security_sensitive} concept={false} data={d} />}</Async>
       {leadsTo.length > 0 && (
         <Section title={t('m01.fs05.leadsTo.title')} description={t('m01.fs05.leadsTo.desc')}>
@@ -52,6 +57,9 @@ export function ConceptRoleView({ role, data }: { role: Role; data: CareerData }
           <L to={`/ask?q=${dalilQ}`} className="btn-outline" data-testid="m01-ask-dalil">
             <Icon name="chat" size={14} className="me-1.5 inline" />
             {t('m01.role.askDalil')}
+          </L>
+          <L to={`/my/career/roadmap?role=${role.id}`} className="btn-outline" data-testid="m01-concept-roadmap">
+            {t('m01.wb.conceptRoadmap')}
           </L>
           <L to={`/careers/plan?to=${role.id}`} className="btn-primary" data-testid="m01-plan-to-role">
             {t('m01.role.planTo')}

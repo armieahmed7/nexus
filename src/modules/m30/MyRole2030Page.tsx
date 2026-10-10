@@ -8,6 +8,7 @@ import { Page, Section, Card, Async, EmptyState, Callout, StatTile, ProgressRing
 import { useEngine } from '../../data';
 import { useFormat, usePick, useT, L } from '../../i18n';
 import { MOVES, type RoleMap } from './transform';
+import { RoleOutlookLine } from '../m18/futureUi'; // FS wave B: FS16 label of the role
 import type { RoleTransformationView } from './backend/rpc';
 import {
   ArchetypeCard, BenchTies, DriverChip, FS11, HorizonChip, HorizonToggle, MilestoneTimeline, MovePill, NoDeployNote, RolePicker, roleLink, useRefData, useRefLabel, useRoleMap, useRoleParams, type RefData,
@@ -78,6 +79,7 @@ function MapView({ v, map, d }: { v: RoleTransformationView; map: RoleMap; d: Re
             </div>
             <h2 className="text-[20px] font-semibold leading-tight">{pick(d.roleById.get(map.role_id), 'title')}</h2>
             {row && <p className="text-[14px] text-ink-2" data-testid="m30-summary">{pick(row, 'summary')}</p>}
+            <RoleOutlookLine roleId={map.role_id} />
             <div className="flex flex-wrap gap-1.5" data-testid="m30-drivers">
               {map.drivers.map((x) => <DriverChip key={x.driver} driver={x.driver}><span className="num ms-1 opacity-75">{t('m30.driverCounts', { tasks: f.num(x.tasks), skills: f.num(x.reqs) })}</span></DriverChip>)}
             </div>
@@ -176,7 +178,7 @@ function MapView({ v, map, d }: { v: RoleTransformationView; map: RoleMap; d: Re
                   <li key={s.step} className="flex items-start gap-3 rounded-card border border-line p-2.5 text-[13px]">
                     <span className="num grid h-6 w-6 shrink-0 place-items-center rounded-full bg-accent-soft text-[12px] font-semibold text-eyebrow">{f.num(s.step)}</span>
                     <div className="min-w-0 flex-1 space-y-1">
-                      <div className="font-semibold">{label(s.kind, s.ref_id)} <HorizonChip horizon={s.horizon} /></div>
+                      <div className="font-semibold">{s.kind === 'skill' ? <L to={`/skills/${s.ref_id}`} data-testid="m30-skill-link">{label(s.kind, s.ref_id)}</L> : label(s.kind, s.ref_id)} <HorizonChip horizon={s.horizon} /></div>
                       <div className="text-ink-2">
                         {c ? <span><Icon name="book" size={13} className="me-1 inline" /><L to={`/learn/course/${c.id}`}>{pick(c, 'title')}</L></span> : <span>{t('m30.bridge.practice')}</span>}
                         <span className="num ms-2 text-ink-3">{t('m30.bridge.hours', { n: f.num(s.hours) })}</span>
@@ -197,7 +199,7 @@ function MapView({ v, map, d }: { v: RoleTransformationView; map: RoleMap; d: Re
               {me.gaps.map((g) => (
                 <li key={`${g.kind}-${g.ref_id}`} className="space-y-1 text-[13px]">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="min-w-0 flex-1 font-semibold">{label(g.kind, g.ref_id)}</span>
+                    <span className="min-w-0 flex-1 font-semibold">{g.kind === 'skill' ? <L to={`/skills/${g.ref_id}`}>{label(g.kind, g.ref_id)}</L> : label(g.kind, g.ref_id)}</span>
                     <span className="num text-ink-2">{t('m30.gaps.level', { have: f.num(g.have), need: f.num(g.need) })}</span>
                     <WhyThis reasons={g.reasons} testId="m30-gap-why" />
                   </div>

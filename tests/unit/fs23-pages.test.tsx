@@ -18,7 +18,7 @@ const chips = async (ids: string[]) => waitFor(() => expect(Array.from(screen.ge
 
 describe('FS11 / FS12 pages', () => {
   it('My role in 2030 (k-ro): drivers, the three task moves with reasons, skills added, bridge, my time-to-ready with gaps, timeline, FS11 chips', async () => {
-    await renderPage(<MyRole2030Page />, { persona: 'k-ro', path: '/my/role-2030' });
+    await renderPage(<MyRole2030Page />, { persona: 'k-ro', path: '/my/role-2030?h=2035' }); // [FS QA wave B] 2030 reads ready now after k-ro's fitness checks
     expect(await screen.findByTestId('m30-hero', {}, T)).toBeTruthy();
     await chips(['SG-JTM', 'SSG-SF', 'CORP']);
     expect(screen.getByTestId('m30-drivers').querySelectorAll('[data-testid="m30-driver"]').length).toBeGreaterThan(0);
@@ -61,7 +61,7 @@ describe('FS11 / FS12 pages', () => {
     await renderPage(<CareersTransformationPage />, { path: '/careers/roles/reactor-operator/transformation', route: '/careers/roles/:slug/transformation' });
     const s = await screen.findByTestId('m30-pub-summary', {}, T);
     expect(s.textContent).not.toMatch(/[0-9]/);
-    expect(Array.from(screen.getByTestId('m30-pub-skills').querySelectorAll('li')).every((li) => !/[0-9]/.test(li.textContent ?? ''))).toBe(true);
+    expect(Array.from((await screen.findByTestId('m30-pub-skills', {}, T)).querySelectorAll('li')).every((li) => !/[0-9]/.test(li.textContent ?? ''))).toBe(true);
     expect(screen.getByTestId('m30-public').textContent).not.toMatch(/%|\bmonths\b|[0-9]+ (people|staff|employees|positions)/i);
   }, 60000);
   it('the public page of a security role is path-level only (Arabic)', async () => {

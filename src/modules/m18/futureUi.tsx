@@ -7,7 +7,7 @@
 import { useMemo } from 'react';
 import { useQuery, useRepo } from '../../data';
 import { Callout, Icon, ProgressRing, StatusPill, WhyThis, type PillTone } from '../../ui';
-import { useFormat, usePick, useT } from '../../i18n';
+import { L, useFormat, usePick, useT } from '../../i18n';
 import { useSession } from '../../auth/session';
 import type { ConceptBand, ConceptReadiness, TransitionEvidence } from './futureRoles';
 import { criteriaFor, labelReasons, thresholdsOf, type Components, type CriteriaRow, type OutlookLabel } from './outlookLabels';
@@ -137,6 +137,22 @@ export function RoleOutlookBadge({ roleId, withWhy = true }: { roleId: string; w
   const row = d.labels.filter((l) => l.role_id === roleId).sort((a, b) => b.year - a.year)[0];
   if (!row) return null;
   return <OutlookChip row={row} components={d.components.get(row.id) ?? null} criteria={d.criteria} withWhy={withWhy} />;
+}
+
+/** FS wave-B integration: the role's current FS16 label with a link to the published criteria (career pages, My Role 2030).
+ * Renders nothing for roles without a label (concept, security, safeguards and cyber roles). */
+export function RoleOutlookLine({ roleId }: { roleId: string }) {
+  const t = useT();
+  const cur = useCurrentLabels();
+  const row = cur?.byRole.get(roleId);
+  if (!cur || !row) return null;
+  return (
+    <div className="flex flex-wrap items-center gap-2 text-[12.5px]" data-testid="m18-fs16-line">
+      <span className="caps">{t('m18.wb.outlook')}</span>
+      <OutlookChip row={row} components={cur.d.components.get(row.id) ?? null} criteria={cur.d.criteria} />
+      <L to="/careers/outlook-criteria" data-testid="m18-fs16-criteria-link">{t('m18.wb.criteria')}</L>
+    </div>
+  );
 }
 
 /** Label for each role in the latest year (map role -> row). */

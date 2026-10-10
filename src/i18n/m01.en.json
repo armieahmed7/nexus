@@ -461,5 +461,11 @@
       "source_required": "Publishing needs at least one https source with a label.",
       "too_few": "A published profile needs requirements (a concept role at least 4)."
     }
+  },
+  "wb": {
+    "tfTitle": "How this role changes by 2030",
+    "tfBody": "The role transformation map shows the technology drivers, the tasks that grow, shrink or are augmented, and the skills added (public summary).",
+    "tfLink": "Open the transformation map",
+    "conceptRoadmap": "Plan a roadmap to this concept role"
   }
 }

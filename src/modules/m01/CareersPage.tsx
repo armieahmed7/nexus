@@ -5,6 +5,7 @@ import { Page, Section, Card, Async, EmptyState, FilterBar, useFilters, Icon, Ca
 import { useT, usePick, L, useNav, useFormat } from '../../i18n';
 import { useCareerData, RoleBadges, CareerSourcesFooter, GROUPS, LEVELS, EDUCATION, type CareerData, type Role } from './shared';
 import { ConceptBanner } from './horizons';
+import { OutlookChip, useCurrentLabels, type OutlookRow } from '../m18/futureUi'; // FS wave B: FS16 labels on role cards
 
 export default function CareersPage() {
   const t = useT();
@@ -37,6 +38,7 @@ function CareerMap({ data }: { data: CareerData }) {
   const nav = useNav();
   const [flt, setFlt] = useFilters({ q: '', group: '', family: '', level: '', education: '', regulated: '', entry: '', basis: '' }, true);
   const [cmp, setCmp] = useState<string[]>([]);
+  const outlook = useCurrentLabels();
 
   const families = data.families.filter((fam) => !flt.group || fam.grp === flt.group);
   const roles = useMemo(() => {
@@ -107,7 +109,7 @@ function CareerMap({ data }: { data: CareerData }) {
         ) : (
           <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3" data-testid="m01-role-list">
             {roles.map((r) => (
-              <RoleCard key={r.id} role={r} data={data} selected={cmp.includes(r.id)} onToggle={() => toggle(r.id)} full={cmp.length >= 3} />
+              <RoleCard key={r.id} role={r} data={data} selected={cmp.includes(r.id)} onToggle={() => toggle(r.id)} full={cmp.length >= 3} label={outlook?.byRole.get(r.id)} />
             ))}
           </ul>
         )}
@@ -180,7 +182,7 @@ function CareerMap({ data }: { data: CareerData }) {
   );
 }
 
-function RoleCard({ role, data, selected, onToggle, full }: { role: Role; data: CareerData; selected: boolean; onToggle: () => void; full: boolean }) {
+function RoleCard({ role, data, selected, onToggle, full, label }: { role: Role; data: CareerData; selected: boolean; onToggle: () => void; full: boolean; label?: OutlookRow }) {
   const t = useT();
   const pick = usePick();
   const fam = data.familyById.get(role.family_id);
@@ -195,8 +197,9 @@ function RoleCard({ role, data, selected, onToggle, full }: { role: Role; data: 
         </L>
       </h3>
       <p className="mt-1 line-clamp-3 flex-1 text-[13px] text-ink-2">{pick(role, 'summary')}</p>
-      <div className="mt-3">
+      <div className="mt-3 flex flex-wrap items-center gap-1.5">
         <RoleBadges role={role} compact />
+        {label && <OutlookChip row={label} withWhy={false} />}
       </div>
       <div className="mt-3 flex items-center justify-between border-t border-line pt-2 text-[12.5px]">
         <span className="text-ink-3">{t(`m01.education.${role.education}`)}</span>

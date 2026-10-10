@@ -3,7 +3,7 @@
 // the courses that close them, "roles like mine" (cosine similarity of role skill vectors) and a shortlist of up to three targets
 // that drives the roadmap (F06). Every suggestion carries its reasons (<WhyThis>). Indicative guidance; ENEC and FANR decide.
 import { useMemo, useState, type ReactNode } from 'react';
-import { Page, Section, Card, Async, EmptyState, Callout, StatusPill, StatTile, Grid, Drawer, Icon, CheckboxField, WhyThis, EngineBadge } from '../../ui';
+import { Page, Section, Card, Async, EmptyState, Callout, StatusPill, StatTile, Grid, Drawer, Icon, CheckboxField, WhyThis, EngineBadge, BenchmarkChips } from '../../ui';
 import { useAction, useRepo } from '../../data';
 import { useEngine } from '../../data/useEngine'; // direct import: avoids a circular chunk warning in the build
 import { useT, usePick, useFormat, L } from '../../i18n';
@@ -154,6 +154,7 @@ function Navigator({ d, me }: { d: CareerBase; me: string }) {
 
             {reach.size > 0 && (
               <Section title={t('m18.moves.title')} description={t('m18.moves.desc')}>
+                <div data-testid="m18-bench-fs16"><BenchmarkChips feature="FS16" /></div>
                 <ul className="grid grid-cols-1 gap-4 lg:grid-cols-2" data-testid="m18-moves">
                   {moves.map((m) => {
                     const r = rs(m.id);

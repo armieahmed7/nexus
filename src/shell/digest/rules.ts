@@ -217,7 +217,10 @@ export function matchScore(o: Row, lv: Map<string, number>, sk: Map<string, Row>
 }
 /** F05 hand-off as on the marketplace: my top shortlist role, else the next vertical step, else the first path out (by sort, id). */
 export function defaultTargetRole(paths: Row[], current: string | null, shortlist: string[]): string | null {
-  const top = shortlist.find((x) => x && x !== current);
+  // FS wave-B integration: a shortlisted FS15 concept role (the target of an FS05 "future" edge) has no vacancy and no F02 role
+  // profile, so it never becomes the digest's or Dalil's target role; the next shortlisted current role does (SQL: kafaa_dg_gather).
+  const concept = new Set(paths.filter((p) => (p.kind ?? 'current') === 'future').map((p) => p.to_role_id));
+  const top = shortlist.find((x) => x && x !== current && !concept.has(x));
   if (top) return top;
   if (!current) return null;
   // FS wave-A integration: FS05 "future" edges (to concept roles) never become the digest's target role (SQL: kafaa_dg_gather).

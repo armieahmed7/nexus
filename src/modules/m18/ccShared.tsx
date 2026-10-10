@@ -9,7 +9,10 @@ import { CheckboxField, Icon, StatusPill, WhyThis, useToast, type PillTone } fro
 import { L, useFormat, usePick, useT, hasKey } from '../../i18n';
 import type { Result } from '../../data';
 import { BandPill, ReadinessRing } from './shared';
-import type { Agenda, Action, Cadence, CadenceState, ConvRow, Prep } from './conversations';
+import type { Agenda, AgendaTarget, Action, Cadence, CadenceState, ConvRow, Prep } from './conversations';
+import type { ConceptBand } from './futureRoles';
+import type { CareerReadiness } from './career';
+import { ConceptBandPill, ConceptChip, ConceptRing } from './futureUi';
 
 /** Catalogue labels the conversation screens need (public or staff reads). */
 export function useCcCatalogue() {
@@ -99,15 +102,18 @@ export function AgendaView({ a, cat, include, onInclude, mine }: { a: Agenda; ca
           : a.targets.length === 0 ? <p className="text-[13px] text-ink-3">{a.shared_only ? t('m18.cc.agenda.targetsNoneShared') : t('m18.cc.agenda.targetsNone')}</p> : (
           <ul className="space-y-2">
             {a.targets.map((x) => {
-              const r = { pct: x.pct, band: x.band, months: x.months, path_only: x.band === 'path_only' };
+              const r = { pct: x.pct, band: x.band, months: x.months, path_only: x.band === 'path_only' } as Pick<CareerReadiness, 'pct' | 'band' | 'months' | 'path_only'>;
+              // FS wave B: a shortlisted concept role shows its FS05-profile readiness (FS15), with the concept chip and band
+              const cr = x.concept ? { pct: x.pct ?? 0, band: x.band as ConceptBand, months: x.months ?? 0 } : null;
+              const gapName = (g: AgendaTarget['gaps'][number]) => ('kind' in g ? (g.kind === 'skill' ? pick(cat.skillById.get(g.ref_id), 'name') || g.ref_id : pick(cat.compById.get(g.ref_id), 'name') || g.ref_id) : pick(cat.compById.get(g.competency_id), 'name'));
               return (
-                <li key={x.role_id} className="flex flex-wrap items-center gap-3" data-testid="m18-cc-ag-target">
-                  <ReadinessRing r={r} size={44} />
+                <li key={x.role_id} className="flex flex-wrap items-center gap-3" data-testid="m18-cc-ag-target" data-concept={x.concept ? 'true' : undefined}>
+                  {cr ? <ConceptRing r={cr} size={44} /> : <ReadinessRing r={r} size={44} />}
                   <div className="min-w-0 flex-1">
                     <div className="font-semibold">{f.num(x.rank)}. {pick(cat.roleById.get(x.role_id), 'title')}</div>
                     <div className="mt-0.5 flex flex-wrap items-center gap-1.5">
-                      <BandPill r={r} />
-                      {x.gaps.slice(0, 2).map((g) => <StatusPill key={g.competency_id} tone="neutral">{pick(cat.compById.get(g.competency_id), 'name')} {f.num(g.have)}→{f.num(g.need)}</StatusPill>)}
+                      {cr ? <><ConceptChip /><ConceptBandPill r={cr} /></> : <BandPill r={r} />}
+                      {x.gaps.slice(0, 2).map((g) => <StatusPill key={'kind' in g ? `${g.kind}:${g.ref_id}` : g.competency_id} tone="neutral">{gapName(g)} {f.num(g.have)}→{f.num(g.need)}</StatusPill>)}
                       <WhyThis reasons={x.reasons} testId="m18-cc-ag-why" />
                     </div>
                   </div>

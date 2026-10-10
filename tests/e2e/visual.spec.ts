@@ -144,6 +144,31 @@ const RTL: Shot[] = [
   { name: 'fsa-sat-task', path: '/training/sat/tasks/jt-qs-ro-t4', persona: 'training-mgr' },
   { name: 'fsa-admin-skills', path: '/admin/frameworks?tab=skills', persona: 'ai-governance' },
   { name: 'fsa-admin-benchmarks', path: '/admin/frameworks?tab=benchmarks', persona: 'ai-governance' },
+  // FS wave B (FS07-FS16): every new page, plus the pages that gained wave-B sections
+  { name: 'fsb-skills', path: '/skills' },
+  { name: 'fsb-skill', path: '/skills/sk-fs-ai-verify' },
+  { name: 'fsb-skill-crosswalk', path: '/skills/sk-fs-tr-analytical?tab=crosswalk' },
+  { name: 'fsb-frameworks', path: '/skills/frameworks' },
+  { name: 'fsb-alignments', path: '/admin/skills/alignments', persona: 'training-mgr' },
+  { name: 'fsb-ladder', path: '/learn/ai-fluency' },
+  { name: 'fsb-my-ai', path: '/my/ai-fluency', persona: 'nse' },
+  { name: 'fsb-fitness', path: '/my/ai-fluency/check', persona: 'sro' },
+  { name: 'fsb-workforce-ai', path: '/workforce/ai-fluency', persona: 'chco' },
+  { name: 'fsb-items', path: '/training/ai-fitness/items', persona: 'training-mgr' },
+  { name: 'fsb-role-2030', path: '/my/role-2030?role=reactor-operator', persona: 'sro' },
+  { name: 'fsb-tasks', path: '/my/role-2030/tasks?role=reactor-operator', persona: 'sro' },
+  { name: 'fsb-public-transformation', path: '/careers/roles/reactor-operator/transformation' },
+  { name: 'fsb-workforce-transformation', path: '/workforce/transformation', persona: 'chco' },
+  { name: 'fsb-transformation-edit', path: '/workforce/transformation/chemistry-technician', persona: 'training-mgr' },
+  { name: 'fsb-my-future', path: '/my/future', persona: 'nse' },
+  { name: 'fsb-future-tech', path: '/my/future/bwr', persona: 'nse' },
+  { name: 'fsb-future-interest', path: '/workforce/future/interest', persona: 'chco' },
+  { name: 'fsb-my-career', path: '/my/career', persona: 'sro' },
+  { name: 'fsb-roadmap-concept', path: '/my/career/roadmap?role=fr-bwr-operator', persona: 'sro' },
+  { name: 'fsb-team-career', path: '/team/career', persona: 'sro' },
+  { name: 'fsb-outlook-criteria', path: '/careers/outlook-criteria' },
+  { name: 'fsb-careers', path: '/careers' },
+  { name: 'fsb-role', path: '/careers/roles/reactor-operator?tab=horizons' },
 ];
 for (const s of RTL) {
   test(`rtl ${s.name}`, async ({ page }) => {
@@ -276,6 +301,31 @@ const MOBILE: Shot[] = [
   { name: 'fsa-sat-task', path: '/training/sat/tasks/jt-qs-ro-t4', persona: 'training-mgr' },
   { name: 'fsa-admin-skills', path: '/admin/frameworks?tab=skills', persona: 'ai-governance' },
   { name: 'fsa-admin-benchmarks', path: '/admin/frameworks?tab=benchmarks', persona: 'ai-governance' },
+  // FS wave B (FS07-FS16): every new page, plus the pages that gained wave-B sections
+  { name: 'fsb-skills', path: '/skills' },
+  { name: 'fsb-skill', path: '/skills/sk-fs-ai-verify' },
+  { name: 'fsb-skill-crosswalk', path: '/skills/sk-fs-tr-analytical?tab=crosswalk' },
+  { name: 'fsb-frameworks', path: '/skills/frameworks' },
+  { name: 'fsb-alignments', path: '/admin/skills/alignments', persona: 'training-mgr' },
+  { name: 'fsb-ladder', path: '/learn/ai-fluency' },
+  { name: 'fsb-my-ai', path: '/my/ai-fluency', persona: 'nse' },
+  { name: 'fsb-fitness', path: '/my/ai-fluency/check', persona: 'sro' },
+  { name: 'fsb-workforce-ai', path: '/workforce/ai-fluency', persona: 'chco' },
+  { name: 'fsb-items', path: '/training/ai-fitness/items', persona: 'training-mgr' },
+  { name: 'fsb-role-2030', path: '/my/role-2030?role=reactor-operator', persona: 'sro' },
+  { name: 'fsb-tasks', path: '/my/role-2030/tasks?role=reactor-operator', persona: 'sro' },
+  { name: 'fsb-public-transformation', path: '/careers/roles/reactor-operator/transformation' },
+  { name: 'fsb-workforce-transformation', path: '/workforce/transformation', persona: 'chco' },
+  { name: 'fsb-transformation-edit', path: '/workforce/transformation/chemistry-technician', persona: 'training-mgr' },
+  { name: 'fsb-my-future', path: '/my/future', persona: 'nse' },
+  { name: 'fsb-future-tech', path: '/my/future/bwr', persona: 'nse' },
+  { name: 'fsb-future-interest', path: '/workforce/future/interest', persona: 'chco' },
+  { name: 'fsb-my-career', path: '/my/career', persona: 'sro' },
+  { name: 'fsb-roadmap-concept', path: '/my/career/roadmap?role=fr-bwr-operator', persona: 'sro' },
+  { name: 'fsb-team-career', path: '/team/career', persona: 'sro' },
+  { name: 'fsb-outlook-criteria', path: '/careers/outlook-criteria' },
+  { name: 'fsb-careers', path: '/careers' },
+  { name: 'fsb-role', path: '/careers/roles/reactor-operator?tab=horizons' },
 ];
 for (const s of MOBILE) {
   test(`mobile ${s.name}`, async ({ page }) => {
@@ -449,5 +499,28 @@ for (const s of SET_FSA) {
     await page.setViewportSize({ width: 1440, height: 900 });
     await open(page, s);
     await page.screenshot({ path: join(SHOTS_FSA, `${s.name}.png`), fullPage: false });
+  });
+}
+
+// FS wave B feature set (FS07-FS16): saved to KAFAA_SHOTS_FSB.
+const SHOTS_FSB = process.env.KAFAA_SHOTS_FSB || 'test-results/shots_fsB';
+mkdirSync(SHOTS_FSB, { recursive: true });
+const SET_FSB: Shot[] = [
+  { name: '01-skills-explorer-en', path: '/skills' },
+  { name: '02-skill-crosswalk-en', path: '/skills/sk-fs-tr-analytical?tab=crosswalk' },
+  { name: '03-ai-fluency-ladder-en', path: '/my/ai-fluency', persona: 'nse' },
+  { name: '04-ai-fitness-workforce-en', path: '/workforce/ai-fluency', persona: 'chco' },
+  { name: '05-my-role-2030-en', path: '/my/role-2030?role=reactor-operator', persona: 'sro' },
+  { name: '06-task-exposure-en', path: '/my/role-2030/tasks?role=reactor-operator', persona: 'sro' },
+  { name: '07-future-me-lanes-en', path: '/my/future', persona: 'nse', then: async (p) => { await p.locator('[data-testid="m21-raises"]').scrollIntoViewIfNeeded(); } },
+  { name: '08-future-roles-navigator-en', path: '/my/career', persona: 'sro', then: async (p) => { await p.locator('[data-testid="m18-fs15"]').scrollIntoViewIfNeeded(); } },
+  { name: '09-outlook-criteria-ar', path: '/careers/outlook-criteria', ar: true },
+  { name: '10-my-role-2030-mobile', path: '/my/role-2030', persona: 'sro', mobile: true },
+];
+for (const s of SET_FSB) {
+  test(`shot fsb ${s.name}`, async ({ page }) => {
+    if (!s.mobile) await page.setViewportSize({ width: 1440, height: 900 });
+    await open(page, s);
+    await page.screenshot({ path: join(SHOTS_FSB, `${s.name}.png`), fullPage: false });
   });
 }

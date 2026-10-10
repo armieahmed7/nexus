@@ -17,7 +17,8 @@
  * Import-free apart from `.ts` files that are themselves node-loadable (seed and validation scripts load this file directly).
  */
 import { MIN_GROUP_SIZE } from '../../auth/policy.ts';
-import { careerReadiness, type CareerData, type CareerReadiness, type Gap, type Reason } from './career.ts';
+import { careerFacts, careerReadiness, type CareerData, type CareerReadiness, type Gap, type Reason } from './career.ts';
+import { conceptReadiness, type ConceptBand, type ConceptGap, type ConceptVersion } from './futureRoles.ts';
 import { lineManagerOf, type AssignmentLite, type PersonLite } from '../m20/domain.ts';
 
 export const ASPIRATIONS = ['stay_deepen', 'grow_vertical', 'move_lateral', 'lead', 'specialise'] as const;
@@ -189,7 +190,8 @@ export const planIdFor = (convId: string) => `dp-cc-${convId}`;
 export const goalIdFor = (personId: string) => `lg:${personId}`;
 
 // ───────────── agenda (SQL: kafaa_cc_agenda)
-export interface AgendaTarget { role_id: string; rank: number; pct: number | null; band: CareerReadiness['band']; gate_status: CareerReadiness['gate_status']; months: number | null; gaps: Gap[]; reasons: Reason[] }
+/** A shortlisted FS15 concept role (concept: true) carries its FS05-profile readiness: concept band, gate_status 'none' and FS15 gaps. */
+export interface AgendaTarget { role_id: string; rank: number; pct: number | null; band: CareerReadiness['band'] | ConceptBand; gate_status: CareerReadiness['gate_status']; months: number | null; gaps: (Gap | ConceptGap)[]; reasons: Reason[]; concept?: true }
 export interface Agenda {
   built_on: string;
   role_id: string | null;
@@ -216,6 +218,8 @@ export interface AgendaTables extends CareerData {
   feedback: { person_id: string; signal: string; at: string }[];
   training: { person_id: string; result: string; completed_on?: string | null }[];
   conversations: ConvRow[];
+  /** FS wave B: FS05 role-profile versions, for shortlisted concept roles (absent: concept targets are left out) */
+  versions?: ConceptVersion[];
 }
 export interface AgendaOptions { targets: boolean; roadmap: boolean; coach: boolean; sharedOnly: boolean }
 
@@ -238,8 +242,14 @@ export function buildAgenda(d: AgendaTables, personId: string, o: AgendaOptions,
     const mine = d.targets.filter((t) => t.person_id === personId && t.active && (!o.sharedOnly || t.shared))
       .sort((a, b) => a.rank - b.rank || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
     if (mine.length) {
-      const rd = careerReadiness(d, personId, mine.map((t) => t.role_id), today);
-      targets = mine.flatMap((t) => {
+      // FS wave B: shortlisted FS15 concept roles read their FS05-profile readiness (conceptReadiness), never F05's 0 % (SQL kafaa_cc_agenda)
+      const concept = new Set(d.roles.filter((r) => (r as { lifecycle?: string | null }).lifecycle === 'concept').map((r) => r.id));
+      const cIds = mine.map((t) => t.role_id).filter((id) => concept.has(id));
+      const rd = careerReadiness(d, personId, mine.map((t) => t.role_id).filter((id) => !concept.has(id)), today);
+      const cd = cIds.length && d.versions ? conceptReadiness({ roles: d.roles as never, versions: d.versions, edges: d.edges as never, skills: d.skills as never, competencies: d.competencies, states: d.states, weights: d.weights }, careerFacts(d, personId, today), personId, cIds) : [];
+      targets = mine.flatMap((t): AgendaTarget[] => {
+        const c = cd.find((r) => r.role_id === t.role_id);
+        if (c) return [{ role_id: t.role_id, rank: t.rank, pct: c.pct, band: c.band, gate_status: 'none', months: c.months, gaps: c.gaps.slice(0, TARGET_GAPS), reasons: c.reasons.slice(0, TARGET_REASONS), concept: true }];
         const x = rd.find((r) => r.role_id === t.role_id);
         return x ? [{ role_id: t.role_id, rank: t.rank, pct: x.pct, band: x.band, gate_status: x.gate_status, months: x.months, gaps: x.gaps.slice(0, TARGET_GAPS), reasons: x.reasons.slice(0, TARGET_REASONS) }] : [];
       });
@@ -378,10 +388,11 @@ export function suggestActions(a: Agenda | null, prep: Partial<Prep> | null, cou
   const out: Suggestion[] = [];
   const push = (s: Suggestion) => { if (!out.some((x) => x.id === s.id)) out.push(s); };
   const due = (days: number) => addDaysIso(today, days);
-  const top = a?.targets.find((t) => t.pct != null);
+  // FS wave B: suggestions close F05 competency gaps of a current target (a concept target's FS05 gaps are planning assumptions)
+  const top = a?.targets.find((t) => t.pct != null && !t.concept);
   if (top) {
     const role = roleTitle(top.role_id);
-    for (const g of top.gaps) {
+    for (const g of top.gaps as Gap[]) {
       const c = courses.filter((x) => x.audience !== 'supplier' && !done.has(x.id) && (x.competency_ids ?? []).includes(g.competency_id) && !String(x.programme_id ?? '').match(/^(coit|loit)/))
         .sort((x, y) => (Number(x.duration_hours) || 999) - (Number(y.duration_hours) || 999) || (x.id < y.id ? -1 : 1))[0];
       if (!c) continue;

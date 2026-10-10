@@ -330,5 +330,13 @@
     "duplicate": "This skill already has an active alignment to that framework entry.",
     "immutable": "The skill and framework of an alignment cannot change: retire it and add a new one.",
     "retired": "This alignment is retired."
+  },
+  "wb": {
+    "aiTitle": {
+      "literacy": "Part of the AI fluency ladder (literacy)",
+      "engineering": "AI engineering skill (specialists; not part of the literacy rung)"
+    },
+    "aiLadder": "See the AI fluency ladder",
+    "aiMine": "My AI fluency"
   }
 }

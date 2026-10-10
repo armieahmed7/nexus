@@ -46,7 +46,11 @@ describe('FS11 acceptance', () => {
   }, 60000);
   it('my time-to-ready lists the gaps it is based on (months = 2 x total level gap, each gap with have, need and a reason)', async () => {
     await as('k-ro');
-    const v = (await b.rpc.roleTransformation(null, '2030'))!;
+    // [FS QA wave B] k-ro's AI fitness checks (FS10) now evidence sk-fs-ai-verify at level 2, so the 2030 profile reads ready now;
+    // the 2035 profile still has two one-level gaps (digital twins, advanced cooling).
+    const v30 = (await b.rpc.roleTransformation(null, '2030'))!;
+    expect(v30.map!.me!.gaps.length).toBe(0);
+    const v = (await b.rpc.roleTransformation(null, '2035'))!;
     expect(v.my_role_id).toBe('reactor-operator');
     const me = v.map!.me!;
     expect(me.gaps.length).toBeGreaterThan(0);
@@ -54,10 +58,10 @@ describe('FS11 acceptance', () => {
     expect(me.months).toBe(MONTHS_PER_LEVEL * me.levels);
     expect(me.gaps.every((g) => g.need > g.have && g.gap === g.need - g.have && g.reasons.length >= 1)).toBe(true);
     expect(me.reasons.map((r) => r.code)).toEqual(['time_rule', 'time_gaps']);
-    expect(me.gaps.map((g) => g.ref_id)).toContain('sk-fs-ai-verify');
-    // the gap list is exactly the requirements of the 2030 profile I am below
-    const pub = S.role_profile_versions.find((x) => x.role_id === 'reactor-operator' && x.horizon === '2030' && x.status === 'published');
-    const fresh = readinessFor(pub.requirements, S.person_skills.filter((s) => s.person_id === 'p-k-ro'), S.skills, '2030');
+    expect(me.gaps.map((g) => g.ref_id).sort()).toEqual(['sk-da-01-twins', 'sk-pf-02-advcool']);
+    // the gap list is exactly the requirements of the 2035 profile I am below
+    const pub = S.role_profile_versions.find((x) => x.role_id === 'reactor-operator' && x.horizon === '2035' && x.status === 'published');
+    const fresh = readinessFor(pub.requirements, S.person_skills.filter((s) => s.person_id === 'p-k-ro'), S.skills, '2035');
     expect(fresh.gaps.map((g) => g.ref_id)).toEqual(me.gaps.map((g) => g.ref_id));
   });
   it('public views pass publicTextIsClean and show no headcount (no numbers in public summaries)', () => {

@@ -2,7 +2,7 @@
 // (RLS: skills_profile Scope, shared rows only), with each person's readiness for their targets from rpc.careerReadiness.
 // Nothing unshared is ever shown; the page reads only what the repository returns.
 import { useMemo } from 'react';
-import { Page, Section, Async, EmptyState, StatusPill, Card, WhyThis, Callout } from '../../ui';
+import { Page, Section, Async, EmptyState, StatusPill, Card, WhyThis, Callout, BenchmarkChips } from '../../ui';
 import { useQuery, useRepo } from '../../data';
 import { useT, usePick, useFormat, L } from '../../i18n';
 import { useSession } from '../../auth/session';
@@ -27,6 +27,7 @@ export default function TeamCareerPage() {
   return (
     <Page title={t('m18.routes.team-career.title')} intro={t('m18.team.intro')} actions={<L to="/team/conversations" className="btn-outline btn-sm" data-testid="m18-to-team-conversations">{t('m18.cc.team.fromCareer')}</L>}>
       <Callout tone="info">{t('m18.team.privacy')}</Callout>
+      <div data-testid="m18-bench-fs15"><BenchmarkChips feature="FS15" /></div>
       <Async state={q}>
         {(d) => {
           const ids = [...new Set([...d.targets.map((x) => x.person_id), ...d.roadmaps.map((x) => x.person_id)])].sort((a, b) => (d.people.get(a)?.display_name ?? a).localeCompare(d.people.get(b)?.display_name ?? b));

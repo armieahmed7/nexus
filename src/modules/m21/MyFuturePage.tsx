@@ -15,6 +15,7 @@ import { FutureMeData, GoalButton, IndexBadge, IndexMeter, InterestToggle, Sourc
 import { toV1Family, v2Levels } from './raises';
 import { FamiliesV2, FS13Chips, PlannedLearning, ReadinessHero, TracksSection, useRaises, WhatRaisesIt } from './v2ui';
 import { LanesSection } from './LanesSection';
+import { ConceptBandPill, useConceptReadiness } from '../m18/futureUi'; // FS wave B: FS15 concept readiness (one rule, conceptReadiness)
 
 export default function MyFuturePage() {
   const t = useT();
@@ -200,7 +201,9 @@ export function ResourceList({ ranked, title }: { ranked: Ranked<FutureMeData['r
 function ClosestRoles({ d, rd, labels }: { d: FutureMeData; rd: Readiness; labels: Labels }) {
   const t = useT();
   const pick = usePick();
+  const f = useFormat();
   const ranked = useMemo(() => rankFutureRoles({ roles: d.roles, levels: rd.levels, myRole: d.person?.job_role_id ?? null, edges: d.edges, roleLabels: labels.roles, advLabels: labels.adv }).slice(0, 3), [d, rd, labels]);
+  const cq = useConceptReadiness(d.person?.id ?? null, ranked.map((r) => r.id), ranked.length > 0);
   return (
     <Section title={t('m21.roles.title')} description={t('m21.roles.desc')}>
       {ranked.length === 0 ? <EmptyState title={t('m21.roles.empty')} /> : (
@@ -215,6 +218,16 @@ function ClosestRoles({ d, rd, labels }: { d: FutureMeData; rd: Readiness; label
                 </div>
                 <p className="text-[13px] text-ink-2">{pick(x, 'summary')}</p>
                 <IndexBadge size="sm" value={Math.round(r.score * 1000) / 10} label={t('m21.roles.closeness')} />
+                {(() => {
+                  const cr = cq.data?.get(r.id);
+                  return cr ? (
+                    <div className="flex flex-wrap items-center gap-1.5 text-[12.5px]" data-testid="m21-concept-readiness">
+                      <span className="text-ink-3">{t('m21.wb.profileReadiness', { pct: f.pct(cr.pct, 0) })}</span>
+                      <ConceptBandPill r={cr} />
+                      <L to={`/my/career/roadmap?role=${r.id}`} data-testid="m21-to-roadmap">{t('m21.wb.planRoadmap')}</L>
+                    </div>
+                  ) : null;
+                })()}
                 <div className="flex flex-wrap gap-1 text-[11.5px]">
                   {x.tech_ids.map((id) => <L key={id} to={`/my/future/${techSlug(id)}`} className="chip border-line bg-panel text-ink">{pick(d.techs.find((y) => y.id === id), 'family')}</L>)}
                 </div>

@@ -9,6 +9,7 @@ import { useCrumbLabel } from '../../shell/crumbs';
 import { useCareerData, RoleBadges, RoleSources, useConditionText, EdgeCard, type CareerData, type Role } from './shared';
 import { neighbours } from './careerGraph';
 import { RoleHorizonsTab, ConceptRoleView } from './RoleHorizons';
+import { RoleOutlookLine } from '../m18/futureUi'; // FS wave B: FS16 label (public: label only; staff: with components)
 
 type EntryRoute = { id: string; en: string; ar: string; rule_ref?: string; url?: string };
 
@@ -75,6 +76,7 @@ function RoleView({ role, data }: { role: Role; data: CareerData }) {
       }
     >
       <RoleBadges role={role} />
+      <RoleOutlookLine roleId={role.id} />
       {role.basis !== 'barakah' && (
         <Callout tone="sim" title={t(`m01.basis.${role.basis}`)}>
           {role.basis_note || t(`m01.basis.${role.basis}Hint`)}

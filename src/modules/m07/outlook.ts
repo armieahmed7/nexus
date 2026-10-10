@@ -247,7 +247,9 @@ export function gatherBase(inp: OutlookInput, scenarioId: string | null): Outloo
   for (const st of inp.states) {
     if (st.active === false || !staff.has(st.person_id)) continue;
     const sk = skillById.get(st.skill_id);
-    if (!sk || !holders.has(sk.area)) continue;
+    // FS wave-B integration: FS02 future skills (fs_area set) are not F35 supply (FS10 fitness-check evidence at level <= 2
+    // would otherwise count every checked person as a digital holder); SQL kafaa_so_base (20261010229001).
+    if (!sk || sk.fs_area || !holders.has(sk.area)) continue;
     if (st.level >= HOLDER_LEVEL) holders.get(sk.area)!.add(st.person_id);
     else if (st.level >= 1) aware.get(sk.area)!.add(st.person_id);
   }

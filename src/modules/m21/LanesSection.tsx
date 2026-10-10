@@ -175,7 +175,7 @@ function LaneDrawer({ d, lane, onClose }: { d: FutureMeData; lane: Lane; onClose
         <ul className="flex flex-wrap gap-1" data-testid="m21-lane-skills">
           {lv.items.map((i) => (
             <li key={i.skill_id} className={`chip max-w-full whitespace-normal ${i.security ? (i.qualified ? 'border-ok-line bg-ok-bg text-ok' : 'border-line bg-sunken text-ink-2') : i.level > 0 ? 'border-accent/30 bg-accent-soft text-eyebrow' : i.future ? 'border-info-line bg-info-bg text-info' : 'border-line bg-panel text-ink-3'}`}>
-              {i.future && <Icon name="sparkle" size={11} />} {pick(skill(i.skill_id), 'name')}
+              {i.future && <Icon name="sparkle" size={11} />} {i.security ? pick(skill(i.skill_id), 'name') : <L to={`/skills/${i.skill_id}`} className="text-inherit" data-testid="m21-lane-skill-link">{pick(skill(i.skill_id), 'name')}</L>}
               <span className="num font-normal">· {i.security ? t(i.qualified ? 'm21.hz.qualified' : 'm21.hz.notQualified') : f.num(i.level)}{i.future ? ` / ${f.num(lk.skill.find((x) => x.ref_id === i.skill_id)?.level ?? 2)}` : ''}</span>
             </li>
           ))}

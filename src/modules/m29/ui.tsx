@@ -85,7 +85,7 @@ export function SkillChips({ ids, data: d, level }: { ids: string[]; data: M29Re
     <span className="flex flex-wrap gap-1">
       {ids.map((id) => {
         const s = d.skills.find((x: Row) => x.id === id);
-        return <span key={id} className="chip max-w-full border-line bg-panel normal-case tracking-normal text-ink-2"><span className="truncate">{s ? pick(s, 'name') : id}</span></span>;
+        return <span key={id} className="chip max-w-full border-line bg-panel normal-case tracking-normal text-ink-2">{s ? <L to={`/skills/${id}`} className="truncate text-inherit" data-testid="m29-skill-link">{pick(s, 'name')}</L> : <span className="truncate">{id}</span>}</span>; // FS wave B: FS07 skill page
       })}
       {level != null && <span className="chip border-transparent bg-sunken normal-case tracking-normal text-ink-3">{t('m29.cell.minLevel', { level: f.num(level) })}</span>}
     </span>

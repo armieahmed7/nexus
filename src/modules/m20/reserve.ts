@@ -154,9 +154,11 @@ export function validateRequest(p: RequestInput, skills: { id: string; area: str
   return null;
 }
 
-/** Freeze the F01 skill state: active, level 1+, never a security-area skill; strongest first, at most 12. */
-export function snapshotFrom(states: { skill_id: string; level: number; basis: string; active?: boolean | null }[], skills: { id: string; area: string }[]): SnapshotSkill[] {
-  const area = new Map(skills.map((s) => [s.id, s.area]));
+/** Freeze the F01 skill state: active, level 1+, never a security-area skill; strongest first, at most 12.
+ * FS wave-B integration: FS02 future skills (fs_area set) are left out, so FS10 fitness-check evidence (level <= 2) never pushes a
+ * departing expert's verified skills out of the snapshot (SQL kafaa_res_snapshot, 20261010229001). */
+export function snapshotFrom(states: { skill_id: string; level: number; basis: string; active?: boolean | null }[], skills: { id: string; area: string; fs_area?: string | null }[]): SnapshotSkill[] {
+  const area = new Map(skills.filter((s) => !s.fs_area).map((s) => [s.id, s.area]));
   return states
     .filter((s) => s.active !== false && s.level >= 1 && area.has(s.skill_id) && !RESTRICTED_SKILL_AREAS.includes(area.get(s.skill_id)!))
     .map((s) => ({ skill_id: s.skill_id, level: s.level, basis: s.basis }))
