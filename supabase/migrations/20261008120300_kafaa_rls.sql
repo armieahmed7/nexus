@@ -2245,3 +2245,38 @@ create policy kafaa_read on kafaa_transformation_archetypes for select to anon, 
 grant select on kafaa_transformation_archetypes to anon, authenticated;
 -- writes: reference data, no client writes
 
+-- core_skills
+alter table kafaa_core_skills enable row level security;
+drop policy if exists kafaa_read on kafaa_core_skills;
+create policy kafaa_read on kafaa_core_skills for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_core_skills to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- core_skill_targets
+alter table kafaa_core_skill_targets enable row level security;
+drop policy if exists kafaa_read on kafaa_core_skill_targets;
+create policy kafaa_read on kafaa_core_skill_targets for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_core_skill_targets to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- core_skill_candidates
+alter table kafaa_core_skill_candidates enable row level security;
+drop policy if exists kafaa_read on kafaa_core_skill_candidates;
+create policy kafaa_read on kafaa_core_skill_candidates for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_core_skill_candidates to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- sjt_items
+alter table kafaa_sjt_items enable row level security;
+drop policy if exists kafaa_read on kafaa_sjt_items;
+create policy kafaa_read on kafaa_sjt_items for select to anon, authenticated using (kafaa_rule_read('secure_items', null::text, null::text, true));
+grant select on kafaa_sjt_items to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- sjt_attempts
+alter table kafaa_sjt_attempts enable row level security;
+drop policy if exists kafaa_read on kafaa_sjt_attempts;
+create policy kafaa_read on kafaa_sjt_attempts for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_sjt_attempts to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+

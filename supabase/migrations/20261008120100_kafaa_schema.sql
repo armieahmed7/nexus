@@ -4411,6 +4411,106 @@ create table if not exists kafaa_transformation_archetypes (
 );
 comment on table kafaa_transformation_archetypes is '[M30] Role archetypes (SkillsFuture Singapore 2025): what each means for learning (FS11)';
 
+-- M33 · Nuclear critical core skill (16 in three SkillsFuture clusters), written for a nuclear plant, with benchmark mappings, INPO traits, linked catalogue skills, level descriptors and its own development and assessment routes (FS25)
+create table if not exists kafaa_core_skills (
+  id text primary key,
+  code text not null unique,
+  cluster text not null check (cluster in ('thinking_critically', 'interacting_with_others', 'staying_relevant')),
+  name_en text not null,
+  name_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  plant_en text not null,
+  plant_ar text not null,
+  descriptors jsonb not null default '[]'::jsonb,
+  mappings jsonb not null default '[]'::jsonb,
+  benchmark_ids text[] not null default '{}'::text[],
+  trait_ids text[] not null default '{}'::text[],
+  skill_ids text[] not null default '{}'::text[],
+  development jsonb not null default '[]'::jsonb,
+  assessment jsonb not null default '[]'::jsonb,
+  dev_approach_en text not null,
+  dev_approach_ar text not null,
+  assess_approach_en text not null,
+  assess_approach_ar text not null,
+  outcome_en text not null default '',
+  outcome_ar text not null default '',
+  sources jsonb not null default '[]'::jsonb,
+  status text not null default 'active' check (status in ('active', 'retired')),
+  version integer not null default 1,
+  as_of date not null,
+  sort integer not null default 0
+);
+comment on table kafaa_core_skills is '[M33] Nuclear critical core skill (16 in three SkillsFuture clusters), written for a nuclear plant, with benchmark mappings, INPO traits, linked catalogue skills, level descriptors and its own development and assessment routes (FS25)';
+
+-- M33 · Core-skill target level (1 Foundation, 2 Proficient, 3 Role model) for each job family and core skill, with the reason (FS25)
+create table if not exists kafaa_core_skill_targets (
+  id text primary key,
+  family_id text not null,
+  core_skill_id text not null,
+  level integer not null,
+  rationale_en text not null,
+  rationale_ar text not null
+);
+comment on table kafaa_core_skill_targets is '[M33] Core-skill target level (1 Foundation, 2 Proficient, 3 Role model) for each job family and core skill, with the reason (FS25)';
+
+-- M33 · Candidate core skills considered and not added under the inclusion rule (merged, treated as an outcome or not added), with the reason and source (FS25)
+create table if not exists kafaa_core_skill_candidates (
+  id text primary key,
+  name_en text not null,
+  name_ar text not null,
+  decision text not null check (decision in ('merged', 'outcome', 'not_added')),
+  merged_into text,
+  has_development boolean not null default false,
+  has_assessment boolean not null default false,
+  reason_en text not null,
+  reason_ar text not null,
+  benchmark_ids text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb,
+  sort integer not null default 0
+);
+comment on table kafaa_core_skill_candidates is '[M33] Candidate core skills considered and not added under the inclusion rule (merged, treated as an outcome or not added), with the reason and source (FS25)';
+
+-- M33 · Situational judgement practice item (EN/AR): a plant scenario, four responses with expert effectiveness 0-3 and a why for each, and the expert rationale; read by training staff, served to takers without the key (FS26)
+create table if not exists kafaa_sjt_items (
+  id text primary key,
+  core_skill_id text not null,
+  theme text not null check (theme in ('conservative_decisions', 'questioning', 'raising_concerns', 'teamwork_pressure', 'procedure_use', 'learning_change', 'working_across_cultures', 'digital_judgement')),
+  stem_en text not null,
+  stem_ar text not null,
+  options_en text[] not null default '{}'::text[],
+  options_ar text[] not null default '{}'::text[],
+  expert_key jsonb not null default '[]'::jsonb,
+  notes_en text[] not null default '{}'::text[],
+  notes_ar text[] not null default '{}'::text[],
+  rationale_en text not null,
+  rationale_ar text not null,
+  status text not null default 'active' check (status in ('active', 'retired')),
+  version integer not null default 1,
+  sort integer not null default 0,
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_sjt_items is '[M33] Situational judgement practice item (EN/AR): a plant scenario, four responses with expert effectiveness 0-3 and a why for each, and the expert rationale; read by training staff, served to takers without the key (FS26)';
+
+-- M33 · One person's situational judgement practice set: the items, answers with expert effectiveness, score and tally per core skill. Own only: never read by managers, HR or talent review (FS26)
+create table if not exists kafaa_sjt_attempts (
+  id text primary key,
+  person_id text not null,
+  period text not null,
+  attempt_no integer not null,
+  core_skill_id text,
+  status text not null default 'in_progress' check (status in ('in_progress', 'completed')),
+  item_ids text[] not null default '{}'::text[],
+  responses jsonb not null default '[]'::jsonb,
+  score integer,
+  by_skill jsonb not null default '{}'::jsonb,
+  reasons jsonb not null default '[]'::jsonb,
+  started_at timestamptz not null default now(),
+  completed_at timestamptz
+);
+comment on table kafaa_sjt_attempts is '[M33] One person''s situational judgement practice set: the items, answers with expert effectiveness, score and tally per core skill. Own only: never read by managers, HR or talent review (FS26)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -4820,6 +4920,12 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_fi
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_transformations_role_id_fk') then alter table kafaa_role_transformations add constraint kafaa_role_transformations_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_transformations_family_id_fk') then alter table kafaa_role_transformations add constraint kafaa_role_transformations_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_transformation_drafts_role_id_fk') then alter table kafaa_transformation_drafts add constraint kafaa_transformation_drafts_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_core_skill_targets_family_id_fk') then alter table kafaa_core_skill_targets add constraint kafaa_core_skill_targets_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_core_skill_targets_core_skill_id_fk') then alter table kafaa_core_skill_targets add constraint kafaa_core_skill_targets_core_skill_id_fk foreign key (core_skill_id) references kafaa_core_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_core_skill_candidates_merged_into_fk') then alter table kafaa_core_skill_candidates add constraint kafaa_core_skill_candidates_merged_into_fk foreign key (merged_into) references kafaa_core_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sjt_items_core_skill_id_fk') then alter table kafaa_sjt_items add constraint kafaa_sjt_items_core_skill_id_fk foreign key (core_skill_id) references kafaa_core_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sjt_attempts_person_id_fk') then alter table kafaa_sjt_attempts add constraint kafaa_sjt_attempts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sjt_attempts_core_skill_id_fk') then alter table kafaa_sjt_attempts add constraint kafaa_sjt_attempts_core_skill_id_fk foreign key (core_skill_id) references kafaa_core_skills(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -5372,6 +5478,18 @@ create index if not exists kafaa_fitness_attempts_period_idx on kafaa_fitness_at
 create index if not exists kafaa_fitness_attempts_status_idx on kafaa_fitness_attempts (status);
 create index if not exists kafaa_role_transformations_family_id_idx on kafaa_role_transformations (family_id);
 create index if not exists kafaa_role_transformations_status_idx on kafaa_role_transformations (status);
+create index if not exists kafaa_core_skills_cluster_idx on kafaa_core_skills (cluster);
+create index if not exists kafaa_core_skill_targets_family_id_idx on kafaa_core_skill_targets (family_id);
+create index if not exists kafaa_core_skill_targets_core_skill_id_idx on kafaa_core_skill_targets (core_skill_id);
+create index if not exists kafaa_core_skill_candidates_decision_idx on kafaa_core_skill_candidates (decision);
+create index if not exists kafaa_core_skill_candidates_merged_into_idx on kafaa_core_skill_candidates (merged_into);
+create index if not exists kafaa_sjt_items_core_skill_id_idx on kafaa_sjt_items (core_skill_id);
+create index if not exists kafaa_sjt_items_theme_idx on kafaa_sjt_items (theme);
+create index if not exists kafaa_sjt_items_status_idx on kafaa_sjt_items (status);
+create index if not exists kafaa_sjt_attempts_person_id_idx on kafaa_sjt_attempts (person_id);
+create index if not exists kafaa_sjt_attempts_period_idx on kafaa_sjt_attempts (period);
+create index if not exists kafaa_sjt_attempts_core_skill_id_idx on kafaa_sjt_attempts (core_skill_id);
+create index if not exists kafaa_sjt_attempts_status_idx on kafaa_sjt_attempts (status);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -5386,4 +5504,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 244) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 249) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
