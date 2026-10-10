@@ -215,7 +215,9 @@
       "skills": "Skills inference",
       "recommend": "Recommendations",
       "match": "Matching",
-      "search": "Search"
+      "search": "Search",
+      "transform": "Role transformation",
+      "assess": "Adaptive assessment"
     },
     "kind": {
       "deterministic": "Deterministic",
@@ -234,7 +236,17 @@
       "move_entry": "Entry route: {role}",
       "readiness": "{pct}% ready on the required competencies (gates are shown separately)",
       "steps": "{n} step(s) away",
-      "path_only": "Career path only: readiness is not computed for security roles"
+      "path_only": "Career path only: readiness is not computed for security roles",
+      "fs_exposure_levels": "AI capability level {ai} against a human requirement of {human} (five-level scales)",
+      "fs_exposure_safety": "Safety-critical task: a qualified person stays in charge",
+      "fs_exposure_automatable": "The tool can cover the task; the person checks the result",
+      "fs_exposure_augmentable": "The tool can help with the task; the person still does it",
+      "fs_exposure_human": "Mostly human work: the tool covers little of it",
+      "fs_exposure_horizon": "Looks ahead to {year}, so the score is discounted",
+      "fs_assess_start": "Starts at level {level}",
+      "fs_assess_up": "Last answer right: next item at level {level}",
+      "fs_assess_down": "Last answer wrong: next item at level {level}",
+      "fs_assess_done": "Stopped after {n} items: estimated level {estimate}"
     },
     "admin": {
       "title": "Recommendation engines",

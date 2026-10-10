@@ -74,6 +74,14 @@ export const RESOURCES = [
   'learning_analytics',
   'sat',
   'lrs',
+  // FS01 (future skills, wave A) [K]: resources for the M28-M37 future-skills features (scratchpad fs/PLAN.md section 2)
+  'skills_taxonomy',
+  'ai_literacy',
+  'transformation',
+  'recognition',
+  'workforce_strategy',
+  'ecosystem',
+  'national_alignment',
 ] as const;
 export type Resource = (typeof RESOURCES)[number];
 
@@ -110,6 +118,13 @@ export const RESOURCE_LABELS: Record<Resource, string> = {
   learning_analytics: '[K] Training effectiveness and needs analytics',
   sat: '[K] SAT analysis and accreditation workbench',
   lrs: '[K] Learning record store (xAPI statements)',
+  skills_taxonomy: '[K] Skills taxonomy governance: change proposals, council decisions, public change log (FS54)',
+  ai_literacy: '[K] AI and digital fluency: ladder, fitness checks, AI-literacy register, sandbox (FS09/FS10/FS36/FS37/FS80)',
+  transformation: '[K] Role transformation: 2030/2035 role profiles, task exposure, transition plans (FS05/FS06/FS11/FS12/FS81)',
+  recognition: '[K] Recognition of prior learning, NQF levels, credits and learning balance (FS24/FS29/FS30/FS78/FS79)',
+  workforce_strategy: '[K] Workforce strategy and disclosure: critical skills, forecasts, ISO 30414 pack, pilots (FS50/FS51/FS60/FS61)',
+  ecosystem: '[K] Skills ecosystem: regional plan, pledges, fellowships, grants, consortium cohorts (FS64-FS69, FS82/FS83)',
+  national_alignment: '[K] National-strategy alignment and MoHRE mapping (FS62/FS63)',
 };
 
 export const ROLE_LABELS: Record<PlatformRole, { en: string; ar: string; tier: 'public' | 'applicant' | 'staff' | 'elevated' | 'partner' | 'observer' | 'admin' }> = {
@@ -203,6 +218,46 @@ export const MATRIX: Record<Resource, Row> = {
   lrs: {
     employee: ['Own'], licensed_operator: ['Own'], manager: ['Own', 'Scope'], instructor: ['Own', 'Scope'], training_manager: ['Own', 'Scope', 'Agg'],
     hr_analyst: ['Agg'], auditor: ['R'],
+  },
+  // ── FS01 (future skills, wave A). Grants follow the RBAC lines of the FS cards (PLAN.md); existing roles only, no new role.
+  // Caveat (as for knowledge): R/W/A on a resource reads every row of a table whose read rule names it. Tables holding personal
+  // rows must use person/org rules (Own/Scope/OwnOrg) or an always-false open_read column, never a bare { res } rule.
+  // skills_taxonomy (FS54): everyone reads the public change log; staff propose (W); the skills council decides (A).
+  skills_taxonomy: {
+    ...fill(PLATFORM_ROLES as unknown as PlatformRole[], ['R']),
+    ...fill(STAFF.filter((r) => r !== 'auditor'), ['R', 'W']),
+    training_manager: ['R', 'W', 'A'], hr_director: ['R', 'W', 'A'], admin: ['R', 'W', 'A'], auditor: ['R'],
+  },
+  // ai_literacy (FS09/FS10/FS36/FS37/FS80): my rung and attempts (Own), staff read published registers and the gallery (R);
+  // HR aggregates; training_manager writes items; admin (incl. ai-governance) maintains the register and decides (A).
+  ai_literacy: {
+    ...fill(STAFF.filter((r) => r !== 'auditor'), ['R', 'Own']),
+    hr_analyst: ['R', 'Own', 'Agg'], hr_director: ['R', 'Own', 'Agg'], training_manager: ['R', 'Own', 'W'], admin: ['R', 'Own', 'W', 'A'], auditor: ['R'],
+  },
+  // transformation (FS05/FS06/FS11/FS12/FS81): staff read role views; managers their team's transition plans; HR aggregates and
+  // decides transition plans; training_manager and HR director edit role profiles.
+  transformation: {
+    ...fill(STAFF.filter((r) => r !== 'auditor'), ['R', 'Own']),
+    manager: ['R', 'Own', 'Scope'], training_manager: ['R', 'Own', 'W'], hr_analyst: ['R', 'Own', 'Agg'], hr_director: ['R', 'Own', 'Agg', 'W', 'A'], auditor: ['R'],
+  },
+  // recognition (FS24/FS29/FS30/FS78/FS79): I request RPL and see my credits (Own); assessors and the HR authority decide (A);
+  // line managers see their team's balance (Scope); HR aggregates; auditors read.
+  recognition: {
+    ...fill(STAFF.filter((r) => r !== 'auditor'), ['Own']),
+    manager: ['Own', 'Scope'], instructor: ['Own', 'A'], training_manager: ['Own', 'A'], hr_analyst: ['Own', 'Agg'], hr_director: ['Own', 'Agg', 'A'], auditor: ['R'],
+  },
+  // workforce_strategy (FS50/FS51/FS60/FS61): never public; HR analyst aggregates and drafts; HR director decides; auditors read.
+  workforce_strategy: { hr_analyst: ['Agg', 'W'], hr_director: ['Agg', 'W', 'A'], training_manager: ['Agg'], admin: ['R'], auditor: ['R'] },
+  // ecosystem (FS64-FS69, FS77, FS82, FS83): partners read released aggregates and write their own organisation's commitments;
+  // staff apply for grants (Own); HR runs and decides the programmes.
+  ecosystem: {
+    ...fill(STAFF.filter((r) => r !== 'auditor'), ['R', 'Own']),
+    partner_user: ['R', 'OwnOrg'], partner_admin: ['R', 'OwnOrg', 'OrgW'], university: ['R', 'OwnOrg', 'OrgW'],
+    hr_analyst: ['R', 'Own', 'Agg', 'W'], hr_director: ['R', 'Own', 'Agg', 'W', 'A'], admin: ['R', 'Own', 'A'], auditor: ['R'],
+  },
+  // national_alignment (FS62/FS63): staff read; admin and the HR director maintain the mapping.
+  national_alignment: {
+    ...fill(STAFF, ['R']), hr_analyst: ['R', 'Agg'], hr_director: ['R', 'W'], admin: ['R', 'W', 'A'],
   },
 };
 

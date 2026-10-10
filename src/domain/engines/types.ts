@@ -22,9 +22,11 @@ export interface Ranked<T = unknown> {
   reasons: Reason[];
   item?: T;
 }
-/** AI-flavoured surfaces that pages request with useEngine(surface). */
-export type Surface = 'skills' | 'recommend' | 'match' | 'search';
+/** AI-flavoured surfaces that pages request with useEngine(surface). FS01 adds transform (role transformation) and assess
+ *  (adaptive assessment); their settings are defaults only (FS_SURFACES), SURFACES stays the four stored in engine_settings. */
+export type Surface = 'skills' | 'recommend' | 'match' | 'search' | 'transform' | 'assess';
 export const SURFACES: Surface[] = ['skills', 'recommend', 'match', 'search'];
+export const FS_SURFACES: Surface[] = ['transform', 'assess'];
 export type EngineKind = 'deterministic' | 'model';
 /** active: the requested engine serves; model_unavailable: model requested but no gateway, deterministic serves instead. */
 export type EngineStatus = 'active' | 'model_unavailable';

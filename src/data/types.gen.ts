@@ -1367,6 +1367,22 @@ export interface SkillsRow {
   description_ar: string;
   sources: any;
   sort: number;
+  reusability: 'transversal' | 'cross_sectoral' | 'sector_specific' | 'occupation_specific';
+  skill_type: 'common' | 'specialised' | 'licence_like';
+  lifecycle: 'emerging' | 'growing' | 'stable' | 'declining' | 'obsolete';
+  decay_class: 'fast' | 'standard' | 'slow';
+  owner_role: 'nuclear_training' | 'operations' | 'maintenance' | 'engineering' | 'radiation_chemistry' | 'safety_licensing' | 'human_performance' | 'emergency_preparedness' | 'quality' | 'leadership_development' | 'digital_ai_governance' | 'sustainability' | 'advanced_reactors' | 'cyber_awareness';
+  version: number;
+  review_due?: string | null;
+  level_essence_en: string;
+  level_essence_ar: string;
+  alt_labels_en: string[];
+  alt_labels_ar: string[];
+  future_group?: 'digital' | 'ten_x' | 'data_ai' | 'new_economy' | 'nuclear_excellence' | null;
+  fs_area?: 'transversal' | 'ai_data' | 'green_energy' | 'advanced_reactor' | 'cyber_hygiene' | 'digital_plant' | null;
+  benchmark_ids: string[];
+  obsolete_on?: string | null;
+  replaced_by?: string | null;
 }
 export interface SkillEvidenceRow {
   id: string;
@@ -1407,6 +1423,32 @@ export interface EngineSettingsRow {
   weights: any;
   updated_by?: string | null;
   updated_at: string;
+}
+export interface BenchmarksRow {
+  id: string;
+  name_en: string;
+  name_ar: string;
+  owner_en: string;
+  owner_ar: string;
+  country_en: string;
+  country_ar: string;
+  category: 'global' | 'national' | 'uae' | 'nuclear_energy' | 'ai' | 'corporate';
+  year_from: number;
+  year_to?: number | null;
+  year_kind: 'single' | 'range' | 'editions' | 'current' | 'reference';
+  urls: string[];
+  fact_en: string;
+  fact_ar: string;
+  borrow_en: string;
+  borrow_ar: string;
+  figures: any;
+  feature_ids: string[];
+  as_of: string;
+  status: 'draft' | 'published' | 'retired';
+  listed: boolean;
+  sort: number;
+  updated_at: string;
+  updated_by?: string | null;
 }
 export interface LedgerLocalRow {
   id: string;
@@ -3344,6 +3386,7 @@ export interface Tables {
   skill_evidence: SkillEvidenceRow;
   person_skills: PersonSkillsRow;
   engine_settings: EngineSettingsRow;
+  benchmarks: BenchmarksRow;
   ledger_local: LedgerLocalRow;
   instructor_tracks: InstructorTracksRow;
   instructor_observations: InstructorObservationsRow;

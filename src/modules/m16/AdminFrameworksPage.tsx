@@ -9,6 +9,8 @@ import { Async, Callout, DataTable, Drawer, EmptyState, FilterBar, KeyValue, Mod
 import type { JobRolesRow, QualStandardsRow } from '../../data/types';
 import { Metric } from './parts';
 import MicrocredAdminTab from '../m17/MicrocredAdminTab'; // W5E1 (F32): micro-credentials tab
+import SkillCatalogueTab from '../m28/admin/SkillCatalogueTab'; // FS02: skills catalogue and taxonomy tab
+import BenchmarksTab from '../m28/admin/BenchmarksTab'; // FS01: benchmark registry tab
 
 export default function AdminFrameworksPage() {
   const t = useT();
@@ -43,8 +45,10 @@ export default function AdminFrameworksPage() {
                 { id: 'competencies', label: t('m16.fw.tabCompetencies'), content: <CompetenciesTab d={d} /> },
                 { id: 'standards', label: t('m16.fw.tabStandards'), content: <StandardsTab standards={d.standards} roles={d.roles} canEdit={canEdit} /> },
                 { id: 'microcredentials', label: t('m17.mc.admin.tab'), content: <MicrocredAdminTab /> }, // W5E1 (F32)
+                { id: 'skills', label: t('fs.admin.sk.tab'), content: <SkillCatalogueTab /> }, // FS02
+                { id: 'benchmarks', label: t('fs.admin.bm.tab'), content: <BenchmarksTab /> }, // FS01
               ]}
-              initial={typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('tab') === 'microcredentials' ? 'microcredentials' : undefined}
+              initial={(() => { const tab = typeof window !== 'undefined' ? new URLSearchParams(window.location.search).get('tab') : null; return tab && ['microcredentials', 'skills', 'benchmarks'].includes(tab) ? tab : undefined; })() /* W5E1, FS01/FS02 */}
             />
           </div>
         )}

@@ -1685,7 +1685,23 @@ create table if not exists kafaa_skills (
   description_en text not null default '',
   description_ar text not null default '',
   sources jsonb not null default '[]'::jsonb,
-  sort integer not null default 0
+  sort integer not null default 0,
+  reusability text not null default 'sector_specific' check (reusability in ('transversal', 'cross_sectoral', 'sector_specific', 'occupation_specific')),
+  skill_type text not null default 'specialised' check (skill_type in ('common', 'specialised', 'licence_like')),
+  lifecycle text not null default 'stable' check (lifecycle in ('emerging', 'growing', 'stable', 'declining', 'obsolete')),
+  decay_class text not null default 'standard' check (decay_class in ('fast', 'standard', 'slow')),
+  owner_role text not null default 'nuclear_training' check (owner_role in ('nuclear_training', 'operations', 'maintenance', 'engineering', 'radiation_chemistry', 'safety_licensing', 'human_performance', 'emergency_preparedness', 'quality', 'leadership_development', 'digital_ai_governance', 'sustainability', 'advanced_reactors', 'cyber_awareness')),
+  version integer not null default 1,
+  review_due date,
+  level_essence_en text not null default '',
+  level_essence_ar text not null default '',
+  alt_labels_en text[] not null default '{}'::text[],
+  alt_labels_ar text[] not null default '{}'::text[],
+  future_group text check (future_group in ('digital', 'ten_x', 'data_ai', 'new_economy', 'nuclear_excellence')),
+  fs_area text check (fs_area in ('transversal', 'ai_data', 'green_energy', 'advanced_reactor', 'cyber_hygiene', 'digital_plant')),
+  benchmark_ids text[] not null default '{}'::text[],
+  obsolete_on date,
+  replaced_by text
 );
 comment on table kafaa_skills is '[M17] Skill catalogue: finer layer under the competencies (F01)';
 
@@ -1737,6 +1753,35 @@ create table if not exists kafaa_engine_settings (
   updated_at timestamptz not null default now()
 );
 comment on table kafaa_engine_settings is '[M16] Engine per surface (deterministic or model slot) and ranking weights (F02)';
+
+-- M28 · International future-skills benchmarks: owner, year, sources, as-of date, figures, what Kafa'a borrows (FS01)
+create table if not exists kafaa_benchmarks (
+  id text primary key,
+  name_en text not null,
+  name_ar text not null,
+  owner_en text not null,
+  owner_ar text not null,
+  country_en text not null,
+  country_ar text not null,
+  category text not null check (category in ('global', 'national', 'uae', 'nuclear_energy', 'ai', 'corporate')),
+  year_from integer not null,
+  year_to integer,
+  year_kind text not null default 'single' check (year_kind in ('single', 'range', 'editions', 'current', 'reference')),
+  urls text[] not null,
+  fact_en text not null,
+  fact_ar text not null,
+  borrow_en text not null,
+  borrow_ar text not null,
+  figures jsonb not null default '[]'::jsonb,
+  feature_ids text[] not null default '{}'::text[],
+  as_of date not null,
+  status text not null default 'published' check (status in ('draft', 'published', 'retired')),
+  listed boolean not null default true,
+  sort integer not null default 0,
+  updated_at timestamptz not null default now(),
+  updated_by text
+);
+comment on table kafaa_benchmarks is '[M28] International future-skills benchmarks: owner, year, sources, as-of date, figures, what Kafa''a borrows (FS01)';
 
 -- M02 · Instructor and SME qualification track: nomination, initial training, observed deliveries, qualification and annual currency (F31)
 create table if not exists kafaa_instructor_tracks (
@@ -3992,6 +4037,7 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ad
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_advisor_turns_session_id_fk') then alter table kafaa_advisor_turns add constraint kafaa_advisor_turns_session_id_fk foreign key (session_id) references kafaa_advisor_sessions(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_advisor_turns_person_id_fk') then alter table kafaa_advisor_turns add constraint kafaa_advisor_turns_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skills_competency_id_fk') then alter table kafaa_skills add constraint kafaa_skills_competency_id_fk foreign key (competency_id) references kafaa_competencies(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skills_replaced_by_fk') then alter table kafaa_skills add constraint kafaa_skills_replaced_by_fk foreign key (replaced_by) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_evidence_person_id_fk') then alter table kafaa_skill_evidence add constraint kafaa_skill_evidence_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_evidence_skill_id_fk') then alter table kafaa_skill_evidence add constraint kafaa_skill_evidence_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_person_skills_person_id_fk') then alter table kafaa_person_skills add constraint kafaa_person_skills_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -4404,6 +4450,10 @@ create index if not exists kafaa_advisor_turns_session_id_idx on kafaa_advisor_t
 create index if not exists kafaa_advisor_turns_person_id_idx on kafaa_advisor_turns (person_id);
 create index if not exists kafaa_skills_competency_id_idx on kafaa_skills (competency_id);
 create index if not exists kafaa_skills_area_idx on kafaa_skills (area);
+create index if not exists kafaa_skills_lifecycle_idx on kafaa_skills (lifecycle);
+create index if not exists kafaa_skills_future_group_idx on kafaa_skills (future_group);
+create index if not exists kafaa_skills_fs_area_idx on kafaa_skills (fs_area);
+create index if not exists kafaa_skills_replaced_by_idx on kafaa_skills (replaced_by);
 create index if not exists kafaa_skill_evidence_person_id_idx on kafaa_skill_evidence (person_id);
 create index if not exists kafaa_skill_evidence_skill_id_idx on kafaa_skill_evidence (skill_id);
 create index if not exists kafaa_skill_evidence_kind_idx on kafaa_skill_evidence (kind);
@@ -4412,6 +4462,8 @@ create index if not exists kafaa_skill_evidence_org_id_idx on kafaa_skill_eviden
 create index if not exists kafaa_person_skills_person_id_idx on kafaa_person_skills (person_id);
 create index if not exists kafaa_person_skills_skill_id_idx on kafaa_person_skills (skill_id);
 create index if not exists kafaa_person_skills_org_id_idx on kafaa_person_skills (org_id);
+create index if not exists kafaa_benchmarks_category_idx on kafaa_benchmarks (category);
+create index if not exists kafaa_benchmarks_status_idx on kafaa_benchmarks (status);
 create index if not exists kafaa_instructor_tracks_person_id_idx on kafaa_instructor_tracks (person_id);
 create index if not exists kafaa_instructor_tracks_stage_idx on kafaa_instructor_tracks (stage);
 create index if not exists kafaa_instructor_tracks_status_idx on kafaa_instructor_tracks (status);
@@ -4767,4 +4819,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 215) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 216) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

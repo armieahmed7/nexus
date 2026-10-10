@@ -36,4 +36,15 @@ export const MODULES: Record<ModuleId, ModuleMeta> = {
   M25: { id: 'M25', group: 'W4', en: 'Training effectiveness and needs', ar: 'فعالية التدريب واحتياجاته' },
   M26: { id: 'M26', group: 'W4', en: 'SAT and accreditation workbench', ar: 'منصة النهج المنهجي للتدريب والاعتماد' },
   M27: { id: 'M27', group: 'W4', en: 'Learning record store', ar: 'مخزن سجلات التعلّم' },
+  // FS01 (future skills, wave A): group = the FS wave that first owns the folder (PLAN.md section 2).
+  M28: { id: 'M28', group: 'FSB', en: 'Skills Intelligence', ar: 'ذكاء المهارات' },
+  M29: { id: 'M29', group: 'FSB', en: 'AI and Digital Fluency', ar: 'الطلاقة في الذكاء الاصطناعي والتقنيات الرقمية' },
+  M30: { id: 'M30', group: 'FSB', en: 'Role Transformation', ar: 'تحوّل الأدوار' },
+  M31: { id: 'M31', group: 'FSE', en: 'Next-Gen Nuclear Readiness', ar: 'الجاهزية للجيل القادم من الطاقة النووية' },
+  M32: { id: 'M32', group: 'FSE', en: 'Energy Transition Skills', ar: 'مهارات تحوّل الطاقة' },
+  M33: { id: 'M33', group: 'FSC', en: 'Human Skills Studio', ar: 'استوديو المهارات الإنسانية' },
+  M34: { id: 'M34', group: 'FSD', en: 'Recognition (RPL, NQF, credits)', ar: 'الاعتراف بالتعلّم (التعلّم السابق والإطار الوطني للمؤهلات والأرصدة)' },
+  M35: { id: 'M35', group: 'FSF', en: 'Workforce Strategy and Disclosure', ar: 'استراتيجية القوى العاملة والإفصاح' },
+  M36: { id: 'M36', group: 'FSG', en: 'Skills Ecosystem', ar: 'منظومة المهارات' },
+  M37: { id: 'M37', group: 'FSG', en: 'National Alignment', ar: 'المواءمة الوطنية' },
 };

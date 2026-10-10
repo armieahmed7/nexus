@@ -7,6 +7,7 @@ import { SearchIndex, type SearchDoc } from '../search';
 import { ModelGatewayEngine } from './model';
 import * as Rank from './rank';
 import { SkillsEngine } from './skills';
+import * as Future from './future'; // FS01: transform and assess surfaces
 import type { EngineKind, EngineStatus, Ranked, Surface, Weights } from './types';
 
 export interface EngineSetting { surface: Surface; engine: EngineKind; weights: Weights }
@@ -15,6 +16,9 @@ export const DEFAULT_SETTINGS: Record<Surface, EngineSetting> = {
   recommend: { surface: 'recommend', engine: 'deterministic', weights: { ...Rank.DEFAULT_RECOMMEND } },
   match: { surface: 'match', engine: 'deterministic', weights: { ...Rank.DEFAULT_MATCH } },
   search: { surface: 'search', engine: 'deterministic', weights: { title: 3, k1: 1.4, b: 0.7 } },
+  // FS01: defaults only (not stored in kafaa_engine_settings); the model slot serves only when a gateway exists.
+  transform: { surface: 'transform', engine: 'deterministic', weights: { ...Future.DEFAULT_TRANSFORM } },
+  assess: { surface: 'assess', engine: 'deterministic', weights: { ...Future.DEFAULT_ASSESS } },
 };
 export interface ResolvedEngine {
   surface: Surface;
@@ -46,6 +50,11 @@ export interface Engine extends ResolvedEngine {
     cosine: typeof Rank.cosine;
   };
   skills: typeof SkillsEngine;
+  /** FS01: task exposure (transform) and adaptive item selection (assess) with this surface's weights. */
+  future: {
+    taskExposure: (t: Future.TaskExposureInput) => ReturnType<typeof Future.taskExposure>;
+    nextItem: (history: Future.AssessAnswer[]) => Future.NextItem;
+  };
   /** BM25 index over any bilingual documents (the SearchEngine). */
   search: <D extends SearchDoc>(docs: D[]) => SearchIndex<D>;
   model: ModelGatewayEngine;
@@ -66,6 +75,10 @@ export function makeEngine(r: ResolvedEngine, model = new ModelGatewayEngine()):
       cosine: Rank.cosine,
     },
     skills: SkillsEngine,
+    future: {
+      taskExposure: (t) => Future.taskExposure(t, { ...Future.DEFAULT_TRANSFORM, ...ws }),
+      nextItem: (h) => Future.nextItem(h, { ...Future.DEFAULT_ASSESS, ...ws }),
+    },
     search: (docs) => new SearchIndex(docs),
     model,
     run: async (deterministic, payload) => {

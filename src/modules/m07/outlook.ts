@@ -132,7 +132,7 @@ export function paramsEqual(a: OutlookParams, b: OutlookParams): boolean {
 // ───────────── Inputs (definer side) and the base aggregates
 export interface OutlookInput {
   people: { id: string; kind: string; status: string; job_role_id?: string | null }[];
-  skills: { id: string; area: string; competency_id?: string | null; core?: boolean; adv_skill_ids?: string[] | null }[];
+  skills: { id: string; area: string; competency_id?: string | null; core?: boolean; adv_skill_ids?: string[] | null; fs_area?: string | null }[]; // FS02: fs_area
   states: { person_id: string; skill_id: string; level: number; active?: boolean | null }[];
   roleComps: { role_id: string; competency_id: string }[];
   klraPositions: { id: string; person_id?: string | null; kind?: string | null; contract_kind: string; retirement_band: string; contract_end_band: string; active?: boolean | null }[];
@@ -285,7 +285,7 @@ export function gatherBase(inp: OutlookInput, scenarioId: string | null): Outloo
       const y = Math.max(BASE_YEAR + 1, Number(c.ready_on.slice(0, 4)));
       cohort[String(y)] = (cohort[String(y)] ?? 0) + c.trainees;
     }
-    const fam = inp.skills.filter((s) => s.area === a);
+    const fam = inp.skills.filter((s) => s.area === a && !s.fs_area); // FS02: established catalogue only (SQL kafaa_so_base)
     const mapped = fam.filter((s) => (s.adv_skill_ids ?? []).some((id) => (scenario?.tech ? advTech.get(id) === scenario.tech : advTech.has(id)))).length;
     const cover: Record<string, number> = {};
     for (let y = BASE_YEAR; y <= COVER_LAST_YEAR; y++) {
