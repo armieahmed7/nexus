@@ -1,4 +1,4 @@
-// M17 routes (Skills Passport; owner: W1 engineer, features F03, F04 (W1) · F10, F11 (W2) · F32 (W5)). Registered once by F01 in src/routes/registry.ts:
+// M17 routes (Skills Passport; owner: W1 engineer, features F03, F04 (W1) · F10, F11 (W2) · F32 (W5) · FS03 (future-skills wave A · E2)). Registered once by F01 in src/routes/registry.ts:
 // add routes here only, never in shared routing files. Each route: { id, path, module: 'M17', zone, guard, nav?, parent?, spec, component }.
 // Route ids are i18n keys (m17.routes.<id>.title|purpose in src/i18n/m17.{en,ar}.json) and are visited by the smoke suite automatically.
 // Param routes: sample params in src/modules/m17/smoke.json.
@@ -19,4 +19,7 @@ export const routes: RouteDef[] = [
   { id: 'team-skills-validate', path: '/team/skills/validate', module: 'M17', zone: 'staff', guard: { signedIn: true, grant: { res: 'skills_profile', levels: ['Scope', 'A'] } }, nav: { lens: 'my', section: 'team', order: 33 }, parent: 'team-skills', spec: 'F10 /team/skills/validate · Validate check-ins and calibration', component: lazy(() => import('./ValidatePage')) },
   // W5 · w5e1: F32 Stackable micro-credentials (definitions are managed in the "Micro-credentials" tab of /admin/frameworks)
   { id: 'my-skills-credentials', path: '/my/skills/credentials', module: 'M17', zone: 'staff', guard: OWN, nav: { lens: 'my', section: 'skills', order: 18.2 }, parent: 'my-skills', spec: 'F32 /my/skills/credentials · Stackable micro-credentials', component: lazy(() => import('./MicrocredsPage')) },
+  // FS · wave A · E2: FS03 Honest skill states (decay classes, half-lives, confidence bands)
+  { id: 'my-skills-confidence', path: '/my/skills/confidence', module: 'M17', zone: 'staff', guard: OWN, nav: { lens: 'my', section: 'skills', order: 18.1 }, parent: 'my-skills', spec: 'FS03 /my/skills/confidence · How sure are we (bands, sources, decay)', component: lazy(() => import('./MyConfidencePage')) },
+  { id: 'admin-skills-confidence', path: '/admin/skills-confidence', module: 'M17', zone: 'admin', guard: { signedIn: true, anyRole: ['admin', 'training_manager', 'auditor', 'hr_analyst', 'hr_director'] }, nav: { lens: 'admin', section: 'admin', order: 6.5 }, parent: 'admin', spec: 'FS03 /admin/skills-confidence · Skill decay classes, half-lives and confidence', component: lazy(() => import('./SkillsConfidenceAdminPage')) },
 ];

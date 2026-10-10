@@ -202,17 +202,19 @@ export interface PassportData {
   training: Row[];
   attempts: Row[];
   forms: Row[];
+  /** FS03: own micro-credential awards (labels for back-filled credential evidence). */
+  mcAwards: Row[];
 }
 const safe = <T,>(p: Promise<T[]>) => p.catch(() => [] as T[]);
 /** Everything the passport needs for one person; the repository applies RLS (own, scope or nothing). */
 export function usePassportData(personId: string | null) {
   const repo = useRepo();
   return useQuery(
-    ['person_skills', 'skill_evidence', 'skill_claims', 'badges', 'qual_records', 'licences', 'people', 'certificates', 'training_records'],
+    ['person_skills', 'skill_evidence', 'skill_claims', 'badges', 'qual_records', 'licences', 'people', 'certificates', 'training_records', 'microcred_awards'],
     async (): Promise<PassportData> => {
       if (!personId) throw new Error('no person');
       const L = (tbl: string, q: object = {}) => safe(repo.list(tbl as never, q as never) as Promise<Row[]>);
-      const [person, skills, comps, states, evidence, roleComps, roles, families, quals, standards, licences, edges, claims, badges, courses, certificates, training, attempts, forms] = await Promise.all([
+      const [person, skills, comps, states, evidence, roleComps, roles, families, quals, standards, licences, edges, claims, badges, courses, certificates, training, attempts, forms, mcAwards] = await Promise.all([
         repo.get('people', personId).catch(() => null),
         L('skills', { order: [['sort', 'asc']] }),
         L('competencies'),
@@ -232,8 +234,9 @@ export function usePassportData(personId: string | null) {
         L('training_records', { filter: { person_id: personId } }),
         L('attempts', { filter: { person_id: personId } }),
         L('assessment_forms'),
+        L('microcred_awards', { filter: { person_id: personId } }),
       ]);
-      return { person: (person as Row) ?? null, skills: skills as never, comps: comps as never, states: states as never, evidence, roleComps, roles, families, quals, standards, licences, edges, claims, badges, courses: courses as never, certificates, training, attempts, forms };
+      return { person: (person as Row) ?? null, skills: skills as never, comps: comps as never, states: states as never, evidence, roleComps, roles, families, quals, standards, licences, edges, claims, badges, courses: courses as never, certificates, training, attempts, forms, mcAwards };
     },
     [personId],
   );

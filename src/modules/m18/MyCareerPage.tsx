@@ -10,6 +10,7 @@ import { useT, usePick, useFormat, L } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { reachableRoles, type CareerReadiness, type Reason } from './career';
 import { BandPill, GatePill, GateRoutes, OpportunityMap, ReadinessRing, useArrow, useCareerBase, useReadiness, type CareerBase, type MapEdge, type MapNode } from './shared';
+import { ReadinessSure } from '../m17/confidenceUi'; // FS03 (M17): how sure the readiness is (band and range)
 
 import { RecoOptedOut, UnrankedRoles, useRecoOptOut } from '../m16/optout'; // W3E5 (F24): per-surface opt-out
 
@@ -250,6 +251,7 @@ function RoleCard(p: { d: CareerBase; roleId: string; r: CareerReadiness | null;
             {p.r && !p.r.path_only && <GatePill status={p.r.gate_status} />}
             {months > 0 && <StatusPill tone="neutral">{t('m18.card.typical', { n: f.num(months) })}</StatusPill>}
           </div>
+          {p.r && !p.r.path_only && <div className="mt-1"><ReadinessSure states={p.d.states} skills={p.d.skills} roleComps={p.d.roleComps} roleId={p.roleId} /></div>}
           {p.path.length > 1 && <div className="mt-1 text-[12px] text-ink-2">{[p.myRole, ...p.path].map((id) => pick(p.d.roleById.get(id), 'title')).join(` ${p.arrow} `)}</div>}
         </div>
       </div>
@@ -306,6 +308,7 @@ function RoleDetail({ d, roleId, r, closing }: { d: CareerBase; roleId: string; 
         <div className="space-y-1">
           <div className="flex flex-wrap gap-1.5"><BandPill r={r} />{!r.path_only && <GatePill status={r.gate_status} />}</div>
           <p className="text-[13px] text-ink-2">{r.path_only ? t('m18.pathOnlyHint') : t('m18.detail.readinessNote')}</p>
+          {!r.path_only && <ReadinessSure states={d.states} skills={d.skills} roleComps={d.roleComps} roleId={roleId} detail />}
           <WhyThis reasons={r.reasons} testId="m18-detail-why" />
         </div>
       </div>

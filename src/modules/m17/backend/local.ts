@@ -20,6 +20,7 @@ import { badgeSourceCheck, badgeView, courseAlignment, isHttpUrl, isSecuritySkil
 import { CLAIMS_PER_DAY, LEVEL_MAX, NOTE_MAX } from '../passport';
 import { makeLocalM17W2 } from './local.w2'; // W2 · w2e1: F10 check-ins, F11 team heatmap
 import { makeLocalM17W5 } from './local.w5'; // W5 · w5e1: F32 micro-credentials
+import { makeLocalM17Fs03 } from './local.fs03'; // FS · wave A · E2: FS03 honest skill states
 
 /** Offline demo key (in-browser backend only; see the file header). Not the server key. */
 export const OFFLINE_SEED = '80df5566f0f615286d25a424ee54b2c33e94253912786453b748dd943143864d';
@@ -32,6 +33,7 @@ export function makeLocalM17(b: LocalBackend, h: LocalRpcHelpers): M17Rpc {
   return {
     ...makeLocalM17W2(b, h),
     ...makeLocalM17W5(b, h, OFFLINE_SEED),
+    ...makeLocalM17Fs03(b, h),
     async claimSkill(input) {
       await b.whenReady();
       type R = { id: string; level: number; state_level: number };

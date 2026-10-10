@@ -2,7 +2,7 @@
 // self-ratings for people with no recorded evidence, and every person's derived skill state.
 // Loaded by scripts/build-seed.mjs (scripts/seed/ext/*.mjs, sorted): default export runs in file order, finalize() runs after
 // every ext builder, so evidence added by later features (ojt, ratings, credentials) is included in the derived states.
-import { gatherEvidence, deriveStates, evidenceId } from '../../../src/domain/skills.ts';
+import { gatherEvidence, deriveStates, evidenceId, decayModelFrom } from '../../../src/domain/skills.ts';
 
 const AREA = { plant: 'plant_systems', conduct: 'operations', maintenance: 'maintenance', rp: 'radiation_chemistry', chemistry: 'radiation_chemistry', engineering: 'engineering', safety: 'safety', hu: 'human_performance', culture: 'human_performance', ep: 'emergency', security: 'security', quality: 'quality', leadership: 'leadership', digital: 'digital' };
 
@@ -124,6 +124,7 @@ export function finalize(T, ctx) {
   }
   const recorded = T.skill_evidence.filter((e) => ['rating', 'ojt', 'credential'].includes(e.kind));
   T.skill_evidence = [...derived.map((e) => ({ ...e, note: null, recorded_by: null, active: true })), ...recorded].sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
-  T.person_skills = deriveStates(T.skill_evidence, now).map((s) => ({ ...s, active: true, updated_at: `${now}T00:00:00Z` }));
+  T.person_skills = deriveStates(T.skill_evidence, now, decayModelFrom(T.engine_settings, T.skills)).map( // FS03: per-class half-lives
+    (s) => ({ ...s, active: true, updated_at: `${now}T00:00:00Z` }));
 }
 export const FINALIZE_LAST = true;

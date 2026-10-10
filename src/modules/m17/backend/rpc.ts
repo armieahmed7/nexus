@@ -4,6 +4,7 @@
 import type { Result } from '../../../data/types';
 import type { CheckinSkill, CoverageRow, CrewRow, Distribution, Group, RaterOffset, TargetRow } from '../checkins';
 import type { AwardView, DefInput, Eligibility } from '../microcred'; // W5 · E1 (F32)
+import type { ConfidenceStats, HalfLivesInput } from '../decay'; // FS03 (future-skills wave A · E2)
 
 export interface ClaimInput {
   skill_id: string;
@@ -98,7 +99,27 @@ export interface MicrocredCheck {
 }
 export interface MicrocredStat { code: string; title_en: string; title_ar: string; kind: string; holders: number | null; pending: number | null; renewal_due: number | null; suppressed: boolean }
 export type EligibilityResult = { allowed: true; person_id: string; items: Eligibility[] } | { allowed: false; code: 'not_signed_in' | 'forbidden' | 'not_found'; items: [] };
-export interface M17Rpc {
+// ───────────── FS · wave A · E2 · FS03 Honest skill states. SQL: supabase/migrations/20261010212001_kafaa_fs12_decay.sql. Rules: src/modules/m17/decay.ts.
+export interface SetHalfLivesResult {
+  change_id: string;
+  surface: 'skills';
+  months: { fast: number; standard: number; slow: number };
+  /** kafaa_skills_apply output for everyone after the change (people, states, evidence, digest). */
+  recompute: { people: number; states: number; evidence: number; digest: string };
+  /** Active states whose band or level changed; how many lost or gained a level. */
+  moved: number;
+  level_down: number;
+  level_up: number;
+}
+export interface Fs03Rpc {
+  /** FS03: decay classes, half-lives, bands by class and area, ageing, the micro-credential evidence back-fill and an optional what-if preview
+   *  of other half-lives (read; platform admins and auditors, the training manager, HR aggregates; cells naming fewer than 10 people are null). */
+  skillConfidenceStats(halfLives?: Record<string, number> | null): Promise<ConfidenceStats>;
+  /** FS03: platform admins set the three half-lives (whole months 6-120, fast <= standard <= slow) with a rationale; logged as an engine
+   *  change (cards versioned, ledger kafaa.ai.engine_change) and every skill state is recomputed. */
+  setSkillHalfLives(input: HalfLivesInput): Promise<Result<SetHalfLivesResult>>;
+}
+export interface M17Rpc extends Fs03Rpc {
   /** F03: self-claim a skill level. Own only; 20 claims a day; refused for security competencies (security_restricted). */
   claimSkill(input: ClaimInput): Promise<Result<{ id: string; level: number; state_level: number }>>;
   /** F04: wrap one of my valid Kafa'a course certificates or course completions in a signed badge (not_eligible otherwise). */

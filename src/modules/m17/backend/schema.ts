@@ -92,4 +92,16 @@ export const TABLES_M17: Record<string, TableDef> = {
     },
     read: [{ res: 'skills_profile', person: 'person_id' }], write: { mode: 'rpc', res: 'skills_profile' },
   },
+  // ───────────── FS · wave A · E2 · FS03 Honest skill states (decay classes, half-lives, confidence bands)
+  // Public reference rows for the three decay classes: what each means, the areas that default to it, the default half-life
+  // (the live value is engine_settings.skills), and the sourced benchmark facts behind it (figures stored here, never in copy).
+  // The compute itself reads only engine_settings + skills (src/domain/skills.ts = SQL kafaa_skill_states_v2).
+  skill_decay_classes: {
+    module: 'M17', label: 'Skill decay classes with default half-lives, area defaults and sourced rationale (FS03)',
+    cols: {
+      id: 'text pk', name_en: 'text', name_ar: 'text', summary_en: 'text', summary_ar: 'text', examples_en: 'text =\'\'', examples_ar: 'text =\'\'',
+      default_months: 'int', areas: 'text[] =[]', facts: 'json =[]', sources: 'json =[]', as_of: 'date', sort: 'int =0',
+    },
+    read: [{ res: 'public_content' }], write: { mode: 'none' },
+  },
 };

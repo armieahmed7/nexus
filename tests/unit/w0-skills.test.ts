@@ -2,7 +2,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { LocalBackend } from '../../src/data/local/LocalBackend';
 import { applySkills } from '../../src/data/local/rpc.w0';
-import { deriveSkillState, deriveStates, gatherEvidence, statesDigestText, skillReasons, type Evidence, type SkillSources } from '../../src/domain/skills';
+import { decayModelFrom, deriveSkillState, deriveStates, gatherEvidence, statesDigestText, skillReasons, type Evidence, type SkillSources } from '../../src/domain/skills';
 import { sha256Hex } from '../../src/data/audit';
 import { hasKey } from '../../src/i18n';
 import seed from '../../src/seed/seed.json';
@@ -45,7 +45,7 @@ describe('F01 seeded skill state', () => {
   });
   it('the seed states equal a fresh derivation (builder and domain functions agree)', () => {
     const recorded = T.skill_evidence.filter((e) => ['rating', 'ojt', 'credential'].includes(e.kind));
-    const fresh = deriveStates([...gatherEvidence(src(), { person: null, now: NOW }), ...recorded] as Evidence[], NOW);
+    const fresh = deriveStates([...gatherEvidence(src(), { person: null, now: NOW }), ...recorded] as Evidence[], NOW, decayModelFrom(T.engine_settings, T.skills)); // FS03: per-class half-lives
     expect(statesDigestText(fresh)).toBe(statesDigestText(T.person_skills));
   });
   it('every reason renders through an i18n key', () => {
@@ -105,7 +105,7 @@ describe('F01 derivation rules', () => {
     expect(old.reasons[0].ageing).toBe(true);
     // a current qualification does not decay
     const q = deriveSkillState([{ ...e('2019-01-01'), kind: 'qual', basis: 'verified', level: 3 }], NOW)!;
-    expect(q.confidence).toBe(0.95);
+    expect(q.confidence).toBe(0.99); // FS03: verified weighs 1.0 in the calibrated blend (capped at 0.99); was 0.95
     expect(q.level).toBe(3);
   });
   it('claims never outrank evidence: a claimed level 4 next to verified level 2 gives verified 2', () => {
