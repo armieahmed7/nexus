@@ -56,7 +56,7 @@ export function BenchmarkChip({ id, row: given }: { id: string; row?: BenchmarkR
     <>
       <button
         type="button"
-        className="chip max-w-full border-accent/30 bg-accent-soft text-eyebrow hover:border-accent"
+        className="chip max-w-full border-accent/30 bg-accent-soft normal-case tracking-normal text-eyebrow hover:border-accent"
         onClick={() => setOpen(true)}
         title={name}
         aria-haspopup="dialog"
@@ -65,7 +65,7 @@ export function BenchmarkChip({ id, row: given }: { id: string; row?: BenchmarkR
       >
         <Icon name="book" size={12} />
         <span className="max-w-[15rem] truncate">{shortName(name)}</span>
-        <span className="num text-ink-3">{year(row)}</span>
+        <span className="tabular-nums text-ink-3">{year(row)}</span>
       </button>
       <BenchmarkDrawer row={row} open={open} onClose={() => setOpen(false)} />
     </>
@@ -109,7 +109,7 @@ export function BenchmarkDrawer({ row, open, onClose }: { row: BenchmarkRow; ope
           <dt className="text-ink-3">{t('fs.bm.where')}</dt>
           <dd>{pick(row, 'country')}</dd>
           <dt className="text-ink-3">{t('fs.bm.year.label')}</dt>
-          <dd className="num">{year(row)}</dd>
+          <dd className="tabular-nums">{year(row)}</dd>
           <dt className="text-ink-3">{t('fs.bm.asOf')}</dt>
           <dd>{f.date(row.as_of)}</dd>
         </dl>

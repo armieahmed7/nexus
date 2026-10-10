@@ -51,7 +51,7 @@ function Registry({ rows, canEdit }: { rows: BenchmarkRow[]; canEdit: boolean })
       </button>
     ) },
     { key: 'owner', header: t('fs.admin.bm.colOwner'), value: (r) => pick(r, 'owner'), sortable: true, render: (r) => <span className="text-ink-2">{pick(r, 'owner')}<span className="block text-[11.5px] text-ink-3">{pick(r, 'country')}</span></span> },
-    { key: 'year', header: t('fs.admin.bm.colYear'), value: (r) => r.year_from, sortable: true, render: (r) => <span className="num whitespace-nowrap">{year(r)}</span> },
+    { key: 'year', header: t('fs.admin.bm.colYear'), value: (r) => r.year_from, sortable: true, render: (r) => <span className="tabular-nums whitespace-nowrap">{year(r)}</span> },
     { key: 'category', header: t('fs.admin.bm.colCategory'), value: (r) => t(`fs.bm.category.${r.category}`), render: (r) => <StatusPill tone="accent">{t(`fs.bm.category.${r.category}`)}</StatusPill> },
     { key: 'sources', header: t('fs.admin.bm.colSources'), value: (r) => r.urls.map(hostOf).join(' '), render: (r) => (
       <span className="flex flex-col gap-0.5 text-[12px]">{r.urls.map((u) => <a key={u} href={u} target="_blank" rel="noopener noreferrer" className="truncate"><bdi dir="ltr">{hostOf(u)}</bdi></a>)}</span>
