@@ -90,7 +90,7 @@ function DifCard({ d, m, taskId }: { d: SatData; m: SatModel; taskId: string }) 
   const [v, setV] = useState({ d: String(mine?.d ?? ''), i: String(mine?.i ?? ''), f: String(mine?.f ?? ''), note: mine?.note ?? '' });
   const valid = v.d && v.i && v.f;
   const cols: Column<(typeof ratings)[number]>[] = [
-    { key: 'kind', header: t('m26.dif.rater'), value: (r) => t(`m26.dif.kind.${r.rater_kind}`), render: (r) => <span>{t(`m26.dif.kind.${r.rater_kind}`)}{r.rater_person_id === s.identity.personId && <span className="chip ms-1 border-accent bg-accent-soft text-accent-ink">{t('m26.dif.you')}</span>}</span> },
+    { key: 'kind', header: t('m26.dif.rater'), value: (r) => t(`m26.dif.kind.${r.rater_kind}`), render: (r) => <span>{t(`m26.dif.kind.${r.rater_kind}`)}{r.rater_person_id === s.identity.personId && <span className="chip ms-1 border-accent bg-accent-soft text-eyebrow">{t('m26.dif.you')}</span>}</span> },
     { key: 'dif', header: t('m26.task.consensus'), csv: false, render: (r) => <DifDots d={r.d} i={r.i} f={r.f} /> },
     { key: 'd', header: t('m26.dif.d1'), value: (r) => r.d, align: 'end' },
     { key: 'i', header: t('m26.dif.i1'), value: (r) => r.i, align: 'end' },

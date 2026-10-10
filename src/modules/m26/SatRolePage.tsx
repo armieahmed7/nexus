@@ -221,7 +221,7 @@ function RoleChanges({ d, m, roleId }: { d: SatData; m: SatModel; roleId: string
               <span className="font-semibold">{m.task.get(c.task_id)?.code}</span>
               <span>{pick(c.after as never, 'title')}</span>
               <span className={`chip ${c.status === 'open' ? 'border-sim-line bg-sim-bg text-sim' : 'border-ok-line bg-ok-bg text-ok'}`}>{t(`m26.changes.status.${c.status}`)}</span>
-              {c.area === 'future' && <span className="chip border-accent bg-accent-soft text-accent-ink">{t('m26.fx.areaFuture')}</span>}
+              {c.area === 'future' && <span className="chip border-accent bg-accent-soft text-eyebrow">{t('m26.fx.areaFuture')}</span>}
             </div>
             <p className="mt-1 text-[13px]">{c.summary}</p>
             <p className="mt-1 text-[12px] text-ink-2">{t(`m26.changes.kind.${c.kind}`)} · {t(`m26.changes.trigger.${c.trigger}`)} · {f.date(c.opened_at)} · <L to="/training/sat/changes" className="link">{t('m26.changes.review')}</L></p>

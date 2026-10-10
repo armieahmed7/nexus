@@ -60,7 +60,7 @@ function Changes({ d, m }: { d: SatData; m: SatModel }) {
                     <span className="min-w-0">{pick(after, 'title')}</span>
                     <span className={`chip ${c.status === 'open' ? 'border-sim-line bg-sim-bg text-sim' : 'border-ok-line bg-ok-bg text-ok'}`}>{t(`m26.changes.status.${c.status}`)}</span>
                     <span className="chip border-line bg-sunken text-ink-2">{t(`m26.changes.kind.${c.kind}`)}</span>
-                    {c.area === 'future' ? <span className="chip border-accent bg-accent-soft text-accent-ink">{t('m26.fx.areaFuture')}</span> : <span className="chip border-info-line bg-info-bg text-info">{t(`m26.changes.trigger.${c.trigger}`)}</span>}
+                    {c.area === 'future' ? <span className="chip border-accent bg-accent-soft text-eyebrow">{t('m26.fx.areaFuture')}</span> : <span className="chip border-info-line bg-info-bg text-info">{t(`m26.changes.trigger.${c.trigger}`)}</span>}
                   </div>
                   <p className="mt-2 text-[13.5px]">{c.summary}</p>
                   {c.area === 'future' ? (<>

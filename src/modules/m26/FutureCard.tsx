@@ -43,9 +43,9 @@ export function FutureCard({ d, task }: { d: SatData; task: Task }) {
                   <ul className="divide-y divide-line rounded-card border border-line" data-testid="m26-fx-skills">
                     {ft.skills.map((s) => (
                       <li key={s.skill_id} className="flex flex-wrap items-center gap-2 p-2 text-[13px]">
-                        <span className="min-w-0 flex-1">{pick(data.skills.find((k) => k.id === s.skill_id), 'name') || s.skill_id}</span>
+                        <span className="min-w-0 flex-1 basis-full sm:basis-auto">{pick(data.skills.find((k) => k.id === s.skill_id), 'name') || s.skill_id}</span>
                         <span className="num chip border-line bg-sunken text-ink-2">{t('m26.fx.skillLevel', { n: f.num(s.level) })}</span>
-                        <span className={`chip ${s.kind === 'future' ? 'border-accent bg-accent-soft text-accent-ink' : 'border-line bg-panel text-ink-2'}`}>{t(`m26.fx.kind.${s.kind}`)}</span>
+                        <span className={`chip ${s.kind === 'future' ? 'border-accent bg-accent-soft text-eyebrow' : 'border-line bg-panel text-ink-2'}`}>{t(`m26.fx.kind.${s.kind}`)}</span>
                         <span className="text-[11.5px] text-ink-3">{t(`m26.fx.src.${s.source}`)}</span>
                       </li>
                     ))}

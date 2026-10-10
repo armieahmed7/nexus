@@ -174,9 +174,12 @@ function RadarView({ r, factor, other, rowFor, planned, canPlan, onPlan, map, ca
           />
           <p className="mt-2 text-[12px] text-ink-3">{t('m11.wf.radarNote')}</p>
         </Card>
-        <Section title={t('m11.wf.gapTitle')} description={t('m11.wf.gapDescComputed')}>
-          <DataTable rows={calc} columns={cols} rowKey={(c) => c.key} csvName={`kafaa-future-skills-SIMULATED-${r.scenario.replace(/\W+/g, '-')}`} initialSort={{ key: 'gap', dir: 'desc' }} searchable={false} caption={t('m11.wf.gapTitle')} />
-        </Section>
+        {/* FS QA: min-w-0 lets the grid track shrink so the table scrolls inside its card instead of widening the page */}
+        <div className="min-w-0">
+          <Section title={t('m11.wf.gapTitle')} description={t('m11.wf.gapDescComputed')}>
+            <DataTable rows={calc} columns={cols} rowKey={(c) => c.key} csvName={`kafaa-future-skills-SIMULATED-${r.scenario.replace(/\W+/g, '-')}`} initialSort={{ key: 'gap', dir: 'desc' }} searchable={false} caption={t('m11.wf.gapTitle')} />
+          </Section>
+        </div>
       </div>
       <Section title={t('m11.wf.assumptionsTitle')} description={t('m11.wf.assumptionsDesc')}>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2" data-testid="m11-assumptions">

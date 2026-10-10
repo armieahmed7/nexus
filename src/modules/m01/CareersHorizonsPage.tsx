@@ -187,7 +187,7 @@ function Overview({ c, p }: { c: CareerData; p: ProfileData }) {
                 <div className="mt-2 flex flex-wrap gap-1 text-[12px]">
                   <span className="text-ink-3">{t('m01.fs05.overview.from')}</span>
                   {from.map((x) => x && (
-                    <span key={x.id} className="chip border-line bg-sunken">
+                    <span key={x.id} className="chip h-auto max-w-full shrink whitespace-normal rounded-lg border-line bg-sunken text-start">
                       {pick(x, 'title')}
                     </span>
                   ))}

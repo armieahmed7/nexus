@@ -86,7 +86,7 @@ function Overview({ d }: { d: FutureData }) {
               {hot.map((x) => (
                 <li key={x.role} className="flex flex-wrap items-center gap-2 py-2 text-[13px]">
                   <L to={`/training/sat/roles/${x.role}`} className="link min-w-0 flex-1 font-semibold">{roleName(x.role)}</L>
-                  {x.badges.map((b) => <span key={b.driver} className="chip border-accent bg-accent-soft text-accent-ink">{t(`m26.fx.driver.${b.driver}`)} · {t('m26.fx.hotShare', { n: f.num(b.n), of: f.num(b.of), pct: f.pct(b.pct, 0) })}</span>)}
+                  {x.badges.map((b) => <span key={b.driver} className="chip border-accent bg-accent-soft text-eyebrow">{t(`m26.fx.driver.${b.driver}`)} · {t('m26.fx.hotShare', { n: f.num(b.n), of: f.num(b.of), pct: f.pct(b.pct, 0) })}</span>)}
                 </li>
               ))}
             </ul>
@@ -147,7 +147,7 @@ function Explorer({ d, roleName }: { d: FutureData; roleName: (id: string) => st
     { key: 'horizon', header: t('m26.fx.col.horizon'), value: (x) => x.change_horizon ?? '', sortable: true, render: (x) => (x.change_horizon ? t(`m26.fx.horizon.${x.change_horizon}`) : '—') },
     { key: 'driver', header: t('m26.fx.col.driver'), value: (x) => (x.tech_driver ? t(`m26.fx.driver.${x.tech_driver}`) : ''), sortable: true },
     { key: 'skills', header: t('m26.fx.col.skills'), value: (x) => x.skills.length, align: 'end', sortable: true, render: (x) => (
-      <span className="num" title={x.skills.map((s) => pick(d.skills.find((k) => k.id === s.skill_id), 'name')).join(', ')}>{x.skills.length}{x.skills.some((s) => s.kind === 'future') && <span className="chip ms-1 border-accent bg-accent-soft text-accent-ink">{t('m26.fx.kind.future')}</span>}</span>
+      <span className="num" title={x.skills.map((s) => pick(d.skills.find((k) => k.id === s.skill_id), 'name')).join(', ')}>{x.skills.length}{x.skills.some((s) => s.kind === 'future') && <span className="chip ms-1 border-accent bg-accent-soft text-eyebrow">{t('m26.fx.kind.future')}</span>}</span>
     ) },
     { key: 'decision', header: t('m26.task.decision'), value: (x) => x.decision, render: (x) => <DecisionPill decision={x.decision} /> },
   ];

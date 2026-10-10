@@ -96,12 +96,11 @@ test('A1 FS01 benchmark registry and FS02 catalogue: sourced rows, chips, admin 
   await go(page, '/admin/frameworks?tab=skills');
   await chips(page, 'fs-admin-skills', 'FS02');
   await expect(page.locator('[data-testid="fs-sk-table"]')).toBeVisible();
-  await page.locator('[data-testid="fs-sk-open-sk-fs-ai-verify"]').first().click().catch(async () => {
-    await page.locator('[data-testid="fs-sk-table"] input, [data-testid="fs-admin-skills"] input[type="search"]').first().fill('AI output verification');
-    await page.locator('[data-testid="fs-sk-open-sk-fs-ai-verify"]').first().click();
-  });
+  await go(page, '/admin/frameworks?tab=skills&sarea=ai_data');
+  await page.locator('[data-testid="fs-sk-open-sk-fs-ai-verify"]').first().click();
   const drawer = page.locator('[data-testid="fs-sk-drawer"]');
-  await expect(drawer).toContainText(/AI output verification/);
+  await expect(drawer).toContainText(/Checks AI outputs against procedures/);
+  await expect(page.getByRole('dialog')).toContainText(/AI output verification/);
   expect(await drawer.locator('a[href^="https://"]').count()).toBeGreaterThan(0);
   await page.keyboard.press('Escape');
   await go(page, '/admin/frameworks?tab=benchmarks');
@@ -149,6 +148,7 @@ test('A2 FS03 honest skill states: bands and intervals, sources, decay classes, 
   // statistics are aggregate-only: staff are refused
   const refused = await rpc(page, 'kafaa_skill_confidence_stats', {});
   expect(refused.status).toBeGreaterThanOrEqual(400);
+  w.take(); // the intended 403 of the refused call is logged by the browser
   await clean(page, w);
   // admin: tiles, curves, back-fill, preview a change without saving; out of range refused by the RPC
   await as(page, 'ai-governance');
@@ -297,8 +297,8 @@ test('A5 FS06 task layer: all tasks rated, restricted never returned, reasons, F
   const rr = await rpc(page, 'kafaa_set_task_future', { p: { ...input(cur.change_horizon), task_id: restricted[0].id } });
   expect(rr.body.ok).toBe(false);
   await clean(page, w);
-  // an instructor reads without write controls
-  await as(page, 'sq-lead');
+  // an instructor who is not a designated SAT analyst reads without write controls (sq-lead is the seeded analyst)
+  await as(page, 'head-sq');
   await go(page, '/training/sat/future');
   await expect(page.locator('[data-testid="m26-fx-readonly"]')).toBeVisible();
   const ri = await rpc(page, 'kafaa_set_task_future', { p: input(cur.change_horizon) });
