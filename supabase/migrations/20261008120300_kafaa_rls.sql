@@ -1246,6 +1246,44 @@ create policy kafaa_read on kafaa_ojt_eval_requests for select to anon, authenti
 grant select on kafaa_ojt_eval_requests to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- level_attributes
+alter table kafaa_level_attributes enable row level security;
+drop policy if exists kafaa_read on kafaa_level_attributes;
+create policy kafaa_read on kafaa_level_attributes for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_level_attributes to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- skill_level_ranges
+alter table kafaa_skill_level_ranges enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_level_ranges;
+create policy kafaa_read on kafaa_skill_level_ranges for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_skill_level_ranges to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- skill_descriptors
+alter table kafaa_skill_descriptors enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_descriptors;
+create policy kafaa_read on kafaa_skill_descriptors for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, listed)
+    or kafaa_rule_read('audit_log', null::text, null::text, true)
+    or kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_skill_descriptors to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- scale_maps
+alter table kafaa_scale_maps enable row level security;
+drop policy if exists kafaa_read on kafaa_scale_maps;
+create policy kafaa_read on kafaa_scale_maps for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_scale_maps to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- authority_recognitions
+alter table kafaa_authority_recognitions enable row level security;
+drop policy if exists kafaa_read on kafaa_authority_recognitions;
+create policy kafaa_read on kafaa_authority_recognitions for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('recognition', null::text, null::text, true));
+grant select on kafaa_authority_recognitions to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- mentoring_agreements
 alter table kafaa_mentoring_agreements enable row level security;
 drop policy if exists kafaa_read on kafaa_mentoring_agreements;

@@ -1604,6 +1604,92 @@ export interface OjtEvalRequestsRow {
   evaluation_id?: string | null;
   result?: 'pass' | 'fail' | null;
 }
+export interface LevelAttributesRow {
+  id: string;
+  level: number;
+  attribute: 'essence' | 'autonomy' | 'influence' | 'complexity' | 'knowledge' | 'behaviours';
+  name_en: string;
+  name_ar: string;
+  text_en: string;
+  text_ar: string;
+  sfia_levels: string;
+  sort: number;
+}
+export interface SkillLevelRangesRow {
+  id: string;
+  skill_id: string;
+  min_level: number;
+  max_level: number;
+  basis: 'full' | 'licence_like' | 'leading' | 'not_operated' | 'awareness_only' | 'watch' | 'declining';
+  track: 'technical' | 'behavioural';
+  rationale_en: string;
+  rationale_ar: string;
+  version: number;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface SkillDescriptorsRow {
+  id: string;
+  skill_id: string;
+  level: number;
+  essence_en: string;
+  essence_ar: string;
+  indicators_en: string[];
+  indicators_ar: string[];
+  evidence_modes: string[];
+  status: 'draft' | 'published' | 'archived';
+  listed: boolean;
+  version: number;
+  created_by?: string | null;
+  created_at: string;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface ScaleMapsRow {
+  id: string;
+  framework: string;
+  row_kind: 'scale' | 'map';
+  band?: 'not_yet' | 'l1' | 'l2' | 'l3' | 'l4' | 'authority' | null;
+  levels: any;
+  level_count?: number | null;
+  ext_from?: number | null;
+  ext_to?: number | null;
+  fit?: 'exact' | 'close' | 'loose' | 'none' | null;
+  label_en: string;
+  label_ar: string;
+  note_en: string;
+  note_ar: string;
+  source_url: string;
+  as_of: string;
+  benchmark_id?: string | null;
+  sort: number;
+}
+export interface AuthorityRecognitionsRow {
+  id: string;
+  person_id: string;
+  person_name: string;
+  person_name_ar: string;
+  skill_id: string;
+  status: 'proposed' | 'recognised' | 'not_yet' | 'withdrawn';
+  panel: string[];
+  citation_en: string;
+  citation_ar: string;
+  level_at_proposal: number;
+  basis_at_proposal: string;
+  proposed_by: string;
+  proposed_role?: string | null;
+  proposed_on: string;
+  decided_by?: string | null;
+  decided_role?: string | null;
+  decided_on?: string | null;
+  decision_note?: string | null;
+  recognised_on?: string | null;
+  review_due?: string | null;
+  withdrawn_by?: string | null;
+  withdrawn_on?: string | null;
+  created_at: string;
+  updated_at: string;
+}
 export interface MentoringAgreementsRow {
   id: string;
   request_id: string;
@@ -3804,6 +3890,11 @@ export interface Tables {
   teaching_hours: TeachingHoursRow;
   ojt_logs: OjtLogsRow;
   ojt_eval_requests: OjtEvalRequestsRow;
+  level_attributes: LevelAttributesRow;
+  skill_level_ranges: SkillLevelRangesRow;
+  skill_descriptors: SkillDescriptorsRow;
+  scale_maps: ScaleMapsRow;
+  authority_recognitions: AuthorityRecognitionsRow;
   mentoring_agreements: MentoringAgreementsRow;
   mentoring_sessions: MentoringSessionsRow;
   mentoring_private_notes: MentoringPrivateNotesRow;

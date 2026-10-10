@@ -3,8 +3,18 @@
 import type { Result } from '../../../data/types';
 import type { HoursInput, NominationInput, ObservationInput } from '../instructors';
 import type { AckInput, LogInput, Readiness } from '../ojt'; // W5 · E1 (F38)
+import type { DescriptorInput, RangeInput } from '../descriptors'; // FS wave C · E4 (FS23)
+import type { ProposeInput } from '../authority'; // FS wave C · E4 (FS24)
 
 export interface PreceptorCard { id: string; name_en: string; name_ar: string; job_role_id: string | null; same_team: boolean; evaluator: boolean }
+
+/** FS24: rpc.recogniseAuthority input. `propose` needs person_id, skill_id, panel and the citation; the decisions need id (+ note). */
+export interface AuthorityInput extends ProposeInput { id?: string | null; note?: string | null }
+/** FS24: an Expert (level 4) holder the panel can consider, with any recognition already on the skill. */
+export interface AuthorityCandidate {
+  person_id: string; name_en: string; name_ar: string; job_role_id: string | null; skill_id: string; basis: string; confidence: number;
+  recognition_id: string | null; recognition_status: string | null;
+}
 
 export interface M02Rpc {
   /** F31: nominate an SME for the instructor track: yourself (volunteer), a person in your team (line manager or qual_records Scope) or anyone (training manager, sat A). */
@@ -34,4 +44,13 @@ export interface M02Rpc {
   closeEvaluationRequest(requestId: string, action: 'complete' | 'decline' | 'cancel', note?: string | null): Promise<Result<{ id: string; status: string; evaluation_id: string | null; result: string | null }>>;
   /** F38: who can precept (or evaluate) a task for me (read): qualified on the standard or an evaluator for it. */
   ojtPreceptors(taskId: string): Promise<PreceptorCard[]>;
+  // FS wave C · E4 · FS23/FS24 (SQL: supabase/migrations/20261010234001_kafaa_fs34_descriptors_scale.sql; rules: src/modules/m02/descriptors.ts, authority.ts)
+  /** FS23: create or edit a skill's descriptor at one level (frameworks W/A). In-range levels are always published; out-of-range levels are drafts. Version bumps. Audited, no ledger. */
+  saveDescriptor(input: DescriptorInput): Promise<Result<{ id: string; status: string; version: number }>>;
+  /** FS23: set the levels where a skill exists with its rationale (frameworks W/A). Every level in range needs a descriptor; in-range drafts are published, published rows outside are archived (never deleted). Audited. */
+  setLevelRange(input: RangeInput): Promise<Result<{ skill_id: string; min_level: number; max_level: number; published: number; archived: number; version: number }>>;
+  /** FS24: propose (training manager or HR director), approve / not_yet (HR director, never the proposer) or withdraw an Authority recognition. Approve and withdraw of a current recognition write a ledger row. Never changes a skill level. */
+  recogniseAuthority(input: AuthorityInput): Promise<Result<{ id: string; status: string }>>;
+  /** FS24: Expert (level 4) holders on non-restricted, non-obsolete skills, with their recognition state (recognition R/W/A only; else []). */
+  authorityCandidates(): Promise<AuthorityCandidate[]>;
 }

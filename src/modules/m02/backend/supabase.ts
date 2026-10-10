@@ -22,5 +22,10 @@ export function makeSupabaseM02(x: SupabaseExtCtx): M02Rpc {
     closeEvaluationRequest: (id, action, note) => x.call('kafaa_close_evaluation_request', { p_request: id, p_action: action, p_note: note ?? null }, ['ojt_eval_requests', 'notifications']),
     ojtPreceptors: (taskId) => x.rpc('kafaa_ojt_preceptors', { p_task: taskId }),
     withdrawInstructorTrack: (trackId, note) => x.call('kafaa_withdraw_instructor_track', { p_track: trackId, p_note: note }, [...T, 'evaluator_quals', 'skill_evidence', 'person_skills']),
+    // FS wave C · E4 · FS23/FS24 (supabase/migrations/20261010234001_kafaa_fs34_descriptors_scale.sql)
+    saveDescriptor: (input) => x.call('kafaa_save_descriptor', { p: input ?? {} }, ['skill_descriptors']),
+    setLevelRange: (input) => x.call('kafaa_set_level_range', { p: input ?? {} }, ['skill_level_ranges', 'skill_descriptors']),
+    recogniseAuthority: (input) => x.call('kafaa_recognise_authority', { p: input ?? {} }, ['authority_recognitions', 'notifications']),
+    authorityCandidates: () => x.rpc('kafaa_authority_candidates', {}),
   };
 }
