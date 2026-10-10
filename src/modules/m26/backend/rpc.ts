@@ -4,6 +4,8 @@
 import type { Result } from '../../../data/types';
 import type { Decision, Impact, Proposal } from '../sat';
 import type { EvidenceFact, EvidenceLink } from '../accr';
+import type { Reason } from '../../../domain/engines/types';
+import type { Driver, Exposure, Horizon, Needs } from '../future';
 
 export type { Impact, EvidenceFact, EvidenceLink };
 
@@ -19,7 +21,29 @@ export interface RateCriterionInput {
 }
 export interface AccrEvidence { programme_id: string; today: string; facts: EvidenceFact[] }
 
-export interface M26Rpc {
+// ── FS06 task layer with AI exposure and change horizon
+export interface TaskSkillInput { skill_id: string; level: number; kind?: 'current' | 'future' }
+export interface SetTaskFutureInput { task_id: string; needs: Needs; change_horizon: Horizon; tech_driver: Driver; skills: TaskSkillInput[]; note?: string }
+export interface SetTaskFutureResult { exposure: Exposure; augmentable: boolean; reasons: Reason[]; change_id: string }
+export interface FutureTask {
+  id: string; role_id: string; code: string; title_en: string; title_ar: string; critical: boolean; decision: string; source: string;
+  needs: Needs | null; exposure: Exposure | null; augmentable: boolean | null; change_horizon: Horizon | null; tech_driver: Driver | null; future_on: string | null;
+  reasons: Reason[]; skills: { skill_id: string; level: number; kind: 'current' | 'future'; source: 'qual_map' | 'analyst' }[];
+}
+export interface SatAnalyst { person_id: string; name: string; name_ar: string; active: boolean; designated_on: string }
+export interface TaskFutureView { can_write: boolean; can_designate: boolean; tasks: FutureTask[]; analysts: SatAnalyst[]; candidates: { person_id: string; name: string; name_ar: string }[] }
+
+export interface FutureRpc {
+  /** FS06: set a task's future attributes (OECD capability needs, change horizon, technology driver, task-to-skill links). The training
+   *  manager or a designated SAT analyst; restricted tasks refused. Writes one SAT change-log row (area future) and one audit row. */
+  setTaskFuture(input: SetTaskFutureInput): Promise<Result<SetTaskFutureResult>>;
+  /** FS06: the task layer (sat R): every active non-restricted task with its exposure and reasons (restricted tasks never returned). Null without sat R. */
+  taskFuture(roleId?: string | null): Promise<TaskFutureView | null>;
+  /** FS06: the training manager designates (or withdraws) an instructor as SAT analyst. Ledger row. */
+  designateSatAnalyst(personId: string, active: boolean): Promise<Result<{ person_id: string; active: boolean }>>;
+}
+
+export interface M26Rpc extends FutureRpc {
   // ── F27 SAT analysis workbench
   /** Add a task to a role's inventory (or edit the title of a task not yet linked to training). Security, safeguards and cyber roles are refused. sat W. */
   saveJtaTask(input: SaveTaskInput): Promise<Result<{ id: string }>>;

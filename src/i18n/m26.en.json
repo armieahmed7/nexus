@@ -38,6 +38,10 @@
     "training-accreditation-report": {
       "title": "Self-evaluation report",
       "purpose": "Generate the self-evaluation report in English or Arabic (demo, not an accreditation decision)."
+    },
+    "training-sat-future": {
+      "title": "Task layer: AI exposure and change horizon",
+      "purpose": "Every SAT task rated on the OECD AI capability dimensions: what the tool will do, what people will still own, by when, and the skills it needs."
     }
   },
   "common": {
@@ -150,7 +154,14 @@
     "dif_override": "The training manager decided \"{decision}\" instead, with a reason",
     "accr_readiness": "Readiness {pct}%: {rated} of {total} criteria rated (1 = 0, 4 = full)",
     "accr_gaps": "{n} criteria rated 1 or 2 are gaps with owners",
-    "accr_unrated": "{n} criteria not yet rated count as 0"
+    "accr_unrated": "{n} criteria not yet rated count as 0",
+    "fx_human_core": "Human core: AI reaches the need on {k} of {n} rated dimensions, fewer than half",
+    "fx_critical_keep": "AI reaches the need on all {n} dimensions, but this is a critical task: a qualified person stays accountable and the tool assists",
+    "fx_all_covered": "AI reaches the need on all {n} rated dimensions: parts of the task can be automated, a person verifies the result",
+    "fx_some_covered": "AI reaches the need on {k} of {n} rated dimensions: the tool assists, a person owns the outcome",
+    "fx_dim_covered": "{dim}: the task needs level {need}; AI capability is level {ai} (covered)",
+    "fx_dim_gap": "{dim}: the task needs level {need}; AI capability is level {ai} (people own this)",
+    "fx_horizon": "Compared at the change horizon: {horizon} (planning assumption)"
   },
   "sat": {
     "intro": "Job and task analysis behind every qualification card and course: who does what, how difficult, important and frequent it is, whether it is trained, and which objective, course, module or JPM covers it.",
@@ -560,5 +571,176 @@
     "due": "Due date",
     "note": "Note",
     "finaliseBody": "Readiness {pct}% with {g} gaps, each with an owner and due date. Finalising freezes the ratings and is recorded in the evidence ledger. It is a self-check, not an accreditation decision."
+  },
+  "fx": {
+    "intro": "The SAT task inventory with a future layer: for each task, the OECD AI capability it needs, how far AI reaches by its change horizon, the technology that drives the change and the skills the task needs today and tomorrow.",
+    "simChip": "Planning assumption (SIMULATED)",
+    "unrated": "Not rated",
+    "loading": "Loading the task layer…",
+    "noAccess": "The task layer is for training staff and auditors",
+    "assumptionTitle": "How to read this page",
+    "assumptionBody": "AI capability levels are an ENEC planning assumption on the OECD five-level scale, not OECD ratings. Exposure describes what a tool could do and what people still own; it implies no staffing or deployment decision. Security, safeguards and cyber tasks are managed outside Kafa'a and never appear here.",
+    "exposure": {
+      "augment": "AI-assisted",
+      "automate_partly": "Partly automatable",
+      "human_core": "Human core"
+    },
+    "meaning": {
+      "augment": "A tool can help with parts of this task; the person keeps the judgement and signs the result.",
+      "automate_partly": "Parts of this task can be automated by its horizon; the person checks the output and handles the exceptions.",
+      "human_core": "People own this task: AI does not reach what it needs on most dimensions."
+    },
+    "horizon": {
+      "now": "Now",
+      "2030": "By 2030",
+      "2035": "By 2035"
+    },
+    "driver": {
+      "ai_assist": "AI assistance",
+      "digital_ic": "Digital I&C",
+      "robotics": "Robotics and remote inspection",
+      "digital_twin": "Digital twin",
+      "smr_design": "Advanced reactor (SMR) design",
+      "none": "No technology driver"
+    },
+    "dim": {
+      "language": "Language",
+      "social": "Social interaction",
+      "problem_solving": "Problem solving",
+      "creativity": "Creativity",
+      "metacognition": "Metacognition and critical thinking",
+      "learning_memory": "Knowledge, learning and memory",
+      "vision": "Vision",
+      "manipulation": "Manipulation",
+      "robotic": "Robotic intelligence"
+    },
+    "level": {
+      "l1": "basic",
+      "l2": "routine",
+      "l3": "skilled",
+      "l4": "advanced",
+      "l5": "expert"
+    },
+    "kind": {
+      "current": "Today",
+      "future": "At the horizon"
+    },
+    "src": {
+      "qual_map": "from the qualification card",
+      "analyst": "set by the SAT analyst"
+    },
+    "covered": "AI reaches the need",
+    "gap": "People own this",
+    "needN": "need {n}",
+    "aiN": "AI {n}",
+    "barLabel": "{dim}: task need {need}, AI capability {ai}",
+    "bench": {
+      "label": "Benchmarks",
+      "borrow": "What Kafa'a borrows",
+      "note": "Benchmarks are sources Kafa'a learns from; they do not endorse this concept."
+    },
+    "tileRated": "Tasks rated",
+    "tileRatedSub": "Non-restricted active tasks",
+    "tileRatedLine": "{a} of {b} tasks rated",
+    "tileAugmentable": "AI can help with",
+    "tileAugmentableSub": "{a} AI-assisted · {p} partly automatable",
+    "tileHuman": "Human core tasks",
+    "tileHumanSub": "People own the task",
+    "tile2030": "Changing by 2030",
+    "tile2030Sub": "{n} more by 2035",
+    "tileHot": "Roles with a driver badge",
+    "tileHotSub": "Driver changes at least {pct}% of tasks",
+    "mixTitle": "Exposure mix",
+    "mixEyebrow": "All rated tasks",
+    "mixNote": "Tasks, not people: no group is small enough to identify anyone.",
+    "driversTitle": "Technology drivers",
+    "driversEyebrow": "What changes the task",
+    "refTitle": "Reference lines",
+    "refEyebrow": "Sourced figures, stored as rows",
+    "oursLabel": "of {n} rated ENEC tasks are AI-assisted or partly automatable (planning assumption)",
+    "oursNote": "A different method from the reference study below: compare the direction, not the number.",
+    "heatTitle": "Exposure by role",
+    "heatBody": "How many tasks of each role fall in each band. Counts of tasks, never of people.",
+    "hotTitle": "Driver badges by role",
+    "hotEyebrow": "Published threshold, as O*NET does",
+    "hotCriteria": "A role shows a driver badge when that driver changes at least {pct}% of its rated tasks, and only when the role has at least {min} rated tasks.",
+    "hotNone": "No role meets the threshold",
+    "hotShare": "{n} of {of} tasks ({pct})",
+    "ruleTitle": "The exposure rule",
+    "ruleEyebrow": "First match wins; the same rule runs in the browser and the database",
+    "rule": {
+      "below_half": "AI reaches the need on fewer than half of the rated dimensions: human core.",
+      "critical_all": "AI reaches the need on every dimension of a critical task: AI-assisted, a qualified person stays accountable.",
+      "all_covered": "AI reaches the need on every dimension: partly automatable, a person verifies.",
+      "some_covered": "Otherwise (half or more): AI-assisted."
+    },
+    "levelsCaption": "AI capability reference (OECD five-level scale, planning assumption)",
+    "levelsNote": "The tenth OECD dimension, consciousness, is not a work-task requirement and is not rated. Levels are reviewed by the SAT team.",
+    "col": {
+      "dimension": "Dimension",
+      "exposure": "Exposure",
+      "horizon": "Horizon",
+      "driver": "Driver",
+      "skills": "Skills",
+      "needs": "Capability needs",
+      "future": "Future"
+    },
+    "explorerTitle": "Task explorer",
+    "explorerBody": "Filter by role, exposure, horizon or driver; open a task to see its dimensions and edit them.",
+    "noTasks": "No task matches these filters",
+    "restrictedNote": "Security, safeguards and cyber tasks are managed outside Kafa'a and are never rated or listed.",
+    "analystsTitle": "SAT analysts",
+    "analystsBody": "The training manager designates instructors who may rate task futures. Other instructors and auditors read.",
+    "analystsNone": "No SAT analyst designated yet",
+    "analystActive": "Designated",
+    "analystWithdrawn": "Withdrawn",
+    "designate": "Designate as SAT analyst",
+    "withdraw": "Withdraw designation",
+    "designateLabel": "Instructor",
+    "designatePick": "Choose an instructor",
+    "designateBody": "{name} will be able to set the future attributes of SAT tasks. The designation is recorded in the evidence ledger.",
+    "withdrawBody": "{name} will no longer be able to set task future attributes. The withdrawal is recorded in the evidence ledger.",
+    "readOnly": "You can read the task layer. The training manager or a designated SAT analyst sets the ratings.",
+    "openLayer": "Open the task layer",
+    "satTitle": "Future of the work (task layer)",
+    "satBody": "How each role's tasks change with AI, digital I&C and robotics, rated on the OECD AI capability dimensions.",
+    "cardTitle": "Future of this task",
+    "cardEyebrow": "OECD AI capability, horizon and driver",
+    "notRated": "This task has no future rating yet.",
+    "ratedOn": "Rated on {date}",
+    "skillsTitle": "Skills this task needs",
+    "noSkills": "No skill linked yet",
+    "skillLevel": "Level {n}",
+    "historyTitle": "Future rating history",
+    "noHistory": "No change logged yet",
+    "allHistory": "All future changes",
+    "areaFuture": "Future attributes",
+    "areaContent": "Task content",
+    "filterArea": "Change type",
+    "diff": {
+      "field": "Field",
+      "before": "Before",
+      "after": "After"
+    },
+    "edit": {
+      "open": "Edit future",
+      "rate": "Rate future",
+      "title": "Future attributes · {code}",
+      "body": "Choose 1 to 4 OECD dimensions the task really needs, the level a person must reach on each, the horizon and the driver of change, and link the skills. Each save writes one SAT change-log entry.",
+      "dims": "Capability dimensions (up to {max})",
+      "needFor": "Level needed: {dim}",
+      "horizon": "Change horizon",
+      "driver": "Technology driver",
+      "skills": "Skills (1 to {max})",
+      "level": "Level",
+      "kind": "When",
+      "remove": "Remove",
+      "addSkill": "Add a skill",
+      "pickSkill": "Choose a skill",
+      "add": "Add",
+      "note": "Note for the change log (optional)",
+      "preview": "Exposure preview:",
+      "pickDims": "Choose at least one dimension"
+    }
   }
 }

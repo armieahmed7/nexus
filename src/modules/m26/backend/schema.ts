@@ -36,6 +36,9 @@ export const TABLES_M26: Record<string, TableDef> = {
       status: 'text enum:active|retired =\'active\' idx', decision: 'text enum:pending|train|no_train|overtrain =\'pending\' idx',
       decision_by: 'text?', decision_on: 'date?', decision_note: 'text?', override: 'bool =false',
       version: 'int =1', created_by: 'text?', created_at: 'ts =now', changed_at: 'ts =now', sort: 'int =0',
+      // FS06 (wave A · E5): future attributes. Null on restricted tasks (trigger kafaa_sat_task_guard + check constraint).
+      ai_capability_needed: 'json?', exposure: 'text? enum:augment|automate_partly|human_core idx', change_horizon: 'text? enum:now|2030|2035',
+      tech_driver: 'text? enum:ai_assist|digital_ic|robotics|digital_twin|smr_design|none', future_by: 'text?', future_on: 'date?',
     },
     read: SAT,
     write: { mode: 'rpc', res: 'sat' },
@@ -74,6 +77,7 @@ export const TABLES_M26: Record<string, TableDef> = {
       id: 'text pk', task_id: 'text ref:jta_tasks idx', role_id: 'text ref:job_roles', kind: 'text enum:modified|retired', trigger: 'text enum:task_change|effectiveness|oe|regulatory =\'task_change\'',
       summary: 'text', before: 'json ={}', after: 'json ={}', impact: 'json ={}', status: 'text enum:open|closed =\'open\' idx',
       opened_by: 'text ref:people', opened_by_name: 'text =\'\'', opened_by_name_ar: 'text =\'\'', opened_at: 'ts =now', closed_at: 'ts?',
+      area: 'text enum:content|future =\'content\'', // FS06: 'future' rows log edits of a task's future attributes (closed at once, no review items)
     },
     read: SAT,
     write: { mode: 'rpc', res: 'sat' },
@@ -83,6 +87,43 @@ export const TABLES_M26: Record<string, TableDef> = {
     cols: {
       id: 'text pk', change_id: 'text ref:sat_changes idx', kind: 'text enum:course|standard', ref_id: 'text', title_en: 'text =\'\'', title_ar: 'text =\'\'',
       status: 'text enum:open|updated|revised|no_change =\'open\' idx', note: 'text =\'\'', revision_id: 'text?', closed_by: 'text?', closed_at: 'ts?', sort: 'int =0',
+    },
+    read: SAT,
+    write: { mode: 'rpc', res: 'sat' },
+  },
+
+  // ───────────── FS06 Task layer with AI exposure and change horizon (wave A · E5)
+  jta_task_skills: {
+    module: 'M26', label: 'Skills (and level) a JTA task needs, today or at its change horizon; never for restricted tasks (FS06)',
+    cols: {
+      id: 'text pk', task_id: 'text ref:jta_tasks idx', skill_id: 'text ref:skills idx', level: 'int', kind: 'text enum:current|future =\'current\'',
+      source: 'text enum:qual_map|analyst =\'analyst\'', active: 'bool =true', linked_by: 'text?', linked_at: 'ts =now', sort: 'int =0',
+    },
+    read: SAT,
+    write: { mode: 'rpc', res: 'sat' },
+  },
+  ai_capability_levels: {
+    module: 'M26', label: 'AI capability level per OECD dimension and horizon on the five-level scale: SIMULATED planning assumption, not an OECD rating (FS06)',
+    cols: {
+      id: 'text pk', dimension: 'text enum:language|social|problem_solving|creativity|metacognition|learning_memory|vision|manipulation|robotic idx', horizon: 'text enum:now|2030|2035',
+      level: 'int', basis_en: 'text', basis_ar: 'text', simulated: 'bool =true', sources: 'json =[]', sort: 'int =0',
+    },
+    read: SAT,
+    write: { mode: 'none' },
+  },
+  ai_exposure_refs: {
+    module: 'M26', label: 'Sourced benchmark figures shown beside the task-exposure results (stored rows, never typed into copy) (FS06)',
+    cols: {
+      id: 'text pk', benchmark_id: 'text idx', label_en: 'text', label_ar: 'text', value: 'num', unit: 'text =\'\'', note_en: 'text =\'\'', note_ar: 'text =\'\'',
+      sources: 'json =[]', as_of: 'date', sort: 'int =0',
+    },
+    read: SAT,
+    write: { mode: 'none' },
+  },
+  sat_analysts: {
+    module: 'M26', label: 'Training staff designated as SAT analysts by the training manager: they may set task future attributes (FS06)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people uniq', active: 'bool =true', name: 'text =\'\'', name_ar: 'text =\'\'', designated_by: 'text?', designated_on: 'date', history: 'json =[]',
     },
     read: SAT,
     write: { mode: 'rpc', res: 'sat' },

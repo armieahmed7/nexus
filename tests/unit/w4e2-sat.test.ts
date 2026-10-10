@@ -155,7 +155,7 @@ describe('F27 · a task change lists all linked courses and standards and create
     expect(b.rawGet('sat_changes', r.data!.id)!.status).toBe('closed');
   });
   it('the shared changeImpact rule reproduces every seeded change impact', () => {
-    for (const c of T.sat_changes) {
+    for (const c of T.sat_changes.filter((x) => x.area !== 'future')) { // FS06 future-attribute rows carry no impact
       const items = T.sat_change_items.filter((i) => i.change_id === c.id);
       expect(items.length, c.id).toBe(c.impact.courses.length + c.impact.standards.length);
     }
@@ -353,7 +353,7 @@ describe('F29 · exports carry "demo / not an accreditation decision"; criteria 
 
 describe('M26 · routes, schema and i18n', () => {
   it('routes are SAT-guarded (the survey is for any signed-in SME) and every route has EN and AR titles', () => {
-    expect(routes.length).toBe(9);
+    expect(routes.length).toBe(10); // FS06 added training-sat-future
     for (const r of routes) {
       expect(hasKey(`m26.routes.${r.id}.title`)).toBe(true);
       expect(translate('ar', `m26.routes.${r.id}.title`)).not.toBe(translate('en', `m26.routes.${r.id}.title`));

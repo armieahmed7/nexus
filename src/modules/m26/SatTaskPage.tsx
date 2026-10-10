@@ -12,6 +12,7 @@ import { L, useFormat, usePick, useT } from '../../i18n';
 import { DECISIONS, MIN_RATERS, SELECTED, type Decision } from './sat';
 import { roleScopeObjectives } from './evidence';
 import { DecisionPill, DifDots, RatingInputs, RestrictedChip, SourceChip, useSatData, useSatModel, type SatData, type SatModel } from './ui';
+import { FutureCard } from './FutureCard'; // FS06
 
 export default function SatTaskPage() {
   const t = useT();
@@ -46,6 +47,7 @@ function TaskView({ d, m, taskId }: { d: SatData; m: SatModel; taskId: string })
         <DifCard d={d} m={m} taskId={taskId} />
         <DecisionCard m={m} taskId={taskId} />
       </div>
+      <FutureCard d={d} task={task} />
       <LinksCard d={d} m={m} taskId={taskId} />
       <ImpactCard d={d} m={m} taskId={taskId} />
     </div>

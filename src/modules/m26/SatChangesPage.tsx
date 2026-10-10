@@ -8,6 +8,7 @@ import { useAction, useRepo } from '../../data';
 import { useSession } from '../../auth/session';
 import { L, useFormat, usePick, useT } from '../../i18n';
 import { useSatData, useSatModel, type SatData, type SatModel } from './ui';
+import { FutureDiff } from './fxui'; // FS06
 
 type Item = SatData['items'][number];
 type Act = { item: Item; kind: 'updated' | 'revised' | 'no_change' | 'revise_std' } | null;
@@ -30,11 +31,11 @@ function Changes({ d, m }: { d: SatData; m: SatModel }) {
   const s = useSession();
   const repo = useRepo();
   const run = useAction();
-  const [flt, setFlt] = useFilters({ status: 'open', role: '' }, true);
+  const [flt, setFlt] = useFilters({ status: 'open', role: '', area: '' }, true);
   const [act, setAct] = useState<Act>(null);
   const canW = s.can('sat', ['W', 'A']);
   const canRevise = s.can('frameworks', ['W', 'A']);
-  const xs = d.changes.filter((c) => (!flt.status || c.status === flt.status) && (!flt.role || c.role_id === flt.role));
+  const xs = d.changes.filter((c) => (!flt.status || c.status === flt.status) && (!flt.role || c.role_id === flt.role) && (!flt.area || (c.area ?? 'content') === flt.area));
   const roles = [...new Set(d.changes.map((c) => c.role_id))];
   const superseded = (stdId: string) => d.standards.find((x) => x.supersedes_id === stdId);
   return (
@@ -42,6 +43,7 @@ function Changes({ d, m }: { d: SatData; m: SatModel }) {
       <FilterBar value={flt} onChange={setFlt} fields={[
         { key: 'status', label: t('m26.changes.filterStatus'), options: [{ value: 'open', label: t('m26.changes.status.open') }, { value: 'closed', label: t('m26.changes.status.closed') }] },
         { key: 'role', label: t('m26.changes.filterRole'), options: roles.map((r) => ({ value: r, label: m.roleName(r) })) },
+        { key: 'area', label: t('m26.fx.filterArea'), options: [{ value: 'content', label: t('m26.fx.areaContent') }, { value: 'future', label: t('m26.fx.areaFuture') }] },
       ]} />
       {xs.length === 0 ? <EmptyState title={t('m26.changes.none')}>{t('m26.changes.noneBody')}</EmptyState> : (
         <ul className="space-y-3" data-testid="m26-changes">
@@ -58,9 +60,13 @@ function Changes({ d, m }: { d: SatData; m: SatModel }) {
                     <span className="min-w-0">{pick(after, 'title')}</span>
                     <span className={`chip ${c.status === 'open' ? 'border-sim-line bg-sim-bg text-sim' : 'border-ok-line bg-ok-bg text-ok'}`}>{t(`m26.changes.status.${c.status}`)}</span>
                     <span className="chip border-line bg-sunken text-ink-2">{t(`m26.changes.kind.${c.kind}`)}</span>
-                    <span className="chip border-info-line bg-info-bg text-info">{t(`m26.changes.trigger.${c.trigger}`)}</span>
+                    {c.area === 'future' ? <span className="chip border-accent bg-accent-soft text-accent-ink">{t('m26.fx.areaFuture')}</span> : <span className="chip border-info-line bg-info-bg text-info">{t(`m26.changes.trigger.${c.trigger}`)}</span>}
                   </div>
                   <p className="mt-2 text-[13.5px]">{c.summary}</p>
+                  {c.area === 'future' ? (<>
+                    <FutureDiff before={c.before} after={c.after} />
+                    <p className="mt-1 text-[12px] text-ink-3">{t('m26.changes.opened', { who: pick({ name_en: c.opened_by_name, name_ar: c.opened_by_name_ar }, 'name'), date: f.date(c.opened_at), role: m.roleName(c.role_id) })}</p>
+                  </>) : (<>
                   {pick(before, 'title') !== pick(after, 'title') && <p className="mt-1 text-[12.5px] text-ink-2">{t('m26.changes.retitled', { from: pick(before, 'title'), v: f.num(after.version) })}</p>}
                   <p className="mt-1 text-[12px] text-ink-3">{t('m26.changes.opened', { who: pick({ name_en: c.opened_by_name, name_ar: c.opened_by_name_ar }, 'name'), date: f.date(c.opened_at), role: m.roleName(c.role_id) })}</p>
                   <p className="mt-1 text-[12px] text-ink-2">{t('m26.changes.impactLine', { c: f.num(imp.courses.length), s: f.num(imp.standards.length), j: f.num(imp.jpms.length), i: f.num(imp.items.length) })}</p>
@@ -89,6 +95,7 @@ function Changes({ d, m }: { d: SatData; m: SatModel }) {
                       })}
                     </ul>
                   )}
+                  </>)}
                 </Card>
               </li>
             );
