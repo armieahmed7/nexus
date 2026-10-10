@@ -7,10 +7,12 @@ import { nowTs } from '../../../data/audit';
 import { addDaysIso, coachInsightsOf, feedbackId } from '../insights';
 import { todayIso } from '../../../domain/rules';
 import { COACH_KINDS, COACH_SIGNALS, DISMISS_DAYS, type CoachFeedbackResult, type CoachInsights, type M19Rpc, type RefresherOutcome, type RefresherQuestion, type RefresherSet } from './rpc';
+import { makeLocalFs17 } from './local.fs17'; // FS17/FS18 (FS wave C · E1)
 import { MSG as RMSG, SET_SIZE, applyAnswer, competencyWeights, isPracticeItem, itemStatsOf, pickRefresher, stateId, type ItemLite, type RefreshCadence, type StateLite, type VersionLite } from '../refresh';
 
 export function makeLocalM19(b: LocalBackend, h: LocalRpcHelpers): M19Rpc {
   return {
+    ...makeLocalFs17(b, h), // FS17/FS18
     async coachFeedback(itemKind, itemId, signal, competencyIds = []) {
       await b.whenReady();
       type R = CoachFeedbackResult;

@@ -2272,6 +2272,123 @@ export interface RefreshPrefsRow {
   cadence: 'daily' | 'weekly' | 'paused';
   updated_at: string;
 }
+export interface PathwaysRow {
+  id: string;
+  skill_id: string;
+  level: number;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  outcome_en: string;
+  outcome_ar: string;
+  envelope_months: number;
+  weekly_hours: number;
+  status: 'draft' | 'published' | 'retired';
+  listed: boolean;
+  version: number;
+  benchmark_ids: string[];
+  sources: any;
+  updated_by?: string | null;
+  updated_at: string;
+  sort: number;
+}
+export interface PathwayStepsRow {
+  id: string;
+  pathway_id: string;
+  n: number;
+  kind: 'learn' | 'practice' | 'assess';
+  title_en: string;
+  title_ar: string;
+  hours: number;
+  pins: string[];
+  auto: boolean;
+  version: number;
+}
+export interface PathwayEnrolmentsRow {
+  id: string;
+  person_id: string;
+  pathway_id: string;
+  status: 'active' | 'completed' | 'withdrawn';
+  started_on: string;
+  completed_on?: string | null;
+  withdrawn_on?: string | null;
+  withdrawn_reason?: string | null;
+  steps_done: any;
+  updated_at: string;
+}
+export interface PathwayGapsRow {
+  id: string;
+  pathway_id: string;
+  step_id: string;
+  skill_id: string;
+  level: number;
+  kind: 'learn' | 'practice' | 'assess';
+  status: 'open' | 'filled';
+  first_seen: string;
+  last_checked: string;
+  filled_on?: string | null;
+}
+export interface ExternalResourcesRow {
+  id: string;
+  title_en: string;
+  title_ar: string;
+  provider_en: string;
+  provider_ar: string;
+  provider_url: string;
+  url: string;
+  format: 'elearning' | 'mooc' | 'course' | 'fellowship' | 'programme' | 'webinar' | 'reading';
+  hours?: number | null;
+  duration_en: string;
+  duration_ar: string;
+  cost_band: 'free' | 'low' | 'medium' | 'high' | 'varies';
+  languages: string[];
+  skills: any;
+  has_assessment: boolean;
+  summary_en: string;
+  summary_ar: string;
+  criteria: any;
+  criteria_note_en: string;
+  criteria_note_ar: string;
+  as_of: string;
+  sources: any;
+  status: 'draft' | 'published' | 'retired';
+  listed: boolean;
+  version: number;
+  published_by?: string | null;
+  published_on?: string | null;
+  retired_reason?: string | null;
+  retired_on?: string | null;
+  created_by?: string | null;
+  updated_by?: string | null;
+  updated_at: string;
+  sort: number;
+}
+export interface CatalogueCriteriaRow {
+  id: string;
+  name_en: string;
+  name_ar: string;
+  question_en: string;
+  question_ar: string;
+  scale: any;
+  min_score: number;
+  required: boolean;
+  status: 'published' | 'retired';
+  benchmark_ids: string[];
+  sources: any;
+  as_of: string;
+  sort: number;
+}
+export interface ExternalCompletionsRow {
+  id: string;
+  person_id: string;
+  resource_id: string;
+  completed_on: string;
+  note?: string | null;
+  evidence: 'self_declared' | 'verified';
+  statement_id?: string | null;
+  created_at: string;
+}
 export interface OpportunitiesRow {
   id: string;
   posted_by: string;
@@ -3849,6 +3966,13 @@ export interface Tables {
   learning_goals: LearningGoalsRow;
   refresh_state: RefreshStateRow;
   refresh_prefs: RefreshPrefsRow;
+  pathways: PathwaysRow;
+  pathway_steps: PathwayStepsRow;
+  pathway_enrolments: PathwayEnrolmentsRow;
+  pathway_gaps: PathwayGapsRow;
+  external_resources: ExternalResourcesRow;
+  catalogue_criteria: CatalogueCriteriaRow;
+  external_completions: ExternalCompletionsRow;
   opportunities: OpportunitiesRow;
   opportunity_applications: OpportunityApplicationsRow;
   opportunity_saves: OpportunitySavesRow;

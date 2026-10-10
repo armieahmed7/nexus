@@ -2741,6 +2741,144 @@ create table if not exists kafaa_refresh_prefs (
 );
 comment on table kafaa_refresh_prefs is '[M19] Knowledge refresher cadence: five questions a day or a week, or paused (F14; private, no streaks)';
 
+-- M19 · Future-skill learning pathway: one FS02 skill at one level (L1-L3), a 3-6 month envelope and a weekly hour cost (FS17)
+create table if not exists kafaa_pathways (
+  id text primary key,
+  skill_id text not null,
+  level integer not null,
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null default '',
+  summary_ar text not null default '',
+  outcome_en text not null default '',
+  outcome_ar text not null default '',
+  envelope_months integer not null,
+  weekly_hours numeric not null,
+  status text not null default 'draft' check (status in ('draft', 'published', 'retired')),
+  listed boolean not null default false,
+  version integer not null default 1,
+  benchmark_ids text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb,
+  updated_by text,
+  updated_at timestamptz not null default now(),
+  sort integer not null default 0
+);
+comment on table kafaa_pathways is '[M19] Future-skill learning pathway: one FS02 skill at one level (L1-L3), a 3-6 month envelope and a weekly hour cost (FS17)';
+
+-- M19 · Pathway step in sequence (learn, practice, assess) with hours; content resolves at run time from pins and items that teach the skill at the level (FS17)
+create table if not exists kafaa_pathway_steps (
+  id text primary key,
+  pathway_id text not null,
+  n integer not null,
+  kind text not null check (kind in ('learn', 'practice', 'assess')),
+  title_en text not null,
+  title_ar text not null,
+  hours numeric not null,
+  pins text[] not null default '{}'::text[],
+  auto boolean not null default true,
+  version integer not null default 1
+);
+comment on table kafaa_pathway_steps is '[M19] Pathway step in sequence (learn, practice, assess) with hours; content resolves at run time from pins and items that teach the skill at the level (FS17)';
+
+-- M19 · My progress on a pathway: started, completed or left; step completion is derived from my records, never typed in (FS17; private)
+create table if not exists kafaa_pathway_enrolments (
+  id text primary key,
+  person_id text not null,
+  pathway_id text not null,
+  status text not null default 'active' check (status in ('active', 'completed', 'withdrawn')),
+  started_on date not null,
+  completed_on date,
+  withdrawn_on date,
+  withdrawn_reason text,
+  steps_done jsonb not null default '[]'::jsonb,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_pathway_enrolments is '[M19] My progress on a pathway: started, completed or left; step completion is derived from my records, never typed in (FS17; private)';
+
+-- M19 · Gap backlog: a pathway step with no content that teaches its skill at its level ("requested"; feeds FS57) (FS17)
+create table if not exists kafaa_pathway_gaps (
+  id text primary key,
+  pathway_id text not null,
+  step_id text not null,
+  skill_id text not null,
+  level integer not null,
+  kind text not null check (kind in ('learn', 'practice', 'assess')),
+  status text not null default 'open' check (status in ('open', 'filled')),
+  first_seen date not null,
+  last_checked date not null,
+  filled_on date
+);
+comment on table kafaa_pathway_gaps is '[M19] Gap backlog: a pathway step with no content that teaches its skill at its level ("requested"; feeds FS57) (FS17)';
+
+-- M19 · External learning resource (IAEA, WNU, NEA, universities, AI courses): provider, hours, cost band, languages, skills taught, as-of; published only when it meets the criteria (FS18)
+create table if not exists kafaa_external_resources (
+  id text primary key,
+  title_en text not null,
+  title_ar text not null,
+  provider_en text not null,
+  provider_ar text not null,
+  provider_url text not null,
+  url text not null,
+  format text not null check (format in ('elearning', 'mooc', 'course', 'fellowship', 'programme', 'webinar', 'reading')),
+  hours numeric,
+  duration_en text not null default '',
+  duration_ar text not null default '',
+  cost_band text not null check (cost_band in ('free', 'low', 'medium', 'high', 'varies')),
+  languages text[] not null default '{}'::text[],
+  skills jsonb not null default '[]'::jsonb,
+  has_assessment boolean not null default false,
+  summary_en text not null default '',
+  summary_ar text not null default '',
+  criteria jsonb not null default '{}'::jsonb,
+  criteria_note_en text not null default '',
+  criteria_note_ar text not null default '',
+  as_of date not null,
+  sources jsonb not null default '[]'::jsonb,
+  status text not null default 'draft' check (status in ('draft', 'published', 'retired')),
+  listed boolean not null default false,
+  version integer not null default 1,
+  published_by text,
+  published_on date,
+  retired_reason text,
+  retired_on date,
+  created_by text,
+  updated_by text,
+  updated_at timestamptz not null default now(),
+  sort integer not null default 0
+);
+comment on table kafaa_external_resources is '[M19] External learning resource (IAEA, WNU, NEA, universities, AI courses): provider, hours, cost band, languages, skills taught, as-of; published only when it meets the criteria (FS18)';
+
+-- M19 · Published admission criteria for the external catalogue (relevance, provider standing, assessment, language) with a 0-3 scale and the minimum to publish (FS18)
+create table if not exists kafaa_catalogue_criteria (
+  id text primary key,
+  name_en text not null,
+  name_ar text not null,
+  question_en text not null,
+  question_ar text not null,
+  scale jsonb not null default '[]'::jsonb,
+  min_score integer not null default 0,
+  required boolean not null default true,
+  status text not null default 'published' check (status in ('published', 'retired')),
+  benchmark_ids text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb,
+  as_of date not null,
+  sort integer not null default 0
+);
+comment on table kafaa_catalogue_criteria is '[M19] Published admission criteria for the external catalogue (relevance, provider standing, assessment, language) with a 0-3 scale and the minimum to publish (FS18)';
+
+-- M19 · My completion of an external resource: recorded through xAPI as "experienced", self-declared until verified (FS79); never verified evidence (FS18; private)
+create table if not exists kafaa_external_completions (
+  id text primary key,
+  person_id text not null,
+  resource_id text not null,
+  completed_on date not null,
+  note text,
+  evidence text not null default 'self_declared' check (evidence in ('self_declared', 'verified')),
+  statement_id text,
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_external_completions is '[M19] My completion of an external resource: recorded through xAPI as "experienced", self-declared until verified (FS79); never verified evidence (FS18; private)';
+
 -- M20 · Opportunity marketplace: short stretch assignments posted by managers (F08)
 create table if not exists kafaa_opportunities (
   id text primary key,
@@ -4646,6 +4784,15 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_re
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_refresh_state_item_id_fk') then alter table kafaa_refresh_state add constraint kafaa_refresh_state_item_id_fk foreign key (item_id) references kafaa_items(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_refresh_state_competency_id_fk') then alter table kafaa_refresh_state add constraint kafaa_refresh_state_competency_id_fk foreign key (competency_id) references kafaa_competencies(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_refresh_prefs_person_id_fk') then alter table kafaa_refresh_prefs add constraint kafaa_refresh_prefs_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_pathways_skill_id_fk') then alter table kafaa_pathways add constraint kafaa_pathways_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_pathway_steps_pathway_id_fk') then alter table kafaa_pathway_steps add constraint kafaa_pathway_steps_pathway_id_fk foreign key (pathway_id) references kafaa_pathways(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_pathway_enrolments_person_id_fk') then alter table kafaa_pathway_enrolments add constraint kafaa_pathway_enrolments_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_pathway_enrolments_pathway_id_fk') then alter table kafaa_pathway_enrolments add constraint kafaa_pathway_enrolments_pathway_id_fk foreign key (pathway_id) references kafaa_pathways(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_pathway_gaps_pathway_id_fk') then alter table kafaa_pathway_gaps add constraint kafaa_pathway_gaps_pathway_id_fk foreign key (pathway_id) references kafaa_pathways(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_pathway_gaps_step_id_fk') then alter table kafaa_pathway_gaps add constraint kafaa_pathway_gaps_step_id_fk foreign key (step_id) references kafaa_pathway_steps(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_pathway_gaps_skill_id_fk') then alter table kafaa_pathway_gaps add constraint kafaa_pathway_gaps_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_external_completions_person_id_fk') then alter table kafaa_external_completions add constraint kafaa_external_completions_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_external_completions_resource_id_fk') then alter table kafaa_external_completions add constraint kafaa_external_completions_resource_id_fk foreign key (resource_id) references kafaa_external_resources(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_opportunities_posted_by_fk') then alter table kafaa_opportunities add constraint kafaa_opportunities_posted_by_fk foreign key (posted_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_opportunities_org_id_fk') then alter table kafaa_opportunities add constraint kafaa_opportunities_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_opportunities_family_id_fk') then alter table kafaa_opportunities add constraint kafaa_opportunities_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
@@ -5142,6 +5289,19 @@ create index if not exists kafaa_coach_feedback_item_kind_idx on kafaa_coach_fee
 create index if not exists kafaa_refresh_state_person_id_idx on kafaa_refresh_state (person_id);
 create index if not exists kafaa_refresh_state_item_id_idx on kafaa_refresh_state (item_id);
 create index if not exists kafaa_refresh_state_competency_id_idx on kafaa_refresh_state (competency_id);
+create index if not exists kafaa_pathways_skill_id_idx on kafaa_pathways (skill_id);
+create index if not exists kafaa_pathways_status_idx on kafaa_pathways (status);
+create index if not exists kafaa_pathway_steps_pathway_id_idx on kafaa_pathway_steps (pathway_id);
+create index if not exists kafaa_pathway_enrolments_person_id_idx on kafaa_pathway_enrolments (person_id);
+create index if not exists kafaa_pathway_enrolments_pathway_id_idx on kafaa_pathway_enrolments (pathway_id);
+create index if not exists kafaa_pathway_enrolments_status_idx on kafaa_pathway_enrolments (status);
+create index if not exists kafaa_pathway_gaps_pathway_id_idx on kafaa_pathway_gaps (pathway_id);
+create index if not exists kafaa_pathway_gaps_step_id_idx on kafaa_pathway_gaps (step_id);
+create index if not exists kafaa_pathway_gaps_skill_id_idx on kafaa_pathway_gaps (skill_id);
+create index if not exists kafaa_pathway_gaps_status_idx on kafaa_pathway_gaps (status);
+create index if not exists kafaa_external_resources_status_idx on kafaa_external_resources (status);
+create index if not exists kafaa_external_completions_person_id_idx on kafaa_external_completions (person_id);
+create index if not exists kafaa_external_completions_resource_id_idx on kafaa_external_completions (resource_id);
 create index if not exists kafaa_opportunities_posted_by_idx on kafaa_opportunities (posted_by);
 create index if not exists kafaa_opportunities_org_id_idx on kafaa_opportunities (org_id);
 create index if not exists kafaa_opportunities_family_id_idx on kafaa_opportunities (family_id);
@@ -5386,4 +5546,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 244) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 251) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

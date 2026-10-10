@@ -1600,6 +1600,64 @@ grant select on kafaa_refresh_prefs to anon;
 drop trigger if exists kafaa_refresh_prefs_audit on kafaa_refresh_prefs;
 create trigger kafaa_refresh_prefs_audit after insert or update on kafaa_refresh_prefs for each row execute function kafaa_audit_row();
 
+-- pathways
+alter table kafaa_pathways enable row level security;
+drop policy if exists kafaa_read on kafaa_pathways;
+create policy kafaa_read on kafaa_pathways for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, listed)
+    or kafaa_rule_read('sat', null::text, null::text, true)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_pathways to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- pathway_steps
+alter table kafaa_pathway_steps enable row level security;
+drop policy if exists kafaa_read on kafaa_pathway_steps;
+create policy kafaa_read on kafaa_pathway_steps for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, true)
+    or kafaa_rule_read('sat', null::text, null::text, true)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_pathway_steps to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- pathway_enrolments
+alter table kafaa_pathway_enrolments enable row level security;
+drop policy if exists kafaa_read on kafaa_pathway_enrolments;
+create policy kafaa_read on kafaa_pathway_enrolments for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_pathway_enrolments to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- pathway_gaps
+alter table kafaa_pathway_gaps enable row level security;
+drop policy if exists kafaa_read on kafaa_pathway_gaps;
+create policy kafaa_read on kafaa_pathway_gaps for select to anon, authenticated using (kafaa_rule_read('sat', null::text, null::text, true)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_pathway_gaps to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- external_resources
+alter table kafaa_external_resources enable row level security;
+drop policy if exists kafaa_read on kafaa_external_resources;
+create policy kafaa_read on kafaa_external_resources for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, listed)
+    or kafaa_rule_read('sat', null::text, null::text, true)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_external_resources to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- catalogue_criteria
+alter table kafaa_catalogue_criteria enable row level security;
+drop policy if exists kafaa_read on kafaa_catalogue_criteria;
+create policy kafaa_read on kafaa_catalogue_criteria for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, true)
+    or kafaa_rule_read('sat', null::text, null::text, true)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_catalogue_criteria to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- external_completions
+alter table kafaa_external_completions enable row level security;
+drop policy if exists kafaa_read on kafaa_external_completions;
+create policy kafaa_read on kafaa_external_completions for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_external_completions to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- opportunities
 alter table kafaa_opportunities enable row level security;
 drop policy if exists kafaa_read on kafaa_opportunities;

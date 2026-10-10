@@ -8,6 +8,7 @@ import { L, useFormat, useLang, useT } from '../../i18n';
 import { asRanked, type CoachCard } from './coach';
 import { useCoachData } from './useCoachData';
 import { AskCoach } from './AskCoach';
+import { FutureSkillsCoach } from './FutureSkillsCoach'; // FS17/FS18 (FS wave C · E1)
 import { GoalCard, FocusCard } from './GoalCard';
 import type { EngineKind, EngineStatus } from '../../domain/engines/types';
 import { RecoOptedOut, UnrankedCatalogue, useRecoOptOut } from '../m16/optout'; // W3E5 (F24): per-surface opt-out
@@ -66,6 +67,7 @@ export default function MyCoachPage() {
             <RefreshTeaser />
             <Tabs initial="feed" tabs={[
               { id: 'feed', label: t('m19.coach.tabFeed'), badge: feed.length, content: <Feed cards={feed} /> },
+              { id: 'future', label: t('m19.pw.coach.tab'), content: <FutureSkillsCoach /> }, // FS17/FS18: pathways ranked for my 2030 and today's gaps
               { id: 'saved', label: t('m19.coach.tabSaved'), badge: saved.length, content: saved.length ? <CardList cards={saved} testId="m19-saved" /> : <EmptyState icon="book" title={t('m19.coach.savedEmpty')}>{t('m19.coach.savedEmptyBody')}</EmptyState> },
               { id: 'ask', label: t('m19.coach.tabAsk'), content: <AskCoach t={result.t} /> },
               { id: 'hidden', label: t('m19.coach.tabHidden'), badge: result.hidden.length, content: <Hidden cards={result.hidden} feedback={result.input.feedback} /> },
