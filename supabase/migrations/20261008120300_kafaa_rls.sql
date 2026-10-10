@@ -1316,6 +1316,52 @@ create policy kafaa_read on kafaa_crew_debrief_members for select to anon, authe
 grant select on kafaa_crew_debrief_members to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- course_pack_items
+alter table kafaa_course_pack_items enable row level security;
+drop policy if exists kafaa_read on kafaa_course_pack_items;
+create policy kafaa_read on kafaa_course_pack_items for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_course_pack_items to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- course_skill_links
+alter table kafaa_course_skill_links enable row level security;
+drop policy if exists kafaa_read on kafaa_course_skill_links;
+create policy kafaa_read on kafaa_course_skill_links for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_course_skill_links to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- academies
+alter table kafaa_academies enable row level security;
+drop policy if exists kafaa_read on kafaa_academies;
+create policy kafaa_read on kafaa_academies for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_academies to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- academy_cohorts
+alter table kafaa_academy_cohorts enable row level security;
+drop policy if exists kafaa_read on kafaa_academy_cohorts;
+create policy kafaa_read on kafaa_academy_cohorts for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_academy_cohorts to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- academy_members
+alter table kafaa_academy_members enable row level security;
+drop policy if exists kafaa_read on kafaa_academy_members;
+create policy kafaa_read on kafaa_academy_members for select to anon, authenticated using (kafaa_rule_read('training', person_id, null::text, true)
+    or kafaa_rule_read('own_profile', mentor_person_id, null::text, true)
+    or kafaa_rule_read('own_profile', reviewer_person_id, null::text, true));
+grant select on kafaa_academy_members to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- cohort_capstones
+alter table kafaa_cohort_capstones enable row level security;
+drop policy if exists kafaa_read on kafaa_cohort_capstones;
+create policy kafaa_read on kafaa_cohort_capstones for select to anon, authenticated using (kafaa_rule_read('training', person_id, null::text, true)
+    or kafaa_rule_read('own_profile', mentor_person_id, null::text, true)
+    or kafaa_rule_read('own_profile', reviewer_person_id, null::text, true));
+grant select on kafaa_cohort_capstones to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- journey_questions
 alter table kafaa_journey_questions enable row level security;
 drop policy if exists kafaa_read on kafaa_journey_questions;

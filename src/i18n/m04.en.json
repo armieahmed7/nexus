@@ -68,6 +68,30 @@
     "my-simulator": {
       "title": "My simulator debriefs",
       "purpose": "Crew debriefs from my simulator sessions and the skills evidence they added"
+    },
+    "learn-future-skills": {
+      "title": "Future-skills course pack",
+      "purpose": "Modular courses that close future-skill gaps, each linked to skills at a stated level."
+    },
+    "learn-academies": {
+      "title": "Future-skills academies",
+      "purpose": "AI Academy, Digital Twin Bootcamp, SMR Fundamentals and Energy Transition cohorts on one template."
+    },
+    "learn-academy": {
+      "title": "Academy",
+      "purpose": "Modules, the capstone project, the mentor role and the cohorts of one academy."
+    },
+    "my-academies": {
+      "title": "My academies",
+      "purpose": "My nominations and places, my capstone, the capstones I review and the people I mentor."
+    },
+    "training-future-skills": {
+      "title": "Course pack studio",
+      "purpose": "Pack coverage, skill links and the copy and link check."
+    },
+    "training-academies": {
+      "title": "Academies console",
+      "purpose": "Nominations, cohort rosters, capstones and alumni for the programme owner."
     }
   },
   "common": {
@@ -590,7 +614,58 @@
     "transcriptBody": "{n} hours on record. The training records system remains the authority; report any error to your training coordinator.",
     "upcomingTitle": "Coming up",
     "validTo": "valid to {date}",
-    "verify": "Verify certificate"
+    "verify": "Verify certificate",
+    "acad": {
+      "intro": "My nominations and places in the future-skills academies, my capstone, the capstones I review and the people I mentor.",
+      "browse": "Browse the academies",
+      "places": "My places",
+      "none": "No academy yet",
+      "noneBody": "Nominate yourself, or ask your line manager to nominate you, for a cohort that is open.",
+      "modules": "Modules: {done} of {total} completed",
+      "cap": {
+        "title": "Capstone",
+        "feedback": "Reviewer feedback",
+        "name": "Title",
+        "nameHint": "3-140 characters.",
+        "summary": "What you built and how you verified it",
+        "summaryHint": "20-2000 characters. Never include plant security details.",
+        "kind": "Kind of artefact",
+        "saveDraft": "Save draft",
+        "submit": "Submit to the reviewer",
+        "saved": "Draft saved",
+        "submitted": "Capstone submitted to your reviewer",
+        "consequence": "Your reviewer is notified and the capstone is locked until they sign it off or return it.",
+        "withReviewer": "With your reviewer for sign-off.",
+        "notYetOpen": "The capstone opens when your cohort starts.",
+        "recorded": "Recorded in your skills",
+        "passport": "Open my skills passport"
+      },
+      "review": {
+        "title": "Capstones I review",
+        "intro": "{n} waiting for your sign-off. Only the named reviewer can sign off; never the member.",
+        "open": "Review",
+        "modal": "Review the capstone of {name}",
+        "result": "Result",
+        "willRecord": "Records:",
+        "nothing": "nothing: the capstone goes back with your feedback.",
+        "feedback": "Feedback",
+        "feedbackHint": "Optional for merit or pass.",
+        "feedbackNeeded": "Required: explain what to rework.",
+        "note": "Signing off records skills evidence for the member and recomputes their skills. It is audited and written to the evidence ledger.",
+        "sign": "Sign off",
+        "return": "Return for rework",
+        "signed": "Capstone signed off; skills updated",
+        "returned": "Returned with feedback"
+      },
+      "mentor": {
+        "title": "People I mentor",
+        "intro": "Members whose mentor you are. Mentors guide the capstone; a separate reviewer signs it off."
+      },
+      "nominateTeam": "Nominate someone in my team",
+      "nominateSelf": "Nominate myself",
+      "nominateIntro": "Academies open for nominations now.",
+      "noOpen": "No cohort is open for nominations right now."
+    }
   },
   "paths": {
     "all": "All training paths",
@@ -1307,5 +1382,327 @@
       "emptyTitle": "No simulator debriefs yet",
       "empty": "Debriefs appear here after a simulator session your crew attended."
     }
+  },
+  "fsc": {
+    "intro": "Modular courses of 60 hours or less that teach the skills the plant of 2030 needs and no course taught before: data, scripting, digital twins, remote operations, AI verification, cyber hygiene, SMR concepts and green skills. Every objective names a skill and a level.",
+    "empty": "The course pack is not available yet.",
+    "theme": {
+      "data_ai": "Data and AI",
+      "digital_plant": "Digital plant",
+      "advanced_reactor": "Advanced reactors",
+      "green": "Energy transition",
+      "human": "Human skills",
+      "cyber": "Cyber hygiene"
+    },
+    "industry": {
+      "oil_gas": "Oil and gas",
+      "power": "Power generation",
+      "process": "Process industries",
+      "aviation": "Aviation maintenance",
+      "defence": "Defence"
+    },
+    "levelN": "Level {n}",
+    "lv": "L{n}",
+    "envelope": "{hours} h in total · about {weeks} weeks at {weekly} h a week",
+    "simulated": "SIMULATED outline",
+    "noDecision": "Concept learning only: ENEC is evaluating these technologies and no deployment decision is implied.",
+    "copyPassed": "Copy and link check passed: awareness content only, public sources",
+    "tile": {
+      "courses": "Pack courses",
+      "coursesSub": "plus {n} cross-over versions",
+      "hours": "Learning hours",
+      "hoursSub": "no course longer than {max} h",
+      "skills": "Skills taught",
+      "skillsSub": "{n} of {total} future skills have a course",
+      "unheld": "Skills nobody held",
+      "unheldValue": "{n} of {total}",
+      "unheldSub": "now have at least one course"
+    },
+    "forMe": {
+      "title": "Picked for me",
+      "intro": "Pack courses ranked against my gaps today and in my role's 2030 profile. Each pick says why.",
+      "anonTitle": "See the courses picked for you",
+      "anonBody": "Signed-in staff see the pack ranked against their own gaps today and in their role's 2030 profile.",
+      "signIn": "Sign in",
+      "noneTitle": "No gaps the pack closes",
+      "noneBody": "Your current and 2030 profile skills are already met by your evidence, or the pack does not teach them yet. Browse the catalogue below.",
+      "rank": "Pick {n}",
+      "gaps": "Closes {n} of my gaps",
+      "enrol": "Enrol",
+      "enrolled": "Enrolment requested",
+      "completed": "Completed",
+      "open": "Open"
+    },
+    "why": {
+      "gapNow": "{skill}: my role needs level {need} today, I hold {have}; this course teaches level {level}",
+      "gap2030": "{skill}: my role's 2030 profile needs level {need}, I hold {have}; this course teaches level {level}",
+      "unheld": "{skill}: nobody at ENEC holds this skill yet",
+      "envelope": "{hours} h: about {weeks} weeks at {weekly} h a week",
+      "completed": "I have completed this course",
+      "enrolled": "I am already enrolled"
+    },
+    "catalogue": {
+      "title": "The pack",
+      "intro": "Each course states its objectives as skills at a level, its hour envelope and its sources. Completing a course records training evidence on those skills."
+    },
+    "filter": {
+      "theme": "Theme",
+      "allThemes": "All themes",
+      "hours": "Length",
+      "anyHours": "Any length",
+      "upTo": "Up to {n} h",
+      "none": "No course matches these filters."
+    },
+    "cross": {
+      "title": "Cross-over versions for adjacent industries",
+      "intro": "For people joining from oil and gas, power, process industries, aviation or defence: what transfers, what is different in nuclear.",
+      "eyebrow": "Cross-over",
+      "of": "Cross-over of"
+    },
+    "routes": {
+      "title": "Learning routes for the skills nobody held",
+      "intro": "In the audit baseline six catalogue skills had no holder and no course. Each now has at least one course.",
+      "skill": "Skill",
+      "before": "Holders before the pack",
+      "courses": "Courses that teach it",
+      "nobody": "Nobody",
+      "futureCover": "Future skills with a learning route",
+      "futureNote": "Learning pathways (FS17) and assessments add further routes; skills without one are listed in the course pack studio."
+    },
+    "sim": {
+      "title": "Demo outlines",
+      "body": "Course outlines are SIMULATED demo content written for this concept. Every course cites public sources with the date they were read."
+    },
+    "panel": {
+      "title": "Future-skills course pack",
+      "all": "All pack courses",
+      "evidence": "Each skill above lists this course as evidence: completing it records training evidence at level 1 (2 for a qualifying course) under the skills-passport rules.",
+      "crossover": "Cross-over version for:",
+      "sep": ", ",
+      "check": {
+        "passed": "Copy and link check passed",
+        "failed": "Copy and link check found problems",
+        "pending": "Copy and link check not run yet"
+      }
+    }
+  },
+  "fst": {
+    "intro": "Coverage of the future skills by pack courses, the skill links of each course and the copy and link check that keeps security detail out.",
+    "tile": {
+      "courses": "Pack courses",
+      "links": "Skill links",
+      "future": "Future skills covered",
+      "futureSub": "with at least one pack course",
+      "check": "Copy and link check",
+      "checkSub": "courses passing"
+    },
+    "tab": {
+      "coverage": "Coverage",
+      "check": "Copy and link check",
+      "links": "Skill links"
+    },
+    "coverage": {
+      "intro": "Every future skill (FS02 catalogue) with the pack courses that teach it and the level. Security skills never appear.",
+      "noRoute": "No course yet",
+      "gapTitle": "{n} future skills have no pack course",
+      "gapBody": "They need a pathway step, an assessment or a new course. Learning pathways (FS17) resolve their steps from these links."
+    },
+    "check": {
+      "howTitle": "What the check does",
+      "howBody": "It reads every title, summary, objective and module title for security-restricted wording, accepts only https links, refuses links into security advisories, and limits the all-staff cyber hygiene course to awareness pages on an allow-list of public hosts.",
+      "run": "Run the check on every course",
+      "consequence": "The copy and link check runs on all {n} pack courses and stores the result. Audited.",
+      "done": "Copy and link check complete",
+      "result": "Result",
+      "problems": "Problems",
+      "at": "Checked on",
+      "passed": "Passed",
+      "failed": "Failed",
+      "pending": "Not run"
+    },
+    "problem": {
+      "restricted_term": "Restricted wording: “{detail}”",
+      "link_https": "Not an https link: {detail}",
+      "link_host": "Not an awareness page on the allow-list: {detail}",
+      "link_path": "Links into security detail: {detail}"
+    },
+    "links": {
+      "course": "Pack course",
+      "pick": "Choose a pack course to edit its skill links",
+      "skill": "Skill",
+      "level": "Level",
+      "objEn": "Objective (English)",
+      "objAr": "Objective (Arabic)",
+      "remove": "Remove",
+      "add": "Add a skill",
+      "save": "Save the skill links",
+      "saved": "Skill links saved",
+      "consequence": "The course will teach exactly these skills at these levels. Each becomes the course's evidence key on the skill, removed links are kept inactive, and the copy and link check runs again. Audited.",
+      "note": "1 to 8 skills, level 1 to 3, objectives in English and Arabic (5-200 characters). Security skills are not offered.",
+      "readOnlyTitle": "Read only",
+      "readOnly": "Training staff with write access (instructors, the training manager) edit skill links."
+    }
+  },
+  "acad": {
+    "intro": "Four academies on one template: modules from the course pack, a capstone project that produces something real, a mentor, and a reviewer who signs the capstone off. Cohorts are comparable because they share the template.",
+    "template": {
+      "title": "One template for every academy",
+      "intro": "Borrowed from the multi-employer Nordic nuclear trainee programme: modules, a project assignment and mentoring. A separate reviewer signs the capstone off."
+    },
+    "triad": {
+      "modules": "Modules",
+      "modulesBody": "Pack courses taken over the cohort, recorded in my learning like any course.",
+      "project": "Capstone project",
+      "projectBody": "A real piece of work for my own job, with a deliverable.",
+      "mentor": "Mentor",
+      "mentorBody": "An experienced colleague who guides the work. Never the person who signs it off.",
+      "reviewer": "Reviewer",
+      "reviewerBody": "Signs the capstone off. Merit or pass records skills evidence; not yet returns it with feedback."
+    },
+    "tile": {
+      "academies": "Academies",
+      "cohorts": "Cohorts",
+      "cohortsSub": "{n} open for nominations",
+      "participants": "Participants",
+      "partSub": "groups under 10 are not counted",
+      "modules": "Pack courses used",
+      "modulesSub": "as academy modules"
+    },
+    "open": "Open the academy",
+    "modulesN": "{n} courses · {h} h",
+    "participants": "Participants",
+    "alumni": "Alumni",
+    "suppressed": "Fewer than 10",
+    "suppressedHint": "Suppressed: figures describing fewer than 10 people are not shown.",
+    "calendar": {
+      "title": "Cohort calendar",
+      "intro": "Past, running and upcoming intakes."
+    },
+    "closes": "nominations close {date}",
+    "suppress": {
+      "title": "Small groups are not shown",
+      "body": "Every academy and cohort figure that would describe fewer than 10 people shows “Fewer than 10” instead of a number."
+    },
+    "notFound": "Academy not found",
+    "back": "All academies",
+    "roles": {
+      "title": "Roles and selection"
+    },
+    "capacity": "Places per cohort",
+    "criteria": "Who it is for",
+    "deliverable": "Deliverable",
+    "records": "A signed-off capstone records",
+    "recordsNote": "Evidence on these skills at the level shown (merit one level higher, up to 3). It appears in my skills passport after sign-off.",
+    "cohorts": {
+      "title": "Cohorts",
+      "intro": "Statistics are suppressed when they would describe fewer than 10 people."
+    },
+    "cohort": "Cohort",
+    "dates": "Dates",
+    "modulePct": "Modules completed",
+    "completionPct": "Alumni",
+    "passPct": "Capstones signed off",
+    "academy": "Academy",
+    "nominate": {
+      "cta": "Nominate",
+      "title": "Nominate for {name}",
+      "who": "Who",
+      "me": "Myself",
+      "whoHint": "Yourself, or someone in your team if you are their line manager.",
+      "note": "Note to the programme owner",
+      "noteHint": "Optional, up to 500 characters.",
+      "send": "Send the nomination",
+      "sent": "Nomination sent to the programme owner",
+      "next": "The training manager decides, names a mentor and a reviewer and enrols the place in the module courses."
+    },
+    "cohortStatus": {
+      "planned": "Planned",
+      "nominating": "Open for nominations",
+      "running": "Running",
+      "completed": "Completed"
+    },
+    "capStatus": {
+      "draft": "Draft",
+      "submitted": "With the reviewer",
+      "signed_off": "Signed off",
+      "returned": "Returned for rework"
+    },
+    "memberStatus": {
+      "nominated": "Nominated",
+      "accepted": "Place offered",
+      "declined": "Not taken forward",
+      "active": "In the cohort",
+      "completed": "Alumni",
+      "withdrawn": "Withdrawn"
+    },
+    "result": {
+      "merit": "Merit",
+      "pass": "Pass",
+      "not_yet": "Not yet"
+    },
+    "source": {
+      "self": "Self",
+      "manager": "Line manager",
+      "programme": "Programme owner"
+    },
+    "kind": {
+      "automation": "Built AI assistant or automation",
+      "analysis": "Analysis",
+      "twin_validation": "Digital-twin validation",
+      "study": "Study",
+      "role_delta": "Role-delta note"
+    },
+    "stage": {
+      "nominated": "Nominated",
+      "accepted": "Place offered",
+      "modules": "Modules",
+      "capstone_draft": "Capstone",
+      "capstone_submitted": "With reviewer",
+      "capstone_returned": "Rework",
+      "alumni": "Alumni",
+      "declined": "Not taken forward",
+      "withdrawn": "Withdrawn"
+    }
+  },
+  "tra": {
+    "intro": "Decide nominations, follow cohort rosters, module progress and capstones, and see the alumni. Statistics describing fewer than 10 people are suppressed.",
+    "tile": {
+      "pending": "Nominations waiting",
+      "pendingSub": "for the programme owner",
+      "participants": "Participants",
+      "alumni": "Alumni",
+      "suppressedSub": "academies under {n} not counted",
+      "review": "Capstones with reviewers",
+      "reviewSub": "submitted, awaiting sign-off"
+    },
+    "readOnlyTitle": "Read only",
+    "readOnly": "Only the programme owner (the training manager) decides nominations. Instructors see the cohorts.",
+    "tab": {
+      "nominations": "Nominations",
+      "cohorts": "Cohorts",
+      "alumni": "Alumni"
+    },
+    "noPending": "No nominations are waiting.",
+    "source": "Nominated by",
+    "by": "Nominator",
+    "on": "On",
+    "decide": "Decide",
+    "decideTitle": "{name} · {academy}",
+    "acceptExplain": "Accepting names a mentor and a reviewer and enrols the member in the {n} module courses.",
+    "reviewerHint": "The reviewer signs the capstone off; choose someone other than the mentor.",
+    "note": "Decision note",
+    "accept": "Offer the place",
+    "decline": "Decline",
+    "accepted": "Place offered; mentor and reviewer named",
+    "declined": "Nomination declined",
+    "filled": "Places filled",
+    "suppressedCohort": "This cohort has fewer than 10 participants, so its statistics are not shown.",
+    "roster": "Roster",
+    "noRoster": "No participants yet.",
+    "stage": "Stage",
+    "modules": "Modules",
+    "rosterNote": "Module enrolments also appear in the M04 cohort views:",
+    "noAlumni": "No alumni yet.",
+    "result": "Capstone result"
   }
 }

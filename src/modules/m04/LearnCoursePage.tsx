@@ -9,6 +9,7 @@ import { L, useFormat, useLang, usePick, useT } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { isOpen, missingPrerequisites } from '../../domain/learning';
 import { Chip, G2Pill, Sources, useLabels, usePeople } from './ui';
+import { FsCoursePanel } from './FsCoursePanel'; // FS wave C · E2 (FS19)
 
 export default function LearnCoursePage() {
   const { id = '' } = useParams();
@@ -78,6 +79,7 @@ export default function LearnCoursePage() {
               {c.packaging && c.packaging !== 'none' && <Chip>{c.packaging === 'scorm' ? 'SCORM' : 'xAPI'}</Chip>}
               {c.concept_content && <Chip tone="sim">{t('m04.course.concept')}</Chip>}
             </div>
+            <FsCoursePanel courseId={c.id} />
 
             <Grid cols={3}>
               <Card title={t('m04.course.facts')} className="sm:col-span-1">

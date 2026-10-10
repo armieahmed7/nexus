@@ -16,6 +16,7 @@ import {
 } from '../mentoring';
 import type { CloseOutResult, M04Rpc, SmeNominee } from './rpc';
 import { makeLocalM04Sim } from './simulator.local'; // W4E3 (F28)
+import { makeLocalM04Fs } from './fs.local'; // FS wave C · E2 (FS19, FS20)
 
 type Row = Record<string, any>;
 
@@ -34,6 +35,7 @@ export function makeLocalM04(b: LocalBackend, h: LocalRpcHelpers): M04Rpc {
 
   return {
     ...makeLocalM04Sim(b, h), // W4E3 (F28) simulator scenario library
+    ...makeLocalM04Fs(b, h), // FS wave C · E2 (FS19 course pack, FS20 academies)
     async requestMentoring(input) {
       await b.whenReady();
       type R = { id: string };
