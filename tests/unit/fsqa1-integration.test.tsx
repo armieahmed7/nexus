@@ -33,7 +33,7 @@ describe('FS wave A · route registry', () => {
   it('212 routes, and the 6 wave-A routes are registered', async () => {
     const { loadRoutes } = await import('../smoke/routes');
     const R = loadRoutes();
-    expect(R.length).toBe(212);
+    expect(R.length).toBe(216); // FS wave B · E1: + 4 M28 routes (FS07, FS08)
     const paths = new Set(R.map((r) => r.path));
     for (const p of ['/my/skills/confidence', '/admin/skills-confidence', '/workforce/future/keyspace', '/careers/horizons', '/careers/roles/:slug/profile', '/training/sat/future']) expect(paths.has(p), p).toBe(true);
   });

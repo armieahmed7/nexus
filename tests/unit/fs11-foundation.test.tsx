@@ -41,7 +41,7 @@ describe('FS01 · modules M28-M37 register once', () => {
     }
   });
   it('the route sweep reads the registry, so routes added to M28-M37 are covered without test edits; today 212 (206 + the 6 wave-A routes of FS03-FS06)', () => {
-    expect(ROUTES.length).toBe(212);
+    expect(ROUTES.length).toBe(216); // FS wave B · E1: + 4 M28 routes (FS07 /skills, /skills/:id; FS08 /skills/frameworks, /admin/skills/alignments)
     const sweep = readFileSync('tests/e2e/sweep.spec.ts', 'utf8');
     expect(sweep).toContain('ROUTES');
     for (const r of ROUTES.filter((x) => NEW.includes(x.module))) {

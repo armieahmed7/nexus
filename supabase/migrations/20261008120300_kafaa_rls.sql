@@ -2095,3 +2095,26 @@ create policy kafaa_read on kafaa_xapi_statements for select to anon, authentica
 grant select on kafaa_xapi_statements to anon, authenticated;
 -- writes: append-only, through kafaa_audit() / RPCs
 
+-- skill_frameworks
+alter table kafaa_skill_frameworks enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_frameworks;
+create policy kafaa_read on kafaa_skill_frameworks for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_skill_frameworks to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- skill_alignments
+alter table kafaa_skill_alignments enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_alignments;
+create policy kafaa_read on kafaa_skill_alignments for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, listed)
+    or kafaa_rule_read('audit_log', null::text, null::text, true)
+    or kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_skill_alignments to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- skill_goals
+alter table kafaa_skill_goals enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_goals;
+create policy kafaa_read on kafaa_skill_goals for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_skill_goals to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
