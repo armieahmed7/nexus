@@ -6,7 +6,8 @@ import type { LocalRpcHelpers } from '../../../data/ext/types';
 import { nowTs } from '../../../data/audit';
 import { MIN_GROUP_SIZE } from '../../../auth/policy';
 import { GOAL_KINDS, GOAL_TARGET_LEVEL, MAX_ACTIVE_GOALS, goalId, goalTarget, type GoalData } from '../future';
-import type { FutureDemandRow, FutureGoalResult, M21Rpc } from './rpc';
+import type { FutureDemandRow, FutureGoalResult, FutureReadiness, M21Rpc, TrackStepResult } from './rpc';
+import { inputFor, normSteps, readinessV2, trackProgressId, type RV2Tables } from '../readiness';
 
 export function makeLocalM21(b: LocalBackend, h: LocalRpcHelpers): M21Rpc {
   const data = (): GoalData => ({
@@ -58,6 +59,44 @@ export function makeLocalM21(b: LocalBackend, h: LocalRpcHelpers): M21Rpc {
         const sup = s.size < MIN_GROUP_SIZE;
         return { source: source as FutureDemandRow['source'], target_kind: target_kind as FutureDemandRow['target_kind'], target_id, n: sup ? null : s.size, suppressed: sup };
       });
+    },
+    // ───────────── FS13 readiness v2 (mirror of kafaa_future_readiness / kafaa_fm_readiness_of)
+    async futureReadiness() {
+      await b.whenReady();
+      const me = b.identity().personId;
+      if (!me || !b.access().has('skills_profile', ['Own'])) throw new Error("Kafa'a · Future Me readiness is for staff with a skills profile");
+      const t = {
+        techs: b.raw('adv_technologies'), advSkills: b.raw('adv_skills'), map: b.raw('future_skill_map'), skills: b.raw('skills'), resources: b.raw('future_resources'),
+        states: b.raw('person_skills'), enrolments: b.raw('enrolments'), trainingRecords: b.raw('training_records'), trackProgress: b.raw('future_track_progress'),
+      } as unknown as RV2Tables;
+      return { person_id: me, ...readinessV2(inputFor(me, t)) } as FutureReadiness;
+    },
+    async recordTrackStep(trackId, step, done = true) {
+      await b.whenReady();
+      type R = TrackStepResult;
+      const me = b.identity().personId;
+      const entity = `${trackId ?? ''}:${step ?? ''}`;
+      const refuse = (code: string, msg: string, role: string | null = null) => h.refuse<R>('future.track', 'future_track_progress', entity, code, msg, role);
+      if (!me) return refuse('not_signed_in', 'Sign in to record your learning');
+      const role = b.access().actingRole('skills_profile', ['Own']);
+      if (!role) return refuse('forbidden', 'ADVANCE tracks count for staff with a skills profile');
+      const track = trackId ? b.rawGet('adv_tracks', trackId) : undefined;
+      if (!track) return refuse('not_found', 'Unknown learning track', role);
+      const total = Array.isArray(track.modules) ? (track.modules as unknown[]).length : 0;
+      if (!Number.isInteger(step) || step < 0 || step >= total) return refuse('invalid', 'That step is not part of this track', role);
+      const id = trackProgressId(me, track.id);
+      const cur = b.rawGet('future_track_progress', id);
+      const ts = nowTs();
+      const before = normSteps(cur?.steps_done, total);
+      const steps = done === false ? before.filter((x) => x !== step) : normSteps([...before, step], total);
+      const complete = steps.length === total;
+      const completed_at = complete ? (cur?.status === 'completed' && cur.completed_at ? String(cur.completed_at) : ts) : null;
+      const row = { steps_done: steps, status: complete ? 'completed' as const : 'in_progress' as const, completed_at, updated_at: ts };
+      if (cur) b.rawUpdate('future_track_progress', id, row);
+      else b.rawInsert('future_track_progress', { id, person_id: me, track_id: track.id, started_at: ts, ...row });
+      const msg = complete ? 'Track completed: it now counts as learning evidence' : 'Progress saved';
+      return h.done<R>('future.track', 'future_track_progress', id, `${track.id} step ${step + 1} ${done === false ? 'undone' : 'done'} (${steps.length}/${total})`, role, null, '', msg,
+        { id, track_id: track.id, status: row.status, steps_done: steps, steps: total, completed_at }, ['future_track_progress']);
     },
   };
 }

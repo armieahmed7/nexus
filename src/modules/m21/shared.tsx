@@ -7,6 +7,7 @@ import { useSession } from '../../auth/session';
 import { useFormat, useT } from '../../i18n';
 import type { BiText } from '../../domain/engines/types';
 import { interestId, readinessIndex, type GoalKind, type Readiness } from './future';
+import type { FutureReadiness } from './backend/rpc';
 
 export type FutureSource = { id?: string; label: string; url: string; as_of?: string };
 export const NO_DECISION_KEY = 'm11.common.noDecision';
@@ -26,8 +27,18 @@ export interface FutureMeData {
   jobRoles: RowOf<'job_roles'>[];
   interest: RowOf<'future_interest'>[];
   goals: RowOf<'future_goals'>[];
+  // FS13 / FS14
+  rv2: FutureReadiness | null;
+  links: RowOf<'horizon_lane_links'>[];
+  milestones: RowOf<'horizon_milestones'>[];
+  tracks: RowOf<'adv_tracks'>[];
+  progress: RowOf<'future_track_progress'>[];
+  courses: RowOf<'courses'>[];
+  gigs: RowOf<'opportunities'>[];
+  enrolments: RowOf<'enrolments'>[];
 }
-export const FUTURE_TABLES = ['person_skills', 'skills', 'adv_technologies', 'adv_skills', 'skill_bridges', 'future_roles', 'horizon_lanes', 'future_resources', 'career_paths', 'job_roles', 'future_interest', 'future_goals'] as const;
+export const FUTURE_TABLES = ['person_skills', 'skills', 'adv_technologies', 'adv_skills', 'skill_bridges', 'future_roles', 'horizon_lanes', 'future_resources', 'career_paths', 'job_roles', 'future_interest', 'future_goals',
+  'horizon_lane_links', 'horizon_milestones', 'adv_tracks', 'future_track_progress', 'courses', 'opportunities', 'enrolments', 'training_records', 'future_skill_map'] as const;
 
 /** Everything Future Me reads for the signed-in person. Row-level security limits interest, goals and skill states to their own rows. */
 export function useFutureMe() {
@@ -36,7 +47,8 @@ export function useFutureMe() {
   const me = identity.personId;
   return useQuery([...FUTURE_TABLES], async (): Promise<FutureMeData | null> => {
     if (!me) return null;
-    const [states, skills, techs, advSkills, bridges, roles, lanes, resources, edges, jobRoles, interest, goals] = await Promise.all([
+    const soft = <X,>(p: Promise<X[]>) => p.catch(() => [] as X[]);
+    const [states, skills, techs, advSkills, bridges, roles, lanes, resources, edges, jobRoles, interest, goals, rv2, links, milestones, tracks, progress, courses, gigs, enrolments] = await Promise.all([
       repo.list('person_skills', { filter: { person_id: me, active: true } }),
       repo.list('skills', { order: [['sort', 'asc']] }),
       repo.list('adv_technologies', { order: [['sort', 'asc']] }),
@@ -49,8 +61,16 @@ export function useFutureMe() {
       repo.list('job_roles'),
       repo.list('future_interest', { filter: { person_id: me } }),
       repo.list('future_goals', { filter: { person_id: me } }),
+      repo.rpc.futureReadiness().catch(() => null),
+      soft(repo.list('horizon_lane_links', { order: [['sort', 'asc']] })),
+      soft(repo.list('horizon_milestones', { order: [['year', 'asc'], ['sort', 'asc']] })),
+      soft(repo.list('adv_tracks', { order: [['sort', 'asc']] })),
+      soft(repo.list('future_track_progress', { filter: { person_id: me } })),
+      soft(repo.list('courses')),
+      soft(repo.list('opportunities')),
+      soft(repo.list('enrolments', { filter: { person_id: me } })),
     ]);
-    return { me, person, states, skills, techs, advSkills, bridges, roles, lanes, resources, edges, jobRoles, interest, goals };
+    return { me, person, states, skills, techs, advSkills, bridges, roles, lanes, resources, edges, jobRoles, interest, goals, rv2, links, milestones, tracks, progress, courses, gigs, enrolments };
   }, [me, person?.id]);
 }
 

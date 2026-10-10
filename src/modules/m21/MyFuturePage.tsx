@@ -2,14 +2,19 @@
 // moves me most, the horizon roadmap 2026-2035 with my current level per lane, the concept future roles I am closest to, and my
 // goals (handed to the Learning Coach) and interests (an aggregate demand signal for HR). Every index carries the SIMULATED chip
 // and "ENEC is evaluating these technologies; no deployment decision is implied".
-import { useMemo } from 'react';
+// FS13: readiness rule v2 (rpc.futureReadiness, TS = SQL): learning moves the index, both ceilings, "what raises it" with +points,
+// before/after previews, planned learning and ADVANCE tracks. FS14: Horizon lanes 2.0 (eleven lanes, board and timeline, drawer).
+import { useMemo, useState } from 'react';
 import { Page, Section, Card, Async, EmptyState, Callout, WhyThis, EngineBadge, Icon, SimChip } from '../../ui';
 import { useT, usePick, useFormat, L } from '../../i18n';
 import { useEngine } from '../../data';
 import type { Ranked } from '../../domain/engines/types';
 import { NoDecision, Radar } from '../m11/shared';
-import { bridgePlan, laneLevel, rankBridges, rankFutureRoles, rankResources, HORIZONS, type BridgeRank, type Readiness } from './future';
-import { FutureMeData, GoalButton, IndexBadge, IndexMeter, InterestToggle, LevelDots, RELATION_TONE, SourceLinks, techSlug, useFutureMe, useLabels, useReadiness, type FutureSource, type Labels } from './shared';
+import { bridgePlan, rankBridges, rankFutureRoles, rankResources, type BridgeRank, type Readiness } from './future';
+import { FutureMeData, GoalButton, IndexBadge, IndexMeter, InterestToggle, SourceLinks, techSlug, useFutureMe, useLabels, useReadiness, type FutureSource, type Labels } from './shared';
+import { toV1Family, v2Levels } from './raises';
+import { FamiliesV2, FS13Chips, PlannedLearning, ReadinessHero, TracksSection, useRaises, WhatRaisesIt } from './v2ui';
+import { LanesSection } from './LanesSection';
 
 export default function MyFuturePage() {
   const t = useT();
@@ -18,6 +23,7 @@ export default function MyFuturePage() {
   return (
     <Page title={t('m21.routes.my-future.title')} eyebrow={t('m21.page.eyebrow')} intro={t('m21.page.intro')} actions={<EngineBadge engine={eng} />} wide>
       <NoDecision />
+      <FS13Chips />
       <Async state={q} isEmpty={(d) => !d} empty={<EmptyState title={t('m21.page.signIn')} />}>
         {(d) => <Body d={d!} />}
       </Async>
@@ -28,7 +34,16 @@ export default function MyFuturePage() {
 function Body({ d }: { d: FutureMeData }) {
   const t = useT();
   const labels = useLabels(d);
-  const rd = useReadiness(d, labels);
+  const v1 = useReadiness(d, labels);
+  const r = d.rv2;
+  const ranked = useRaises(d, r, labels);
+  const [focus, setFocus] = useState<string | null>(null);
+  // the F09 rankers (bridges, resources, concept roles) read readiness v2 through the adapter
+  const rd: Readiness = useMemo(() => (r ? { overall: r.overall, ceiling: r.learn_ceiling, families: r.families.map((f) => toV1Family(f)), levels: v2Levels(r) } : v1), [r, v1]);
+  const onTrack = (id: string) => {
+    setFocus(id);
+    document.getElementById(`m21-track-${id}`)?.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
+  };
   const hasSkills = d.states.length > 0;
   return (
     <>
@@ -37,10 +52,13 @@ function Body({ d }: { d: FutureMeData }) {
           {t('m21.page.noSkillsBody')} <L to="/my/skills">{t('m21.page.openPassport')}</L>
         </Callout>
       )}
-      <Hero d={d} rd={rd} />
-      <Families d={d} rd={rd} />
+      {r ? <ReadinessHero d={d} r={r} top={ranked[0]} /> : <Hero d={d} rd={v1} />}
+      {r && <FamiliesV2 d={d} r={r} extra={(id) => <InterestToggle d={d} kind="tech" target={id} />} />}
+      {r && <WhatRaisesIt d={d} r={r} ranked={ranked} onTrack={onTrack} />}
+      {r && <PlannedLearning d={d} r={r} />}
+      {r && <TracksSection d={d} r={r} focus={focus} />}
       <BridgePlan d={d} rd={rd} labels={labels} />
-      <Horizon d={d} />
+      <LanesSection d={d} />
       <ClosestRoles d={d} rd={rd} labels={labels} />
       <MyGoals d={d} />
       <Method />
@@ -91,41 +109,6 @@ function Hero({ d, rd }: { d: FutureMeData; rd: Readiness }) {
         <p className="mt-1 text-center text-[11.5px] text-sim" data-testid="m21-no-decision">{t('m11.common.noDecision')}</p>
       </Card>
     </section>
-  );
-}
-
-function Families({ d, rd }: { d: FutureMeData; rd: Readiness }) {
-  const t = useT();
-  const pick = usePick();
-  const f = useFormat();
-  return (
-    <Section title={t('m21.fam.title')} description={t('m21.fam.desc')}>
-      <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3" data-testid="m21-families">
-        {rd.families.map((fr) => {
-          const x = d.techs.find((y) => y.id === fr.tech_id)!;
-          return (
-            <li key={fr.tech_id} className="card flex flex-col gap-3 p-4" data-testid="m21-family">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <div className="caps num">{x.designs}</div>
-                  <L to={`/my/future/${techSlug(x.id)}`} className="text-[15px] font-semibold leading-snug">{pick(x, 'family')}</L>
-                </div>
-                <InterestToggle d={d} kind="tech" target={x.id} />
-              </div>
-              <IndexBadge size="sm" value={fr.index} label={t('m21.fam.index')} sub={t('m21.fam.ceiling', { n: f.num(fr.ceiling, { maximumFractionDigits: 1 }) })} />
-              <IndexMeter value={fr.index} ceiling={fr.ceiling} label={t('m21.hero.meter', { v: f.num(fr.index), c: f.num(fr.ceiling) })} />
-              <div className="flex flex-wrap gap-1">
-                {(['transfers', 'adapts', 'new'] as const).map((r) => <span key={r} className={`chip ${RELATION_TONE[r]}`}>{t(`m11.rel.${r}`)} · {f.num(fr.counts[r])}</span>)}
-              </div>
-              <div className="mt-auto flex items-center justify-between gap-2 border-t border-line pt-2">
-                <WhyThis reasons={fr.reasons} />
-                <L to={`/my/future/${techSlug(x.id)}`} className="text-[12.5px]">{t('m21.fam.open')}</L>
-              </div>
-            </li>
-          );
-        })}
-      </ul>
-    </Section>
   );
 }
 
@@ -214,76 +197,6 @@ export function ResourceList({ ranked, title }: { ranked: Ranked<FutureMeData['r
   );
 }
 
-function Horizon({ d }: { d: FutureMeData }) {
-  const t = useT();
-  const pick = usePick();
-  const f = useFormat();
-  const skill = (id: string) => d.skills.find((s) => s.id === id);
-  const role = (id: string) => d.jobRoles.find((r) => r.id === id);
-  return (
-    <Section title={t('m21.hz.title')} description={t('m21.hz.desc')}>
-      <div className="frame-line h-1 rounded-full" aria-hidden />
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3" data-testid="m21-horizon">
-        {(Object.keys(HORIZONS) as (keyof typeof HORIZONS)[]).map((h) => (
-          <div key={h} className="flex flex-col gap-3">
-            <div className="flex items-baseline justify-between border-b border-line pb-1">
-              <span className="text-[14px] font-semibold">{t(`m21.hz.h.${h}`)}</span>
-              <span className="num text-[12px] text-ink-3">{f.num(HORIZONS[h][0], { useGrouping: false })}–{f.num(HORIZONS[h][1], { useGrouping: false })}</span>
-            </div>
-            {d.lanes.filter((l) => l.horizon === h).map((l) => {
-              const lv = laneLevel(l, d.skills, d.states);
-              return (
-                <article key={l.id} className="card flex flex-col gap-2.5 p-4" data-testid="m21-lane">
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="text-[15px] font-semibold leading-snug">{pick(l, 'title')}</h3>
-                    <span className="caps num">{l.code}</span>
-                  </div>
-                  <p className="text-[13px] text-ink-2">{pick(l, 'summary')}</p>
-                  <div className="rounded-btn bg-sunken/60 p-2.5">
-                    <div className="caps mb-0.5">{t('m21.hz.why')}</div>
-                    <p className="text-[12.5px]">{pick(l, 'why')}</p>
-                  </div>
-                  <div>
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="caps">{t('m21.hz.myLevel')}</span>
-                      {lv.level == null ? <span className="text-[12px] text-ink-3">—</span> : (
-                        <span className="inline-flex items-center gap-2"><LevelDots level={Math.round(lv.level)} label={t('m21.hz.levelOf', { n: f.num(lv.level) })} /><span className="num text-[12.5px] font-semibold">{t('m21.hz.levelOf', { n: f.num(lv.level, { maximumFractionDigits: 1 }) })}</span></span>
-                      )}
-                    </div>
-                    <ul className="mt-1.5 flex flex-wrap gap-1">
-                      {lv.items.map((i) => (
-                        <li key={i.skill_id} className={`chip max-w-full whitespace-normal ${i.security ? (i.qualified ? 'border-ok-line bg-ok-bg text-ok' : 'border-line bg-sunken text-ink-2') : i.level > 0 ? 'border-accent/30 bg-accent-soft text-eyebrow' : 'border-line bg-panel text-ink-3'}`}>
-                          {pick(skill(i.skill_id), 'name')}
-                          <span className="num font-normal">· {i.security ? t(i.qualified ? 'm21.hz.qualified' : 'm21.hz.notQualified') : f.num(i.level)}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  {l.path_only_role_ids.length > 0 && (
-                    <p className="text-[12px] text-ink-2"><Icon name="lock" size={12} /> {t('m21.hz.pathOnly')}{' '}
-                      {l.path_only_role_ids.map((id, n) => <span key={id}>{n > 0 && ', '}<L to={`/careers/roles/${id}`}>{pick(role(id), 'title') || id}</L></span>)}
-                    </p>
-                  )}
-                  {l.role_ids.length > 0 && (
-                    <p className="text-[12px] text-ink-2">{t('m21.hz.roles')}{' '}
-                      {l.role_ids.map((id, n) => <span key={id}>{n > 0 && ', '}<L to={`/careers/roles/${id}`}>{pick(role(id), 'title') || id}</L></span>)}
-                    </p>
-                  )}
-                  <SourceLinks sources={(l.sources as FutureSource[]) ?? []} />
-                  <div className="mt-auto flex flex-wrap gap-2 border-t border-line pt-2">
-                    <InterestToggle d={d} kind="lane" target={l.id} />
-                    <GoalButton d={d} kind="lane" refId={l.id} compact />
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        ))}
-      </div>
-    </Section>
-  );
-}
-
 function ClosestRoles({ d, rd, labels }: { d: FutureMeData; rd: Readiness; labels: Labels }) {
   const t = useT();
   const pick = usePick();
@@ -368,10 +281,13 @@ function Method() {
       <details className="card p-4 text-[13px]" data-testid="m21-method">
         <summary className="cursor-pointer font-semibold">{t('m21.method.title')}</summary>
         <ul className="mt-2 list-disc space-y-1 ps-5 text-ink-2">
-          <li>{t('m21.method.level')}</li>
-          <li>{t('m21.method.factor')}</li>
-          <li>{t('m21.method.index')}</li>
-          <li>{t('m21.method.ceiling')}</li>
+          <li>{t('m21.method.v2.keyspace')}</li>
+          <li>{t('m21.method.v2.carry')}</li>
+          <li>{t('m21.method.v2.direct')}</li>
+          <li>{t('m21.method.v2.learn')}</li>
+          <li>{t('m21.method.v2.credit')}</li>
+          <li>{t('m21.method.v2.index')}</li>
+          <li>{t('m21.method.v2.ceilings')}</li>
           <li>{t('m21.method.bridges')}</li>
           <li>{t('m21.method.roles')}</li>
           <li>{t('m21.method.mirror')}</li>

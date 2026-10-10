@@ -1,7 +1,7 @@
 // M21 /workforce/future/interest (F09): the Future Me demand signal for HR and training (input to F26 training needs).
 // Distinct people interested in each technology family and horizon lane, and with Future Me learning goals there.
 // Aggregate only (rpc.futureDemand): any cell under the minimum group size shows "suppressed"; individual rows never reach HR.
-import { Page, Section, Card, Async, EmptyState, Callout, BarChart, Grid, StatTile, DataTable } from '../../ui';
+import { Page, Section, Card, Async, EmptyState, Callout, BarChart, Grid, StatTile, DataTable, BenchmarkChips } from '../../ui';
 import { useT, usePick, useFormat } from '../../i18n';
 import { useQuery, useRepo } from '../../data';
 import { MIN_GROUP_SIZE } from '../../auth/policy';
@@ -17,6 +17,7 @@ export default function FutureDemandPage() {
   return (
     <Page title={t('m21.routes.workforce-future-interest.title')} intro={t('m21.demand.intro')}>
       <NoDecision compact />
+      <div data-testid="m21-bench-fs14"><BenchmarkChips feature="FS14" /></div>
       <Callout tone="info" title={t('m21.demand.privacyTitle')}>{t('m21.demand.privacy', { n: MIN_GROUP_SIZE })}</Callout>
       <Async state={q} isEmpty={(d) => d.techs.length === 0} empty={<EmptyState title={t('m21.demand.empty')} />}>
         {(d) => <Body {...d} />}
@@ -26,7 +27,7 @@ export default function FutureDemandPage() {
 }
 
 type Row = Awaited<ReturnType<ReturnType<typeof useRepo>['rpc']['futureDemand']>>[number];
-function Body({ rows, techs, lanes }: { rows: Row[]; techs: { id: string; family_en: string; family_ar: string }[]; lanes: { id: string; title_en: string; title_ar: string; horizon: string }[] }) {
+function Body({ rows, techs, lanes }: { rows: Row[]; techs: { id: string; family_en: string; family_ar: string }[]; lanes: { id: string; title_en: string; title_ar: string; horizon: string; kind?: string; code?: string }[] }) {
   const t = useT();
   const pick = usePick();
   const f = useFormat();
@@ -34,8 +35,8 @@ function Body({ rows, techs, lanes }: { rows: Row[]; techs: { id: string; family
   const fmt = (c: { n: number | null; suppressed: boolean }) => (c.suppressed ? t('common.suppressedShort') : f.num(c.n));
   const shown = rows.filter((r) => !r.suppressed);
   const targets = [
-    ...techs.map((x) => ({ id: x.id, kind: 'tech', name: pick(x, 'family') })),
-    ...lanes.map((x) => ({ id: x.id, kind: 'lane', name: pick(x, 'title') })),
+    ...techs.map((x) => ({ id: x.id, kind: 'tech', name: pick(x, 'family'), horizon: '' })),
+    ...lanes.map((x) => ({ id: x.id, kind: 'lane', name: `${x.code ? `${x.code} · ` : ''}${pick(x, 'title')}${x.kind === 'watch' ? ` (${t('m21.hz2.watch')})` : ''}`, horizon: x.horizon })),
   ];
   return (
     <>
@@ -65,6 +66,7 @@ function Body({ rows, techs, lanes }: { rows: Row[]; techs: { id: string; family
             columns={[
               { key: 'name', header: t('m21.demand.col.target'), value: (r) => r.name, sortable: true },
               { key: 'kind', header: t('m21.demand.col.kind'), value: (r) => t(`m21.demand.kind.${r.kind}`), sortable: true },
+              { key: 'horizon', header: t('m21.demand.col.horizon'), value: (r) => (r.horizon ? t(`m21.hz.h.${r.horizon}`) : '—'), sortable: true },
               { key: 'interest', header: t('m21.demand.col.interest'), value: (r) => fmt(cell('interest', r.id)), sortable: true, align: 'end' },
               { key: 'goals', header: t('m21.demand.col.goals'), value: (r) => fmt(cell('goal', r.id)), sortable: true, align: 'end' },
             ]}

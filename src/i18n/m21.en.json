@@ -127,7 +127,16 @@
     "ceiling": "The ceiling is the most your current skills can carry over; the gap above it is new learning.",
     "bridges": "Bridge plan: role fit (1 your role, 0.6 within two career steps, 0.3 other) × (index points still available + 5). Learning suggestions are ranked by the deterministic gap-closure engine.",
     "roles": "Concept roles: half for the link to the roles they start from, half for your skill overlap.",
-    "mirror": "Kafa'a is a mirror, not an authority: these indices are SIMULATED, are not a qualification or an assessment, and imply no deployment decision."
+    "mirror": "Kafa'a is a mirror, not an authority: these indices are SIMULATED, are not a qualification or an assessment, and imply no deployment decision.",
+    "v2": {
+      "keyspace": "Every ADVANCE skill is resolved through the future-skill keyspace (FS04): today's skills that transfer or adapt, and the new capability skills (including the FS02 future skills) that count directly. Security skills never count.",
+      "carry": "Carry over: the best of today's skills on the key, level up to 3; transferring skills count in full, adapting skills at half.",
+      "direct": "New capability: the best level you hold on a new or FS02 skill on the key, up to 3, counts directly.",
+      "learn": "Learning: a completed catalogue course that covers the skill gives its level (1 or 2); a completed ADVANCE track gives level 1.",
+      "credit": "Credit per ADVANCE skill = 1 − (1 − carry) × (1 − new capability) × (1 − learning): each kind of evidence closes part of the gap that is left.",
+      "index": "Family index = 100 × the mean credit of its ADVANCE skills; the overall index is the mean of the six families. The server computes the same numbers (readiness rule v2).",
+      "ceilings": "Ceilings: what today's skills can carry at most, and how far every catalogue course and track lifts that. Recorded practice on the new capabilities reaches 100."
+    }
   },
   "tech": {
     "notFound": "This technology family is not in the catalogue.",
@@ -177,7 +186,8 @@
       "target": "Technology or lane",
       "kind": "Type",
       "interest": "Interested",
-      "goals": "With a goal"
+      "goals": "With a goal",
+      "horizon": "Horizon"
     },
     "kind": {
       "tech": "Technology family",
@@ -205,6 +215,149 @@
     "rel_adapts": "Adapts from APR-1400 work: counts × {factor}",
     "rel_new": "New skill: counts × {factor}",
     "via": "Your level comes from {skill} (level {level})",
-    "no_evidence": "No evidence yet on the mapped skills"
+    "no_evidence": "No evidence yet on the mapped skills",
+    "v2_item_transfers": "{skill} at level {level} carries over in full",
+    "v2_item_adapts": "{skill} at level {level} adapts and counts at half",
+    "v2_item_direct": "You hold the new capability {skill} at level {level}: it counts directly",
+    "v2_item_learn": "Recorded learning: {title} (level {level})",
+    "v2_item_none": "No evidence yet on this ADVANCE skill",
+    "v2_item_credit": "Credit on this skill: {pct}%",
+    "v2_carry": "{n} ADVANCE skill(s) carry over from today's skills",
+    "v2_direct": "{n} skill(s) count directly from new capabilities you hold",
+    "v2_learn": "{n} skill(s) credited from learning you recorded",
+    "v2_gap": "{n} skill(s) with no evidence yet",
+    "v2_ceiling": "Today's skills can carry up to {c}; catalogue courses and tracks lift that to {l}; recorded practice reaches 100",
+    "act_course": "Completing it records level {level} on {n} ADVANCE skill(s)",
+    "act_track": "Completing the track records level {level} on {n} ADVANCE skill(s)",
+    "act_practice": "Reaching level {level} on {skill} counts directly for {n} ADVANCE skill(s)",
+    "act_family": "+{pts} in {tech}"
+  },
+  "v2": {
+    "rule": "Readiness rule v2 · learning counts",
+    "ceilings": "Today's skills can carry {c} · with catalogue learning {l} · 100 with recorded practice",
+    "meter": "Readiness {v} of 100; today's skills carry up to {c}; catalogue learning lifts this to {l}",
+    "legendMine": "My readiness",
+    "legendCarry": "Today's skills ceiling",
+    "legendLearn": "With catalogue learning",
+    "legendFull": "100 = recorded practice",
+    "cover": {
+      "carry": "Carry over",
+      "direct": "New capability",
+      "learn": "Learning",
+      "open": "No evidence"
+    },
+    "nextBest": "Next best step",
+    "plus": "+{n} points",
+    "explain": "Each ADVANCE skill earns credit three ways: what carries over from today's skills, the new capability itself when you hold it, and learning you have recorded (a course gives level 1 or 2, an ADVANCE track level 1). Each closes part of the gap that is left, so an index of 100 is reachable through evidence alone.",
+    "famDesc": "Your index per technology family, with what today's skills can carry and how far catalogue learning lifts it. Open a family for the skill-by-skill breakdown.",
+    "chip": {
+      "carry": "{n} carry over",
+      "direct": "{n} new capability",
+      "learn": "{n} learning"
+    },
+    "kind": {
+      "course": "Course",
+      "track": "ADVANCE track",
+      "practice": "Practice"
+    },
+    "practiceLevel": "Build to level {n} through recorded practice",
+    "recordsLevel": "Records level {n} on {k} ADVANCE skill(s)",
+    "points": "index points",
+    "planned": {
+      "title": "My planned learning: before and after",
+      "desc": "Courses you are enrolled in, assigned or have requested, with the readiness they would add once completed.",
+      "empty": "No planned learning yet",
+      "emptyBody": "Plan a course from \"What raises it\" to see its effect here.",
+      "noEffect": "does not cover an ADVANCE skill"
+    },
+    "plan": "Plan this course",
+    "openTrack": "Work through the track",
+    "openPassport": "Open my skills passport",
+    "raise": {
+      "title": "What raises it",
+      "desc": "Learning and practice ranked by the index points they would add once recorded. Preview any of them before you commit.",
+      "empty": "Nothing in the catalogue would raise your index further: every covered skill is already recorded.",
+      "practice": "New capabilities to practise"
+    },
+    "preview": {
+      "title": "Before and after",
+      "before": "Before",
+      "after": "After",
+      "table": "Readiness before and after, by technology family",
+      "family": "Technology family",
+      "radar": "Readiness before and after",
+      "note": "The preview uses the same rule as your readiness, so the index changes by exactly this much once the evidence is recorded.",
+      "open": "Preview"
+    },
+    "tracks": {
+      "title": "ADVANCE learning tracks",
+      "desc": "Short, self-paced tracks. Mark each step as you finish it; a completed track counts as level-1 learning evidence.",
+      "level": {
+        "intro": "Introductory",
+        "intermediate": "Intermediate"
+      },
+      "hours": "hours",
+      "done": "Completed {date}",
+      "gain": "+{n} when complete",
+      "noGain": "already counted",
+      "progress": "{n} of {k} steps done",
+      "minutes": "{n} min",
+      "undo": "Undo",
+      "mark": "Mark done",
+      "foot": "Tracks are orientation material. A completed track is recorded as learning evidence for Future Me only; it is not a qualification and implies no deployment decision."
+    },
+    "bench": "Benchmarks",
+    "tech": {
+      "skillsDesc": "For each ADVANCE skill: what carries over from today's skills, the new capability if you hold it, the learning you recorded, and the credit they add up to.",
+      "carry": "Carries over",
+      "direct": "New capability",
+      "learn": "Learning",
+      "credit": "Credit",
+      "note": "Points = credit ÷ number of ADVANCE skills in the family. The three kinds of evidence each close part of the gap that is left.",
+      "raiseTitle": "What raises this family",
+      "raiseDesc": "The learning and practice that would add most to this family, with a before/after preview."
+    }
+  },
+  "hz2": {
+    "title": "Horizon lanes 2026 to 2035",
+    "desc": "Eleven lanes that will shape nuclear and energy work, placed now, next or later against dated milestones. Each lane lists its future skills, learning, open gigs and at least three public sources. Horizons are orientation, not plans.",
+    "board": "Board",
+    "timeline": "Timeline",
+    "watch": "Awareness only",
+    "watchNoGoal": "A watch lane is for awareness only: it takes interest, not learning goals.",
+    "n": {
+      "skills": "{n} future skills",
+      "learning": "{n} courses and tracks",
+      "gigs": "{n} open gigs",
+      "sources": "{n} sources"
+    },
+    "open": "Open lane",
+    "ms": {
+      "enec": "ENEC milestone",
+      "uae": "UAE milestone",
+      "international": "International"
+    },
+    "milestones": "Milestones",
+    "none": "None yet",
+    "skills": "Skills: today's and future (FS02)",
+    "skillsNote": "My level across these skills: {n} of 4. Future skills show my level / the target level.",
+    "courses": "Catalogue courses",
+    "tracks": "ADVANCE tracks",
+    "pathways": "Training pathways",
+    "path": {
+      "licensed-operator": "Licensed operator",
+      "maintenance": "Maintenance",
+      "radiation-protection": "Radiation protection",
+      "chemistry": "Chemistry",
+      "engineering": "Engineering",
+      "all-staff": "All staff",
+      "emergency-preparedness": "Emergency preparedness",
+      "supplier": "Suppliers",
+      "graduate": "Graduates"
+    },
+    "resources": "Learning resources",
+    "gigs": "Open gigs",
+    "roles": "Roles",
+    "sources": "Sources ({n})"
   }
 }

@@ -3015,7 +3015,10 @@ create table if not exists kafaa_horizon_lanes (
   path_only_role_ids text[] not null default '{}'::text[],
   role_ids text[] not null default '{}'::text[],
   sources jsonb not null default '[]'::jsonb,
-  sort integer not null default 0
+  sort integer not null default 0,
+  kind text not null default 'build' check (kind in ('build', 'watch')),
+  milestone_ids text[] not null default '{}'::text[],
+  as_of date
 );
 comment on table kafaa_horizon_lanes is '[M21] Horizon roadmap lanes 2026-2035 with public sources (F09; no headcount, no sites)';
 
@@ -3074,6 +3077,45 @@ create table if not exists kafaa_future_goals (
   updated_at timestamptz not null default now()
 );
 comment on table kafaa_future_goals is '[M21] Future Me learning goals handed to the Learning Coach as coach targets (F09 -> F07)';
+
+-- M21 · Horizon lane links: FS02 skills, courses, tracks, pathways, resources and gigs per lane (FS14)
+create table if not exists kafaa_horizon_lane_links (
+  id text primary key,
+  lane_id text not null,
+  kind text not null check (kind in ('skill', 'course', 'track', 'pathway', 'resource', 'gig')),
+  ref_id text not null,
+  level integer,
+  sort integer not null default 0
+);
+comment on table kafaa_horizon_lane_links is '[M21] Horizon lane links: FS02 skills, courses, tracks, pathways, resources and gigs per lane (FS14)';
+
+-- M21 · Dated, sourced milestones the horizon lanes are placed against (FS14; no headcount, no sites)
+create table if not exists kafaa_horizon_milestones (
+  id text primary key,
+  year integer not null,
+  month integer,
+  kind text not null check (kind in ('enec', 'uae', 'international')),
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  sources jsonb not null default '[]'::jsonb,
+  sort integer not null default 0
+);
+comment on table kafaa_horizon_milestones is '[M21] Dated, sourced milestones the horizon lanes are placed against (FS14; no headcount, no sites)';
+
+-- M21 · My steps through an ADVANCE learning track (own rows; a completed track is level-1 learning evidence) (FS13)
+create table if not exists kafaa_future_track_progress (
+  id text primary key,
+  person_id text not null,
+  track_id text not null,
+  steps_done jsonb not null default '[]'::jsonb,
+  status text not null default 'in_progress' check (status in ('in_progress', 'completed')),
+  started_at timestamptz not null default now(),
+  completed_at timestamptz,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_future_track_progress is '[M21] My steps through an ADVANCE learning track (own rows; a completed track is level-1 learning evidence) (FS13)';
 
 -- M22 · Enterprise Nuclear Leadership Academy programmes with published facts and sources (F16)
 create table if not exists kafaa_leadership_programmes (
@@ -4595,6 +4637,9 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_fu
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_goals_person_id_fk') then alter table kafaa_future_goals add constraint kafaa_future_goals_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_goals_tech_id_fk') then alter table kafaa_future_goals add constraint kafaa_future_goals_tech_id_fk foreign key (tech_id) references kafaa_adv_technologies(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_goals_lane_id_fk') then alter table kafaa_future_goals add constraint kafaa_future_goals_lane_id_fk foreign key (lane_id) references kafaa_horizon_lanes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_horizon_lane_links_lane_id_fk') then alter table kafaa_horizon_lane_links add constraint kafaa_horizon_lane_links_lane_id_fk foreign key (lane_id) references kafaa_horizon_lanes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_track_progress_person_id_fk') then alter table kafaa_future_track_progress add constraint kafaa_future_track_progress_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_track_progress_track_id_fk') then alter table kafaa_future_track_progress add constraint kafaa_future_track_progress_track_id_fk foreign key (track_id) references kafaa_adv_tracks(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_leadership_programmes_course_id_fk') then alter table kafaa_leadership_programmes add constraint kafaa_leadership_programmes_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_leadership_nominations_person_id_fk') then alter table kafaa_leadership_nominations add constraint kafaa_leadership_nominations_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_leadership_nominations_programme_id_fk') then alter table kafaa_leadership_nominations add constraint kafaa_leadership_nominations_programme_id_fk foreign key (programme_id) references kafaa_leadership_programmes(id) deferrable initially deferred; end if; end $$;
@@ -5094,6 +5139,11 @@ create index if not exists kafaa_future_goals_person_id_idx on kafaa_future_goal
 create index if not exists kafaa_future_goals_ref_id_idx on kafaa_future_goals (ref_id);
 create index if not exists kafaa_future_goals_tech_id_idx on kafaa_future_goals (tech_id);
 create index if not exists kafaa_future_goals_lane_id_idx on kafaa_future_goals (lane_id);
+create index if not exists kafaa_horizon_lane_links_lane_id_idx on kafaa_horizon_lane_links (lane_id);
+create index if not exists kafaa_horizon_lane_links_kind_idx on kafaa_horizon_lane_links (kind);
+create index if not exists kafaa_horizon_lane_links_ref_id_idx on kafaa_horizon_lane_links (ref_id);
+create index if not exists kafaa_future_track_progress_person_id_idx on kafaa_future_track_progress (person_id);
+create index if not exists kafaa_future_track_progress_track_id_idx on kafaa_future_track_progress (track_id);
 create index if not exists kafaa_leadership_programmes_course_id_idx on kafaa_leadership_programmes (course_id);
 create index if not exists kafaa_leadership_nominations_person_id_idx on kafaa_leadership_nominations (person_id);
 create index if not exists kafaa_leadership_nominations_programme_id_idx on kafaa_leadership_nominations (programme_id);
@@ -5266,4 +5316,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 237) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 240) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
