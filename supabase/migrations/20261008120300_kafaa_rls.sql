@@ -2095,3 +2095,32 @@ create policy kafaa_read on kafaa_xapi_statements for select to anon, authentica
 grant select on kafaa_xapi_statements to anon, authenticated;
 -- writes: append-only, through kafaa_audit() / RPCs
 
+-- role_transformations
+alter table kafaa_role_transformations enable row level security;
+drop policy if exists kafaa_read on kafaa_role_transformations;
+create policy kafaa_read on kafaa_role_transformations for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, is_public)
+    or kafaa_rule_read('transformation', null::text, null::text, true));
+grant select on kafaa_role_transformations to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- transformation_drafts
+alter table kafaa_transformation_drafts enable row level security;
+drop policy if exists kafaa_read on kafaa_transformation_drafts;
+create policy kafaa_read on kafaa_transformation_drafts for select to anon, authenticated using (kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_transformation_drafts to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- transformation_milestones
+alter table kafaa_transformation_milestones enable row level security;
+drop policy if exists kafaa_read on kafaa_transformation_milestones;
+create policy kafaa_read on kafaa_transformation_milestones for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_transformation_milestones to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- transformation_archetypes
+alter table kafaa_transformation_archetypes enable row level security;
+drop policy if exists kafaa_read on kafaa_transformation_archetypes;
+create policy kafaa_read on kafaa_transformation_archetypes for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_transformation_archetypes to anon, authenticated;
+-- writes: reference data, no client writes
+

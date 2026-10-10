@@ -3394,6 +3394,65 @@ export interface XapiStatementsRow {
   stored_by?: string | null;
   version: string;
 }
+export interface RoleTransformationsRow {
+  id: string;
+  role_id: string;
+  family_id: string;
+  archetype?: 'mastery_builder' | 'analytical_specialist' | 'human_connector' | null;
+  drivers: string[];
+  summary_en: string;
+  summary_ar: string;
+  public_summary_en: string;
+  public_summary_ar: string;
+  sources: any;
+  as_of: string;
+  status: 'draft' | 'published';
+  is_public: boolean;
+  path_only: boolean;
+  version: number;
+  history: any;
+  updated_by?: string | null;
+  updated_at: string;
+  published_by?: string | null;
+  published_at?: string | null;
+  sort: number;
+}
+export interface TransformationDraftsRow {
+  id: string;
+  role_id: string;
+  content: any;
+  open: boolean;
+  saved_by?: string | null;
+  saved_at: string;
+}
+export interface TransformationMilestonesRow {
+  id: string;
+  year: number;
+  kind: 'ossa' | 'advance' | 'profiles' | 'horizon';
+  title_en: string;
+  title_ar: string;
+  body_en: string;
+  body_ar: string;
+  simulated: boolean;
+  families: string[];
+  sources: any;
+  as_of: string;
+  sort: number;
+}
+export interface TransformationArchetypesRow {
+  id: string;
+  name_en: string;
+  name_ar: string;
+  meaning_en: string;
+  meaning_ar: string;
+  learning_en: string;
+  learning_ar: string;
+  example_en: string;
+  example_ar: string;
+  sources: any;
+  as_of: string;
+  sort: number;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -3620,6 +3679,10 @@ export interface Tables {
   accr_selfevals: AccrSelfevalsRow;
   accr_assessments: AccrAssessmentsRow;
   xapi_statements: XapiStatementsRow;
+  role_transformations: RoleTransformationsRow;
+  transformation_drafts: TransformationDraftsRow;
+  transformation_milestones: TransformationMilestonesRow;
+  transformation_archetypes: TransformationArchetypesRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];
