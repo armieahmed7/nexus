@@ -5,7 +5,7 @@
 // recording references on the topics the CNS report lists). Synthetic people only (w-* / p-* rows); no contact details anywhere.
 import { lineManagerOf } from '../../../src/modules/m20/domain.ts';
 import { BEHAVIOUR_IDS, hasContactDetails, postGuard } from '../../../src/modules/m22/domain.ts';
-import { gatherEvidence, deriveStates } from '../../../src/domain/skills.ts';
+import { gatherEvidence, deriveStates, decayModelFrom } from '../../../src/domain/skills.ts';
 
 const AS_OF = '2026-10-08';
 /** FNV-1a for stable synthetic picks. */
@@ -393,7 +393,7 @@ export function finalize(T, ctx) {
   };
   const derived = gatherEvidence(src, { person: null, now });
   const recorded = (T.skill_evidence ?? []).filter((e) => ['rating', 'ojt', 'credential'].includes(e.kind));
-  const states = deriveStates([...derived, ...recorded], now);
+  const states = deriveStates([...derived, ...recorded], now, decayModelFrom(T.engine_settings, T.skills)); // FS03: per-class half-lives
   const lv = new Map(states.map((s) => [`${s.person_id}:${s.skill_id}`, s]));
   const skill = new Map(T.skills.map((s) => [s.id, s]));
   const people = new Map(T.people.map((p) => [p.id, p]));

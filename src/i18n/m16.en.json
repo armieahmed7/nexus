@@ -687,7 +687,9 @@
       "skills": "Skills fit",
       "development": "Development value",
       "target": "Target-role value",
-      "half_life_months": "Evidence half-life (months)",
+      "half_life_months": "Evidence half-life, standard skills (months)",
+      "half_life_fast": "Evidence half-life, fast-changing skills (months)",
+      "half_life_slow": "Evidence half-life, slow-changing skills (months)",
       "title": "Title boost",
       "k1": "Term saturation (k1)",
       "b": "Length normalisation (b)"

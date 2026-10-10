@@ -8,7 +8,7 @@ import type { Result, RowOf } from '../types';
 import type { LocalRpcHelpers } from '../ext/types';
 import { sha256Hex, nowTs } from '../audit';
 import { todayIso } from '../../domain/rules';
-import { DERIVED_KINDS, RECORDED_KINDS, deriveStates, gatherEvidence, statesDigestText, type Evidence, type SkillSources } from '../../domain/skills';
+import { DERIVED_KINDS, RECORDED_KINDS, decayModelFrom, deriveStates, gatherEvidence, statesDigestText, type Evidence, type SkillSources } from '../../domain/skills';
 import { SURFACES } from '../../domain/engines/types';
 
 export interface SkillsRecomputeResult {
@@ -43,16 +43,19 @@ export async function applySkills(b: LocalBackend, person: string | null, now: s
   }
   for (const e of b.raw('skill_evidence')) if (e.active && DERIVED_KINDS.includes(e.kind) && inScope(e.person_id) && !derivedIds.has(e.id)) b.rawUpdate('skill_evidence', e.id, { active: false });
   const recorded = b.raw('skill_evidence').filter((e) => e.active && RECORDED_KINDS.includes(e.kind) && inScope(e.person_id)) as unknown as Evidence[];
-  const states = deriveStates([...derived, ...recorded], now);
+  // FS03: per-class half-lives from engine_settings (skills) and each skill's decay class
+  const states = deriveStates([...derived, ...recorded], now, decayModelFrom(b.raw('engine_settings') as never, b.raw('skills') as never));
   const ids = new Set(states.map((s) => s.id));
   const ts = nowTs();
   for (const s of states) {
     const cur = b.rawGet('person_skills', s.id);
     if (!cur) b.rawInsert('person_skills', { ...s, active: true, updated_at: ts } as never);
-    else if (cur.level !== s.level || Number(cur.confidence) !== s.confidence || cur.basis !== s.basis || JSON.stringify(cur.reasons) !== JSON.stringify(s.reasons) || cur.evidence_count !== s.evidence_count || !cur.active)
-      b.rawUpdate('person_skills', s.id, { level: s.level, confidence: s.confidence, basis: s.basis, reasons: s.reasons, evidence_count: s.evidence_count, active: true, updated_at: ts } as never);
+    else if (cur.level !== s.level || Number(cur.confidence) !== s.confidence || cur.basis !== s.basis || JSON.stringify(cur.reasons) !== JSON.stringify(s.reasons) || cur.evidence_count !== s.evidence_count || !cur.active
+      || cur.confidence_band !== s.confidence_band || Number(cur.conf_low) !== s.conf_low || Number(cur.conf_high) !== s.conf_high) // FS03
+      b.rawUpdate('person_skills', s.id, { level: s.level, confidence: s.confidence, basis: s.basis, reasons: s.reasons, evidence_count: s.evidence_count, active: true, updated_at: ts,
+        confidence_band: s.confidence_band, conf_low: s.conf_low, conf_high: s.conf_high } as never);
   }
-  for (const p of b.raw('person_skills')) if (p.active && inScope(p.person_id) && !ids.has(p.id)) b.rawUpdate('person_skills', p.id, { active: false, level: 0, confidence: 0, basis: 'none', reasons: [], evidence_count: 0, updated_at: ts });
+  for (const p of b.raw('person_skills')) if (p.active && inScope(p.person_id) && !ids.has(p.id)) b.rawUpdate('person_skills', p.id, { active: false, level: 0, confidence: 0, basis: 'none', reasons: [], evidence_count: 0, updated_at: ts, confidence_band: 'low', conf_low: 0, conf_high: 0 } as never);
   const active = b.raw('person_skills').filter((p) => p.active && inScope(p.person_id)) as RowOf<'person_skills'>[];
   return {
     people: new Set(active.map((p) => p.person_id)).size,

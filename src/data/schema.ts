@@ -1027,6 +1027,9 @@ export const SCHEMA: Record<string, TableDef> = {
       id: 'text pk', person_id: 'text ref:people idx', skill_id: 'text ref:skills idx', level: 'int', confidence: 'num',
       basis: 'text enum:verified|evidenced|validated|claimed|none', reasons: 'json =[]', evidence_count: 'int =0', active: 'bool =true', updated_at: 'ts =now',
       org_id: 'text? idx', contractor: 'bool =false', // W5E2 (F33): see skill_evidence
+
+      // FS03: how sure we are. Band from the cautious end of an 80% interval around confidence (src/domain/skills.ts)
+      confidence_band: 'text enum:low|medium|high =\'low\'', conf_low: 'num =0', conf_high: 'num =0',
     },
     read: [{ res: 'skills_profile', person: 'person_id' }, { res: 'own_profile', person: 'person_id' }, { res: 'equivalency', org: 'org_id', where: 'contractor' }],
     write: { mode: 'rpc', res: 'skills_profile' },

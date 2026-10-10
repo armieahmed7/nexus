@@ -1739,7 +1739,10 @@ create table if not exists kafaa_person_skills (
   active boolean not null default true,
   updated_at timestamptz not null default now(),
   org_id text,
-  contractor boolean not null default false
+  contractor boolean not null default false,
+  confidence_band text not null default 'low' check (confidence_band in ('low', 'medium', 'high')),
+  conf_low numeric not null default 0,
+  conf_high numeric not null default 0
 );
 comment on table kafaa_person_skills is '[M17] Derived skill state per person: level 0-4, confidence, basis and reasons (F01)';
 
@@ -2498,6 +2501,24 @@ create table if not exists kafaa_microcred_awards (
   created_at timestamptz not null default now()
 );
 comment on table kafaa_microcred_awards is '[M17] Micro-credential awards with the evidence snapshot and the signed credential (F32)';
+
+-- M17 · Skill decay classes with default half-lives, area defaults and sourced rationale (FS03)
+create table if not exists kafaa_skill_decay_classes (
+  id text primary key,
+  name_en text not null,
+  name_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  examples_en text not null default '',
+  examples_ar text not null default '',
+  default_months integer not null,
+  areas text[] not null default '{}'::text[],
+  facts jsonb not null default '[]'::jsonb,
+  sources jsonb not null default '[]'::jsonb,
+  as_of date not null,
+  sort integer not null default 0
+);
+comment on table kafaa_skill_decay_classes is '[M17] Skill decay classes with default half-lives, area defaults and sourced rationale (FS03)';
 
 -- M18 · Career Navigator shortlist: up to three target roles per person, optionally shared with the line manager (F05)
 create table if not exists kafaa_career_targets (
@@ -4819,4 +4840,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 216) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 217) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

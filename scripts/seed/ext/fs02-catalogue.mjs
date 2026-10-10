@@ -12,7 +12,7 @@
 // seed from the catalogue (F20 enrichment, F35 outlook aggregates, agendas ...) are built exactly as before and stay equal to
 // the live rows; at run time both backends read the full catalogue. It then re-runs the F01 derivation over the extended
 // catalogue and fails the build if any state differs (the F01 digest for the original 71 skills is unchanged).
-import { deriveStates } from '../../../src/domain/skills.ts';
+import { deriveStates, decayModelFrom, AREA_DECAY_CLASS } from '../../../src/domain/skills.ts';
 import { levelEssence, addMonthsIso, REVIEW_CYCLE_MONTHS } from '../../../src/domain/taxonomy.ts';
 import { src } from '../sources.mjs';
 import { BENCHMARKS } from './fs01-benchmarks.mjs';
@@ -36,7 +36,9 @@ export function backfill(s, i) {
   const qualKeyed = (s.evidence_keys ?? []).some((k) => k.startsWith('qs-'));
   const futureOnly = (s.adv_skill_ids ?? []).length > 0 && (s.evidence_keys ?? []).length === 0;
   const dataAi = s.competency_id === 'da-02' || ['sk-da-01-analysis', 'sk-da-01-twins', 'sk-da-01-remote'].includes(s.id);
-  const decay = s.area === 'digital' ? 'fast' : ['human_performance', 'leadership'].includes(s.area) ? 'slow' : 'standard';
+  // FS QA (wave A): the decay class of an F01 skill is FS03's area default (digital fast; plant systems, engineering and
+  // nuclear safety slow; everything else standard), so the stored column, the public decay-class rows and the derivation agree.
+  const decay = AREA_DECAY_CLASS[s.area] ?? 'standard';
   const bms = s.area === 'digital' ? (s.competency_id === 'da-02' ? ['AI-LIT', 'IAEA-AI'] : ['DIGCOMP']) : ['human_performance', 'leadership'].includes(s.area) ? ['IAEA-1917'] : ['IAEA-WFP'];
   const name = { en: s.name_en, ar: s.name_ar };
   const ess = levelEssence(s.key_level, name);
@@ -260,7 +262,7 @@ export function finalize(T, ctx) {
   T.skills = T.skills.map((s, i) => ({ ...s, ...backfill(s, i) }));
   T.skills.push(...futureRows(T));
   // F01 recompute on the extended catalogue: deterministic, and identical to the states F01 derived before the extension.
-  const again = deriveStates(T.skill_evidence, ctx.DEMO_TODAY);
+  const again = deriveStates(T.skill_evidence, ctx.DEMO_TODAY, decayModelFrom(T.engine_settings, T.skills));
   const key = (x) => `${x.id}|${x.level}|${x.confidence}|${x.basis}|${x.evidence_count}`;
   const a = T.person_skills.map(key).sort().join('\n');
   const b = again.map(key).sort().join('\n');

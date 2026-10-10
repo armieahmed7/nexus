@@ -9,7 +9,7 @@
  * Kafa'a is not an authority: qualification and licence lines are mirrors and are never issued as badges.
  */
 import { qualView, daysBetween } from '../../domain/rules';
-import { HALF_LIFE_DAYS, type StoredReason } from '../../domain/skills';
+import { HALF_LIFE_DAYS, monthsToDays, type StoredReason } from '../../domain/skills';
 import { careerMoves, byCosine, cosine, IMPORTANCE_WEIGHT, type BiText, type Ranked, type Reason, type Weights } from '../../domain/engines';
 import { skillVector, roleVector } from '../../domain/engines/skills';
 import type { PathEdge, RoleComp } from '../../domain/careerGraph';
@@ -19,7 +19,9 @@ import { addDays, securityComps, courseIsSecurity, type SkillRow, type CompRow, 
 export * from './badgeRules';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = any;
-export interface StateRow { id: string; person_id: string; skill_id: string; level: number; confidence: number | string; basis: string; reasons: StoredReason[]; evidence_count: number; active?: boolean }
+export interface StateRow { id: string; person_id: string; skill_id: string; level: number; confidence: number | string; basis: string; reasons: StoredReason[]; evidence_count: number; active?: boolean;
+  /** FS03: band and interval (absent on rows written before FS03). */
+  confidence_band?: string; conf_low?: number | string; conf_high?: number | string }
 
 export const LEVEL_MAX = 4;
 export const CLAIMS_PER_DAY = 20;
@@ -87,14 +89,14 @@ export function expiringQuals(records: Row[], standards: Row[], today: string): 
     .sort((a, b) => a.days - b.days || (a.id < b.id ? -1 : 1));
 }
 export interface AgeingSkill { skill_id: string; level: number; state: 'ageing' | 'soon' | 'lapsed'; since: string; ages_on: string; days: number; reasons: Reason[] }
-/** Skills whose strongest evidence is ageing (older than 36 months, counted one level lower), ageing within 180 days, or a lapsed qualification. */
+/** Skills whose strongest evidence is ageing (older than its decay class's half-life, counted one level lower; FS03), ageing within 180 days, or a lapsed qualification. */
 export function ageingSkills(states: StateRow[], today: string): AgeingSkill[] {
   const out: AgeingSkill[] = [];
   for (const s of states) {
     if (s.active === false || !s.reasons?.length) continue;
     const top = s.reasons[0];
     if (top.code === 'qual') continue; // a current qualification holds while the record is current
-    const agesOn = addDays(top.observed_on, HALF_LIFE_DAYS);
+    const agesOn = addDays(top.observed_on, top.hl ? monthsToDays(top.hl) : HALF_LIFE_DAYS); // FS03: the half-life that applied to this row
     const days = daysBetween(today, agesOn);
     const state: AgeingSkill['state'] | null = top.code === 'qual_lapsed' ? 'lapsed' : top.ageing ? 'ageing' : days <= AGEING_SOON_DAYS ? 'soon' : null;
     if (!state) continue;
@@ -168,7 +170,7 @@ export interface PassportModel {
   role: string;
   family: string;
   years: number | null;
-  skills: { id: string; code: string; name: string; area: string; level: number; basis: string; confidence: number; required: number | null; evidence: { kind: string; ref: string; observed_on: string; source: string }[] }[];
+  skills: { id: string; code: string; name: string; area: string; level: number; basis: string; confidence: number; band?: string; interval?: [number, number]; required: number | null; evidence: { kind: string; ref: string; observed_on: string; source: string }[] }[];
   quals: { code: string; title: string; status: string; expires_on: string | null }[];
   licence: { type: string; status: string } | null;
   badges: { name: string; status: string; slug: string; issued_on: string }[];
@@ -186,7 +188,7 @@ export function passportJson(m: PassportModel) {
     kafaaNoticeAr: `${NOTICE_AR} كفاءة ليست جهة اعتماد: بنود المؤهلات والتراخيص نسخة مطابقة لأنظمة المرخَّص له.`,
     skills: m.skills.map((s) => ({
       type: ['Alignment'], targetType: 'ceterms:Skill', targetFramework: "Kafa'a skills catalogue", targetCode: s.code, targetName: s.name, targetUrl: `urn:kafaa:skill:${s.id}`,
-      level: s.level, basis: s.basis, confidence: s.confidence, requiredForRole: s.required, evidence: s.evidence,
+      level: s.level, basis: s.basis, confidence: s.confidence, ...(s.band ? { confidenceBand: s.band, confidenceInterval: s.interval } : {}), requiredForRole: s.required, evidence: s.evidence, // FS03: band and 80% interval
     })),
     qualifications: m.quals.map((q) => ({ ...q, mirror: true })),
     licence: m.licence ? { ...m.licence, mirror: true } : null,

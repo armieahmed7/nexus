@@ -1473,6 +1473,13 @@ create policy kafaa_read on kafaa_microcred_awards for select to anon, authentic
 grant select on kafaa_microcred_awards to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- skill_decay_classes
+alter table kafaa_skill_decay_classes enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_decay_classes;
+create policy kafaa_read on kafaa_skill_decay_classes for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_skill_decay_classes to anon, authenticated;
+-- writes: reference data, no client writes
+
 -- career_targets
 alter table kafaa_career_targets enable row level security;
 drop policy if exists kafaa_read on kafaa_career_targets;

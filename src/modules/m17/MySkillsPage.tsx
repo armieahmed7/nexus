@@ -30,6 +30,9 @@ function Exports({ d }: { d: PassportData }) {
       <L to="/my/skills/checkins" className="btn-outline btn-sm no-underline" data-testid="m17-to-checkins">
         <Icon name="users" size={14} /> {t('m17.ci.toCheckins')}
       </L>
+      <L to="/my/skills/confidence" className="btn-outline btn-sm no-underline" data-testid="m17-to-confidence">
+        <Icon name="chart" size={14} /> {t('m17.dk.howSureLink')}
+      </L>
       <L to="/my/skills/wallet" className="btn-outline btn-sm no-underline" data-testid="m17-to-wallet">
         <Icon name="shield" size={14} /> {t('m17.passport.wallet')}
       </L>

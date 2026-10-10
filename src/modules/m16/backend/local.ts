@@ -11,7 +11,7 @@ import { todayIso } from '../../../domain/rules';
 import { MIN_GROUP_SIZE } from '../../../auth/policy';
 import { SURFACES } from '../../../domain/engines/types';
 import { OPTOUT_SURFACES, fairnessSnapshot, isoWeek, type FairnessData } from '../fairness';
-import { ENGINE_MSG, RATIONALE_MIN, sameWeights, validWeights } from '../transparency';
+import { ENGINE_MSG, RATIONALE_MIN, sameWeights, validHalfLives, validWeights } from '../transparency'; // FS03: validHalfLives
 import type { EngineChangeResult, M16Rpc, OptoutResult, OptoutStat, SnapshotResult } from './rpc';
 
 /** Everything the fairness monitor reads, straight from the in-memory tables (no RLS: the RPC is the gate). */
@@ -54,7 +54,8 @@ export function makeLocalM16(b: LocalBackend, h: LocalRpcHelpers): M16Rpc {
     if (!role) return refuse('forbidden', ENGINE_MSG.forbidden, null);
     if (!surface || !SURFACES.includes(surface as never)) return refuse('invalid', ENGINE_MSG.surface);
     if (engine !== 'deterministic' && engine !== 'model') return refuse('invalid', ENGINE_MSG.engine);
-    if (weights != null && !validWeights(weights)) return refuse('invalid', ENGINE_MSG.weights);
+    if (weights != null && !validWeights(weights, surface)) return refuse('invalid', ENGINE_MSG.weights);
+    if (surface === 'skills' && weights != null && !validHalfLives(weights as Record<string, number>)) return refuse('invalid', ENGINE_MSG.halfLife); // FS03
     return null;
   };
 

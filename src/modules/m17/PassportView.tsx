@@ -14,6 +14,8 @@ import {
   LEVEL_MAX, NOTE_MAX, type PassportModel, type StateRow,
 } from './passport';
 import { qualView, licenceView } from '../../domain/rules';
+import { BandChip, IntervalBar, SourceRecordView } from './confidenceUi'; // FS03
+import { sourceRecord, type RecordRow } from './decay'; // FS03
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = any;
@@ -80,6 +82,10 @@ export function useEvidenceLabel(d: PassportData) {
       return { title: `${t('m17.evidence.kind.assessment')} ${c ? `${c.code} · ${pick(c, 'title')}` : ''}`, system: t('m17.evidence.sys.assess'), ref: e.ref_id };
     }
     if (e.kind === 'jpm') return { title: t('m17.evidence.kind.jpm'), system: t('m17.evidence.sys.jpm'), ref: e.ref_id };
+    if (e.kind === 'credential' && e.ref_table === 'microcred_awards') { // FS03: back-filled micro-credential evidence
+      const a = (d.mcAwards ?? []).find((x) => x.id === e.ref_id);
+      return { title: `${t('m17.evidence.kind.credential')} ${a?.def_code ?? ''}`, system: t('m17.evidence.sys.wallet'), ref: a?.public_slug ?? e.ref_id };
+    }
     if (e.kind === 'credential') {
       const b = d.badges.find((x) => x.id === e.ref_id);
       return { title: `${t('m17.evidence.kind.credential')} ${b ? pick(b.achievement, 'name') : ''}`, system: t('m17.evidence.sys.wallet'), ref: b?.public_slug ?? e.ref_id };
@@ -110,6 +116,7 @@ export function useExportModel(d: PassportData, vm: PassportVM): PassportModel {
       .sort((a, b) => Number(b.required != null) - Number(a.required != null) || (b.state!.level - a.state!.level) || a.skill.sort - b.skill.sort)
       .map((l) => ({
         id: l.skill.id, code: l.skill.code, name: pick(l.skill, 'name'), area: l.skill.area, level: l.state!.level, basis: l.state!.basis, confidence: Number(l.state!.confidence), required: l.required,
+        ...(l.state!.confidence_band ? { band: l.state!.confidence_band, interval: [Number(l.state!.conf_low), Number(l.state!.conf_high)] as [number, number] } : {}), // FS03
         evidence: l.evidence.map((e) => { const x = label(e); return { kind: e.kind, ref: x.title, observed_on: String(e.observed_on).slice(0, 10), source: x.system }; }),
       })),
     quals: d.quals.map((q) => {
@@ -376,7 +383,7 @@ export function PassportView({ d, readOnly = false }: { d: PassportData; readOnl
                   <th scope="col" className="caps px-3 py-2 text-start">{t('m17.list.skill')}</th>
                   <th scope="col" className="caps px-3 py-2 text-start">{t('m17.list.level')}</th>
                   <th scope="col" className="caps px-3 py-2 text-start">{t('m17.list.basis')}</th>
-                  <th scope="col" className="caps hidden px-3 py-2 text-end sm:table-cell">{t('m17.list.confidence')}</th>
+                  <th scope="col" className="caps hidden px-3 py-2 text-start sm:table-cell">{t('m17.dk.list.howSure')}</th>
                   <th scope="col" className="caps px-3 py-2 text-end">{t('m17.list.evidence')}</th>
                 </tr>
               </thead>
@@ -401,7 +408,14 @@ export function PassportView({ d, readOnly = false }: { d: PassportData; readOnl
                       <td className="px-3 py-2">
                         {l.state ? <BasisChip basis={basis} onClick={() => setOpen(l.skill.id)} testId={`m17-basis-${basis}-${l.skill.id}`} /> : <BasisChip basis="none" />}
                       </td>
-                      <td className="num hidden px-3 py-2 text-end text-ink-2 sm:table-cell">{l.state ? f.pct(Number(l.state.confidence) * 100, 0) : '—'}</td>
+                      <td className="hidden px-3 py-2 sm:table-cell" data-band={l.state?.confidence_band ?? 'none'}>
+                        {l.state && !isSecuritySkill(l.skill, vm.sec) ? (
+                          <span className="flex flex-col items-start gap-1">
+                            <BandChip band={l.state.confidence_band} low={l.state.conf_low} high={l.state.conf_high} testId={`m17-passport-band-${l.skill.id}`} />
+                            <IntervalBar low={Number(l.state.conf_low ?? 0)} high={Number(l.state.conf_high ?? 0)} point={Number(l.state.confidence)} width={84} />
+                          </span>
+                        ) : <span className="text-ink-3">—</span>}
+                      </td>
                       <td className="px-3 py-2 text-end">
                         {l.state ? (
                           <span className="inline-flex items-center gap-1">
@@ -458,7 +472,7 @@ export function PassportView({ d, readOnly = false }: { d: PassportData; readOnl
 
       <Callout tone="sim" title={t('m17.notAuthority.title')}>{t('m17.notAuthority.body')}</Callout>
 
-      <EvidenceDrawer d={d} line={opened} onClose={() => setOpen(null)} />
+      <EvidenceDrawer d={d} line={opened} onClose={() => setOpen(null)} readOnly={readOnly} />
       {!readOnly && <ClaimModal open={claiming} onClose={() => setClaiming(false)} d={d} vm={vm} />}
       {/* keep the export model referenced so print and JSON stay in sync with what is shown */}
       <span hidden data-export-skills={model.skills.length} />
@@ -466,7 +480,7 @@ export function PassportView({ d, readOnly = false }: { d: PassportData; readOnl
   );
 }
 
-function EvidenceDrawer({ d, line, onClose }: { d: PassportData; line?: SkillLine; onClose: () => void }) {
+function EvidenceDrawer({ d, line, onClose, readOnly = false }: { d: PassportData; line?: SkillLine; onClose: () => void; readOnly?: boolean }) {
   const t = useT();
   const pick = usePick();
   const f = useFormat();
@@ -481,8 +495,16 @@ function EvidenceDrawer({ d, line, onClose }: { d: PassportData; line?: SkillLin
         <div className="flex flex-wrap items-center gap-2">
           <LevelMeter level={line.state?.level ?? 0} required={line.required} />
           <BasisChip basis={line.state?.basis ?? 'none'} />
+          {line.state && <BandChip band={line.state.confidence_band} low={line.state.conf_low} high={line.state.conf_high} testId="m17-evidence-band" />}
           {line.state && <span className="text-[12.5px] text-ink-2">{t('common.skills.confidence', { pct: f.num(Math.round(Number(line.state.confidence) * 100)) })}</span>}
         </div>
+        {line.state && (
+          <section data-testid="m17-evidence-sources">
+            <h3 className="mb-1.5 text-[13px] font-semibold">{t('m17.dk.drawer.record')}</h3>
+            <SourceRecordView record={sourceRecord(line.state, line.evidence)} label={(r: RecordRow) => { const e = line.evidence.find((y) => y.id === r.id); return e ? label(e) : { title: r.kind, system: '' }; }} />
+            {!readOnly && <L to={`/my/skills/confidence?q=${encodeURIComponent(line.skill.code)}`} className="mt-1.5 inline-block text-[12.5px]" data-testid="m17-evidence-to-confidence">{t('m17.dk.toConfidence')}</L>}
+          </section>
+        )}
         <p className="text-[13px] text-ink-2">{t('m17.evidence.intro')}</p>
         <ol className="space-y-2">
           {rows.map((e, i) => {

@@ -13,11 +13,24 @@ export const ENGINE_MSG = {
   weights: 'Weights must be numbers between 0 and 10',
   rationale: 'Give a rationale of 10 to 500 characters: it is shown in the change log',
   noChange: 'Nothing changed: the engine and weights are already set this way',
+  // FS03: the skills surface's half-lives (SQL kafaa_engine_check redefined in 20261010212001_kafaa_fs12_decay.sql, same text)
+  halfLife: 'Half-lives are whole months from 6 to 120, and fast may not be longer than standard, nor standard longer than slow',
 } as const;
 
-/** Same rule as the wave-0 SQL: a JSON object whose values are numbers from 0 to 10. */
-export function validWeights(w: unknown): w is Record<string, number> {
-  return !!w && typeof w === 'object' && !Array.isArray(w) && Object.values(w as Record<string, unknown>).every((v) => typeof v === 'number' && Number.isFinite(v) && v >= 0 && v <= 10);
+/** FS03: half-life keys of the skills surface (months), with their defaults (same as DEFAULT_HALF_LIFE_MONTHS in src/domain/skills.ts). */
+export const HALF_LIFE_WEIGHTS = { half_life_fast: 18, half_life_months: 36, half_life_slow: 60 } as const;
+const isHalfLife = (surface: string | null | undefined, k: string) => surface === 'skills' && k in HALF_LIFE_WEIGHTS;
+/** Same rule as the SQL: a JSON object of numbers from 0 to 10; on the skills surface the half-life keys are checked by validHalfLives. */
+export function validWeights(w: unknown, surface: string | null = null): w is Record<string, number> {
+  return !!w && typeof w === 'object' && !Array.isArray(w)
+    && Object.entries(w as Record<string, unknown>).every(([k, v]) => typeof v === 'number' && Number.isFinite(v) && (isHalfLife(surface, k) || (v >= 0 && v <= 10)));
+}
+/** FS03: half-life keys are whole months from 6 to 120, and (with defaults for the keys left out) fast <= standard <= slow. */
+export function validHalfLives(w: Record<string, number>): boolean {
+  const keys = Object.keys(HALF_LIFE_WEIGHTS) as (keyof typeof HALF_LIFE_WEIGHTS)[];
+  if (keys.some((k) => k in w && !(Number.isInteger(w[k]) && w[k] >= 6 && w[k] <= 120))) return false;
+  const r = (k: keyof typeof HALF_LIFE_WEIGHTS) => (typeof w[k] === 'number' && w[k] >= 6 && w[k] <= 120 ? w[k] : HALF_LIFE_WEIGHTS[k]);
+  return r('half_life_fast') <= r('half_life_months') && r('half_life_months') <= r('half_life_slow');
 }
 export function sameWeights(a: Record<string, number> | null | undefined, b: Record<string, number> | null | undefined): boolean {
   const x = a ?? {}, y = b ?? {};

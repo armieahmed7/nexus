@@ -28,5 +28,8 @@ export function makeSupabaseM17(x: SupabaseExtCtx): M17Rpc {
     setMicrocredDefStatus: (id, status, note) => x.call('kafaa_set_microcred_def_status', { p_def: id, p_status: status, p_note: note ?? null }, ['microcred_defs']),
     microcredSweep: () => x.call('kafaa_microcred_sweep', {}, ['notifications']),
     microcredStats: () => x.rpc('kafaa_microcred_stats'),
+    // FS · wave A · E2 · FS03 (supabase/migrations/20261010212001_kafaa_fs12_decay.sql)
+    skillConfidenceStats: (hl) => x.rpc('kafaa_skill_confidence_stats', { p_hl: hl ?? null }),
+    setSkillHalfLives: (i) => x.call('kafaa_set_skill_half_lives', { p: i }, ['engine_settings', 'engine_changes', 'engine_cards', 'person_skills', 'skill_evidence']),
   };
 }

@@ -92,7 +92,7 @@ describe('Wave-5 route registry', () => {
   it('206 routes, and the 13 wave-5 routes are registered', async () => {
     const { loadRoutes } = await import('../smoke/routes');
     const R = loadRoutes();
-    expect(R.length).toBe(206);
+    expect(R.length).toBe(208); // FS03 (M17): + /my/skills/confidence, /admin/skills-confidence
     const paths = new Set(R.map((r) => r.path));
     for (const p of ['/my/skills/credentials', '/my/ojt', '/team/ojt', '/partner/workforce/passport', '/partner/workforce/passport/:personId', '/partner/workforce/precheck',
       '/training/equivalency/passport/:personId', '/admin/suppliers/contract-roles', '/pathways/journey', '/pathways/journey/parents', '/workforce/journeys', '/workforce/skills-outlook', '/admin/digest'])

@@ -1415,6 +1415,9 @@ export interface PersonSkillsRow {
   updated_at: string;
   org_id?: string | null;
   contractor: boolean;
+  confidence_band: 'low' | 'medium' | 'high';
+  conf_low: number;
+  conf_high: number;
 }
 export interface EngineSettingsRow {
   id: string;
@@ -2071,6 +2074,21 @@ export interface MicrocredAwardsRow {
   revoked_at?: string | null;
   revoke_reason?: string | null;
   created_at: string;
+}
+export interface SkillDecayClassesRow {
+  id: string;
+  name_en: string;
+  name_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  examples_en: string;
+  examples_ar: string;
+  default_months: number;
+  areas: string[];
+  facts: any;
+  sources: any;
+  as_of: string;
+  sort: number;
 }
 export interface CareerTargetsRow {
   id: string;
@@ -3425,6 +3443,7 @@ export interface Tables {
   team_skill_targets: TeamSkillTargetsRow;
   microcred_defs: MicrocredDefsRow;
   microcred_awards: MicrocredAwardsRow;
+  skill_decay_classes: SkillDecayClassesRow;
   career_targets: CareerTargetsRow;
   roadmaps: RoadmapsRow;
   career_conversations: CareerConversationsRow;

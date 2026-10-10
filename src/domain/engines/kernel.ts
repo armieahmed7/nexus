@@ -12,7 +12,7 @@ import type { EngineKind, EngineStatus, Ranked, Surface, Weights } from './types
 
 export interface EngineSetting { surface: Surface; engine: EngineKind; weights: Weights }
 export const DEFAULT_SETTINGS: Record<Surface, EngineSetting> = {
-  skills: { surface: 'skills', engine: 'deterministic', weights: { half_life_months: 36 } },
+  skills: { surface: 'skills', engine: 'deterministic', weights: { half_life_months: 36, half_life_fast: 18, half_life_slow: 60 } }, // FS03: per-class half-lives (months)
   recommend: { surface: 'recommend', engine: 'deterministic', weights: { ...Rank.DEFAULT_RECOMMEND } },
   match: { surface: 'match', engine: 'deterministic', weights: { ...Rank.DEFAULT_MATCH } },
   search: { surface: 'search', engine: 'deterministic', weights: { title: 3, k1: 1.4, b: 0.7 } },
