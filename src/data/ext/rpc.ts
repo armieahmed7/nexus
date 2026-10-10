@@ -4,6 +4,7 @@ import type { M04Rpc } from '../../modules/m04/backend/rpc'; // W2E3 (F13): M04 
 import type { M06Rpc } from '../../modules/m06/backend/rpc'; // W5E3 (F34): M06 student journey RPCs
 import type { M07Rpc } from '../../modules/m07/backend/rpc'; // W3E3 (F22): M07 handover board RPCs
 import type { M09Rpc } from '../../modules/m09/backend/rpc'; // W5E2 (F33): contractor passport RPCs
+import type { M11Rpc } from '../../modules/m11/backend/rpc'; // FS wave A E3 (FS04): computed future-skills radar, keyspace edits
 import type { M16Rpc } from '../../modules/m16/backend/rpc'; // W3E5 (F24): AI transparency RPCs (also redefines F02 setEngineWeights)
 import type { M13Rpc } from '../../modules/m13/backend/rpc'; // W5E5 (F37): Dalil career-mode turn log
 import type { DigestRpc } from '../../shell/digest/backend/rpc'; // W5E5 (F36): personal digest
@@ -30,5 +31,5 @@ import type { M35Rpc } from '../../modules/m35/backend/rpc';
 import type { M36Rpc } from '../../modules/m36/backend/rpc';
 import type { M37Rpc } from '../../modules/m37/backend/rpc';
 
-export interface ExtRpc extends M02Rpc, M13Rpc, DigestRpc, M04Rpc, M06Rpc, M07Rpc, M09Rpc, M16Rpc, M17Rpc, M18Rpc, M19Rpc, M20Rpc, M21Rpc, M22Rpc, M23Rpc, M24Rpc, M25Rpc, M26Rpc, M27Rpc,
+export interface ExtRpc extends M02Rpc, M13Rpc, DigestRpc, M04Rpc, M06Rpc, M07Rpc, M09Rpc, M11Rpc, M16Rpc, M17Rpc, M18Rpc, M19Rpc, M20Rpc, M21Rpc, M22Rpc, M23Rpc, M24Rpc, M25Rpc, M26Rpc, M27Rpc,
   M28Rpc, M29Rpc, M30Rpc, M31Rpc, M32Rpc, M33Rpc, M34Rpc, M35Rpc, M36Rpc, M37Rpc {}

@@ -823,6 +823,10 @@ export const SCHEMA: Record<string, TableDef> = {
     cols: {
       id: 'text pk', skill_en: 'text', skill_ar: 'text', tech_ids: 'text[] =[]', scenario: 'text', value: 'num', simulated: 'bool =true',
       skill_key: 'text =\'\'', readiness: 'num?', // [G4] stable skill key and SIMULATED current-readiness index (0-100)
+      // [FS04] one keyspace: the catalogue skill this radar key resolves to (primary row of future_skill_map), the level the
+      // computed readiness counts (rpc.futureRadar), and the sourced SIMULATED demand assumption of this scenario. `readiness`
+      // above is the legacy hand-entered index, no longer shown.
+      sk_id: 'text? ref:skills', target_level: 'int =2', assumption_en: 'text =\'\'', assumption_ar: 'text =\'\'', sources: 'json =[]',
     },
     read: [{ res: 'workforce_analytics', special: 'agg_ok' }], write: { mode: 'direct', res: 'workforce_analytics' },
   },
@@ -833,6 +837,7 @@ export const SCHEMA: Record<string, TableDef> = {
       id: 'text pk', tech_id: 'text ref:adv_technologies idx', skill_en: 'text', skill_ar: 'text',
       area: 'text enum:physics|chemistry|materials|operations|maintenance|licensing|digital|project|safety',
       relation: 'text enum:transfers|adapts|new', note_en: 'text =\'\'', note_ar: 'text =\'\'', sort: 'int =0',
+      sk_ids: 'text[] =[]', // [FS04] catalogue skills this ADVANCE skill resolves to (active future_skill_map rows of the key)
     },
     read: PUB, write: { mode: 'direct', res: 'public_content' },
   },
@@ -860,6 +865,7 @@ export const SCHEMA: Record<string, TableDef> = {
     cols: {
       id: 'text pk', skill_key: 'text idx', scenario: 'text', action: 'text enum:train|reskill|hire|partner|research', owner_role: 'text',
       target_quarter: 'text', status: 'text enum:draft|active|done =\'draft\'', note: 'text =\'\'', created_by: 'text?', created_at: 'ts =now', updated_at: 'ts?',
+      sk_id: 'text? ref:skills idx', // [FS04] re-keyed to the catalogue skill; skill_key stays as the label (radar key or sk-* id)
     },
     read: [{ res: 'workforce_analytics', special: 'agg_ok' }], write: { mode: 'rpc', res: 'workforce_analytics' },
   },

@@ -1394,7 +1394,12 @@ create table if not exists kafaa_future_skills (
   value numeric not null,
   simulated boolean not null default true,
   skill_key text not null default '',
-  readiness numeric
+  readiness numeric,
+  sk_id text,
+  target_level integer not null default 2,
+  assumption_en text not null default '',
+  assumption_ar text not null default '',
+  sources jsonb not null default '[]'::jsonb
 );
 comment on table kafaa_future_skills is '[M11] Future-skills radar values (SIMULATED scenarios, never forecasts)';
 
@@ -1408,7 +1413,8 @@ create table if not exists kafaa_adv_skills (
   relation text not null check (relation in ('transfers', 'adapts', 'new')),
   note_en text not null default '',
   note_ar text not null default '',
-  sort integer not null default 0
+  sort integer not null default 0,
+  sk_ids text[] not null default '{}'::text[]
 );
 comment on table kafaa_adv_skills is '[M11] Skill areas per technology family and how they relate to APR-1400 skills';
 
@@ -1458,7 +1464,8 @@ create table if not exists kafaa_skill_gap_plans (
   note text not null default '',
   created_by text,
   created_at timestamptz not null default now(),
-  updated_at timestamptz
+  updated_at timestamptz,
+  sk_id text
 );
 comment on table kafaa_skill_gap_plans is '[M11] Skills-gap plan actions against SIMULATED scenarios';
 
@@ -2249,6 +2256,24 @@ create table if not exists kafaa_contractor_engagements (
   created_at timestamptz not null default now()
 );
 comment on table kafaa_contractor_engagements is '[M09] SIMULATED mirror of contractor work history at ENEC with supervisor skill sign-offs (F33)';
+
+-- M11 · One future-skill keyspace: ADVANCE, radar and gap-plan keys resolved to catalogue skills (FS04)
+create table if not exists kafaa_future_skill_map (
+  id text primary key,
+  key text not null,
+  key_kind text not null check (key_kind in ('adv_skill', 'radar', 'gap_plan')),
+  sk_id text not null,
+  relation text not null check (relation in ('transfers', 'adapts', 'new')),
+  need_level integer not null default 2,
+  primary_sk boolean not null default false,
+  active boolean not null default true,
+  note_en text not null default '',
+  note_ar text not null default '',
+  sort integer not null default 0,
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_future_skill_map is '[M11] One future-skill keyspace: ADVANCE, radar and gap-plan keys resolved to catalogue skills (FS04)';
 
 -- M16 · Model and engine card per recommendation surface: inputs used and never used, weights, owner, oversight, last change (F24)
 create table if not exists kafaa_engine_cards (
@@ -4050,9 +4075,11 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_re
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_critical_roles_role_id_fk') then alter table kafaa_critical_roles add constraint kafaa_critical_roles_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_bridges_from_role_id_fk') then alter table kafaa_skill_bridges add constraint kafaa_skill_bridges_from_role_id_fk foreign key (from_role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_bridges_tech_id_fk') then alter table kafaa_skill_bridges add constraint kafaa_skill_bridges_tech_id_fk foreign key (tech_id) references kafaa_adv_technologies(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_skills_sk_id_fk') then alter table kafaa_future_skills add constraint kafaa_future_skills_sk_id_fk foreign key (sk_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_adv_skills_tech_id_fk') then alter table kafaa_adv_skills add constraint kafaa_adv_skills_tech_id_fk foreign key (tech_id) references kafaa_adv_technologies(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_roles_family_id_fk') then alter table kafaa_future_roles add constraint kafaa_future_roles_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_adv_tracks_course_id_fk') then alter table kafaa_adv_tracks add constraint kafaa_adv_tracks_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_gap_plans_sk_id_fk') then alter table kafaa_skill_gap_plans add constraint kafaa_skill_gap_plans_sk_id_fk foreign key (sk_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_facts_source_id_fk') then alter table kafaa_facts add constraint kafaa_facts_source_id_fk foreign key (source_id) references kafaa_sources(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_advisor_sessions_person_id_fk') then alter table kafaa_advisor_sessions add constraint kafaa_advisor_sessions_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_advisor_turns_session_id_fk') then alter table kafaa_advisor_turns add constraint kafaa_advisor_turns_session_id_fk foreign key (session_id) references kafaa_advisor_sessions(id) deferrable initially deferred; end if; end $$;
@@ -4134,6 +4161,7 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ta
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_contractor_engagements_person_id_fk') then alter table kafaa_contractor_engagements add constraint kafaa_contractor_engagements_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_contractor_engagements_org_id_fk') then alter table kafaa_contractor_engagements add constraint kafaa_contractor_engagements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_contractor_engagements_role_id_fk') then alter table kafaa_contractor_engagements add constraint kafaa_contractor_engagements_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_skill_map_sk_id_fk') then alter table kafaa_future_skill_map add constraint kafaa_future_skill_map_sk_id_fk foreign key (sk_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_reco_optouts_person_id_fk') then alter table kafaa_reco_optouts add constraint kafaa_reco_optouts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_digest_runs_person_id_fk') then alter table kafaa_digest_runs add constraint kafaa_digest_runs_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_digest_prefs_person_id_fk') then alter table kafaa_digest_prefs add constraint kafaa_digest_prefs_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -4458,10 +4486,12 @@ create index if not exists kafaa_kpi_series_metric_idx on kafaa_kpi_series (metr
 create index if not exists kafaa_critical_roles_role_id_idx on kafaa_critical_roles (role_id);
 create index if not exists kafaa_skill_bridges_from_role_id_idx on kafaa_skill_bridges (from_role_id);
 create index if not exists kafaa_skill_bridges_tech_id_idx on kafaa_skill_bridges (tech_id);
+create index if not exists kafaa_future_skills_sk_id_idx on kafaa_future_skills (sk_id);
 create index if not exists kafaa_adv_skills_tech_id_idx on kafaa_adv_skills (tech_id);
 create index if not exists kafaa_future_roles_family_id_idx on kafaa_future_roles (family_id);
 create index if not exists kafaa_adv_tracks_course_id_idx on kafaa_adv_tracks (course_id);
 create index if not exists kafaa_skill_gap_plans_skill_key_idx on kafaa_skill_gap_plans (skill_key);
+create index if not exists kafaa_skill_gap_plans_sk_id_idx on kafaa_skill_gap_plans (sk_id);
 create index if not exists kafaa_content_pages_is_published_idx on kafaa_content_pages (is_published);
 create index if not exists kafaa_content_pages_kind_idx on kafaa_content_pages (kind);
 create index if not exists kafaa_facts_source_id_idx on kafaa_facts (source_id);
@@ -4574,6 +4604,9 @@ create index if not exists kafaa_contractor_engagements_person_id_idx on kafaa_c
 create index if not exists kafaa_contractor_engagements_org_id_idx on kafaa_contractor_engagements (org_id);
 create index if not exists kafaa_contractor_engagements_role_id_idx on kafaa_contractor_engagements (role_id);
 create index if not exists kafaa_contractor_engagements_status_idx on kafaa_contractor_engagements (status);
+create index if not exists kafaa_future_skill_map_key_idx on kafaa_future_skill_map (key);
+create index if not exists kafaa_future_skill_map_key_kind_idx on kafaa_future_skill_map (key_kind);
+create index if not exists kafaa_future_skill_map_sk_id_idx on kafaa_future_skill_map (sk_id);
 create index if not exists kafaa_engine_cards_engine_surface_idx on kafaa_engine_cards (engine_surface);
 create index if not exists kafaa_reco_optouts_person_id_idx on kafaa_reco_optouts (person_id);
 create index if not exists kafaa_reco_optouts_surface_idx on kafaa_reco_optouts (surface);
@@ -4840,4 +4873,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 217) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 218) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

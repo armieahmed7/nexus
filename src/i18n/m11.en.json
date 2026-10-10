@@ -12,6 +12,10 @@
     "workforce-future": {
       "title": "Future skills",
       "purpose": "Future-skills radar with scenarios labelled SIMULATED, never forecasts."
+    },
+    "workforce-future-keyspace": {
+      "title": "Future-skill keyspace",
+      "purpose": "How every ADVANCE skill, radar key and gap plan resolves to the skills catalogue."
     }
   },
   "common": {
@@ -188,6 +192,126 @@
     "structureTitle": "Bridge coverage",
     "structureDesc": "How many current roles have a mapped skill bridge into each technology, and how many concept roles exist.",
     "bridges": "Roles with a bridge",
-    "conceptRoles": "Concept roles"
+    "conceptRoles": "Concept roles",
+    "keyspaceLink": "Keyspace",
+    "scnA": "Scenario A (SIMULATED)",
+    "scnB": "Scenario B (SIMULATED)",
+    "scnAHint": "Evaluation continues at today's pace; consulting and governed AI lead.",
+    "scnBHint": "A light-water SMR option leads; advanced coolants recede.",
+    "readinessComputed": "Readiness today",
+    "suppressed": "Fewer than 10",
+    "suppressedHint": "Suppressed: fewer than 10 people. Readiness is at most {max}.",
+    "readyPeople": "People at target",
+    "under10": "<10",
+    "gapDescComputed": "Readiness is computed from the skills catalogue: the share of active staff at the target level on each key's catalogue skills (transfers and new count in full, adapts at half). Gap = demand minus readiness; ≥ marks a lower bound where readiness is suppressed.",
+    "radarNote": "Dashed line: the other scenario's demand. Axes marked (<10) have suppressed readiness and are drawn at zero.",
+    "otherDemand": "Demand in {s}",
+    "statPopulation": "Staff measured",
+    "statPopulationSub": "Active staff with a skills profile",
+    "statSkillsSub": "of {n} future skills",
+    "statSuppressed": "Suppressed cells",
+    "statSuppressedSub": "Fewer than 10 people: no value shown",
+    "assumptionsTitle": "Scenario assumptions",
+    "assumptionsDesc": "Each demand index rests on a written assumption with public sources. The chip shows the change against the other scenario.",
+    "familyTitle": "Readiness by job family",
+    "familyDesc": "{shown} of {total} families have 10 or more measured staff; the rest are suppressed.",
+    "familyNote": "Security, safeguards and cyber families are never broken out (career-path level only).",
+    "catalogueSkill": "Catalogue skill",
+    "plansDescKeyed": "Actions HR has recorded against SIMULATED scenarios. Each action is keyed to a catalogue skill; the radar label is kept. Each save is audited.",
+    "catalogueOption": "Catalogue: {name}",
+    "resolvesTo": "Resolves to the catalogue skill: {name}"
+  },
+  "why": {
+    "population": "Population: {n} active staff with a skills profile.",
+    "transfers": "{skill} at level {level} or above counts in full (transfers, ×{credit}).",
+    "adapts": "{skill} at level {level} or above counts at half (adapts, ×{credit}).",
+    "new": "{skill} at level {level} or above counts in full (the new capability, ×{credit}).",
+    "suppressed": "Fewer than {min} people qualify, so the value is suppressed (at most {max}).",
+    "share": "{n} people qualify: readiness {pct}.",
+    "demand": "Scenario demand index {value} (SIMULATED)."
+  },
+  "bench": {
+    "follows": "Benchmarks",
+    "owner": "Owner",
+    "borrow": "What Kafa'a borrows",
+    "applied": "Where it shows here",
+    "IAEA-WFP": {
+      "name": "IAEA NG-T-3.10 Workforce Planning and the Nuclear Infrastructure Competency Framework",
+      "borrow": "Scenario bands rather than point estimates, a fill plan per gap, and a \"why this competency exists\" link to its activity.",
+      "applied": "Demand is shown per scenario with its assumption and sources, readiness is assessed from today's staff, and every gap has a plan action keyed to a catalogue skill."
+    },
+    "ESCO": {
+      "name": "ESCO v1.2.1 (European Skills, Competences, Qualifications and Occupations)",
+      "borrow": "Reusability level on every skill, Arabic preferred and alternative labels, obsolete-not-deleted, and a published crosswalk.",
+      "applied": "One keyspace: every future-skill key resolves to a catalogue skill, map rows are switched off rather than deleted, and the crosswalk downloads as CSV."
+    }
+  },
+  "ks": {
+    "eyebrow": "Future skills",
+    "intro": "One keyspace for future skills. Every ADVANCE skill, radar key and gap-plan key resolves to at least one skill in the Kafa'a catalogue, with how today's skill carries over and the level that counts.",
+    "backRadar": "Back to the radar",
+    "empty": "No keyspace rows yet.",
+    "radarGroup": "Future-skills radar",
+    "key": "Key",
+    "group": "Group",
+    "advRelation": "ADVANCE relation",
+    "catalogue": "Catalogue skills",
+    "resolves": "Resolves",
+    "kind": "Key type",
+    "kinds": {
+      "adv_skill": "ADVANCE skill",
+      "radar": "Radar key",
+      "gap_plan": "Gap-plan key"
+    },
+    "relation": "Relation",
+    "need": "Level that counts",
+    "primary": "Primary",
+    "active": "Active",
+    "note": "Note",
+    "statAdv": "ADVANCE skills resolved",
+    "statAdvSub": "as-* keys with a catalogue skill",
+    "statRadar": "Radar keys resolved",
+    "statRadarSub": "Radar and readiness use these",
+    "statPlans": "Gap-plan keys resolved",
+    "statPlansSub": "Plans carry the catalogue skill",
+    "statPlansNone": "No plans visible to you",
+    "statCatalogue": "Catalogue skills used",
+    "statRel": "{t} transfer · {a} adapt · {n} new",
+    "unresolved": "Keys without a catalogue skill",
+    "allResolved": "Every key resolves",
+    "allResolvedBody": "ADVANCE skills, radar keys and gap plans all join the skills catalogue, so readiness can be computed from people's skill records.",
+    "creditTitle": "How a catalogue skill counts toward readiness",
+    "relCredit": {
+      "transfers": "carries over as it is: counts in full",
+      "adapts": "familiar but works differently: counts at half",
+      "new": "names the new capability itself: counts in full"
+    },
+    "lvl": "L{n}",
+    "tabAdv": "ADVANCE skills",
+    "tabRadar": "Radar keys",
+    "tabPlans": "Gap plans",
+    "tabAll": "Crosswalk (all rows)",
+    "noPlans": "No gap plans visible",
+    "noPlansBody": "Gap plans are HR records; HR analysts, the CHCO office and auditors see them.",
+    "planCount": "Plan actions",
+    "editTitle": "Edit keyspace: {key}",
+    "editIntro": "Choose a catalogue skill to add or change for this key. Rows are never deleted: switch a row off instead. Security skills are not offered.",
+    "levels": {
+      "1": "1 · Awareness",
+      "2": "2 · Practitioner",
+      "3": "3 · Qualified",
+      "4": "4 · Expert"
+    },
+    "primaryLabel": "Primary catalogue skill",
+    "primaryHint": "Plans and the radar label resolve to the primary skill.",
+    "activeLabel": "Active",
+    "activeHint": "Switch off to stop this skill counting toward readiness.",
+    "lastActive": "This is the key's last active skill, so it stays on.",
+    "noteEn": "Note (English)",
+    "noteAr": "Note (Arabic)",
+    "saveTitle": "Save keyspace change",
+    "saveBody": "The change applies to readiness at once and is written to the audit log.",
+    "actingAdmin": "Platform admin",
+    "saved": "Keyspace updated"
   }
 }

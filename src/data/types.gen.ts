@@ -1127,6 +1127,11 @@ export interface FutureSkillsRow {
   simulated: boolean;
   skill_key: string;
   readiness?: number | null;
+  sk_id?: string | null;
+  target_level: number;
+  assumption_en: string;
+  assumption_ar: string;
+  sources: any;
 }
 export interface AdvSkillsRow {
   id: string;
@@ -1138,6 +1143,7 @@ export interface AdvSkillsRow {
   note_en: string;
   note_ar: string;
   sort: number;
+  sk_ids: string[];
 }
 export interface FutureRolesRow {
   id: string;
@@ -1179,6 +1185,7 @@ export interface SkillGapPlansRow {
   created_by?: string | null;
   created_at: string;
   updated_at?: string | null;
+  sk_id?: string | null;
 }
 export interface ContentPagesRow {
   id: string;
@@ -1861,6 +1868,21 @@ export interface ContractorEngagementsRow {
   skills: any;
   source: 'mirror';
   created_at: string;
+}
+export interface FutureSkillMapRow {
+  id: string;
+  key: string;
+  key_kind: 'adv_skill' | 'radar' | 'gap_plan';
+  sk_id: string;
+  relation: 'transfers' | 'adapts' | 'new';
+  need_level: number;
+  primary_sk: boolean;
+  active: boolean;
+  note_en: string;
+  note_ar: string;
+  sort: number;
+  updated_by?: string | null;
+  updated_at: string;
 }
 export interface EngineCardsRow {
   id: string;
@@ -3430,6 +3452,7 @@ export interface Tables {
   contract_role_targets: ContractRoleTargetsRow;
   task_skill_links: TaskSkillLinksRow;
   contractor_engagements: ContractorEngagementsRow;
+  future_skill_map: FutureSkillMapRow;
   engine_cards: EngineCardsRow;
   reco_optouts: RecoOptoutsRow;
   fairness_snapshots: FairnessSnapshotsRow;

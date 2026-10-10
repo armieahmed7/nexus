@@ -1379,6 +1379,13 @@ create policy kafaa_read on kafaa_contractor_engagements for select to anon, aut
 grant select on kafaa_contractor_engagements to anon, authenticated;
 -- writes: reference data, no client writes
 
+-- future_skill_map
+alter table kafaa_future_skill_map enable row level security;
+drop policy if exists kafaa_read on kafaa_future_skill_map;
+create policy kafaa_read on kafaa_future_skill_map for select to anon, authenticated using (kafaa_rule_read('frameworks', null::text, null::text, true));
+grant select on kafaa_future_skill_map to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- engine_cards
 alter table kafaa_engine_cards enable row level security;
 drop policy if exists kafaa_read on kafaa_engine_cards;

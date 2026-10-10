@@ -6,6 +6,7 @@ import { makeSupabaseM04 } from '../../modules/m04/backend/supabase'; // W2E3 (F
 import { makeSupabaseM06 } from '../../modules/m06/backend/supabase'; // W5E3 (F34)
 import { makeSupabaseM07 } from '../../modules/m07/backend/supabase'; // W3E3 (F22)
 import { makeSupabaseM09 } from '../../modules/m09/backend/supabase'; // W5E2 (F33)
+import { makeSupabaseM11 } from '../../modules/m11/backend/supabase'; // FS wave A E3 (FS04)
 import { makeSupabaseM16 } from '../../modules/m16/backend/supabase'; // W3E5 (F24)
 import { makeSupabaseM13 } from '../../modules/m13/backend/supabase'; // W5E5 (F37)
 import { makeSupabaseDigest } from '../../shell/digest/backend/supabase'; // W5E5 (F36)
@@ -33,6 +34,6 @@ import { makeSupabaseM36 } from '../../modules/m36/backend/supabase';
 import { makeSupabaseM37 } from '../../modules/m37/backend/supabase';
 
 export function makeExtSupabaseRpc(x: SupabaseExtCtx): ExtRpc {
-  return { ...makeSupabaseM02(x), ...makeSupabaseM13(x), ...makeSupabaseDigest(x), ...makeSupabaseM04(x), ...makeSupabaseM06(x), ...makeSupabaseM07(x), ...makeSupabaseM09(x), ...makeSupabaseM16(x), ...makeSupabaseM17(x), ...makeSupabaseM18(x), ...makeSupabaseM19(x), ...makeSupabaseM20(x), ...makeSupabaseM21(x), ...makeSupabaseM22(x), ...makeSupabaseM23(x), ...makeSupabaseM24(x), ...makeSupabaseM25(x), ...makeSupabaseM26(x), ...makeSupabaseM27(x),
+  return { ...makeSupabaseM02(x), ...makeSupabaseM13(x), ...makeSupabaseDigest(x), ...makeSupabaseM04(x), ...makeSupabaseM06(x), ...makeSupabaseM07(x), ...makeSupabaseM09(x), ...makeSupabaseM11(x), ...makeSupabaseM16(x), ...makeSupabaseM17(x), ...makeSupabaseM18(x), ...makeSupabaseM19(x), ...makeSupabaseM20(x), ...makeSupabaseM21(x), ...makeSupabaseM22(x), ...makeSupabaseM23(x), ...makeSupabaseM24(x), ...makeSupabaseM25(x), ...makeSupabaseM26(x), ...makeSupabaseM27(x),
     ...makeSupabaseM28(x), ...makeSupabaseM29(x), ...makeSupabaseM30(x), ...makeSupabaseM31(x), ...makeSupabaseM32(x), ...makeSupabaseM33(x), ...makeSupabaseM34(x), ...makeSupabaseM35(x), ...makeSupabaseM36(x), ...makeSupabaseM37(x) };
 }
