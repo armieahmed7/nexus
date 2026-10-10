@@ -9,7 +9,7 @@ import { useAction, useRepo } from '../../data';
 import { useT, usePick, useFormat, L } from '../../i18n';
 import { useCrumbLabel } from '../../shell/crumbs';
 import { useCareerData, type CareerData, type Role } from './shared';
-import { PlanningNotice, useProfileData, useReqLabel, type ProfileData, type ProfileRow } from './horizons';
+import { BenchmarkChips, PlanningNotice, useProfileData, useReqLabel, type ProfileData, type ProfileRow } from './horizons';
 import {
   DRIVERS, HORIZONS, IMPORTANCE, SECURITY_COMPETENCY_DOMAIN, SECURITY_SKILL_AREA, changeSize, checkVersion, publishedByHorizon, reqsOf,
   type Horizon, type ProfileReq, type ProfileSource,
@@ -31,6 +31,7 @@ export default function CareersProfileEditPage() {
     );
   return (
     <Page title={role ? t('m01.fs05.edit.title', { role: pick(role, 'title') }) : t('m01.routes.careers-profile-edit.title')} intro={t('m01.fs05.edit.intro')}>
+      <div className="mb-4"><BenchmarkChips /></div>
       <Async state={c}>{(cd) => <Async state={p}>{(pd) => (role ? <EditorShell role={role} c={cd} p={pd} /> : null)}</Async>}</Async>
     </Page>
   );

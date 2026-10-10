@@ -220,7 +220,8 @@ export function defaultTargetRole(paths: Row[], current: string | null, shortlis
   const top = shortlist.find((x) => x && x !== current);
   if (top) return top;
   if (!current) return null;
-  const out = paths.filter((p) => p.from_role_id === current).sort((a, b) => Number(a.sort ?? 0) - Number(b.sort ?? 0) || cmp(a.id, b.id));
+  // FS wave-A integration: FS05 "future" edges (to concept roles) never become the digest's target role (SQL: kafaa_dg_gather).
+  const out = paths.filter((p) => p.from_role_id === current && (p.kind ?? 'current') !== 'future').sort((a, b) => Number(a.sort ?? 0) - Number(b.sort ?? 0) || cmp(a.id, b.id));
   return (out.find((p) => p.type === 'vertical') ?? out[0])?.to_role_id ?? null;
 }
 

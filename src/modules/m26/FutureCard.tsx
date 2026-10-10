@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { Card, EmptyState, SimChip, WhyThis } from '../../ui';
 import { L, useFormat, usePick, useT } from '../../i18n';
-import { DriverChip, ExposurePill, FutureDiff, FutureEditor, HorizonChip, NeedsBars, useFutureData } from './fxui';
+import { BenchTies, DriverChip, ExposurePill, FutureDiff, FutureEditor, HorizonChip, NeedsBars, useFutureData } from './fxui';
 import type { SatData } from './ui';
 
 type Task = SatData['tasks'][number];
@@ -20,7 +20,7 @@ export function FutureCard({ d, task }: { d: SatData; task: Task }) {
   const history = d.changes.filter((c) => c.task_id === task.id && c.area === 'future');
   if (task.restricted || task.status !== 'active') return null;
   return (
-    <Card title={t('m26.fx.cardTitle')} eyebrow={<span className="inline-flex flex-wrap items-center gap-2">{t('m26.fx.cardEyebrow')}<SimChip label={t('m26.fx.simChip')} /></span>}
+    <Card title={t('m26.fx.cardTitle')} eyebrow={<span className="inline-flex flex-wrap items-center gap-2">{t('m26.fx.cardEyebrow')}<SimChip label={t('m26.fx.simChip')} /><BenchTies ids={['OECD-AICI', 'SSG-SF', 'ONET']} /></span>}
       actions={data?.view?.can_write && ft ? <button className="btn-outline btn-sm" onClick={() => setEdit(true)} data-testid="m26-fx-edit">{ft.exposure ? t('m26.fx.edit.open') : t('m26.fx.edit.rate')}</button> : undefined}>
       <div data-testid="m26-fx-card">
         {!data ? <p className="text-[13px] text-ink-3">{t('m26.fx.loading')}</p> : !ft ? <EmptyState title={t('m26.fx.noAccess')} /> : (

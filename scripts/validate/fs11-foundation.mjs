@@ -12,7 +12,10 @@ import { statesDigestText } from '../../src/domain/skills.ts';
 
 const MINE = '20261010211001_kafaa_fs11_foundation_catalogue.sql';
 /** sha256 of statesDigestText over the states of the original 71 skills in the master seed before FS02 (06d23f1). */
-export const F01_DIGEST_71 = '68427633f02b803792825b671f03a6a683bd41826ffbee4e1db850ae8ba0bd0d';
+// FS wave-A integration: FS03's decay model changes the F01 states themselves (per-class half-lives, blended confidence), so the
+// baseline is the FS03 digest before the catalogue extension (master after FS03 = branch fsAe2); FS02 still adds no change.
+// Pre-FS03 value: 68427633f02b803792825b671f03a6a683bd41826ffbee4e1db850ae8ba0bd0d.
+export const F01_DIGEST_71 = 'e53f5501a72a5d22adc8ac96df4885fc54225afc9f10a6840a3c7e0f4a496148';
 const NEW_RES = ['skills_taxonomy', 'ai_literacy', 'transformation', 'recognition', 'workforce_strategy', 'ecosystem', 'national_alignment'];
 
 export default async function fs11Checks({ db, as, one, count, ok }) {

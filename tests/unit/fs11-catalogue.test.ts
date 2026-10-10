@@ -4,7 +4,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { createHash } from 'node:crypto';
 import { LocalBackend } from '../../src/data/local/LocalBackend';
-import { deriveStates, statesDigestText, type Evidence } from '../../src/domain/skills';
+import { decayModelFrom, deriveStates, statesDigestText, type Evidence } from '../../src/domain/skills';
 import { publicTextIsClean } from '../../src/domain/future';
 import {
   FS_AREAS, LIFECYCLES, OWNER_ROLES, SKILL_GUARD_MSG, addMonthsIso, isPublishable, levelEssence, publishProblems, reviewState, skillGuard,
@@ -100,7 +100,7 @@ describe('FS02 · F01 recompute stays deterministic', () => {
     const states = T.person_skills;
     expect(states.every((s) => ids.has(s.skill_id))).toBe(true);
     expect(createHash('sha256').update(statesDigestText(states.filter((s) => ids.has(s.skill_id)))).digest('hex')).toBe(F01_DIGEST_71);
-    const again = deriveStates(T.skill_evidence as Evidence[], S.meta.demo_today);
+    const again = deriveStates(T.skill_evidence as Evidence[], S.meta.demo_today, decayModelFrom(T.engine_settings as never, T.skills as never)); // FS03 decay model (wave-A merge)
     expect(statesDigestText(again)).toBe(statesDigestText(states));
   });
   it('recomputeSkills on the LocalBackend gives the same digest twice', async () => {

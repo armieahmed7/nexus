@@ -26,7 +26,7 @@ describe('/careers/roles/:slug "Now, 2030, 2035" tab', () => {
     expect(within(panel).getAllByTestId(/^m01-why-/).length).toBeGreaterThan(5);
     expect(within(panel).getByTestId('m01-drivers').textContent).toContain(en.fs05.driver.ai_assistance);
     expect(within(panel).getByTestId('m01-horizon-sources').querySelectorAll('a').length).toBeGreaterThan(2);
-    await waitFor(() => expect(screen.getAllByTestId('m01-benchmark-chip')).toHaveLength(3));
+    await waitFor(() => expect(Array.from(screen.getByTestId('m01-benchmarks').querySelectorAll('button[data-testid^="benchmark-chip-"]')).map((x) => x.getAttribute('data-testid'))).toEqual(['benchmark-chip-SG-JTM', 'benchmark-chip-SSG-SF', 'benchmark-chip-IAEA-WFP'])); // FS01 shared chips
     // switching to 2035 and to now
     fireEvent.click(screen.getByTestId('m01-horizon-2035'));
     expect(screen.getByTestId('m01-horizon-2035').getAttribute('aria-selected')).toBe('true');

@@ -5,7 +5,7 @@ import { useMemo, useState, type ReactNode } from 'react';
 import { useAction, useQuery, useRepo, type RowOf } from '../../data';
 import { SCHEMA } from '../../data/schema';
 import { useFormat, useLang, usePick, useT } from '../../i18n';
-import { Drawer, Modal, SourceLink, StatusPill, WhyThis, SelectField, TextArea, type PillTone } from '../../ui';
+import { BenchmarkChip, Drawer, Modal, SourceLink, StatusPill, WhyThis, SelectField, TextArea, type PillTone } from '../../ui';
 import { DRIVERS, HORIZONS, MAX_DIMS, MAX_SKILLS, TASK_DIMS, aiLevel, exposureOf, type CapLevel, type Dim, type Driver, type Horizon, type Needs } from './future';
 import type { FutureTask } from './backend/rpc';
 
@@ -52,49 +52,13 @@ export function FutureCell({ task }: { task: Pick<FutureTask, 'exposure' | 'chan
   );
 }
 
-// ───────────── benchmark ties (reads kafaa_benchmarks once FS01 lands; until then the three FS06 rows from the plan)
-interface Bench { id: string; name_en: string; name_ar: string; owner: string; year: string; urls: string[]; borrow_en: string; borrow_ar: string; as_of: string }
-const FS06_BENCH: Record<string, Bench> = {
-  'OECD-AICI': { id: 'OECD-AICI', name_en: 'OECD AI Capability Indicators', name_ar: 'مؤشرات قدرات الذكاء الاصطناعي لدى منظمة التعاون الاقتصادي والتنمية', owner: 'OECD', year: '2025',
-    urls: ['https://digital-skills-jobs.europa.eu/en/latest/research/oecd-ai-capability-indicators-technical-report'], as_of: '2026-10-10',
-    borrow_en: 'A five-level AI capability rating per task, compared with the human requirement to flag augmentable tasks.',
-    borrow_ar: 'تقييم من خمسة مستويات لقدرة الذكاء الاصطناعي لكل مهمة، يُقارَن بالمتطلب البشري لتحديد المهام القابلة للتعزيز.' },
-  'SSG-SF': { id: 'SSG-SF', name_en: 'SkillsFuture Skills Frameworks, Critical Core Skills and AI Potential on Tasks', name_ar: 'أطر مهارات سكلز فيوتشر والمهارات الأساسية الحرجة وإمكانات الذكاء الاصطناعي في المهام', owner: 'SkillsFuture Singapore', year: '2025',
-    urls: ['https://isomer-user-content.by.gov.sg/41/4955bc61-161d-4584-945c-7eeeb276867a/Factsheet%20on%20Top%20skills%20trends%20in%202025.pdf'], as_of: '2026-10-10',
-    borrow_en: 'A task layer between role and skill, AI exposure per task, role archetypes with ladder-rung protection, and a core-skills set.',
-    borrow_ar: 'طبقة مهام بين الدور والمهارة، والتعرض للذكاء الاصطناعي لكل مهمة، ونماذج أدوار تحمي درجات السلم الوظيفي، ومجموعة مهارات أساسية.' },
-  ONET: { id: 'ONET', name_en: 'O*NET Hot Technologies and Bright Outlook', name_ar: 'التقنيات الرائجة والتوقعات المشرقة في O*NET', owner: 'US Department of Labor', year: '2026',
-    urls: ['https://onetcenter.org/bright.html', 'https://onetcenter.org/reports/Hot_Technologies_Demand.html'], as_of: '2026-10-10',
-    borrow_en: 'Role and technology badges with published thresholds, past lists kept, and a three-tier consumer label.',
-    borrow_ar: 'شارات للأدوار والتقنيات بعتبات منشورة، مع الاحتفاظ بالقوائم السابقة، وتصنيف من ثلاث درجات للمستخدم.' },
-};
-const HAS_BENCH_TABLE = 'benchmarks' in SCHEMA;
-
+// ───────────── benchmark ties (FS01 shared <BenchmarkChip>s, rows from kafaa_benchmarks; each opens the registry drawer)
 export function BenchTies({ ids }: { ids: string[] }) {
   const t = useT();
-  const pick = usePick();
-  const repo = useRepo();
-  const [open, setOpen] = useState<Bench | null>(null);
-  const q = useQuery(['benchmarks' as never], async () => (HAS_BENCH_TABLE ? ((await repo.list('benchmarks' as never).catch(() => [])) as unknown as Bench[]) : []));
-  const rows = ids.map((id) => (q.data ?? []).find((b) => b.id === id) ?? FS06_BENCH[id]).filter((b): b is Bench => !!b);
   return (
     <span className="inline-flex flex-wrap items-center gap-1.5" data-testid="m26-fx-bench">
       <span className="caps">{t('m26.fx.bench.label')}</span>
-      {rows.map((b) => (
-        <button key={b.id} type="button" className="chip border-accent bg-accent-soft text-accent-ink hover:underline" onClick={() => setOpen(b)} data-testid="m26-fx-bench-chip">
-          {pick(b, 'name')} · <span className="num">{b.year}</span>
-        </button>
-      ))}
-      <Drawer open={!!open} onClose={() => setOpen(null)} title={open ? pick(open, 'name') : ''}>
-        {open && (
-          <div className="space-y-3 text-[13.5px]">
-            <p className="text-ink-2">{open.owner} · <span className="num">{open.year}</span></p>
-            <div><div className="caps mb-1">{t('m26.fx.bench.borrow')}</div><p>{pick(open, 'borrow')}</p></div>
-            <div className="space-y-1">{open.urls.map((u) => <div key={u}><SourceLink href={u} date={open.as_of}>{u.replace(/^https:\/\//, '').slice(0, 60)}</SourceLink></div>)}</div>
-            <p className="text-[12px] text-ink-3">{t('m26.fx.bench.note')}</p>
-          </div>
-        )}
-      </Drawer>
+      {ids.map((id) => <BenchmarkChip key={id} id={id} />)}
     </span>
   );
 }

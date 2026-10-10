@@ -89,10 +89,10 @@ describe('F38 -> F36: OJT approvals in the personal digest', () => {
 });
 
 describe('Wave-5 route registry', () => {
-  it('206 routes, and the 13 wave-5 routes are registered', async () => {
+  it('212 routes (206 after wave 5 + 6 FS wave A), and the 13 wave-5 routes are registered', async () => {
     const { loadRoutes } = await import('../smoke/routes');
     const R = loadRoutes();
-    expect(R.length).toBe(208); // FS03 (M17): + /my/skills/confidence, /admin/skills-confidence
+    expect(R.length).toBe(212); // FS wave A: + /my/skills/confidence, /admin/skills-confidence (FS03), /workforce/future/keyspace (FS04), /careers/horizons, /careers/roles/:slug/profile (FS05), /training/sat/future (FS06)
     const paths = new Set(R.map((r) => r.path));
     for (const p of ['/my/skills/credentials', '/my/ojt', '/team/ojt', '/partner/workforce/passport', '/partner/workforce/passport/:personId', '/partner/workforce/precheck',
       '/training/equivalency/passport/:personId', '/admin/suppliers/contract-roles', '/pathways/journey', '/pathways/journey/parents', '/workforce/journeys', '/workforce/skills-outlook', '/admin/digest'])

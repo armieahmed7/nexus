@@ -40,8 +40,8 @@ describe('FS01 · modules M28-M37 register once', () => {
       for (const f of ['schema', 'rpc', 'local', 'supabase']) expect(readFileSync(`src/data/ext/${f}.ts`, 'utf8')).toContain(`modules/${m}/backend/`);
     }
   });
-  it('the route sweep reads the registry, so routes added to M28-M37 are covered without test edits; today the count is unchanged', () => {
-    expect(ROUTES.length).toBe(206);
+  it('the route sweep reads the registry, so routes added to M28-M37 are covered without test edits; today 212 (206 + the 6 wave-A routes of FS03-FS06)', () => {
+    expect(ROUTES.length).toBe(212);
     const sweep = readFileSync('tests/e2e/sweep.spec.ts', 'utf8');
     expect(sweep).toContain('ROUTES');
     for (const r of ROUTES.filter((x) => NEW.includes(x.module))) {

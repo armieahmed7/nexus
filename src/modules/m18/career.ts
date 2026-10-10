@@ -287,7 +287,9 @@ export function reachableRoles(edges: EdgeIn[], from: string, maxSteps = 2): Map
   const q = [from];
   while (q.length) {
     const at = q.shift()!;
-    for (const e of edges) if (e.from_role_id === at && !dist.has(e.to_role_id)) { dist.set(e.to_role_id, dist.get(at)! + 1); q.push(e.to_role_id); }
+    // FS wave-A integration: FS05 "future" edges (current role -> concept role) are not progression routes; concept roles come
+    // into readiness deliberately with FS13. Same rule in SQL (kafaa_fairness_compute, kafaa_dg_gather).
+    for (const e of edges) if (e.from_role_id === at && !dist.has(e.to_role_id) && ((e as { kind?: string | null }).kind ?? 'current') !== 'future') { dist.set(e.to_role_id, dist.get(at)! + 1); q.push(e.to_role_id); }
   }
   dist.delete(from);
   return new Map([...dist].filter(([, n]) => n <= maxSteps));

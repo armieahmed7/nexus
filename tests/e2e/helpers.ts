@@ -58,7 +58,7 @@ export async function settle(page: Page) {
   await expect(page.locator('main [data-testid="skeleton"]').first()).toHaveCount(0, { timeout: 30_000 });
 }
 
-const RAW_KEY = /\b(?:common|shell|m0[1-9]|m1[0-9]|m2[0-7])\.[A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z0-9_]+)+\b/g;
+const RAW_KEY = /\b(?:common|shell|digest|fs|m0[1-9]|m[1-3][0-9])\.[A-Za-z][A-Za-z0-9_]*(?:\.[A-Za-z0-9_]+)+\b/g;
 const BAD_TEXT: [RegExp, string][] = [
   [/\bundefined\b/, 'undefined'],
   [/\bNaN\b/, 'NaN'],

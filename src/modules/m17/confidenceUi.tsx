@@ -2,13 +2,13 @@
 // Navigator's readiness range (rendered by M18), the methodology-change banner and the benchmark chips. Built inside the module
 // (CONTRACT section 5); nothing here imports a backend. Pure rules: ./decay.ts and src/domain/skills.ts.
 import { useMemo, type ReactNode } from 'react';
-import { Callout, Icon, WhyThis } from '../../ui';
+import { BenchmarkChip, Callout, Icon, WhyThis } from '../../ui';
 import { useQuery, useRepo } from '../../data';
 import { SCHEMA } from '../../data/schema';
 import { useT, useFormat, usePick, useLang, L } from '../../i18n';
 import { todayIso } from '../../domain/rules';
 import type { ConfidenceBand, DecayClass } from '../../domain/skills';
-import { FS03_BENCHMARKS, methodNotice, readinessRange, type BenchRow, type RecordEntry, type RecordRow } from './decay';
+import { methodNotice, readinessRange, type RecordEntry, type RecordRow } from './decay';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = any;
@@ -151,34 +151,18 @@ export function MethodBanner({ settings }: { settings?: Row | null }) {
   );
 }
 
-/** Benchmark chips (FS01 kafaa_benchmarks rows when that table exists; the PLAN fallback otherwise), each linking its source. */
+/** Benchmark chips (FS01 shared <BenchmarkChip>s, rows from kafaa_benchmarks), each opening the registry drawer with sources,
+ *  plus one line per benchmark on what this feature takes from it. */
 export function Fs03Benchmarks({ ids = ['WEF-FOJ', 'SKILLS-TECH', 'FORECAST'], children }: { ids?: string[]; children?: ReactNode }) {
   const t = useT();
-  const lang = useLang();
-  const repo = useRepo();
-  const has = Object.prototype.hasOwnProperty.call(SCHEMA, 'benchmarks');
-  const q = useQuery((has ? ['benchmarks'] : []) as never, async () => (has ? ((await repo.list('benchmarks' as never).catch(() => [])) as unknown as Row[]) : []), []);
-  const rows: BenchRow[] = ids.map((id) => {
-    const live = (q.data ?? []).find((r: Row) => r.id === id);
-    const fb = FS03_BENCHMARKS.find((b) => b.id === id)!;
-    return live ? { id, name_en: live.name_en ?? fb.name_en, name_ar: live.name_ar ?? fb.name_ar, year: String(live.year ?? fb.year), urls: (live.urls?.length ? live.urls : fb.urls) as string[] } : fb;
-  });
   return (
     <div className="space-y-2" data-testid="m17-benchmarks">
       <div className="flex flex-wrap items-center gap-1.5">
         <span className="caps me-1">{t('m17.dk.bench.title')}</span>
-        {rows.map((b) => (
-          <a key={b.id} href={b.urls[0]} target="_blank" rel="noopener noreferrer" className="chip border-accent/30 bg-accent-soft text-eyebrow no-underline hover:brightness-95" data-testid="m17-benchmark" data-id={b.id}
-            title={lang === 'ar' ? b.name_ar : b.name_en}>
-            <span className="font-mono text-[11px]" dir="ltr">{b.id}</span>
-            <span className="max-w-[16rem] truncate">{lang === 'ar' ? b.name_ar : b.name_en}</span>
-            <span className="num">{b.year}</span>
-            <Icon name="external" size={11} />
-          </a>
-        ))}
+        {ids.map((id) => <BenchmarkChip key={id} id={id} />)}
       </div>
       <ul className="grid grid-cols-1 gap-1 text-[12.5px] text-ink-2 md:grid-cols-3">
-        {rows.map((b) => <li key={b.id}><span className="font-semibold text-ink">{b.id}</span>: {t(`m17.dk.bench.${b.id}`)}</li>)}
+        {ids.map((id) => <li key={id}><span className="font-semibold text-ink" dir="ltr">{id}</span>: {t(`m17.dk.bench.${id}`)}</li>)}
       </ul>
       {children}
     </div>

@@ -16,8 +16,7 @@ describe('/workforce/future (FS04 computed radar)', () => {
   it('shows computed readiness with suppressed cells, sourced assumptions, the family heatmap and both benchmarks', async () => {
     await renderPage(<WorkforceFuturePage />, { persona: 'k-hr-analyst', path: '/workforce/future' });
     await waitFor(() => expect(screen.getByTestId('m11-suppressed-salt-chemistry')).toBeTruthy());
-    expect(screen.getByTestId('m11-bench-IAEA-WFP')).toBeTruthy();
-    expect(screen.getByTestId('m11-bench-ESCO')).toBeTruthy();
+    await waitFor(() => expect(Array.from(screen.getByTestId('m11-benchmarks').querySelectorAll('button[data-testid^="benchmark-chip-"]')).map((x) => x.getAttribute('data-testid'))).toEqual(['benchmark-chip-IAEA-WFP', 'benchmark-chip-ESCO'])); // FS01 shared chips
     expect(screen.getAllByTestId('heatmap').length).toBeGreaterThan(0);
     expect(screen.getByTestId('m11-assumptions').textContent).toContain('SIMULATED');
     expect(screen.getAllByTestId(/^m11-why-/).length).toBe(8);

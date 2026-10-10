@@ -129,9 +129,11 @@ export interface CareerMove { role_id: string; steps: number; type: string; read
 export function careerMoves(input: { from: string; edges: PathEdge[]; roleComps: RoleComp[]; have: Map<string, number>; maxSteps?: number; pathOnly?: string[]; labels?: Record<string, BiText>; weights?: Weights }): Ranked<CareerMove>[] {
   const out: Ranked<CareerMove>[] = [];
   const pathOnly = new Set(input.pathOnly ?? []);
-  for (const [roleId, steps] of reachable(input.edges, input.from)) {
+  // FS wave-A integration: FS05 "future" edges lead to concept roles, which are not career moves today (FS13 brings them in).
+  const edges = input.edges.filter((e) => ((e as { kind?: string | null }).kind ?? 'current') !== 'future');
+  for (const [roleId, steps] of reachable(edges, input.from)) {
     if (steps > (input.maxSteps ?? 2)) continue;
-    const p = findPaths(input.edges, input.from, roleId, input.maxSteps ?? 2, 1)[0] ?? [];
+    const p = findPaths(edges, input.from, roleId, input.maxSteps ?? 2, 1)[0] ?? [];
     const type = p[0]?.type ?? 'lateral';
     const reasons: Reason[] = [reason(`move_${type}`, { role: input.labels?.[roleId] ?? roleId }), reason('steps', { n: steps })];
     let ready: number | null = null;

@@ -225,3 +225,29 @@ export const FEATURE_BENCHMARKS: Record<string, string[]> = {
   FS83: ['NUC-NET', 'UAE-PEERS'],
   FS84: ['ISO30414', 'IAEA-WFP'],
 };
+
+/**
+ * FS wave-A integration: where an established F01 skill and an FS02 future skill describe the same future capability, the
+ * future-facing records (FS05 2030/2035 role requirements, FS06 task links of kind "future", FS04 keyspace rows) point at the
+ * FS02 skill. The F01 skill stays in the catalogue, keeps its holders and evidence, and keeps today's ("now") requirements.
+ */
+export const FUTURE_SKILL_EQUIVALENT: Record<string, string> = {
+  'sk-da-02-review': 'sk-fs-ai-verify', // Reviewing AI outputs under governance -> AI output verification and challenge (IAEA-AI)
+  'sk-mp-01-remote': 'sk-fs-dp-robotics', // Remote inspection and modular installation -> Robotics and remote inspection
+  'sk-mp-02-dic': 'sk-fs-dp-dic', // Digital I&C maintenance -> Digital I&C fundamentals
+};
+/** FS04 keyspace rows added at the wave-A integration: [key, key kind, FS02 skill, relation, need level, note EN, note AR]. */
+export const FS_QA_KEYSPACE_ROWS: [string, 'adv_skill' | 'radar', string, 'transfers' | 'adapts' | 'new', number, string, string][] = [
+  ['as-passive-safety', 'adv_skill', 'sk-fs-adv-passive', 'new', 1, 'Passive safety concepts (FS02 awareness skill).', 'مفاهيم السلامة الخاملة (مهارة توعوية من الكتالوج).'],
+  ['as-new-licensing-basis', 'adv_skill', 'sk-fs-adv-regulation', 'new', 1, 'Advanced-reactor regulatory awareness (FS02).', 'الوعي التنظيمي بالمفاعلات المتقدمة (من الكتالوج).'],
+  ['as-other-regulators', 'adv_skill', 'sk-fs-adv-regulation', 'new', 1, 'Advanced-reactor regulatory awareness (FS02).', 'الوعي التنظيمي بالمفاعلات المتقدمة (من الكتالوج).'],
+  ['as-transportable-units', 'adv_skill', 'sk-fs-adv-micro', 'new', 1, 'Microreactor and transportable unit concepts (FS02).', 'مفاهيم المفاعلات الصغرى والوحدات القابلة للنقل (من الكتالوج).'],
+  ['as-triso-fuel', 'adv_skill', 'sk-fs-adv-fuelcycle', 'new', 1, 'Advanced fuel-cycle awareness (FS02).', 'الوعي بدورة الوقود المتقدمة (من الكتالوج).'],
+  ['as-digital-twins', 'adv_skill', 'sk-fs-ai-twin', 'new', 2, 'Digital twin validation (FS02).', 'التحقق من التوائم الرقمية (من الكتالوج).'],
+  ['as-ic-maintenance', 'adv_skill', 'sk-fs-dp-dic', 'adapts', 2, 'Digital I&C fundamentals (FS02).', 'أساسيات الأجهزة والتحكم الرقمية (من الكتالوج).'],
+  ['as-opaque-inspection', 'adv_skill', 'sk-fs-dp-robotics', 'new', 2, 'Robotics and remote inspection (FS02).', 'الروبوتات والتفتيش عن بعد (من الكتالوج).'],
+  ['digital-twins', 'radar', 'sk-fs-ai-twin', 'new', 2, 'Digital twin validation (FS02).', 'التحقق من التوائم الرقمية (من الكتالوج).'],
+  ['ai-governance', 'radar', 'sk-fs-ai-verify', 'new', 2, 'AI output verification and challenge (FS02).', 'التحقق من مخرجات الذكاء الاصطناعي والاعتراض عليها (من الكتالوج).'],
+  ['ai-governance', 'radar', 'sk-fs-ai-use', 'new', 2, 'Everyday use of approved AI tools (FS02).', 'الاستخدام اليومي لأدوات الذكاء الاصطناعي المعتمدة (من الكتالوج).'],
+  ['remote-ops', 'radar', 'sk-fs-adv-multimodule', 'new', 1, 'Multi-module operations concepts (FS02).', 'مفاهيم تشغيل الوحدات المتعددة (من الكتالوج).'],
+];

@@ -131,6 +131,19 @@ const RTL: Shot[] = [
   { name: 'w5-admin-digest', path: '/admin/digest', persona: 'ai-governance' },
   { name: 'w5-my-digest', path: '/my', persona: 'sq-lead' },
   { name: 'w5-ask-career', path: '/ask?mode=career', persona: 'nse' },
+  // FS wave A (FS01-FS06): every new page and tab
+  { name: 'fsa-my-confidence', path: '/my/skills/confidence', persona: 'nse' },
+  { name: 'fsa-admin-confidence', path: '/admin/skills-confidence', persona: 'ai-governance' },
+  { name: 'fsa-workforce-future', path: '/workforce/future', persona: 'chco' },
+  { name: 'fsa-keyspace', path: '/workforce/future/keyspace', persona: 'chco' },
+  { name: 'fsa-horizons', path: '/careers/horizons' },
+  { name: 'fsa-role-horizons', path: '/careers/roles/reactor-operator?tab=horizons' },
+  { name: 'fsa-concept-role', path: '/careers/roles/fr-remote-ops?tab=horizons' },
+  { name: 'fsa-profile-edit', path: '/careers/roles/maintenance-technician-engineer/profile?h=2035', persona: 'training-mgr' },
+  { name: 'fsa-sat-future', path: '/training/sat/future', persona: 'training-mgr' },
+  { name: 'fsa-sat-task', path: '/training/sat/tasks/jt-qs-ro-t4', persona: 'training-mgr' },
+  { name: 'fsa-admin-skills', path: '/admin/frameworks?tab=skills', persona: 'ai-governance' },
+  { name: 'fsa-admin-benchmarks', path: '/admin/frameworks?tab=benchmarks', persona: 'ai-governance' },
 ];
 for (const s of RTL) {
   test(`rtl ${s.name}`, async ({ page }) => {
@@ -250,6 +263,19 @@ const MOBILE: Shot[] = [
   { name: 'w5-admin-digest', path: '/admin/digest', persona: 'ai-governance' },
   { name: 'w5-my-digest', path: '/my', persona: 'sq-lead' },
   { name: 'w5-ask-career', path: '/ask?mode=career', persona: 'nse' },
+  // FS wave A (FS01-FS06): every new page and tab
+  { name: 'fsa-my-confidence', path: '/my/skills/confidence', persona: 'nse' },
+  { name: 'fsa-admin-confidence', path: '/admin/skills-confidence', persona: 'ai-governance' },
+  { name: 'fsa-workforce-future', path: '/workforce/future', persona: 'chco' },
+  { name: 'fsa-keyspace', path: '/workforce/future/keyspace', persona: 'chco' },
+  { name: 'fsa-horizons', path: '/careers/horizons' },
+  { name: 'fsa-role-horizons', path: '/careers/roles/reactor-operator?tab=horizons' },
+  { name: 'fsa-concept-role', path: '/careers/roles/fr-remote-ops?tab=horizons' },
+  { name: 'fsa-profile-edit', path: '/careers/roles/maintenance-technician-engineer/profile?h=2035', persona: 'training-mgr' },
+  { name: 'fsa-sat-future', path: '/training/sat/future', persona: 'training-mgr' },
+  { name: 'fsa-sat-task', path: '/training/sat/tasks/jt-qs-ro-t4', persona: 'training-mgr' },
+  { name: 'fsa-admin-skills', path: '/admin/frameworks?tab=skills', persona: 'ai-governance' },
+  { name: 'fsa-admin-benchmarks', path: '/admin/frameworks?tab=benchmarks', persona: 'ai-governance' },
 ];
 for (const s of MOBILE) {
   test(`mobile ${s.name}`, async ({ page }) => {
@@ -400,5 +426,28 @@ for (const s of SET_W5) {
     await page.setViewportSize({ width: 1440, height: 900 });
     await open(page, s);
     await page.screenshot({ path: join(SHOTS_W5, `${s.name}.png`), fullPage: false });
+  });
+}
+
+// FS wave A feature set (FS01-FS06): saved to KAFAA_SHOTS_FSA.
+const SHOTS_FSA = process.env.KAFAA_SHOTS_FSA || 'test-results/shots_fsA';
+mkdirSync(SHOTS_FSA, { recursive: true });
+const SET_FSA: Shot[] = [
+  { name: '01-benchmark-registry-en', path: '/admin/frameworks?tab=benchmarks', persona: 'ai-governance' },
+  { name: '02-skills-catalogue-en', path: '/admin/frameworks?tab=skills', persona: 'ai-governance' },
+  { name: '03-skill-confidence-bands-en', path: '/my/skills/confidence', persona: 'nse' },
+  { name: '04-half-lives-admin-en', path: '/admin/skills-confidence', persona: 'ai-governance' },
+  { name: '05-future-skills-radar-en', path: '/workforce/future', persona: 'chco' },
+  { name: '06-role-horizons-2030-en', path: '/careers/roles/reactor-operator?tab=horizons', then: async (p) => { await p.locator('[data-testid="m01-horizon-2030"]').click(); } },
+  { name: '07-task-layer-ai-exposure-en', path: '/training/sat/future', persona: 'training-mgr' },
+  { name: '08-keyspace-en', path: '/workforce/future/keyspace', persona: 'chco' },
+  { name: '09-careers-horizons-ar', path: '/careers/horizons', ar: true },
+  { name: '10-skill-confidence-mobile', path: '/my/skills/confidence', persona: 'nse', mobile: true },
+];
+for (const s of SET_FSA) {
+  test(`shot fsa ${s.name}`, async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await open(page, s);
+    await page.screenshot({ path: join(SHOTS_FSA, `${s.name}.png`), fullPage: false });
   });
 }

@@ -197,10 +197,10 @@ describe('FS05 rules', () => {
       const v = publishedByHorizon(T.role_profile_versions as never[], id)['2030']!;
       const reqs = reqsOf(v);
       expect(reqs.find((x) => x.ref_id === 'sk-da-01')?.level).toBe(2);
-      expect(reqs.find((x) => x.ref_id === 'sk-da-02-review')?.level).toBe(2);
+      expect(reqs.find((x) => x.ref_id === 'sk-fs-ai-verify')?.level).toBe(2); // FS02 skill since the wave-A integration (was sk-da-02-review)
     }
     const m = publishedByHorizon(T.role_profile_versions as never[], 'maintenance-technician-engineer')['2030']!;
-    expect(reqsOf(m).map((x) => x.ref_id)).toEqual(expect.arrayContaining(['sk-mp-01-remote', 'sk-en-02-perf']));
+    expect(reqsOf(m).map((x) => x.ref_id)).toEqual(expect.arrayContaining(['sk-fs-dp-robotics', 'sk-en-02-perf'])); // FS02 robotics and remote inspection (wave-A integration)
   });
   it('digital requirements spread from 4 roles today to most roles by 2030 (the audit gap FS05 closes)', () => {
     const area = new Map(T.skills.map((s) => [s.id, s.area]));

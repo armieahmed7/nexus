@@ -4,7 +4,7 @@
  *  with the editor, the Future column and filter on a role's inventory, the SAT workbench summary and the change log, in English
  *  and Arabic. Restricted tasks never appear. */
 import { describe, expect, it } from 'vitest';
-import { fireEvent, screen, within } from '@testing-library/react';
+import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { renderPage } from './g1-harness';
 import SatFuturePage from '../../src/modules/m26/SatFuturePage';
 import SatTaskPage from '../../src/modules/m26/SatTaskPage';
@@ -23,7 +23,7 @@ describe('FS06 pages', () => {
     const tiles = await screen.findByTestId('m26-fx-tiles', {}, T);
     const rated = S.jta_tasks.filter((t) => !t.restricted).length;
     expect(tiles.textContent).toContain(`${rated} / ${rated}`);
-    expect(screen.getAllByTestId('m26-fx-bench-chip').length).toBe(3);
+    await waitFor(() => expect(Array.from(screen.getByTestId('m26-fx-bench').querySelectorAll('button[data-testid^="benchmark-chip-"]')).map((x) => x.getAttribute('data-testid'))).toEqual(['benchmark-chip-OECD-AICI', 'benchmark-chip-SSG-SF', 'benchmark-chip-ONET'])); // FS01 shared chips (wave-A integration)
     expect(screen.getAllByTestId('m26-fx-ref').length).toBeGreaterThanOrEqual(2);
     expect(screen.getByTestId('m26-fx-hot-criteria').textContent).toMatch(/30%/);
     expect(screen.getByTestId('m26-fx-rule')).toBeTruthy();
@@ -32,8 +32,8 @@ describe('FS06 pages', () => {
     expect(screen.getByTestId('m26-fx-analysts').textContent).toMatch(/Designated/);
     expect(screen.getByTestId('m26-fx-designate')).toBeTruthy();
     expect(document.body.textContent).not.toContain(RESTRICTED_TITLE.en);
-    fireEvent.click(screen.getAllByTestId('m26-fx-bench-chip')[0]);
-    expect(await screen.findByText(/What Kafa'a borrows/)).toBeTruthy();
+    fireEvent.click(screen.getByTestId('benchmark-chip-OECD-AICI'));
+    expect((await screen.findByTestId('benchmark-drawer')).querySelector('a[href^="https://"]')).toBeTruthy();
   }, 40000);
   it('an auditor reads the layer without write or designation controls', async () => {
     await renderPage(<SatFuturePage />, { persona: 'k-auditor', path: '/training/sat/future' });

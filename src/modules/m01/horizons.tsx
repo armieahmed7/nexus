@@ -2,7 +2,7 @@
 // concept-role banner. Rules live in ./roleProfiles (import-free); this file only renders. Benchmarks read kafaa_benchmarks
 // (FS01) when that table is registered and otherwise fall back to the three FS05 rows of PLAN.md section 4.
 import { useMemo, useState } from 'react';
-import { Card, Callout, StatusPill, SourceLink, Icon, Drawer, WhyThis, EmptyState } from '../../ui';
+import { Card, Callout, StatusPill, SourceLink, Icon, Drawer, WhyThis, EmptyState, BenchmarkChips as SharedBenchmarkChips } from '../../ui';
 import { useQuery, useRepo } from '../../data';
 import type { RowOf, Table } from '../../data';
 import { SCHEMA } from '../../data/schema';
@@ -56,95 +56,14 @@ export function useCanEditProfiles() {
 }
 
 // ───────────── benchmarks (FS01 kafaa_benchmarks when present; PLAN.md section 4 fallback)
-interface Bench {
-  id: string;
-  name_en: string;
-  name_ar: string;
-  owner: string;
-  year: string;
-  urls: string[];
-  borrow_en: string;
-  borrow_ar: string;
-  as_of: string;
-}
-const FALLBACK: Record<string, Bench> = {
-  'SG-JTM': {
-    id: 'SG-JTM', name_en: 'Jobs Transformation Maps', name_ar: 'خرائط تحوّل الوظائف', owner: 'Workforce Singapore', year: '2025',
-    urls: ['https://wsg.gov.sg/for-employers/jobs-transformation-maps.html', 'https://www.mom.gov.sg/newsroom/parliament-questions-and-replies/2025/1104-written-answer-to-pq-on-update-on-jobs-transformation-maps'],
-    borrow_en: 'A per-role transformation page: technology drivers, tasks added or removed, the redesigned profile and a dated reskilling path.',
-    borrow_ar: 'صفحة تحوّل لكل دور: المحركات التقنية، والمهام المضافة أو المحذوفة، والملف المعاد تصميمه، ومسار إعادة تأهيل مؤرخ.', as_of: '2026-10-10',
-  },
-  'SSG-SF': {
-    id: 'SSG-SF', name_en: 'SkillsFuture Skills Frameworks, Critical Core Skills and AI Potential on Tasks', name_ar: 'أطر مهارات SkillsFuture والمهارات الأساسية الحرجة وإمكانات الذكاء الاصطناعي في المهام', owner: 'SkillsFuture Singapore', year: '2025',
-    urls: ['https://isomer-user-content.by.gov.sg/41/4955bc61-161d-4584-945c-7eeeb276867a/Factsheet%20on%20Top%20skills%20trends%20in%202025.pdf'],
-    borrow_en: 'A task layer between role and skill, AI exposure per task, role archetypes with ladder-rung protection, and a core-skills set.',
-    borrow_ar: 'طبقة مهام بين الدور والمهارة، وتعرّض كل مهمة للذكاء الاصطناعي، ونماذج أدوار تحمي درجات السلم الوظيفي، ومجموعة مهارات أساسية.', as_of: '2026-10-10',
-  },
-  'IAEA-WFP': {
-    id: 'IAEA-WFP', name_en: 'IAEA NG-T-3.10 Workforce Planning and the Nuclear Infrastructure Competency Framework', name_ar: 'دليل الوكالة الدولية للطاقة الذرية NG-T-3.10 لتخطيط القوى العاملة وإطار كفاءات البنية التحتية النووية', owner: 'IAEA', year: '2011',
-    urls: ['https://www-pub.iaea.org/MTCD/Publications/PDF/Pub1477_web.pdf', 'https://www.iaea.org/sites/default/files/20/11/nicf.pdf'],
-    borrow_en: 'Scenario bands rather than point estimates, a fill plan per gap, and a "why this competency exists" link to its activity.',
-    borrow_ar: 'نطاقات سيناريوهات بدلاً من تقديرات نقطية، وخطة سدّ لكل فجوة، ورابط "لماذا توجد هذه الكفاءة" بنشاطها.', as_of: '2026-10-10',
-  },
-};
 export const FS05_BENCHMARKS = ['SG-JTM', 'SSG-SF', 'IAEA-WFP'];
 
-function useBenchmarks(ids: string[]) {
-  const repo = useRepo();
-  const has = Object.prototype.hasOwnProperty.call(SCHEMA, 'benchmarks');
-  return useQuery((has ? ['benchmarks'] : ['job_roles']) as Table[], async () => {
-    let rows: Record<string, unknown>[] = [];
-    if (has) rows = (await repo.list('benchmarks' as Table).catch(() => [])) as unknown as Record<string, unknown>[];
-    const byId = new Map(rows.map((r) => [String(r.id), r]));
-    return ids.map((id): Bench => {
-      const r = byId.get(id);
-      if (!r) return FALLBACK[id] ?? { id, name_en: id, name_ar: id, owner: '', year: '', urls: [], borrow_en: '', borrow_ar: '', as_of: '' };
-      return {
-        id, name_en: String(r.name_en ?? id), name_ar: String(r.name_ar ?? r.name_en ?? id), owner: String(r.owner ?? ''), year: String(r.year ?? ''),
-        urls: Array.isArray(r.urls) ? (r.urls as string[]) : [], borrow_en: String(r.borrow_en ?? ''), borrow_ar: String(r.borrow_ar ?? ''), as_of: String(r.as_of ?? ''),
-      };
-    });
-  }, [has, ids.join(',')]);
-}
-
-/** Benchmark chips (name, year) that open a drawer with what Kafa'a borrows and the source links. */
+/** Benchmark chips (FS01 shared <BenchmarkChip>s, rows from kafaa_benchmarks); each opens the registry drawer with sources. */
 export function BenchmarkChips({ ids = FS05_BENCHMARKS }: { ids?: string[] }) {
   const t = useT();
-  const pick = usePick();
-  const f = useFormat();
-  const q = useBenchmarks(ids);
-  const [open, setOpen] = useState<Bench | null>(null);
-  if (!q.data) return null;
   return (
-    <div className="flex flex-wrap items-center gap-1.5" data-testid="m01-benchmarks">
-      <span className="caps me-1">{t('m01.fs05.bench.label')}</span>
-      {q.data.map((b) => (
-        <button key={b.id} type="button" className="chip border-line bg-panel text-ink-2 hover:border-accent" onClick={() => setOpen(b)} data-testid="m01-benchmark-chip">
-          <Icon name="book" size={12} className="me-1 inline" />
-          {pick(b, 'name')} · <span className="num">{b.year}</span>
-        </button>
-      ))}
-      <Drawer open={!!open} onClose={() => setOpen(null)} title={open ? pick(open, 'name') : ''}>
-        {open && (
-          <div className="space-y-3 text-[14px]">
-            <div className="caps">
-              {open.owner} · <span className="num">{open.year}</span>
-            </div>
-            <p className="text-ink-2">{t('m01.fs05.bench.borrow')}</p>
-            <p>{pick(open, 'borrow')}</p>
-            <ul className="space-y-1">
-              {open.urls.map((u) => (
-                <li key={u}>
-                  <SourceLink href={u} date={open.as_of ? f.date(open.as_of) : null}>
-                    {new URL(u).hostname}
-                  </SourceLink>
-                </li>
-              ))}
-            </ul>
-            <p className="text-[12.5px] text-ink-3">{t('m01.fs05.bench.note')}</p>
-          </div>
-        )}
-      </Drawer>
+    <div data-testid="m01-benchmarks">
+      <SharedBenchmarkChips ids={ids} label={t('m01.fs05.bench.label')} />
     </div>
   );
 }

@@ -20,7 +20,7 @@ describe('FS03 /my/skills/confidence', { timeout: 90000 }, () => {
     expect(rows.length).toBeGreaterThan(10);
     expect(new Set(rows.map((r) => r.getAttribute('data-band')))).toEqual(new Set(['low', 'medium', 'high']));
     expect(screen.getByTestId('m17-method-banner')).toBeTruthy();
-    expect(screen.getAllByTestId('m17-benchmark').map((x) => x.getAttribute('data-id'))).toEqual(['WEF-FOJ', 'SKILLS-TECH', 'FORECAST']);
+    await waitFor(() => expect(Array.from(screen.getByTestId('m17-benchmarks').querySelectorAll('button[data-testid^="benchmark-chip-"]')).map((x) => x.getAttribute('data-testid'))).toEqual(['benchmark-chip-WEF-FOJ', 'benchmark-chip-SKILLS-TECH', 'benchmark-chip-FORECAST'])); // FS01 shared chips
     expect(screen.getAllByTestId('m17-decay-class').length).toBe(3);
     expect(screen.getAllByTestId('m17-decay-fact').length).toBeGreaterThan(1);
     const low = rows.find((r) => r.getAttribute('data-band') === 'low')!;
