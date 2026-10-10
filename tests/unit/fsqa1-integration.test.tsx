@@ -176,7 +176,7 @@ describe('FS wave A · FS05 future edges are not progression routes for pre-FS05
     expect(concept.size).toBe(11);
     for (const r of T.job_roles.filter((x) => x.lifecycle === 'current')) {
       expect([...reachableRoles(T.career_paths as never, r.id, 2).keys()].filter((x) => concept.has(x)), r.id).toEqual([]);
-      expect(careerMoves({ from: r.id, edges: T.career_paths as never, roleComps: T.role_competencies as never, have: new Map() }).filter((m) => concept.has(m.item.role_id))).toEqual([]);
+      expect(careerMoves({ from: r.id, edges: T.career_paths as never, roleComps: T.role_competencies as never, have: new Map() }).filter((m) => concept.has(m.item?.role_id ?? ""))).toEqual([]);
       const tgt = defaultTargetRole(T.career_paths, r.id, []);
       expect(tgt == null || !concept.has(tgt), r.id).toBe(true);
     }
