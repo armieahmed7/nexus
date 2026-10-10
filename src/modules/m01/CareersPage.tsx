@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { Page, Section, Card, Async, EmptyState, FilterBar, useFilters, Icon, Callout } from '../../ui';
 import { useT, usePick, L, useNav, useFormat } from '../../i18n';
 import { useCareerData, RoleBadges, CareerSourcesFooter, GROUPS, LEVELS, EDUCATION, type CareerData, type Role } from './shared';
+import { ConceptBanner } from './horizons';
 
 export default function CareersPage() {
   const t = useT();
@@ -111,6 +112,45 @@ function CareerMap({ data }: { data: CareerData }) {
           </ul>
         )}
       </Section>
+
+      {data.concepts.length > 0 && (
+        <Section
+          title={t('m01.fs05.careers.futureTitle')}
+          description={t('m01.fs05.careers.futureDesc', { n: f.num(data.concepts.length) })}
+          actions={
+            <L to="/careers/horizons" className="btn-outline btn-sm" data-testid="m01-to-horizons">
+              {t('m01.fs05.careers.toHorizons')}
+            </L>
+          }
+        >
+          <ConceptBanner />
+          <ul className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3" data-testid="m01-concept-list">
+            {data.concepts.map((r) => (
+              <Card as="li" key={r.id} className="flex flex-col">
+                <div className="caps mb-1">
+                  {pick(data.familyById.get(r.family_id), 'name')} · {t('m01.fs05.concept.pill')}
+                </div>
+                <h3 className="text-[15px] font-semibold leading-snug">
+                  <L to={`/careers/roles/${r.id}`} data-testid="m01-concept-link">
+                    {pick(r, 'title')}
+                  </L>
+                </h3>
+                <p className="mt-1 line-clamp-3 flex-1 text-[13px] text-ink-2">{pick(r, 'summary')}</p>
+                <div className="mt-3 flex flex-wrap gap-1 border-t border-line pt-2 text-[12px]">
+                  <span className="text-ink-3">{t('m01.fs05.overview.from')}</span>
+                  {data.futurePaths
+                    .filter((e) => e.to_role_id === r.id)
+                    .map((e) => (
+                      <span key={e.id} className="chip border-line bg-sunken">
+                        {pick(data.roleById.get(e.from_role_id!), 'title')}
+                      </span>
+                    ))}
+                </div>
+              </Card>
+            ))}
+          </ul>
+        </Section>
+      )}
 
       <CareerSourcesFooter data={data} ids={['fanr-reg17', 'ssg75', 'sr2024', 'cns10']} />
 

@@ -24,6 +24,14 @@
     "careers-jobs": {
       "title": "Vacancies",
       "purpose": "Vacancy listing linked to ENEC's official careers channel."
+    },
+    "careers-horizons": {
+      "title": "Roles in 2030 and 2035",
+      "purpose": "How every role is expected to change by 2030 and 2035, the technology drivers and the concept future roles."
+    },
+    "careers-profile-edit": {
+      "title": "Role profile editor",
+      "purpose": "Edit, check, save and publish a role profile for now, 2030 or 2035; version history."
     }
   },
   "sources": "Sources",
@@ -238,5 +246,220 @@
     "applyOfficial": "Apply on enec.ae",
     "programmes": "Looking for a programme rather than a job?",
     "toPathways": "See the talent programmes"
+  },
+  "fs05": {
+    "tab": "Now, 2030, 2035",
+    "tabOverview": "Overview",
+    "h": {
+      "now": "Now",
+      "2030": "2030",
+      "2035": "2035"
+    },
+    "driver": {
+      "digital_ic": "Digital I&C",
+      "ai_assistance": "AI assistance",
+      "robotics": "Robotics and remote inspection",
+      "smr_design": "SMR and advanced reactor design",
+      "digital_twin": "Digital twins"
+    },
+    "kind": {
+      "competency": "Competency",
+      "skill": "Skill"
+    },
+    "change": {
+      "new": "New",
+      "raised": "Raised",
+      "same": "Unchanged",
+      "lowered": "Lowered",
+      "dropped": "No longer listed"
+    },
+    "frHorizon": {
+      "watch": "Horizon: watch",
+      "explore": "Horizon: explore",
+      "prepare": "Horizon: prepare"
+    },
+    "planning": {
+      "title": "Planning assumption",
+      "body": "2030 and 2035 profiles describe how this work may change so people can plan their learning. They are planning assumptions: no deployment decision is implied, and they say nothing about headcount or sites."
+    },
+    "concept": {
+      "pill": "Concept role",
+      "banner": "Concept role: no vacancy and no deployment decision implied. Use it to plan learning and career conversations.",
+      "about": "What this concept role would do",
+      "qualTitle": "Requirements and learning",
+      "seeFuture": "Explore the ADVANCE technologies",
+      "howTitle": "How to get here",
+      "howDesc": "Current roles with a \"future\" move to this concept role, with the indicative experience and bridge learning.",
+      "profileTitle": "Concept profile for 2030 and 2035",
+      "profileDesc": "The skills and competencies this concept role is expected to need, with the reason for each."
+    },
+    "leadsTo": {
+      "title": "Concept roles this role can lead to",
+      "desc": "Future moves for planning only: no vacancy and no deployment decision implied."
+    },
+    "panel": {
+      "horizons": "Horizon",
+      "version": "Version {n}",
+      "publishedOn": "published {date}",
+      "edit": "Edit profile",
+      "editDrafts": "Edit profile ({n} draft)",
+      "none": "No published profile yet",
+      "noneBody": "Profiles for this role have not been published.",
+      "pathOnlyTitle": "Career-path level only",
+      "pathOnlyBody": "Security, safeguards and cyber roles are shown at career-path level only. Status is qualified or not qualified; requirements are not published here.",
+      "why": "Why the role changes",
+      "drivers": "Technology drivers",
+      "vs": "Change against {h}",
+      "today": "Today's profile",
+      "conceptStart": "New concept profile",
+      "caption": "Requirements at {h} and how they change",
+      "requirement": "Requirement",
+      "level": "Level",
+      "importance": "Importance",
+      "change": "Change",
+      "sourcesNote": "Each profile cites its sources and an as-of date. Benchmarks show the international practice this view follows."
+    },
+    "why": {
+      "new": "New at {horizon}: required at level {level}.",
+      "raised": "Raised at {horizon}: from level {from} to {to}.",
+      "same": "Already required at level {level}; unchanged.",
+      "lowered": "Lowered from level {from} to {to}.",
+      "text": "{text}",
+      "driver": {
+        "digital_ic": "Driver: digital I&C and plant-data tools.",
+        "ai_assistance": "Driver: AI assistance that people verify before acting.",
+        "robotics": "Driver: robotics and remote inspection.",
+        "smr_design": "Driver: SMR and advanced reactor design (no deployment decision implied).",
+        "digital_twin": "Driver: digital twins, kept separate from reactor control."
+      },
+      "importance": {
+        "core": "Core to the role.",
+        "important": "Important for the role.",
+        "useful": "Useful for the role."
+      },
+      "planning": "Planning assumption: no deployment decision implied."
+    },
+    "bench": {
+      "label": "Benchmarks",
+      "borrow": "What Kafa'a borrows from this benchmark:",
+      "note": "Benchmarks are sourced reference rows; Kafa'a follows their method and does not claim their results."
+    },
+    "careers": {
+      "futureTitle": "Future roles (concept)",
+      "futureDesc": "{n} concept roles linked to today's roles by future moves. No vacancy and no deployment decision implied.",
+      "toHorizons": "Roles in 2030 and 2035"
+    },
+    "paths": {
+      "tab": "Future roles",
+      "graphTitle": "Future moves from current roles to concept roles",
+      "listTitle": "Future moves",
+      "listDesc": "Each move lists indicative experience and the bridge learning it needs."
+    },
+    "plan": {
+      "skillsTitle": "Skills this concept role asks for",
+      "seeProfile": "See the full concept profile"
+    },
+    "overview": {
+      "eyebrow": "Future role profiles",
+      "intro": "How every role's requirements are expected to change by 2030 and 2035, and the concept roles today's roles can lead to. Counts are of roles, never of people.",
+      "toGraph": "Future moves graph",
+      "with2030": "Roles with a 2030 profile",
+      "with2030Sub": "Published; security roles at career-path level",
+      "concepts": "Concept roles profiled",
+      "conceptsSub": "At least 4 requirements and 1 inbound move each",
+      "digital": "Roles asking for digital skills",
+      "digitalSub": "Now {now} · 2030 {y30} · 2035 {y35}",
+      "ai": "Roles asking for AI skills",
+      "aiSub": "Now {now} · 2030 {y30} · 2035 {y35}",
+      "digitalChart": "Roles asking for digital skills, by horizon",
+      "aiChart": "Roles asking for AI skills, by horizon",
+      "aiShort": "AI",
+      "driversTitle": "Roles by technology driver",
+      "mapTitle": "Size of change by role",
+      "mapDesc": "Change score against the previous horizon: a new requirement counts its level, a raised one the increase.",
+      "group": "Group",
+      "vsPrev": "{h} vs previous",
+      "pathOnly": "Path level only",
+      "cell": "{added} new, {raised} raised",
+      "scoreNote": "Security, safeguards and cyber roles are shown at career-path level only and carry no score.",
+      "tableTitle": "Every role across the three horizons",
+      "role": "Role",
+      "reqs": "{n} requirements",
+      "delta": "+{added} new, {raised} raised",
+      "conceptTitle": "Concept future roles",
+      "conceptDesc": "Each has a published profile and at least one future move from a current role.",
+      "conceptReqs": "{n} requirements in the {h} profile",
+      "from": "From:"
+    },
+    "method": {
+      "title": "How the profiles are built",
+      "s1": "Estimate what each role will need at each horizon (the 2030 and 2035 profiles).",
+      "s2": "Assess today's capability against the current profile (skills passport and readiness).",
+      "s3": "Identify the gaps: new and raised requirements per role.",
+      "s4": "Plan how to fill them: learning, moves and future roles, reviewed every year."
+    },
+    "review": {
+      "title": "Drafts awaiting review",
+      "none": "No drafts are open. {n} earlier versions are kept as history.",
+      "open": "Open"
+    },
+    "edit": {
+      "title": "Role profile: {role}",
+      "intro": "Edit the requirements for one horizon, check them, save a draft or publish. Publishing supersedes the previous version, is audited and is recorded in the NEXUS evidence ledger.",
+      "back": "Back to roles in 2030 and 2035",
+      "viewPublic": "View the public page",
+      "pathOnly": "This role stays at career-path level: requirements cannot be added. You can still update the rationale and sources.",
+      "history": "Version history",
+      "noHistory": "No versions yet for this horizon.",
+      "updatedOn": "updated {date}",
+      "status": "Starting point",
+      "new": "New profile",
+      "startsDraft": "Saving starts a new draft from this version.",
+      "size": {
+        "added": "Added",
+        "raised": "Raised",
+        "dropped": "Removed"
+      },
+      "checks": "Checks",
+      "okDraft": "Ready to save as a draft.",
+      "okPublish": "Ready to publish.",
+      "checksNote": "The same rules run again on the server when you save.",
+      "reqs": "Requirements",
+      "reqsDesc": "Competencies and skills with a level from 1 to 4, an importance, an optional technology driver and a short reason in both languages.",
+      "noReqs": "No requirements yet",
+      "remove": "Remove {name}",
+      "driver": "Technology driver",
+      "noDriver": "None",
+      "whyEn": "Why (English)",
+      "whyAr": "Why (Arabic)",
+      "addKind": "Add a",
+      "addRef": "Competency or skill",
+      "add": "Add",
+      "securityNote": "Security-area skills and competencies are not offered: security content stays at career-path level.",
+      "rationale": "Rationale",
+      "ratEn": "Rationale (English)",
+      "ratAr": "Rationale (Arabic)",
+      "sourcesDesc": "Publishing needs at least one https source.",
+      "srcLabel": "Source label",
+      "srcUrl": "Source link",
+      "addSource": "Add source",
+      "footer": "Drafts are visible to training, admins and auditors only. Published versions are public.",
+      "saveDraft": "Save draft",
+      "publish": "Publish",
+      "saved": "Draft saved",
+      "published": "Profile published",
+      "confirmTitle": "Publish the {h} profile?",
+      "confirmBody": "The new version becomes public and the previous one is kept as history. The action is audited and recorded in the NEXUS evidence ledger."
+    },
+    "check": {
+      "invalid": "Choose a horizon, known drivers and a rationale of at least 20 characters in English and Arabic.",
+      "not_found": "Role not found.",
+      "invalid_requirements": "Each requirement needs a level from 1 to 4 and an importance; no duplicates; at most 30.",
+      "unknown_ref": "A requirement points at an unknown competency or skill.",
+      "security_restricted": "Security, safeguards and cyber content stays at career-path level.",
+      "unclean_text": "Remove any mention of headcount, sites or a deployment decision.",
+      "source_required": "Publishing needs at least one https source with a label.",
+      "too_few": "A published profile needs requirements (a concept role at least 4)."
+    }
   }
 }

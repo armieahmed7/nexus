@@ -1,4 +1,5 @@
 // F01: RPC signatures of the M17-M27 modules, merged into Rpc (src/data/types.ts). Each module owns src/modules/<m>/backend/rpc.ts.
+import type { M01Rpc } from '../../modules/m01/backend/rpc'; // FS05 (fsAe4): role profile versions
 import type { M02Rpc } from '../../modules/m02/backend/rpc'; // W4E5 (F31): M02 instructor and SME pipeline RPCs
 import type { M04Rpc } from '../../modules/m04/backend/rpc'; // W2E3 (F13): M04 mentoring extension RPCs
 import type { M06Rpc } from '../../modules/m06/backend/rpc'; // W5E3 (F34): M06 student journey RPCs
@@ -19,4 +20,4 @@ import type { M25Rpc } from '../../modules/m25/backend/rpc';
 import type { M26Rpc } from '../../modules/m26/backend/rpc';
 import type { M27Rpc } from '../../modules/m27/backend/rpc';
 
-export interface ExtRpc extends M02Rpc, M13Rpc, DigestRpc, M04Rpc, M06Rpc, M07Rpc, M09Rpc, M16Rpc, M17Rpc, M18Rpc, M19Rpc, M20Rpc, M21Rpc, M22Rpc, M23Rpc, M24Rpc, M25Rpc, M26Rpc, M27Rpc {}
+export interface ExtRpc extends M01Rpc, M02Rpc, M13Rpc, DigestRpc, M04Rpc, M06Rpc, M07Rpc, M09Rpc, M16Rpc, M17Rpc, M18Rpc, M19Rpc, M20Rpc, M21Rpc, M22Rpc, M23Rpc, M24Rpc, M25Rpc, M26Rpc, M27Rpc {}

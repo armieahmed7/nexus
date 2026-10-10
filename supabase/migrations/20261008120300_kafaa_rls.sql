@@ -1177,6 +1177,15 @@ create policy kafaa_read on kafaa_engine_settings for select to anon, authentica
 grant select on kafaa_engine_settings to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- role_profile_versions
+alter table kafaa_role_profile_versions enable row level security;
+drop policy if exists kafaa_read on kafaa_role_profile_versions;
+create policy kafaa_read on kafaa_role_profile_versions for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, is_public)
+    or kafaa_rule_read('audit_log', null::text, null::text, true)
+    or kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_role_profile_versions to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- instructor_tracks
 alter table kafaa_instructor_tracks enable row level security;
 drop policy if exists kafaa_read on kafaa_instructor_tracks;

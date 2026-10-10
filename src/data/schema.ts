@@ -178,6 +178,8 @@ export const SCHEMA: Record<string, TableDef> = {
       licensing_body_en: 'text', licensing_body_ar: 'text', entry_routes: 'json =[]',
       education: 'text enum:high_school|diploma|bachelor|master', entry_level: 'bool =false', emiratization_reserved: 'bool =false', critical: 'bool =false',
       security_sensitive: 'bool =false', sources: 'json =[]', status: 'text enum:published|draft =\'published\'', version: 'int =1', sort: 'int =0',
+      // FS05 (fsAe4): current roles and concept future roles (concept = no vacancy, no deployment decision; profile in role_profile_versions)
+      lifecycle: 'text enum:current|concept =\'current\' idx',
     },
     read: [{ res: 'frameworks' }, ...PUB], write: { mode: 'direct', res: 'frameworks' },
   },
@@ -210,6 +212,8 @@ export const SCHEMA: Record<string, TableDef> = {
       id: 'text pk', from_role_id: 'text? ref:job_roles idx', to_role_id: 'text ref:job_roles idx', from_label_en: 'text?', from_label_ar: 'text?',
       type: 'text enum:entry|vertical|lateral|cross_functional', route_code: 'text?', label_en: 'text =\'\'', label_ar: 'text =\'\'',
       conditions: 'json =[]', rule_ref: 'text?', basis: 'text enum:barakah|generic|uncertain =\'barakah\'', sort: 'int =0',
+      // FS05 (fsAe4): 'future' edges lead from a current role to a concept future role (planning assumption only)
+      kind: 'text enum:current|future =\'current\' idx',
     },
     read: [{ res: 'frameworks' }, ...PUB], write: { mode: 'direct', res: 'frameworks' },
   },

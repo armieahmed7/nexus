@@ -165,7 +165,8 @@ describe('M03 licensing tracker', () => {
 describe('M01 career map data', () => {
   it('all 28 roles are published with EN/AR titles, a basis and at least one source; RO and SRO list three entry routes', async () => {
     await as(null);
-    const roles = await b.list('job_roles');
+    // FS05: concept future roles (lifecycle 'concept') live in job_roles too; the 28 seed roles are the current ones
+    const roles = (await b.list('job_roles')).filter((r) => r.lifecycle === 'current');
     expect(roles).toHaveLength(28);
     for (const r of roles) {
       expect(r.title_en && r.title_ar).toBeTruthy();

@@ -39,7 +39,7 @@ const one = async (persona, sql, params) => (await as(persona, sql, params))[0];
 const count = async (persona, table, where = 'true') => Number((await one(persona, `select count(*)::int as n from ${table} where ${where}`)).n);
 
 console.log('RLS and RPC checks');
-ok((await count(null, 'kafaa_job_roles')) === 28, 'anon reads all 28 published roles');
+ok((await count(null, 'kafaa_job_roles', "lifecycle = 'current'")) === 28, 'anon reads all 28 published roles'); // FS05: plus the concept future roles (lifecycle 'concept'), checked in scripts/validate/fs14-role-profiles.mjs
 ok((await count(null, 'kafaa_people')) === 0, 'anon reads no people');
 ok((await count(null, 'kafaa_qual_records')) === 0, 'anon reads no qualification records');
 ok((await count(null, 'kafaa_organisations', 'not public_listed')) === 0, 'anon reads only public directory entries');
