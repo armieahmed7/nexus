@@ -8,7 +8,7 @@ import type { Result, RowOf } from '../types';
 import type { LocalRpcHelpers } from '../ext/types';
 import { sha256Hex, nowTs } from '../audit';
 import { todayIso } from '../../domain/rules';
-import { DERIVED_KINDS, RECORDED_KINDS, decayModelFrom, deriveStates, gatherEvidence, statesDigestText, type Evidence, type SkillSources } from '../../domain/skills';
+import { decayModelFrom, isDerivedEvidence, isRecordedEvidence, deriveStates, gatherEvidence, statesDigestText, type Evidence, type SkillSources } from '../../domain/skills';
 import { SURFACES } from '../../domain/engines/types';
 
 export interface SkillsRecomputeResult {
@@ -41,8 +41,8 @@ export async function applySkills(b: LocalBackend, person: string | null, now: s
     else if (cur.level !== d.level || cur.basis !== d.basis || cur.status !== d.status || cur.observed_on !== d.observed_on || !cur.active)
       b.rawUpdate('skill_evidence', d.id, { level: d.level, basis: d.basis, status: d.status, observed_on: d.observed_on, active: true });
   }
-  for (const e of b.raw('skill_evidence')) if (e.active && DERIVED_KINDS.includes(e.kind) && inScope(e.person_id) && !derivedIds.has(e.id)) b.rawUpdate('skill_evidence', e.id, { active: false });
-  const recorded = b.raw('skill_evidence').filter((e) => e.active && RECORDED_KINDS.includes(e.kind) && inScope(e.person_id)) as unknown as Evidence[];
+  for (const e of b.raw('skill_evidence')) if (e.active && isDerivedEvidence(e) && inScope(e.person_id) && !derivedIds.has(e.id)) b.rawUpdate('skill_evidence', e.id, { active: false });
+  const recorded = b.raw('skill_evidence').filter((e) => e.active && isRecordedEvidence(e) && inScope /* FS10: fitness-check rows */(e.person_id)) as unknown as Evidence[];
   // FS03: per-class half-lives from engine_settings (skills) and each skill's decay class
   const states = deriveStates([...derived, ...recorded], now, decayModelFrom(b.raw('engine_settings') as never, b.raw('skills') as never));
   const ids = new Set(states.map((s) => s.id));

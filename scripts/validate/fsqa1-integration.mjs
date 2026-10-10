@@ -77,7 +77,9 @@ export default async function fsqa1Checks({ ok }) {
   ok(adv === 0, 'adv_skills.sk_ids lists every active keyspace row of its key');
   const sk = await q(`select id, area, decay_class from kafaa_skills where fs_area is null`);
   ok(sk.every((s) => s.decay_class === (AREA_DECAY_CLASS[s.area] ?? 'standard')), `FS02 <-> FS03: all ${sk.length} F01 skills store FS03's area decay class`);
-  const holders = (await q(`select count(*)::int n from kafaa_person_skills p where p.active and p.level > 0 and p.skill_id in (select sk_id from kafaa_future_skill_map where id in (${qaIds}))`))[0].n;
-  ok(holders === 0, 'nobody holds the FS02 skills of the new keyspace rows yet, so radar readiness is unchanged (best-row credit)');
+  // FS10 (wave B): the AI and digital fitness check now evidences some FS02 AI skills (level <= 2); no other source does yet.
+  const holders = (await q(`select count(*)::int n from kafaa_person_skills p where p.active and p.level > 0 and p.skill_id in (select sk_id from kafaa_future_skill_map where id in (${qaIds}))
+    and exists (select 1 from kafaa_skill_evidence e where e.person_id = p.person_id and e.skill_id = p.skill_id and e.active and e.ref_table <> 'fitness_attempts')`))[0].n;
+  ok(holders === 0, 'nobody holds the FS02 skills of the new keyspace rows except through FS10 fitness-check evidence (level <= 2)');
   await db.close();
 }

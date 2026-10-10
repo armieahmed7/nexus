@@ -3454,6 +3454,104 @@ export interface SkillGoalsRow {
   created_at: string;
   updated_at: string;
 }
+export interface AiRungsRow {
+  id: string;
+  rung: number;
+  rung_key: 'aware' | 'practitioner' | 'builder' | 'assurer';
+  dimension: 'mindset' | 'ethics' | 'techniques' | 'design';
+  name_en: string;
+  name_ar: string;
+  essence_en: string;
+  essence_ar: string;
+  descriptor_en: string;
+  descriptor_ar: string;
+  example_en: string;
+  example_ar: string;
+  skill_ids: string[];
+  min_level: number;
+  learning: any;
+  sources: any;
+  sort: number;
+}
+export interface AiSkillTracksRow {
+  id: string;
+  skill_id: string;
+  track: 'literacy' | 'engineering';
+  rationale_en: string;
+  rationale_ar: string;
+  sort: number;
+}
+export interface AiRoleTargetsRow {
+  id: string;
+  family_id: string;
+  rung: number;
+  plus_cells: string[];
+  fitness_target: number;
+  rationale_en: string;
+  rationale_ar: string;
+  sort: number;
+}
+export interface AiOrgTargetsRow {
+  id: string;
+  metric: 'practitioner_or_above' | 'above_basic';
+  pct: number;
+  due_on: string;
+  basis_en: string;
+  basis_ar: string;
+  set_by_en: string;
+  set_by_ar: string;
+  benchmark_ids: string[];
+  sources: any;
+  as_of: string;
+}
+export interface FitnessAreasRow {
+  id: string;
+  framework: 'digcomp' | 'ai';
+  code: string;
+  name_en: string;
+  name_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  weight: number;
+  skill_ids: string[];
+  dimension?: 'mindset' | 'ethics' | 'techniques' | 'design' | null;
+  sources: any;
+  sort: number;
+}
+export interface FitnessItemsRow {
+  id: string;
+  area_id: string;
+  difficulty: number;
+  stem_en: string;
+  stem_ar: string;
+  options_en: string[];
+  options_ar: string[];
+  correct: number;
+  explain_en: string;
+  explain_ar: string;
+  status: 'active' | 'retired';
+  version: number;
+  sort: number;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface FitnessAttemptsRow {
+  id: string;
+  person_id: string;
+  period: string;
+  attempt_no: number;
+  status: 'in_progress' | 'completed';
+  started_at: string;
+  completed_at?: string | null;
+  responses: any;
+  current_item_id?: string | null;
+  item_count: number;
+  area_levels: any;
+  score?: number | null;
+  band?: 'limited' | 'basic' | 'above_basic' | 'advanced' | null;
+  reasons: any;
+  evidence: any;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -3683,6 +3781,13 @@ export interface Tables {
   skill_frameworks: SkillFrameworksRow;
   skill_alignments: SkillAlignmentsRow;
   skill_goals: SkillGoalsRow;
+  ai_rungs: AiRungsRow;
+  ai_skill_tracks: AiSkillTracksRow;
+  ai_role_targets: AiRoleTargetsRow;
+  ai_org_targets: AiOrgTargetsRow;
+  fitness_areas: FitnessAreasRow;
+  fitness_items: FitnessItemsRow;
+  fitness_attempts: FitnessAttemptsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];

@@ -2118,3 +2118,52 @@ create policy kafaa_read on kafaa_skill_goals for select to anon, authenticated 
 grant select on kafaa_skill_goals to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- ai_rungs
+alter table kafaa_ai_rungs enable row level security;
+drop policy if exists kafaa_read on kafaa_ai_rungs;
+create policy kafaa_read on kafaa_ai_rungs for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_ai_rungs to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- ai_skill_tracks
+alter table kafaa_ai_skill_tracks enable row level security;
+drop policy if exists kafaa_read on kafaa_ai_skill_tracks;
+create policy kafaa_read on kafaa_ai_skill_tracks for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_ai_skill_tracks to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- ai_role_targets
+alter table kafaa_ai_role_targets enable row level security;
+drop policy if exists kafaa_read on kafaa_ai_role_targets;
+create policy kafaa_read on kafaa_ai_role_targets for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_ai_role_targets to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- ai_org_targets
+alter table kafaa_ai_org_targets enable row level security;
+drop policy if exists kafaa_read on kafaa_ai_org_targets;
+create policy kafaa_read on kafaa_ai_org_targets for select to anon, authenticated using (kafaa_has_grant('ai_literacy', array['Agg','R','W','A']));
+grant select on kafaa_ai_org_targets to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- fitness_areas
+alter table kafaa_fitness_areas enable row level security;
+drop policy if exists kafaa_read on kafaa_fitness_areas;
+create policy kafaa_read on kafaa_fitness_areas for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_fitness_areas to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- fitness_items
+alter table kafaa_fitness_items enable row level security;
+drop policy if exists kafaa_read on kafaa_fitness_items;
+create policy kafaa_read on kafaa_fitness_items for select to anon, authenticated using (kafaa_rule_read('secure_items', null::text, null::text, true));
+grant select on kafaa_fitness_items to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- fitness_attempts
+alter table kafaa_fitness_attempts enable row level security;
+drop policy if exists kafaa_read on kafaa_fitness_attempts;
+create policy kafaa_read on kafaa_fitness_attempts for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_fitness_attempts to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+

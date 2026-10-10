@@ -50,7 +50,7 @@ describe('FS03 AC1 · the half-life setting is wired (TS and SQL use the same ru
     const today = new Date().toISOString().slice(0, 10);
     const tbl = Object.fromEntries(['skills', 'competencies', 'role_competencies', 'qual_standards', 'qual_records', 'training_records', 'courses', 'attempts', 'assessment_forms', 'jpm_results', 'jpms']
       .map((t) => [t, b.raw(t as never) as unknown as any[]])) as Record<string, any[]>;
-    const recorded = b.raw('skill_evidence').filter((e) => e.active && ['rating', 'ojt', 'credential'].includes(e.kind)) as unknown as Evidence[];
+    const recorded = b.raw('skill_evidence').filter((e) => e.active && (['rating', 'ojt', 'credential'].includes(e.kind) || e.ref_table === 'fitness_attempts' /* FS10 */)) as unknown as Evidence[];
     const want = deriveStates([...gatherEvidence(src(tbl), { person: null, now: today }), ...recorded], today, makeDecayModel(w, b.raw('skills') as never));
     const stored = new Map(b.raw('person_skills').filter((p) => p.active).map((p) => [p.id, p]));
     expect(want.length).toBe(stored.size);

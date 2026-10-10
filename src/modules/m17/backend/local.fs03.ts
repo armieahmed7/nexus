@@ -7,7 +7,7 @@ import type { LocalRpcHelpers } from '../../../data/ext/types';
 import type { Result } from '../../../data/types';
 import type { Fs03Rpc, SetHalfLivesResult } from './rpc';
 import { todayIso } from '../../../domain/rules';
-import { RECORDED_KINDS, decayModelFrom, deriveStates, gatherEvidence, halfLifeMonths, makeDecayModel, type Evidence, type SkillSources } from '../../../domain/skills';
+import { isRecordedEvidence, decayModelFrom, deriveStates, gatherEvidence, halfLifeMonths, makeDecayModel, type Evidence, type SkillSources } from '../../../domain/skills';
 import { applySkills } from '../../../data/local/rpc.w0';
 import { nowTs } from '../../../data/audit';
 import { FS03_MSG, checkHalfLives, confidenceStats, previewWeights, toWeights, type StateLite } from '../decay';
@@ -23,7 +23,7 @@ export function makeLocalM17Fs03(b: LocalBackend, h: LocalRpcHelpers): Fs03Rpc {
       skills: raw('skills'), competencies: raw('competencies'), role_competencies: raw('role_competencies'), qual_standards: raw('qual_standards'), qual_records: raw('qual_records'),
       training_records: raw('training_records'), courses: raw('courses'), attempts: raw('attempts'), assessment_forms: raw('assessment_forms'), jpm_results: raw('jpm_results'), jpms: raw('jpms'),
     };
-    return [...gatherEvidence(src, { person: null, now }), ...(raw('skill_evidence').filter((e) => e.active && RECORDED_KINDS.includes(e.kind)) as Evidence[])];
+    return [...gatherEvidence(src, { person: null, now }), ...(raw('skill_evidence').filter((e) => e.active && isRecordedEvidence(e)) as Evidence[])];
   };
   return {
     async skillConfidenceStats(hl = null) {

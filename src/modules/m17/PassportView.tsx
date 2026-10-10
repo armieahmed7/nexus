@@ -76,6 +76,7 @@ export function useEvidenceLabel(d: PassportData) {
       const c = course(tr?.course_id);
       return { title: `${t('m17.evidence.kind.course')} ${c?.code ?? ''} · ${pick(c, 'title')}`, system: systemName(t, tr?.source_system ?? 'Training records system'), ref: e.ref_id };
     }
+    if (e.kind === 'assessment' && e.ref_table === 'fitness_attempts') return { title: t('m29.evidenceLabel'), system: 'Kafa\'a', ref: e.ref_id }; // FS10: AI and digital fitness check
     if (e.kind === 'assessment') {
       const a = d.attempts.find((x) => x.id === e.ref_id);
       const c = course(d.forms.find((f) => f.id === a?.form_id)?.course_id);

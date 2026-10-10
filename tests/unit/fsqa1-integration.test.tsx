@@ -145,7 +145,10 @@ describe('FS wave A · FS04 -> FS02 keyspace', () => {
     expect(unresolvedKeys({ advSkills: T.adv_skills, futureSkills: T.future_skills, plans: T.skill_gap_plans, map, skills: T.skills } as never)).toEqual([]);
     const qa = new Set(FS_QA_KEYSPACE_ROWS.map(([k, , sk]) => `fsm:${k}:${sk}`));
     for (const sc of [...new Set(T.future_skills.map((f) => f.scenario))]) {
-      const inp = (m: MapRow[]) => ({ futureSkills: T.future_skills as never, map: m, people: T.people as never, states: T.person_skills as never });
+      // FS10: states backed only by the AI and digital fitness check (recorded F01 evidence on FS02 skills) are left out here, so the
+      // invariant still isolates the keyspace rows; with them, the ai-governance key gains holders (see fs22-ai-fluency).
+      const fit = new Set((T.skill_evidence as { active: boolean; ref_table: string; person_id: string; skill_id: string }[]).filter((e) => e.active && e.ref_table === 'fitness_attempts').map((e) => `ps:${e.person_id}:${e.skill_id}`));
+      const inp = (m: MapRow[]) => ({ futureSkills: T.future_skills as never, map: m, people: T.people as never, states: (T.person_skills as { id: string }[]).filter((x) => !fit.has(x.id)) as never });
       const a = futureRadar(inp(map), sc as string).rows.map((r) => [r.key, r.readiness, r.ready_n]);
       const b = futureRadar(inp(map.filter((m) => !qa.has(m.id))), sc as string).rows.map((r) => [r.key, r.readiness, r.ready_n]);
       expect(a).toEqual(b);
