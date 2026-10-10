@@ -1708,6 +1708,27 @@ create policy kafaa_read on kafaa_future_goals for select to anon, authenticated
 grant select on kafaa_future_goals to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- horizon_lane_links
+alter table kafaa_horizon_lane_links enable row level security;
+drop policy if exists kafaa_read on kafaa_horizon_lane_links;
+create policy kafaa_read on kafaa_horizon_lane_links for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_horizon_lane_links to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- horizon_milestones
+alter table kafaa_horizon_milestones enable row level security;
+drop policy if exists kafaa_read on kafaa_horizon_milestones;
+create policy kafaa_read on kafaa_horizon_milestones for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_horizon_milestones to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- future_track_progress
+alter table kafaa_future_track_progress enable row level security;
+drop policy if exists kafaa_read on kafaa_future_track_progress;
+create policy kafaa_read on kafaa_future_track_progress for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_future_track_progress to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- leadership_programmes
 alter table kafaa_leadership_programmes enable row level security;
 drop policy if exists kafaa_read on kafaa_leadership_programmes;

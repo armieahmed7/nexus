@@ -24,6 +24,7 @@ import { reportingChain } from '../../src/modules/m04/mentoring';
 import { rankHosts, rankProgrammes } from '../../src/modules/m20/rotationMatch';
 import { rankExperts, type ExpertRow } from '../../src/modules/m22/domain';
 import { rankBridges, rankFutureRoles, rankResources, readinessIndex } from '../../src/modules/m21/future';
+import { inputFor, previewEvidence, readinessV2 } from '../../src/modules/m21/readiness'; // FS13
 
 type Rows = Record<string, any>[];
 const S = seed as unknown as { tables: Record<string, Rows>; meta: { demo_today: string } };
@@ -55,6 +56,7 @@ const ROLE = 'reactor-operator';
 const careerData = () => ({ people: T.people, roles: T.job_roles, edges: T.career_paths, roleComps: T.role_competencies, competencies: T.competencies, skills: T.skills, states: T.person_skills,
   licences: T.licences, standards: T.qual_standards, qualRecords: T.qual_records, programmes: T.programmes, courses: T.courses, trainingRecords: T.training_records, enrolments: T.enrolments });
 const have = () => competencyLevels(statesOf(ME) as never, T.skills as never);
+const fs13Tables = () => ({ techs: T.adv_technologies, advSkills: T.adv_skills, map: T.future_skill_map, skills: T.skills, resources: T.future_resources, states: T.person_skills, enrolments: T.enrolments, trainingRecords: T.training_records, trackProgress: T.future_track_progress }) as never;
 const rotCtx = () => ({ states: statesOf(ME) as never, skills: T.skills as never, roleComps: T.role_competencies as never, targetRole: 'senior-reactor-operator', family: 'operations' });
 
 /** One runner per scoring function named on the engine cards (file#function). Each runs on trapped seed rows. */
@@ -82,6 +84,9 @@ const RUN: Record<string, () => unknown> = {
   'src/modules/m21/future.ts#rankBridges': () => rankBridges({ bridges: T.skill_bridges as never, families: readinessIndex(T.adv_technologies as never, T.adv_skills as never, T.skills as never, statesOf(ME) as never).families, myRole: ROLE, edges: T.career_paths as never }),
   'src/modules/m21/future.ts#rankFutureRoles': () => rankFutureRoles({ roles: T.future_roles as never, levels: readinessIndex(T.adv_technologies as never, T.adv_skills as never, T.skills as never, statesOf(ME) as never).levels, myRole: ROLE, edges: T.career_paths as never }),
   'src/modules/m21/future.ts#rankResources': () => { const r = readinessIndex(T.adv_technologies as never, T.adv_skills as never, T.skills as never, statesOf(ME) as never); return r.families.map((f) => rankResources(T.future_resources as never, f)); },
+  // FS13 readiness v2 (card "future", version 2)
+  'src/modules/m21/readiness.ts#readinessV2': () => readinessV2(inputFor(ME, fs13Tables())),
+  'src/modules/m21/readiness.ts#previewEvidence': () => previewEvidence(readinessV2(inputFor(ME, fs13Tables())), { courses: ['c-adv-intro'], tracks: ['trk-digital'] }),
 };
 const cardFns = [...new Set(S.tables.engine_cards.flatMap((c) => c.scoring_functions as string[]))];
 const tsFns = cardFns.filter((f) => !f.startsWith('sql:'));

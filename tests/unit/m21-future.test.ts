@@ -112,7 +112,7 @@ describe('bridge plan, learning and concept roles (F02 engines, reasons on every
 
 describe('horizon lanes and goals', () => {
   it('each lane cites a public source with an as-of date and public rows are clean (no headcount, no site)', () => {
-    expect(T.horizon_lanes).toHaveLength(5);
+    expect(T.horizon_lanes).toHaveLength(11); // FS14 Horizon lanes 2.0: 5 F09 lanes + 6
     for (const l of T.horizon_lanes) {
       expect(l.sources.length).toBeGreaterThan(0);
       for (const s of l.sources) {

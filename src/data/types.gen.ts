@@ -2522,6 +2522,9 @@ export interface HorizonLanesRow {
   role_ids: string[];
   sources: any;
   sort: number;
+  kind: 'build' | 'watch';
+  milestone_ids: string[];
+  as_of?: string | null;
 }
 export interface FutureResourcesRow {
   id: string;
@@ -2568,6 +2571,36 @@ export interface FutureGoalsRow {
   status: 'active' | 'removed';
   source: string;
   created_at: string;
+  updated_at: string;
+}
+export interface HorizonLaneLinksRow {
+  id: string;
+  lane_id: string;
+  kind: 'skill' | 'course' | 'track' | 'pathway' | 'resource' | 'gig';
+  ref_id: string;
+  level?: number | null;
+  sort: number;
+}
+export interface HorizonMilestonesRow {
+  id: string;
+  year: number;
+  month?: number | null;
+  kind: 'enec' | 'uae' | 'international';
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  sources: any;
+  sort: number;
+}
+export interface FutureTrackProgressRow {
+  id: string;
+  person_id: string;
+  track_id: string;
+  steps_done: any;
+  status: 'in_progress' | 'completed';
+  started_at: string;
+  completed_at?: string | null;
   updated_at: string;
 }
 export interface LeadershipProgrammesRow {
@@ -3568,6 +3601,9 @@ export interface Tables {
   future_resources: FutureResourcesRow;
   future_interest: FutureInterestRow;
   future_goals: FutureGoalsRow;
+  horizon_lane_links: HorizonLaneLinksRow;
+  horizon_milestones: HorizonMilestonesRow;
+  future_track_progress: FutureTrackProgressRow;
   leadership_programmes: LeadershipProgrammesRow;
   leadership_nominations: LeadershipNominationsRow;
   leadership_360_requests: Leadership360RequestsRow;

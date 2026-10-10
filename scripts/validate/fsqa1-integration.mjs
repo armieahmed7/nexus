@@ -71,7 +71,8 @@ export default async function fsqa1Checks({ ok }) {
   ok(n1 === 0 && n2 > 0, `FS05 -> FS02: 2030/2035 requirements name the FS02 skills (${n2}), none the F01 equivalents`);
   const fl = (await q(`select count(*)::int n, count(*) filter (where s.fs_area is not null)::int fs, count(*) filter (where l.skill_id in (${olds}))::int old from kafaa_jta_task_skills l join kafaa_skills s on s.id = l.skill_id where l.kind = 'future'`))[0];
   ok(fl.old === 0 && fl.fs > 0, `FS06 -> FS02: future task links name FS02 skills (${fl.fs} of ${fl.n}), none the F01 equivalents`);
-  const keys = (await q(`select count(*)::int n from kafaa_future_skill_map m join kafaa_skills s on s.id = m.sk_id where s.fs_area is not null and m.active`))[0].n;
+  // FS13 (wave B) adds its own FS02 keyspace rows; this check counts the wave-A QA rows only
+  const keys = (await q(`select count(*)::int n from kafaa_future_skill_map m join kafaa_skills s on s.id = m.sk_id where s.fs_area is not null and m.active and m.id in (${qaIds})`))[0].n;
   ok(keys === FS_QA_KEYSPACE_ROWS.length, `FS04 -> FS02: ${keys} active keyspace rows name FS02 skills`);
   const adv = (await q(`select count(*)::int n from kafaa_adv_skills a where exists (select 1 from kafaa_future_skill_map m where m.key = a.id and m.active and not (m.sk_id = any(a.sk_ids)))`))[0].n;
   ok(adv === 0, 'adv_skills.sk_ids lists every active keyspace row of its key');
