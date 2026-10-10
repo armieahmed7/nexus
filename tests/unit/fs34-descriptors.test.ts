@@ -15,6 +15,7 @@ import {
 } from '../../src/modules/m02/descriptors';
 import { AUTH_MSG, BANDS, SCALE_FRAMEWORKS, addYearsIso, alignmentFollowsMap, authResultCode, bandOfLevel, checkDecide, checkPropose, extRange, rowCitesSource } from '../../src/modules/m02/authority';
 import { routes } from '../../src/modules/m02/routes';
+import { makeSupabaseM02 } from '../../src/modules/m02/backend/supabase';
 import { FEATURE_BENCHMARKS, LEVEL_ESSENCE } from '../../src/domain/taxonomy';
 import { todayIso } from '../../src/domain/rules';
 
@@ -293,6 +294,20 @@ describe('FS23/FS24 · routes, benchmarks and i18n', () => {
     expect(FEATURE_BENCHMARKS.FS24).toEqual(['SFIA9', 'DIGCOMP', 'UAE-NQF']);
     for (const [f, fs] of [['LevelsPage', 'FS23'], ['DescriptorLibraryPage', 'FS23'], ['DescriptorPage', 'FS23'], ['DescriptorsAdminPage', 'FS23'], ['ScaleMapPage', 'FS24'], ['AuthorityAdminPage', 'FS24'], ['MyLevelsPage', 'FS24']])
       expect(readFileSync(`src/modules/m02/${f}.tsx`, 'utf8'), f).toContain(`<BenchmarkChips feature="${fs}"`);
+  });
+  it('the four RPCs are mapped for the Supabase backend; the migration is additive', async () => {
+    const calls: string[] = [];
+    const reads: string[] = [];
+    const m = makeSupabaseM02({ call: async (fn: string) => { calls.push(fn); return { ok: true, code: 'ok', message: '', data: null } as never; }, rpc: async (fn: string) => { reads.push(fn); return [] as never; } } as never);
+    await m.saveDescriptor(base);
+    await m.setLevelRange({ skill_id: 'x', min_level: 1, max_level: 2, basis: 'full', rationale_en: '', rationale_ar: '' });
+    await m.recogniseAuthority({ action: 'approve', id: 'x' });
+    await m.authorityCandidates();
+    expect(calls).toEqual(['kafaa_save_descriptor', 'kafaa_set_level_range', 'kafaa_recognise_authority']);
+    expect(reads).toEqual(['kafaa_authority_candidates']);
+    const sql = readFileSync('supabase/migrations/20261010234001_kafaa_fs34_descriptors_scale.sql', 'utf8');
+    expect(/\b(drop\s+\w+|delete\s+from|truncate)\b/i.test(sql.replace(/--[^\n]*/g, ''))).toBe(false); // "revoke ... delete on" is a grant, not a delete
+    for (const msg of [...Object.values(DESC_MSG), ...Object.values(AUTH_MSG)]) expect(sql.includes(`'${msg.replace(/'/g, "''")}'`), msg).toBe(true);
   });
   it('EN and AR are complete for the FS23/FS24 keys (and the refusal codes have AR text)', () => {
     const flat = (o: any, p = ''): Record<string, string> => Object.entries(o).reduce((a, [k, v]) => (typeof v === 'object' ? { ...a, ...flat(v, `${p}${k}.`) } : { ...a, [`${p}${k}`]: v as string }), {}); // eslint-disable-line @typescript-eslint/no-explicit-any
