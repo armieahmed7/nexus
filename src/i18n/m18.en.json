@@ -26,6 +26,10 @@
     "workforce-career-conversations": {
       "title": "Career conversation insights",
       "purpose": "Aspirations, mobility and conversation coverage by job family: aggregates of 10 or more only."
+    },
+    "careers-outlook-criteria": {
+      "title": "Role outlook labels",
+      "purpose": "Which roles are growing, changing or stable, and the published criteria behind every label."
     }
   },
   "nav": {
@@ -624,6 +628,159 @@
       "none": "No career conversation on record",
       "goal": "12-month goal: {goal}",
       "asOf": "From the conversation of {date}"
+    }
+  },
+  "fs15": {
+    "title": "Future roles (concept)",
+    "desc": "{n} concept roles for the ADVANCE era, measured against their 2030 or 2035 role profiles; {mine} have a bridge from your role.",
+    "none": "No concept roles to show yet.",
+    "conceptChip": "Concept role",
+    "banner": {
+      "title": "Concept role: no vacancy and no deployment decision",
+      "body": "Concept roles describe skills ENEC may need in the future. There is no vacancy, no staffing number and no deployment decision implied; readiness is a planning signal against the published role profile, never \"ready now\"."
+    },
+    "band": {
+      "profile_met": "Profile met",
+      "within": "Profile within about {n} months",
+      "stretch": "Stretch (about {n} months)"
+    },
+    "profileOf": "{horizon} profile · version {v}",
+    "bridge": {
+      "met": "Bridge from your role ({role}): experience condition met",
+      "wait": "Bridge from your role ({role}): {n} months in role, {left} to go",
+      "other": "Bridge from {role} ({n} months there): not your current role",
+      "none": "No bridge edge published yet"
+    },
+    "topGaps": "Top gaps ({n} in total)",
+    "newSkill": "New skill",
+    "noGaps": "You meet every requirement of this profile.",
+    "why": "Why the profile asks for it",
+    "gapsTitle": "Requirements still to build ({n})",
+    "detailNote": "Readiness is weighted coverage of the {horizon} role profile (FS05), a planning assumption.",
+    "horizons": "Roles in 2030 and 2035",
+    "rmBridge": "Bridge learning sized from your profile gaps: about {n} months (indicative, {horizon} profile)",
+    "tr": {
+      "count": "{n} colleagues made this move · median {months} months in the previous role",
+      "suppressed": "Fewer than 10 colleagues made this move: not shown, to protect privacy",
+      "conceptNone": "Nobody can have made this move yet: concept role",
+      "conceptAnalogue": "Nobody has made this move yet (concept role). Closest evidence: {n} colleagues moved from your role into {family} roles, median {months} months",
+      "conceptSuppressed": "Nobody has made this move yet (concept role); fewer than 10 colleagues moved from your role into {family} roles, so that is not shown either"
+    },
+    "reason": {
+      "profile": "Measured against the {horizon} role profile, version {version} (FS05, planning assumption)",
+      "bridge_met": "Bridge from {role}: the experience condition is met",
+      "bridge_wait": "Bridge from your role: {months} more months of experience",
+      "bridge_other": "The bridge starts from {role} ({months} months there), not from your current role",
+      "bridge_none": "No published bridge edge into this role yet",
+      "gap": "Gap: {skill} at level {from} of {to}",
+      "band_met": "Your evidence meets the profile",
+      "band_within": "About {months} months to meet the profile",
+      "band_stretch": "A stretch: about {months} months to meet the profile",
+      "concept": "Concept role: no vacancy and no deployment decision implied",
+      "tr_count": "{n} colleagues made this move; median {months} months in the previous role",
+      "tr_suppressed": "Fewer than {min} colleagues made this move, so the count is suppressed",
+      "tr_concept": "Nobody can have made a move into a concept role yet",
+      "tr_analogue": "Closest evidence: {n} colleagues moved into the same job family, median {months} months",
+      "tr_analogue_suppressed": "Closest evidence (same job family) has fewer than {min} moves and is suppressed"
+    }
+  },
+  "fs16": {
+    "eyebrow": "Career outlook",
+    "intro": "Every current role carries one of three labels: Growing, Changing or Stable. The criteria and thresholds are published here, and past years' labels are kept so anyone can check whether a label held up.",
+    "toHorizons": "Roles in 2030 and 2035",
+    "simChip": "Planning inputs SIMULATED",
+    "none": "No outlook labels published yet.",
+    "label": {
+      "growing": "Growing",
+      "changing": "Changing",
+      "stable": "Stable"
+    },
+    "short": {
+      "growing": "Growing",
+      "changing": "Changing",
+      "stable": "Stable"
+    },
+    "meaning": {
+      "growing": "Demand for the skills this role needs is projected to grow and to outrun the people who hold them. Good moment to move in.",
+      "changing": "The role's 2030 profile adds or raises a large share of its requirements. Plan your learning now; the work is being redesigned, not removed.",
+      "stable": "Neither the demand signal nor the profile-change signal crosses its threshold."
+    },
+    "rolesIn": "roles in {year}",
+    "why": "Why this label?",
+    "howTitle": "How a label is decided",
+    "howDesc": "Criteria version {v}, in force from {year}. The first rule that matches decides the label.",
+    "firstMatch": "Rules are checked in this order. Components are percentages from the released skills outlook and the role profiles; no staffing numbers are ever used or shown.",
+    "rule": {
+      "changing": "The 2030 role profile adds or raises at least {pct} of today's requirement weight.",
+      "growing": "Projected demand for the role's skill families grows by at least {pct} to {year}, and demand stays above the people who hold those skills.",
+      "stable": "Everything else."
+    },
+    "thresholdsTitle": "Published thresholds",
+    "col": {
+      "component": "Component",
+      "threshold": "Threshold",
+      "basis": "Basis",
+      "role": "Role",
+      "label": "Label",
+      "history": "Label by year",
+      "growth": "Demand growth",
+      "shortfall": "Shortfall",
+      "change": "Profile change"
+    },
+    "comp": {
+      "change": "Profile change (now to 2030)",
+      "growth": "Demand growth ({from} to {to})",
+      "shortfall": "Demand above holders in {year}"
+    },
+    "basis": {
+      "change": "FS05 role profiles: new requirements count their full level, raised ones the increase, weighted core 3, important 2, useful 1",
+      "growth": "Released skills outlook (SIMULATED), skill families weighted by how much the role needs them; the 5% line follows O*NET Bright Outlook",
+      "shortfall": "Pressure, kept apart from later demand: projected demand minus holders, as a share of demand"
+    },
+    "lineStaff": "Median demand growth across labelled roles",
+    "linePublic": "Growth threshold",
+    "lineKafaa": "Kafa'a threshold",
+    "rolesTitle": "Labels by role",
+    "rolesDescPublic": "Every current role and its label for each year. Past labels stay as they were published.",
+    "rolesDescStaff": "Every current role, its label for each year, and the components behind it (staff view).",
+    "yearPick": "Year",
+    "current": "current",
+    "filter": "Filter by label",
+    "all": "All",
+    "notMeasured": "not measured",
+    "publicNote": "Public pages show the label only. Staff see the components behind each label when signed in. Security, safeguards and cyber roles appear at career-path level only and concept roles have no vacancy, so neither carries a label.",
+    "versionsTitle": "Criteria versions",
+    "versionsDesc": "When the criteria change, a new version is published; labels keep the version they were made under.",
+    "version": "Version {v}",
+    "status": {
+      "published": "In force",
+      "retired": "Retired"
+    },
+    "yearsRange": "Used for {from} to {to}",
+    "yearsFrom": "Used from {from}",
+    "hr": {
+      "title": "This year's labels",
+      "desc": "Recompute the {year} labels from today's inputs and compare them with what is published. Only the HR director publishes; past years cannot be changed.",
+      "preview": "Preview from today's inputs",
+      "publish": "Publish labels",
+      "onlyDirector": "Only the HR director can publish.",
+      "changed": "{n} would change",
+      "confirmTitle": "Publish the {year} outlook labels?",
+      "confirmBody": "{n} role labels are published ({changed} change). The labels are public; the components stay staff-only. This is audited and recorded in the NEXUS evidence ledger.",
+      "done": "Outlook labels published"
+    },
+    "disclaimer": "Labels are planning signals built from SIMULATED outlook inputs and FS05 planning assumptions. They are not forecasts, carry no staffing numbers and imply no deployment decision. ENEC decides roles and vacancies.",
+    "reason": {
+      "growing": "Growing: demand growth and shortfall both cross their thresholds",
+      "changing": "Changing: the 2030 profile change crosses its threshold",
+      "stable": "Stable: no signal crosses its threshold",
+      "change": "Profile change by 2030: {pct}% of today's requirement weight (threshold {min}%)",
+      "change_none": "No profile change measured for this role",
+      "growth": "Demand growth {from} to {to}: {pct}% (threshold {min}%)",
+      "growth_none": "Demand growth not available (families suppressed in the outlook)",
+      "shortfall": "Demand above holders in {year}: {pct}% of demand",
+      "archived": "Archived label: kept as it was published that year",
+      "simulated": "Inputs are SIMULATED planning numbers, not forecasts"
     }
   }
 }

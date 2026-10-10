@@ -33,7 +33,7 @@ export const INDICATIVE = { qualifyMonths: 6, programmeWeeks: 12, fanrAfterDays:
 export const FANR_NOTICE_DAYS = 60;
 
 export type Lane = 'experience' | 'programme' | 'milestone' | 'development';
-export type BlockKind = 'qualify' | 'experience' | 'programme' | 'internal_exam' | 'fanr_notice' | 'fanr_exam' | 'certification' | 'clearance' | 'medical' | 'appointment' | 'move' | 'rotation' | 'mentoring' | 'leadership' | 'course';
+export type BlockKind = 'qualify' | 'experience' | 'programme' | 'bridge' | 'internal_exam' | 'fanr_notice' | 'fanr_exam' | 'certification' | 'clearance' | 'medical' | 'appointment' | 'move' | 'rotation' | 'mentoring' | 'leadership' | 'course';
 export interface Block {
   id: string;
   lane: Lane;
@@ -74,6 +74,10 @@ export interface RoadmapInput {
   sources?: SourceRef[];
   gapCourses?: RmCourse[];
   leadershipCourse?: RmCourse | null;
+  /** FS15: concept role ids (FS05 lifecycle 'concept'). A route into one ends with an indicative bridge-learning block sized by
+   *  the person's gaps against the concept profile (bridgeMonths) and a "profile-ready" milestone instead of a move. */
+  conceptRoles?: string[];
+  bridgeMonths?: number;
 }
 
 // ───────────── UTC date helpers (ISO yyyy-mm-dd)
@@ -203,8 +207,19 @@ export function buildRoadmap(input: RoadmapInput, s: Scenario): Roadmap {
       done = cert;
     }
     if (has('appointment')) blocks.push({ id: `appoint-${i}`, lane: 'milestone', kind: 'appointment', title: { en: 'Licensee appointment decision', ar: 'قرار التعيين من المرخَّص له' }, start: done, end: done, source: null, rule_ref: e.rule_ref ?? null, indicative: false, critical: true, edge_id: e.id });
-    if (!progs.length && !has('exam', 'fanr')) done = nextIntake(gateDate);
-    blocks.push({ id: `move-${i}`, lane: 'milestone', kind: 'move', title: { en: `Move to ${to.en}`, ar: `الانتقال إلى ${to.ar}` }, start: done, end: done, source: null, indicative: false, critical: true, edge_id: e.id });
+    const concept = (input.conceptRoles ?? []).includes(e.to_role_id);
+    if (concept) {
+      // FS15: bridge learning towards the concept profile, then "profile-ready" (no vacancy, no deployment decision)
+      const m = Math.max(INDICATIVE.courseMonths, Math.round(input.bridgeMonths ?? 0));
+      const end = addMonths(gateDate, m);
+      const title: BiText = { en: `Bridge learning towards the ${to.en} profile`, ar: `تعلّم جسري نحو ملف ${to.ar}` };
+      if (!firstProgramme) firstProgramme = title;
+      blocks.push({ id: `bridge-${i}`, lane: 'programme', kind: 'bridge', title, start: gateDate, end, months: m, source: null, indicative: true, critical: true, edge_id: e.id });
+      done = end;
+    } else if (!progs.length && !has('exam', 'fanr')) done = nextIntake(gateDate);
+    blocks.push(concept
+      ? { id: `move-${i}`, lane: 'milestone', kind: 'move', title: { en: `Profile-ready for ${to.en} (concept role: no vacancy, no deployment decision)`, ar: `جاهزية الملف لدور ${to.ar} (دور مفاهيمي: لا وظيفة شاغرة ولا قرار نشر)` }, start: done, end: done, source: null, indicative: true, critical: true, edge_id: e.id }
+      : { id: `move-${i}`, lane: 'milestone', kind: 'move', title: { en: `Move to ${to.en}`, ar: `الانتقال إلى ${to.ar}` }, start: done, end: done, source: null, indicative: false, critical: true, edge_id: e.id });
     cursor = done;
   });
 

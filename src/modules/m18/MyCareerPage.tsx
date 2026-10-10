@@ -2,7 +2,7 @@
 // role from my own skill state (rpc.careerReadiness: weighted coverage, gates shown separately), role cards with the top gaps and
 // the courses that close them, "roles like mine" (cosine similarity of role skill vectors) and a shortlist of up to three targets
 // that drives the roadmap (F06). Every suggestion carries its reasons (<WhyThis>). Indicative guidance; ENEC and FANR decide.
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { Page, Section, Card, Async, EmptyState, Callout, StatusPill, StatTile, Grid, Drawer, Icon, CheckboxField, WhyThis, EngineBadge } from '../../ui';
 import { useAction, useRepo } from '../../data';
 import { useEngine } from '../../data/useEngine'; // direct import: avoids a circular chunk warning in the build
@@ -13,6 +13,11 @@ import { BandPill, GatePill, GateRoutes, OpportunityMap, ReadinessRing, useArrow
 import { ReadinessSure } from '../m17/confidenceUi'; // FS03 (M17): how sure the readiness is (band and range)
 
 import { RecoOptedOut, UnrankedRoles, useRecoOptOut } from '../m16/optout'; // W3E5 (F24): per-surface opt-out
+// FS15 / FS16 (FS wave B · E5): concept future roles with readiness against their FS05 profiles, transition evidence on every
+// move (suppressed under 10) and the role outlook label with its components
+import { FutureRolesSection, ConceptDetail } from './FutureRoles';
+import { ConceptBandPill, ConceptChip, OutlookChip, TransitionNote, useConceptReadiness, useCurrentLabels, useTransitions } from './futureUi';
+import type { ConceptReadiness, TransitionEvidence } from './futureRoles';
 
 const MAX_TARGETS = 3;
 
@@ -69,6 +74,16 @@ function Navigator({ d, me }: { d: CareerBase; me: string }) {
   const active = d.targets.filter((x) => x.active).sort((a, b) => a.rank - b.rank);
   const ids = useMemo(() => [...new Set([myRole, ...reach.keys(), ...similar.map((x) => x.id), ...active.map((x) => x.role_id)])], [myRole, reach, similar, active]);
   const ready = useReadiness(me, ids);
+  const conceptIds = useMemo(() => d.roles.filter((r) => (r as { lifecycle?: string }).lifecycle === 'concept').map((r) => r.id), [d.roles]);
+  const concept = useConceptReadiness(me, null);
+  const conceptMap = concept.data ?? new Map<string, ConceptReadiness>();
+  const tr = useTransitions(myRole, [...reach.keys(), ...conceptIds]);
+  const trMap = tr.data ?? new Map<string, TransitionEvidence>();
+  const outlook = useCurrentLabels();
+  const outlookOf = (roleId: string) => {
+    const row = outlook?.byRole.get(roleId);
+    return row ? <OutlookChip row={row} components={outlook!.d.components.get(row.id) ?? null} criteria={outlook!.d.criteria} /> : null;
+  };
   const doneCourses = useMemo(() => new Set(d.trainingRecords.filter((x) => x.result === 'passed' || x.result === 'completed').map((x) => x.course_id)), [d.trainingRecords]);
   const closing = (roleId: string) => {
     const courses = d.courses.filter((c) => c.audience === 'staff' && !doneCourses.has(c.id)) as { id: string; competency_ids: string[]; qualifying: boolean; duration_hours: number | null; title_en: string; title_ar: string }[];
@@ -143,7 +158,8 @@ function Navigator({ d, me }: { d: CareerBase; me: string }) {
                   {moves.map((m) => {
                     const r = rs(m.id);
                     return <RoleCard key={m.id} d={d} roleId={m.id} r={r} reasons={[...m.reasons.filter((x) => x.code !== 'readiness'), ...(r?.reasons ?? [])]} steps={m.item?.steps ?? 1} type={m.item?.type ?? 'lateral'} path={m.item?.path ?? []}
-                      closing={r && !r.path_only ? closing(m.id) : []} onOpen={() => setSelected(m.id)} shortlisted={active.some((x) => x.role_id === m.id)} canAdd={active.length < MAX_TARGETS} onAdd={() => addTarget(m.id)} myRole={myRole} arrow={arrow} />;
+                      closing={r && !r.path_only ? closing(m.id) : []} onOpen={() => setSelected(m.id)} shortlisted={active.some((x) => x.role_id === m.id)} canAdd={active.length < MAX_TARGETS} onAdd={() => addTarget(m.id)} myRole={myRole} arrow={arrow}
+                      ev={trMap.get(m.id)} outlook={outlookOf(m.id)} />;
                   })}
                 </ul>
               </Section>
@@ -164,6 +180,7 @@ function Navigator({ d, me }: { d: CareerBase; me: string }) {
                           <div className="mt-0.5 flex flex-wrap gap-1.5">
                             <StatusPill tone="info">{t('m18.similar.match', { pct: f.num(Math.round(x.score * 100)) })}</StatusPill>
                             {r && <BandPill r={r} />}
+                            {outlookOf(x.id)}
                           </div>
                           <div className="mt-1.5 flex flex-wrap items-center gap-1">
                             <WhyThis reasons={[...x.reasons, ...(r?.reasons ?? []).filter((z) => z.code !== 'readiness')]} testId="m18-similar-why" />
@@ -180,6 +197,9 @@ function Navigator({ d, me }: { d: CareerBase; me: string }) {
               )}
             </Section>
 
+            <FutureRolesSection d={d} me={me} myRole={myRole} concept={conceptMap} transitions={trMap} shortlisted={(id) => active.some((x) => x.role_id === id)}
+              canAdd={active.length < MAX_TARGETS} onAdd={(id) => void addTarget(id)} onOpen={setSelected} />
+
             <Section title={t('m18.short.title')} description={t('m18.short.desc', { n: f.num(MAX_TARGETS) })}>
               <Card>
                 {active.length === 0 ? (
@@ -189,12 +209,13 @@ function Navigator({ d, me }: { d: CareerBase; me: string }) {
                     <ol className="divide-y divide-line" data-testid="m18-shortlist">
                       {active.map((x, i) => {
                         const r = rs(x.role_id);
+                        const cr = conceptMap.get(x.role_id);
                         return (
-                          <li key={x.id} className="flex flex-wrap items-center gap-3 py-2.5">
+                          <li key={x.id} className="flex flex-wrap items-center gap-3 py-2.5" data-concept={cr ? 'true' : undefined}>
                             <span className="num grid h-7 w-7 place-items-center rounded-full bg-accent-soft text-[12px] font-semibold text-eyebrow">{f.num(i + 1)}</span>
                             <div className="min-w-0 flex-1">
                               <div className="font-semibold">{pick(d.roleById.get(x.role_id), 'title')}</div>
-                              <div className="mt-0.5 flex flex-wrap gap-1.5">{r && <BandPill r={r} />}{r && !r.path_only && <GatePill status={r.gate_status} />}{r?.pct != null && <StatusPill tone="neutral">{f.pct(r.pct, 0)}</StatusPill>}</div>
+                              <div className="mt-0.5 flex flex-wrap gap-1.5">{cr ? <><ConceptChip /><ConceptBandPill r={cr} /><StatusPill tone="neutral">{f.pct(cr.pct, 0)}</StatusPill></> : <>{r && <BandPill r={r} />}{r && !r.path_only && <GatePill status={r.gate_status} />}{r?.pct != null && <StatusPill tone="neutral">{f.pct(r.pct, 0)}</StatusPill>}</>}</div>
                             </div>
                             <div className="flex flex-wrap items-center gap-1">
                               <button className="btn-ghost btn-sm" aria-label={t('m18.short.up')} disabled={i === 0} onClick={() => move(i, -1)}><Icon name="chevronDown" size={14} className="rotate-180" /></button>
@@ -217,7 +238,9 @@ function Navigator({ d, me }: { d: CareerBase; me: string }) {
             <p className="text-[12.5px] text-ink-3" data-testid="m18-disclaimer">{t('m18.disclaimer')}</p>
 
             <Drawer open={!!selected} onClose={() => setSelected(null)} title={selected ? pick(d.roleById.get(selected), 'title') : ''}>
-              {selected && <RoleDetail d={d} roleId={selected} r={sel} closing={sel && !sel.path_only ? closing(selected) : []} />}
+              {selected && (conceptIds.includes(selected)
+                ? <ConceptDetail d={d} r={conceptMap.get(selected) ?? null} ev={trMap.get(selected)} />
+                : <RoleDetail d={d} roleId={selected} r={sel} closing={sel && !sel.path_only ? closing(selected) : []} ev={trMap.get(selected)} outlook={outlookOf(selected)} />)}
             </Drawer>
           </>
         );
@@ -228,7 +251,7 @@ function Navigator({ d, me }: { d: CareerBase; me: string }) {
 
 type Closing = ReturnType<ReturnType<typeof useEngine>['rank']['coursesForGaps']>;
 
-function RoleCard(p: { d: CareerBase; roleId: string; r: CareerReadiness | null; reasons: Reason[]; steps: number; type: string; path: string[]; closing: Closing; onOpen: () => void; shortlisted: boolean; canAdd: boolean; onAdd: () => void; myRole: string; arrow: string }) {
+function RoleCard(p: { d: CareerBase; roleId: string; r: CareerReadiness | null; reasons: Reason[]; steps: number; type: string; path: string[]; closing: Closing; onOpen: () => void; shortlisted: boolean; canAdd: boolean; onAdd: () => void; myRole: string; arrow: string; ev?: TransitionEvidence; outlook?: ReactNode }) {
   const t = useT();
   const pick = usePick();
   const f = useFormat();
@@ -250,7 +273,9 @@ function RoleCard(p: { d: CareerBase; roleId: string; r: CareerReadiness | null;
             {p.r && <BandPill r={p.r} />}
             {p.r && !p.r.path_only && <GatePill status={p.r.gate_status} />}
             {months > 0 && <StatusPill tone="neutral">{t('m18.card.typical', { n: f.num(months) })}</StatusPill>}
+            {p.outlook}
           </div>
+          {p.steps === 1 && <div className="mt-1"><TransitionNote ev={p.ev} /></div>}
           {p.r && !p.r.path_only && <div className="mt-1"><ReadinessSure states={p.d.states} skills={p.d.skills} roleComps={p.d.roleComps} roleId={p.roleId} /></div>}
           {p.path.length > 1 && <div className="mt-1 text-[12px] text-ink-2">{[p.myRole, ...p.path].map((id) => pick(p.d.roleById.get(id), 'title')).join(` ${p.arrow} `)}</div>}
         </div>
@@ -296,7 +321,7 @@ function RoleCard(p: { d: CareerBase; roleId: string; r: CareerReadiness | null;
   );
 }
 
-function RoleDetail({ d, roleId, r, closing }: { d: CareerBase; roleId: string; r: CareerReadiness | null; closing: Closing }) {
+function RoleDetail({ d, roleId, r, closing, ev, outlook }: { d: CareerBase; roleId: string; r: CareerReadiness | null; closing: Closing; ev?: TransitionEvidence; outlook?: ReactNode }) {
   const t = useT();
   const pick = usePick();
   const f = useFormat();
@@ -306,7 +331,8 @@ function RoleDetail({ d, roleId, r, closing }: { d: CareerBase; roleId: string; 
       <div className="flex items-center gap-4">
         <ReadinessRing r={r} size={72} />
         <div className="space-y-1">
-          <div className="flex flex-wrap gap-1.5"><BandPill r={r} />{!r.path_only && <GatePill status={r.gate_status} />}</div>
+          <div className="flex flex-wrap gap-1.5"><BandPill r={r} />{!r.path_only && <GatePill status={r.gate_status} />}{outlook}</div>
+          <TransitionNote ev={ev} />
           <p className="text-[13px] text-ink-2">{r.path_only ? t('m18.pathOnlyHint') : t('m18.detail.readinessNote')}</p>
           {!r.path_only && <ReadinessSure states={d.states} skills={d.skills} roleComps={d.roleComps} roleId={roleId} detail />}
           <WhyThis reasons={r.reasons} testId="m18-detail-why" />

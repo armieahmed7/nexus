@@ -16,5 +16,10 @@ export function makeSupabaseM18(x: SupabaseExtCtx): M18Rpc {
     conversationInsights: () => x.call('kafaa_conversation_insights', {}, []),
     teamConversations: () => x.call('kafaa_team_conversations', {}, []),
     conversationReminders: () => x.call('kafaa_conversation_reminders', {}, ['notifications']),
+    // FS15 / FS16 (FS wave B · E5)
+    futureRoleReadiness: (personId, roleIds) => x.call('kafaa_future_role_readiness', { p_person: personId, p_role_ids: roleIds }, []),
+    transitionEvidence: (fromRoleId, toRoleIds) => x.call('kafaa_transition_evidence', { p_from: fromRoleId, p_to: toRoleIds }, []),
+    outlookLabelsPreview: (year) => x.call('kafaa_outlook_labels_preview', { p_year: year }, []),
+    publishOutlookLabels: (year) => x.call('kafaa_publish_outlook_labels', { p_year: year }, ['role_outlook_labels', 'role_outlook_components']),
   };
 }
