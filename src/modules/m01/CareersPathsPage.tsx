@@ -5,6 +5,7 @@ import { Page, Section, Card, Grid, Async, EmptyState, Tabs, CareerLadder, PathG
 import { useT, usePick, useI18n, useNav, L, useFormat } from '../../i18n';
 import { useCareerData, BasisBadge, EdgeCard, CareerSourcesFooter, useConditionText, useArrow, LEVELS, type CareerData } from './shared';
 import { ladderSteps, edgeMonths, neighbours } from './careerGraph';
+import { ConceptBanner, PlanningNotice, BenchmarkChips } from './horizons';
 
 export default function CareersPathsPage() {
   const t = useT();
@@ -31,6 +32,7 @@ export default function CareersPathsPage() {
               { id: 'hierarchy', label: t('m01.paths.tabHierarchy'), content: <HierarchyView data={d} /> },
               { id: 'family', label: t('m01.paths.tabFamily'), content: <FamilyView data={d} family={v.family || d.families[0]?.id} setFamily={(family) => setV({ family })} /> },
               { id: 'graph', label: t('m01.paths.tabGraph'), content: <GraphView data={d} type={v.type} setType={(type) => setV({ type })} /> },
+              { id: 'future', label: t('m01.fs05.paths.tab'), content: <FutureView data={d} /> },
             ]}
           />
         )}
@@ -235,6 +237,37 @@ function GraphView({ data, type, setType }: { data: CareerData; type: string; se
         </ul>
       </details>
       <p className="text-[12.5px] text-ink-3">{t('m01.paths.isolated', { n: data.roles.filter((r) => !neighbours(data.paths, r.id).next.length && !neighbours(data.paths, r.id).prev.length).length })}</p>
+    </div>
+  );
+}
+
+/** FS05: current roles -> concept future roles over 'future' edges (planning assumption; no vacancy, no deployment decision). */
+function FutureView({ data }: { data: CareerData }) {
+  const t = useT();
+  const pick = usePick();
+  const nav = useNav();
+  const { dir } = useI18n();
+  const condText = useConditionText();
+  const from = [...new Set(data.futurePaths.map((e) => e.from_role_id!))];
+  const nodes = [
+    ...from.map((id) => ({ id, label: pick(data.roleById.get(id), 'title'), group: 'current' })),
+    ...data.concepts.map((r) => ({ id: r.id, label: pick(r, 'title'), group: 'concept' })),
+  ];
+  return (
+    <div className="space-y-4" data-testid="m01-future-graph">
+      <ConceptBanner />
+      <PlanningNotice />
+      <Card title={t('m01.fs05.paths.graphTitle')}>
+        <PathGraph nodes={nodes} edges={data.futurePaths.map((e) => ({ from: e.from_role_id!, to: e.to_role_id }))} onSelect={(id) => nav(`/careers/roles/${id}`)} rtl={dir === 'rtl'} />
+      </Card>
+      <Section title={t('m01.fs05.paths.listTitle')} description={t('m01.fs05.paths.listDesc')}>
+        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+          {data.futurePaths.map((e) => (
+            <EdgeCard key={e.id} edge={e} to={data.conceptById.get(e.to_role_id)} title={pick(data.roleById.get(e.from_role_id!), 'title')} conds={[`${pick(data.roleById.get(e.from_role_id!), 'title')} ${dir === 'rtl' ? '←' : '→'} ${pick(data.conceptById.get(e.to_role_id), 'title')}`, ...condText(e)]} />
+          ))}
+        </div>
+      </Section>
+      <BenchmarkChips />
     </div>
   );
 }

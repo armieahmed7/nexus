@@ -194,6 +194,7 @@ export interface JobRolesRow {
   status: 'published' | 'draft';
   version: number;
   sort: number;
+  lifecycle: 'current' | 'concept';
 }
 export interface RoleResponsibilitiesRow {
   id: string;
@@ -243,6 +244,7 @@ export interface CareerPathsRow {
   rule_ref?: string | null;
   basis: 'barakah' | 'generic' | 'uncertain';
   sort: number;
+  kind: 'current' | 'future';
 }
 export interface QualStandardsRow {
   id: string;
@@ -1476,6 +1478,28 @@ export interface LedgerLocalRow {
   prev_hash: string;
   hash: string;
   actor_persona_id?: string | null;
+}
+export interface RoleProfileVersionsRow {
+  id: string;
+  role_id: string;
+  horizon: 'now' | '2030' | '2035';
+  version: number;
+  status: 'draft' | 'published' | 'superseded';
+  is_public: boolean;
+  path_only: boolean;
+  requirements: any;
+  drivers: string[];
+  rationale_en: string;
+  rationale_ar: string;
+  sources: any;
+  as_of: string;
+  supersedes_id?: string | null;
+  superseded_by_id?: string | null;
+  created_by?: string | null;
+  created_at: string;
+  updated_at: string;
+  published_by?: string | null;
+  published_at?: string | null;
 }
 export interface InstructorTracksRow {
   id: string;
@@ -3428,6 +3452,7 @@ export interface Tables {
   engine_settings: EngineSettingsRow;
   benchmarks: BenchmarksRow;
   ledger_local: LedgerLocalRow;
+  role_profile_versions: RoleProfileVersionsRow;
   instructor_tracks: InstructorTracksRow;
   instructor_observations: InstructorObservationsRow;
   teaching_hours: TeachingHoursRow;

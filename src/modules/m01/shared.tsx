@@ -26,12 +26,20 @@ export function useCareerData() {
       repo.list('career_paths', { order: [['sort', 'asc']] }),
       repo.list('sources'),
     ]);
+    // FS05: concept future roles and 'future' edges are kept apart, so the existing views show today's map unchanged.
+    const current = roles.filter((r) => r.lifecycle !== 'concept');
+    const concepts = roles.filter((r) => r.lifecycle === 'concept');
+    const edges = paths as Edge[];
     return {
-      roles,
+      roles: current,
+      concepts,
       families,
-      paths: paths as Edge[],
+      paths: edges.filter((e) => e.kind !== 'future'),
+      futurePaths: edges.filter((e) => e.kind === 'future'),
       sources,
-      roleById: new Map(roles.map((r) => [r.id, r])),
+      roleById: new Map(current.map((r) => [r.id, r])),
+      conceptById: new Map(concepts.map((r) => [r.id, r])),
+      anyRoleById: new Map(roles.map((r) => [r.id, r])),
       familyById: new Map(families.map((f) => [f.id, f])),
       sourceById: new Map(sources.map((s) => [s.id, s])),
     };

@@ -239,7 +239,8 @@ create table if not exists kafaa_job_roles (
   sources jsonb not null default '[]'::jsonb,
   status text not null default 'published' check (status in ('published', 'draft')),
   version integer not null default 1,
-  sort integer not null default 0
+  sort integer not null default 0,
+  lifecycle text not null default 'current' check (lifecycle in ('current', 'concept'))
 );
 comment on table kafaa_job_roles is '[M01] Role (28 seed roles) with EN/AR, regulated flag, basis and sources';
 
@@ -303,7 +304,8 @@ create table if not exists kafaa_career_paths (
   conditions jsonb not null default '[]'::jsonb,
   rule_ref text,
   basis text not null default 'barakah' check (basis in ('barakah', 'generic', 'uncertain')),
-  sort integer not null default 0
+  sort integer not null default 0,
+  kind text not null default 'current' check (kind in ('current', 'future'))
 );
 comment on table kafaa_career_paths is '[M01] Progression edge with structured conditions and rule reference';
 
@@ -1792,6 +1794,31 @@ create table if not exists kafaa_benchmarks (
   updated_by text
 );
 comment on table kafaa_benchmarks is '[M28] International future-skills benchmarks: owner, year, sources, as-of date, figures, what Kafa''a borrows (FS01)';
+
+-- M01 · Role profile versions for now, 2030 and 2035 (planning assumptions; FS05)
+create table if not exists kafaa_role_profile_versions (
+  id text primary key,
+  role_id text not null,
+  horizon text not null check (horizon in ('now', '2030', '2035')),
+  version integer not null default 1,
+  status text not null default 'draft' check (status in ('draft', 'published', 'superseded')),
+  is_public boolean not null default false,
+  path_only boolean not null default false,
+  requirements jsonb not null default '[]'::jsonb,
+  drivers text[] not null default '{}'::text[],
+  rationale_en text not null,
+  rationale_ar text not null,
+  sources jsonb not null default '[]'::jsonb,
+  as_of date not null,
+  supersedes_id text,
+  superseded_by_id text,
+  created_by text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  published_by text,
+  published_at timestamptz
+);
+comment on table kafaa_role_profile_versions is '[M01] Role profile versions for now, 2030 and 2035 (planning assumptions; FS05)';
 
 -- M02 · Instructor and SME qualification track: nomination, initial training, observed deliveries, qualification and annual currency (F31)
 create table if not exists kafaa_instructor_tracks (
@@ -4090,6 +4117,7 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sk
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_evidence_skill_id_fk') then alter table kafaa_skill_evidence add constraint kafaa_skill_evidence_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_person_skills_person_id_fk') then alter table kafaa_person_skills add constraint kafaa_person_skills_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_person_skills_skill_id_fk') then alter table kafaa_person_skills add constraint kafaa_person_skills_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_profile_versions_role_id_fk') then alter table kafaa_role_profile_versions add constraint kafaa_role_profile_versions_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_instructor_tracks_person_id_fk') then alter table kafaa_instructor_tracks add constraint kafaa_instructor_tracks_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_instructor_tracks_nominated_by_fk') then alter table kafaa_instructor_tracks add constraint kafaa_instructor_tracks_nominated_by_fk foreign key (nominated_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_instructor_tracks_accepted_by_fk') then alter table kafaa_instructor_tracks add constraint kafaa_instructor_tracks_accepted_by_fk foreign key (accepted_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -4369,12 +4397,14 @@ create index if not exists kafaa_audit_events_action_idx on kafaa_audit_events (
 create index if not exists kafaa_notifications_person_id_idx on kafaa_notifications (person_id);
 create index if not exists kafaa_data_requests_person_id_idx on kafaa_data_requests (person_id);
 create index if not exists kafaa_job_roles_family_id_idx on kafaa_job_roles (family_id);
+create index if not exists kafaa_job_roles_lifecycle_idx on kafaa_job_roles (lifecycle);
 create index if not exists kafaa_role_responsibilities_role_id_idx on kafaa_role_responsibilities (role_id);
 create index if not exists kafaa_competencies_domain_idx on kafaa_competencies (domain);
 create index if not exists kafaa_role_competencies_role_id_idx on kafaa_role_competencies (role_id);
 create index if not exists kafaa_role_competencies_competency_id_idx on kafaa_role_competencies (competency_id);
 create index if not exists kafaa_career_paths_from_role_id_idx on kafaa_career_paths (from_role_id);
 create index if not exists kafaa_career_paths_to_role_id_idx on kafaa_career_paths (to_role_id);
+create index if not exists kafaa_career_paths_kind_idx on kafaa_career_paths (kind);
 create index if not exists kafaa_qual_standards_code_idx on kafaa_qual_standards (code);
 create index if not exists kafaa_task_items_standard_id_idx on kafaa_task_items (standard_id);
 create index if not exists kafaa_jpms_task_id_idx on kafaa_jpms (task_id);
@@ -4515,6 +4545,9 @@ create index if not exists kafaa_person_skills_skill_id_idx on kafaa_person_skil
 create index if not exists kafaa_person_skills_org_id_idx on kafaa_person_skills (org_id);
 create index if not exists kafaa_benchmarks_category_idx on kafaa_benchmarks (category);
 create index if not exists kafaa_benchmarks_status_idx on kafaa_benchmarks (status);
+create index if not exists kafaa_role_profile_versions_role_id_idx on kafaa_role_profile_versions (role_id);
+create index if not exists kafaa_role_profile_versions_horizon_idx on kafaa_role_profile_versions (horizon);
+create index if not exists kafaa_role_profile_versions_status_idx on kafaa_role_profile_versions (status);
 create index if not exists kafaa_instructor_tracks_person_id_idx on kafaa_instructor_tracks (person_id);
 create index if not exists kafaa_instructor_tracks_stage_idx on kafaa_instructor_tracks (stage);
 create index if not exists kafaa_instructor_tracks_status_idx on kafaa_instructor_tracks (status);
@@ -4873,4 +4906,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 218) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 219) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
