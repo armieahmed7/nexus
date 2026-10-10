@@ -4055,6 +4055,75 @@ create table if not exists kafaa_xapi_statements (
 );
 comment on table kafaa_xapi_statements is '[M27] xAPI statement (learning record store; append-only; actor by Kafa''a account, no email) (F30)';
 
+-- M28 · External skills frameworks the crosswalk aligns to: owner, version, code kind, level scale, source (FS08)
+create table if not exists kafaa_skill_frameworks (
+  id text primary key,
+  short text not null,
+  name_en text not null,
+  name_ar text not null,
+  owner_en text not null,
+  owner_ar text not null,
+  version_label text not null default '',
+  kind text not null check (kind in ('skills', 'occupations', 'competences', 'qualifications', 'reference')),
+  code_label_en text not null default '',
+  code_label_ar text not null default '',
+  codes_copied boolean not null default false,
+  level_scale_en text not null default '',
+  level_scale_ar text not null default '',
+  scope_en text not null default '',
+  scope_ar text not null default '',
+  url text not null,
+  benchmark_id text,
+  as_of date not null,
+  sort integer not null default 0
+);
+comment on table kafaa_skill_frameworks is '[M28] External skills frameworks the crosswalk aligns to: owner, version, code kind, level scale, source (FS08)';
+
+-- M28 · Skill crosswalk: one external framework entry per row, match type, level map, source and review state (FS08)
+create table if not exists kafaa_skill_alignments (
+  id text primary key,
+  skill_id text not null,
+  framework text not null,
+  external_code text,
+  label_en text not null,
+  label_ar text not null,
+  label_ar_official boolean not null default false,
+  external_meta jsonb not null default '{}'::jsonb,
+  match_type text not null check (match_type in ('exact', 'close', 'broad', 'partial')),
+  level_map jsonb not null default '{}'::jsonb,
+  note_en text not null default '',
+  note_ar text not null default '',
+  source_url text not null,
+  as_of date not null,
+  status text not null default 'draft' check (status in ('draft', 'published', 'retired')),
+  listed boolean not null default false,
+  reviewed_by text,
+  reviewed_role text,
+  reviewed_on date,
+  retired_reason text,
+  retired_on date,
+  version integer not null default 1,
+  created_by text,
+  created_at timestamptz not null default now(),
+  updated_by text,
+  updated_at timestamptz not null default now(),
+  sort integer not null default 0
+);
+comment on table kafaa_skill_alignments is '[M28] Skill crosswalk: one external framework entry per row, match type, level map, source and review state (FS08)';
+
+-- M28 · Skills a person wants to grow, added from the skills explorer (FS07; hand-off to FS33)
+create table if not exists kafaa_skill_goals (
+  id text primary key,
+  person_id text not null,
+  skill_id text not null,
+  target_level integer not null default 2,
+  status text not null default 'active' check (status in ('active', 'removed')),
+  source text not null default 'skills_explorer',
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_skill_goals is '[M28] Skills a person wants to grow, added from the skills explorer (FS07; hand-off to FS33)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -4444,6 +4513,10 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ac
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_accr_assessments_criterion_id_fk') then alter table kafaa_accr_assessments add constraint kafaa_accr_assessments_criterion_id_fk foreign key (criterion_id) references kafaa_accr_criteria(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_accr_assessments_rated_by_fk') then alter table kafaa_accr_assessments add constraint kafaa_accr_assessments_rated_by_fk foreign key (rated_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_xapi_statements_actor_person_id_fk') then alter table kafaa_xapi_statements add constraint kafaa_xapi_statements_actor_person_id_fk foreign key (actor_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_alignments_skill_id_fk') then alter table kafaa_skill_alignments add constraint kafaa_skill_alignments_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_alignments_framework_fk') then alter table kafaa_skill_alignments add constraint kafaa_skill_alignments_framework_fk foreign key (framework) references kafaa_skill_frameworks(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_goals_person_id_fk') then alter table kafaa_skill_goals add constraint kafaa_skill_goals_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_goals_skill_id_fk') then alter table kafaa_skill_goals add constraint kafaa_skill_goals_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -4965,6 +5038,14 @@ create index if not exists kafaa_xapi_statements_object_type_idx on kafaa_xapi_s
 create index if not exists kafaa_xapi_statements_object_id_idx on kafaa_xapi_statements (object_id);
 create index if not exists kafaa_xapi_statements_occurred_at_idx on kafaa_xapi_statements (occurred_at);
 create index if not exists kafaa_xapi_statements_source_idx on kafaa_xapi_statements (source);
+create index if not exists kafaa_skill_frameworks_benchmark_id_idx on kafaa_skill_frameworks (benchmark_id);
+create index if not exists kafaa_skill_alignments_skill_id_idx on kafaa_skill_alignments (skill_id);
+create index if not exists kafaa_skill_alignments_framework_idx on kafaa_skill_alignments (framework);
+create index if not exists kafaa_skill_alignments_match_type_idx on kafaa_skill_alignments (match_type);
+create index if not exists kafaa_skill_alignments_status_idx on kafaa_skill_alignments (status);
+create index if not exists kafaa_skill_goals_person_id_idx on kafaa_skill_goals (person_id);
+create index if not exists kafaa_skill_goals_skill_id_idx on kafaa_skill_goals (skill_id);
+create index if not exists kafaa_skill_goals_status_idx on kafaa_skill_goals (status);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -4979,4 +5060,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 223) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 226) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

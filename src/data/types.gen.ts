@@ -3394,6 +3394,66 @@ export interface XapiStatementsRow {
   stored_by?: string | null;
   version: string;
 }
+export interface SkillFrameworksRow {
+  id: string;
+  short: string;
+  name_en: string;
+  name_ar: string;
+  owner_en: string;
+  owner_ar: string;
+  version_label: string;
+  kind: 'skills' | 'occupations' | 'competences' | 'qualifications' | 'reference';
+  code_label_en: string;
+  code_label_ar: string;
+  codes_copied: boolean;
+  level_scale_en: string;
+  level_scale_ar: string;
+  scope_en: string;
+  scope_ar: string;
+  url: string;
+  benchmark_id?: string | null;
+  as_of: string;
+  sort: number;
+}
+export interface SkillAlignmentsRow {
+  id: string;
+  skill_id: string;
+  framework: string;
+  external_code?: string | null;
+  label_en: string;
+  label_ar: string;
+  label_ar_official: boolean;
+  external_meta: any;
+  match_type: 'exact' | 'close' | 'broad' | 'partial';
+  level_map: any;
+  note_en: string;
+  note_ar: string;
+  source_url: string;
+  as_of: string;
+  status: 'draft' | 'published' | 'retired';
+  listed: boolean;
+  reviewed_by?: string | null;
+  reviewed_role?: string | null;
+  reviewed_on?: string | null;
+  retired_reason?: string | null;
+  retired_on?: string | null;
+  version: number;
+  created_by?: string | null;
+  created_at: string;
+  updated_by?: string | null;
+  updated_at: string;
+  sort: number;
+}
+export interface SkillGoalsRow {
+  id: string;
+  person_id: string;
+  skill_id: string;
+  target_level: number;
+  status: 'active' | 'removed';
+  source: string;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -3620,6 +3680,9 @@ export interface Tables {
   accr_selfevals: AccrSelfevalsRow;
   accr_assessments: AccrAssessmentsRow;
   xapi_statements: XapiStatementsRow;
+  skill_frameworks: SkillFrameworksRow;
+  skill_alignments: SkillAlignmentsRow;
+  skill_goals: SkillGoalsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];
