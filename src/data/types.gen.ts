@@ -2453,6 +2453,9 @@ export interface MicrocredDefsRow {
   updated_at: string;
   published_by?: string | null;
   published_at?: string | null;
+  strategic: boolean;
+  strategic_note?: string | null;
+  strategic_since?: string | null;
 }
 export interface MicrocredAwardsRow {
   id: string;
@@ -2492,6 +2495,47 @@ export interface SkillDecayClassesRow {
   sources: any;
   as_of: string;
   sort: number;
+}
+export interface MicrocredUnlocksRow {
+  id: string;
+  def_code: string;
+  target_kind: 'opportunity' | 'rotation';
+  target_id: string;
+  note_en: string;
+  note_ar: string;
+  active: boolean;
+  set_by?: string | null;
+  set_at: string;
+}
+export interface RecordSharesRow {
+  id: string;
+  person_id: string;
+  token: string;
+  label: string;
+  items: string[];
+  holder_initials: string;
+  consents: any;
+  expires_on: string;
+  revoked_at?: string | null;
+  revoke_reason?: string | null;
+  views: number;
+  last_viewed_at?: string | null;
+  created_at: string;
+}
+export interface SkillGoalPlansRow {
+  id: string;
+  person_id: string;
+  skill_id: string;
+  target_level: number;
+  target_date: string;
+  note?: string | null;
+  shared: boolean;
+  share_person?: string | null;
+  status: 'active' | 'removed';
+  open_read: boolean;
+  created_at: string;
+  updated_at: string;
+  removed_at?: string | null;
 }
 export interface CareerTargetsRow {
   id: string;
@@ -4415,6 +4459,9 @@ export interface Tables {
   microcred_defs: MicrocredDefsRow;
   microcred_awards: MicrocredAwardsRow;
   skill_decay_classes: SkillDecayClassesRow;
+  microcred_unlocks: MicrocredUnlocksRow;
+  record_shares: RecordSharesRow;
+  skill_goal_plans: SkillGoalPlansRow;
   career_targets: CareerTargetsRow;
   roadmaps: RoadmapsRow;
   career_conversations: CareerConversationsRow;

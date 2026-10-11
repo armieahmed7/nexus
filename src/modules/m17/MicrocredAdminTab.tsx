@@ -22,12 +22,13 @@ export default function MicrocredAdminTab() {
   const canEdit = s.can('frameworks', ['W', 'A']);
   const canDecide = s.can('skills_profile', ['A']);
   const q = useQuery(['microcred_defs', 'microcred_awards', 'people'], async () => {
-    const [defs, awards, stats, people, roles, skills, courses, forms, opps, comps] = await Promise.all([
+    const [defs, awards, stats, people, roles, skills, courses, forms, opps, comps, banks, tasks] = await Promise.all([
       repo.list('microcred_defs', { order: [['sort', 'asc']] }), canDecide ? repo.list('microcred_awards') : Promise.resolve([]), repo.rpc.microcredStats(),
       canDecide ? repo.list('people', { filter: { kind: 'staff' } }) : Promise.resolve([]), repo.list('job_roles', { order: [['sort', 'asc']] }), repo.list('skills', { order: [['sort', 'asc']] }),
       repo.list('courses'), repo.list('assessment_forms'), repo.list('opportunities').catch(() => []), repo.list('competencies'),
+      repo.list('adaptive_banks').catch(() => []), repo.list('performance_tasks').catch(() => []), // FS31: adaptive and task criteria
     ]);
-    return { defs: defs as unknown as DefRow[], awards: awards as unknown as AwardRow[], stats, people, roles, skills, courses, forms, opps, comps };
+    return { defs: defs as unknown as DefRow[], awards: awards as unknown as AwardRow[], stats, people, roles, skills, courses, forms, opps, comps, banks, tasks };
   }, [canDecide]);
   return (
     <Async state={q}>
@@ -59,7 +60,7 @@ export default function MicrocredAdminTab() {
   );
 }
 
-type AdminData = { defs: DefRow[]; awards: AwardRow[]; people: Row[]; roles: Row[]; skills: Row[]; courses: Row[]; forms: Row[]; opps: Row[]; comps: Row[] };
+type AdminData = { defs: DefRow[]; awards: AwardRow[]; people: Row[]; roles: Row[]; skills: Row[]; courses: Row[]; forms: Row[]; opps: Row[]; comps: Row[]; banks: Row[]; tasks: Row[] };
 
 function Approvals({ pending, d }: { pending: AwardRow[]; d: AdminData }) {
   const t = useT();
@@ -162,13 +163,15 @@ function DefEditor({ d, base, onClose }: { d: AdminData; base: DefRow | null; on
   const refOptions = (kind: string) => kind === 'skill' ? okSkills.map((s) => ({ value: s.id, label: `${s.code} · ${pick(s, 'name')}` }))
     : kind === 'course' ? okCourses.map((c) => ({ value: c.id, label: `${c.code} · ${pick(c, 'title')}` }))
       : kind === 'assessment' ? d.forms.map((fm) => ({ value: fm.id, label: pick(fm, 'title') }))
-        : kind === 'opportunity' ? [...['project', 'outage_support', 'shadowing', 'oe_review', 'knowledge_capture', 'outreach', 'research'].map((k) => ({ value: `kind:${k}`, label: t('m17.mc.admin.oppKind', { kind: k }) })), ...d.opps.map((o) => ({ value: o.id, label: pick(o, 'title') }))] : [];
+        : kind === 'opportunity' ? [...['project', 'outage_support', 'shadowing', 'oe_review', 'knowledge_capture', 'outreach', 'research'].map((k) => ({ value: `kind:${k}`, label: t('m17.mc.admin.oppKind', { kind: k }) })), ...d.opps.map((o) => ({ value: o.id, label: pick(o, 'title') }))]
+          : kind === 'adaptive' ? d.banks.filter((b) => b.status === 'active').map((b) => ({ value: b.id, label: `${b.code} · ${pick(b, 'name')}` }))
+            : kind === 'task' ? d.tasks.filter((tk) => tk.status === 'active').map((tk) => ({ value: tk.id, label: `${tk.code} · ${pick(tk, 'title')}` })) : [];
   const stacks = d.defs.filter((y) => y.kind === 'stack' && y.status !== 'retired' && y.code !== x.code);
   const wording = hasRegulatoryWording(x.title_en, x.title_ar, x.summary_en, x.summary_ar, ...crit.flatMap((c) => [c.label_en, c.label_ar]));
   const input = (): DefInput => ({
     ...(base ? { id: base.id } : {}), code: x.code.trim(), kind: x.kind as DefInput['kind'], area: x.area, level: x.level, title_en: x.title_en, title_ar: x.title_ar, summary_en: x.summary_en, summary_ar: x.summary_ar,
     validity_months: Number(x.validity_months), hours: x.hours ? Number(x.hours) : null, stacks_into: x.kind === 'micro' && x.stacks_into ? x.stacks_into : null, change_reason: x.change_reason || null, role_ids: x.role_ids,
-    criteria: crit.map((c) => ({ key: c.key, kind: c.kind, ref: c.kind === 'manual' ? '' : c.ref, min_level: c.kind === 'skill' ? Number(c.min_level) : null, label_en: c.label_en, label_ar: c.label_ar })),
+    criteria: crit.map((c) => ({ key: c.key, kind: c.kind, ref: c.kind === 'manual' ? '' : c.ref, min_level: c.kind === 'skill' || c.kind === 'adaptive' ? Number(c.min_level) : null, label_en: c.label_en, label_ar: c.label_ar })),
     alignment: align.filter((a) => a.skill_id).map((a) => ({ skill_id: a.skill_id, level: Number(a.level) })),
   });
   const save = async () => { const r = await act(() => repo.rpc.saveMicrocredDef(input())); if (r.ok) onClose(); };
@@ -198,7 +201,7 @@ function DefEditor({ d, base, onClose }: { d: AdminData; base: DefRow | null; on
             <div key={i} className="grid grid-cols-1 gap-2 rounded-card border border-line p-2 sm:grid-cols-6" data-testid="m17-mc-crit-row">
               <SelectField label={t('m17.mc.admin.critKind')} name={`k${i}`} value={c.kind} onChange={(v) => setCrit((p) => p.map((y, j) => (j === i ? { ...y, kind: v as Criterion['kind'], ref: '' } : y)))} options={CRIT_KINDS.map((k) => ({ value: k, label: t(`m17.mc.critKind.${k}`) }))} />
               {c.kind !== 'manual' ? <div className="sm:col-span-3"><SelectField label={t('m17.mc.admin.critRef')} name={`r${i}`} value={c.ref} onChange={(v) => setCrit((p) => p.map((y, j) => (j === i ? { ...y, ref: v } : y)))} placeholder="—" options={refOptions(c.kind)} /></div> : <p className="self-end text-[12px] text-ink-3 sm:col-span-3">{t('m17.mc.admin.manualHelp')}</p>}
-              {c.kind === 'skill' ? <SelectField label={t('m17.mc.admin.minLevel')} name={`l${i}`} value={c.min_level} onChange={(v) => setCrit((p) => p.map((y, j) => (j === i ? { ...y, min_level: v } : y)))} options={['1', '2', '3', '4'].map((v) => ({ value: v, label: v }))} /> : <span />}
+              {c.kind === 'skill' || c.kind === 'adaptive' ? <SelectField label={t('m17.mc.admin.minLevel')} name={`l${i}`} value={c.min_level} onChange={(v) => setCrit((p) => p.map((y, j) => (j === i ? { ...y, min_level: v } : y)))} options={['1', '2', '3', '4'].map((v) => ({ value: v, label: v }))} /> : <span />}
               <button type="button" className="btn-ghost btn-sm self-end" onClick={() => setCrit((p) => p.filter((_, j) => j !== i))}>{t('m17.mc.admin.remove')}</button>
               <div className="sm:col-span-3"><TextField label={t('m17.mc.admin.labelEn')} name={`le${i}`} value={c.label_en} onChange={(v) => setCrit((p) => p.map((y, j) => (j === i ? { ...y, label_en: v } : y)))} /></div>
               <div className="sm:col-span-3"><TextField label={t('m17.mc.admin.labelAr')} name={`la${i}`} value={c.label_ar} onChange={(v) => setCrit((p) => p.map((y, j) => (j === i ? { ...y, label_ar: v } : y)))} /></div>

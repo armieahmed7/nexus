@@ -21,11 +21,15 @@ import { CONTEXTS, CRYPTOSUITE, ISSUER_ID, ISSUER_NAME, ISSUER_URL, NOTICE_EN, v
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = any;
 
-export const CRIT_KINDS = ['course', 'assessment', 'opportunity', 'skill', 'manual'] as const;
+// FS31 (wave D · E3): + adaptive (an FS21 adaptive bank result at or above a level) and task (a passed FS22 performance task);
+// both count only attempts with counts = true whose integrity report (if any) is not voided.
+export const CRIT_KINDS = ['course', 'assessment', 'opportunity', 'skill', 'manual', 'adaptive', 'task'] as const;
 export type CritKind = (typeof CRIT_KINDS)[number];
 export const DEF_KINDS = ['micro', 'stack'] as const;
 export const DEF_LEVELS = ['foundation', 'practitioner', 'advanced'] as const;
-export const DEF_AREAS = ['human_performance', 'digital', 'project', 'operations', 'leadership', 'quality', 'maintenance', 'safety'] as const;
+export const DEF_AREAS = ['human_performance', 'digital', 'project', 'operations', 'leadership', 'quality', 'maintenance', 'safety',
+  // FS31: the FS02 future-skill areas
+  'ai_data', 'green_energy', 'advanced_reactor', 'cyber_hygiene', 'transversal'] as const;
 export const DEF_STATUSES = ['draft', 'current', 'superseded', 'retired'] as const;
 export const AWARD_STATES = ['pending_approval', 'awarded', 'declined', 'revoked', 'superseded'] as const;
 export type AwardView = 'pending_approval' | 'declined' | 'revoked' | 'superseded' | 'active' | 'renewal_due' | 'expired';
@@ -91,6 +95,8 @@ export interface DefRow {
   criteria: Criterion[]; stacks_into: string | null; alignment: Alignment[]; role_ids: string[]; validity_months: number; hours: number | null;
   status: 'draft' | 'current' | 'superseded' | 'retired'; effective_date: string | null; supersedes_id: string | null; change_reason: string | null;
   updated_by?: string | null; updated_at?: string | null; published_by?: string | null; published_at?: string | null; sort?: number;
+  /** FS31: strategic tier (grants eligibility for the gigs and rotations that name it). */
+  strategic?: boolean | null; strategic_note?: string | null; strategic_since?: string | null;
 }
 export interface AwardRow {
   id: string; def_id: string; def_code: string; def_version: number; person_id: string; holder_initials: string; status: string;
@@ -122,6 +128,10 @@ export interface McWorld {
   opportunities: Row[];
   opportunity_applications: Row[];
   person_skills: Row[];
+  /** FS31: FS21/FS22 results (optional: absent = no such evidence). */
+  adaptive_attempts?: Row[];
+  task_attempts?: Row[];
+  integrity_reports?: Row[];
 }
 
 // ───────────── dates (same semantics as SQL: date + interval 'n months' clamps to the month end)
@@ -219,6 +229,30 @@ function opportunityCrit(c: Criterion, person: string, w: McWorld): Omit<CritRes
   if (!apps.length) return { status: 'missing', met: false, level: null, evidence: [] };
   return { status: 'met', met: true, level: null, evidence: [{ table: 'opportunity_applications', id: String(apps[0].id), date: d10(apps[0].completed_at), level: null }] };
 }
+/** FS31: attempts voided by an integrity review never count (FS22 hand-off). */
+const voidedIds = (w: Pick<McWorld, 'integrity_reports'>) => new Set((w.integrity_reports ?? []).filter((r) => r.decision === 'voided').map((r) => String(r.attempt_id)));
+/** FS31: the latest counted FS21 adaptive result on bank `ref` at or above min_level (criterion banks: the standard met). Same as kafaa_mc_crit. */
+function adaptiveCrit(c: Criterion, person: string, w: McWorld): Omit<CritResult, keyof Criterion | 'min_level'> {
+  const min = Number(c.min_level) || 2;
+  const vo = voidedIds(w);
+  const counted = (w.adaptive_attempts ?? []).filter((a) => a.person_id === person && a.bank_id === c.ref && a.status === 'completed' && a.counts !== false && !vo.has(String(a.id)))
+    .sort((a, b) => cmp(String(b.completed_at ?? ''), String(a.completed_at ?? '')) || cmp(String(b.id), String(a.id)));
+  if (!counted.length) return { status: 'missing', met: false, level: null, evidence: [] };
+  const hit = counted.find((a) => (Number(a.estimate) || 0) >= min && (a.mode !== 'criterion' || a.meets === true));
+  if (!hit) return { status: 'missing', met: false, level: Number(counted[0].estimate) || 0, evidence: [] };
+  const lvl = Number(hit.estimate) || 0;
+  return { status: 'met', met: true, level: lvl, evidence: [{ table: 'adaptive_attempts', id: String(hit.id), date: d10(hit.completed_at), level: lvl }] };
+}
+/** FS31: the latest counted, scored and passed FS22 performance-task attempt on task `ref`. Same as kafaa_mc_crit. */
+function taskCrit(c: Criterion, person: string, w: McWorld): Omit<CritResult, keyof Criterion | 'min_level'> {
+  const vo = voidedIds(w);
+  const at = (w.task_attempts ?? []).filter((a) => a.person_id === person && a.task_id === c.ref && a.status === 'scored' && a.passed === true && a.counts !== false && !vo.has(String(a.id)))
+    .sort((a, b) => cmp(String(b.scored_at ?? ''), String(a.scored_at ?? '')) || cmp(String(b.id), String(a.id)));
+  if (!at.length) return { status: 'missing', met: false, level: null, evidence: [] };
+  return { status: 'met', met: true, level: null, evidence: [{ table: 'task_attempts', id: String(at[0].id), date: d10(at[0].scored_at), level: null }] };
+}
+/** Criteria kinds that carry a minimum level (skill states and adaptive results). */
+export const hasMinLevel = (kind: string) => kind === 'skill' || kind === 'adaptive';
 function skillCrit(c: Criterion, person: string, w: McWorld): Omit<CritResult, keyof Criterion | 'min_level'> {
   const min = Number(c.min_level) || 2;
   const st = w.person_skills.find((p) => p.id === `ps:${person}:${c.ref}` && p.active === true);
@@ -233,9 +267,10 @@ function skillCrit(c: Criterion, person: string, w: McWorld): Omit<CritResult, k
 /** Eligibility of `person` for definition `def` (any status; pages and RPCs pass the current version). Same as kafaa_mc_eligibility. */
 export function eligibility(def: DefRow, person: string, w: McWorld): Eligibility {
   const criteria: CritResult[] = (def.criteria ?? []).map((c) => {
-    const base = { key: c.key, kind: c.kind, ref: c.ref, min_level: c.kind === 'skill' ? Number(c.min_level) || 2 : null, label_en: c.label_en ?? '', label_ar: c.label_ar ?? '' };
+    const base = { key: c.key, kind: c.kind, ref: c.ref, min_level: hasMinLevel(c.kind) ? Number(c.min_level) || 2 : null, label_en: c.label_en ?? '', label_ar: c.label_ar ?? '' };
     const r = c.kind === 'course' ? courseCrit(c, person, w) : c.kind === 'assessment' ? assessmentCrit(c, person, w) : c.kind === 'opportunity' ? opportunityCrit(c, person, w)
-      : c.kind === 'skill' ? skillCrit(c, person, w) : { status: 'manual' as const, met: false, level: null, evidence: [] };
+      : c.kind === 'skill' ? skillCrit(c, person, w) : c.kind === 'adaptive' ? adaptiveCrit(c, person, w) : c.kind === 'task' ? taskCrit(c, person, w)
+      : { status: 'manual' as const, met: false, level: null, evidence: [] };
     return { ...base, ...r };
   });
   const components: CompResult[] = def.kind === 'stack' ? componentsOf(w.defs, def.code).map((cd) => {
@@ -261,7 +296,7 @@ export function reproduce(e: Eligibility, rows: Record<string, Row[]>, def: DefR
     const r = byId(ev.table).get(ev.id);
     if (!r || r.person_id !== e.person_id) return false;
     const crit = def.criteria.find((x) => x.key === c.key)!;
-    const sub: McWorld = { today: w.today, defs: [], awards: [], courses: w.courses, opportunities: w.opportunities, training_records: [], attempts: [], opportunity_applications: [], person_skills: [] };
+    const sub: McWorld = { today: w.today, defs: [], awards: [], courses: w.courses, opportunities: w.opportunities, training_records: [], attempts: [], opportunity_applications: [], person_skills: [], adaptive_attempts: [], task_attempts: [] };
     (sub as unknown as Record<string, Row[]>)[ev.table] = [r];
     const again = eligibility({ ...def, kind: 'micro', criteria: [crit] }, e.person_id, sub).criteria[0];
     if (!again.met) return false;
@@ -283,6 +318,8 @@ export interface DefInput {
 }
 export interface DefWorld {
   defs: DefRow[]; courses: Row[]; forms: Row[]; opportunities: Row[]; skills: Row[]; competencies: Row[]; job_roles: Row[]; qual_standards: Row[];
+  /** FS31: FS21 banks and FS22 tasks (optional). */
+  adaptive_banks?: Row[]; performance_tasks?: Row[];
 }
 const str = (v: unknown, min: number, max: number) => typeof v === 'string' && v.trim().length >= min && v.trim().length <= max;
 /** A JSON integer in [lo, hi] (strings never count; same as SQL jsonb_typeof = 'number'). */
@@ -304,7 +341,7 @@ export function validateDef(x: DefInput, w: DefWorld): { code: 'ok' | 'invalid' 
     if (!c || typeof c !== 'object' || typeof c.key !== 'string' || !KEY_RE.test(c.key) || keys.has(c.key)) return bad;
     keys.add(c.key);
     if (!(CRIT_KINDS as readonly string[]).includes(c.kind) || typeof c.ref !== 'string' || !str(c.label_en, 3, 160) || !str(c.label_ar, 3, 160)) return bad;
-    if (c.kind === 'skill' && !int(c.min_level, 1, 4)) return bad;
+    if (hasMinLevel(c.kind) && !int(c.min_level, 1, 4)) return bad;
   }
   const al = Array.isArray(x.alignment) ? x.alignment : null;
   if (!al || al.length > MC_RULES.maxAlignment || new Set(al.map((a) => a?.skill_id)).size !== al.length) return bad;
@@ -335,6 +372,14 @@ export function validateDef(x: DefInput, w: DefWorld): { code: 'ok' | 'invalid' 
     } else if (c.kind === 'skill') {
       if (!w.skills.some((k) => k.id === c.ref)) return bad;
       if (secSkill(c.ref)) return { code: 'security_restricted', message: MCMSG.security_restricted };
+    } else if (c.kind === 'adaptive') { // FS31: an active FS21 bank, none of whose skills is security-restricted
+      const bk = (w.adaptive_banks ?? []).find((k) => k.id === c.ref && k.status === 'active');
+      if (!bk) return bad;
+      if ((bk.skill_ids ?? []).some((id: string) => secSkill(id))) return { code: 'security_restricted', message: MCMSG.security_restricted };
+    } else if (c.kind === 'task') { // FS31: an active FS22 performance task
+      const tk = (w.performance_tasks ?? []).find((k) => k.id === c.ref && k.status === 'active');
+      if (!tk) return bad;
+      if ((tk.skill_ids ?? []).some((id: string) => secSkill(id))) return { code: 'security_restricted', message: MCMSG.security_restricted };
     } else if (c.ref !== '') return bad; // manual criteria carry no reference
   }
   for (const a of al) {

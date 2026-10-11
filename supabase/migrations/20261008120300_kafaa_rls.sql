@@ -1632,6 +1632,28 @@ create policy kafaa_read on kafaa_skill_decay_classes for select to anon, authen
 grant select on kafaa_skill_decay_classes to anon, authenticated;
 -- writes: reference data, no client writes
 
+-- microcred_unlocks
+alter table kafaa_microcred_unlocks enable row level security;
+drop policy if exists kafaa_read on kafaa_microcred_unlocks;
+create policy kafaa_read on kafaa_microcred_unlocks for select to anon, authenticated using (kafaa_rule_read('frameworks', null::text, null::text, true));
+grant select on kafaa_microcred_unlocks to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- record_shares
+alter table kafaa_record_shares enable row level security;
+drop policy if exists kafaa_read on kafaa_record_shares;
+create policy kafaa_read on kafaa_record_shares for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_record_shares to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- skill_goal_plans
+alter table kafaa_skill_goal_plans enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_goal_plans;
+create policy kafaa_read on kafaa_skill_goal_plans for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('skills_profile', share_person, null::text, open_read));
+grant select on kafaa_skill_goal_plans to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- career_targets
 alter table kafaa_career_targets enable row level security;
 drop policy if exists kafaa_read on kafaa_career_targets;

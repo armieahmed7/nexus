@@ -66,6 +66,7 @@ function critNote(c: CritResult, t: (k: string, v?: Record<string, string | numb
   const ev = c.evidence[0];
   if (c.kind === 'manual') return t('m17.mc.crit.manualNote');
   if (c.kind === 'skill') return t(`m17.mc.crit.skill_${c.status}`, { level: f.num(c.level ?? 0), min: f.num(c.min_level ?? 2) });
+  if (c.kind === 'adaptive') return t(`m17.mc.crit.adaptive_${c.status === 'met' ? 'met' : 'missing'}`, { level: f.num(c.level ?? 0), min: f.num(c.min_level ?? 2) }); // FS31
   if (c.status === 'met') return ev?.date ? t('m17.mc.crit.metOn', { date: f.date(ev.date), table: t(`m17.mc.table.${ev.table}`) }) : t('m17.mc.crit.met');
   if (c.status === 'lapsed') return t('m17.mc.crit.lapsed', { date: ev?.date ? f.date(ev.date) : '—' });
   return t(`m17.mc.crit.missing_${c.kind}`);

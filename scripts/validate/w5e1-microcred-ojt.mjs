@@ -29,6 +29,8 @@ export default async function w5e1Checks({ db, as, count, ok, uid }) {
   const world = async () => ({
     today, defs: await rows('kafaa_microcred_defs'), awards: await rows('kafaa_microcred_awards'), courses: await rows('kafaa_courses'), training_records: await rows('kafaa_training_records'),
     attempts: await rows('kafaa_attempts'), opportunities: await rows('kafaa_opportunities'), opportunity_applications: await rows('kafaa_opportunity_applications'), person_skills: await rows('kafaa_person_skills'),
+    // FS31 (fsDe3): adaptive and task criteria read FS21/FS22 results (voided by an integrity decision never count)
+    adaptive_attempts: await rows('kafaa_adaptive_attempts'), task_attempts: await rows('kafaa_task_attempts'), integrity_reports: await rows('kafaa_integrity_reports'),
   });
 
   // ═════════════ F32
@@ -148,7 +150,7 @@ export default async function w5e1Checks({ db, as, count, ok, uid }) {
       && evN === 1 && (await q('select count(*)::int n from ledger_entries'))[0].n === led0 + 1 && before + 1 === (await q(`select count(*)::int n from kafaa_skill_evidence where ref_table = 'microcred_awards'`))[0].n,
     'an eligible employee earns a signed Open Badges 3.0 micro-credential (key-1), F01 credential evidence and a ledger entry');
     ok((await rpc('qc-inspector', 'kafaa_award_microcred($1)', ['MC-DATA-FOUND'])).code === 'already_awarded', 'an active micro-credential is not issued twice');
-    ok((await rpc('qc-inspector', 'kafaa_award_microcred($1)', ['MC-COACH'])).code === 'not_eligible' && (await rpc('qc-inspector', 'kafaa_award_microcred($1)', ['MC-TWINS'])).code === 'not_found',
+    ok((await rpc('qc-inspector', 'kafaa_award_microcred($1)', ['MC-COACH'])).code === 'not_eligible' && (await rpc('qc-inspector', 'kafaa_award_microcred($1)', ['MC-H2-HEAT'])).code === 'not_found',
       'not eligible -> not_eligible; a draft definition cannot be earned');
     // eligibility is reproducible from the listed evidence: the snapshot rows exist and satisfy each met criterion
     const snap = row.evidence.filter((c) => c.status === 'met');

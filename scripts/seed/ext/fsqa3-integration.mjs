@@ -7,6 +7,7 @@
 //     on QA_REFRESH: a row whose step now resolves becomes "filled", the rest stay "open", and any newly empty step is added.
 // The live database gets the same rows from supabase/migrations/20261010239001_kafaa_fs3qa_integration.sql (guarded DML).
 import { resolvePathway } from '../../../src/modules/m19/pathways.ts';
+import { FS31_DEFS } from './fs31-future-credentials.mjs'; // FS wave D · E3: FS31 credentials came after wave C
 
 export const FINALIZE_LAST = true;
 export const QA_REFRESH = '2026-10-11';
@@ -14,7 +15,8 @@ export const QA_REFRESH = '2026-10-11';
 /** FS17's content before wave C's other branches: no FS19 pack courses, no FS21 banks, no FS22 tasks. */
 export function contentBefore(T) {
   const pack = new Set((T.course_pack_items ?? []).map((p) => p.course_id));
-  return { courses: T.courses.filter((c) => !pack.has(c.id)), externals: T.external_resources, opportunities: T.opportunities, credentials: T.microcred_defs ?? [], fitness: T.fitness_areas ?? [] };
+  const fs31 = new Set(FS31_DEFS.map((d) => `mcd-${d[0].toLowerCase()}-v${d[1]}`));
+  return { courses: T.courses.filter((c) => !pack.has(c.id)), externals: T.external_resources, opportunities: T.opportunities, credentials: (T.microcred_defs ?? []).filter((d) => !fs31.has(d.id)), fitness: T.fitness_areas ?? [] };
 }
 /** Content after the wave C merge (what kafaa_pw_resolve reads). */
 export function contentAfter(T) {

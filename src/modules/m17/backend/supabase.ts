@@ -31,5 +31,18 @@ export function makeSupabaseM17(x: SupabaseExtCtx): M17Rpc {
     // FS · wave A · E2 · FS03 (supabase/migrations/20261010212001_kafaa_fs12_decay.sql)
     skillConfidenceStats: (hl) => x.rpc('kafaa_skill_confidence_stats', { p_hl: hl ?? null }),
     setSkillHalfLives: (i) => x.call('kafaa_set_skill_half_lives', { p: i }, ['engine_settings', 'engine_changes', 'engine_cards', 'person_skills', 'skill_evidence']),
+    // FS · wave D · E3 · FS31/FS32/FS33 (supabase/migrations/20261010243001_kafaa_fs43_credentials_record_goals.sql)
+    setMicrocredStrategic: (code, strategic, note) => x.call('kafaa_set_microcred_strategic', { p_code: code, p_strategic: strategic, p_note: note }, ['microcred_defs']),
+    setCredentialUnlock: (i) => x.call('kafaa_set_credential_unlock', { p: i }, ['microcred_unlocks']),
+    credentialUnlocks: (personId) => x.rpc('kafaa_credential_unlocks', { p_person: personId ?? null }),
+    credentialTargetCheck: (kind, targetId) => x.rpc('kafaa_credential_target_check', { p_kind: kind, p_target: targetId }),
+    strategicReport: () => x.rpc('kafaa_strategic_report'),
+    learnerRecord: (refs) => x.rpc('kafaa_learner_record', { p_refs: refs ?? null }),
+    createRecordShare: (i) => x.call('kafaa_create_record_share', { p: i }, ['record_shares']),
+    revokeRecordShare: (id, reason) => x.call('kafaa_revoke_record_share', { p_id: id, p_reason: reason ?? null }, ['record_shares']),
+    verifyRecordShare: (token) => x.call('kafaa_verify_record_share', { p_token: token }, ['audit_events']),
+    saveSkillGoal: (i) => x.call('kafaa_save_skill_goal', { p: i }, ['skill_goals', 'skill_goal_plans']),
+    withdrawSkillGoal: (skillId) => x.call('kafaa_withdraw_skill_goal', { p_skill: skillId }, ['skill_goals', 'skill_goal_plans']),
+    shareSkillGoal: (skillId, shared) => x.call('kafaa_share_skill_goal', { p_skill: skillId, p_shared: shared }, ['skill_goal_plans']),
   };
 }

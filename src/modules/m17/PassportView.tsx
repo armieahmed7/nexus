@@ -16,6 +16,8 @@ import {
 import { qualView, licenceView } from '../../domain/rules';
 import { BandChip, IntervalBar, SourceRecordView } from './confidenceUi'; // FS03
 import { sourceRecord, type RecordRow } from './decay'; // FS03
+import { AddGoalButton } from './goalsUi'; // FS33
+import { useSession } from '../../auth/session';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = any;
@@ -488,6 +490,7 @@ function EvidenceDrawer({ d, line, onClose, readOnly = false }: { d: PassportDat
   const pick = usePick();
   const f = useFormat();
   const label = useEvidenceLabel(d);
+  const me = useSession().identity.personId;
   if (!line) return <Drawer open={false} onClose={onClose} title="" />;
   const order = new Map((line.state?.reasons ?? []).map((r, i) => [r.evidence_id, i]));
   const rows = [...line.evidence].sort((a, b) => (order.get(a.id) ?? 99) - (order.get(b.id) ?? 99));
@@ -508,6 +511,7 @@ function EvidenceDrawer({ d, line, onClose, readOnly = false }: { d: PassportDat
             {!readOnly && <L to={`/my/skills/confidence?q=${encodeURIComponent(line.skill.code)}`} className="mt-1.5 inline-block text-[12.5px]" data-testid="m17-evidence-to-confidence">{t('m17.dk.toConfidence')}</L>}
           </section>
         )}
+        {!readOnly && <div className="flex justify-end"><AddGoalButton skillId={line.skill.id} person={me} /></div>}
         <p className="text-[13px] text-ink-2">{t('m17.evidence.intro')}</p>
         <ol className="space-y-2">
           {rows.map((e, i) => {

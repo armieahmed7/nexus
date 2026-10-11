@@ -20,7 +20,7 @@ export default function MicrocredsPage() {
   const q = useMcData(s.identity.personId);
   return (
     <Page title={t('m17.routes.my-skills-credentials.title')} eyebrow={t('m17.mc.eyebrow')} intro={t('m17.mc.intro')} wide
-      actions={<div className="flex flex-wrap gap-2"><L to="/my/skills/wallet" className="btn-outline btn-sm no-underline">{t('m17.mc.toWallet')}</L><L to="/my/skills" className="btn-ghost btn-sm no-underline">{t('m17.wallet.toPassport')}</L></div>}>
+      actions={<div className="flex flex-wrap gap-2"><L to="/my/skills/credentials/future" className="btn-primary btn-sm no-underline" data-testid="m17-to-future">{t('m17.fc.toFuture')}</L><L to="/my/skills/wallet" className="btn-outline btn-sm no-underline">{t('m17.mc.toWallet')}</L><L to="/my/skills" className="btn-ghost btn-sm no-underline">{t('m17.wallet.toPassport')}</L></div>}>
       <Callout tone="sim" title={t('m17.mc.noticeTitle')}>{t('m17.mc.notice')}</Callout>
       <Async state={q}>{(d) => <Catalogue d={d} />}</Async>
     </Page>
@@ -139,7 +139,7 @@ function McCard({ def, e, st, d, onOpen }: { def: DefRow; e?: Eligibility; st: S
 }
 
 /** Claim / request / renew, or a link to the credential. Consequential: behind a ConfirmDialog. */
-function McAction({ def, e, st }: { def: DefRow; e?: Eligibility; st: St }) {
+export function McAction({ def, e, st }: { def: DefRow; e?: Eligibility; st: St }) {
   const t = useT();
   const pick = usePick();
   const repo = useRepo();

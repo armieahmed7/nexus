@@ -76,6 +76,8 @@ export const TABLES_M17: Record<string, TableDef> = {
       role_ids: 'text[] =[]', validity_months: 'int =24', hours: 'int?', status: 'text enum:draft|current|superseded|retired =\'draft\' idx',
       effective_date: 'date?', supersedes_id: 'text?', change_reason: 'text?', sort: 'int =0',
       updated_by: 'text?', updated_at: 'ts =now', published_by: 'text?', published_at: 'ts?',
+      // FS31 (wave D · E3): the strategic tier (grants eligibility for the gigs and rotations that name the credential)
+      strategic: 'bool =false idx', strategic_note: 'text?', strategic_since: 'date?',
     },
     read: [{ res: 'frameworks' }], write: { mode: 'rpc', res: 'frameworks' },
   },
@@ -103,5 +105,39 @@ export const TABLES_M17: Record<string, TableDef> = {
       default_months: 'int', areas: 'text[] =[]', facts: 'json =[]', sources: 'json =[]', as_of: 'date', sort: 'int =0',
     },
     read: [{ res: 'public_content' }], write: { mode: 'none' },
+  },
+  // ───────────── FS · wave D · E3 · FS31 strategic tier, FS32 learner record shares, FS33 skill goal plans
+  // FS31 · A future gig (F08 opportunity) or rotation (F15 template) that names a strategic micro-credential: holders of a current
+  // strategic credential (active or renewal due) are eligible (kafaa_fc_target_check, the F08/F15 hand-off). Framework catalogue:
+  // readable like the definitions; changed by framework owners through rpc.setCredentialUnlock (audited).
+  microcred_unlocks: {
+    module: 'M17', label: 'Gigs and rotations that name a strategic micro-credential (FS31)',
+    cols: {
+      id: 'text pk', def_code: 'text idx', target_kind: 'text enum:opportunity|rotation', target_id: 'text idx', note_en: 'text', note_ar: 'text',
+      active: 'bool =true idx', set_by: 'text?', set_at: 'ts =now',
+    },
+    read: [{ res: 'frameworks' }], write: { mode: 'rpc', res: 'frameworks' },
+  },
+  // FS32 · A curated, expiring share of my learner record (CLR-shaped). Own only (the public sees the shared items through
+  // rpc.verifyRecordShare while the link is active, initials only). Items are references: mc:<award>, badge:<badge>,
+  // qual:<record> (mirror status only), skill:<skill>. Three consent gates are stored with their time.
+  record_shares: {
+    module: 'M17', label: 'Curated learner-record share links with consent, expiry and revocation (FS32)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', token: 'text uniq', label: 'text', items: 'text[] =[]', holder_initials: 'text =\'\'',
+      consents: 'json ={}', expires_on: 'date', revoked_at: 'ts?', revoke_reason: 'text?', views: 'int =0', last_viewed_at: 'ts?', created_at: 'ts =now',
+    },
+    read: [{ res: 'own_profile', person: 'person_id' }], write: { mode: 'rpc', res: 'skills_profile' },
+  },
+  // FS33 · The plan behind an FS07 skill goal (same id sg:<person>:<skill>): target date, note, sharing. Own; a manager whose scope
+  // covers the person reads it only while it is shared (share_person = person_id); the always-false open_read blocks R/W/A reads.
+  skill_goal_plans: {
+    module: 'M17', label: 'Skill goals with a target date, shared with the manager only by choice (FS33)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', skill_id: 'text ref:skills idx', target_level: 'int =2', target_date: 'date', note: 'text?',
+      shared: 'bool =false', share_person: 'text? idx', status: 'text enum:active|removed =\'active\' idx', open_read: 'bool =false',
+      created_at: 'ts =now', updated_at: 'ts =now', removed_at: 'ts?',
+    },
+    read: [{ res: 'own_profile', person: 'person_id' }, { res: 'skills_profile', person: 'share_person', where: 'open_read' }], write: { mode: 'rpc', res: 'skills_profile' },
   },
 };
