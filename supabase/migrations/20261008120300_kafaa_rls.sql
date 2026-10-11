@@ -2492,3 +2492,43 @@ create policy kafaa_read on kafaa_sjt_attempts for select to anon, authenticated
 grant select on kafaa_sjt_attempts to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- rpl_requests
+alter table kafaa_rpl_requests enable row level security;
+drop policy if exists kafaa_read on kafaa_rpl_requests;
+create policy kafaa_read on kafaa_rpl_requests for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('recognition', null::text, null::text, true));
+grant select on kafaa_rpl_requests to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- rpl_evidence
+alter table kafaa_rpl_evidence enable row level security;
+drop policy if exists kafaa_read on kafaa_rpl_evidence;
+create policy kafaa_read on kafaa_rpl_evidence for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('own_profile', attester_id, null::text, true)
+    or kafaa_rule_read('recognition', null::text, null::text, true));
+grant select on kafaa_rpl_evidence to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- credit_tags
+alter table kafaa_credit_tags enable row level security;
+drop policy if exists kafaa_read on kafaa_credit_tags;
+create policy kafaa_read on kafaa_credit_tags for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, listed)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_credit_tags to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- credit_stacks
+alter table kafaa_credit_stacks enable row level security;
+drop policy if exists kafaa_read on kafaa_credit_stacks;
+create policy kafaa_read on kafaa_credit_stacks for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_credit_stacks to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- credit_ledger
+alter table kafaa_credit_ledger enable row level security;
+drop policy if exists kafaa_read on kafaa_credit_ledger;
+create policy kafaa_read on kafaa_credit_ledger for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_credit_ledger to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+

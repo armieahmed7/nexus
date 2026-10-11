@@ -5130,6 +5130,156 @@ create table if not exists kafaa_sjt_attempts (
 );
 comment on table kafaa_sjt_attempts is '[M33] One person''s situational judgement practice set: the items, answers with expert effectiveness, score and tally per core skill. Own only: never read by managers, HR or talent review (FS26)';
 
+-- M34 · RPL requests: target skill or micro-credential, narrative, maker-checker decision (full, partial, not yet), RPL statement (FS29)
+create table if not exists kafaa_rpl_requests (
+  id text primary key,
+  person_id text not null,
+  person_name text not null default '',
+  person_name_ar text not null default '',
+  person_kind text not null default 'staff' check (person_kind in ('staff', 'contractor')),
+  org_id text,
+  target_kind text not null check (target_kind in ('skill', 'credential')),
+  skill_id text,
+  microcred_def_id text,
+  level integer,
+  target_title_en text not null default '',
+  target_title_ar text not null default '',
+  target_skill_ids text[] not null default '{}'::text[],
+  narrative_en text not null default '',
+  narrative_ar text not null default '',
+  status text not null default 'draft' check (status in ('draft', 'submitted', 'recommended', 'decided', 'withdrawn')),
+  opened_by text not null,
+  opened_role text,
+  submitted_on date,
+  outcome text check (outcome in ('full', 'partial', 'not_yet')),
+  credited_level integer,
+  hours integer not null default 0,
+  nqf_level integer,
+  rationale_en text,
+  rationale_ar text,
+  recommended_by text,
+  recommended_role text,
+  recommended_on date,
+  return_note text,
+  return_count integer not null default 0,
+  decided_by text,
+  decided_role text,
+  decided_on date,
+  rpl_statement_en text,
+  rpl_statement_ar text,
+  evidence_ids text[] not null default '{}'::text[],
+  export_count integer not null default 0,
+  exported_at timestamptz,
+  withdrawn_on date,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_rpl_requests is '[M34] RPL requests: target skill or micro-credential, narrative, maker-checker decision (full, partial, not yet), RPL statement (FS29)';
+
+-- M34 · RPL evidence packs: OJT practice, simulator debriefs, qualification mirror (qualified or not), engagements, supervisor attestations (FS29)
+create table if not exists kafaa_rpl_evidence (
+  id text primary key,
+  request_id text not null,
+  person_id text not null,
+  kind text not null check (kind in ('ojt', 'simulator', 'qualification', 'engagement', 'attestation')),
+  ref_table text,
+  ref_id text,
+  title_en text not null,
+  title_ar text not null,
+  detail_en text not null default '',
+  detail_ar text not null default '',
+  observed_on date,
+  mirror boolean not null default false,
+  mirror_status text check (mirror_status in ('qualified', 'not_qualified')),
+  skill_ids text[] not null default '{}'::text[],
+  attester_id text,
+  attester_role_en text,
+  attester_role_ar text,
+  request_note text,
+  attestation_status text check (attestation_status in ('requested', 'confirmed', 'declined')),
+  attestation_en text,
+  attestation_ar text,
+  attested_on date,
+  target_title_en text not null default '',
+  target_title_ar text not null default '',
+  requester_name text not null default '',
+  requester_name_ar text not null default '',
+  active boolean not null default true,
+  added_by text not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_rpl_evidence is '[M34] RPL evidence packs: OJT practice, simulator debriefs, qualification mirror (qualified or not), engagements, supervisor attestations (FS29)';
+
+-- M34 · Indicative NQF level and credits (1 credit = 10 notional hours) on courses, pathways and micro-credentials (FS30)
+create table if not exists kafaa_credit_tags (
+  id text primary key,
+  item_kind text not null check (item_kind in ('course', 'pathway', 'microcred')),
+  item_id text not null,
+  title_en text not null,
+  title_ar text not null,
+  nqf_level integer not null,
+  notional_hours integer not null,
+  credits numeric not null,
+  indicative boolean not null default true,
+  basis_en text not null,
+  basis_ar text not null,
+  stack_ids text[] not null default '{}'::text[],
+  status text not null default 'published' check (status in ('published', 'retired')),
+  listed boolean not null default true,
+  source_url text not null,
+  as_of date not null,
+  version integer not null default 1,
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_credit_tags is '[M34] Indicative NQF level and credits (1 credit = 10 notional hours) on courses, pathways and micro-credentials (FS30)';
+
+-- M34 · 30-credit stacks toward an indicative external award with a partner university still to be agreed (FS30)
+create table if not exists kafaa_credit_stacks (
+  id text primary key,
+  title_en text not null,
+  title_ar text not null,
+  award_en text not null,
+  award_ar text not null,
+  partner_en text not null,
+  partner_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  credits_required integer not null default 30,
+  nqf_level integer not null,
+  min_item_nqf integer not null default 1,
+  rpl_max integer not null default 10,
+  skill_ids text[] not null default '{}'::text[],
+  status text not null default 'indicative' check (status in ('indicative')),
+  source_url text not null,
+  as_of date not null,
+  benchmark_ids text[] not null default '{}'::text[],
+  sort integer not null default 0
+);
+comment on table kafaa_credit_stacks is '[M34] 30-credit stacks toward an indicative external award with a partner university still to be agreed (FS30)';
+
+-- M34 · Personal credit ledger: one row per completed tagged item and RPL credit; reversed, never deleted (FS30)
+create table if not exists kafaa_credit_ledger (
+  id text primary key,
+  person_id text not null,
+  item_kind text not null check (item_kind in ('course', 'pathway', 'microcred', 'rpl')),
+  item_id text not null,
+  tag_id text,
+  title_en text not null,
+  title_ar text not null,
+  completed_on date not null,
+  source_table text not null,
+  source_id text not null,
+  notional_hours integer not null,
+  credits numeric not null,
+  nqf_level integer,
+  stack_ids text[] not null default '{}'::text[],
+  status text not null default 'counted' check (status in ('counted', 'reversed')),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_credit_ledger is '[M34] Personal credit ledger: one row per completed tagged item and RPL credit; reversed, never deleted (FS30)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -5597,6 +5747,12 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_co
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sjt_items_core_skill_id_fk') then alter table kafaa_sjt_items add constraint kafaa_sjt_items_core_skill_id_fk foreign key (core_skill_id) references kafaa_core_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sjt_attempts_person_id_fk') then alter table kafaa_sjt_attempts add constraint kafaa_sjt_attempts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sjt_attempts_core_skill_id_fk') then alter table kafaa_sjt_attempts add constraint kafaa_sjt_attempts_core_skill_id_fk foreign key (core_skill_id) references kafaa_core_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_rpl_requests_person_id_fk') then alter table kafaa_rpl_requests add constraint kafaa_rpl_requests_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_rpl_requests_skill_id_fk') then alter table kafaa_rpl_requests add constraint kafaa_rpl_requests_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_rpl_evidence_request_id_fk') then alter table kafaa_rpl_evidence add constraint kafaa_rpl_evidence_request_id_fk foreign key (request_id) references kafaa_rpl_requests(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_rpl_evidence_person_id_fk') then alter table kafaa_rpl_evidence add constraint kafaa_rpl_evidence_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_rpl_evidence_attester_id_fk') then alter table kafaa_rpl_evidence add constraint kafaa_rpl_evidence_attester_id_fk foreign key (attester_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_credit_ledger_person_id_fk') then alter table kafaa_credit_ledger add constraint kafaa_credit_ledger_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -6236,6 +6392,16 @@ create index if not exists kafaa_sjt_attempts_person_id_idx on kafaa_sjt_attempt
 create index if not exists kafaa_sjt_attempts_period_idx on kafaa_sjt_attempts (period);
 create index if not exists kafaa_sjt_attempts_core_skill_id_idx on kafaa_sjt_attempts (core_skill_id);
 create index if not exists kafaa_sjt_attempts_status_idx on kafaa_sjt_attempts (status);
+create index if not exists kafaa_rpl_requests_person_id_idx on kafaa_rpl_requests (person_id);
+create index if not exists kafaa_rpl_requests_skill_id_idx on kafaa_rpl_requests (skill_id);
+create index if not exists kafaa_rpl_requests_status_idx on kafaa_rpl_requests (status);
+create index if not exists kafaa_rpl_evidence_request_id_idx on kafaa_rpl_evidence (request_id);
+create index if not exists kafaa_rpl_evidence_person_id_idx on kafaa_rpl_evidence (person_id);
+create index if not exists kafaa_rpl_evidence_attester_id_idx on kafaa_rpl_evidence (attester_id);
+create index if not exists kafaa_credit_tags_item_id_idx on kafaa_credit_tags (item_id);
+create index if not exists kafaa_credit_tags_status_idx on kafaa_credit_tags (status);
+create index if not exists kafaa_credit_ledger_person_id_idx on kafaa_credit_ledger (person_id);
+create index if not exists kafaa_credit_ledger_status_idx on kafaa_credit_ledger (status);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -6250,4 +6416,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 276) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 281) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

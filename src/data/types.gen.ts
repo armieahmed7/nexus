@@ -4310,6 +4310,141 @@ export interface SjtAttemptsRow {
   started_at: string;
   completed_at?: string | null;
 }
+export interface RplRequestsRow {
+  id: string;
+  person_id: string;
+  person_name: string;
+  person_name_ar: string;
+  person_kind: 'staff' | 'contractor';
+  org_id?: string | null;
+  target_kind: 'skill' | 'credential';
+  skill_id?: string | null;
+  microcred_def_id?: string | null;
+  level?: number | null;
+  target_title_en: string;
+  target_title_ar: string;
+  target_skill_ids: string[];
+  narrative_en: string;
+  narrative_ar: string;
+  status: 'draft' | 'submitted' | 'recommended' | 'decided' | 'withdrawn';
+  opened_by: string;
+  opened_role?: string | null;
+  submitted_on?: string | null;
+  outcome?: 'full' | 'partial' | 'not_yet' | null;
+  credited_level?: number | null;
+  hours: number;
+  nqf_level?: number | null;
+  rationale_en?: string | null;
+  rationale_ar?: string | null;
+  recommended_by?: string | null;
+  recommended_role?: string | null;
+  recommended_on?: string | null;
+  return_note?: string | null;
+  return_count: number;
+  decided_by?: string | null;
+  decided_role?: string | null;
+  decided_on?: string | null;
+  rpl_statement_en?: string | null;
+  rpl_statement_ar?: string | null;
+  evidence_ids: string[];
+  export_count: number;
+  exported_at?: string | null;
+  withdrawn_on?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+export interface RplEvidenceRow {
+  id: string;
+  request_id: string;
+  person_id: string;
+  kind: 'ojt' | 'simulator' | 'qualification' | 'engagement' | 'attestation';
+  ref_table?: string | null;
+  ref_id?: string | null;
+  title_en: string;
+  title_ar: string;
+  detail_en: string;
+  detail_ar: string;
+  observed_on?: string | null;
+  mirror: boolean;
+  mirror_status?: 'qualified' | 'not_qualified' | null;
+  skill_ids: string[];
+  attester_id?: string | null;
+  attester_role_en?: string | null;
+  attester_role_ar?: string | null;
+  request_note?: string | null;
+  attestation_status?: 'requested' | 'confirmed' | 'declined' | null;
+  attestation_en?: string | null;
+  attestation_ar?: string | null;
+  attested_on?: string | null;
+  target_title_en: string;
+  target_title_ar: string;
+  requester_name: string;
+  requester_name_ar: string;
+  active: boolean;
+  added_by: string;
+  created_at: string;
+  updated_at: string;
+}
+export interface CreditTagsRow {
+  id: string;
+  item_kind: 'course' | 'pathway' | 'microcred';
+  item_id: string;
+  title_en: string;
+  title_ar: string;
+  nqf_level: number;
+  notional_hours: number;
+  credits: number;
+  indicative: boolean;
+  basis_en: string;
+  basis_ar: string;
+  stack_ids: string[];
+  status: 'published' | 'retired';
+  listed: boolean;
+  source_url: string;
+  as_of: string;
+  version: number;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface CreditStacksRow {
+  id: string;
+  title_en: string;
+  title_ar: string;
+  award_en: string;
+  award_ar: string;
+  partner_en: string;
+  partner_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  credits_required: number;
+  nqf_level: number;
+  min_item_nqf: number;
+  rpl_max: number;
+  skill_ids: string[];
+  status: 'indicative';
+  source_url: string;
+  as_of: string;
+  benchmark_ids: string[];
+  sort: number;
+}
+export interface CreditLedgerRow {
+  id: string;
+  person_id: string;
+  item_kind: 'course' | 'pathway' | 'microcred' | 'rpl';
+  item_id: string;
+  tag_id?: string | null;
+  title_en: string;
+  title_ar: string;
+  completed_on: string;
+  source_table: string;
+  source_id: string;
+  notional_hours: number;
+  credits: number;
+  nqf_level?: number | null;
+  stack_ids: string[];
+  status: 'counted' | 'reversed';
+  updated_at: string;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -4589,6 +4724,11 @@ export interface Tables {
   core_skill_candidates: CoreSkillCandidatesRow;
   sjt_items: SjtItemsRow;
   sjt_attempts: SjtAttemptsRow;
+  rpl_requests: RplRequestsRow;
+  rpl_evidence: RplEvidenceRow;
+  credit_tags: CreditTagsRow;
+  credit_stacks: CreditStacksRow;
+  credit_ledger: CreditLedgerRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];
