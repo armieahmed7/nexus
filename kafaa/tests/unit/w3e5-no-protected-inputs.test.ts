@@ -27,6 +27,7 @@ import { rankBridges, rankFutureRoles, rankResources, readinessIndex } from '../
 import { inputFor, previewEvidence, readinessV2 } from '../../src/modules/m21/readiness'; // FS13
 import { careerFacts } from '../../src/modules/m18/career';
 import { conceptReadiness, transitionEvidence } from '../../src/modules/m18/futureRoles';
+import { circleMembersView, coachFocus, flReadiness, flReasons, rankCircles, rankOffers, wfnArea } from '../../src/modules/m22/future'; // FS46-FS48 (fsEe4)
 
 type Rows = Record<string, any>[];
 const S = seed as unknown as { tables: Record<string, Rows>; meta: { demo_today: string } };
@@ -93,6 +94,9 @@ const RUN: Record<string, () => unknown> = {
   // FS13 readiness v2 (card "future", version 2)
   'src/modules/m21/readiness.ts#readinessV2': () => readinessV2(inputFor(ME, fs13Tables())),
   'src/modules/m21/readiness.ts#previewEvidence': () => previewEvidence(readinessV2(inputFor(ME, fs13Tables())), { courses: ['c-adv-intro'], tracks: ['trk-digital'] }),
+  // FS48 (fsEe4): the mentoring card v2 lists the network rankings; every participant row carries gender and is never read
+  'src/modules/m22/future.ts#rankCircles': () => T.wfn_participants.filter((p) => p.active).map((p) => rankCircles(p as never, T.wfn_circles as never, T.wfn_circle_members as never, wfnArea)),
+  'src/modules/m22/future.ts#rankOffers': () => T.wfn_participants.filter((p) => p.active).map((p) => rankOffers(p as never, T.wfn_offers as never, T.wfn_requests as never, NOW, wfnArea)),
 };
 const cardFns = [...new Set(S.tables.engine_cards.flatMap((c) => c.scoring_functions as string[]))];
 const tsFns = cardFns.filter((f) => !f.startsWith('sql:'));
@@ -137,5 +141,30 @@ describe('F24: no scoring function reads gender, nationality or age', () => {
     expect(protectedRefs('const x = row["nationality_flag"];')).toEqual([]);
     expect(protectedRefs('// nationality is never an input\nconst y = 1;')).toEqual([]);
     expect(protectedRefs('if (p.nationality_flag === "uae") score += 1;')).toEqual(['nationality_flag']);
+  });
+});
+
+// FS46-FS48 (fsEe4): ranking and readiness functions that are not on an engine card are held to the same rule (FS48 acceptance:
+// gender never in ranking). wfnStats() is left out on purpose: like the fairness monitor it measures participation and ranks nobody.
+describe('FS46-FS48: coach cards, Future Leaders readiness and the network rankings never read gender, nationality or age', () => {
+  const levels = (pid: string) => new Map(statesOf(pid).map((x) => [x.skill_id as string, x]));
+  const extra: Record<string, () => unknown> = {
+    coachFocus: () => [coachFocus(T.leadership_behaviours as never, null), coachFocus(T.leadership_behaviours as never, T.leadership_behaviours.map((b, i) => ({ id: b.id, self: 3 + (i % 2), others: 3.2 })))],
+    flReadiness: () => T.fl_participants.map((p) => flReadiness(p.person_id, levels(p.person_id) as never, T.fl_competencies as never)),
+    flReasons: () => T.fl_participants.map((p) => flReasons(flReadiness(p.person_id, levels(p.person_id) as never, T.fl_competencies as never), T.fl_competencies as never, (id) => ({ en: id, ar: id }))),
+    circleMembersView: () => T.wfn_participants.filter((p) => p.active).map((p) => rankCircles(p as never, T.wfn_circles as never, circleMembersView(T.wfn_circles as never, T.wfn_circle_members.filter((m) => m.person_id === p.person_id) as never), wfnArea)),
+  };
+  it.each(Object.keys(extra))('%s: its source names no protected field and a run on trapped rows reads none', (name) => {
+    const src = readFileSync('src/modules/m22/future.ts', 'utf8');
+    expect(protectedRefs(functionBody(src, name)!)).toEqual([]);
+    reads.length = 0;
+    expect(extra[name]()).toBeTruthy();
+    expect([...new Set(reads)]).toEqual([]);
+  });
+  it('the people rows the network ranks carry a gender (so the trap is armed), and the rankings still never read it', () => {
+    expect(S.tables.people.filter((p) => S.tables.wfn_participants.some((w) => w.person_id === p.id) && p.gender != null).length).toBeGreaterThanOrEqual(10);
+    reads.length = 0;
+    for (const p of T.wfn_participants) { rankCircles(p as never, T.wfn_circles as never, T.wfn_circle_members as never, wfnArea); rankOffers(p as never, T.wfn_offers as never, T.wfn_requests as never, NOW, wfnArea); }
+    expect(reads).toEqual([]);
   });
 });
