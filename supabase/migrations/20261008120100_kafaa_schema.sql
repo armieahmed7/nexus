@@ -1938,6 +1938,107 @@ create table if not exists kafaa_ojt_eval_requests (
 );
 comment on table kafaa_ojt_eval_requests is '[M02] OJT evaluation requests: a ready task handed to a qualified evaluator (F38)';
 
+-- M02 · Generic level attributes across all skills: essence, autonomy, influence, complexity, knowledge, behaviours (FS23, SFIA 9 style)
+create table if not exists kafaa_level_attributes (
+  id text primary key,
+  level integer not null,
+  attribute text not null check (attribute in ('essence', 'autonomy', 'influence', 'complexity', 'knowledge', 'behaviours')),
+  name_en text not null,
+  name_ar text not null,
+  text_en text not null,
+  text_ar text not null,
+  sfia_levels text not null default '',
+  sort integer not null default 0
+);
+comment on table kafaa_level_attributes is '[M02] Generic level attributes across all skills: essence, autonomy, influence, complexity, knowledge, behaviours (FS23, SFIA 9 style)';
+
+-- M02 · The levels where each skill exists, its track (technical or behavioural) and the published rationale (FS23)
+create table if not exists kafaa_skill_level_ranges (
+  id text primary key,
+  skill_id text not null unique,
+  min_level integer not null default 1,
+  max_level integer not null default 4,
+  basis text not null default 'full' check (basis in ('full', 'licence_like', 'leading', 'not_operated', 'awareness_only', 'watch', 'declining')),
+  track text not null default 'technical' check (track in ('technical', 'behavioural')),
+  rationale_en text not null,
+  rationale_ar text not null,
+  version integer not null default 1,
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_skill_level_ranges is '[M02] The levels where each skill exists, its track (technical or behavioural) and the published rationale (FS23)';
+
+-- M02 · Per-skill level descriptors: essence and 2-4 observable indicators in EN and AR, with evidence modes (FS23)
+create table if not exists kafaa_skill_descriptors (
+  id text primary key,
+  skill_id text not null,
+  level integer not null,
+  essence_en text not null,
+  essence_ar text not null,
+  indicators_en text[] not null default '{}'::text[],
+  indicators_ar text[] not null default '{}'::text[],
+  evidence_modes text[] not null default '{}'::text[],
+  status text not null default 'draft' check (status in ('draft', 'published', 'archived')),
+  listed boolean not null default false,
+  version integer not null default 1,
+  created_by text,
+  created_at timestamptz not null default now(),
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_skill_descriptors is '[M02] Per-skill level descriptors: essence and 2-4 observable indicators in EN and AR, with evidence modes (FS23)';
+
+-- M02 · Published level map from the Kafa'a scale to SFIA, SkillsFuture, DigComp, UNESCO and NQF levels, with fit notes and sources (FS24)
+create table if not exists kafaa_scale_maps (
+  id text primary key,
+  framework text not null,
+  row_kind text not null check (row_kind in ('scale', 'map')),
+  band text check (band in ('not_yet', 'l1', 'l2', 'l3', 'l4', 'authority')),
+  levels jsonb not null default '[]'::jsonb,
+  level_count integer,
+  ext_from integer,
+  ext_to integer,
+  fit text check (fit in ('exact', 'close', 'loose', 'none')),
+  label_en text not null default '',
+  label_ar text not null default '',
+  note_en text not null default '',
+  note_ar text not null default '',
+  source_url text not null,
+  as_of date not null,
+  benchmark_id text,
+  sort integer not null default 0
+);
+comment on table kafaa_scale_maps is '[M02] Published level map from the Kafa''a scale to SFIA, SkillsFuture, DigComp, UNESCO and NQF levels, with fit notes and sources (FS24)';
+
+-- M02 · Authority recognitions above Expert: panel, citation, maker-checker decision (recognised or not yet); never a fifth level (FS24)
+create table if not exists kafaa_authority_recognitions (
+  id text primary key,
+  person_id text not null,
+  person_name text not null default '',
+  person_name_ar text not null default '',
+  skill_id text not null,
+  status text not null default 'proposed' check (status in ('proposed', 'recognised', 'not_yet', 'withdrawn')),
+  panel text[] not null default '{}'::text[],
+  citation_en text not null,
+  citation_ar text not null,
+  level_at_proposal integer not null default 4,
+  basis_at_proposal text not null default '',
+  proposed_by text not null,
+  proposed_role text,
+  proposed_on date not null,
+  decided_by text,
+  decided_role text,
+  decided_on date,
+  decision_note text,
+  recognised_on date,
+  review_due date,
+  withdrawn_by text,
+  withdrawn_on date,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_authority_recognitions is '[M02] Authority recognitions above Expert: panel, citation, maker-checker decision (recognised or not yet); never a fifth level (FS24)';
+
 -- M04 · Mentoring agreement: skill goals, cadence and duration, close-out ratings (F13; the pair only)
 create table if not exists kafaa_mentoring_agreements (
   id text primary key,
@@ -5010,6 +5111,11 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_oj
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ojt_eval_requests_record_id_fk') then alter table kafaa_ojt_eval_requests add constraint kafaa_ojt_eval_requests_record_id_fk foreign key (record_id) references kafaa_qual_records(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ojt_eval_requests_evaluator_person_id_fk') then alter table kafaa_ojt_eval_requests add constraint kafaa_ojt_eval_requests_evaluator_person_id_fk foreign key (evaluator_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ojt_eval_requests_evaluation_id_fk') then alter table kafaa_ojt_eval_requests add constraint kafaa_ojt_eval_requests_evaluation_id_fk foreign key (evaluation_id) references kafaa_evaluations(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_level_ranges_skill_id_fk') then alter table kafaa_skill_level_ranges add constraint kafaa_skill_level_ranges_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_descriptors_skill_id_fk') then alter table kafaa_skill_descriptors add constraint kafaa_skill_descriptors_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_scale_maps_framework_fk') then alter table kafaa_scale_maps add constraint kafaa_scale_maps_framework_fk foreign key (framework) references kafaa_skill_frameworks(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_authority_recognitions_person_id_fk') then alter table kafaa_authority_recognitions add constraint kafaa_authority_recognitions_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_authority_recognitions_skill_id_fk') then alter table kafaa_authority_recognitions add constraint kafaa_authority_recognitions_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_mentoring_agreements_request_id_fk') then alter table kafaa_mentoring_agreements add constraint kafaa_mentoring_agreements_request_id_fk foreign key (request_id) references kafaa_mentoring_requests(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_mentoring_agreements_mentor_id_fk') then alter table kafaa_mentoring_agreements add constraint kafaa_mentoring_agreements_mentor_id_fk foreign key (mentor_id) references kafaa_mentors(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_mentoring_agreements_person_id_fk') then alter table kafaa_mentoring_agreements add constraint kafaa_mentoring_agreements_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -5508,6 +5614,13 @@ create index if not exists kafaa_ojt_eval_requests_record_id_idx on kafaa_ojt_ev
 create index if not exists kafaa_ojt_eval_requests_evaluator_person_id_idx on kafaa_ojt_eval_requests (evaluator_person_id);
 create index if not exists kafaa_ojt_eval_requests_status_idx on kafaa_ojt_eval_requests (status);
 create index if not exists kafaa_ojt_eval_requests_evaluation_id_idx on kafaa_ojt_eval_requests (evaluation_id);
+create index if not exists kafaa_level_attributes_level_idx on kafaa_level_attributes (level);
+create index if not exists kafaa_skill_descriptors_skill_id_idx on kafaa_skill_descriptors (skill_id);
+create index if not exists kafaa_skill_descriptors_status_idx on kafaa_skill_descriptors (status);
+create index if not exists kafaa_scale_maps_framework_idx on kafaa_scale_maps (framework);
+create index if not exists kafaa_authority_recognitions_person_id_idx on kafaa_authority_recognitions (person_id);
+create index if not exists kafaa_authority_recognitions_skill_id_idx on kafaa_authority_recognitions (skill_id);
+create index if not exists kafaa_authority_recognitions_status_idx on kafaa_authority_recognitions (status);
 create index if not exists kafaa_mentoring_agreements_mentor_id_idx on kafaa_mentoring_agreements (mentor_id);
 create index if not exists kafaa_mentoring_agreements_person_id_idx on kafaa_mentoring_agreements (person_id);
 create index if not exists kafaa_mentoring_agreements_mentor_person_id_idx on kafaa_mentoring_agreements (mentor_person_id);
@@ -5926,4 +6039,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 264) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 269) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

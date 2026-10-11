@@ -9,9 +9,10 @@ import { useT, usePick, L, useFormat } from '../../i18n';
 export default function CompetenciesPage() {
   const t = useT();
   const repo = useRepo();
-  const q = useQuery(['competencies', 'proficiency_levels', 'role_competencies', 'job_roles', 'job_families', 'sources'], () => load(repo));
+  const q = useQuery(['competencies', 'proficiency_levels', 'role_competencies', 'job_roles', 'job_families', 'sources', 'skills', 'skill_descriptors'], () => load(repo));
   return (
-    <Page title={t('m02.routes.competencies.title')} intro={t('m02.lib.intro')}>
+    <Page title={t('m02.routes.competencies.title')} intro={t('m02.lib.intro')}
+      actions={<><L to="/competencies/levels" className="btn-outline" data-testid="m02-to-levels">{t('m02.lib.toLevels')}</L><L to="/competencies/scale" className="btn-ghost">{t('m02.lib.toScale')}</L></>}>
       <Async state={q}>{(d) => <Library d={d} />}</Async>
     </Page>
   );
@@ -19,15 +20,19 @@ export default function CompetenciesPage() {
 
 async function load(repo: Repository) {
   {
-    const [comps, levels, rc, roles, fams, sources] = await Promise.all([
+    const [comps, levels, rc, roles, fams, sources, coreSkills, descs] = await Promise.all([
       repo.list('competencies', { order: [['code', 'asc']] }),
       repo.list('proficiency_levels', { order: [['level', 'asc']] }),
       repo.list('role_competencies'),
       repo.list('job_roles', { filter: { status: 'published' }, order: [['sort', 'asc']] }),
       repo.list('job_families', { order: [['sort', 'asc']] }),
       repo.list('sources', { filter: { id: ['fanr-reg17', 'cns10', 'ssg75'] } }),
+      repo.list('skills', { filter: { core: true } }).catch(() => []), // FS23: the core skill of each competency
+      repo.list('skill_descriptors', { filter: { status: 'published' } }).catch(() => []),
     ]);
-    return { comps, levels, rc, roles, fams, sources, roleById: new Map(roles.map((r) => [r.id, r])) };
+    const coreOf = new Map(coreSkills.map((s) => [s.competency_id as string, s.id as string]));
+    const descOf = new Map(descs.map((x) => [`${x.skill_id}|${x.level}`, x]));
+    return { comps, levels, rc, roles, fams, sources, roleById: new Map(roles.map((r) => [r.id, r])), coreOf, descOf };
   }
 }
 
@@ -117,14 +122,20 @@ function Library({ d }: { d: D }) {
                     <div className="grid grid-cols-1 gap-4 border-t border-line p-4 md:grid-cols-2">
                       <div>
                         <div className="caps mb-1">{t('m02.lib.descriptors')}</div>
-                        <ol className="space-y-1.5 text-[13px]">
-                          {lv.map((x) => (
-                            <li key={x.level}>
-                              <span className="font-semibold">{pick(d.levels.find((l) => l.level === x.level), 'name')}: </span>
-                              {pick({ v_en: x.en, v_ar: x.ar }, 'v')}
-                            </li>
-                          ))}
+                        {/* FS23: behaviourally anchored descriptors of the competency's core skill (the old template text only as a fallback) */}
+                        <ol className="space-y-1.5 text-[13px]" data-testid={`m02-lib-desc-${c.id}`}>
+                          {lv.map((x) => {
+                            const sk = d.coreOf.get(c.id);
+                            const fs = sk ? d.descOf.get(`${sk}|${x.level}`) : undefined;
+                            return (
+                              <li key={x.level}>
+                                <span className="font-semibold">{pick(d.levels.find((l) => l.level === x.level), 'name')}: </span>
+                                {fs ? pick(fs, 'essence') : sk ? <span className="text-ink-3">{t('m02.lib.notDefined')}</span> : pick({ v_en: x.en, v_ar: x.ar }, 'v')}
+                              </li>
+                            );
+                          })}
                         </ol>
+                        {d.coreOf.get(c.id) && <L to={`/competencies/descriptors/${d.coreOf.get(c.id)}`} className="mt-1 inline-block text-[12.5px]">{t('m02.lib.seeIndicators')}</L>}
                       </div>
                       <div>
                         <div className="caps mb-1">{t('m02.lib.linkedRoles')}</div>

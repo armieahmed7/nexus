@@ -75,4 +75,59 @@ export const TABLES_M02: Record<string, TableDef> = {
     read: [{ res: 'own_profile', person: 'person_id' }, { res: 'own_profile', person: 'evaluator_person_id' }, { res: 'qual_records', person: 'person_id' }],
     write: { mode: 'rpc', res: 'qual_records' },
   },
+
+  // ───────────── FS wave C · E4 · FS23 Behaviourally anchored descriptors and generic level attributes (SFIA 9, SkillsFuture,
+  // IAEA-TECDOC-1917). Rules: src/modules/m02/descriptors.ts (SQL kafaa_sd_*). Public reads published rows; framework owners
+  // (frameworks W/A) edit through rpc.saveDescriptor / rpc.setLevelRange (audited); drafts and archived rows are read by sat
+  // R/W/A and audit_log R. Published descriptor levels always equal the skill's level range.
+  level_attributes: {
+    module: 'M02', label: 'Generic level attributes across all skills: essence, autonomy, influence, complexity, knowledge, behaviours (FS23, SFIA 9 style)',
+    cols: {
+      id: 'text pk', level: 'int idx', attribute: 'text enum:essence|autonomy|influence|complexity|knowledge|behaviours', name_en: 'text', name_ar: 'text',
+      text_en: 'text', text_ar: 'text', sfia_levels: 'text =\'\'', sort: 'int =0',
+    },
+    read: [{ res: 'public_content' }], write: { mode: 'none' },
+  },
+  skill_level_ranges: {
+    module: 'M02', label: 'The levels where each skill exists, its track (technical or behavioural) and the published rationale (FS23)',
+    cols: {
+      id: 'text pk', skill_id: 'text uniq ref:skills', min_level: 'int =1', max_level: 'int =4',
+      basis: 'text enum:full|licence_like|leading|not_operated|awareness_only|watch|declining =\'full\'', track: 'text enum:technical|behavioural =\'technical\'',
+      rationale_en: 'text', rationale_ar: 'text', version: 'int =1', updated_by: 'text?', updated_at: 'ts =now',
+    },
+    read: [{ res: 'public_content' }], write: { mode: 'rpc', res: 'frameworks' },
+  },
+  skill_descriptors: {
+    module: 'M02', label: 'Per-skill level descriptors: essence and 2-4 observable indicators in EN and AR, with evidence modes (FS23)',
+    cols: {
+      id: 'text pk', skill_id: 'text ref:skills idx', level: 'int', essence_en: 'text', essence_ar: 'text', indicators_en: 'text[] =[]', indicators_ar: 'text[] =[]',
+      evidence_modes: 'text[] =[]', status: 'text enum:draft|published|archived =\'draft\' idx', listed: 'bool =false', version: 'int =1',
+      created_by: 'text?', created_at: 'ts =now', updated_by: 'text?', updated_at: 'ts =now',
+    },
+    read: [{ res: 'public_content', where: 'listed' }, { res: 'audit_log' }, { res: 'sat' }], write: { mode: 'rpc', res: 'frameworks' },
+  },
+  // ───────────── FS wave C · E4 · FS24 Scale mapping and an "Authority" recognition (SFIA 9, DigComp, UAE NQF). Rules:
+  // src/modules/m02/authority.ts (SQL kafaa_ar_*). Scale map public, written only by migration/seed. Authority recognitions: the
+  // person (own_profile Own) and recognition R/W/A (assessors, the training manager, the HR director, auditors); written only by
+  // rpc.recogniseAuthority (maker-checker, ledger). Never changes an F01 skill level.
+  scale_maps: {
+    module: 'M02', label: 'Published level map from the Kafa\'a scale to SFIA, SkillsFuture, DigComp, UNESCO and NQF levels, with fit notes and sources (FS24)',
+    cols: {
+      id: 'text pk', framework: 'text ref:skill_frameworks idx', row_kind: 'text enum:scale|map', band: 'text? enum:not_yet|l1|l2|l3|l4|authority',
+      levels: 'json =[]', level_count: 'int?', ext_from: 'int?', ext_to: 'int?', fit: 'text? enum:exact|close|loose|none',
+      label_en: 'text =\'\'', label_ar: 'text =\'\'', note_en: 'text =\'\'', note_ar: 'text =\'\'', source_url: 'text', as_of: 'date', benchmark_id: 'text?', sort: 'int =0',
+    },
+    read: [{ res: 'public_content' }], write: { mode: 'none' },
+  },
+  authority_recognitions: {
+    module: 'M02', label: 'Authority recognitions above Expert: panel, citation, maker-checker decision (recognised or not yet); never a fifth level (FS24)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', person_name: 'text =\'\'', person_name_ar: 'text =\'\'', skill_id: 'text ref:skills idx',
+      status: 'text enum:proposed|recognised|not_yet|withdrawn =\'proposed\' idx', panel: 'text[] =[]', citation_en: 'text', citation_ar: 'text',
+      level_at_proposal: 'int =4', basis_at_proposal: 'text =\'\'', proposed_by: 'text', proposed_role: 'text?', proposed_on: 'date',
+      decided_by: 'text?', decided_role: 'text?', decided_on: 'date?', decision_note: 'text?', recognised_on: 'date?', review_due: 'date?',
+      withdrawn_by: 'text?', withdrawn_on: 'date?', created_at: 'ts =now', updated_at: 'ts =now',
+    },
+    read: [{ res: 'own_profile', person: 'person_id' }, { res: 'recognition' }], write: { mode: 'rpc', res: 'recognition' },
+  },
 };

@@ -5,6 +5,7 @@ import { Icon, StatusPill } from '../../ui';
 import { useT, useFormat, usePick, useLang, hasKey } from '../../i18n';
 import { useQuery, useRepo } from '../../data';
 import type { BiText } from '../../domain/engines/types';
+import { LevelIndicators } from '../m02/levelsUi'; // FS23 (fsCe4): raters see the skill's observable indicators at the level being rated
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = any;
@@ -66,7 +67,8 @@ export function LevelPicker({ name, value, onChange, cat, skillId, allowZero, ze
           </button>
         ))}
       </div>
-      {d && <p className="text-[12px] text-ink-3">{lang === 'ar' ? d.ar : d.en}</p>}
+      {/* FS23: the skill's own essence and indicators at the selected level (falls back to the competency text) */}
+      {value && value > 0 ? <LevelIndicators skillId={skillId} level={value} fallback={d ? <p className="text-[12px] text-ink-3">{lang === 'ar' ? d.ar : d.en}</p> : null} /> : null}
     </fieldset>
   );
 }
