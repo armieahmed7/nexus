@@ -5357,6 +5357,83 @@ create table if not exists kafaa_twin_attempts (
 );
 comment on table kafaa_twin_attempts is '[M31] One person''s submitted digital-twin drill: checks, diagnosis, action, rationales, score, pass, level and the capped evidence it wrote (FS40)';
 
+-- M32 · CleanEnergyComp competence (12 in four GreenComp-method areas): EN/AR description, nuclear angle, learning outcomes, the FS02 skills that evidence it, learning items, the Jahiz New Economy group and Net Zero 2050 tag, sources (FS41)
+create table if not exists kafaa_cec_competences (
+  id text primary key,
+  code text not null unique,
+  area text not null check (area in ('values', 'complexity', 'futures', 'acting')),
+  name_en text not null,
+  name_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  plant_en text not null,
+  plant_ar text not null,
+  outcomes jsonb not null default '[]'::jsonb,
+  greencomp_area text not null,
+  skill_ids text[] not null default '{}'::text[],
+  learning jsonb not null default '[]'::jsonb,
+  jahiz_group text not null default 'new_economy',
+  net_zero boolean not null default true,
+  benchmark_ids text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb,
+  status text not null default 'active' check (status in ('active', 'retired')),
+  version integer not null default 1,
+  as_of date not null,
+  sort integer not null default 0
+);
+comment on table kafaa_cec_competences is '[M32] CleanEnergyComp competence (12 in four GreenComp-method areas): EN/AR description, nuclear angle, learning outcomes, the FS02 skills that evidence it, learning items, the Jahiz New Economy group and Net Zero 2050 tag, sources (FS41)';
+
+-- M32 · CleanEnergyComp target level (1 Aware, 2 Practitioner, 3 Advocate) for each job family, with its focus competences and the reason (FS41)
+create table if not exists kafaa_cec_role_targets (
+  id text primary key,
+  family_id text not null,
+  level integer not null,
+  focus_ids text[] not null default '{}'::text[],
+  rationale_en text not null,
+  rationale_ar text not null
+);
+comment on table kafaa_cec_role_targets is '[M32] CleanEnergyComp target level (1 Aware, 2 Practitioner, 3 Advocate) for each job family, with its focus competences and the reason (FS41)';
+
+-- M32 · Energy-system value chain explainer (hydrogen, process heat, grid): stages with the role nuclear could play, sourced facts with as-of dates, skills, horizon lanes, pathways; concept only, no ENEC project claims (FS42)
+create table if not exists kafaa_value_chains (
+  id text primary key,
+  code text not null unique,
+  name_en text not null,
+  name_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  stages jsonb not null default '[]'::jsonb,
+  facts jsonb not null default '[]'::jsonb,
+  skill_ids text[] not null default '{}'::text[],
+  lane_ids text[] not null default '{}'::text[],
+  pathway_ids text[] not null default '{}'::text[],
+  cec_ids text[] not null default '{}'::text[],
+  benchmark_ids text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb,
+  status text not null default 'active' check (status in ('active', 'retired')),
+  as_of date not null,
+  sort integer not null default 0
+);
+comment on table kafaa_value_chains is '[M32] Energy-system value chain explainer (hydrogen, process heat, grid): stages with the role nuclear could play, sourced facts with as-of dates, skills, horizon lanes, pathways; concept only, no ENEC project claims (FS42)';
+
+-- M32 · Energy-transition learning track: the FS17 pathway it runs on (M19 rows), audience, the matching micro-credential, the hour cap (FS43: under 10 hours), value chains and sources (FS42, FS43)
+create table if not exists kafaa_transition_tracks (
+  id text primary key,
+  feature text not null check (feature in ('FS42', 'FS43')),
+  pathway_id text not null,
+  credential_code text,
+  max_hours numeric,
+  audience_en text not null,
+  audience_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  chain_ids text[] not null default '{}'::text[],
+  benchmark_ids text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb,
+  sort integer not null default 0
+);
+comment on table kafaa_transition_tracks is '[M32] Energy-transition learning track: the FS17 pathway it runs on (M19 rows), audience, the matching micro-credential, the hour cap (FS43: under 10 hours), value chains and sources (FS42, FS43)';
+
 -- M33 · Nuclear critical core skill (16 in three SkillsFuture clusters), written for a nuclear plant, with benchmark mappings, INPO traits, linked catalogue skills, level descriptors and its own development and assessment routes (FS25)
 create table if not exists kafaa_core_skills (
   id text primary key,
@@ -6086,6 +6163,8 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_pl
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_twin_keys_scenario_id_fk') then alter table kafaa_twin_keys add constraint kafaa_twin_keys_scenario_id_fk foreign key (scenario_id) references kafaa_twin_scenarios(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_twin_attempts_person_id_fk') then alter table kafaa_twin_attempts add constraint kafaa_twin_attempts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_twin_attempts_scenario_id_fk') then alter table kafaa_twin_attempts add constraint kafaa_twin_attempts_scenario_id_fk foreign key (scenario_id) references kafaa_twin_scenarios(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_cec_role_targets_family_id_fk') then alter table kafaa_cec_role_targets add constraint kafaa_cec_role_targets_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_transition_tracks_pathway_id_fk') then alter table kafaa_transition_tracks add constraint kafaa_transition_tracks_pathway_id_fk foreign key (pathway_id) references kafaa_pathways(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_core_skill_targets_family_id_fk') then alter table kafaa_core_skill_targets add constraint kafaa_core_skill_targets_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_core_skill_targets_core_skill_id_fk') then alter table kafaa_core_skill_targets add constraint kafaa_core_skill_targets_core_skill_id_fk foreign key (core_skill_id) references kafaa_core_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_core_skill_candidates_merged_into_fk') then alter table kafaa_core_skill_candidates add constraint kafaa_core_skill_candidates_merged_into_fk foreign key (merged_into) references kafaa_core_skills(id) deferrable initially deferred; end if; end $$;
@@ -6755,6 +6834,9 @@ create index if not exists kafaa_plant_visits_status_idx on kafaa_plant_visits (
 create index if not exists kafaa_twin_scenarios_status_idx on kafaa_twin_scenarios (status);
 create index if not exists kafaa_twin_attempts_person_id_idx on kafaa_twin_attempts (person_id);
 create index if not exists kafaa_twin_attempts_scenario_id_idx on kafaa_twin_attempts (scenario_id);
+create index if not exists kafaa_cec_competences_area_idx on kafaa_cec_competences (area);
+create index if not exists kafaa_cec_role_targets_family_id_idx on kafaa_cec_role_targets (family_id);
+create index if not exists kafaa_transition_tracks_pathway_id_idx on kafaa_transition_tracks (pathway_id);
 create index if not exists kafaa_core_skills_cluster_idx on kafaa_core_skills (cluster);
 create index if not exists kafaa_core_skill_targets_family_id_idx on kafaa_core_skill_targets (family_id);
 create index if not exists kafaa_core_skill_targets_core_skill_id_idx on kafaa_core_skill_targets (core_skill_id);
@@ -6791,4 +6873,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 296) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 300) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
