@@ -3,6 +3,8 @@
 // (supabase/migrations/20261009113001_kafaa_w1e3_coach.sql) + backend/supabase.ts mapping.
 import type { Result } from '../../../data/types';
 import type { Pick, RefresherItemStats } from '../refresh';
+import type { M19PathwaysRpc } from './rpc.fs17'; // FS17/FS18 (FS wave C · E1)
+export type * from './rpc.fs17';
 
 export type CoachItemKind = 'course' | 'practice' | 'ojt' | 'mentor' | 'opportunity' | 'reading' | 'refresher';
 export type CoachSignal = 'saved' | 'dismissed' | 'enrolled' | 'cleared';
@@ -35,7 +37,7 @@ export interface CoachInsights {
   goals: { people: number | null; median_hours: number | null; suppressed: boolean };
 }
 
-export interface M19Rpc {
+export interface M19Rpc extends M19PathwaysRpc {
   /**
    * F07: record the person's own feedback on a coach suggestion. saved | dismissed (hidden for 90 days) | enrolled | cleared
    * (undo). One row per person and suggestion; staff only (skills_profile Own); audited, no ledger.
