@@ -42,7 +42,7 @@ export default async function fs12Checks({ count, ok }) {
     tables[t] = (await q(`select to_jsonb(x) j from kafaa_${t} x`)).map((r) => r.j);
   }
   for (const r of tables.qual_records) for (const k of ['qualified_on', 'expires_on', 'last_synced']) if (r[k]) r[k] = String(r[k]);
-  const recorded = async () => (await q(`select id, person_id, skill_id, kind, ref_table, ref_id, level, basis, status, observed_on::text observed_on, active from kafaa_skill_evidence where active and (kind = any($1) or ref_table in ('fitness_attempts', 'adaptive_attempts', 'task_attempts', 'ai_drill_attempts'))` /* FS21/FS22 too */, [RECORDED_KINDS]) /* FS10: fitness-check rows are recorded */).map((r) => ({ ...r }));
+  const recorded = async () => (await q(`select id, person_id, skill_id, kind, ref_table, ref_id, level, basis, status, observed_on::text observed_on, active from kafaa_skill_evidence where active and (kind = any($1) or ref_table in ('fitness_attempts', 'adaptive_attempts', 'task_attempts', 'ai_drill_attempts', 'plant_visits', 'twin_attempts'))` /* FS21/FS22 too */, [RECORDED_KINDS]) /* FS10: fitness-check rows are recorded */).map((r) => ({ ...r }));
   const tsStates = async (on, weights) => {
     const settings = (await q(`select id, weights from kafaa_engine_settings`)).map((r) => ({ id: r.id, weights: r.weights }));
     const model = weights ? makeDecayModel(weights, tables.skills) : decayModelFrom(settings, tables.skills);

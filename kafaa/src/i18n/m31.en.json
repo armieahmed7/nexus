@@ -2,5 +2,644 @@
   "module": {
     "name": "Next-Gen Nuclear Readiness"
   },
-  "routes": {}
+  "routes": {
+    "careers-next-gen": {
+      "title": "Next-generation reactors and your role",
+      "purpose": "What small modular and advanced reactors would change, and keep, in every Barakah role: a planning overlay with sources, no deployment decision implied."
+    },
+    "my-next-gen": {
+      "title": "My SMR delta",
+      "purpose": "For your role and each advanced technology family: what changes, the skills it asks for against your levels, and the training that closes the gaps."
+    },
+    "workforce-next-gen": {
+      "title": "Next-gen readiness across ENEC",
+      "purpose": "How ready each job family is for the SMR delta, per technology family, from skill evidence (groups under 10 suppressed)."
+    },
+    "admin-next-gen": {
+      "title": "SMR delta overlay",
+      "purpose": "Maintain the delta for each current role and technology family: dimensions, skills, training links and sources (versioned and audited)."
+    },
+    "learn-plant-literacy": {
+      "title": "How a nuclear plant works",
+      "purpose": "A guided, simulated walk from heat to the grid and through the three safety functions, with what-if scenarios. Runs entirely in your browser."
+    },
+    "my-plant-log": {
+      "title": "My plant visit log",
+      "purpose": "Log reference-plant visits and simulator observations; your host confirms them and confirmed visits count as evidence."
+    },
+    "my-twin-drills": {
+      "title": "Digital-twin drills",
+      "purpose": "Diagnose a degrading component from simulated twin trends with a limited check budget, then choose a conservative action."
+    },
+    "my-twin-drill": {
+      "title": "Digital-twin drill",
+      "purpose": "Read the trends, run your checks, name the component and failure mode, act and justify."
+    },
+    "training-twin-drills": {
+      "title": "Digital-twin drill bank",
+      "purpose": "Drills, keys and results for training staff (groups under 10 suppressed); the training manager authors drills."
+    }
+  },
+  "ng": {
+    "planningChip": "Planning assumption",
+    "noDeploy": "Planning assumption: no deployment decision is implied. Technology families come from ENEC's public ADVANCE agreements; nothing here is a site, headcount or schedule.",
+    "dim": {
+      "multi_module": "Multi-module operation",
+      "passive_safety": "Passive safety",
+      "digital_ic": "Digital I&C",
+      "factory_fab": "Factory fabrication",
+      "maintenance": "Maintenance regime",
+      "systems": "Plant systems",
+      "delivery": "Project delivery"
+    },
+    "change": {
+      "same": "Stays the same",
+      "adapts": "Adapts",
+      "new": "New"
+    },
+    "dimSame": "No change expected for this role along this dimension.",
+    "band": {
+      "small": "Small change",
+      "moderate": "Moderate change",
+      "large": "Large change",
+      "path": "Career path only"
+    },
+    "changes": "What changes",
+    "stays": "What stays the same",
+    "dimsTitle": "Seven dimensions of change",
+    "dimsEyebrow": "Adapts = existing skills stretch; new = skills the role does not use today",
+    "skillsTitle": "Skills the delta asks for",
+    "pathOnlySkills": "Security, safeguards and cyber roles stay at career-path level: no skill list is published here.",
+    "trainingTitle": "Delta training",
+    "trainingEyebrow": "Existing micro-credentials, courses, pathways and horizon lanes",
+    "noTraining": "No training is linked yet.",
+    "trainingKind": {
+      "microcred": "Micro-credential",
+      "course": "Course",
+      "pathway": "Pathway",
+      "lane": "Horizon lane"
+    },
+    "closes": "Closes {n} of my gaps",
+    "concepts": "Related future concept roles",
+    "conceptsEyebrow": "Concepts for planning only, never your current role",
+    "sources": "Sources",
+    "pathOnly": {
+      "title": "Career path only",
+      "body": "Security, safeguards and cyber roles keep their delta at career-path level: the dimensions describe awareness only, and no skills, readiness or numbers are shown."
+    },
+    "pathOnlyShort": "Career path only",
+    "sizeLine": "Change size {n} ({band})",
+    "readyLine": "{met} of {total} skills already at the level",
+    "source": {
+      "delta": "Delta",
+      "profile": "2035 profile",
+      "both": "Delta and 2035 profile"
+    },
+    "reason": {
+      "change": {
+        "small": "Change size {n}: adapts counts 1 and new counts 2 per dimension, so this is a small change.",
+        "moderate": "Change size {n}: adapts counts 1 and new counts 2 per dimension, so this is a moderate change.",
+        "large": "Change size {n}: adapts counts 1 and new counts 2 per dimension, so this is a large change."
+      },
+      "dims": "{new} dimensions are new, {adapts} adapt and {same} stay the same.",
+      "pathOnly": "This role stays at career-path level, so no skills or readiness are computed.",
+      "profile": "{n} skills come from the role's published 2035 profile (SMR design driver); the higher level wins where both name a skill.",
+      "gap": "You have a gap on {gaps} of {total} skills, from your current skill levels.",
+      "ready": "Readiness {pct}%: the share of the needed levels you already hold ({met} of {total} skills fully met)."
+    }
+  },
+  "pub": {
+    "intro": "Every current Barakah role, read against each advanced reactor technology family in ENEC's ADVANCE agreements: what would change, what would stay, and the training that already exists. A planning overlay, not a plan.",
+    "mine": "See it for my role",
+    "none": "No deltas are published yet.",
+    "planningTitle": "Planning assumption",
+    "planningBody": "ENEC has signed agreements to explore small modular and advanced reactors. These deltas help people plan their learning; they imply no deployment decision, site or headcount.",
+    "gridTitle": "Roles and technology families",
+    "gridDesc": "Each cell is one published delta: its relevance rank for the role and its change size. Choose a cell to read it.",
+    "gridLegend": "Rank 1 is the most relevant family for the role. Change size: adapts counts 1 and new counts 2 for each of seven dimensions.",
+    "role": "Role",
+    "tech": "Technology family",
+    "deltaTitle": "{role}: the delta",
+    "deltaDesc": "What changes along the seven dimensions, what stays the same, the skills and training, and the sources.",
+    "toRole": "Role profile",
+    "noDelta": "No published delta for this role and technology family.",
+    "techLabel": "Technology family:",
+    "version": "version {v}, as of {date}"
+  },
+  "my": {
+    "intro": "Your current role read against each advanced reactor family: what changes, the skills it asks for compared with your levels today, and the training that closes the gaps. Computed from your own skill record.",
+    "toPublic": "All roles",
+    "roleLabel": "Role",
+    "rolePlaceholder": "Choose a role",
+    "mineTag": "my role",
+    "backToMine": "Back to my role",
+    "noRole": "No current role on your record",
+    "noRoleBody": "Choose a role above to explore its delta, or ask HR to update your role.",
+    "notCurrent": "This role is not a current Barakah role.",
+    "myRole": "My role",
+    "exploring": "Exploring a role",
+    "toRole": "Role profile",
+    "noDeltas": "No delta is published for this role yet.",
+    "tile": {
+      "techs": "Technology families",
+      "techsSub": "ranked for this role",
+      "largest": "Largest change",
+      "best": "Best readiness",
+      "gaps": "Skills to build",
+      "gapsSub": "across all families"
+    },
+    "needsTitle": "Skills the delta asks for",
+    "needsDesc": "The delta's own skills plus the SMR design skills in the role's 2035 profile, against your current levels.",
+    "col": {
+      "skill": "Skill",
+      "source": "From",
+      "level": "Mine / needed",
+      "progress": "Progress"
+    },
+    "haveNeed": "{have} of {need}",
+    "closeTitle": "Training that closes my gaps",
+    "closeEyebrow": "Links that build a skill you are missing come first"
+  },
+  "wf": {
+    "intro": "How ready each technology family's delta is across the workforce, from the skill evidence of people whose role has a published delta. Groups under 10 are never shown.",
+    "toPublic": "Public overlay",
+    "noAccess": "This view is for HR and workforce planning.",
+    "howTitle": "How readiness is counted",
+    "howBody": "For each person and each published delta of their role, readiness is the share of the needed skill levels they hold. A person is delta-ready at {line} or above. Every number covers at least {min} people.",
+    "suppressed": "Suppressed",
+    "tile": {
+      "people": "People covered",
+      "peopleSub": "with a published, non path-only delta",
+      "techs": "Families shown",
+      "techsSub": "the rest are suppressed",
+      "deltas": "Published deltas",
+      "deltasSub": "excluding path-only roles",
+      "asOf": "As of"
+    },
+    "techTitle": "By technology family",
+    "techDesc": "Delta-ready people and average readiness.",
+    "cellSuppressed": "Fewer than {min} people: suppressed.",
+    "techLine": "{ready} of {n} people delta-ready, across {deltas} role deltas",
+    "readyShare": "Share delta-ready",
+    "half": "Half",
+    "avg": "Average readiness {pct}",
+    "reason": {
+      "n": "{n} person-role readings from {deltas} published deltas for this family.",
+      "ready": "{ready} people are at or above the {line}% readiness line.",
+      "min": "Cells covering fewer than {min} people are suppressed."
+    },
+    "heatTitle": "Job family by technology family",
+    "heatDesc": "Share of people delta-ready. Cells under {min} people are suppressed.",
+    "noFamilies": "No family has enough people to show."
+  },
+  "adm": {
+    "intro": "One delta per current role and technology family. Changes are versioned and audited; publishing writes a ledger entry.",
+    "rulesTitle": "Rules the server checks",
+    "rulesBody": "Rank 1-6; one to seven distinct dimensions, each adapts or new, in English and Arabic; up to 8 catalogue skills at level 1-3; links only to existing training; at least two https sources to publish. Security, safeguards and cyber roles stay path-only. No headcount, site or deployment claims.",
+    "counts": "{pub} published and {draft} draft deltas across {roles} roles.",
+    "addTitle": "Add a delta",
+    "add": "Add delta",
+    "exists": "That role and family already has a delta: choose it in the table.",
+    "rank": "Rank",
+    "dims": "Dimensions",
+    "status": "Status",
+    "version": "Version",
+    "asOf": "As of",
+    "st": {
+      "draft": "Draft",
+      "published": "Published",
+      "retired": "Retired"
+    },
+    "ready": "Ready to save.",
+    "save": "Save",
+    "editing": "Editing version {v}.",
+    "pathOnly": "This role stays path-only: describe awareness only and add no skills.",
+    "changesEn": "What changes (English)",
+    "changesAr": "What changes (Arabic)",
+    "staysEn": "What stays (English)",
+    "staysAr": "What stays (Arabic)",
+    "textEn": "Text (English)",
+    "textAr": "Text (Arabic)",
+    "skill": "Skill",
+    "level": "Level",
+    "remove": "Remove",
+    "addSkill": "Add skill",
+    "kind": "Kind",
+    "item": "Item",
+    "addTraining": "Add training link",
+    "srcLabel": "Label",
+    "srcUrl": "https link",
+    "srcAsOf": "As of",
+    "addSource": "Add source",
+    "confirmTitle": "Save this delta?",
+    "confirmPublish": "Version {v} will be published and readable by everyone. A ledger entry records it.",
+    "confirmDraft": "Version {v} will be saved as a draft that only framework owners and auditors can read.",
+    "problem": {
+      "rank": "Choose a rank from 1 to 6.",
+      "status": "Choose draft, published or retired.",
+      "security": "Security, safeguards and cyber roles stay path-only, with no skills.",
+      "dims": "Add one to seven distinct dimensions, each with English and Arabic text up to 400 characters.",
+      "texts": "Fill what changes and what stays in English and Arabic (up to 600 characters each).",
+      "skills": "Up to 8 distinct catalogue skills at level 1 to 3.",
+      "training": "Up to 8 distinct links to existing training.",
+      "sources": "Sources need a label and an https link; publishing needs at least two.",
+      "unclean": "Remove headcount, site or deployment claims: no deployment decision is implied."
+    }
+  },
+  "pl": {
+    "intro": "Walk through how a pressurised water reactor plant turns heat into electricity, and how it keeps the reaction controlled, the fuel cooled and radioactivity contained when something goes wrong.",
+    "toLog": "My plant visit log",
+    "simTitle": "Simulated and illustrative",
+    "simBody": "Everything on this page is a simplified illustration that runs in your browser. Values are illustrative indices from 0 to 100, never plant temperatures, pressures, setpoints or flows, and nothing you do here is stored.",
+    "simNote": "SIMULATED: an illustrative model for learning, not plant data or procedures.",
+    "fnTitle": "The three fundamental safety functions",
+    "fnEyebrow": "What every nuclear plant must always do",
+    "fn": {
+      "control": "Control the reaction",
+      "cool": "Cool the fuel",
+      "contain": "Contain radioactivity"
+    },
+    "fnHelp": {
+      "control": "Keep the chain reaction under control and stop it when needed, for example by inserting the control rods.",
+      "cool": "Remove heat from the fuel, including the decay heat that continues after shutdown.",
+      "contain": "Keep radioactive material inside its barriers: the fuel, the primary circuit and the containment building."
+    },
+    "fnState": {
+      "normal": "Normal",
+      "acting": "Acting",
+      "passive": "Passive"
+    },
+    "steps": "{n} steps, about {min} minutes",
+    "start": "Start",
+    "exit": "All scenarios",
+    "checkTitle": "Quick check",
+    "right": "Right.",
+    "notQuite": "Not quite.",
+    "nextGenTitle": "What this could mean for your role",
+    "nextGen": "Open my SMR delta",
+    "prev": "Back",
+    "next": "Next",
+    "done": "Finish",
+    "score": "Quick checks so far: {right} of {asked} right (kept only on this page).",
+    "indices": "Illustrative indices",
+    "idx": {
+      "power": "Reactor power",
+      "heat": "Heat to remove",
+      "steam": "Steam flow",
+      "output": "Electrical output"
+    },
+    "indexNote": "Indices from 0 to 100 show direction only; they are not plant values.",
+    "schematicLabel": "Simplified schematic of a pressurised water reactor plant",
+    "caption": "Simplified schematic for learning; not to scale and not any specific plant.",
+    "c": {
+      "containment": "Containment",
+      "core": "Reactor core",
+      "rods": "Control rods",
+      "primary": "Primary loop",
+      "sg": "Steam generator",
+      "turbine": "Turbine",
+      "generator": "Generator",
+      "grid": "Grid",
+      "condenser": "Condenser",
+      "sea": "Sea",
+      "feed": "Feedwater",
+      "backup": "Backup power",
+      "pool": "Passive cooling pool",
+      "valves": "Steam release"
+    },
+    "pumps": {
+      "running": "pumps running",
+      "coasting": "pumps coasting down",
+      "natural": "natural circulation"
+    },
+    "turbine": {
+      "online": "online",
+      "tripped": "tripped"
+    },
+    "grid": {
+      "connected": "connected",
+      "lost": "offsite power lost"
+    },
+    "feed": {
+      "normal": "normal feed",
+      "emergency": "emergency feed",
+      "passive": "passive feed"
+    },
+    "backup": {
+      "standby": "standby",
+      "running": "running",
+      "not_needed": "not needed"
+    }
+  },
+  "pv": {
+    "intro": "Seeing real plant systems builds technology literacy. Log a reference-plant visit, a simulator observation or a partner reference plant, name the host who was there, and the host confirms it.",
+    "toExplainer": "How a plant works",
+    "evidenceLabel": "Confirmed plant visit",
+    "tab": {
+      "mine": "My visits",
+      "host": "To confirm"
+    },
+    "tile": {
+      "confirmed": "Confirmed visits",
+      "hours": "{n} hours",
+      "pending": "Waiting for the host",
+      "pendingSub": "no evidence until confirmed",
+      "kinds": "Kinds of visit",
+      "level": "Evidence level",
+      "levelSub": "technology literacy, at most 2"
+    },
+    "levelN": "Level {n}",
+    "toL2": "Confirmed hours towards level 2 ({n} hours across two kinds)",
+    "l2Line": "Level 2",
+    "reason": {
+      "confirmed": "{n} confirmed visits, {hours} hours in total.",
+      "kinds": "{kinds} different kinds of visit confirmed.",
+      "level0": "No confirmed visit yet: evidence starts when a host confirms one.",
+      "level1": "Level 1: level 2 needs {need} confirmed hours across at least two kinds ({left} hours to go).",
+      "level2": "Level 2 reached: {need} confirmed hours or more across at least two kinds.",
+      "pending": "{n} visits are waiting for their host and do not count yet."
+    },
+    "log": "Log a visit",
+    "rulesTitle": "How confirmation works",
+    "rulesBody": "Your host must be an ENEC instructor, training manager or line manager who was there, never you. Only a confirmed visit becomes evidence; a declined or withdrawn visit never does. Do not put contact details in the note.",
+    "none": "No visits logged yet",
+    "noneBody": "Log your first reference-plant visit or simulator observation.",
+    "kind": {
+      "reference_plant": "Reference-plant visit",
+      "simulator_observation": "Simulator observation",
+      "partner_facility": "Partner reference plant"
+    },
+    "kindHelp": {
+      "reference_plant": "a guided visit to plant areas or systems",
+      "simulator_observation": "watching a crew scenario on the full-scope simulator",
+      "partner_facility": "a visit to a partner's reference plant or facility"
+    },
+    "st": {
+      "logged": "Waiting for host",
+      "confirmed": "Confirmed",
+      "declined": "Declined",
+      "withdrawn": "Withdrawn"
+    },
+    "evidence": "Evidence level {n}",
+    "line": "{date} · {hours} hours · host {host}",
+    "declinedBecause": "Host's reason: {reason}",
+    "withdraw": "Withdraw",
+    "withdrawTitle": "Withdraw this visit?",
+    "withdrawBody": "The host will no longer be asked to confirm it and it will never count as evidence.",
+    "syntheticNote": "Demo data: every person and visit in this tenant is synthetic.",
+    "logTitle": "Log a plant visit",
+    "kindLabel": "Kind of visit",
+    "hostLabel": "Host who was there",
+    "hostHint": "An instructor, training manager or line manager; never yourself.",
+    "hostRole": {
+      "instructor": "Instructor",
+      "training_manager": "Training manager",
+      "manager": "Line manager"
+    },
+    "noHosts": "No eligible hosts are available to you.",
+    "dateLabel": "Date",
+    "dateHint": "Within the last 365 days, not in the future.",
+    "hoursLabel": "Hours",
+    "hoursHint": "{min} to {max} hours, in half-hour steps.",
+    "noteLabel": "Note (optional)",
+    "noteHint": "What you saw, up to 300 characters, without contact details.",
+    "ready": "Ready to send to your host.",
+    "send": "Send to host",
+    "confirmTitle": "Send this visit to your host?",
+    "confirmBody": "{host} will be asked to confirm it. It becomes evidence only once confirmed.",
+    "problem": {
+      "kind": "Choose the kind of visit.",
+      "host": "Name your host.",
+      "date": "Use a date in the last 365 days, not in the future.",
+      "hours": "Use 0.5 to 12 hours in half-hour steps.",
+      "note": "Keep the note under 300 characters and without contact details."
+    },
+    "hostTitle": "You are named as host",
+    "hostBody": "Confirm only visits you attended. Confirming writes technology-literacy evidence for the visitor; declining needs a short reason, which the visitor sees.",
+    "hostNone": "Nothing to confirm.",
+    "hostDone": "Already decided",
+    "aColleague": "A colleague",
+    "hostLine": "{date} · {hours} hours",
+    "confirm": "Confirm",
+    "decline": "Decline",
+    "declineTitle": "Decline this visit?",
+    "declineBody": "The visitor will see your reason and the visit will not count as evidence.",
+    "declineReason": "Reason (5 to 300 characters)",
+    "confirmVisitTitle": "Confirm this visit?",
+    "confirmVisitBody": "You confirm you hosted it. This writes technology-literacy evidence (level 1 or 2) for the visitor and a ledger entry."
+  },
+  "tw": {
+    "intro": "Read simulated trends from a digital twin of a plant system, spend a limited check budget, name the degrading component and failure mode, then choose a conservative action and say why.",
+    "toExplainer": "How a plant works",
+    "evidenceLabel": "Digital-twin drill",
+    "none": "No drills are open yet.",
+    "simTitle": "Synthetic twins, simulated trends",
+    "simBody": "Every system and trend here is synthetic (SYN-TW codes) and labelled SIMULATED. No plant data, setpoints or security details are used. Scoring is deterministic and explained.",
+    "tile": {
+      "drills": "Drills open",
+      "passed": "Passed now",
+      "level": "Best level",
+      "levelSub": "evidence never above level {cap}",
+      "attempts": "Attempts"
+    },
+    "levelN": "Level {n}",
+    "list": {
+      "title": "Drills",
+      "intro": "Each drill names the twin and plant-data skills it evidences."
+    },
+    "passedL": "Passed · level {n}",
+    "notYet": "Not yet",
+    "new": "New",
+    "difficulty": "Difficulty {n} of 3",
+    "upTo": "Evidence up to level {n}",
+    "minutes": "About {n} minutes",
+    "last": "Last attempt {pct} on {date}",
+    "start": "Start",
+    "retake": "Retake",
+    "scoring": {
+      "title": "How drills are scored",
+      "eyebrow": "The same rules on the server and here",
+      "component": "Right component: 4 points; right failure mode as well: 2 more.",
+      "checks": "Each useful check: 1 point; each wasted check: minus 1.",
+      "action": "Best action: 3 points; another conservative action: 2.",
+      "rationales": "Each sound reason: 1 point; each unsound reason: minus 1.",
+      "unsafe": "An unsafe check or action fails the drill whatever the score.",
+      "pass": "Pass: safe, the right component, a conservative action and the pass mark.",
+      "level": "Level 2 needs a level-2 drill, the right mode, every useful check, no wasted check and 85% or more.",
+      "latest": "Your latest attempt on a drill replaces the evidence from earlier attempts."
+    },
+    "reason": {
+      "component": "You named the degrading component.",
+      "componentWrong": "The component you named is not the one degrading.",
+      "mode": "You named the failure mode.",
+      "modeWrong": "The failure mode is not right (it only scores with the right component).",
+      "checks": "{useful} of {total} useful checks run, {wasted} wasted.",
+      "action": {
+        "best": "You chose the best conservative action.",
+        "conservative": "Your action is conservative, though not the best one.",
+        "not_conservative": "Your action is not conservative enough.",
+        "unsafe": "Your action removes protection: unsafe."
+      },
+      "rationales": "{sound} of {total} sound reasons given, {unsound} unsound.",
+      "unsafe": "An unsafe check or action fails the drill whatever the score.",
+      "level": "Passed at level {level} with {pct}%.",
+      "notPassed": "Not passed: {pct}% against a pass mark of {pass}%, or a safety condition was not met."
+    }
+  },
+  "twd": {
+    "back": "All drills",
+    "notFound": "Drill not found or not open.",
+    "attempts": "{n} attempts",
+    "step": {
+      "investigate": "Investigate",
+      "diagnose": "Diagnose",
+      "act": "Act",
+      "result": "Result"
+    },
+    "task": "Compare each trend with the model band (shaded). Then run up to your budget of checks: each one reveals a synthetic result.",
+    "trends": "Twin trends",
+    "trendsEyebrow": "Shaded band = what the twin model expects",
+    "checks": "Checks: {used} of {max} used",
+    "checksEyebrow": "Choose carefully; some checks waste time and some are unsafe",
+    "checkMinutes": "{n} min",
+    "run": "Run",
+    "undo": "Undo",
+    "budgetUsed": "Check budget used. Undo a check to choose another.",
+    "toDiagnose": "Diagnose",
+    "componentQ": "Which component is degrading?",
+    "modeQ": "What is the failure mode?",
+    "backInvestigate": "Back to the trends",
+    "toAct": "Choose an action",
+    "actTitle": "Act conservatively",
+    "actBody": "When in doubt, choose the action that keeps margins and protection in place. Pick an action and up to three reasons for it.",
+    "actionQ": "What would you do?",
+    "rationaleQ": "Why? (up to {n})",
+    "backDiagnose": "Back to the diagnosis",
+    "submit": "Submit",
+    "confirmTitle": "Submit this drill?",
+    "confirmBody": "{checks} checks, component: {component}, action: {action}. The result is scored on the server.",
+    "outside": "{n} points outside the band",
+    "inside": "within the band",
+    "chartLabel": "Simulated trend of {name} against the model band",
+    "tableCaption": "{name}: values by time; model band {lo} to {hi}",
+    "res": {
+      "passed": "Passed at level {n}",
+      "notYet": "Not yet passed",
+      "summary": "{points} of {max} points · {useful} of {total} useful checks · {wasted} wasted",
+      "line": "Your score",
+      "passMark": "Pass mark {pct}",
+      "l2": "Level 2 from {pct}",
+      "unsafeTitle": "Unsafe choice",
+      "unsafe": "An unsafe check or action fails the drill whatever the score. Review the explanation below.",
+      "diagnosis": "Diagnosis and action",
+      "right": "Right",
+      "wrong": "Not right",
+      "component": "Component",
+      "mode": "Failure mode",
+      "correct": "correct: {a}",
+      "actionLabel": "Action",
+      "action": {
+        "best": "Best action",
+        "conservative": "Conservative",
+        "not_conservative": "Not conservative",
+        "unsafe": "Unsafe"
+      },
+      "best": "best: {a}",
+      "checks": "Checks",
+      "check": {
+        "useful": "Useful",
+        "wasted": "Wasted",
+        "unsafe": "Unsafe",
+        "missed": "Missed"
+      },
+      "noChecks": "No checks run.",
+      "rationales": "Reasons",
+      "sound": "Sound",
+      "unsound": "Unsound",
+      "missedReason": "Also sound",
+      "evidence": "Evidence",
+      "evidenceWritten": "Assessment evidence written at level {n} for:",
+      "noEvidence": "No evidence was written: a drill writes evidence only when passed.",
+      "more": "More drills"
+    }
+  },
+  "ttw": {
+    "intro": "The digital-twin drill bank and its results. Statistics use each person's latest attempt; groups under 10 are suppressed.",
+    "ruleTitle": "Synthetic only",
+    "ruleBody": "Drills use synthetic SYN-TW systems and SIMULATED trends, evidence at level 1 or 2, and no plant security wording. The server checks every drill before saving.",
+    "statsTitle": "Results",
+    "statsDesc": "Latest attempt per person and drill; cells under {min} people are suppressed.",
+    "noStats": "Results are for training staff and HR.",
+    "tile": {
+      "attempts": "Attempts",
+      "people": "People",
+      "drills": "Published drills",
+      "drillsSub": "{n} drafts",
+      "cap": "Evidence cap"
+    },
+    "col": {
+      "drill": "Drill",
+      "people": "People",
+      "pass": "Pass rate",
+      "avg": "Average score",
+      "mis": "Wrong component"
+    },
+    "suppressed": "Suppressed",
+    "bankTitle": "Drill bank",
+    "bankDesc": "Every drill with its key where you may read it.",
+    "bankDescEdit": "Every drill with its key. Edit, duplicate or publish a drill.",
+    "version": "version {v}",
+    "edit": "Edit",
+    "copy": "Duplicate",
+    "key": "Answer key",
+    "keyHidden": "The answer key is visible to the training manager.",
+    "useful": "Useful checks",
+    "unsafeChecks": "Unsafe checks",
+    "bestAction": "Best action",
+    "unsafeActions": "Unsafe actions",
+    "passMark": "Pass mark",
+    "editTitle": "Edit drill {code}",
+    "newTitle": "New drill",
+    "code": "Code",
+    "codeHint": "SYN-TW- followed by three digits.",
+    "titleEn": "Title (English)",
+    "titleAr": "Title (Arabic)",
+    "summaryEn": "Summary (English)",
+    "summaryAr": "Summary (Arabic)",
+    "scenarioEn": "Scenario (English)",
+    "scenarioAr": "Scenario (Arabic)",
+    "systemEn": "Synthetic system (English)",
+    "systemAr": "Synthetic system (Arabic)",
+    "difficulty": "Difficulty",
+    "level": "Evidence level",
+    "minutes": "Minutes",
+    "maxChecks": "Check budget",
+    "skills": "Skills evidenced (1 to 3)",
+    "structure": "Trends, options and key (JSON)",
+    "structureHint": "series, components, modes, checks, actions, rationales and key, as in the existing drills.",
+    "jsonError": "The JSON cannot be read.",
+    "confirmTitle": "Save this drill?",
+    "confirmPublish": "The drill will be published for staff. Its key stays visible to training staff only.",
+    "confirmDraft": "The drill will be saved as a draft that staff cannot see.",
+    "problem": {
+      "json": "Fix the JSON first.",
+      "texts": "Fill every title, summary, scenario and system text in English and Arabic.",
+      "synthetic": "Use a synthetic code: SYN-TW- and three digits.",
+      "difficulty": "Difficulty 1 to 3.",
+      "level": "Evidence level 1 or 2.",
+      "skill": "Choose 1 to 3 twin or plant-data skills.",
+      "status": "Choose draft, published or retired.",
+      "minutes": "5 to 40 minutes.",
+      "series": "Trends need 6 to 48 time points and 2 to 6 signals with a valid model band.",
+      "components": "3 to 6 components with English and Arabic labels.",
+      "modes": "2 to 5 failure modes.",
+      "checks": "3 to 8 checks with minutes and English and Arabic results.",
+      "max_checks": "The check budget must be between 1 and the number of checks.",
+      "actions": "3 to 5 actions.",
+      "rationales": "3 to 6 reasons.",
+      "key": "The key must name a listed component, mode, checks, conservative best action and 1 to 3 sound reasons.",
+      "pass": "Pass mark 50 to 95.",
+      "restricted": "Remove plant security wording."
+    }
+  }
 }
