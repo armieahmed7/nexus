@@ -1,6 +1,6 @@
 # FS wave E integration and QA (FS38-FS49), 11 Oct 2026
 
-Repo `/workspace/nexus` (app in `kafaa/`), branch `fsE-integration` (from `main`). Commits: merges `c535e73` (fsEe1), `cd23c8e` (fsEe2), `8406245` (fsEe3), `352f826` (fsEe4), `db26d8c` (fsEe5), then one QA commit (wiring, QA migration, tests, fixes, live-apply bundle, this report). Pushed to `origin/fsE-integration` only; `main` and Netlify were not touched. **Live Supabase was not available in this session: nothing was applied live.** The live-apply bundle must be applied before this branch reaches `main`, because merging to `main` deploys production.
+Repo `/workspace/nexus` (app in `kafaa/`), branch `fsE-integration-qa` (from `main`; it is the `fsE-integration` integration of this session, renamed at push time because another session had already pushed a different `fsE-integration` at 22:52 UTC, which was left untouched). Commits: merges `c535e73` (fsEe1), `cd23c8e` (fsEe2), `8406245` (fsEe3), `352f826` (fsEe4), `db26d8c` (fsEe5), then one QA commit (wiring, QA migration, tests, fixes, live-apply bundle, this report). Pushed to `origin/fsE-integration-qa` only; `main` and Netlify were not touched. **Live Supabase was not available in this session: nothing was applied live.** The live-apply bundle must be applied before this branch reaches `main`, because merging to `main` deploys production.
 
 ## Merge
 - `fsEe1`..`fsEe5` merged `--no-ff` in slot order:
