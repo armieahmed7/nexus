@@ -774,12 +774,24 @@ export const SCHEMA: Record<string, TableDef> = {
   // ───────────────────────────── Safety culture (M08)
   sc_traits: {
     module: 'M08', label: 'The 10 traits of a healthy nuclear safety culture',
-    cols: { id: 'text pk', n: 'int', name_en: 'text', name_ar: 'text', description_en: 'text', description_ar: 'text', behaviours: 'json =[]', prompts: 'json =[]' },
+    cols: {
+      id: 'text pk', n: 'int', name_en: 'text', name_ar: 'text', description_en: 'text', description_ar: 'text', behaviours: 'json =[]', prompts: 'json =[]',
+      // FS49 (wave E · E5): the trait with AI and automation in the loop ({en, ar} lists) and the AI-era HU cards that support it
+      ai_behaviours: 'json =[]', ai_prompts: 'json =[]', ai_hu_ids: 'text[] =[]',
+    },
     read: PUB, write: { mode: 'none' },
   },
   hu_tools: {
     module: 'M08', label: 'Human performance tools (core and conditional)',
-    cols: { id: 'text pk', name_en: 'text', name_ar: 'text', description_en: 'text', description_ar: 'text', kind: 'text enum:core|conditional' },
+    cols: {
+      id: 'text pk', name_en: 'text', name_ar: 'text', description_en: 'text', description_ar: 'text', kind: 'text enum:core|conditional',
+      // FS49 (wave E · E5): AI-era HU tool cards (automation bias, mode confusion, over-reliance, verify against the controlled source) and
+      // an "AI in the loop" angle on every classic tool. Every card links at least one FS37 drill or OE lesson (trigger kafaa_fs49_content_guard
+      // = huCardProblems in src/modules/m08/aiCulture.ts). Situation cues feed the deterministic "which tool fits" matcher.
+      topic: "text enum:classic|ai_automation ='classic' idx", sort: 'int =0', ai_en: "text =''", ai_ar: "text =''",
+      trap_en: "text =''", trap_ar: "text =''", practice: 'json =[]', example_en: "text =''", example_ar: "text =''",
+      cues: 'text[] =[]', trait_ids: 'text[] =[]', drill_ids: 'text[] =[]', lesson_ids: 'text[] =[]',
+    },
     read: [{ res: 'internal_content' }, ...PUB], write: { mode: 'direct', res: 'internal_content' },
   },
   oe_lessons: {
@@ -788,6 +800,9 @@ export const SCHEMA: Record<string, TableDef> = {
       id: 'text pk', title_en: 'text', title_ar: 'text', summary_en: 'text', summary_ar: 'text', lesson_en: 'text', lesson_ar: 'text',
       source_kind: 'text', trait_ids: 'text[] =[]', reviewed_on: 'date', reviewing_body: 'text', deidentified: 'bool =true',
       status: 'text enum:draft|in_review|published =\'published\'', affected_standard_ids: 'text[] =[]', sample: 'bool =true',
+      // FS49 (wave E · E5): international lessons on automation and digital systems from public guidance (topic ai_automation): each cites
+      // https sources with the source year and an as-of date (sources [{label, url, year, as_of}]); links to HU cards and FS37 drills.
+      topic: "text enum:general|ai_automation ='general' idx", sources: 'json =[]', hu_ids: 'text[] =[]', drill_ids: 'text[] =[]',
     },
     read: [{ res: 'internal_content' }], write: { mode: 'direct', res: 'internal_content' },
   },

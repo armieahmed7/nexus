@@ -1291,7 +1291,10 @@ create table if not exists kafaa_sc_traits (
   description_en text not null,
   description_ar text not null,
   behaviours jsonb not null default '[]'::jsonb,
-  prompts jsonb not null default '[]'::jsonb
+  prompts jsonb not null default '[]'::jsonb,
+  ai_behaviours jsonb not null default '[]'::jsonb,
+  ai_prompts jsonb not null default '[]'::jsonb,
+  ai_hu_ids text[] not null default '{}'::text[]
 );
 comment on table kafaa_sc_traits is '[M08] The 10 traits of a healthy nuclear safety culture';
 
@@ -1302,7 +1305,20 @@ create table if not exists kafaa_hu_tools (
   name_ar text not null,
   description_en text not null,
   description_ar text not null,
-  kind text not null check (kind in ('core', 'conditional'))
+  kind text not null check (kind in ('core', 'conditional')),
+  topic text not null default 'classic' check (topic in ('classic', 'ai_automation')),
+  sort integer not null default 0,
+  ai_en text not null default '',
+  ai_ar text not null default '',
+  trap_en text not null default '',
+  trap_ar text not null default '',
+  practice jsonb not null default '[]'::jsonb,
+  example_en text not null default '',
+  example_ar text not null default '',
+  cues text[] not null default '{}'::text[],
+  trait_ids text[] not null default '{}'::text[],
+  drill_ids text[] not null default '{}'::text[],
+  lesson_ids text[] not null default '{}'::text[]
 );
 comment on table kafaa_hu_tools is '[M08] Human performance tools (core and conditional)';
 
@@ -1322,7 +1338,11 @@ create table if not exists kafaa_oe_lessons (
   deidentified boolean not null default true,
   status text not null default 'published' check (status in ('draft', 'in_review', 'published')),
   affected_standard_ids text[] not null default '{}'::text[],
-  sample boolean not null default true
+  sample boolean not null default true,
+  topic text not null default 'general' check (topic in ('general', 'ai_automation')),
+  sources jsonb not null default '[]'::jsonb,
+  hu_ids text[] not null default '{}'::text[],
+  drill_ids text[] not null default '{}'::text[]
 );
 comment on table kafaa_oe_lessons is '[M08] Curated, de-identified operating-experience lesson';
 
@@ -6236,6 +6256,8 @@ create index if not exists kafaa_research_proposals_org_id_idx on kafaa_research
 create index if not exists kafaa_workforce_snapshots_period_idx on kafaa_workforce_snapshots (period);
 create index if not exists kafaa_kpi_series_metric_idx on kafaa_kpi_series (metric);
 create index if not exists kafaa_critical_roles_role_id_idx on kafaa_critical_roles (role_id);
+create index if not exists kafaa_hu_tools_topic_idx on kafaa_hu_tools (topic);
+create index if not exists kafaa_oe_lessons_topic_idx on kafaa_oe_lessons (topic);
 create index if not exists kafaa_skill_bridges_from_role_id_idx on kafaa_skill_bridges (from_role_id);
 create index if not exists kafaa_skill_bridges_tech_id_idx on kafaa_skill_bridges (tech_id);
 create index if not exists kafaa_future_skills_sk_id_idx on kafaa_future_skills (sk_id);

@@ -7,11 +7,13 @@ import { useAction, useQuery, useRepo } from '../../data';
 import { useSession } from '../../auth/session';
 import { L, useFormat, usePick, useT } from '../../i18n';
 import { Async, CheckboxField, DataTable, Drawer, EmptyState, FilterBar, Icon, KeyValue, Modal, Page, SimChip, StatusPill, TextArea, TextField, required, minLen, useFilters, useForm, type Column } from '../../ui';
+import { LessonSources } from './aiUi'; // FS49: sourced international lessons on automation and digital systems
 import type { OeLessonsRow } from '../../data/types';
 import { todayIso } from '../../domain/rules';
 import { GatedConfirm } from '../m16/parts';
 
 const SOURCE_KINDS = ['WANO', 'INPO', 'IAEA IRS', 'EPRI', 'KHNP', 'FANR', 'US NRC', 'internal'];
+const FS49_SOURCE_KINDS = ['IAEA', 'EU AI Office', 'UNESCO', 'OECD']; // FS49 public-guidance lessons (filter only; new drafts keep SOURCE_KINDS)
 
 export default function OePage() {
   const t = useT();
@@ -22,13 +24,13 @@ export default function OePage() {
   const s = useSession();
   const canEdit = s.can('internal_content', ['W']);
   const [params, setParams] = useSearchParams();
-  const [flt, setFlt] = useFilters({ q: '', trait: '', source: '', status: '' }, true);
+  const [flt, setFlt] = useFilters({ q: '', trait: '', source: '', status: '', topic: '' }, true);
   const data = useQuery(['oe_lessons', 'sc_traits'], async () => {
     const [lessons, traits] = await Promise.all([repo.list('oe_lessons', { order: [['reviewed_on', 'desc']] }), repo.list('sc_traits', { order: [['n', 'asc']] })]);
     return { lessons, traits };
   });
   const traitName = useMemo(() => new Map((data.data?.traits ?? []).map((x) => [x.id, pick(x, 'name')])), [data.data, pick]);
-  const visible = (data.data?.lessons ?? []).filter((l) => (canEdit || l.status === 'published') && (!flt.trait || l.trait_ids.includes(flt.trait)) && (!flt.source || l.source_kind === flt.source) && (!flt.status || l.status === flt.status) && (!flt.q || `${pick(l, 'title')} ${pick(l, 'summary')} ${pick(l, 'lesson')}`.toLowerCase().includes(flt.q.toLowerCase())));
+  const visible = (data.data?.lessons ?? []).filter((l) => (canEdit || l.status === 'published') && (!flt.trait || l.trait_ids.includes(flt.trait)) && (!flt.source || l.source_kind === flt.source) && (!flt.status || l.status === flt.status) && (!flt.topic || l.topic === flt.topic) && (!flt.q || `${pick(l, 'title')} ${pick(l, 'summary')} ${pick(l, 'lesson')}`.toLowerCase().includes(flt.q.toLowerCase())));
   const openId = params.get('lesson');
   const open = data.data?.lessons.find((l) => l.id === openId) ?? null;
   const setOpen = (id: string | null) => {
@@ -42,7 +44,7 @@ export default function OePage() {
   const [checks, setChecks] = useState({ deid: false, nosec: false });
 
   const cols: Column<OeLessonsRow>[] = [
-    { key: 'title', header: t('m08.oe.lesson'), value: (r) => pick(r, 'title'), sortable: true, render: (r) => <button className="text-start font-semibold text-eyebrow hover:underline" onClick={() => setOpen(r.id)}>{pick(r, 'title')}</button> },
+    { key: 'title', header: t('m08.oe.lesson'), value: (r) => pick(r, 'title'), sortable: true, render: (r) => <span className="inline-flex flex-wrap items-center gap-1.5"><button className="text-start font-semibold text-eyebrow hover:underline" onClick={() => setOpen(r.id)}>{pick(r, 'title')}</button>{r.topic === 'ai_automation' && <StatusPill tone="accent">{t('m08.oe.topics.ai_automation')}</StatusPill>}</span> },
     { key: 'source', header: t('m08.oe.source'), value: (r) => (r.source_kind === 'internal' ? t('m08.oe.sourceInternal') : r.source_kind), sortable: true },
     { key: 'traits', header: t('m08.oe.traits'), value: (r) => r.trait_ids.map((x) => traitName.get(x)).join(', '), render: (r) => <span className="text-[12px] text-ink-2">{r.trait_ids.map((x) => traitName.get(x)).join(' · ')}</span> },
     { key: 'reviewed', header: t('m08.oe.reviewedOn'), value: (r) => r.reviewed_on, sortable: true, render: (r) => f.date(r.reviewed_on) },
@@ -58,7 +60,8 @@ export default function OePage() {
         search="q"
         fields={[
           { key: 'trait', label: t('m08.oe.trait'), options: (data.data?.traits ?? []).map((x) => ({ value: x.id, label: pick(x, 'name') })) },
-          { key: 'source', label: t('m08.oe.source'), options: SOURCE_KINDS.map((x) => ({ value: x, label: x === 'internal' ? t('m08.oe.sourceInternal') : x })) },
+          { key: 'source', label: t('m08.oe.source'), options: [...SOURCE_KINDS, ...FS49_SOURCE_KINDS].map((x) => ({ value: x, label: x === 'internal' ? t('m08.oe.sourceInternal') : x })) },
+          { key: 'topic', label: t('m08.oe.topic'), options: ['general', 'ai_automation'].map((x) => ({ value: x, label: t(`m08.oe.topics.${x}`) })) },
           ...(canEdit ? [{ key: 'status', label: t('m08.oe.status'), options: ['draft', 'in_review', 'published'].map((x) => ({ value: x, label: t(`common.status.${x}`) })) }] : []),
         ]}
       />
@@ -80,6 +83,12 @@ export default function OePage() {
               <div className="caps mb-1">{t('m08.oe.lessonFor')}</div>
               <p className="text-[14px] font-semibold">{pick(open, 'lesson')}</p>
             </div>
+            {open.topic === 'ai_automation' && (
+              <div data-testid="m08-oe-sources">
+                <div className="caps mb-1">{t('m08.oe.publicSource')}</div>
+                <LessonSources lesson={open} />
+              </div>
+            )}
             <KeyValue
               items={[
                 [t('m08.oe.reviewedOn'), f.date(open.reviewed_on, 'long')],
@@ -89,7 +98,10 @@ export default function OePage() {
                 [t('m08.oe.standards'), open.affected_standard_ids.length ? open.affected_standard_ids.map((x) => <code key={x} className="ltr me-1">{x}</code>) : '—'],
               ]}
             />
-            <L to="/my/safety-culture" className="btn-outline btn-sm">{t('m08.oe.toLearning')}</L>
+            <div className="flex flex-wrap gap-2">
+              <L to="/my/safety-culture" className="btn-outline btn-sm">{t('m08.oe.toLearning')}</L>
+              {open.topic === 'ai_automation' && <L to="/my/safety-culture/ai" className="btn-outline btn-sm" data-testid="m08-oe-to-ai">{t('m08.oe.toAi')}</L>}
+            </div>
             {canEdit && open.status !== 'published' && (
               <div className="flex flex-wrap gap-2 border-t border-line pt-3">
                 {open.status === 'draft' && (
