@@ -2,5 +2,473 @@
   "module": {
     "name": "Human Skills Studio"
   },
-  "routes": {}
+  "routes": {
+    "learn-core-skills": {
+      "title": "Nuclear Critical Core Skills",
+      "purpose": "The 16 human and thinking skills every role at a nuclear plant needs, how each maps to international frameworks, and how each is developed and assessed."
+    },
+    "learn-core-skill": {
+      "title": "Core skill",
+      "purpose": "One core skill: what it looks like at the plant, its levels, benchmark mappings, development and assessment routes, and family targets."
+    },
+    "my-core-skills": {
+      "title": "My core skills",
+      "purpose": "Your evidence for each core skill against your family's target, why, and the next step."
+    },
+    "my-core-practice": {
+      "title": "Situational judgement practice",
+      "purpose": "Practise plant scenarios for the core skills and see the expert's reasoning. For development only."
+    },
+    "workforce-core-skills": {
+      "title": "Core skills across ENEC",
+      "purpose": "Evidence against targets and practice participation by core skill, cluster and family, suppressed under 10."
+    },
+    "training-sjt-items": {
+      "title": "Situational judgement item bank",
+      "purpose": "The practice scenarios, expert ratings and rationales in English and Arabic; the training manager maintains them."
+    }
+  },
+  "level": {
+    "0": "No evidence yet",
+    "1": "Foundation",
+    "2": "Proficient",
+    "3": "Role model"
+  },
+  "status": {
+    "met": "Target met",
+    "below": "Below target",
+    "no_evidence": "No evidence yet",
+    "no_target": "No family target"
+  },
+  "cluster": {
+    "thinking_critically": "Thinking critically",
+    "interacting_with_others": "Interacting with others",
+    "staying_relevant": "Staying relevant"
+  },
+  "clusterSub": {
+    "thinking_critically": "Questioning, deciding conservatively, using procedures, seeing the whole system and solving problems at their cause.",
+    "interacting_with_others": "Checking each other, communicating under pressure, speaking up, working across cultures and developing others.",
+    "staying_relevant": "Learning fast, managing yourself, adapting to change, using digital tools with judgement and owning your work."
+  },
+  "kind": {
+    "course": "course",
+    "practice": "practice",
+    "page": "on Kafa'a",
+    "ojt": "on the job",
+    "sjt": "practice",
+    "checkin": "check-in",
+    "360": "360 feedback",
+    "observation": "observed",
+    "simulator": "simulator",
+    "fitness": "fitness check"
+  },
+  "fwk": {
+    "inpo": "INPO",
+    "wef": "WEF",
+    "lifecomp": "LifeComp",
+    "entrecomp": "EntreComp",
+    "greencomp": "GreenComp",
+    "ssg_ccs": "SkillsFuture",
+    "delta": "DELTA",
+    "iaea_1917": "IAEA 1917"
+  },
+  "need": {
+    "aria": "Level {level} of 3 against a target of {target}"
+  },
+  "reason": {
+    "evidence": "{skill}: level {level} ({basis}).",
+    "none": "No evidence yet on the {n} catalogue skills linked to this core skill.",
+    "met": "Core level {level} meets your family target of {target}.",
+    "below": "Core level {level} is below your family target of {target}.",
+    "noTarget": "Core level {level}; your role has no family target for this skill.",
+    "practice": "Practice: {pct}% of the expert's best across {n} scenarios. Shown for development; it does not change the level."
+  },
+  "fw": {
+    "intro": "Sixteen human and thinking skills every role at a nuclear plant needs, in the three SkillsFuture clusters. Each is written for the plant, mapped to at least two international frameworks and kept only because it has its own development and assessment approach.",
+    "tile": {
+      "skills": "Core skills",
+      "skillsSub": "written for a nuclear plant",
+      "clusters": "Clusters",
+      "clustersSub": "SkillsFuture structure",
+      "mappings": "Benchmark mappings",
+      "mappingsSub": "at least 2 per skill",
+      "notAdded": "Considered, not added",
+      "notAddedSub": "the inclusion rule at work"
+    },
+    "filter": "Show a cluster",
+    "all": "All",
+    "atPlant": "At the plant",
+    "trait": "INPO trait: {trait}",
+    "cta": {
+      "mine": "Your core skills",
+      "signIn": "Sign in to see your core skills",
+      "body": "Staff see their own evidence for each core skill against their family target, and can practise plant scenarios with the expert's reasoning.",
+      "mineBtn": "My core skills",
+      "practiceBtn": "Practise scenarios",
+      "signInBtn": "Sign in"
+    }
+  },
+  "matrix": {
+    "title": "Mapping matrix",
+    "intro": "Which frameworks each core skill maps to. Every benchmark is a sourced row in the registry; open a chip for the source and as-of date.",
+    "skill": "Core skill",
+    "benchmarks": "Benchmarks",
+    "mapped": "mapped",
+    "notMapped": "not mapped"
+  },
+  "rule": {
+    "title": "The inclusion rule",
+    "intro": "Following McKinsey's DELTA research, a core skill exists only if it needs its own way to develop it and its own way to assess it. The rule runs on the definitions below every time this page loads.",
+    "check": "Rule check",
+    "checkEyebrow": "run live on the definitions",
+    "pass": "All {n} core skills pass.",
+    "r1": "A development route of its own, beyond generic practice.",
+    "r2": "An assessment route of its own, beyond generic practice.",
+    "r3": "No two skills share the same development and assessment approach.",
+    "r4": "At least two benchmark mappings, and no wellbeing competency.",
+    "problem": {
+      "no_development": "no development route of its own",
+      "no_assessment": "no assessment route of its own",
+      "shared_approach": "shares its approach with another skill",
+      "few_mappings": "fewer than 2 benchmark mappings",
+      "wellbeing": "a wellbeing competency is not allowed",
+      "no_descriptors": "needs three level descriptors",
+      "bad_cluster": "unknown cluster",
+      "count": "the set should hold 16 core skills"
+    }
+  },
+  "cand": {
+    "title": "Considered and not added",
+    "eyebrow": "{n} candidates",
+    "col": {
+      "name": "Candidate",
+      "decision": "Decision",
+      "into": "Lives in",
+      "rule": "Own approach?",
+      "reason": "Why",
+      "source": "Source"
+    },
+    "decision": {
+      "merged": "Merged",
+      "outcome": "An outcome",
+      "not_added": "Not added"
+    },
+    "devYes": "Development: yes",
+    "devNo": "Development: no",
+    "assessYes": "Assessment: yes",
+    "assessNo": "Assessment: no"
+  },
+  "wellbeing": {
+    "title": "Wellbeing is an outcome, not a skill",
+    "body": "SkillsFuture's 2025 review found wellbeing and career health are best treated as outcomes within existing skills. Kafa'a follows it: there is no wellbeing competency and no wellbeing score; Resilience and self-management and Learning agility carry them as outcomes, and no health information is recorded."
+  },
+  "cs": {
+    "back": "All core skills",
+    "notFound": "This core skill was not found.",
+    "atPlant": "What it looks like at the plant",
+    "levels": "Levels",
+    "levelsNote": "Three levels, 1 to {max}. A catalogue skill held at level 3 or above counts as Role model.",
+    "mappings": "Benchmark mappings",
+    "mappingsEyebrow": "{n} benchmarks",
+    "traits": "INPO safety-culture trait:",
+    "catalogue": "Catalogue skills that evidence it",
+    "routes": "How it is developed and assessed",
+    "routesIntro": "Each core skill has its own route for both. That is why it is a core skill (the inclusion rule).",
+    "develop": "Development route",
+    "developEyebrow": "how to build it",
+    "assess": "Assessment route",
+    "assessEyebrow": "how it is evidenced",
+    "outcome": "An outcome, not a separate skill",
+    "targets": "Target by job family",
+    "targetsIntro": "The level each family needs, with the reason.",
+    "col": {
+      "family": "Job family",
+      "target": "Target",
+      "why": "Why"
+    },
+    "sources": "Sources",
+    "version": "Version {v}, as of {date}",
+    "try": "Try a scenario",
+    "tryBody": "Practise plant scenarios for this skill and compare your choice with the expert's. Development only; nothing is gated.",
+    "tryBtn": "Practise this skill"
+  },
+  "my": {
+    "intro": "Your evidence for each Nuclear Critical Core Skill, from the skill states in your passport, against your job family's target. Practice results sit beside it for your development only.",
+    "practice": "Practise scenarios",
+    "none": "Core skills are shown to ENEC staff with a skills passport.",
+    "tile": {
+      "met": "Targets met",
+      "metSub": "for {family}",
+      "below": "Below target",
+      "belowSub": "a development route is listed for each",
+      "none": "No evidence yet",
+      "noneSub": "start with the route shown",
+      "practice": "Skills practised",
+      "practiceSub": "in the last four quarters"
+    },
+    "filter": "Which skills to show",
+    "show": {
+      "all": "All skills",
+      "gaps": "Gaps to close"
+    },
+    "legend": {
+      "level": "my level",
+      "target": "family target",
+      "gap": "gap to target"
+    },
+    "noTarget": "no family target",
+    "target": "target: {level}",
+    "practiceChip": "practice {pct}% · {n}",
+    "practiceTitle": "Your practice score on this skill's scenarios in the last four quarters (development only)",
+    "practiseThis": "Practise this skill",
+    "how": {
+      "title": "How your level is worked out",
+      "body": "Each core skill links to catalogue skills. Your level is your highest evidenced level on those skills (3 or above counts as Role model), the same rule on the server and in this page. Open \"Why this?\" for the evidence behind each one."
+    },
+    "private": {
+      "title": "Practice stays yours",
+      "body": "Your situational judgement practice is visible only to you. It never changes your level, never gates a qualification and never appears in talent review."
+    }
+  },
+  "sjt": {
+    "intro": "Short plant scenarios for the core skills. Choose what you would do, then see how the expert rates every response and why. For your development only.",
+    "toMine": "My core skills",
+    "none": "Practice is for ENEC staff with a skills passport.",
+    "error": "Could not continue",
+    "q": {
+      "progress": "Scenario {n} of {max}",
+      "progressLabel": "Progress through the set",
+      "ask": "What would you do?",
+      "noKey": "The expert's ratings appear after you answer.",
+      "submit": "Check my answer"
+    },
+    "verdict": {
+      "0": "The expert sees this response as counterproductive",
+      "1": "A weak response",
+      "2": "An acceptable response",
+      "3": "The expert's best response"
+    },
+    "eff": {
+      "0": "Counterproductive",
+      "1": "Weak",
+      "2": "Acceptable",
+      "3": "Expert's best"
+    },
+    "effSub": {
+      "0": "Makes the situation less safe.",
+      "1": "Well meant but leaves the risk.",
+      "2": "Safe, but not the strongest response.",
+      "3": "What an experienced professional would do."
+    },
+    "fb": {
+      "eyebrow": "Expert feedback",
+      "yours": "Your choice",
+      "rationale": "Why the expert answers this way",
+      "next": "Next scenario",
+      "result": "See my result"
+    },
+    "doneTitle": "Practice set complete",
+    "doneBody": "You worked through {n} scenarios. Your result is below and stays with you.",
+    "start": {
+      "eyebrow": "{n} scenarios in the bank",
+      "title": "Start a practice set",
+      "b1": "Up to 8 plant scenarios, mixed or for one core skill.",
+      "b2": "After each answer you see the expert's rating of every response and the reasoning.",
+      "b3": "Scenarios you have seen least come first.",
+      "b4": "For development only: no pass mark, nothing gated, no points or streaks.",
+      "focus": "Focus",
+      "mixed": "Mixed set (all core skills)",
+      "go": "Start practice",
+      "resume": "Resume my set"
+    },
+    "scale": {
+      "title": "How responses are rated",
+      "eyebrow": "the expert key",
+      "note": "Your score is the share of the expert's best, where every best response counts {max}."
+    },
+    "noResult": "No practice yet",
+    "noResultBody": "Start a set to see your result and trend here.",
+    "res": {
+      "title": "Latest result ({period})",
+      "intro": "Your score with the ENEC average as a reference line, and the skills you were strongest and weakest on.",
+      "items": "across {n} scenarios",
+      "line": "Your practice score",
+      "enec": "ENEC average ({n} people)",
+      "enecShort": "ENEC average",
+      "enecSuppressed": "The ENEC average is shown when at least 10 people have practised.",
+      "meaning": "This is practice, not an assessment. Use it to see where your judgement differs from the expert's, then read the rationale.",
+      "bySkill": "By core skill",
+      "bySkillEyebrow": "this set"
+    },
+    "trend": {
+      "title": "My trend",
+      "eyebrow": "average per quarter",
+      "mine": "My average",
+      "one": "Your trend appears after practice in two quarters.",
+      "sets": "Sets",
+      "first": "First",
+      "latest": "Latest"
+    },
+    "hist": {
+      "title": "My practice sets",
+      "when": "Date",
+      "set": "Set",
+      "items": "Scenarios",
+      "score": "Score"
+    },
+    "private": {
+      "title": "Development only",
+      "body": "Your practice is visible only to you. It never writes skill evidence, never gates a qualification, never reaches your manager or talent review, and HR sees only aggregates of 10 or more people."
+    },
+    "reason": {
+      "score": "{score}% of the expert's best across {n} scenarios; you chose the expert's best response {best} times.",
+      "strong": "Strongest: {skill} ({pct}%).",
+      "develop": "To develop: {skill} ({pct}%). Read the rationales and try a focused set.",
+      "private": "This result is yours only and is never used in talent review."
+    }
+  },
+  "theme": {
+    "conservative_decisions": "Conservative decisions",
+    "questioning": "Questioning",
+    "raising_concerns": "Raising concerns",
+    "teamwork_pressure": "Teamwork under pressure",
+    "procedure_use": "Procedure use",
+    "learning_change": "Learning and change",
+    "working_across_cultures": "Working across cultures",
+    "digital_judgement": "Digital judgement"
+  },
+  "wf": {
+    "intro": "The core skills across ENEC: evidence against family targets, and situational judgement practice. Aggregates only; any cell under 10 people is suppressed.",
+    "none": "This view is for HR (aggregate access).",
+    "tab": {
+      "evidence": "Evidence against targets",
+      "practice": "Practice"
+    },
+    "tile": {
+      "staff": "Staff in scope",
+      "staffSub": "active ENEC staff",
+      "met": "Targets met",
+      "metSub": "share of person x skill pairs",
+      "evidenced": "With any core evidence",
+      "evidencedSub": "share of staff",
+      "practice": "Practising",
+      "practiceSub": "people, last four quarters"
+    },
+    "bySkill": "By core skill",
+    "bySkillEyebrow": "people meeting their family target",
+    "col": {
+      "skill": "Core skill",
+      "met": "Met",
+      "below": "Below",
+      "none": "No evidence",
+      "pct": "% met",
+      "family": "Job family",
+      "people": "People",
+      "pairs": "% of targets met",
+      "practising": "People practising",
+      "avg": "Average score"
+    },
+    "byCluster": "By cluster",
+    "gaps": "Biggest evidence gaps",
+    "gapsEyebrow": "where to start",
+    "gapN": "{n} without evidence",
+    "gapRoute": "Route: {route}",
+    "byFamily": "By job family",
+    "byFamilyEyebrow": "families of 10 or more; security, safeguards and cyber are never broken out",
+    "sjt": {
+      "people": "People practising",
+      "peopleSub": "last four quarters",
+      "sets": "Practice sets",
+      "setsSub": "completed",
+      "avg": "Average score",
+      "avgSub": "share of the expert's best",
+      "trend": "Average by quarter",
+      "trendEyebrow": "suppressed under 10 people",
+      "quarters": "People per quarter: {list}",
+      "bySkill": "By core skill",
+      "devTitle": "Development only",
+      "devBody": "Practice results are never shown per person, never gate anything and never feed talent review."
+    },
+    "def": {
+      "title": "Definitions",
+      "d1": "A target is met when a person's core level (their highest evidenced level on the linked catalogue skills, capped at 3) reaches their job family's target.",
+      "d2": "Practice score: the share of the expert's best across the scenarios answered (each best response counts 3).",
+      "d3": "Cells naming fewer than 10 people show as suppressed (<10).",
+      "d4": "Security, safeguards and cyber families are never broken out."
+    }
+  },
+  "bank": {
+    "intro": "The situational judgement scenarios behind the practice, with the expert's rating and reasoning for every response, in English and Arabic.",
+    "coverage": {
+      "title": "Active scenarios per core skill",
+      "eyebrow": "at least {min} each",
+      "ok": "Every core skill has enough scenarios ({n} active).",
+      "thin": "Below the minimum: {list}"
+    },
+    "rules": {
+      "title": "Item rules",
+      "eyebrow": "checked by the server on every save",
+      "r1": "The scenario, four responses, a why for each and the expert rationale, all in English and Arabic.",
+      "r2": "Every response rated 0 to 3, with exactly one expert's best response.",
+      "r3": "Each core skill keeps at least two active scenarios.",
+      "r4": "Nothing about plant security; no exam content.",
+      "r5": "Every save is versioned and audited."
+    },
+    "add": "Add a scenario",
+    "readonly": "You can read the bank; only the training manager edits it.",
+    "list": {
+      "title": "Scenarios ({n})",
+      "caption": "Situational judgement scenarios",
+      "none": "No scenarios match these filters."
+    },
+    "col": {
+      "id": "ID",
+      "skill": "Core skill",
+      "theme": "Theme",
+      "stem": "Scenario",
+      "status": "Status",
+      "version": "Version"
+    },
+    "status": {
+      "active": "Active",
+      "retired": "Retired"
+    },
+    "security": {
+      "title": "Practice, not security",
+      "body": "Scenarios never describe security arrangements or exam content. The server refuses restricted wording."
+    },
+    "edit": "Edit",
+    "retire": "Retire",
+    "lang": {
+      "en": "English",
+      "ar": "Arabic"
+    },
+    "meta": "Version {v}, updated {date}",
+    "form": {
+      "addTitle": "Add a scenario",
+      "editTitle": "Edit {id}",
+      "stemEn": "Scenario (English)",
+      "stemAr": "Scenario (Arabic)",
+      "optEn": "Response {n} (English)",
+      "optAr": "Response {n} (Arabic)",
+      "noteEn": "Why, response {n} (English)",
+      "noteAr": "Why, response {n} (Arabic)",
+      "eff": "Expert rating, response {n}",
+      "ratEn": "Expert rationale (English)",
+      "ratAr": "Expert rationale (Arabic)",
+      "save": "Save"
+    },
+    "problem": {
+      "core_skill": "Choose a core skill.",
+      "theme": "Choose a theme.",
+      "stem": "Write the scenario in English and Arabic.",
+      "options": "Write all four responses in both languages.",
+      "key": "Rate every response 0-3 with exactly one expert's best.",
+      "notes": "Write a why for every response in both languages.",
+      "rationale": "Write the expert rationale in English and Arabic.",
+      "restricted": "Remove wording about plant security."
+    },
+    "retireTitle": "Retire {id}?",
+    "retireBody": "It stops appearing in new practice sets. Past results keep it. Each core skill must keep two active scenarios."
+  }
 }

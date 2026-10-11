@@ -4161,6 +4161,91 @@ export interface TransformationArchetypesRow {
   as_of: string;
   sort: number;
 }
+export interface CoreSkillsRow {
+  id: string;
+  code: string;
+  cluster: 'thinking_critically' | 'interacting_with_others' | 'staying_relevant';
+  name_en: string;
+  name_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  plant_en: string;
+  plant_ar: string;
+  descriptors: any;
+  mappings: any;
+  benchmark_ids: string[];
+  trait_ids: string[];
+  skill_ids: string[];
+  development: any;
+  assessment: any;
+  dev_approach_en: string;
+  dev_approach_ar: string;
+  assess_approach_en: string;
+  assess_approach_ar: string;
+  outcome_en: string;
+  outcome_ar: string;
+  sources: any;
+  status: 'active' | 'retired';
+  version: number;
+  as_of: string;
+  sort: number;
+}
+export interface CoreSkillTargetsRow {
+  id: string;
+  family_id: string;
+  core_skill_id: string;
+  level: number;
+  rationale_en: string;
+  rationale_ar: string;
+}
+export interface CoreSkillCandidatesRow {
+  id: string;
+  name_en: string;
+  name_ar: string;
+  decision: 'merged' | 'outcome' | 'not_added';
+  merged_into?: string | null;
+  has_development: boolean;
+  has_assessment: boolean;
+  reason_en: string;
+  reason_ar: string;
+  benchmark_ids: string[];
+  sources: any;
+  sort: number;
+}
+export interface SjtItemsRow {
+  id: string;
+  core_skill_id: string;
+  theme: 'conservative_decisions' | 'questioning' | 'raising_concerns' | 'teamwork_pressure' | 'procedure_use' | 'learning_change' | 'working_across_cultures' | 'digital_judgement';
+  stem_en: string;
+  stem_ar: string;
+  options_en: string[];
+  options_ar: string[];
+  expert_key: any;
+  notes_en: string[];
+  notes_ar: string[];
+  rationale_en: string;
+  rationale_ar: string;
+  status: 'active' | 'retired';
+  version: number;
+  sort: number;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface SjtAttemptsRow {
+  id: string;
+  person_id: string;
+  period: string;
+  attempt_no: number;
+  core_skill_id?: string | null;
+  status: 'in_progress' | 'completed';
+  item_ids: string[];
+  responses: any;
+  score?: number | null;
+  by_skill: any;
+  reasons: any;
+  started_at: string;
+  completed_at?: string | null;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -4433,6 +4518,11 @@ export interface Tables {
   transformation_drafts: TransformationDraftsRow;
   transformation_milestones: TransformationMilestonesRow;
   transformation_archetypes: TransformationArchetypesRow;
+  core_skills: CoreSkillsRow;
+  core_skill_targets: CoreSkillTargetsRow;
+  core_skill_candidates: CoreSkillCandidatesRow;
+  sjt_items: SjtItemsRow;
+  sjt_attempts: SjtAttemptsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];
