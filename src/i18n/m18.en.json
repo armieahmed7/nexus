@@ -30,6 +30,14 @@
     "careers-outlook-criteria": {
       "title": "Role outlook labels",
       "purpose": "Which roles are growing, changing or stable, and the published criteria behind every label."
+    },
+    "careers-translate": {
+      "title": "Your skills in nuclear",
+      "purpose": "Already skilled in oil and gas, power, aviation, defence or utilities? See the nearest ENEC roles, what transfers and the route to bridge the gap."
+    },
+    "my-career-health": {
+      "title": "Career Health check",
+      "purpose": "Assess five visible parts of your career health, chart a plan and book a career conversation. Private to you."
     }
   },
   "nav": {
@@ -786,5 +794,311 @@
   "wb": {
     "outlook": "Role outlook",
     "criteria": "How labels are set"
+  },
+  "fs34": {
+    "eyebrow": "Career-changers · transferable skills",
+    "intro": "Pick the job you do today. Kafa'a lines up the skills it usually brings against ENEC roles, shows what already counts, what is missing and a bridging route with its duration. Nothing you choose is stored.",
+    "toCareers": "All careers",
+    "privacyTitle": "Nothing is stored",
+    "privacy": "The translation runs in your browser from published reference data. Kafa'a does not save your choice, does not ask who you are and sends nothing to anyone.",
+    "none": "No source occupations are published yet",
+    "fig": {
+      "uk": "New nuclear jobs the UK plans by 2030",
+      "fr": "Nuclear hires France expects over 2023-2033",
+      "esco": "Occupations described in ESCO"
+    },
+    "tab": {
+      "occupation": "From my current occupation",
+      "passport": "From my skills passport"
+    },
+    "pickTitle": "1. What do you do today?",
+    "pickDesc": "{n} occupations from outside nuclear, each an ESCO occupation with the skills it usually brings.",
+    "skillsN": "{n} skills",
+    "industry": {
+      "oil_gas": "Oil and gas",
+      "power": "Power generation",
+      "process": "Process industries",
+      "aviation": "Aviation maintenance",
+      "defence": "Defence",
+      "utilities": "Water and utilities"
+    },
+    "pickFirst": "Choose an occupation to see where it leads",
+    "pickFirstBody": "You will see the nearest ENEC roles, what transfers, the delta skills and the bridging route.",
+    "bringTitle": "2. What a {occ} usually brings",
+    "escoLabel": "ESCO label",
+    "escoSource": "ESCO occupation page",
+    "col": {
+      "skill": "Kafa'a skill",
+      "level": "Typical level",
+      "esco": "ESCO skill it rests on",
+      "tie": "Alignment"
+    },
+    "level": {
+      "1": "Awareness",
+      "2": "Practitioner",
+      "3": "Qualified",
+      "4": "Expert"
+    },
+    "levelAria": "Level {n} of 4",
+    "rel": {
+      "essential": "essential",
+      "optional": "optional"
+    },
+    "match": {
+      "exact": "Exact (crosswalk)",
+      "related": "Related"
+    },
+    "levelsNote": "Levels are typical for an experienced practitioner (a template assumption, not a measurement of you). ESCO concepts read {date}.",
+    "resultsTitle": "3. Your nearest ENEC roles",
+    "resultsDesc": "The {n} roles open to experienced entrants that your skills cover best, each with what transfers, what is missing and how to bridge it.",
+    "noResults": "No role could be matched",
+    "rank": "Match {n}",
+    "coverLine": "Your skills cover {pct} of the role's requirements; {n} of {of} competencies already count.",
+    "duration": "About {weeks} weeks (≈ {months} months)",
+    "hours": "{hours} hours of learning and practice",
+    "transfersTitle": "What transfers",
+    "noTransfers": "Nothing counts yet: start with the cross-over course.",
+    "gapsTitle": "Delta skills",
+    "noGaps": "No gap: you meet every requirement.",
+    "routeTitle": "Bridging route",
+    "noRoute": "No bridging needed.",
+    "practice": "Supervised practice: {skill}",
+    "kind": {
+      "crossover": "Cross-over",
+      "course": "Course",
+      "practice": "Practice"
+    },
+    "itemTime": "{hours} h · {weeks} weeks",
+    "passportTitle": "Your own passport",
+    "passportBody": "The same rule, run on your own skill states instead of an occupation template. Your current role is left out; nothing is saved.",
+    "passportEmpty": "Your skills passport has no skill states yet",
+    "toPassport": "Open my skills passport",
+    "heldN": "Translated from {n} skills in your passport.",
+    "methodTitle": "How the translator works",
+    "method": {
+      "cover": "Coverage is the Career Navigator formula: for each competency a role needs, the level you bring (up to the level needed) divided by the level needed, weighted core 3, important 2, useful 1.",
+      "roles": "Only current roles open to experienced entrants (entry and professional levels) are proposed. Security, safeguards and cyber roles are shown at career-path level only and never here; concept future roles have no vacancy.",
+      "route": "The route starts with the cross-over courses for your industry, then for each gap the shortest published course that teaches it (one level), then supervised practice at {per} hours per level left. Weeks assume {week} study hours a week.",
+      "templates": "Each occupation is an ESCO v1.2 concept; every skill listed rests on an essential or optional ESCO skill of that occupation, marked exact when the Kafa'a crosswalk already aligns the two.",
+      "limits": "This is guidance, not an offer or an assessment: it does not measure you, and entry still follows ENEC's recruitment and qualification rules. SMR content is concept learning; no deployment decision implied."
+    },
+    "reason": {
+      "cover": "Your skills cover {pct}% of what this role needs",
+      "transfer": "{n} of the role's {of} competencies already count",
+      "transfer_item": "{skill} transfers: level {have} for a level {need} requirement",
+      "gap": "Delta skill: {skill} from level {from} to {to}",
+      "route": "Bridging route: {hours} hours, about {weeks} weeks ({months} months) at 4 hours a week",
+      "route_none": "No bridging needed: every requirement is met",
+      "crossover": "Starts with {n} cross-over course(s) for your industry (SMR and new-build workforce models)",
+      "entry": "Entry route for experienced people: {route}",
+      "education_high_school": "Entry asks for a secondary school certificate and the role's qualification programme",
+      "education_diploma": "Entry asks for a technical diploma",
+      "education_bachelor": "Entry asks for a bachelor's degree",
+      "education_master": "Entry asks for a master's degree",
+      "education_none": "Entry requirements are on the role page",
+      "b_crossover": "Cross-over course for people from your industry: {hours} hours",
+      "b_course": "Shortest published course that teaches {skill}: {hours} hours (one level)",
+      "b_also": "The same course also teaches {skill}",
+      "b_practice": "Supervised practice for {skill}: {levels} level(s) × {per} hours = {hours} hours"
+    }
+  },
+  "fs35": {
+    "eyebrow": "Assess · Chart · Execute",
+    "intro": "Five visible parts of your career health, each with its inputs and rule, then a plan and a career conversation. There is no hidden score.",
+    "toNavigator": "Career Navigator",
+    "privateTitle": "Only you can see this",
+    "private": "Your health check is never shown to your manager, HR or talent review. Only what you choose to write in a conversation request is shared.",
+    "step": {
+      "assess": "Assess",
+      "chart": "Chart",
+      "execute": "Execute"
+    },
+    "stepHint": {
+      "assess": "See the five components and what drives each one.",
+      "chart": "Choose what you will do about the ones to watch or act on.",
+      "execute": "Book a career conversation with your line manager to agree the plan."
+    },
+    "assessTitle": "Your career health today",
+    "assessDesc": "Each tile shows its value, the rule behind its status and the inputs it used.",
+    "goodOf": "{n} of {of} in good shape",
+    "count": {
+      "good": "{n} good",
+      "watch": "{n} to watch",
+      "act": "{n} to act on"
+    },
+    "asOf": "As of {date}",
+    "noScore": "Kafa'a does not combine these into one number: read each component on its own.",
+    "status": {
+      "good": "Good",
+      "watch": "Watch",
+      "act": "Act",
+      "na": "Not applicable"
+    },
+    "comp": {
+      "currency": "Skill currency",
+      "breadth": "Breadth",
+      "recency": "Recency of learning",
+      "mobility": "Mobility options",
+      "change": "Change exposure (2030)"
+    },
+    "rule": {
+      "currency": "Share of your skills with current evidence. Good from {good}, watch from {watch}. \"Due\" means within {due} months of the skill's half-life.",
+      "breadth": "Skill areas where you hold level {level} or more. Good from {good} areas, watch from {watch}.",
+      "recency": "Months since your last completed learning. Good up to {good}, watch up to {watch}.",
+      "mobility": "Other current roles whose competencies you cover at {reach} or more. Good from {good}, watch from {watch}.",
+      "change": "Your readiness for your role's 2030 profile (Role in 2030). Good from {good}, watch from {watch}."
+    },
+    "value": {
+      "months": "{n} months",
+      "none": {
+        "currency": "No skills yet",
+        "breadth": "None",
+        "recency": "No learning recorded",
+        "mobility": "None",
+        "change": "Not applicable"
+      }
+    },
+    "input": {
+      "currency": {
+        "total": "Active skills",
+        "current": "Current",
+        "due": "Due for refresh",
+        "ageing": "Ageing"
+      },
+      "breadth": {
+        "areas": "Areas at level 2+",
+        "of": "Areas in the catalogue",
+        "transferable": "Transferable skills",
+        "beyond_role": "Skills beyond my role"
+      },
+      "recency": {
+        "months_since": "Months since last",
+        "last_12m": "Completed in 12 months",
+        "total": "Completed in total"
+      },
+      "mobility": {
+        "reach": "Roles within reach",
+        "stretch": "Stretch roles (50-69%)",
+        "roles": "Roles compared",
+        "best_pct": "Best coverage (%)"
+      },
+      "change": {
+        "rated": "Tasks rated",
+        "exposure_pct": "Tasks changing",
+        "change_pct": "Profile new or raised",
+        "ready_pct": "My readiness for 2030",
+        "months": "Months to ready"
+      }
+    },
+    "changeLine": "Share of my role's 2030 profile that is new or raised",
+    "refs": {
+      "currency": "Refresh first",
+      "mobility": "Closest roles",
+      "change": "Bridge courses for 2030"
+    },
+    "lastLearning": "Last completed: {date}",
+    "area": {
+      "plant_systems": "Plant systems",
+      "operations": "Operations",
+      "maintenance": "Maintenance",
+      "radiation_chemistry": "Radiation and chemistry",
+      "engineering": "Engineering",
+      "project": "Projects",
+      "safety": "Nuclear safety",
+      "human_performance": "Human performance",
+      "emergency": "Emergency preparedness",
+      "quality": "Quality",
+      "leadership": "Leadership",
+      "digital": "Digital and AI"
+    },
+    "historyTitle": "My health checks over time",
+    "historyDesc": "Each saved check keeps the components as they were computed that day.",
+    "historyNone": "No saved health checks yet",
+    "trendTitle": "Components in good shape",
+    "trendSeries": "In good shape (of 5)",
+    "col": {
+      "date": "Date",
+      "good": "In good shape",
+      "step": "Reached"
+    },
+    "stepDone": {
+      "assessed": "Assessed",
+      "charted": "Plan charted",
+      "executed": "Conversation booked"
+    },
+    "toChart": "Chart my plan",
+    "chartTitle": "Chart your plan",
+    "chartDesc": "Suggested actions come from the components to watch or act on. Keep what fits you.",
+    "suggested": "Suggested",
+    "action": {
+      "refresh": "Refresh ageing skills",
+      "broaden": "Broaden into a new skill area",
+      "learn": "Restart regular learning",
+      "explore": "Explore roles within reach",
+      "bridge": "Bridge to my role in 2030",
+      "conversation": "Talk it through with my line manager"
+    },
+    "actionHint": {
+      "refresh": "Add recent evidence: a refresher, a check-in or work evidence for the skills listed.",
+      "broaden": "Pick a transferable skill outside your role and practise it on a project or gig.",
+      "learn": "Set a weekly learning goal in the Learning Coach.",
+      "explore": "Shortlist one of the closest roles in the Career Navigator.",
+      "bridge": "Start the first bridge course for your role's 2030 profile.",
+      "conversation": "Book a career conversation to agree the plan and the support you need."
+    },
+    "focus": "Focus role (optional)",
+    "focusNone": "No focus role",
+    "review": "Review my plan on",
+    "note": "Note to myself",
+    "noteHint": "Up to {n} characters; private.",
+    "back": "Back",
+    "savePlan": "Save my plan",
+    "saved": "Your plan is saved",
+    "executeTitle": "Book a career conversation",
+    "executeDesc": "Your request goes to your line manager through Career conversations.",
+    "shareTitle": "What is shared",
+    "shareBody": "Only your aspiration, your 12-month goal and the topics below. Your health check scores are not sent.",
+    "aspiration": "What do you want next?",
+    "goal": "My goal for the next 12 months",
+    "topics": "Topics to discuss",
+    "topicsHint": "Edit freely before you share; up to 500 characters.",
+    "topic": {
+      "refresh": "Refreshing my ageing skills",
+      "broaden": "Broadening into a new skill area",
+      "learn": "Making time for regular learning",
+      "explore": "Roles I could move to",
+      "bridge": "Preparing for my role in 2030"
+    },
+    "book": "Share and book the conversation",
+    "confirmTitle": "Share with your line manager?",
+    "confirmBody": "Your line manager will see your aspiration, goal and topics and can record the conversation. Your health check stays private.",
+    "shared": "Shared with your line manager",
+    "booked": "Conversation booked and plan saved",
+    "doneTitle": "Your conversation is booked",
+    "doneBody": "Your line manager has your request. Your plan is saved with this health check.",
+    "toConversations": "Open Career conversations",
+    "toCoach": "Open the Learning Coach",
+    "snapshotRef": "This will be health check number {n} in your history.",
+    "reason": {
+      "currency_rule": "{current} of {total} skills have current evidence ({pct}%)",
+      "currency_split": "{due} due for a refresh (within {months} months of their half-life), {ageing} ageing",
+      "currency_none": "No skill states yet",
+      "breadth_rule": "You hold level {level} or more in {n} of {of} skill areas",
+      "breadth_transfer": "{n} of them are transferable (transversal or cross-sectoral)",
+      "breadth_beyond": "{n} sit outside your role's competencies",
+      "breadth_none": "No skill at level 2 or more yet",
+      "recency_last": "Last completed learning on {date}, {months} months ago",
+      "recency_window": "{n} completed in the last {months} months",
+      "recency_none": "No completed learning on record",
+      "mobility_rule": "{n} of {of} current roles are within reach (coverage {pct}% or more)",
+      "mobility_stretch": "{n} more are a stretch ({from}-{to}%)",
+      "mobility_best": "Your best match covers {pct}% of its requirements",
+      "change_no_role": "No current role on record",
+      "change_path_only": "Your role is shown at career-path level only",
+      "change_no_tasks": "Your role has no rated task analysis yet",
+      "change_tasks": "{pct}% of your role's rated tasks change by 2030 ({n} of {of}: AI-assisted or partly automatable)",
+      "change_profile": "{n} of {of} requirements in the 2030 profile are new or raised ({pct}%)",
+      "change_ready": "You are {pct}% ready for 2030; about {months} months of learning and practice to go"
+    }
   }
 }

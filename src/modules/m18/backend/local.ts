@@ -15,6 +15,7 @@ import {
   teamRowsOf, addDaysIso, HELD_BACK_DAYS, MAX_COMMENT, MAX_NOTES, MAX_PEOPLE, type Agenda, type AgendaTables, type AspirationSignal, type ConvRow, type ConversationInsights, type PeopleRow, type TeamRow,
 } from '../conversations';
 import { lineManagerOf, type AssignmentLite } from '../../m20/domain';
+import { makeLocalFs44 } from './local.fs44';
 
 const PLAN_KINDS = ['course', 'mentoring', 'project'];
 const OPEN_PLAN = ['draft', 'submitted', 'approved', 'active'];
@@ -91,6 +92,7 @@ export function makeLocalM18(b: LocalBackend, h: LocalRpcHelpers): M18Rpc {
     return true;
   };
   return {
+    ...makeLocalFs44(b, h), // FS wave D · E4: FS34 translator (staff), FS35 career health
     async careerReadiness(personId, roleIds) {
       await b.whenReady();
       const who = b.identity();

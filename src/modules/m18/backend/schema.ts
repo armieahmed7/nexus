@@ -83,4 +83,30 @@ export const TABLES_M18: Record<string, TableDef> = {
     read: [{ res: 'transformation' }],
     write: { mode: 'rpc', res: 'transformation' },
   },
+  // [FS wave D · E4] FS34 Transferable-skills translator. ESCO-aligned skill sets for source occupations outside nuclear (oil and
+  // gas, power, process, aviation, defence, utilities): each row is an ESCO v1.2 occupation concept with the Kafa'a skills and
+  // typical levels it brings, each skill tied to an essential or optional ESCO skill of that occupation, and a cited source.
+  // Public reference rows (listed); no writes from the API. The translation itself is computed and never stored.
+  occupation_templates: {
+    module: 'M18', label: 'ESCO-aligned source occupation for the career-changer translator: Kafa\'a skills and typical levels, cited ESCO concepts (FS34)',
+    cols: {
+      id: 'text pk', esco_uri: 'text', esco_code: 'text', isco_code: 'text?', title_en: 'text', title_ar: 'text', esco_label_en: 'text', esco_label_ar: 'text',
+      industry: 'text enum:oil_gas|power|process|aviation|defence|utilities idx', summary_en: 'text', summary_ar: 'text', skills: 'json =[]', sources: 'json =[]',
+      benchmark_ids: 'text[] =[]', as_of: 'date', status: 'text enum:draft|published|retired =\'published\'', listed: 'bool =true', sort: 'int =0',
+    },
+    read: [{ res: 'public_content', where: 'listed' }],
+    write: { mode: 'none' },
+  },
+  // [FS wave D · E4] FS35 Career Health check. My own snapshots (Assess, Chart, Execute): the five components as computed when
+  // saved, my plan and the career conversation it ended in. Own only: own_profile carries Own for every signed-in role and
+  // nothing wider, so no manager, HR or talent-review reader can see a snapshot. RPC writes only (rpc.saveHealthSnapshot).
+  health_snapshots: {
+    module: 'M18', label: 'My Career Health check snapshots: five visible components, my plan and the booked conversation; own only (FS35)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', taken_at: 'ts =now', as_of: 'date', role_id: 'text? ref:job_roles', components: 'json =[]',
+      good: 'int =0', watch: 'int =0', act: 'int =0', plan: 'json ={}', step: 'text enum:assessed|charted|executed =\'assessed\'', conversation_id: 'text?', updated_at: 'ts =now',
+    },
+    read: [{ res: 'own_profile', person: 'person_id' }],
+    write: { mode: 'rpc', res: 'own_profile' },
+  },
 };

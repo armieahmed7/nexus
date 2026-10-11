@@ -1,0 +1,3203 @@
+{
+ "_source": "ESCO API v1.2 (https://ec.europa.eu/esco/api), occupation resources read 2026-10-11; labels copied verbatim (EN and AR preferred labels)",
+ "occupations": {
+  "oil-refinery-cro": {
+   "uri": "http://data.europa.eu/esco/occupation/217e7ae2-605d-4225-afd2-6319c2408116",
+   "code": "3134.3",
+   "label_en": "oil refinery control room operator",
+   "label_ar": "مشغل غرفة مراقبة مصفاة النفط / مشغلة غرفة مراقبة مصفاة النفط",
+   "isco": "3134",
+   "skills": [
+    {
+     "uri": "http://data.europa.eu/esco/skill/f041ce17-a005-4c69-846e-e3806e0b62f9",
+     "en": "conduct inter-shift communication",
+     "ar": "إجراء الاتصالات بين المناوبات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/7f18c3a2-f1ce-4db2-a354-9417691b5a43",
+     "en": "write production reports",
+     "ar": "كتابة تقارير الإنتاج",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/445b65c5-5b16-4f66-94ce-f2a7f49f9ee7",
+     "en": "manage emergency procedures",
+     "ar": "تنظيم الإجراءات المتبعة في حالة الطوارئ",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ad536e6e-7333-4d86-bea6-130ca4ed9ee3",
+     "en": "petroleum",
+     "ar": "البترول",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/233be639-bdb5-4099-ab40-96d537d6c1f3",
+     "en": "ensure compliance with safety legislation",
+     "ar": "التأكد من الامتثال لتشريعات السلامة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/95c35c3a-035f-47c2-90cf-7e934d20fc08",
+     "en": "electronics",
+     "ar": "الإلكترونيات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/920764e7-43c6-42c0-b2a6-2cbcc07fafc2",
+     "en": "monitor equipment condition",
+     "ar": "الإشراف على حالة المعدات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/334e3e49-fb02-4051-809a-f06adfdc1c40",
+     "en": "troubleshoot",
+     "ar": "حل المشكلات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/9bafaea2-76cd-4532-ab77-8b3d21fa6235",
+     "en": "coordinate remote communications",
+     "ar": "تنسيق الاتصالات عن بعد",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/5ab5301c-f32f-4688-91bb-adb92968187d",
+     "en": "oil sweetening processes",
+     "ar": "عمليات تحلية النفط",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f18b3dc3-fc4f-438c-9279-ebcaf2908b20",
+     "en": "alkylation",
+     "ar": "الألكلة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c8ac1986-38fa-43b2-89dc-50a4beeb420e",
+     "en": "electricity",
+     "ar": "كهرباء",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/fdca2645-4d0d-4537-95d0-00ed70b48988",
+     "en": "crude oil distillation processes",
+     "ar": "عمليات تقطير النفط الخام",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/efa141df-f382-418f-9121-bd88fd735669",
+     "en": "mechanics",
+     "ar": "علم الميكانيكا",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/520ff013-d72c-44c7-b1c0-a97bbadfce76",
+     "en": "petroleum coking techniques",
+     "ar": "تقنيات فحم الكوك البترولي",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2a8a178f-5206-4657-9f4c-750bf0bf5874",
+     "en": "hydrocarbon isomerisation processes",
+     "ar": "عمليات المصاوغة الهيدروكربونية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ab04dd50-0bdd-4d51-8c06-9405a81612f3",
+     "en": "hydrocarbon cracking techniques",
+     "ar": "أساليب تكسير الهيدروكربون",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d40fb05b-5a5a-4a38-9e47-9560349860fb",
+     "en": "vacuum distillation processes",
+     "ar": "عمليات التقطير الفراغي",
+     "rel": "optional"
+    }
+   ]
+  },
+  "gas-plant-cro": {
+   "uri": "http://data.europa.eu/esco/occupation/47ae3ed9-e03c-450e-9ea8-aab317545adc",
+   "code": "3134.1",
+   "label_en": "gas processing plant control room operator",
+   "label_ar": "مشغل غرفة مراقبة محطة معالجة الغاز / مشغلة غرفة مراقبة محطة معالجة الغاز",
+   "isco": "3134",
+   "skills": [
+    {
+     "uri": "http://data.europa.eu/esco/skill/233be639-bdb5-4099-ab40-96d537d6c1f3",
+     "en": "ensure compliance with safety legislation",
+     "ar": "التأكد من الامتثال لتشريعات السلامة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/9bafaea2-76cd-4532-ab77-8b3d21fa6235",
+     "en": "coordinate remote communications",
+     "ar": "تنسيق الاتصالات عن بعد",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/608eb32b-276c-42a6-9be9-2d7bc33e9b3b",
+     "en": "natural gas",
+     "ar": "الغاز الطبيعي",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/445b65c5-5b16-4f66-94ce-f2a7f49f9ee7",
+     "en": "manage emergency procedures",
+     "ar": "تنظيم الإجراءات المتبعة في حالة الطوارئ",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f041ce17-a005-4c69-846e-e3806e0b62f9",
+     "en": "conduct inter-shift communication",
+     "ar": "إجراء الاتصالات بين المناوبات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/920764e7-43c6-42c0-b2a6-2cbcc07fafc2",
+     "en": "monitor equipment condition",
+     "ar": "الإشراف على حالة المعدات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/334e3e49-fb02-4051-809a-f06adfdc1c40",
+     "en": "troubleshoot",
+     "ar": "حل المشكلات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/7f18c3a2-f1ce-4db2-a354-9417691b5a43",
+     "en": "write production reports",
+     "ar": "كتابة تقارير الإنتاج",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/95c35c3a-035f-47c2-90cf-7e934d20fc08",
+     "en": "electronics",
+     "ar": "الإلكترونيات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ca484f72-3ae0-4670-97d8-5aa2d456155a",
+     "en": "sour gas sweetening processes",
+     "ar": "عمليات تحلية الغاز الحامض",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/24603607-640c-41a9-93a1-d2420399d55c",
+     "en": "sulphur recovery processes",
+     "ar": "عمليات استخلاص الكبريت",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/301a852a-3958-44be-bfef-c3a077616c7a",
+     "en": "gas dehydration processes",
+     "ar": "معالجة تجفيف الغاز",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/4669d245-31b4-4695-ba92-2eea6e965255",
+     "en": "gas contaminant removal processes",
+     "ar": "عمليات إزالة الملوثات الغازية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/44832432-3bcc-4e62-8696-0411dd28e4b7",
+     "en": "natural gas liquids recovery processes",
+     "ar": "عمليات معالجة سوائل الغاز الطبيعي",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c8ac1986-38fa-43b2-89dc-50a4beeb420e",
+     "en": "electricity",
+     "ar": "كهرباء",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/efa141df-f382-418f-9121-bd88fd735669",
+     "en": "mechanics",
+     "ar": "علم الميكانيكا",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/65f2b899-d1c6-40e3-9f8e-40c4d3e59079",
+     "en": "natural gas liquids fractionation processes",
+     "ar": "عمليات فصل سوائل الغاز الطبيعي",
+     "rel": "optional"
+    }
+   ]
+  },
+  "power-plant-cro": {
+   "uri": "http://data.europa.eu/esco/occupation/f33a70bd-c5b6-495d-8e0c-5e2c6e56d93e",
+   "code": "3131.3.7",
+   "label_en": "power plant control room operator",
+   "label_ar": "مشغل غرفة تحكم محطة توليد الكهرباء / مشغلة غرفة تحكم محطة توليد الكهرباء",
+   "isco": "3131",
+   "skills": [
+    {
+     "uri": "http://data.europa.eu/esco/skill/f191c306-f0eb-4cb8-82fb-3331adbbc6f1",
+     "en": "adapt energy distribution schedules",
+     "ar": "ملائمة جداول توزيع الطاقة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/445b65c5-5b16-4f66-94ce-f2a7f49f9ee7",
+     "en": "manage emergency procedures",
+     "ar": "تنظيم الإجراءات المتبعة في حالة الطوارئ",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/57869946-cec2-4121-981c-84c9846c58d0",
+     "en": "electric current",
+     "ar": "التيار الكهربائي",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/7aa52bdc-9c56-4341-be65-e8e30f64403f",
+     "en": "monitor automated machines",
+     "ar": "مراقبة الأجهزة الآلية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/55944cd4-03ea-4e52-832a-4ce72b62cf84",
+     "en": "close circuit breaker",
+     "ar": "اغلاق قواطع الدائرة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/285cac9e-dad3-4b7b-848f-9bd2860ae345",
+     "en": "monitor gauge",
+     "ar": "مراقبة العدّاد",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c8c18b8d-a813-49f8-a702-689564dcf8b2",
+     "en": "electric generators",
+     "ar": "المولدات الكهربائية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/7f18c3a2-f1ce-4db2-a354-9417691b5a43",
+     "en": "write production reports",
+     "ar": "كتابة تقارير الإنتاج",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f7a4fb1d-d951-4c4c-8643-3212c0958f71",
+     "en": "monitor electric generators",
+     "ar": "مراقبة المولدات الكهربائية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/9bafaea2-76cd-4532-ab77-8b3d21fa6235",
+     "en": "coordinate remote communications",
+     "ar": "تنسيق الاتصالات عن بعد",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/95c35c3a-035f-47c2-90cf-7e934d20fc08",
+     "en": "electronics",
+     "ar": "الإلكترونيات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/7807d33c-c581-48dd-be90-69cc9b13b54c",
+     "en": "maintain power plant machinery",
+     "ar": "القيام بصيانة آلات محطة توليد الكهرباء",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/233be639-bdb5-4099-ab40-96d537d6c1f3",
+     "en": "ensure compliance with safety legislation",
+     "ar": "التأكد من الامتثال لتشريعات السلامة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/6542601c-92ee-4a03-abd9-fde0635727a2",
+     "en": "respond to electrical power contingencies",
+     "ar": "الإستجابة لحالات الطوارئ المتعلقة بالطاقة الكهربائية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/6360d655-3494-45f6-bfc6-d5f63afc355b",
+     "en": "electrical power safety regulations",
+     "ar": "أنظمة سلامة الطاقة الكهربائية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/334e3e49-fb02-4051-809a-f06adfdc1c40",
+     "en": "troubleshoot",
+     "ar": "حل المشكلات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/58c3ed60-c06b-47c0-b213-4e3608608644",
+     "en": "use remote control equipment",
+     "ar": "استخدام معدات التحكم عن بعد",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/6122d586-5978-431f-8e7a-96e61fc1f3fc",
+     "en": "wear appropriate protective gear",
+     "ar": "إرتداء معدات الوقاية المناسبة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/920764e7-43c6-42c0-b2a6-2cbcc07fafc2",
+     "en": "monitor equipment condition",
+     "ar": "الإشراف على حالة المعدات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f041ce17-a005-4c69-846e-e3806e0b62f9",
+     "en": "conduct inter-shift communication",
+     "ar": "إجراء الاتصالات بين المناوبات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/1de6b87b-2c7d-49aa-bcc0-3b2ef75f064f",
+     "en": "resolve equipment malfunctions",
+     "ar": "اصلاح أعطال المعدات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/81665015-4963-472c-9b5a-f2cf13ae9de0",
+     "en": "power plant instrumentation",
+     "ar": "أجهزة قياس محطات الطاقة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/81d274bc-6dbf-4003-bcba-f76478d5d930",
+     "en": "nuclear energy",
+     "ar": "الطاقة النووية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/b66b7130-e851-4e54-a3cc-7bd1f8db531e",
+     "en": "respond to nuclear emergencies",
+     "ar": "الاستجابة لحالات الطوارئ النووية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/b552832c-ad26-4901-b76c-232a53c74aba",
+     "en": "coordinate electricity generation",
+     "ar": "تنسيق توليد الكهرباء",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/182915aa-3470-433a-9b12-347511befcde",
+     "en": "maintain records of maintenance interventions",
+     "ar": "الاحتفاظ بسجلات عمليات الصيانة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/94e7a22f-16b8-4eee-98ba-a5b09e9cdf96",
+     "en": "develop strategies for electricity contingencies",
+     "ar": "وضع استراتيجيات طوارئ الكهرباء",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f4a6e9f7-5cff-46c0-894c-59c20bb78694",
+     "en": "automation technology",
+     "ar": "تكنولوجيا الأتمتة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/555ee719-4bc2-49c9-82b2-c2c01bfe3637",
+     "en": "oversee power equipment operation",
+     "ar": "الإشراف على تشغيل معدات الطاقة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2b76cbbf-eddc-4a12-a120-f4ea370820a5",
+     "en": "ensure safety in electrical power operations",
+     "ar": "ضمان السلامة في عمليات الطاقة الكهربية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/386774ac-fe5b-431a-b485-9aec0bf5c09e",
+     "en": "maintain electrical equipment",
+     "ar": "القيام بصيانة المعدات الكهربائية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/efa141df-f382-418f-9121-bd88fd735669",
+     "en": "mechanics",
+     "ar": "علم الميكانيكا",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c0fc7d2d-d013-40d7-bc58-75cf3771153f",
+     "en": "perform minor repairs to equipment",
+     "ar": "إجراء إصلاحات طفيفة على المعدات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c927ec6e-9082-4b22-afd3-0c4e219eaf73",
+     "en": "ensure equipment maintenance",
+     "ar": "ضمان صيانة المعدات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/0dc8813a-cebd-4a42-acc8-9a7c4e6e3663",
+     "en": "test procedures in electricity transmission",
+     "ar": "اختبار إجراءات التوصيل الكهربائي",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/7263d760-f114-42b8-8d60-3b9e8107e990",
+     "en": "supervise electricity distribution operations",
+     "ar": "الإشراف على عمليات توزيع الكهرباء",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/be7c80ee-0b7a-455c-8928-055cfa65076c",
+     "en": "react to events in time-critical environments",
+     "ar": "التفاعل مع الأحداث في البيئات الحرجة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c564a8dc-e6b3-48a1-bb6c-674f6ce37215",
+     "en": "fossil fuels",
+     "ar": "الوقود الأحفوري",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c8ac1986-38fa-43b2-89dc-50a4beeb420e",
+     "en": "electricity",
+     "ar": "كهرباء",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/79a5bc25-5b59-47bc-a4c2-fb8e8cb1ddf6",
+     "en": "smart grids systems",
+     "ar": "أنظمة الشبكة الذكية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ea271a04-ce7f-492f-bf2f-b6984a9a1910",
+     "en": "read electricity meter",
+     "ar": "قراءة عداد الكهرباء",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/21c27eba-bd1f-42f5-a1d5-c250227030f7",
+     "en": "electricity consumption",
+     "ar": "استهلاك الكهرباء",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/587f6825-0ef1-4fb0-8425-71a50d786a37",
+     "en": "arrange equipment repairs",
+     "ar": "ترتيب إصلاحات المعدات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/608eb32b-276c-42a6-9be9-2d7bc33e9b3b",
+     "en": "natural gas",
+     "ar": "الغاز الطبيعي",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/694e1e70-3e22-4d72-a3ac-b5f92951423d",
+     "en": "ensure compliance with electricity distribution schedule",
+     "ar": "ضمان الامتثال لجدول توزيع الكهرباء",
+     "rel": "optional"
+    }
+   ]
+  },
+  "chem-plant-cro": {
+   "uri": "http://data.europa.eu/esco/occupation/b21aac17-8237-4264-bc2c-0e315346fd8f",
+   "code": "3133.1.3",
+   "label_en": "chemical plant control room operator",
+   "label_ar": "مشغل غرافة مراقبة المحطة الكيميائية / مشغلة غرافة مراقبة المحطة الكيميائية",
+   "isco": "3133",
+   "skills": [
+    {
+     "uri": "http://data.europa.eu/esco/skill/3d69b305-4051-4c1d-ba1e-d8c5b35e22db",
+     "en": "monitor manufacturing impact",
+     "ar": "رصد تأثير عملية التصنيع",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/34a80161-73fd-4a45-b135-ead89d4f37ee",
+     "en": "report on possible equipment hazards",
+     "ar": "تقديم تقرير عن مخاطر المعدات المحتملة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/381306c1-bb5a-4696-8b1b-d7a6679400bf",
+     "en": "control minor maintenance",
+     "ar": "التحكم في الصيانة الثانوية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c09dce1b-e198-487e-b63f-934e10a4c181",
+     "en": "monitor plant production",
+     "ar": "مراقبة إنتاج النبات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/3938da70-dd7a-4092-b039-10c2218867fd",
+     "en": "react to mining emergencies",
+     "ar": "التصرف في حالات طوارئ التعدين",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/5edaf4c4-6747-4eb8-b898-72dd2351dca8",
+     "en": "control production flow remotely",
+     "ar": "مراقبة وتيرة الإنتاج عن بعد",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/7373abdb-ee5a-4949-b4ae-dee60ab37914",
+     "en": "use communication equipment",
+     "ar": "استخدام معدات الاتصالات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/24310a7b-5db1-4917-a705-4835630227ca",
+     "en": "create incident reports",
+     "ar": "وضع تقارير الحوادث",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/0f0698e7-04e4-4bf7-9af2-e3191147525a",
+     "en": "optimise production processes parameters",
+     "ar": "تحسين معالم عمليات الإنتاج",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/9ff9db9d-d14b-426e-83f3-e7449af6c79f",
+     "en": "manage data",
+     "ar": "ادارة البيانات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/e7219848-a27a-4bf4-8775-d367707be7c9",
+     "en": "sales strategies",
+     "ar": "استراتيجيات المبيعات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/e54ff029-1ce9-447d-a5b2-eb7283a23e6e",
+     "en": "train employees",
+     "ar": "تدريب الموظفين",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d73cb129-b385-4776-8303-f3f926b2e481",
+     "en": "report on production results",
+     "ar": "رفع التقارير عن نتائج الإنتاج",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/13f22eb5-e3a8-405a-9d89-c8124d4a239a",
+     "en": "good manufacturing practices",
+     "ar": "الممارسات التصنيعية الجيدة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/77e7cb08-2c6f-42ab-881b-b34b2318acbe",
+     "en": "manage administrative systems",
+     "ar": "إدارة  الأنظمة الإدارية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d1f607d0-48bb-4d08-a0c8-c6ee1c888b8d",
+     "en": "manufacturing plant equipment",
+     "ar": "معدات معامل التصنيع",
+     "rel": "optional"
+    }
+   ]
+  },
+  "aircraft-mt": {
+   "uri": "http://data.europa.eu/esco/occupation/91373a70-79b6-47a2-aa50-07dfe20dd258",
+   "code": "7232.5",
+   "label_en": "aircraft maintenance technician",
+   "label_ar": "فني صيانة الطائرات",
+   "isco": "7232",
+   "skills": [
+    {
+     "uri": "http://data.europa.eu/esco/skill/532bcdca-a889-4dea-8f7f-4e03d8cfd0d2",
+     "en": "aircraft mechanics",
+     "ar": "ميكانيكا الطائرات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/faf1930e-1818-4710-a85e-c690a153eeca",
+     "en": "follow manufacturer guidelines in use of airport equipment",
+     "ar": "إتباع الإرشادات التوجيهية للشركة المصنعة في استخدام معدات المطار",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/95c35c3a-035f-47c2-90cf-7e934d20fc08",
+     "en": "electronics",
+     "ar": "الإلكترونيات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d5b63f98-28ce-4cbb-b075-6ac539a685b0",
+     "en": "common aviation safety regulations",
+     "ar": "لوائح السلامة الجوية المشتركة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c32ad607-0c4d-4e34-b73f-668298f7bf13",
+     "en": "apply technical communication skills",
+     "ar": "تطبيق مهارات الاتصال الفني",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/3e40c7d0-0e36-4b33-bc33-0aa87eda0561",
+     "en": "electrical engineering",
+     "ar": "الهندسة الكهربائية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d15e92c4-c8dc-48cd-a1f6-94fe13347f87",
+     "en": "electrical wiring plans",
+     "ar": "خطط التوصيل الكهربي",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f5fa2654-52cc-45d2-ac92-ac979dee5d12",
+     "en": "engine components",
+     "ar": "مكونات المحرك",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/5bf7f85a-b080-4b27-8ddc-9f62af4643f5",
+     "en": "use power tools",
+     "ar": "استخدام أدوات الطاقة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/72a74f69-5cf1-43c5-99b9-62a444578919",
+     "en": "engineering processes",
+     "ar": "عمليات الهندسة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/db3c8181-31b4-4950-bf0b-de01f93c372b",
+     "en": "disassemble engines",
+     "ar": "تفكيك المحركات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/efa141df-f382-418f-9121-bd88fd735669",
+     "en": "mechanics",
+     "ar": "علم الميكانيكا",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2bbdea06-a265-42b5-bb4f-7241b661f069",
+     "en": "electromechanics",
+     "ar": "كهربائية آلية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/59ea80e1-463a-4dba-82c6-d0b6d577d532",
+     "en": "technical drawings",
+     "ar": "الرسوم التقنية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c8ac1986-38fa-43b2-89dc-50a4beeb420e",
+     "en": "electricity",
+     "ar": "كهرباء",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/1bc7c69b-4292-4592-b854-f48165a06082",
+     "en": "repair engines",
+     "ar": "اصلاح المحركات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/52797dce-911c-4e6d-b0cb-491f6469014f",
+     "en": "install electrical and electronic equipment",
+     "ar": "تركيب المعدات الكهربائية والإلكترونية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/6122d586-5978-431f-8e7a-96e61fc1f3fc",
+     "en": "wear appropriate protective gear",
+     "ar": "إرتداء معدات الوقاية المناسبة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/44e2c4c4-9fd2-42d4-a133-d81360ded4bc",
+     "en": "manage health and safety standards",
+     "ar": "تنظيم معايير الصحة والسلامة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/415cb0c2-e169-4f99-ba3e-d1c433b75368",
+     "en": "assemble electrical components",
+     "ar": "تجميع المكونات الكهربائية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f30a7ea4-77dd-452c-8a2d-b06c12606a7f",
+     "en": "operate soldering equipment",
+     "ar": "تشغيل معدات لحام",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ed938748-60ae-4964-a657-ff2685ecc0d0",
+     "en": "evaluate engine performance",
+     "ar": "تقييم أداء المحرك",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/62b7060c-3055-4ab8-bcf2-8080fd7c01f3",
+     "en": "ensure compliance with airport security measures",
+     "ar": "التأكد من الامتثال لتدابير أمن المطارات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/9c071f1d-eac3-449d-b004-c14775b5a3b9",
+     "en": "mechanical engineering",
+     "ar": "الهندسة الميكانيكية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/209a5498-3449-4689-8ed9-bd08cab4fd78",
+     "en": "engineering principles",
+     "ar": "المبادئ الهندسية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c648deac-4969-41b7-8a67-9987f5d414a6",
+     "en": "airport safety regulations",
+     "ar": "لوائح سلامة المطار",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/b07daddc-8625-4360-946e-ad2b0e56ebf6",
+     "en": "read engineering drawings",
+     "ar": "قراءة الرسومات الهندسية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/68b6ef08-d823-489d-a95c-752ae6f6e6a7",
+     "en": "read standard blueprints",
+     "ar": "قراءة المخططات القياسية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/cffc3e97-e942-4b13-a2f3-0bf4910c06d3",
+     "en": "use technical documentation",
+     "ar": "استخدام الوثائق التقنية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/baf501a8-f0fe-4ad7-9b69-8e920fa1a87b",
+     "en": "test electronic units",
+     "ar": "اختبار الوحدات الإلكترونية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/bbd57056-80e0-45bb-a2c1-658ed99a1251",
+     "en": "conduct performance tests",
+     "ar": "إجراء اختبارات الأداء",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/42c25baf-ccb3-47d9-a872-bb2ceb615538",
+     "en": "operate precision measuring equipment",
+     "ar": "تشغيل معدات قياس الدقة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2672f6a9-1e70-43c5-859d-e6a0fc9ea0f1",
+     "en": "aircraft flight control systems",
+     "ar": "أنظمة مراقبة الرحلات الجوية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/74374d09-7a54-4a05-ae78-d5940423de7c",
+     "en": "use testing equipment",
+     "ar": "استخدام معدات الاختبار",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2c02af08-a7f9-4535-889d-f4172cfc9a17",
+     "en": "inspect aircraft for airworthiness",
+     "ar": "فحص الطائرات للتأكد من صلاحيتها للطيران",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/a28df07f-976c-4eb4-b29a-06161af39756",
+     "en": "use computerised maintenance management systems",
+     "ar": "يستخدم أنظمة إدارة الصيانة المحوسبة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/5088c536-13fb-4b6b-85e7-4053578e1451",
+     "en": "electrical systems used in transportation",
+     "ar": "الأنظمة الكهربائية المستخدمة في النقل",
+     "rel": "optional"
+    }
+   ]
+  },
+  "avionics-tech": {
+   "uri": "http://data.europa.eu/esco/occupation/d9ab0f3d-078d-42a7-a502-3e739e0aeff6",
+   "code": "7421.2",
+   "label_en": "avionics technician",
+   "label_ar": "فني إلكترونيات الطيران",
+   "isco": "7421",
+   "skills": [
+    {
+     "uri": "http://data.europa.eu/esco/skill/52797dce-911c-4e6d-b0cb-491f6469014f",
+     "en": "install electrical and electronic equipment",
+     "ar": "تركيب المعدات الكهربائية والإلكترونية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/334e3e49-fb02-4051-809a-f06adfdc1c40",
+     "en": "troubleshoot",
+     "ar": "حل المشكلات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d15e92c4-c8dc-48cd-a1f6-94fe13347f87",
+     "en": "electrical wiring plans",
+     "ar": "خطط التوصيل الكهربي",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2672f6a9-1e70-43c5-859d-e6a0fc9ea0f1",
+     "en": "aircraft flight control systems",
+     "ar": "أنظمة مراقبة الرحلات الجوية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/415cb0c2-e169-4f99-ba3e-d1c433b75368",
+     "en": "assemble electrical components",
+     "ar": "تجميع المكونات الكهربائية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/3e40c7d0-0e36-4b33-bc33-0aa87eda0561",
+     "en": "electrical engineering",
+     "ar": "الهندسة الكهربائية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/6122d586-5978-431f-8e7a-96e61fc1f3fc",
+     "en": "wear appropriate protective gear",
+     "ar": "إرتداء معدات الوقاية المناسبة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/dcc96a49-0bac-4a9c-8f8e-a32b4e47e6eb",
+     "en": "apply health and safety standards",
+     "ar": "تطبيق معايير الصحة والسلامة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d5b63f98-28ce-4cbb-b075-6ac539a685b0",
+     "en": "common aviation safety regulations",
+     "ar": "لوائح السلامة الجوية المشتركة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/baf501a8-f0fe-4ad7-9b69-8e920fa1a87b",
+     "en": "test electronic units",
+     "ar": "اختبار الوحدات الإلكترونية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f30a7ea4-77dd-452c-8a2d-b06c12606a7f",
+     "en": "operate soldering equipment",
+     "ar": "تشغيل معدات لحام",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c8ac1986-38fa-43b2-89dc-50a4beeb420e",
+     "en": "electricity",
+     "ar": "كهرباء",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/26ed52cf-30ca-451e-9699-a6c04a30649f",
+     "en": "solder electronics",
+     "ar": "لحم المكونات الإلكترونية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/95c35c3a-035f-47c2-90cf-7e934d20fc08",
+     "en": "electronics",
+     "ar": "الإلكترونيات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/136596a4-00b5-4ed3-bb6e-717198c1ccbe",
+     "en": "apply soldering techniques",
+     "ar": "استخدام تقنيات اللحام",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/b07daddc-8625-4360-946e-ad2b0e56ebf6",
+     "en": "read engineering drawings",
+     "ar": "قراءة الرسومات الهندسية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/5088c536-13fb-4b6b-85e7-4053578e1451",
+     "en": "electrical systems used in transportation",
+     "ar": "الأنظمة الكهربائية المستخدمة في النقل",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/557d1221-0235-4a48-ada5-8fca73443627",
+     "en": "electronics principles",
+     "ar": "مبادئ الإلكترونيات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/68b6ef08-d823-489d-a95c-752ae6f6e6a7",
+     "en": "read standard blueprints",
+     "ar": "قراءة المخططات القياسية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/54ddd422-5905-44db-93d4-03b17b913c5e",
+     "en": "use CADD software",
+     "ar": "استخدام برنامج التصميم والتخطيط بمساعدة الحاسوب (CADD)",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/74374d09-7a54-4a05-ae78-d5940423de7c",
+     "en": "use testing equipment",
+     "ar": "استخدام معدات الاختبار",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/3a33cec3-4b44-471a-8864-5cc8567a8b1f",
+     "en": "CADD software",
+     "ar": "برنامج التصميم بمساعدة الحاسوب",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ccfbdaad-b91d-4bfe-bd0e-d30b33587f19",
+     "en": "keep records of work progress",
+     "ar": "الاحتفاظ بسجلات تقدم العمل",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/02e235f4-a30a-412a-a06e-1c471ad28678",
+     "en": "follow procedures to control substances hazardous to health",
+     "ar": "اتباع الإجراءات لمراقبة المواد الخطرة على الصحة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/a2b5dcf3-5b6a-453d-876c-cff540c0faf1",
+     "en": "CAD software",
+     "ar": "برمجيات التصميم بمساعدة الحاسوب",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/72a74f69-5cf1-43c5-99b9-62a444578919",
+     "en": "engineering processes",
+     "ar": "عمليات الهندسة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/b34e2ba1-9080-48c9-9b42-ee9192a4d3f1",
+     "en": "use CAD software",
+     "ar": "استخدام برمجيات التصميم بمساعدة الحاسوب",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/bbd57056-80e0-45bb-a2c1-658ed99a1251",
+     "en": "conduct performance tests",
+     "ar": "إجراء اختبارات الأداء",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/82313e12-9d39-47d1-b7c9-78bbd6bb50e2",
+     "en": "CAE software",
+     "ar": "برنامج الهندسة بمساعدة الحاسوب",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/209a5498-3449-4689-8ed9-bd08cab4fd78",
+     "en": "engineering principles",
+     "ar": "المبادئ الهندسية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8867088a-e54d-41bc-81e8-a21ff98e81d3",
+     "en": "calibrate electronic instruments",
+     "ar": "فحص أدوات الإلكترونية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/386774ac-fe5b-431a-b485-9aec0bf5c09e",
+     "en": "maintain electrical equipment",
+     "ar": "القيام بصيانة المعدات الكهربائية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/42b23922-1c40-4dbe-9e0c-7a568dfdf06b",
+     "en": "adjust engineering designs",
+     "ar": "ضبط التصاميم الهندسية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c5c51528-ccfc-4c53-b409-c200aaa44222",
+     "en": "liaise with engineers",
+     "ar": "التنسيق مع المهندسين",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ba45db8f-34e8-4f29-af0b-e6645e1d693f",
+     "en": "maintain electronic equipment",
+     "ar": "القيام بصيانة المعدات الإلكترونية",
+     "rel": "optional"
+    }
+   ]
+  },
+  "military-engineer": {
+   "uri": "http://data.europa.eu/esco/occupation/555235ce-8c45-409b-a6c9-83e69c2d2bce",
+   "code": "0310.5",
+   "label_en": "military engineer",
+   "label_ar": "مهندس عسكري",
+   "isco": "0310",
+   "skills": [
+    {
+     "uri": "http://data.europa.eu/esco/skill/54924a2c-daca-40d3-9716-4b38ceb04f38",
+     "en": "algorithms",
+     "ar": "الخوارزميات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d220e067-ed2b-4ad0-94b9-7b27cb4aed22",
+     "en": "military weaponry",
+     "ar": "الأسلحة العسكرية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/415abd43-e8e5-4643-b5da-5f11307af57a",
+     "en": "use different communication channels",
+     "ar": "استخدام قنوات اتصال مختلفة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/248894d1-42dc-474f-af6e-2da52ac0c679",
+     "en": "define technology strategy",
+     "ar": "تحديد استراتيجية التكنولوجيا",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/209a5498-3449-4689-8ed9-bd08cab4fd78",
+     "en": "engineering principles",
+     "ar": "المبادئ الهندسية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f334a048-ad2a-40f5-b5dc-a9a846c38623",
+     "en": "monitor military equipment use",
+     "ar": "مراقبة استخدام المعدات العسكرية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/72a74f69-5cf1-43c5-99b9-62a444578919",
+     "en": "engineering processes",
+     "ar": "عمليات الهندسة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/7a17d7ce-01a2-4746-bbcc-22ffe22fa16e",
+     "en": "monitor technology trends",
+     "ar": "رصد اتجاهات التكنولوجيا",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8d4271ca-c9fd-40b3-875f-15f78332a49e",
+     "en": "quality standards",
+     "ar": "معايير الجودة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/1fea0bc2-a6fa-4fe8-b36f-7a3194f8ed1c",
+     "en": "electricity principles",
+     "ar": "مبادئ الكهرباء",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/b8ac179c-4a29-4467-9177-031daf1321d6",
+     "en": "packaging engineering",
+     "ar": "هندسة التعبئة والتغليف",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/734fc996-03ed-40c2-b502-b1ba44e3b867",
+     "en": "ensure compliance with types of weapons",
+     "ar": "التأكد من الامتثال لأنواع الأسلحة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/42b23922-1c40-4dbe-9e0c-7a568dfdf06b",
+     "en": "adjust engineering designs",
+     "ar": "ضبط التصاميم الهندسية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/1cca610d-2afc-44a7-97fc-f2262fb5fc75",
+     "en": "surveying",
+     "ar": "إجراء الاستبيان",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/e8cb2ae8-1dc7-494a-b7e4-5c305243b2dc",
+     "en": "perform ground-handling maintenance procedures",
+     "ar": "تنفيذ إجراءات الصيانة الأرضية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/44297bbb-306a-46fa-ab1b-fa3fb327ebda",
+     "en": "mechanical tools",
+     "ar": "الأدوات الميكانيكية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/4ca91852-c534-4b98-ab1c-59a126534c88",
+     "en": "project commissioning",
+     "ar": "جاهزيّة المشروع",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/e843973c-23dd-416a-8a9c-9e89512542fb",
+     "en": "logistics",
+     "ar": "الخدمات اللوجستية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8bc1c7da-c832-4896-a441-30d087c46aad",
+     "en": "examine engineering principles",
+     "ar": "تدريس المبادئ الهندسية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/7111b95d-0ce3-441a-9d92-4c75d05c4388",
+     "en": "project management",
+     "ar": "إدارة المشاريع",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8d13e6ed-49e8-4c0d-876c-4629d798b2c8",
+     "en": "handle surveillance equipment",
+     "ar": "استعمال معدات المراقبة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/87ebd3b5-f80c-4beb-8e73-75c225065290",
+     "en": "supervise the maintenance of military equipment",
+     "ar": "الاشراف على صيانة المعدات العسكرية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ff8bd17c-77e9-4d4e-929a-a0cf86f3ed34",
+     "en": "surveillance methods",
+     "ar": "طرق المراقبة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/e58a3832-4e13-458e-8efd-bfa251eed702",
+     "en": "maintain operational communications",
+     "ar": "الحفاظ على الاتصالات التشغيلية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/4c58528e-bdaa-43ad-8f5a-8ad0b8cd4bbb",
+     "en": "design principles",
+     "ar": "مبادئ التصميم",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/1349751e-dfb5-492e-89af-e7d9bd2546ac",
+     "en": "patents",
+     "ar": "براءات الاختراع",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/5a362a03-c808-4e19-a387-226ccaf1c6a7",
+     "en": "advise superiors on military operations",
+     "ar": "تقديم المشورة للرؤساء بشأن العمليات العسكرية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/7ee4c2ea-b349-4bd2-81a3-ec31475d4833",
+     "en": "statistics",
+     "ar": "علم الإحصاء",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/bec4359e-cb92-468f-a997-8fb28e32fba9",
+     "en": "ICT project management methodologies",
+     "ar": "منهجيات إدارة مشاريع تكنولوجيا المعلومات والاتصالات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/5d34adde-0b78-42b4-9d3d-69e9388d8398",
+     "en": "oversee quality control",
+     "ar": "الإشراف على مراقبة الجودة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/749ce4c2-4dfd-461a-a8f3-0f6914814d3e",
+     "en": "securities",
+     "ar": "الأوراق المالية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/6eff134b-e34f-4d6e-a6e8-5e47cf2228d0",
+     "en": "risk management",
+     "ar": "إدارة المخاطر",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/377861af-f966-4c87-a2db-7e99904312b9",
+     "en": "geographic information systems",
+     "ar": "أنظمة المعلومات الجغرافية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/e4a32aa6-6042-4073-b46b-38362522198b",
+     "en": "military drill",
+     "ar": "حفارة عسكرية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/b6f26b50-3914-46ff-8f88-3defb71e007a",
+     "en": "terminology",
+     "ar": "المصطلح",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/87434439-c07d-48be-af34-b0cdd03121c4",
+     "en": "design engineering components",
+     "ar": "تصميم المكونات الهندسية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/9570e84e-6699-4c9f-9a12-7bc82d53a231",
+     "en": "public health",
+     "ar": "الصحة العامة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c79a6989-a73c-496b-997f-c706e1c5c52b",
+     "en": "determine production feasibility",
+     "ar": "تحديد جدوى الإنتاج",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/53103efa-a525-4a5b-81e5-282c4331e72c",
+     "en": "programme work according to incoming orders",
+     "ar": "وضع برنامجًا للعمل وفقًا للطلبات الواردة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ddc3119d-1d6e-4324-9125-a3380d299ac5",
+     "en": "computer technology",
+     "ar": "تكنولوجيا الحاسوب",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f1a56786-e6d7-4b2e-a39c-23e09024d473",
+     "en": "concepts of telecommunications",
+     "ar": "مفاهيم الاتصالات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/72c7f1a4-b283-45d0-b36f-754f0a9445d9",
+     "en": "camouflage",
+     "ar": "التمويه",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/baf501a8-f0fe-4ad7-9b69-8e920fa1a87b",
+     "en": "test electronic units",
+     "ar": "اختبار الوحدات الإلكترونية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/9e84a506-df06-4be3-874a-fa01293e3dd5",
+     "en": "business processes",
+     "ar": "عمليات الأعمال",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/3e40c7d0-0e36-4b33-bc33-0aa87eda0561",
+     "en": "electrical engineering",
+     "ar": "الهندسة الكهربائية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/3cb69f14-c297-474a-8950-5e7af4da0049",
+     "en": "perform physical stress tests on models",
+     "ar": "إجراء اختبارات التحمل البدني على العارضات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/6b2bc23e-67e1-4587-9dfb-a09af24aeafa",
+     "en": "defend human rights",
+     "ar": "الدفاع عن حقوق الإنسان",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/1dd23dba-dd00-45ab-abf4-642902538317",
+     "en": "perform risk analysis",
+     "ar": "القيام بتحليل المخاطر",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/16c8eade-5c2b-4c9c-a60d-6799dbc758a3",
+     "en": "instrumentation equipment",
+     "ar": "معدات القياس",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/a0cbe83f-dd83-44d9-8c38-bfff2c80ef04",
+     "en": "operate armoured fighting vehicles",
+     "ar": "تشغيل مركبات القتال المصفحة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/96d549bb-3e62-4c45-92a7-f114df089581",
+     "en": "analyse supply chain strategies",
+     "ar": "تحليل استراتيجيات سلسلة الإمداد",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8744f28f-59a9-45af-8ef6-6944cb5a1473",
+     "en": "risk identification",
+     "ar": "تعريف المخاطر",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/0db1a833-e4b7-4cae-9c6f-ddcdd4326e85",
+     "en": "geographic areas",
+     "ar": "المناطق الجغرافية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/3a2d5b45-56e4-4f5a-a55a-4a4a65afdc43",
+     "en": "machine learning",
+     "ar": "تعليم الآلة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/60571d44-dfd4-4d57-bab2-e8598cc825e5",
+     "en": "coordinate humanitarian aid missions",
+     "ar": "تنظيم بعثات المساعدة الإنسانية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/4339176e-3acd-4f7f-a5d9-445bee3d23f2",
+     "en": "mathematics",
+     "ar": "الرياضيات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/143769cb-b61e-47d8-a61e-eedfbec1016c",
+     "en": "business intelligence",
+     "ar": "ذكاء الأعمال",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c0fc7d2d-d013-40d7-bc58-75cf3771153f",
+     "en": "perform minor repairs to equipment",
+     "ar": "إجراء إصلاحات طفيفة على المعدات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/70a7b3b3-31ef-4b29-a30f-bb7299dff39b",
+     "en": "sensors",
+     "ar": "أجهزة الاستشعار",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f2d57f41-43b4-4f5b-8100-3df5c21eda50",
+     "en": "process data",
+     "ar": "معالجة البيانات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/557d1221-0235-4a48-ada5-8fca73443627",
+     "en": "electronics principles",
+     "ar": "مبادئ الإلكترونيات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/1e38f5be-bb7d-42c5-8301-c16cf400f8ee",
+     "en": "energy",
+     "ar": "الطاقة المتجددة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2357e4f8-4b42-4969-bd17-cfea963956c0",
+     "en": "perform military operations",
+     "ar": "القيام بالعمليات العسكرية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/730ce01a-8f7f-4bfd-8799-ed7a8620b841",
+     "en": "military aviation",
+     "ar": "الطيران العسكري",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/af43a17b-8ac2-4cff-8318-42701317daa7",
+     "en": "coordinate patrols",
+     "ar": "تنسيق الدوريات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f929c89e-c363-4132-a918-e021d57b307c",
+     "en": "supply chain management",
+     "ar": "إدارة سلسلة الإمدادات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/613a3233-31e5-4c9e-842f-92e2a6b5d7a1",
+     "en": "give battle commands",
+     "ar": "إصدار أوامر المعركة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/77e7cb08-2c6f-42ab-881b-b34b2318acbe",
+     "en": "manage administrative systems",
+     "ar": "إدارة  الأنظمة الإدارية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/7fc1bae3-eb9b-4609-a374-01c2a39d827d",
+     "en": "devise military tactics",
+     "ar": "وضع تكتيكات عسكرية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/a56dec32-05ef-45de-a256-ee6741f356db",
+     "en": "information confidentiality",
+     "ar": "سرية المعلومات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f6f22c8e-249e-4e82-9528-6779a947b265",
+     "en": "surveillance radars",
+     "ar": "رادارات المراقبة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/386774ac-fe5b-431a-b485-9aec0bf5c09e",
+     "en": "maintain electrical equipment",
+     "ar": "القيام بصيانة المعدات الكهربائية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/949ced5f-7536-4614-ac60-563ffc91a2f2",
+     "en": "strategic planning",
+     "ar": "التخطيط الإستراتيجي",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/86d2e2ea-1ba2-4aa6-b465-8a1f9abc81b8",
+     "en": "apply information security policies",
+     "ar": "تطبيق سياسات أمن المعلومات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/3cbe8b8d-69ba-4faa-9a7c-4cb95769df88",
+     "en": "politics",
+     "ar": "السياسة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/0a9acb6b-1139-4be9-b431-3a80a959f2f4",
+     "en": "Agile project management",
+     "ar": "الإدارة الرشيقة للمشروع",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f5dd06b8-5d17-4932-9d03-957d0c4f5051",
+     "en": "perform resource planning",
+     "ar": "تنفيذ تخطيط الموارد",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/0256f6b0-f4a9-4c5e-9cfd-96d58a2a70fe",
+     "en": "operate radio equipment",
+     "ar": "تشغيل معدات الراديو",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/726abd5a-d23c-44b9-abb0-f22bbe95f1d3",
+     "en": "operational research",
+     "ar": "البحوث التشغيلية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/415f816c-07ae-4ac1-9ddb-ecaa9957a249",
+     "en": "law enforcement",
+     "ar": "إنفاذ القانون",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/b88fde8f-1b98-4a83-8a2e-75232be4f725",
+     "en": "write situation reports",
+     "ar": "كتابة تقارير الحالة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2b92a5b2-6758-4ee3-9fb4-b6387a55cc8f",
+     "en": "perform data analysis",
+     "ar": "اجراء تحليلًا على البيانات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/25f0ea33-b4a2-4f31-b7b4-7d20e827b180",
+     "en": "data mining",
+     "ar": "استخراج البيانات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/020b3c27-bae1-4b85-9d6f-eccee0f5ed99",
+     "en": "manage supplies",
+     "ar": "إدارة الإمدادات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/b80b624d-8fa5-4a88-a12f-9d56880eddef",
+     "en": "aviation meteorology",
+     "ar": "الأرصاد الجوية للطيران",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ec6df9cb-be92-4027-80fa-83b70aabce58",
+     "en": "industrial research and development",
+     "ar": "البحث والتطوير على الصعيد الصناعي",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8622f74f-61b7-4664-862a-7c1dea8041f0",
+     "en": "knowledge management",
+     "ar": "إدارة المعرفة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/1177c6f5-09c5-4c35-873c-afd22d170ad3",
+     "en": "quality assurance procedures",
+     "ar": "إجراءات ضمان الجودة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2ca4c857-1450-4004-9fdb-8500def6b8fa",
+     "en": "military logistics",
+     "ar": "الخدمات اللوجستية العسكرية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/465ff64a-1271-4064-8ed1-e969cb68d8b4",
+     "en": "perform test run",
+     "ar": "تنفيذ تجربة الاختبار",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/499c05a2-6f36-4407-83c1-dc3448d35818",
+     "en": "ensure public safety and security",
+     "ar": "التأكد من السلامة العامة والأمن",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/4331d9e9-a1a5-4aad-90e1-7cd2688331c4",
+     "en": "manage troop deployment",
+     "ar": "إدارة عملية نشر القوات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/9983816d-cc78-4d3f-9e3c-c7baa9ebc77a",
+     "en": "computer equipment",
+     "ar": "معدات الحاسوب",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/79aa4ec0-399d-432e-aae8-7a390ce89bcc",
+     "en": "perform maintenance on installed equipment",
+     "ar": "القيام بصيانة المعدات المثبتة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/4fb87cb4-6442-4b5d-8bd0-eb1aa743a9ee",
+     "en": "application process",
+     "ar": "عملية تقديم الطلبات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ba45db8f-34e8-4f29-af0b-e6645e1d693f",
+     "en": "maintain electronic equipment",
+     "ar": "القيام بصيانة المعدات الإلكترونية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/3a6b6485-8775-44b9-aba8-0ae06a53ce2f",
+     "en": "military code",
+     "ar": "اللغة العسكرية الرمزية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/3ce1fe19-7f9e-4070-941d-651673a5693b",
+     "en": "decision support systems",
+     "ar": "أنظمة دعم القرارات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/445b65c5-5b16-4f66-94ce-f2a7f49f9ee7",
+     "en": "manage emergency procedures",
+     "ar": "تنظيم الإجراءات المتبعة في حالة الطوارئ",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/49fed129-e32b-4f67-b80a-609d79e45b20",
+     "en": "electronic and telecommunication equipment",
+     "ar": "الأجهزة الالكترونية ومعدات الاتصالات السلكية واللاسلكية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/98301d4a-2cc3-439d-8d7f-0b6ac76302bb",
+     "en": "business process modelling",
+     "ar": "نمذجة العمليات التجارية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/7a950986-27fe-4b6c-adf3-88f211e77019",
+     "en": "robotic components",
+     "ar": "المكونات الآلية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f0de4973-0a70-4644-8fd4-3a97080476f4",
+     "en": "DevOps",
+     "ar": "DevOps",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/9c071f1d-eac3-449d-b004-c14775b5a3b9",
+     "en": "mechanical engineering",
+     "ar": "الهندسة الميكانيكية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/a4fd17bf-6309-47c5-b7fa-ae5560673acf",
+     "en": "identify security threats",
+     "ar": "تحديد تهديدات الأمن",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/0760bfac-9a03-427a-ad84-ccd33a2f2ae8",
+     "en": "mathematical modelling",
+     "ar": "النمذجة الرياضية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/3362724b-fe06-4c5d-89a4-76fe62b9268e",
+     "en": "scaffolding components",
+     "ar": "مكونات السقالات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/bacbfc27-4b5d-47de-8bfd-af5fa27562a2",
+     "en": "design prototypes",
+     "ar": "تصميم النماذج",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/21c5790c-0930-4d74-b3b0-84caf5af12ea",
+     "en": "manage budgets",
+     "ar": "إدارة الميزانيات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c278dc62-c85f-4608-8a85-f30b6d087ac3",
+     "en": "military combat techniques",
+     "ar": "أساليب القتال العسكرية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/440f64e5-e66c-45ee-bc29-53c14a2ad720",
+     "en": "use geographic information systems",
+     "ar": "إستخدام أنظمة المعلومات الجغرافية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8867088a-e54d-41bc-81e8-a21ff98e81d3",
+     "en": "calibrate electronic instruments",
+     "ar": "فحص أدوات الإلكترونية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/911e13ee-1eec-4243-88c8-3c08a3681a19",
+     "en": "manage resources",
+     "ar": "إدارة الموارد",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/561c2525-5bd8-4d86-8f45-820f4be7db93",
+     "en": "report test findings",
+     "ar": "إعداد  تقريرًا عن نتائج الاختبار",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/e43cb15d-b48c-43f9-a995-0dfd87b903b9",
+     "en": "assess danger in risk areas",
+     "ar": "تقييم الخطر في المناطق المعرضة للخطر",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f83c245f-4aa9-484f-8fd2-4ad65dd82ae5",
+     "en": "practice vigilance",
+     "ar": "ممارسة اليقظة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/6833e58b-eceb-4599-9375-1b7e6ec64087",
+     "en": "ensure information security",
+     "ar": "التأكد من أمن المعلومات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ecc18804-a466-40d9-98b4-fba5cd67dd4b",
+     "en": "accounting",
+     "ar": "المحاسبة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/4ff549c3-daa5-4def-9916-301c7bdf13b8",
+     "en": "control systems",
+     "ar": "أنظمة التحكم",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/286d0e0d-48e9-4210-b110-b1fbf04c35f1",
+     "en": "radars",
+     "ar": "أجهزة الرادار",
+     "rel": "optional"
+    }
+   ]
+  },
+  "instrument-tech": {
+   "uri": "http://data.europa.eu/esco/occupation/2bb8adee-2b84-4d7b-84f9-0620bc09ada8",
+   "code": "3114.1.4",
+   "label_en": "instrumentation engineering technician",
+   "label_ar": "فني هندسة استخدام الأدوات",
+   "isco": "3114",
+   "skills": [
+    {
+     "uri": "http://data.europa.eu/esco/skill/aec4c9bf-9c44-4f9d-99f1-70011cebe1a8",
+     "en": "test instrumentation equipment",
+     "ar": "اختبار معدات القياس",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/bf1f763e-c505-46e7-8af3-e48f13ec5f44",
+     "en": "control engineering",
+     "ar": "هندسة التحكم",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/5bf7f85a-b080-4b27-8ddc-9f62af4643f5",
+     "en": "use power tools",
+     "ar": "استخدام أدوات الطاقة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c5c51528-ccfc-4c53-b409-c200aaa44222",
+     "en": "liaise with engineers",
+     "ar": "التنسيق مع المهندسين",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/36aa8d72-84b2-4abc-a30b-cdee19363cb3",
+     "en": "measure parts of manufactured products",
+     "ar": "قياس أجزاء المنتجات المصنعة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/6122d586-5978-431f-8e7a-96e61fc1f3fc",
+     "en": "wear appropriate protective gear",
+     "ar": "إرتداء معدات الوقاية المناسبة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/95c35c3a-035f-47c2-90cf-7e934d20fc08",
+     "en": "electronics",
+     "ar": "الإلكترونيات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/465ff64a-1271-4064-8ed1-e969cb68d8b4",
+     "en": "perform test run",
+     "ar": "تنفيذ تجربة الاختبار",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/65a3a184-7d11-4db9-9b85-281961d1514b",
+     "en": "conduct routine machinery checks",
+     "ar": "إجراء عمليات فحص الآلات الروتينية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/270de514-3206-4cf9-b122-0f148ab06fa1",
+     "en": "measure electrical characteristics",
+     "ar": "قياس الخصائص الكهربية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/e921279a-1a7e-4900-9720-bde93ae3e70e",
+     "en": "prepare production prototypes",
+     "ar": "إعداد نماذج الإنتاج",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/5b0a8b4d-7c71-43b1-8e52-4c0cfacd7bbd",
+     "en": "metallurgy",
+     "ar": "علم المعادن",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/16c8eade-5c2b-4c9c-a60d-6799dbc758a3",
+     "en": "instrumentation equipment",
+     "ar": "معدات القياس",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/1a3660c2-011c-4e96-9b1d-529afc305428",
+     "en": "inspect quality of products",
+     "ar": "فحص جودة المنتجات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/5d71a91f-cc72-4b66-b6e3-d75ecc05e235",
+     "en": "manage instrumentation systems",
+     "ar": "إدارة أنظمة توزيع التأليف الموسيقي",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/af0b1937-7538-434f-871b-7e8f72e04117",
+     "en": "assemble instrumentation equipment",
+     "ar": "جمع المعدات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d8c19849-f4cf-458d-90cd-abe735a729bf",
+     "en": "develop instrumentation systems",
+     "ar": "تطوير أنظمة الأجهزة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f30a7ea4-77dd-452c-8a2d-b06c12606a7f",
+     "en": "operate soldering equipment",
+     "ar": "تشغيل معدات لحام",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/b07daddc-8625-4360-946e-ad2b0e56ebf6",
+     "en": "read engineering drawings",
+     "ar": "قراءة الرسومات الهندسية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/42b23922-1c40-4dbe-9e0c-7a568dfdf06b",
+     "en": "adjust engineering designs",
+     "ar": "ضبط التصاميم الهندسية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d6179c4b-ff5a-4bbb-a3c8-e0acf0de1f56",
+     "en": "assist scientific research",
+     "ar": "مساعدة في البحوث العلمية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2bbdea06-a265-42b5-bb4f-7241b661f069",
+     "en": "electromechanics",
+     "ar": "كهربائية آلية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/68b6ef08-d823-489d-a95c-752ae6f6e6a7",
+     "en": "read standard blueprints",
+     "ar": "قراءة المخططات القياسية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2feeef46-05cf-445c-9ca1-c96a30e10106",
+     "en": "read assembly drawings",
+     "ar": "قراءة رسومات التجميع",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/940d02e8-0199-4b5b-bba4-19547aa9b498",
+     "en": "assemble measuring equipment",
+     "ar": "تجميع أجهزة القياس",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/60482359-eda3-410f-a2cf-05ff1bddef8e",
+     "en": "use wrenches",
+     "ar": "استخدام مفتاح ربط",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/7cd6de25-f691-4aac-81a2-a9d09b004b38",
+     "en": "use hand tools",
+     "ar": "استخدام الأدوات اليدوية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/b7b381f5-7de2-4f91-9a8f-524041cb47d9",
+     "en": "instrumentation engineering",
+     "ar": "هندسة الأجهزة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/5133ed7b-0785-4c28-825d-1dcf518c4b5b",
+     "en": "align components",
+     "ar": "تنظيم العناصر",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/328733a7-6d84-420d-a65c-2a8014fadc60",
+     "en": "record test data",
+     "ar": "تسجيل بيانات الاختبار",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/cafc2723-c308-4058-9921-61306b5de924",
+     "en": "fasten components",
+     "ar": "ربط المكونات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/efc5534d-3631-4564-a7b0-f6ae558f3c03",
+     "en": "ensure conformity to specifications",
+     "ar": "ضمان مطابقة للمواصفات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/25f0ea33-b4a2-4f31-b7b4-7d20e827b180",
+     "en": "data mining",
+     "ar": "استخراج البيانات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/a99c6783-50c0-4f7a-99df-bf93429ef6dc",
+     "en": "use precision tools",
+     "ar": "إستخدام أدوات الدقة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/68e66ed6-a171-4350-8ec1-2cfc4cae50e4",
+     "en": "hydraulics",
+     "ar": "علم حركة السوائل",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/81665015-4963-472c-9b5a-f2cf13ae9de0",
+     "en": "power plant instrumentation",
+     "ar": "أجهزة قياس محطات الطاقة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/69fe6624-bc7f-412e-ad6d-35c7b0df842e",
+     "en": "instrument performance elements",
+     "ar": "عناصر العزف على آلة موسيقية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/cf200547-25b5-47c8-9eda-bca4aedc13fb",
+     "en": "program firmware",
+     "ar": "برمجة البرامج الثابتة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/81d274bc-6dbf-4003-bcba-f76478d5d930",
+     "en": "nuclear energy",
+     "ar": "الطاقة النووية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/136596a4-00b5-4ed3-bb6e-717198c1ccbe",
+     "en": "apply soldering techniques",
+     "ar": "استخدام تقنيات اللحام",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/5a29fbb3-3b5c-44f2-b07a-e84faa790088",
+     "en": "maintain sensor equipment",
+     "ar": "إجراء الصيانة لمعدات الاستشعار",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/9b04cd15-b9c4-442d-9bbb-32e1b2058dca",
+     "en": "offshore constructions and facilities",
+     "ar": "مباني ومرافق في عرض البحر",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/aadf267e-08f0-4bf3-ae4a-f1670b8e9e5d",
+     "en": "offshore renewable energy technologies",
+     "ar": "تكنولوجيات الطاقة المتجددة في عرض البحار",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ec4de8aa-9ba4-412b-832d-93361210eae3",
+     "en": "marine technology",
+     "ar": "تكنولوجيا بحرية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/4f7fa632-15a6-4739-930b-abbac8055a80",
+     "en": "firmware",
+     "ar": "البرنامج الثابت",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/9c071f1d-eac3-449d-b004-c14775b5a3b9",
+     "en": "mechanical engineering",
+     "ar": "الهندسة الميكانيكية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c32ad607-0c4d-4e34-b73f-668298f7bf13",
+     "en": "apply technical communication skills",
+     "ar": "تطبيق مهارات الاتصال الفني",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/560db5a6-cd42-4d8f-a5ed-69308e5ce011",
+     "en": "tend surface grinding machine",
+     "ar": "تشغيل آلة شحذ السطوح",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/bd14968e-e409-45af-b362-3495ed7b10e0",
+     "en": "cloud technologies",
+     "ar": "التقنيات السحابية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/70a7b3b3-31ef-4b29-a30f-bb7299dff39b",
+     "en": "sensors",
+     "ar": "أجهزة الاستشعار",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8369c2d6-c100-4cf6-bd83-9668d8678433",
+     "en": "utilise machine learning",
+     "ar": "استخدام التعلم الآلي",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2aff3316-15b8-4ca1-8ae2-270bd5fd22e1",
+     "en": "electrical equipment regulations",
+     "ar": "لوائح خاصة بالمعدات الكهربائية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8a753714-9a19-4418-9b37-77e79d72c705",
+     "en": "integrate new products in manufacturing",
+     "ar": "إدراج منتجات جديدة في التصنيع",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/1619f337-77d4-401c-a090-277a7b7253fb",
+     "en": "operate circular saw",
+     "ar": "تشغيل المنشار الدائري",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8867088a-e54d-41bc-81e8-a21ff98e81d3",
+     "en": "calibrate electronic instruments",
+     "ar": "فحص أدوات الإلكترونية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c96ab6ac-cf85-4c91-86b5-7ac5bb14eb28",
+     "en": "operate cranes",
+     "ar": "تشغيل الرافعات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/941364b9-1375-4add-9889-d67bae99bc8c",
+     "en": "write technical reports",
+     "ar": "كتابة تقارير فنية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/1de6b87b-2c7d-49aa-bcc0-3b2ef75f064f",
+     "en": "resolve equipment malfunctions",
+     "ar": "اصلاح أعطال المعدات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f8413360-6114-40de-a276-c59b764b9913",
+     "en": "renewable energy",
+     "ar": "تقنيات الطاقة المتجددة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/87af00b5-30fa-41c8-bfa5-357f22c8d589",
+     "en": "replace defect components",
+     "ar": "استبدال المكونات التالفة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/a7f0fbe0-c546-4f30-8e41-34a58c64567e",
+     "en": "data storage",
+     "ar": "تخزين البيانات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/7a757fa5-9a6f-43ab-9e66-f8f4dba1ffcb",
+     "en": "use CAM software",
+     "ar": "استخدام برامج التصنيع بواسطة الكومبيوتر (CAM)",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/41a3240f-58ba-44e2-a688-edeb21ea5c16",
+     "en": "conduct quality control analysis",
+     "ar": "إجراء تحليل مراقبة الجودة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/3e40c7d0-0e36-4b33-bc33-0aa87eda0561",
+     "en": "electrical engineering",
+     "ar": "الهندسة الكهربائية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/47a49cd6-097d-457a-9f7b-c290c14930d5",
+     "en": "analyse big data",
+     "ar": "تحليل البيانات الضخمة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d8045ecd-22f3-4711-bb51-58969d9f28c7",
+     "en": "operate precision machinery",
+     "ar": "تشغيل الآلات الدقيقة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ccfbdaad-b91d-4bfe-bd0e-d30b33587f19",
+     "en": "keep records of work progress",
+     "ar": "الاحتفاظ بسجلات تقدم العمل",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8d4271ca-c9fd-40b3-875f-15f78332a49e",
+     "en": "quality standards",
+     "ar": "معايير الجودة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/a2b5dcf3-5b6a-453d-876c-cff540c0faf1",
+     "en": "CAD software",
+     "ar": "برمجيات التصميم بمساعدة الحاسوب",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ad59afe4-6f8a-4bc4-acfd-0f228277508a",
+     "en": "statistical analysis system software",
+     "ar": "برمجيات نظام التحليل الإحصائي",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/58c3ed60-c06b-47c0-b213-4e3608608644",
+     "en": "use remote control equipment",
+     "ar": "استخدام معدات التحكم عن بعد",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/6e34b68e-0d61-49f2-bc4d-571c0326d857",
+     "en": "test sensors",
+     "ar": "اختبار أجهزة الاستشعار",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/82313e12-9d39-47d1-b7c9-78bbd6bb50e2",
+     "en": "CAE software",
+     "ar": "برنامج الهندسة بمساعدة الحاسوب",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d88cb3f1-8e02-4618-bf32-4b0488066934",
+     "en": "mechatronics",
+     "ar": "الميكاترونيكس",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f53ec337-786f-4904-951d-adf3655e1c60",
+     "en": "tend metal sawing machine",
+     "ar": "الحفاظ على آلة نشر المعادن",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/bf419e00-8548-491a-a06f-d72ab439df2f",
+     "en": "pneumatics",
+     "ar": "علم الخصائص الميكانيكية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f4a6e9f7-5cff-46c0-894c-59c20bb78694",
+     "en": "automation technology",
+     "ar": "تكنولوجيا الأتمتة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/19ec88aa-c0b1-4515-ba10-56b6cf27369e",
+     "en": "electronic equipment standards",
+     "ar": "معايير الأجهزة الإلكترونية",
+     "rel": "optional"
+    }
+   ]
+  },
+  "electrical-tech": {
+   "uri": "http://data.europa.eu/esco/occupation/9aa2a36f-296e-45fe-9798-b7839e0ed389",
+   "code": "3113.1",
+   "label_en": "electrical engineering technician",
+   "label_ar": "فني الهندسة الكهربائية",
+   "isco": "3113",
+   "skills": [
+    {
+     "uri": "http://data.europa.eu/esco/skill/270de514-3206-4cf9-b122-0f148ab06fa1",
+     "en": "measure electrical characteristics",
+     "ar": "قياس الخصائص الكهربية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/328733a7-6d84-420d-a65c-2a8014fadc60",
+     "en": "record test data",
+     "ar": "تسجيل بيانات الاختبار",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/b07daddc-8625-4360-946e-ad2b0e56ebf6",
+     "en": "read engineering drawings",
+     "ar": "قراءة الرسومات الهندسية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d6179c4b-ff5a-4bbb-a3c8-e0acf0de1f56",
+     "en": "assist scientific research",
+     "ar": "مساعدة في البحوث العلمية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/3f6dc31c-ceef-4e93-9d8a-b4b862cf9b51",
+     "en": "test electrical equipment",
+     "ar": "اختبار المعدات الإلكترونية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/68b6ef08-d823-489d-a95c-752ae6f6e6a7",
+     "en": "read standard blueprints",
+     "ar": "قراءة المخططات القياسية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/42b23922-1c40-4dbe-9e0c-7a568dfdf06b",
+     "en": "adjust engineering designs",
+     "ar": "ضبط التصاميم الهندسية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/6122d586-5978-431f-8e7a-96e61fc1f3fc",
+     "en": "wear appropriate protective gear",
+     "ar": "إرتداء معدات الوقاية المناسبة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/1a3660c2-011c-4e96-9b1d-529afc305428",
+     "en": "inspect quality of products",
+     "ar": "فحص جودة المنتجات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2feeef46-05cf-445c-9ca1-c96a30e10106",
+     "en": "read assembly drawings",
+     "ar": "قراءة رسومات التجميع",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/e5ad0cce-e3d5-4c60-8504-5d1c7e3b55b9",
+     "en": "electrical equipment components",
+     "ar": "مكونات المعدات الكهربائية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/e921279a-1a7e-4900-9720-bde93ae3e70e",
+     "en": "prepare production prototypes",
+     "ar": "إعداد نماذج الإنتاج",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c5c51528-ccfc-4c53-b409-c200aaa44222",
+     "en": "liaise with engineers",
+     "ar": "التنسيق مع المهندسين",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/3e40c7d0-0e36-4b33-bc33-0aa87eda0561",
+     "en": "electrical engineering",
+     "ar": "الهندسة الكهربائية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/df08a4ae-4024-4460-8c92-eab78da1c94b",
+     "en": "ensure material compliance",
+     "ar": "ضمان امتثال المواد",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/5133ed7b-0785-4c28-825d-1dcf518c4b5b",
+     "en": "align components",
+     "ar": "تنظيم العناصر",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c8bd9f9f-0ec6-447a-ab78-ad6eeeed9aa8",
+     "en": "electrical testing methods",
+     "ar": "أساليب الاختبار الكهربائي",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f30a7ea4-77dd-452c-8a2d-b06c12606a7f",
+     "en": "operate soldering equipment",
+     "ar": "تشغيل معدات لحام",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/136596a4-00b5-4ed3-bb6e-717198c1ccbe",
+     "en": "apply soldering techniques",
+     "ar": "استخدام تقنيات اللحام",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c0ccbd15-36f3-4515-ae0b-b4062d225ee2",
+     "en": "abide by regulations on banned materials",
+     "ar": "الالتزام باللوائح المتعلقة بالمواد المحظورة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/cafc2723-c308-4058-9921-61306b5de924",
+     "en": "fasten components",
+     "ar": "ربط المكونات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/1fea0bc2-a6fa-4fe8-b36f-7a3194f8ed1c",
+     "en": "electricity principles",
+     "ar": "مبادئ الكهرباء",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/465ff64a-1271-4064-8ed1-e969cb68d8b4",
+     "en": "perform test run",
+     "ar": "تنفيذ تجربة الاختبار",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/56a13f47-ad7c-451f-81cf-e550107abc03",
+     "en": "electrical discharge",
+     "ar": "التفريغ الكهربائي",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/3c333552-8d89-43f5-90bd-856e15bec433",
+     "en": "design drawings",
+     "ar": "تصميم الرسومات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/16da7f95-bd00-4a5c-b837-bf1c2a5a9f15",
+     "en": "prepare pieces for joining",
+     "ar": "تجهيز القطع للتجميع",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ed291aa0-8b2f-4179-b2f7-540ea6f63bf3",
+     "en": "electrical wiring diagrams",
+     "ar": "مخططات الأسلاك الكهربائية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/415cb0c2-e169-4f99-ba3e-d1c433b75368",
+     "en": "assemble electrical components",
+     "ar": "تجميع المكونات الكهربائية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c8c18b8d-a813-49f8-a702-689564dcf8b2",
+     "en": "electric generators",
+     "ar": "المولدات الكهربائية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2e55bf22-45f2-43f6-8aa0-28894263313d",
+     "en": "electric motors",
+     "ar": "محركات كهربائية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/dd6e5939-d19b-4e2f-a025-2014f0a2ec88",
+     "en": "power engineering",
+     "ar": "هندسة الطاقة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/81d274bc-6dbf-4003-bcba-f76478d5d930",
+     "en": "nuclear energy",
+     "ar": "الطاقة النووية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/968bb301-faa1-44aa-a7c9-75d1f7a43b3f",
+     "en": "bend wire",
+     "ar": "القيام بثني الأسلاك",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/a2b5dcf3-5b6a-453d-876c-cff540c0faf1",
+     "en": "CAD software",
+     "ar": "برمجيات التصميم بمساعدة الحاسوب",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/4940d889-a185-4176-a920-46b88cbe0d8c",
+     "en": "electrical wire accessories",
+     "ar": "لوازم الأسلاك الكهربائية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2aff3316-15b8-4ca1-8ae2-270bd5fd22e1",
+     "en": "electrical equipment regulations",
+     "ar": "لوائح خاصة بالمعدات الكهربائية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/7f8d7116-6d80-49eb-86b1-8327aa15ac5f",
+     "en": "use wire processing machinery",
+     "ar": "استخدام آلات معالجة الأسلاك",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/af1c7b89-679b-4fae-b67c-ed05c669719c",
+     "en": "repair wiring",
+     "ar": "اصلاح الأسلاك",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/6360d655-3494-45f6-bfc6-d5f63afc355b",
+     "en": "electrical power safety regulations",
+     "ar": "أنظمة سلامة الطاقة الكهربائية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/334e3e49-fb02-4051-809a-f06adfdc1c40",
+     "en": "troubleshoot",
+     "ar": "حل المشكلات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/78a45d6e-8785-4016-984f-b54cba6c3ae8",
+     "en": "use wire hand tools",
+     "ar": "استخدام الأدوات اليدوية الخاصة بالأسلاك",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/1de6b87b-2c7d-49aa-bcc0-3b2ef75f064f",
+     "en": "resolve equipment malfunctions",
+     "ar": "اصلاح أعطال المعدات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c32ad607-0c4d-4e34-b73f-668298f7bf13",
+     "en": "apply technical communication skills",
+     "ar": "تطبيق مهارات الاتصال الفني",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/3b8d148d-dec4-459e-a0ad-431dccbaa976",
+     "en": "wire harnesses",
+     "ar": "استخدام الأسلاك",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/386774ac-fe5b-431a-b485-9aec0bf5c09e",
+     "en": "maintain electrical equipment",
+     "ar": "القيام بصيانة المعدات الكهربائية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/b979d9ae-37c2-4d1f-b8b8-7539f913cb19",
+     "en": "electric drives",
+     "ar": "محركات كهربائية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/27f461a7-3bf9-47e5-9e46-a2aa13cf4064",
+     "en": "apply coating to electrical equipment",
+     "ar": "وضع طلاءً للمعدات الكهربائية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/40fa39b5-0f69-432a-b5ea-b01b5d98649a",
+     "en": "dispose of hazardous waste",
+     "ar": "التخلص من النفايات الخطرة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/9c3db86b-2cbf-4f8a-82e1-08533494c7a9",
+     "en": "maintain power plants",
+     "ar": "القيام بصيانة محطات الطاقة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/188048ff-18bf-43c4-a1a0-7adb6e68f421",
+     "en": "monitor machine operations",
+     "ar": "مراقبة تشغيل الآلة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d15e92c4-c8dc-48cd-a1f6-94fe13347f87",
+     "en": "electrical wiring plans",
+     "ar": "خطط التوصيل الكهربي",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/90d7dc07-3d66-4364-b6ff-c40a1fe1b849",
+     "en": "switching devices",
+     "ar": "أجهزة فصل التيار",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8a753714-9a19-4418-9b37-77e79d72c705",
+     "en": "integrate new products in manufacturing",
+     "ar": "إدراج منتجات جديدة في التصنيع",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ccfbdaad-b91d-4bfe-bd0e-d30b33587f19",
+     "en": "keep records of work progress",
+     "ar": "الاحتفاظ بسجلات تقدم العمل",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8ca18245-8842-4e6e-bc80-3ace0ee7fe5b",
+     "en": "provide power connection from bus bars",
+     "ar": "توفير إمدادات الطاقة من قضبان التوصيل",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f0ab5d57-4be7-411b-afce-b4a76a142302",
+     "en": "electrical machines",
+     "ar": "الآلات الكهربائية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/82313e12-9d39-47d1-b7c9-78bbd6bb50e2",
+     "en": "CAE software",
+     "ar": "برنامج الهندسة بمساعدة الحاسوب",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2bbdea06-a265-42b5-bb4f-7241b661f069",
+     "en": "electromechanics",
+     "ar": "كهربائية آلية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2179e0fd-7431-41a3-bbf4-76451c615ce2",
+     "en": "inspect electrical supplies",
+     "ar": "فحص إمدادات الكهرباء",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/86ff9a65-66eb-4c8f-93d8-22e0a467fc08",
+     "en": "power electronics",
+     "ar": "إلكترونيات الطاقة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/5c221b93-667d-408b-a37b-bfeb2c94dd61",
+     "en": "use specialised tools in electric repairs",
+     "ar": "استخدام أدوات متخصصة في الإصلاحات الإلكترونية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/40f27736-0d98-4446-8234-11646e4f4bc3",
+     "en": "oversee logistics of finished products",
+     "ar": "الإشراف على الخدمات اللوجستية للمنتجات الجاهزة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/4909646e-35d8-42f2-943c-19f220869345",
+     "en": "manufacture of electrical wire products",
+     "ar": "تصنيع منتجات الأسلاك الكهربائية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/941364b9-1375-4add-9889-d67bae99bc8c",
+     "en": "write technical reports",
+     "ar": "كتابة تقارير فنية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/7a757fa5-9a6f-43ab-9e66-f8f4dba1ffcb",
+     "en": "use CAM software",
+     "ar": "استخدام برامج التصنيع بواسطة الكومبيوتر (CAM)",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2876970d-90af-45bd-9cfd-c0af757947ea",
+     "en": "maintain electrical engines",
+     "ar": "القيام بصيانة المحركات الكهربائية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/9bcff7ef-1f9e-4054-b8fa-3c640e491a11",
+     "en": "design electric power systems",
+     "ar": "تصميم أنظمة الطاقة الكهربائية",
+     "rel": "optional"
+    }
+   ]
+  },
+  "desalination-tech": {
+   "uri": "http://data.europa.eu/esco/occupation/fad4abdf-fe1b-4751-8253-aef40b49afe0",
+   "code": "3117.1",
+   "label_en": "desalination technician",
+   "label_ar": "فني تحلية المياه",
+   "isco": "3117",
+   "skills": [
+    {
+     "uri": "http://data.europa.eu/esco/skill/d2c9c20e-ff2f-4684-bf93-1d04c78f698f",
+     "en": "maintain desalination control system",
+     "ar": "القيام بصيانة نظام التحكم في تحلية المياه",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d0f2f8a7-d935-4a6d-8e54-dcc3e5e2cbeb",
+     "en": "present reports",
+     "ar": "تقديم التقارير",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/dcc96a49-0bac-4a9c-8f8e-a32b4e47e6eb",
+     "en": "apply health and safety standards",
+     "ar": "تطبيق معايير الصحة والسلامة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/351e3f8f-4631-412d-963f-25b5fd4efe48",
+     "en": "maintain records of mining operations",
+     "ar": "الإحتفاظ بسجلات عمليات التعدين",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/17fa2e6a-ca80-4d60-afb0-03f170e9d5f3",
+     "en": "collect samples",
+     "ar": "جمع العينات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/e80f9e50-71ff-4bb7-8b7d-eb232685d17f",
+     "en": "perform water testing procedures",
+     "ar": "تنفيذ إجراءات اختبار المياه",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/918f5211-b99f-4b29-9a34-6e475583ef55",
+     "en": "write work-related reports",
+     "ar": "كتابة التقارير ذات الصلة بالعمل",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/198b614d-a9af-46f5-b3fd-2672b401dd8e",
+     "en": "health and safety in the workplace",
+     "ar": "الصحة والسلامة في مكان العمل",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/6f5850ea-5785-4e2c-b062-743066fd5bdb",
+     "en": "environmental legislation",
+     "ar": "التشريعات البيئية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/eaef3371-cb14-4d21-90a4-e54dc7c6391c",
+     "en": "manage desalination control system",
+     "ar": "إدارة نظام التحكم في تحلية المياه",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/156f8c5b-894a-4ccc-a70e-37a2726f3f00",
+     "en": "work ergonomically",
+     "ar": "العمل بطريقة مقبولة من منظور الهندسة البشرية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/334e3e49-fb02-4051-809a-f06adfdc1c40",
+     "en": "troubleshoot",
+     "ar": "حل المشكلات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8bcf4ef0-edda-4f6a-a1ce-7defb1d324d6",
+     "en": "perform water treatment procedures",
+     "ar": "القيام بإجراءات معالجة المياه",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/cde9911c-f92e-4de1-811f-336e177ac4ce",
+     "en": "chemistry",
+     "ar": "كيمياء",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/b2b970ad-0276-4069-ba31-899a53191b95",
+     "en": "biofilter systems",
+     "ar": "أنظمة المرشح الحيوي",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f041ce17-a005-4c69-846e-e3806e0b62f9",
+     "en": "conduct inter-shift communication",
+     "ar": "إجراء الاتصالات بين المناوبات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c0fc7d2d-d013-40d7-bc58-75cf3771153f",
+     "en": "perform minor repairs to equipment",
+     "ar": "إجراء إصلاحات طفيفة على المعدات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/efa141df-f382-418f-9121-bd88fd735669",
+     "en": "mechanics",
+     "ar": "علم الميكانيكا",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c8ac1986-38fa-43b2-89dc-50a4beeb420e",
+     "en": "electricity",
+     "ar": "كهرباء",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/e54ff029-1ce9-447d-a5b2-eb7283a23e6e",
+     "en": "train employees",
+     "ar": "تدريب الموظفين",
+     "rel": "optional"
+    }
+   ]
+  },
+  "hse-officer": {
+   "uri": "http://data.europa.eu/esco/occupation/789517fb-95ee-43d1-9530-c2860be1a439",
+   "code": "2263.3",
+   "label_en": "health and safety officer",
+   "label_ar": "مسؤول الصحة والسلامة / مسؤولة الصحة والسلامة",
+   "isco": "2263",
+   "skills": [
+    {
+     "uri": "http://data.europa.eu/esco/skill/089ee650-297e-4716-87d1-440743b70a0d",
+     "en": "ensure compliance with environmental legislation",
+     "ar": "التأكد من الامتثال للتشريعات البيئية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/86065a19-7537-4bd5-b41c-7e0638d67b58",
+     "en": "follow standards for machinery safety",
+     "ar": "اتباع المعايير في أمن الماكينات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/2dbdd054-896a-4167-8f11-e9b9ebcf199d",
+     "en": "health, safety and hygiene legislation",
+     "ar": "لوائح الصحة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/0cfc7eb9-2891-4153-b335-6331f381ff05",
+     "en": "communicate health and safety measures",
+     "ar": "توضيح معايير الصحة والسلامة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8bdc520c-6293-4e99-bf6f-a44d5da3ebcb",
+     "en": "monitor legislation developments",
+     "ar": "مراقبة تطور التشريعات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/0efbe2dc-2770-47ec-b8f4-d1bdff6ac0a4",
+     "en": "advise on risk management",
+     "ar": "تقديم المشورة بشأن إدارة المخاطر",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/9091c8e5-9357-4c29-bceb-ddb1792c22e8",
+     "en": "advise on conflict management",
+     "ar": "تقديم المشورة بشأن إدارة الصراع",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/59ea80e1-463a-4dba-82c6-d0b6d577d532",
+     "en": "technical drawings",
+     "ar": "الرسوم التقنية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/5d204ec8-981b-4405-9a82-0b1cb21ca9d3",
+     "en": "monitor employee's health",
+     "ar": "مراقبة صحة الموظفين",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d0f2f8a7-d935-4a6d-8e54-dcc3e5e2cbeb",
+     "en": "present reports",
+     "ar": "تقديم التقارير",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/7f27f1ff-2e17-4b69-990e-c23334478313",
+     "en": "assessment of risks and threats",
+     "ar": "تقييم المخاطر والتهديدات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/6f5850ea-5785-4e2c-b062-743066fd5bdb",
+     "en": "environmental legislation",
+     "ar": "التشريعات البيئية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8d4271ca-c9fd-40b3-875f-15f78332a49e",
+     "en": "quality standards",
+     "ar": "معايير الجودة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/594bd121-9614-4e87-9ecf-6ccb95507efe",
+     "en": "draw up risk assessment",
+     "ar": "إجراء تقييمًا للمخاطر",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/66ea3249-a079-45ad-b4f2-e6a79b59f10f",
+     "en": "personal protective equipment",
+     "ar": "معدات الوقاية الشخصية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ef1b72a4-7f39-47e8-985a-a541db616dcf",
+     "en": "educate employees on occupational hazards",
+     "ar": "تثقيف الموظفين بشأن المخاطر المهنية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/75f312e1-622b-4751-8d93-815b32feaf8d",
+     "en": "pollution prevention",
+     "ar": "منع التلوث",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/101d63ee-bb22-4a7c-9e0a-c2716063696a",
+     "en": "make health, safety and environment assessments",
+     "ar": "إجراء تقييمات بشأن الصحة والسلامة والبيئة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/6a66039e-0580-473b-a605-eedfdab85a2d",
+     "en": "educate on emergency management",
+     "ar": "التوعية بشأن إدارة الطوارئ",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f7b5d916-52f0-4865-b6a6-e1a3b711cb5e",
+     "en": "implement strategic planning",
+     "ar": "تنفيذ التخطيط الاستراتيجي",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/6a536b36-c5c7-4d10-bf67-a4fb0f8549b2",
+     "en": "audit techniques",
+     "ar": "تقنيات التدقيق",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/bf318ffc-0b68-4915-80be-8c8b500d344c",
+     "en": "test safety strategies",
+     "ar": "اختبار استراتيجيات السلامة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d5e39a53-4f54-4d5f-9df3-b49664c9559d",
+     "en": "occupational health",
+     "ar": "الصحة المهنية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/777339f8-fe81-41af-b945-6c4922031119",
+     "en": "perform health assessment autonomously",
+     "ar": "إجراء التقييم الصحي على نحو مستقل",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8d202e22-85e9-47b1-a1e0-3296d17244cd",
+     "en": "observe confidentiality",
+     "ar": "الحفاظ على السرية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f14ff4b7-be1e-4b55-b39b-520005f8a97e",
+     "en": "liaise with managers",
+     "ar": "التنسيق مع المديرين",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/97b713f0-b9e8-4903-8dee-7e0b4019a1c0",
+     "en": "employment law",
+     "ar": "قانون التوظيف",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/404b3fcd-306a-4d18-b5db-d90c517ff72f",
+     "en": "issue licences",
+     "ar": "إصدار التراخيص",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/7111b95d-0ce3-441a-9d92-4c75d05c4388",
+     "en": "project management",
+     "ar": "إدارة المشاريع",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/415abd43-e8e5-4643-b5da-5f11307af57a",
+     "en": "use different communication channels",
+     "ar": "استخدام قنوات اتصال مختلفة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/751f6baf-de47-4d67-a657-4133066703f4",
+     "en": "identify policy breach",
+     "ar": "الكشف عن حالات انتهاك السياسات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/0ee94af1-b445-4973-9c3f-459fab250342",
+     "en": "apply conflict management",
+     "ar": "تطبيق إدارة الصراع",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/896563fc-6255-4419-89c2-ffed30159ad6",
+     "en": "conduct research interview",
+     "ar": "إجراء مقابلات لجمع المعلومات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/556be6f4-225f-46a2-a795-d3d54d98c3f7",
+     "en": "conduct workplace audits",
+     "ar": "إجراء عمليات التدقيق في مكان العمل",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d4cc5022-7801-4885-bcff-166552788d35",
+     "en": "provide improvement strategies",
+     "ar": "توفير استراتيجيات التحسين",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/1dd23dba-dd00-45ab-abf4-642902538317",
+     "en": "perform risk analysis",
+     "ar": "القيام بتحليل المخاطر",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/a366bfc5-8d17-4792-a9f0-db0951528dda",
+     "en": "advise on environmental risk management systems",
+     "ar": "تقديم المشورة بشأن أنظمة إدارة المخاطر البيئية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/cd5efa8c-e44d-4cbc-91c6-796018dbed68",
+     "en": "perform project management",
+     "ar": "إدارة قسم المشاريع",
+     "rel": "optional"
+    }
+   ]
+  },
+  "ndt-specialist": {
+   "uri": "http://data.europa.eu/esco/occupation/82d75f3b-644a-4582-ad6b-a2a1833e44cb",
+   "code": "7543.5",
+   "label_en": "non-destructive testing specialist",
+   "label_ar": "أخصائي اختبار غير مدمر / أخصائية اختبار غير مدمر",
+   "isco": "7543",
+   "skills": [
+    {
+     "uri": "http://data.europa.eu/esco/skill/328733a7-6d84-420d-a65c-2a8014fadc60",
+     "en": "record test data",
+     "ar": "تسجيل بيانات الاختبار",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/ccfbdaad-b91d-4bfe-bd0e-d30b33587f19",
+     "en": "keep records of work progress",
+     "ar": "الاحتفاظ بسجلات تقدم العمل",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8d4271ca-c9fd-40b3-875f-15f78332a49e",
+     "en": "quality standards",
+     "ar": "معايير الجودة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/74374d09-7a54-4a05-ae78-d5940423de7c",
+     "en": "use testing equipment",
+     "ar": "استخدام معدات الاختبار",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/03b9b491-fc9b-4868-914a-bf7cd47b5041",
+     "en": "create solutions to problems",
+     "ar": "وضع حلولاً للمشكلات",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8d6a9e62-1e89-49df-8147-680081ce5315",
+     "en": "use non-destructive testing equipment",
+     "ar": "استخدام معدات الاختبار غير الإتلافي",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/6122d586-5978-431f-8e7a-96e61fc1f3fc",
+     "en": "wear appropriate protective gear",
+     "ar": "إرتداء معدات الوقاية المناسبة",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d48b3cfe-80b6-406f-b582-d959b60417f8",
+     "en": "examine civil structures",
+     "ar": "فحص الهياكل المدنية",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/561c2525-5bd8-4d86-8f45-820f4be7db93",
+     "en": "report test findings",
+     "ar": "إعداد  تقريرًا عن نتائج الاختبار",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/75697ed4-c1a3-47dc-93e3-bb50f21aa2f6",
+     "en": "non-destructive testing",
+     "ar": "الاختبار غير الإتلافي",
+     "rel": "essential"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/c5c51528-ccfc-4c53-b409-c200aaa44222",
+     "en": "liaise with engineers",
+     "ar": "التنسيق مع المهندسين",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/9214bb50-f24e-4b82-8dd2-f299ccba2258",
+     "en": "identify defects in concrete",
+     "ar": "تحديد العيوب الموجودة في الخرسانة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/8867088a-e54d-41bc-81e8-a21ff98e81d3",
+     "en": "calibrate electronic instruments",
+     "ar": "فحص أدوات الإلكترونية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/d6179c4b-ff5a-4bbb-a3c8-e0acf0de1f56",
+     "en": "assist scientific research",
+     "ar": "مساعدة في البحوث العلمية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/0b84762c-e400-4a0b-9870-f0221708eac2",
+     "en": "make radiographic images",
+     "ar": "التقاط صور الأشعة",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/987a848a-01ec-4938-9f31-1af1c7bef651",
+     "en": "maintain test equipment",
+     "ar": "اجراء صيانة لمعدات الاختبار",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/cb886ee9-c4e4-4d3b-9961-228e9f283a69",
+     "en": "use ultrasonic equipment",
+     "ar": "إستخدام معدات بالموجات فوق الصوتية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/0ad58425-0691-4da4-b89b-eaa15c09c142",
+     "en": "perform liquid penetrant tests",
+     "ar": "إجراء اختبارات اختراق السائل",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/e54ff029-1ce9-447d-a5b2-eb7283a23e6e",
+     "en": "train employees",
+     "ar": "تدريب الموظفين",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/f9d70f2a-c3f0-475d-ac55-dc2e2ba856e8",
+     "en": "lead inspections",
+     "ar": "قيادة عمليات التفتيش",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/81a2db2c-7e55-44d0-9cd9-74c25147d7cd",
+     "en": "analyse test data",
+     "ar": "تحليل بيانات الاختبار",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/209a5498-3449-4689-8ed9-bd08cab4fd78",
+     "en": "engineering principles",
+     "ar": "المبادئ الهندسية",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/4339176e-3acd-4f7f-a5d9-445bee3d23f2",
+     "en": "mathematics",
+     "ar": "الرياضيات",
+     "rel": "optional"
+    },
+    {
+     "uri": "http://data.europa.eu/esco/skill/658b6ea0-79f5-451d-a037-7593a4416c85",
+     "en": "develop material testing procedures",
+     "ar": "وضع إجراءات فحص المواد",
+     "rel": "optional"
+    }
+   ]
+  }
+ }
+}

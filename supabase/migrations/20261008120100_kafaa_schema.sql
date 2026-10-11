@@ -3104,6 +3104,47 @@ create table if not exists kafaa_role_outlook_components (
 );
 comment on table kafaa_role_outlook_components is '[M18] The components behind each role outlook label (demand growth, shortfall, profile change); staff only (FS16)';
 
+-- M18 · ESCO-aligned source occupation for the career-changer translator: Kafa'a skills and typical levels, cited ESCO concepts (FS34)
+create table if not exists kafaa_occupation_templates (
+  id text primary key,
+  esco_uri text not null,
+  esco_code text not null,
+  isco_code text,
+  title_en text not null,
+  title_ar text not null,
+  esco_label_en text not null,
+  esco_label_ar text not null,
+  industry text not null check (industry in ('oil_gas', 'power', 'process', 'aviation', 'defence', 'utilities')),
+  summary_en text not null,
+  summary_ar text not null,
+  skills jsonb not null default '[]'::jsonb,
+  sources jsonb not null default '[]'::jsonb,
+  benchmark_ids text[] not null default '{}'::text[],
+  as_of date not null,
+  status text not null default 'published' check (status in ('draft', 'published', 'retired')),
+  listed boolean not null default true,
+  sort integer not null default 0
+);
+comment on table kafaa_occupation_templates is '[M18] ESCO-aligned source occupation for the career-changer translator: Kafa''a skills and typical levels, cited ESCO concepts (FS34)';
+
+-- M18 · My Career Health check snapshots: five visible components, my plan and the booked conversation; own only (FS35)
+create table if not exists kafaa_health_snapshots (
+  id text primary key,
+  person_id text not null,
+  taken_at timestamptz not null default now(),
+  as_of date not null,
+  role_id text,
+  components jsonb not null default '[]'::jsonb,
+  good integer not null default 0,
+  watch integer not null default 0,
+  act integer not null default 0,
+  plan jsonb not null default '{}'::jsonb,
+  step text not null default 'assessed' check (step in ('assessed', 'charted', 'executed')),
+  conversation_id text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_health_snapshots is '[M18] My Career Health check snapshots: five visible components, my plan and the booked conversation; own only (FS35)';
+
 -- M19 · Learning Coach feedback per person and suggestion: saved, dismissed (hidden 90 days), enrolled (F07)
 create table if not exists kafaa_coach_feedback (
   id text primary key,
@@ -5324,6 +5365,8 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ro
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_outlook_labels_criteria_id_fk') then alter table kafaa_role_outlook_labels add constraint kafaa_role_outlook_labels_criteria_id_fk foreign key (criteria_id) references kafaa_role_outlook_criteria(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_outlook_components_role_id_fk') then alter table kafaa_role_outlook_components add constraint kafaa_role_outlook_components_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_outlook_components_criteria_id_fk') then alter table kafaa_role_outlook_components add constraint kafaa_role_outlook_components_criteria_id_fk foreign key (criteria_id) references kafaa_role_outlook_criteria(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_health_snapshots_person_id_fk') then alter table kafaa_health_snapshots add constraint kafaa_health_snapshots_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_health_snapshots_role_id_fk') then alter table kafaa_health_snapshots add constraint kafaa_health_snapshots_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_coach_feedback_person_id_fk') then alter table kafaa_coach_feedback add constraint kafaa_coach_feedback_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_learning_goals_person_id_fk') then alter table kafaa_learning_goals add constraint kafaa_learning_goals_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_refresh_state_person_id_fk') then alter table kafaa_refresh_state add constraint kafaa_refresh_state_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -5883,6 +5926,9 @@ create index if not exists kafaa_role_outlook_labels_criteria_id_idx on kafaa_ro
 create index if not exists kafaa_role_outlook_components_role_id_idx on kafaa_role_outlook_components (role_id);
 create index if not exists kafaa_role_outlook_components_year_idx on kafaa_role_outlook_components (year);
 create index if not exists kafaa_role_outlook_components_criteria_id_idx on kafaa_role_outlook_components (criteria_id);
+create index if not exists kafaa_occupation_templates_industry_idx on kafaa_occupation_templates (industry);
+create index if not exists kafaa_health_snapshots_person_id_idx on kafaa_health_snapshots (person_id);
+create index if not exists kafaa_health_snapshots_role_id_idx on kafaa_health_snapshots (role_id);
 create index if not exists kafaa_coach_feedback_person_id_idx on kafaa_coach_feedback (person_id);
 create index if not exists kafaa_coach_feedback_item_kind_idx on kafaa_coach_feedback (item_kind);
 create index if not exists kafaa_refresh_state_person_id_idx on kafaa_refresh_state (person_id);
@@ -6157,4 +6203,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 274) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 276) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

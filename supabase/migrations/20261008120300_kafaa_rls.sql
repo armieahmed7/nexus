@@ -1696,6 +1696,20 @@ create policy kafaa_read on kafaa_role_outlook_components for select to anon, au
 grant select on kafaa_role_outlook_components to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- occupation_templates
+alter table kafaa_occupation_templates enable row level security;
+drop policy if exists kafaa_read on kafaa_occupation_templates;
+create policy kafaa_read on kafaa_occupation_templates for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, listed));
+grant select on kafaa_occupation_templates to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- health_snapshots
+alter table kafaa_health_snapshots enable row level security;
+drop policy if exists kafaa_read on kafaa_health_snapshots;
+create policy kafaa_read on kafaa_health_snapshots for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_health_snapshots to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- coach_feedback
 alter table kafaa_coach_feedback enable row level security;
 drop policy if exists kafaa_read on kafaa_coach_feedback;
