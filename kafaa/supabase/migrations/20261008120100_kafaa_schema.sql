@@ -5235,6 +5235,128 @@ create table if not exists kafaa_transformation_archetypes (
 );
 comment on table kafaa_transformation_archetypes is '[M30] Role archetypes (SkillsFuture Singapore 2025): what each means for learning (FS11)';
 
+-- M31 · SMR delta for one current Barakah role on one ADVANCE technology family: what changes (by dimension), what stays, skills, delta training and sources; planning assumption, no deployment decision implied (FS38)
+create table if not exists kafaa_smr_deltas (
+  id text primary key,
+  role_id text not null,
+  tech_id text not null,
+  rank integer not null,
+  path_only boolean not null default false,
+  dims jsonb not null default '[]'::jsonb,
+  changes_en text not null,
+  changes_ar text not null,
+  stays_en text not null,
+  stays_ar text not null,
+  skills jsonb not null default '[]'::jsonb,
+  training jsonb not null default '[]'::jsonb,
+  concept_role_ids text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb,
+  benchmark_ids text[] not null default '{}'::text[],
+  status text not null default 'draft' check (status in ('draft', 'published', 'retired')),
+  listed boolean not null default false,
+  version integer not null default 1,
+  as_of date not null,
+  sort integer not null default 0,
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_smr_deltas is '[M31] SMR delta for one current Barakah role on one ADVANCE technology family: what changes (by dimension), what stays, skills, delta training and sources; planning assumption, no deployment decision implied (FS38)';
+
+-- M31 · Reference-plant visit or simulator observation logged by a person and confirmed (or declined) by the named host; confirmed visits write capped F01 evidence (FS39)
+create table if not exists kafaa_plant_visits (
+  id text primary key,
+  person_id text not null,
+  kind text not null check (kind in ('reference_plant', 'simulator_observation', 'partner_facility')),
+  host_person_id text not null,
+  visit_on date not null,
+  hours numeric not null,
+  note text not null default '',
+  status text not null default 'logged' check (status in ('logged', 'confirmed', 'declined', 'withdrawn')),
+  decided_by text,
+  decided_at timestamptz,
+  decline_reason text,
+  level integer not null default 0,
+  evidence jsonb not null default '[]'::jsonb,
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_plant_visits is '[M31] Reference-plant visit or simulator observation logged by a person and confirmed (or declined) by the named host; confirmed visits write capped F01 evidence (FS39)';
+
+-- M31 · Digital-twin diagnosis drill: synthetic plant-model trend set (SIMULATED, SYN-TW code), components, failure modes, checks, actions and rationales; no answers (the key is in twin_keys) (FS40)
+create table if not exists kafaa_twin_scenarios (
+  id text primary key,
+  code text not null unique,
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  scenario_en text not null,
+  scenario_ar text not null,
+  system_en text not null,
+  system_ar text not null,
+  difficulty integer not null,
+  level integer not null,
+  skill_ids text[] not null default '{}'::text[],
+  series jsonb not null default '{}'::jsonb,
+  components jsonb not null default '[]'::jsonb,
+  modes jsonb not null default '[]'::jsonb,
+  checks jsonb not null default '[]'::jsonb,
+  actions jsonb not null default '[]'::jsonb,
+  rationales jsonb not null default '[]'::jsonb,
+  max_checks integer not null default 3,
+  est_minutes integer not null default 12,
+  synthetic boolean not null default true,
+  sources jsonb not null default '[]'::jsonb,
+  status text not null default 'draft' check (status in ('draft', 'published', 'retired')),
+  listed boolean not null default false,
+  version integer not null default 1,
+  sort integer not null default 0,
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_twin_scenarios is '[M31] Digital-twin diagnosis drill: synthetic plant-model trend set (SIMULATED, SYN-TW code), components, failure modes, checks, actions and rationales; no answers (the key is in twin_keys) (FS40)';
+
+-- M31 · Answer key of a digital-twin drill: the degrading component and mode, useful and unsafe checks, conservative and unsafe actions, sound rationales; training staff only (FS40)
+create table if not exists kafaa_twin_keys (
+  id text primary key,
+  scenario_id text not null unique,
+  component_id text not null,
+  mode_id text not null,
+  useful_checks text[] not null default '{}'::text[],
+  unsafe_checks text[] not null default '{}'::text[],
+  conservative_actions text[] not null default '{}'::text[],
+  best_action text not null,
+  unsafe_actions text[] not null default '{}'::text[],
+  sound_rationales text[] not null default '{}'::text[],
+  explain jsonb not null default '{}'::jsonb,
+  pass_pct integer not null default 70
+);
+comment on table kafaa_twin_keys is '[M31] Answer key of a digital-twin drill: the degrading component and mode, useful and unsafe checks, conservative and unsafe actions, sound rationales; training staff only (FS40)';
+
+-- M31 · One person's submitted digital-twin drill: checks, diagnosis, action, rationales, score, pass, level and the capped evidence it wrote (FS40)
+create table if not exists kafaa_twin_attempts (
+  id text primary key,
+  person_id text not null,
+  scenario_id text not null,
+  scenario_version integer not null,
+  attempt_no integer not null,
+  checks text[] not null default '{}'::text[],
+  component_id text not null,
+  mode_id text not null,
+  action_id text not null,
+  rationale_ids text[] not null default '{}'::text[],
+  points integer not null,
+  max_points integer not null,
+  pct integer not null,
+  critical_ok boolean not null,
+  passed boolean not null,
+  level integer not null default 0,
+  feedback jsonb not null default '{}'::jsonb,
+  reasons jsonb not null default '[]'::jsonb,
+  evidence jsonb not null default '[]'::jsonb,
+  submitted_at timestamptz not null default now()
+);
+comment on table kafaa_twin_attempts is '[M31] One person''s submitted digital-twin drill: checks, diagnosis, action, rationales, score, pass, level and the capped evidence it wrote (FS40)';
+
 -- M33 · Nuclear critical core skill (16 in three SkillsFuture clusters), written for a nuclear plant, with benchmark mappings, INPO traits, linked catalogue skills, level descriptors and its own development and assessment routes (FS25)
 create table if not exists kafaa_core_skills (
   id text primary key,
@@ -5957,6 +6079,13 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ai
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_transformations_role_id_fk') then alter table kafaa_role_transformations add constraint kafaa_role_transformations_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_transformations_family_id_fk') then alter table kafaa_role_transformations add constraint kafaa_role_transformations_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_transformation_drafts_role_id_fk') then alter table kafaa_transformation_drafts add constraint kafaa_transformation_drafts_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_smr_deltas_role_id_fk') then alter table kafaa_smr_deltas add constraint kafaa_smr_deltas_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_smr_deltas_tech_id_fk') then alter table kafaa_smr_deltas add constraint kafaa_smr_deltas_tech_id_fk foreign key (tech_id) references kafaa_adv_technologies(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_plant_visits_person_id_fk') then alter table kafaa_plant_visits add constraint kafaa_plant_visits_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_plant_visits_host_person_id_fk') then alter table kafaa_plant_visits add constraint kafaa_plant_visits_host_person_id_fk foreign key (host_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_twin_keys_scenario_id_fk') then alter table kafaa_twin_keys add constraint kafaa_twin_keys_scenario_id_fk foreign key (scenario_id) references kafaa_twin_scenarios(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_twin_attempts_person_id_fk') then alter table kafaa_twin_attempts add constraint kafaa_twin_attempts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_twin_attempts_scenario_id_fk') then alter table kafaa_twin_attempts add constraint kafaa_twin_attempts_scenario_id_fk foreign key (scenario_id) references kafaa_twin_scenarios(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_core_skill_targets_family_id_fk') then alter table kafaa_core_skill_targets add constraint kafaa_core_skill_targets_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_core_skill_targets_core_skill_id_fk') then alter table kafaa_core_skill_targets add constraint kafaa_core_skill_targets_core_skill_id_fk foreign key (core_skill_id) references kafaa_core_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_core_skill_candidates_merged_into_fk') then alter table kafaa_core_skill_candidates add constraint kafaa_core_skill_candidates_merged_into_fk foreign key (merged_into) references kafaa_core_skills(id) deferrable initially deferred; end if; end $$;
@@ -6616,6 +6745,16 @@ create index if not exists kafaa_ai_drill_attempts_person_id_idx on kafaa_ai_dri
 create index if not exists kafaa_ai_drill_attempts_drill_id_idx on kafaa_ai_drill_attempts (drill_id);
 create index if not exists kafaa_role_transformations_family_id_idx on kafaa_role_transformations (family_id);
 create index if not exists kafaa_role_transformations_status_idx on kafaa_role_transformations (status);
+create index if not exists kafaa_smr_deltas_role_id_idx on kafaa_smr_deltas (role_id);
+create index if not exists kafaa_smr_deltas_tech_id_idx on kafaa_smr_deltas (tech_id);
+create index if not exists kafaa_smr_deltas_status_idx on kafaa_smr_deltas (status);
+create index if not exists kafaa_plant_visits_person_id_idx on kafaa_plant_visits (person_id);
+create index if not exists kafaa_plant_visits_kind_idx on kafaa_plant_visits (kind);
+create index if not exists kafaa_plant_visits_host_person_id_idx on kafaa_plant_visits (host_person_id);
+create index if not exists kafaa_plant_visits_status_idx on kafaa_plant_visits (status);
+create index if not exists kafaa_twin_scenarios_status_idx on kafaa_twin_scenarios (status);
+create index if not exists kafaa_twin_attempts_person_id_idx on kafaa_twin_attempts (person_id);
+create index if not exists kafaa_twin_attempts_scenario_id_idx on kafaa_twin_attempts (scenario_id);
 create index if not exists kafaa_core_skills_cluster_idx on kafaa_core_skills (cluster);
 create index if not exists kafaa_core_skill_targets_family_id_idx on kafaa_core_skill_targets (family_id);
 create index if not exists kafaa_core_skill_targets_core_skill_id_idx on kafaa_core_skill_targets (core_skill_id);
@@ -6652,4 +6791,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 291) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 296) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
