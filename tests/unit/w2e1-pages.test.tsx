@@ -29,7 +29,7 @@ describe('F10 /my/skills/checkins', () => {
     expect(within(list).getByTestId('m17-ci-skill-sk-hu-02')).toBeTruthy();
     expect(screen.getByTestId('m17-ci-qualonly').textContent).toMatch(/Verified by qualification only/);
     expect(within(screen.getByTestId('m17-ci-peers')).queryByText(/Shift/)).toBeNull();
-  }, 30000);
+  }, 90000); // FS wave C QA: the first test boots the 19 MB seed (about 27 s)
   it('a peer (buyer) answers only the skills named for them, never the self level', async () => {
     await renderPage(<CheckinsPage />, { persona: 'buyer', path: '/my/skills/checkins' });
     const asked = await screen.findByTestId('m17-ci-asked', {}, WAIT);
@@ -43,7 +43,7 @@ describe('F10 /my/skills/checkins', () => {
     const dlg = await screen.findByRole('dialog', {}, WAIT);
     fireEvent.click(within(dlg).getByRole('button', { name: 'Send ratings' }));
     await waitFor(() => expect(screen.getAllByText(/your ratings were sent/i).length).toBeGreaterThan(0), WAIT);
-  }, 30000);
+  }, 90000); // FS wave C QA: the first test boots the 19 MB seed (about 27 s)
 });
 
 describe('F10 /team/skills/validate', () => {
@@ -55,7 +55,7 @@ describe('F10 /team/skills/validate', () => {
     fireEvent.click(screen.getByRole('tab', { name: /Calibration/ }));
     const cal = await screen.findByTestId('m17-cal', {}, WAIT);
     expect(cal.textContent).toMatch(/Distributions suppressed/);
-  }, 30000);
+  }, 90000); // FS wave C QA: the first test boots the 19 MB seed (about 27 s)
 });
 
 describe('F11 /team/skills', () => {
@@ -73,17 +73,17 @@ describe('F11 /team/skills', () => {
     fireEvent.click(screen.getByRole('tab', { name: /Suggested actions/ }));
     const acts = await screen.findByTestId('m17-tm-actions', {}, WAIT);
     expect(within(acts).getAllByTestId('why-this').length).toBeGreaterThan(0);
-  }, 30000);
+  }, 90000); // FS wave C QA: the first test boots the 19 MB seed (about 27 s)
   it('HR sees the aggregate view only', async () => {
     await renderPage(<TeamSkillsPage />, { persona: 'k-hr-analyst', path: '/team/skills' });
     await screen.findByText(/Aggregate view/, {}, WAIT);
     expect(screen.queryByTestId('m17-tm-heatmap')).toBeNull();
     expect(screen.queryByTestId('m17-tm-csv')).toBeNull();
-  }, 30000);
+  }, 90000); // FS wave C QA: the first test boots the 19 MB seed (about 27 s)
   it('Arabic: the heatmap page renders in Arabic', async () => {
     await renderPage(<TeamSkillsPage />, { persona: 'sro', path: '/ar/team/skills' });
     await screen.findByTestId('m17-tm-heatmap', {}, WAIT);
     expect(document.body.textContent).toMatch(/خريطة قدرات الفريق|الخريطة الحرارية/);
     expect(document.body.textContent).toMatch(/مناوبة التشغيل B/);
-  }, 30000);
+  }, 90000); // FS wave C QA: the first test boots the 19 MB seed (about 27 s)
 });

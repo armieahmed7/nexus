@@ -358,7 +358,9 @@
       "external": "External",
       "opportunity": "Gig",
       "credential": "Micro-credential",
-      "fitness": "Fitness check"
+      "fitness": "Fitness check",
+      "adaptive": "Adaptive assessment",
+      "task": "Performance task"
     },
     "kind": {
       "learn": "Learn",
@@ -689,5 +691,18 @@
       "saveDraft": "Save draft",
       "saved": "Resource saved"
     }
+  },
+  "wc": {
+    "title": "Close the gap: future-skills courses and pathways",
+    "eyebrow": "FS19 course pack · FS17 pathways",
+    "courses": "Courses that teach these skills",
+    "pathways": "Learning pathways",
+    "levels": "level {levels}",
+    "envelope": "{months} months · {hours} h a week",
+    "noCourses": "No pack course teaches these skills yet.",
+    "noPathways": "Sign in as ENEC staff to see the pathways, or none is published yet.",
+    "allCourses": "All future-skills courses",
+    "allPathways": "All learning pathways",
+    "descriptor": "What level {n} looks like"
   }
 }

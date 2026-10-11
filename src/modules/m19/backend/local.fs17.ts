@@ -29,7 +29,7 @@ export function makeLocalFs17(b: LocalBackend, h: LocalRpcHelpers): M19PathwaysR
   const get = (t: string, id: string | null | undefined) => (id ? (b.rawGet(t as never, id) as unknown as Row | undefined) : undefined);
   const ins = (t: string, row: Row) => b.rawInsert(t as never, row as never);
   const upd = (t: string, id: string, patch: Row) => b.rawUpdate(t as never, id, patch as never);
-  const content = (): Content => ({ courses: raw('courses') as never, externals: raw('external_resources') as never, opportunities: raw('opportunities') as never, credentials: raw('microcred_defs') as never, fitness: raw('fitness_areas') as never });
+  const content = (): Content => ({ courses: raw('courses') as never, externals: raw('external_resources') as never, opportunities: raw('opportunities') as never, credentials: raw('microcred_defs') as never, fitness: raw('fitness_areas') as never, adaptive: raw('adaptive_banks') as never, tasks: raw('performance_tasks') as never });
   const skills = () => raw('skills') as unknown as SkillRef[];
   const criteria = () => raw('catalogue_criteria') as unknown as CriterionRow[];
   const steps = () => raw('pathway_steps') as unknown as StepRow[];
@@ -38,7 +38,7 @@ export function makeLocalFs17(b: LocalBackend, h: LocalRpcHelpers): M19PathwaysR
   const resolve = (p: Row) => resolvePathway(p as PathwayRow, steps(), content());
   const progressOf = (person: string, p: Row) => pathwayProgress(resolve(p), recordsOf(person, {
     training_records: raw('training_records'), external_completions: raw('external_completions'), opportunity_applications: raw('opportunity_applications'),
-    microcred_awards: raw('microcred_awards'), fitness_attempts: raw('fitness_attempts'),
+    microcred_awards: raw('microcred_awards'), fitness_attempts: raw('fitness_attempts'), adaptive_attempts: raw('adaptive_attempts'), task_attempts: raw('task_attempts'),
   }));
   const enrolId = (person: string, pw: string) => `pe:${person}:${pw}`;
 

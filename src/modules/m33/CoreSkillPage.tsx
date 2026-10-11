@@ -8,6 +8,7 @@ import { useSession } from '../../auth/session';
 import { L, useFormat, useLang, usePick, useT } from '../../i18n';
 import { CORE_MAX } from './coreSkills';
 import { LevelPill, MappingList, RouteList, SkillLinks, useFamilyName, useM33Ref, type M33Ref, type Row } from './ui';
+import { LearnForSkills } from '../m19/waveC'; // FS wave C integration: FS19 courses and FS17 pathways for the linked catalogue skills
 
 export default function CoreSkillPage() {
   const t = useT();
@@ -78,6 +79,7 @@ function Detail({ d, c }: { d: M33Ref; c: Row }) {
           </Card>
         </div>
         {c.outcome_en && <Callout tone="info" title={t('m33.cs.outcome')}>{pick(c, 'outcome')}</Callout>}
+        <LearnForSkills skillIds={c.skill_ids ?? []} testId="m33-cs-learn" />
       </Section>
 
       <Section title={t('m33.cs.targets')} description={t('m33.cs.targetsIntro')}>

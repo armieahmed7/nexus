@@ -149,8 +149,10 @@ describe('F18 flows: placement, locked cycle, calibration and lock (every change
   it('acceptance: the outlier flag is raised for potential 3 when the evidence index is in the bottom third', async () => {
     await as('ops-ceo');
     const d = await board('trc-2026h2-ops');
-    const low = [...d.members].filter((m) => m.can_place).sort((x, y) => x.index - y.index)[0] as BoardMember;
-    expect(low.index).toBeLessThanOrEqual(d.cuts!.low);
+    // FS wave C QA: rank by the live evidence a new placement freezes (a seeded placement keeps its older snapshot; wave C added
+    // capstone and assessment evidence for some of those people after their placement)
+    const low = [...d.members].filter((m) => m.can_place).sort((x, y) => x.evidence.index - y.evidence.index)[0] as BoardMember;
+    expect(low.evidence.index).toBeLessThanOrEqual(d.cuts!.low);
     const sug = low.suggested_perf ?? 2;
     const r = await b.rpc.placeTalent({ cycle_id: 'trc-2026h2-ops', person_id: low.person_id, perf: sug, anchors: { agility: 3, influence: 3, drive: 3 } });
     expect(r.ok, r.message).toBe(true);

@@ -39,7 +39,7 @@ describe('FS wave B · route registry', () => {
   it('227 routes, and the 15 wave-B routes are registered', async () => {
     const { loadRoutes } = await import('../smoke/routes');
     const R = loadRoutes();
-    expect(R.length).toBe(227);
+    expect(R.length).toBe(259); // FS wave C QA: + 32 wave-C routes (tests/unit/fsqa3-integration.test.tsx)
     const paths = new Set(R.map((r) => r.path));
     for (const p of ['/skills', '/skills/:id', '/skills/frameworks', '/admin/skills/alignments', '/learn/ai-fluency', '/my/ai-fluency', '/my/ai-fluency/check', '/workforce/ai-fluency',
       '/training/ai-fitness/items', '/my/role-2030', '/my/role-2030/tasks', '/careers/roles/:slug/transformation', '/workforce/transformation', '/workforce/transformation/:roleId',

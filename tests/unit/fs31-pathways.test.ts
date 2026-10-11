@@ -15,7 +15,7 @@ import {
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 const T = (seed as unknown as { tables: Record<string, Row[]> }).tables;
-const content: Content = { courses: T.courses as never, externals: T.external_resources as never, opportunities: T.opportunities as never, credentials: T.microcred_defs as never, fitness: T.fitness_areas as never };
+const content: Content = { courses: T.courses as never, externals: T.external_resources as never, opportunities: T.opportunities as never, credentials: T.microcred_defs as never, fitness: T.fitness_areas as never, adaptive: T.adaptive_banks as never, tasks: T.performance_tasks as never }; // FS wave C QA: FS21/FS22 items
 const skills = T.skills as unknown as SkillRef[];
 const futureSkills = T.skills.filter((s) => s.fs_area && s.lifecycle !== 'obsolete' && s.area !== 'security');
 const TODAY = new Date().toISOString().slice(0, 10);
@@ -109,16 +109,17 @@ describe('FS17 · rules (mirrored by SQL)', () => {
     expect(r.steps[0].items[0]).toMatchObject({ type: 'course', id: 'c-ai-gov', pinned: true });
     expect(r.steps[2].items.some((i) => i.type === 'fitness')).toBe(true);
     // a new course whose objective carries the skill and level is picked up with no code change (FS19 hand-off)
-    const fsCourse = { id: 'c-test-ghg', code: 'T-1', title_en: 'GHG basics', title_ar: 'أساسيات غازات الدفيئة', modality: 'elearning', audience: 'staff', duration_hours: 4, objectives: [{ skill_id: 'sk-fs-gr-esg', level: 1 }] };
-    expect(courseTeaches(fsCourse, 'sk-fs-gr-esg', 1)).toBe(true);
-    const esg = T.pathways.find((x) => x.id === 'pw-gr-esg-l1')!;
+    // (wave C QA: FS19's c-fs-ghg now fills the ESG learn step, so the check uses circular economy, still requested)
+    const fsCourse = { id: 'c-test-circ', code: 'T-1', title_en: 'Circular economy basics', title_ar: 'أساسيات الاقتصاد الدائري', modality: 'elearning', audience: 'staff', duration_hours: 4, objectives: [{ skill_id: 'sk-fs-gr-circular', level: 1 }] };
+    expect(courseTeaches(fsCourse, 'sk-fs-gr-circular', 1)).toBe(true);
+    const esg = T.pathways.find((x) => x.id === 'pw-gr-circular-l1')!;
     expect(resolvePathway(esg as never, T.pathway_steps as never, content).steps[0].status).toBe('requested');
     const after = resolvePathway(esg as never, T.pathway_steps as never, { ...content, courses: [...content.courses, fsCourse] });
-    expect(after.steps[0]).toMatchObject({ status: 'resolved', items: [expect.objectContaining({ id: 'c-test-ghg', pinned: false })] });
+    expect(after.steps[0]).toMatchObject({ status: 'resolved', items: [expect.objectContaining({ id: 'c-test-circ', pinned: false })] });
   });
   it('the seeded gap backlog is exactly the requested steps of published pathways (FS57 feed)', () => {
     const req = T.pathways.filter((p) => p.status === 'published').flatMap((p) => resolvePathway(p as never, T.pathway_steps as never, content).steps.filter((s) => s.status === 'requested').map((s) => `pg:${s.step_id}`));
-    expect(T.pathway_gaps.map((g) => g.id).sort()).toEqual(req.sort());
+    expect(T.pathway_gaps.filter((g) => g.status === 'open').map((g) => g.id).sort()).toEqual(req.sort()); // wave C QA: filled rows stay in the backlog
   });
   it('progress is derived from records; a self-declared external counts but is labelled', () => {
     const p = T.pathways.find((x) => x.id === 'pw-ai-use-l1')!;
@@ -178,7 +179,7 @@ describe('FS17 · RPCs (LocalBackend = SQL)', () => {
     expect((b.raw('pathway_steps' as never) as Row[]).filter((s) => s.pathway_id === p.id).length).toBe(6);
     const g = await b.rpc.refreshPathwayGaps();
     expect(g.ok).toBe(true);
-    expect(g.data!.open).toBe(T.pathway_gaps.length);
+    expect(g.data!.open).toBe(T.pathway_gaps.filter((x) => x.status === 'open').length);
   });
   it('anonymous and partner users get no catalogue; staff never see drafts', async () => {
     await as(null);

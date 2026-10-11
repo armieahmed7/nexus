@@ -25,7 +25,7 @@ describe('F18 pages', () => {
     expect(cards.length).toBe(1);
     expect(cards[0].getAttribute('data-status')).toBe('open');
     expect(screen.getByTestId('m23-confidential')).toBeTruthy();
-  }, 30000);
+  }, 90000); // FS wave C QA: the first test boots the 19 MB seed (about 27 s)
   it('the board shows the grid, the evidence panel with reasons and the aspiration signal, and the manager places k-ro', async () => {
     await renderPage(<CyclePage />, { persona: 'sro', path: '/talent/review/trc-2026h2-ops', route: '/talent/review/:cycleId' });
     await screen.findByTestId('m23-ninebox', {}, T);
@@ -51,7 +51,7 @@ describe('F18 pages', () => {
     await renderPage(<CyclePage />, { persona: 'ops-ceo', path: '/ar/talent/review/trc-2026h2-ops', route: '/ar/talent/review/:cycleId' });
     const grid = await screen.findByTestId('m23-ninebox', {}, T);
     expect(grid.textContent).toMatch(/قائد المستقبل/);
-  }, 30000);
+  }, 90000); // FS wave C QA: the first test boots the 19 MB seed (about 27 s)
   it('calibration: the HR director sees the lock (calibrated by the HR BP); the HR BP sees finish and the outliers', async () => {
     await renderPage(<CalibrationPage />, { persona: 'chco', path: '/talent/review/trc-2026h2-mne/calibration', route: '/talent/review/:cycleId/calibration' });
     const lock = await screen.findByTestId('m23-lock', {}, T);
@@ -59,12 +59,12 @@ describe('F18 pages', () => {
     expect(screen.getByTestId('m23-raters')).toBeTruthy();
     fireEvent.click(lock);
     expect(await screen.findByTestId('confirm-action')).toBeTruthy();
-  }, 30000);
+  }, 90000); // FS wave C QA: the first test boots the 19 MB seed (about 27 s)
   it('calibration as the HR BP offers finish but no lock', async () => {
     await renderPage(<CalibrationPage />, { persona: 'k-hr-analyst', path: '/talent/review/trc-2026h2-ops/calibration', route: '/talent/review/:cycleId/calibration' });
     await screen.findByTestId('m23-cal-finish', {}, T);
     expect(screen.queryByTestId('m23-lock')).toBeNull();
-  }, 30000);
+  }, 90000); // FS wave C QA: the first test boots the 19 MB seed (about 27 s)
   it('HR insights show suppressed cells and no names', async () => {
     await renderPage(<TalentInsightsPage />, { persona: 'k-hr-analyst', path: '/talent/review/insights' });
     const grid = await screen.findByTestId('m23-ins-grid', {}, T);
@@ -72,18 +72,18 @@ describe('F18 pages', () => {
     expect(cells).toHaveLength(9);
     expect(cells.some((c) => c.getAttribute('data-suppressed') === 'true')).toBe(true);
     expect(grid.textContent).not.toMatch(/w-|Reactor Operator \(/);
-  }, 30000);
+  }, 90000); // FS wave C QA: the first test boots the 19 MB seed (about 27 s)
   it('the HiPo pool lists locked-cycle HiPo people with nominations for managers', async () => {
     await renderPage(<HipoPoolPage />, { persona: 'chco', path: '/talent/review/pool' });
     const pool = await screen.findByTestId('m23-pool', {}, T);
     expect(within(pool).getAllByTestId('m23-hipo').length).toBeGreaterThan(0);
-  }, 30000);
+  }, 90000); // FS wave C QA: the first test boots the 19 MB seed (about 27 s)
   it('an employee sees agreed priorities and never a box or rating', async () => {
     await renderPage(<MyPrioritiesPage />, { persona: 'qc-inspector', path: '/my/development-priorities' });
     const list = await screen.findByTestId('m23-my-priorities', {}, T);
     expect(within(list).getAllByTestId('m23-my-priority').length).toBeGreaterThan(0);
     expect(document.body.textContent).not.toMatch(/Future leader|Growth candidate|Core contributor|potential 3|box \d/i);
-  }, 30000);
+  }, 90000); // FS wave C QA: the first test boots the 19 MB seed (about 27 s)
 });
 
 describe('F19 pages', () => {
@@ -95,14 +95,14 @@ describe('F19 pages', () => {
     expect(list.textContent).toMatch(/more than 2 slates/);
     expect(screen.getByTestId('m23-sx-agg')).toBeTruthy();
     expect(screen.getByTestId('m23-rollup')).toBeTruthy();
-  }, 30000);
+  }, 90000); // FS wave C QA: the first test boots the 19 MB seed (about 27 s)
   it('an executive sees their function read-only, without aggregates or roll-up', async () => {
     await renderPage(<SuccessionPage />, { persona: 'emergency-director', path: '/talent/succession' });
     const list = await screen.findByTestId('m23-slates', {}, T);
     expect(within(list).getAllByTestId('m23-slate')).toHaveLength(1);
     expect(screen.queryByTestId('m23-rollup')).toBeNull();
     expect(screen.queryByTestId('m23-sx-agg')).toBeNull();
-  }, 30000);
+  }, 90000); // FS wave C QA: the first test boots the 19 MB seed (about 27 s)
   it('the slate page shows gates and candidates; ready now is disabled for a candidate with a gate not met', async () => {
     await renderPage(<SlatePage />, { persona: 'chco', path: '/talent/succession/ss-shift-supervisor-2026h2', route: '/talent/succession/:slateId' });
     await screen.findByTestId('m23-successors', {}, T);

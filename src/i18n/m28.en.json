@@ -189,7 +189,7 @@
     "review": "Next review",
     "ladder": "What it means at each level",
     "keyLevel": "Key level",
-    "ladderNote": "The key level carries the skill's own essence line; the other levels use the generic level attributes shared by every skill (SFIA 9 style).",
+    "ladderNote": "The key level carries the skill's own essence line; each level lists the observable indicators published for this skill (FS23), or says why the skill is not defined there.",
     "facts": "At a glance",
     "area": "Area",
     "type": "Skill type",
@@ -220,7 +220,8 @@
     "credVia": {
       "skill": "requires this skill",
       "course": "through a course that builds it"
-    }
+    },
+    "descriptorsLink": "All descriptors and levels"
   },
   "fw": {
     "eyebrow": "Skills Intelligence · crosswalk",

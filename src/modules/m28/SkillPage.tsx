@@ -17,6 +17,7 @@ import type { PersonSkillsRow, SkillGoalsRow, SkillsRow } from '../../data/types
 import { TRAINING_PATHS } from '../m04/paths';
 import { datedSources, learningFor, rolesForSkill, type PathRef } from './explorer';
 import { CrosswalkList, LIFE_TONE, MatchLegend, useCatalogue, type Catalogue } from './ui';
+import { LevelIndicators } from '../m02/levelsUi'; // FS wave C integration: FS23 behavioural indicators on the ladder
 
 const TABS = ['overview', 'roles', 'learning', 'crosswalk', 'sources'] as const;
 
@@ -139,12 +140,13 @@ function Overview({ s }: { s: SkillsRow }) {
             return (
               <li key={lv} className={`rounded-card border p-3 ${key ? 'border-accent bg-accent-soft' : 'border-line bg-panel'}`} data-testid={key ? 'm28-key-level' : undefined}>
                 <p className="flex items-center gap-2 text-[12px]"><span className="num font-semibold">{t('m28.levels.level', { n: f.num(lv) })}</span><span className="caps">{t(`m28.levelName.${lv}`)}</span>{key && <StatusPill tone="accent">{t('m28.skill.keyLevel')}</StatusPill>}</p>
-                <p className="mt-1 text-[13.5px]">{text}</p>
+                {key && <p className="mt-1 text-[13.5px]">{text}</p>}
+                <div className="mt-1.5" data-testid="m28-ladder-indicators" data-level={lv}><LevelIndicators skillId={s.id} level={lv} fallback={key ? null : <p className="text-[13.5px]">{text}</p>} /></div>
               </li>
             );
           })}
         </ol>
-        <p className="mt-2 text-[12px] text-ink-3">{t('m28.skill.ladderNote')}</p>
+        <p className="mt-2 text-[12px] text-ink-3">{t('m28.skill.ladderNote')} <L to={`/competencies/descriptors/${s.id}`} data-testid="m28-to-descriptors">{t('m28.skill.descriptorsLink')}</L></p>
       </Card>
       <div className="space-y-4">
         <Card title={t('m28.skill.facts')}>

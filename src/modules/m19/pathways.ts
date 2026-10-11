@@ -17,15 +17,20 @@
  *     courses are "learn", fellowships and programmes are "practice", and a resource with an assessment also counts for "assess";
  *   - an open, listed gig (F08 opportunity) that grows S is "practice" for levels 1-2 (security-type gigs never);
  *   - assessment: an FS10 fitness-check area that evidences S (levels 1-2; the check writes evidence up to level 2) and a current
- *     micro-credential aligned to S at level L.
+ *     micro-credential aligned to S at level L;
+ *   - assessment (FS wave C integration, data-only): an active FS21 adaptive bank that assesses S (levels up to the bank's evidence
+ *     cap) and an active FS22 performance task that evidences S (levels up to the task's evidence level). These two are discovered
+ *     only (never pinned); SQL twin redefined in 20261010239001_kafaa_fs3qa_integration.sql.
  * A step with nothing to resolve is "requested" and feeds the FS57 gap backlog (kafaa_pathway_gaps).
  */
 
 // ───────────── shared shapes (structural; repository rows and seed rows both fit)
 export type StepKind = 'learn' | 'practice' | 'assess';
 export const STEP_KINDS: StepKind[] = ['learn', 'practice', 'assess'];
-export type ItemType = 'course' | 'external' | 'opportunity' | 'credential' | 'fitness';
-export const ITEM_TYPES: ItemType[] = ['course', 'external', 'opportunity', 'credential', 'fitness'];
+export type ItemType = 'course' | 'external' | 'opportunity' | 'credential' | 'fitness' | 'adaptive' | 'task';
+export const ITEM_TYPES: ItemType[] = ['course', 'external', 'opportunity', 'credential', 'fitness', 'adaptive', 'task'];
+/** Item types a training manager can pin (FS21/FS22 items are discovered only). */
+export const PIN_TYPES: ItemType[] = ['course', 'external', 'opportunity', 'credential', 'fitness'];
 export const LEARN_MODALITIES = ['classroom', 'elearning', 'blended', 'external'];
 export const PRACTICE_MODALITIES = ['ojt', 'drill', 'simulator', 'clinic'];
 export const EXT_LEARN_FORMATS = ['elearning', 'mooc', 'course'];
@@ -50,7 +55,10 @@ export interface ExternalC { id: string; title_en: string; title_ar: string; pro
 export interface OppC { id: string; title_en: string; title_ar?: string | null; kind: string; status: string; listed?: boolean | null; skills_gained?: string[] | null; hours_week?: number | null }
 export interface CredC { id: string; title_en: string; title_ar: string; status: string; alignment?: unknown; hours?: number | string | null }
 export interface FitC { id: string; name_en: string; name_ar: string; skill_ids?: string[] | null }
-export interface Content { courses: CourseC[]; externals: ExternalC[]; opportunities: OppC[]; credentials: CredC[]; fitness: FitC[] }
+/** FS21 adaptive bank and FS22 performance task (wave C integration; data-only). */
+export interface AdaptiveC { id: string; name_en: string; name_ar: string; status: string; skill_ids?: string[] | null; evidence_cap?: number | null }
+export interface TaskC { id: string; title_en: string; title_ar: string; status: string; skill_ids?: string[] | null; evidence_level?: number | null }
+export interface Content { courses: CourseC[]; externals: ExternalC[]; opportunities: OppC[]; credentials: CredC[]; fitness: FitC[]; adaptive?: AdaptiveC[]; tasks?: TaskC[] }
 
 export interface ResolvedItem { type: ItemType; id: string; title_en: string; title_ar: string; hours: number | null; external: boolean; pinned: boolean; link: string }
 export interface ResolvedStep { step_id: string; n: number; kind: StepKind; title_en: string; title_ar: string; hours: number; status: 'resolved' | 'requested'; items: ResolvedItem[] }
@@ -81,12 +89,15 @@ const LINK: Record<ItemType, (id: string) => string> = {
   opportunity: (id) => `/opportunities/${id}`,
   credential: () => '/my/skills/credentials',
   fitness: () => '/my/ai-fluency/check',
+  adaptive: (id) => `/my/assessments/adaptive/${id}`,
+  task: (id) => `/my/assessments/tasks/${id}`,
 };
 
 function itemOf(type: ItemType, row: Row, pinned: boolean): ResolvedItem {
   const hours = type === 'course' ? num(row.duration_hours) : type === 'external' ? num(row.hours) : type === 'opportunity' ? num(row.hours_week) : type === 'credential' ? num(row.hours) : null;
-  const en = String(type === 'fitness' ? row.name_en : row.title_en);
-  const ar = String((type === 'fitness' ? row.name_ar : row.title_ar) || en);
+  const named = type === 'fitness' || type === 'adaptive';
+  const en = String(named ? row.name_en : row.title_en);
+  const ar = String((named ? row.name_ar : row.title_ar) || en);
   return { type, id: String(row.id), title_en: en, title_ar: ar, hours, external: type === 'external', pinned, link: LINK[type](String(row.id)) };
 }
 
@@ -124,6 +135,8 @@ export function discover(kind: StepKind, skill: string, level: number, content: 
     add('external', pubExt.filter((x) => !!x.has_assessment) as unknown as Row[]);
     add('credential', content.credentials.filter((c) => c.status === 'current' && credAligned(c, skill, level)) as unknown as Row[]);
     if (level <= 2) add('fitness', content.fitness.filter((f) => (f.skill_ids ?? []).includes(skill)) as unknown as Row[]);
+    add('adaptive', (content.adaptive ?? []).filter((b) => b.status === 'active' && (b.skill_ids ?? []).includes(skill) && level <= Number(b.evidence_cap ?? 3)) as unknown as Row[]);
+    add('task', (content.tasks ?? []).filter((k) => k.status === 'active' && (k.skill_ids ?? []).includes(skill) && level <= Number(k.evidence_level ?? 2)) as unknown as Row[]);
   }
   return out;
 }
@@ -161,6 +174,8 @@ export interface PersonRecords {
   opportunities: string[]; // opportunity ids with a completed application
   credentials: string[]; // micro-credential definition ids awarded to the person
   fitness: boolean; // a completed FS10 fitness check
+  adaptive?: string[]; // (wave C integration) FS21 bank ids with a completed attempt that counts
+  tasks?: string[]; // (wave C integration) FS22 task ids with a scored, passed attempt that counts
 }
 export interface StepProgress { step_id: string; done: boolean; via: string | null; self_declared: boolean }
 export interface PathwayProgress { steps: StepProgress[]; done: number; total: number; pct: number; self_declared: number; complete: boolean }
@@ -171,7 +186,8 @@ export function pathwayProgress(resolved: ResolvedPathway, rec: PersonRecords): 
     let self = false;
     for (const it of s.items) {
       const hit = it.type === 'course' ? rec.courses.includes(it.id) : it.type === 'external' ? rec.externals.includes(it.id) || ver.has(it.id)
-        : it.type === 'opportunity' ? rec.opportunities.includes(it.id) : it.type === 'credential' ? rec.credentials.includes(it.id) : rec.fitness;
+        : it.type === 'opportunity' ? rec.opportunities.includes(it.id) : it.type === 'credential' ? rec.credentials.includes(it.id)
+        : it.type === 'adaptive' ? (rec.adaptive ?? []).includes(it.id) : it.type === 'task' ? (rec.tasks ?? []).includes(it.id) : rec.fitness;
       if (!hit) continue;
       const selfDecl = it.type === 'external' && !ver.has(it.id);
       if (via === null || (self && !selfDecl)) { via = `${it.type}:${it.id}`; self = selfDecl; }
@@ -183,7 +199,7 @@ export function pathwayProgress(resolved: ResolvedPathway, rec: PersonRecords): 
 }
 export const COURSE_DONE_RESULTS = ['passed', 'completed', 'attended'];
 /** The records one person holds, from raw rows (LocalBackend and seed). SQL: inside kafaa_pw_progress. */
-export function recordsOf(person: string, t: { training_records: Row[]; external_completions: Row[]; opportunity_applications: Row[]; microcred_awards: Row[]; fitness_attempts: Row[] }): PersonRecords {
+export function recordsOf(person: string, t: { training_records: Row[]; external_completions: Row[]; opportunity_applications: Row[]; microcred_awards: Row[]; fitness_attempts: Row[]; adaptive_attempts?: Row[]; task_attempts?: Row[] }): PersonRecords {
   return {
     courses: [...new Set(t.training_records.filter((r) => r.person_id === person && COURSE_DONE_RESULTS.includes(String(r.result))).map((r) => String(r.course_id)))],
     externals: [...new Set(t.external_completions.filter((r) => r.person_id === person).map((r) => String(r.resource_id)))],
@@ -191,6 +207,8 @@ export function recordsOf(person: string, t: { training_records: Row[]; external
     opportunities: [...new Set(t.opportunity_applications.filter((r) => r.person_id === person && r.status === 'completed').map((r) => String(r.opportunity_id)))],
     credentials: [...new Set(t.microcred_awards.filter((r) => r.person_id === person && r.status === 'awarded').map((r) => String(r.def_id)))],
     fitness: t.fitness_attempts.some((r) => r.person_id === person && r.status === 'completed'),
+    adaptive: [...new Set((t.adaptive_attempts ?? []).filter((r) => r.person_id === person && r.status === 'completed' && r.counts !== false).map((r) => String(r.bank_id)))],
+    tasks: [...new Set((t.task_attempts ?? []).filter((r) => r.person_id === person && r.status === 'scored' && r.passed === true && r.counts !== false).map((r) => String(r.task_id)))],
   };
 }
 

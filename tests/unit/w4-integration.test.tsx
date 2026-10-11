@@ -156,7 +156,7 @@ describe('E2E route sweep input', () => {
   it('every route guard (including the M25 constants) parses for the sweep', async () => {
     const { loadRoutes } = await import('../smoke/routes');
     const R = loadRoutes();
-    expect(R.length).toBe(227); // FS wave B QA: + 11 (FS09/FS10 5, FS11/FS12 5, FS16 1). FS wave B · E1: + 4 M28 routes (FS07, FS08). W5 QA: 193 + 13 wave-5 routes (M17 1, M02 2, M09 5, M06 3, M07 1, M13 1); FS wave A: + 6 (FS03 M17 2, FS04 M11 1, FS05 M01 2, FS06 M26 1)
+    expect(R.length).toBe(259); // FS wave C QA: + 32 (FS17/FS18 M19 6, FS19/FS20 M04 6, FS21/FS22 M05 7, FS23/FS24 M02 7, FS25/FS26 M33 6). FS wave B QA: + 11 (FS09/FS10 5, FS11/FS12 5, FS16 1). FS wave B · E1: + 4 M28 routes (FS07, FS08). W5 QA: 193 + 13 wave-5 routes (M17 1, M02 2, M09 5, M06 3, M07 1, M13 1); FS wave A: + 6 (FS03 M17 2, FS04 M11 1, FS05 M01 2, FS06 M26 1)
     for (const r of R) {
       let d = 0, e = 0;
       for (let i = 0; i < r.guard.length; i++) { if (r.guard[i] === '{') d++; else if (r.guard[i] === '}' && --d === 0) { e = i + 1; break; } }

@@ -10,7 +10,7 @@ import AdminDigestPage from '../../src/modules/m13/AdminDigestPage';
 import { Notifications } from '../../src/shell/Notifications';
 import { DIGEST_MAX } from '../../src/shell/digest/rules';
 
-vi.setConfig({ testTimeout: 30000 });
+vi.setConfig({ testTimeout: 90000 }); // FS wave C QA: seed boot about 27 s
 // jsdom has no layout: the Ask page scrolls the newest turn into view.
 if (!Element.prototype.scrollIntoView) Element.prototype.scrollIntoView = () => {};
 const W = { timeout: 15000 };

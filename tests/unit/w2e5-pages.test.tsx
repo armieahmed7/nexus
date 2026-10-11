@@ -32,7 +32,7 @@ describe('F16 pages', () => {
     fireEvent.click(screen.getByTestId('m22-why-ready'));
     expect((await screen.findByTestId('m22-why-ready-panel')).textContent).toMatch(/ready on the leadership competencies/);
     expect(screen.getAllByTestId('m22-sources').length).toBeGreaterThan(5);
-  }, 30000);
+  }, 90000); // FS wave C QA: the first test boots the 19 MB seed (about 27 s)
   it('renders in Arabic', async () => {
     await renderPage(<LeadershipPage />, { persona: 'k-ro', path: '/ar/leadership' });
     const ladder = await screen.findByTestId('m22-ladder', {}, T);

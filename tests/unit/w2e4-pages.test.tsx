@@ -15,7 +15,7 @@ import ProgrammeDesignPage from '../../src/modules/m20/ProgrammeDesignPage';
 
 const T = { timeout: 8000 };
 
-describe('F15 pages', { timeout: 30000 }, () => {
+describe('F15 pages', { timeout: 90000 }, () => { // FS wave C QA: seed boot about 27 s
   it('the hub ranks programmes with a "Why this?" on every card and shows the current rotation (k-ro)', async () => {
     await renderPage(<RotationsPage />, { persona: 'k-ro', path: '/opportunities/rotations' });
     const list = await screen.findByTestId('m20-rot-programmes', {}, T);

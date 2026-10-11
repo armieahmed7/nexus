@@ -24,7 +24,7 @@ export default function PerfTasksPage() {
   return (
     <Page title={t('m05.routes.my-perf-tasks.title')} intro={t('m05.pt.intro')} wide eyebrow={<BenchmarkChips feature="FS22" />}
       actions={<L to="/my/assessments/adaptive" className="btn-outline btn-sm no-underline"><Icon name="sparkle" size={14} /> {t('m05.pt.toAdaptive')}</L>}>
-      <Async state={ref}>{(d) => <Async state={q}>{(attempts) => <Body d={d} attempts={attempts} />}</Async>}</Async>
+      <Async state={ref}>{(d) => <Async state={q} isEmpty={() => false}>{(attempts) => <Body d={d} attempts={attempts} />}</Async>}</Async>
     </Page>
   );
 }

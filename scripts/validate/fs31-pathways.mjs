@@ -17,7 +17,7 @@ const TODAY = new Date().toISOString().slice(0, 10);
 export default async function fs31Checks({ db, as, one, count, ok, uid }) {
   const T = JSON.parse(readFileSync('src/seed/seed.json', 'utf8')).tables;
   console.log('FS wave C · E1 · FS17 future-skill learning pathways + FS18 curated external catalogue');
-  const content = { courses: T.courses, externals: T.external_resources, opportunities: T.opportunities, credentials: T.microcred_defs, fitness: T.fitness_areas };
+  const content = { courses: T.courses, externals: T.external_resources, opportunities: T.opportunities, credentials: T.microcred_defs, fitness: T.fitness_areas, adaptive: T.adaptive_banks, tasks: T.performance_tasks }; // FS wave C QA: FS21/FS22 assessment items
   const pub = T.pathways.filter((p) => p.status === 'published');
 
   // ── seed sanity (acceptance)
@@ -44,8 +44,10 @@ export default async function fs31Checks({ db, as, one, count, ok, uid }) {
   }
   ok(diffR.length === 0, `SQL kafaa_pw_resolve equals resolvePathway() for all ${T.pathways.length} pathways${diffR.length ? ` (first diff ${diffR[0]})` : ''}`);
   const nReq = [...resolved.values()].filter((r) => T.pathways.find((p) => p.id === r.pathway_id).status === 'published').reduce((n, r) => n + r.requested, 0);
-  ok(nReq === T.pathway_gaps.length && T.pathway_gaps.every((g) => resolved.get(g.pathway_id).steps.find((s) => s.step_id === g.step_id)?.status === 'requested'), `acceptance: the ${nReq} requested steps are exactly the gap backlog (FS57 feed)`);
-  const recT = { training_records: T.training_records, external_completions: T.external_completions, opportunity_applications: T.opportunity_applications, microcred_awards: T.microcred_awards, fitness_attempts: T.fitness_attempts };
+  const openGaps = T.pathway_gaps.filter((g) => g.status === 'open'); // FS wave C QA: steps FS19/FS21/FS22 fill are kept as "filled"
+  ok(nReq === openGaps.length && openGaps.every((g) => resolved.get(g.pathway_id).steps.find((s) => s.step_id === g.step_id)?.status === 'requested')
+    && T.pathway_gaps.filter((g) => g.status === 'filled').every((g) => resolved.get(g.pathway_id).steps.find((s) => s.step_id === g.step_id)?.status === 'resolved'), `acceptance: the ${nReq} requested steps are exactly the open gap backlog (FS57 feed)`);
+  const recT = { training_records: T.training_records, external_completions: T.external_completions, opportunity_applications: T.opportunity_applications, microcred_awards: T.microcred_awards, fitness_attempts: T.fitness_attempts, adaptive_attempts: T.adaptive_attempts, task_attempts: T.task_attempts };
   const pairs = [...T.pathway_enrolments.map((e) => [e.person_id, e.pathway_id]), ...['p-k-ro', 'p-sro', 'p-training-mgr'].flatMap((pid) => pub.map((p) => [pid, p.id]))];
   const diffP = [];
   for (const [pid, pw] of pairs) {

@@ -130,7 +130,8 @@ function Detail({ d, skills, pathway, externals }: { d: PathwayDetail; skills: R
           {(pathway.sources as Row[]).map((s) => <SourceLink key={s.url} href={s.url} date={s.accessed ?? null}>{s.label}</SourceLink>)}
         </p>
       )}
-      <p className="text-[12px] text-ink-3">{t('m19.pw.det.skillLink', { skill: skill ? skillName(skills, skill.id, pick) : r.skill_id })}</p>
+      <p className="flex flex-wrap gap-x-3 text-[12px] text-ink-3"><span>{t('m19.pw.det.skillLink', { skill: skill ? skillName(skills, skill.id, pick) : r.skill_id })}</span>
+        <L to={`/competencies/descriptors/${r.skill_id}`} data-testid="m19-pw-descriptor">{t('m19.wc.descriptor', { n: f.num(r.level) })}</L></p>
 
       <ConfirmDialog open={confirm === 'start'} onClose={() => setConfirm(null)} title={t('m19.pw.det.startTitle')}
         consequence={t('m19.pw.det.startBody', { months: f.num(Number(pathway?.envelope_months ?? 0)), hours: f.num(Number(pathway?.weekly_hours ?? 0)) })}

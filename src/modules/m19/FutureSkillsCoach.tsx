@@ -2,7 +2,7 @@
 // reasons for <WhyThis>), and external catalogue picks for the same skills with the "external" chip. Used by /my/coach (tab) and
 // /my/pathways. Deterministic; the engine kernel's model slot is not used here.
 import { useState } from 'react';
-import { Async, EmptyState, Callout } from '../../ui';
+import { Async, EmptyState, Callout, BenchmarkChips } from '../../ui';
 import { L, useT } from '../../i18n';
 import { CoachPathwayCard, CompleteExternalModal, ExternalCard, useFsCoach, useMyCompletions, usePwRef, type Row } from './fsui';
 
@@ -16,6 +16,7 @@ export function FutureSkillsCoach({ compact }: { compact?: boolean }) {
     <Async state={ref}>{(d) => (
       <Async state={q} isEmpty={(x) => !x} empty={<EmptyState title={t('m19.pw.coach.none')}>{t('m19.pw.coach.noneBody')}</EmptyState>}>{(x) => x && (
         <div className="space-y-5" data-testid="m19-fs-coach">
+          {!compact && <div className="flex flex-wrap items-center gap-2" data-testid="m19-fs-coach-bench"><BenchmarkChips feature="FS17" /><BenchmarkChips feature="FS18" /></div>}
           {!compact && <p className="text-[13.5px] text-ink-2">{t(x.has2030 ? 'm19.pw.coach.intro2030' : 'm19.pw.coach.introNow')}</p>}
           {x.ranked.length ? (
             <ol className="grid grid-cols-1 gap-3 lg:grid-cols-2" data-testid="m19-fs-coach-list">

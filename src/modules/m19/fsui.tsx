@@ -66,7 +66,7 @@ export function useFsCoach() {
 
 // ───────────── small pieces
 export const KIND_ICON: Record<StepKind, string> = { learn: 'book', practice: 'briefcase', assess: 'check' };
-export const ITEM_ICON: Record<string, string> = { course: 'book', external: 'external', opportunity: 'sparkle', credential: 'shield', fitness: 'check' };
+export const ITEM_ICON: Record<string, string> = { course: 'book', external: 'external', opportunity: 'sparkle', credential: 'shield', fitness: 'check', adaptive: 'chart', task: 'grad' };
 export function LevelPill({ level }: { level: number }) {
   const t = useT();
   return <span className="inline-flex items-center rounded-full border border-accent/40 bg-accent-soft px-2 py-0.5 text-[11.5px] font-semibold text-eyebrow" data-testid="m19-pw-level">{t('m19.pw.levelShort', { n: level })}</span>;

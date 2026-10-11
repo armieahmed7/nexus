@@ -16,7 +16,7 @@ const T = (seed as unknown as { tables: Record<string, any[]> }).tables;
 const W = { timeout: 8000 };
 const confirm = async () => fireEvent.click(await screen.findByTestId('confirm-action', {}, W));
 
-describe('F23 pages', { timeout: 30000 }, () => {
+describe('F23 pages', { timeout: 90000 }, () => { // FS wave C QA: seed boot about 27 s
   it('the hub shows only experts who opted into the finder, with no contact details, and consented synthetic stories', async () => {
     await renderPage(<ReservePage />, { persona: 'k-ro', path: '/opportunities/reserve' });
     const list = await screen.findByTestId('m20-res-experts', {}, W);

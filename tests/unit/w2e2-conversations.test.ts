@@ -19,7 +19,7 @@ import seed from '../../src/seed/seed.json';
 
 
 // cold LocalBackend start-up (seed parse) can exceed the 5 s default on a loaded machine
-vi.setConfig({ testTimeout: 30000, hookTimeout: 30000 });
+vi.setConfig({ testTimeout: 90000, hookTimeout: 90000 }); // FS wave C QA: the first test boots the 19 MB seed (about 27 s)
 const T = (seed as unknown as { tables: Record<string, any[]>; meta: { demo_today: string } }).tables;
 const NOW = (seed as unknown as { meta: { demo_today: string } }).meta.demo_today;
 const CONVS = T.career_conversations as ConvRow[];

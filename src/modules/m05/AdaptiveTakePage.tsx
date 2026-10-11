@@ -12,6 +12,7 @@ import { L, useFormat, useLang, usePick, useT } from '../../i18n';
 import type { AdBankCard, AdResult, AdStepView } from './backend/rpc';
 import { GateChips, IntegritySummary, LevelPill, ModeChip, SkillLinks, StaircasePath, useFsRef, type FsRef, type Row } from './fsui';
 import { ResultText } from './AdaptivePage';
+import { LearnForSkills } from '../m19/waveC'; // FS wave C integration: FS19 courses and FS17 pathways for the bank's skills
 
 export const resultFromRow = (a: Row): AdResult => ({
   attempt_id: a.id, bank_id: a.bank_id, estimate: Number(a.estimate), stop: a.stop, criterion: a.mode === 'criterion', meets: a.meets ?? null, percentile: a.percentile ?? null,
@@ -184,6 +185,7 @@ function Result({ d, b, card, r, report, voided }: { d: FsRef; b: Row; card: AdB
           {report ? <IntegritySummary r={report} /> : <p className="text-[13px] text-ink-3">{(b.gates ?? []).length ? t('m05.ir.pending') : t('m05.ir.notGating')}</p>}
         </Card>
       </div>
+      <LearnForSkills skillIds={b.skill_ids ?? []} testId="m05-take-learn" />
     </Section>
   );
 }

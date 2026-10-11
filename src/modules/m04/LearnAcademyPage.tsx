@@ -113,7 +113,7 @@ export function NominateModal({ academy, cohorts, onClose }: { academy: Row; coh
         }}>{t('m04.acad.nominate.send')}</button></div>}>
       <div className="space-y-3">
         <SelectField name="m04-nom-cohort" label={t('m04.acad.cohort')} value={cohort} onChange={setCohort} options={cohorts.map((c) => ({ value: c.id, label: pick(c, 'label') }))} />
-        <Async state={q}>{(list) => (
+        <Async state={q} isEmpty={() => false}>{(list) => (
           <SelectField name="m04-nom-person" label={t('m04.acad.nominate.who')} value={person} onChange={setPerson}
             options={list.map((n) => ({ value: n.self ? '' : n.person_id, label: n.self ? t('m04.acad.nominate.me') : people.name(n.person_id) }))} hint={t('m04.acad.nominate.whoHint')} />
         )}</Async>

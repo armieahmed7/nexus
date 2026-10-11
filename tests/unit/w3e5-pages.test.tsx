@@ -6,7 +6,7 @@
  */
 import { describe, expect, it, vi } from 'vitest';
 
-vi.setConfig({ testTimeout: 30000 });
+vi.setConfig({ testTimeout: 90000 }); // FS wave C QA: seed boot about 27 s
 import { fireEvent, screen, waitFor, within } from '@testing-library/react';
 import { renderPage } from './g1-harness';
 import { getLocalBackend } from '../../src/data';

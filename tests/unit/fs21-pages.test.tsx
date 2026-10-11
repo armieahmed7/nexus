@@ -54,7 +54,7 @@ describe('FS07/FS08 pages', () => {
     expect(src.querySelector('a[href^="https://"]')).toBeTruthy();
     expect(screen.getByTestId('m28-mine-anon')).toBeTruthy();
     fireEvent.click(screen.getByRole('tab', { name: /overview/i }));
-    expect(within(await screen.findByTestId('m28-ladder')).getAllByRole('listitem').length).toBe(4);
+    expect((await screen.findByTestId('m28-ladder')).querySelectorAll(':scope > li').length).toBe(4); // wave C QA: each level now also lists FS23 indicators
     expect(screen.getByTestId('m28-key-level').textContent).toContain(S.skills.find((s) => s.id === 'sk-fs-ai-verify').level_essence_en);
     fireEvent.click(screen.getByRole('tab', { name: /roles/i }));
     expect((await screen.findByTestId('m28-roles-2030', {}, W)).querySelectorAll('li').length).toBeGreaterThan(0);

@@ -22,7 +22,7 @@ export default function SjtItemsPage() {
   const q = useBank();
   return (
     <Page title={t('m33.routes.training-sjt-items.title')} intro={t('m33.bank.intro')} wide eyebrow={<BenchmarkChips feature="FS26" />}>
-      <Async state={ref}>{(d) => <Async state={q}>{(items) => <Bank d={d} items={items} />}</Async>}</Async>
+      <Async state={ref}>{(d) => <Async state={q} isEmpty={() => false}>{(items) => <Bank d={d} items={items} />}</Async>}</Async>
     </Page>
   );
 }

@@ -169,6 +169,40 @@ const RTL: Shot[] = [
   { name: 'fsb-outlook-criteria', path: '/careers/outlook-criteria' },
   { name: 'fsb-careers', path: '/careers' },
   { name: 'fsb-role', path: '/careers/roles/reactor-operator?tab=horizons' },
+  // FS wave C (FS17-FS26): every new page
+  { name: 'fsc-pathways', path: '/learn/pathways', persona: 'nse' },
+  { name: 'fsc-pathway', path: '/learn/pathways/pw-ai-verify-l2', persona: 'nse' },
+  { name: 'fsc-my-pathways', path: '/my/pathways', persona: 'sro' },
+  { name: 'fsc-external', path: '/learn/external', persona: 'nse' },
+  { name: 'fsc-training-pathways', path: '/training/pathways', persona: 'training-mgr' },
+  { name: 'fsc-training-external', path: '/training/external', persona: 'training-mgr' },
+  { name: 'fsc-course-pack', path: '/learn/future-skills' },
+  { name: 'fsc-academies', path: '/learn/academies' },
+  { name: 'fsc-academy', path: '/learn/academies/ac-ai' },
+  { name: 'fsc-my-academies', path: '/my/academies', persona: 'buyer' },
+  { name: 'fsc-training-pack', path: '/training/future-skills', persona: 'training-mgr' },
+  { name: 'fsc-training-academies', path: '/training/academies', persona: 'training-mgr' },
+  { name: 'fsc-adaptive', path: '/my/assessments/adaptive', persona: 'nse' },
+  { name: 'fsc-adaptive-take', path: '/my/assessments/adaptive/ab-ai-literacy', persona: 'nse' },
+  { name: 'fsc-tasks', path: '/my/assessments/tasks', persona: 'nse' },
+  { name: 'fsc-task', path: '/my/assessments/tasks/pt-feedwater-drift', persona: 'nse' },
+  { name: 'fsc-training-adaptive', path: '/training/adaptive', persona: 'training-mgr' },
+  { name: 'fsc-training-perf', path: '/training/perf-tasks', persona: 'training-mgr' },
+  { name: 'fsc-integrity', path: '/training/integrity', persona: 'presenter' },
+  { name: 'fsc-levels', path: '/competencies/levels' },
+  { name: 'fsc-descriptors', path: '/competencies/descriptors' },
+  { name: 'fsc-descriptor', path: '/competencies/descriptors/sk-fs-ai-verify' },
+  { name: 'fsc-scale', path: '/competencies/scale' },
+  { name: 'fsc-my-levels', path: '/my/levels', persona: 'sro' },
+  { name: 'fsc-admin-descriptors', path: '/admin/descriptors', persona: 'training-mgr' },
+  { name: 'fsc-admin-authority', path: '/admin/authority', persona: 'chco' },
+  { name: 'fsc-core-skills', path: '/learn/core-skills' },
+  { name: 'fsc-core-skill', path: '/learn/core-skills/cs-systems', persona: 'nse' },
+  { name: 'fsc-my-core', path: '/my/core-skills', persona: 'nse' },
+  { name: 'fsc-practice', path: '/my/core-skills/practice', persona: 'nse' },
+  { name: 'fsc-workforce-core', path: '/workforce/core-skills', persona: 'chco' },
+  { name: 'fsc-sjt-items', path: '/training/sjt/items', persona: 'training-mgr' },
+  { name: 'fsc-skill-indicators', path: '/skills/sk-fs-ai-verify' },
 ];
 for (const s of RTL) {
   test(`rtl ${s.name}`, async ({ page }) => {
@@ -326,6 +360,40 @@ const MOBILE: Shot[] = [
   { name: 'fsb-outlook-criteria', path: '/careers/outlook-criteria' },
   { name: 'fsb-careers', path: '/careers' },
   { name: 'fsb-role', path: '/careers/roles/reactor-operator?tab=horizons' },
+  // FS wave C (FS17-FS26): every new page
+  { name: 'fsc-pathways', path: '/learn/pathways', persona: 'nse' },
+  { name: 'fsc-pathway', path: '/learn/pathways/pw-ai-verify-l2', persona: 'nse' },
+  { name: 'fsc-my-pathways', path: '/my/pathways', persona: 'sro' },
+  { name: 'fsc-external', path: '/learn/external', persona: 'nse' },
+  { name: 'fsc-training-pathways', path: '/training/pathways', persona: 'training-mgr' },
+  { name: 'fsc-training-external', path: '/training/external', persona: 'training-mgr' },
+  { name: 'fsc-course-pack', path: '/learn/future-skills' },
+  { name: 'fsc-academies', path: '/learn/academies' },
+  { name: 'fsc-academy', path: '/learn/academies/ac-ai' },
+  { name: 'fsc-my-academies', path: '/my/academies', persona: 'buyer' },
+  { name: 'fsc-training-pack', path: '/training/future-skills', persona: 'training-mgr' },
+  { name: 'fsc-training-academies', path: '/training/academies', persona: 'training-mgr' },
+  { name: 'fsc-adaptive', path: '/my/assessments/adaptive', persona: 'nse' },
+  { name: 'fsc-adaptive-take', path: '/my/assessments/adaptive/ab-ai-literacy', persona: 'nse' },
+  { name: 'fsc-tasks', path: '/my/assessments/tasks', persona: 'nse' },
+  { name: 'fsc-task', path: '/my/assessments/tasks/pt-feedwater-drift', persona: 'nse' },
+  { name: 'fsc-training-adaptive', path: '/training/adaptive', persona: 'training-mgr' },
+  { name: 'fsc-training-perf', path: '/training/perf-tasks', persona: 'training-mgr' },
+  { name: 'fsc-integrity', path: '/training/integrity', persona: 'presenter' },
+  { name: 'fsc-levels', path: '/competencies/levels' },
+  { name: 'fsc-descriptors', path: '/competencies/descriptors' },
+  { name: 'fsc-descriptor', path: '/competencies/descriptors/sk-fs-ai-verify' },
+  { name: 'fsc-scale', path: '/competencies/scale' },
+  { name: 'fsc-my-levels', path: '/my/levels', persona: 'sro' },
+  { name: 'fsc-admin-descriptors', path: '/admin/descriptors', persona: 'training-mgr' },
+  { name: 'fsc-admin-authority', path: '/admin/authority', persona: 'chco' },
+  { name: 'fsc-core-skills', path: '/learn/core-skills' },
+  { name: 'fsc-core-skill', path: '/learn/core-skills/cs-systems', persona: 'nse' },
+  { name: 'fsc-my-core', path: '/my/core-skills', persona: 'nse' },
+  { name: 'fsc-practice', path: '/my/core-skills/practice', persona: 'nse' },
+  { name: 'fsc-workforce-core', path: '/workforce/core-skills', persona: 'chco' },
+  { name: 'fsc-sjt-items', path: '/training/sjt/items', persona: 'training-mgr' },
+  { name: 'fsc-skill-indicators', path: '/skills/sk-fs-ai-verify' },
 ];
 for (const s of MOBILE) {
   test(`mobile ${s.name}`, async ({ page }) => {
@@ -522,5 +590,28 @@ for (const s of SET_FSB) {
     if (!s.mobile) await page.setViewportSize({ width: 1440, height: 900 });
     await open(page, s);
     await page.screenshot({ path: join(SHOTS_FSB, `${s.name}.png`), fullPage: false });
+  });
+}
+
+// FS wave C feature set (FS17-FS26): saved to KAFAA_SHOTS_FSC.
+const SHOTS_FSC = process.env.KAFAA_SHOTS_FSC || 'test-results/shots_fsC';
+mkdirSync(SHOTS_FSC, { recursive: true });
+const SET_FSC: Shot[] = [
+  { name: '01-learning-pathway-en', path: '/learn/pathways/pw-ai-verify-l2', persona: 'nse' },
+  { name: '02-external-catalogue-en', path: '/learn/external', persona: 'nse' },
+  { name: '03-course-pack-en', path: '/learn/future-skills', persona: 'nse' },
+  { name: '04-academy-en', path: '/learn/academies/ac-ai' },
+  { name: '05-adaptive-result-en', path: '/my/assessments/adaptive/ab-ai-literacy', persona: 'nse', then: async (p) => { await p.locator('[data-testid="m05-take-result"]').scrollIntoViewIfNeeded(); } },
+  { name: '06-performance-task-rubric-en', path: '/my/assessments/tasks/pt-feedwater-drift', persona: 'nse' },
+  { name: '07-skill-descriptors-en', path: '/competencies/descriptors/sk-fs-ai-verify' },
+  { name: '08-my-core-skills-en', path: '/my/core-skills', persona: 'nse' },
+  { name: '09-scale-map-ar', path: '/competencies/scale', ar: true },
+  { name: '10-sjt-practice-mobile', path: '/my/core-skills/practice', persona: 'nse', mobile: true },
+];
+for (const s of SET_FSC) {
+  test(`shot fsc ${s.name}`, async ({ page }) => {
+    if (!s.mobile) await page.setViewportSize({ width: 1440, height: 900 });
+    await open(page, s);
+    await page.screenshot({ path: join(SHOTS_FSC, `${s.name}.png`), fullPage: false });
   });
 }

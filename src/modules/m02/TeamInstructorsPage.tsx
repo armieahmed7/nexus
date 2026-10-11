@@ -2,6 +2,7 @@
 // per qualification standard, colleagues in scope ranked by the SME finder (F01 skills, F21 SME profiles, F13 SME mentors; <WhyThis>),
 // with a nomination the training manager then decides. Security, cyber and safeguards families never appear.
 import { useMemo, useState } from 'react';
+import { scopedPersonIds } from '../../data/scope';
 import { Page, Section, Card, Async, EmptyState, WhyThis, EngineBadge, SelectField } from '../../ui';
 import { useQuery, useRepo, type RowOf } from '../../data';
 import { useEngine } from '../../data/useEngine';
@@ -33,8 +34,11 @@ function Team({ d }: { d: InsData }) {
   const [std, setStd] = useState(stds[0]?.id ?? '');
   const [nom, setNom] = useState<{ id: string; name: string } | null>(null);
   const q = useQuery(['people', 'person_skills', 'skills', 'sme_profiles', 'mentors'], async () => {
-    const [people, states, skills, sme, mentors] = await Promise.all([
-      repo.list('people', { filter: { kind: 'staff', status: 'active' } }), repo.list('person_skills', { filter: { active: true } }), repo.list('skills'),
+    const people = await repo.list('people', { filter: { kind: 'staff', status: 'active' } });
+    // QA (FS wave C): narrow the person_skills read to the people this manager can see (RLS still decides; avoids a per-row scan timeout live).
+    const ids = scopedPersonIds(s.identity, people, ['skills_profile', 'own_profile']);
+    const [states, skills, sme, mentors] = await Promise.all([
+      repo.list('person_skills', { filter: ids ? { active: true, person_id: ids } : { active: true } }), repo.list('skills'),
       repo.list('sme_profiles').catch(() => [] as RowOf<'sme_profiles'>[]), repo.list('mentors').catch(() => [] as RowOf<'mentors'>[]),
     ]);
     return { people: people.filter((p) => p.id !== me), states, skills, sme, mentors };
