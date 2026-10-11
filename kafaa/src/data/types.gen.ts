@@ -1045,6 +1045,9 @@ export interface ScTraitsRow {
   description_ar: string;
   behaviours: any;
   prompts: any;
+  ai_behaviours: any;
+  ai_prompts: any;
+  ai_hu_ids: string[];
 }
 export interface HuToolsRow {
   id: string;
@@ -1053,6 +1056,19 @@ export interface HuToolsRow {
   description_en: string;
   description_ar: string;
   kind: 'core' | 'conditional';
+  topic: 'classic' | 'ai_automation';
+  sort: number;
+  ai_en: string;
+  ai_ar: string;
+  trap_en: string;
+  trap_ar: string;
+  practice: any;
+  example_en: string;
+  example_ar: string;
+  cues: string[];
+  trait_ids: string[];
+  drill_ids: string[];
+  lesson_ids: string[];
 }
 export interface OeLessonsRow {
   id: string;
@@ -1070,6 +1086,10 @@ export interface OeLessonsRow {
   status: 'draft' | 'in_review' | 'published';
   affected_standard_ids: string[];
   sample: boolean;
+  topic: 'general' | 'ai_automation';
+  sources: any;
+  hu_ids: string[];
+  drill_ids: string[];
 }
 export interface EcpChannelsRow {
   id: string;
