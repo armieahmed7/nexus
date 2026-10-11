@@ -67,7 +67,69 @@ export interface QueueAsset {
 }
 export interface ReviewQueue { can_review: boolean; can_publish: boolean; items: QueueAsset[] }
 
-export interface M24Rpc {
+
+// ───────────── FS44 Expert lecture library + FS45 Localisation countdown (wave E · E3). Local: backend/local.fs44.ts; SQL:
+// supabase/migrations/20261010253001_kafaa_fs53_lectures_localisation.sql (kafaa_save_lecture ... kafaa_set_localisation_status).
+export interface LectureChapter { at: number; en: string; ar: string }
+export interface LectureInput {
+  id?: string | null; speaker_id?: string | null; title_en: string; title_ar: string; abstract_en: string; abstract_ar: string; format: string; lang: 'en' | 'ar';
+  delivered_on: string; duration_min: number; skill_ids: string[]; system_family: string; chapters?: LectureChapter[]; recording_code?: string | null;
+  position_id?: string | null; submit: boolean;
+}
+export interface ContributionView {
+  id: string; person_id: string; person_name: string; person_name_ar: string; kind: string; contributor_role: string; ref_table: string; ref_id: string;
+  title_en: string; title_ar: string; skill_ids: string[]; evidence_skill_ids: string[]; level: number; status: string; submitted_on: string;
+  decided_on: string | null; decided_by_name: string; decided_by_name_ar: string; note: string | null; evidence_ids: string[];
+  source_status: string; source_date: string | null; position_linked: boolean; reasons: Reason[];
+}
+export interface LectureReview {
+  id: string; title_en: string; title_ar: string; abstract_en: string; abstract_ar: string; speaker_id: string; speaker_name: string; speaker_name_ar: string; created_by: string;
+  format: string; lang: string; delivered_on: string; duration_min: number; skill_ids: string[]; position_id: string | null; position_title_en: string; position_title_ar: string;
+  system_family: string; chapters: LectureChapter[]; recording_code: string | null;
+}
+export interface ContributionQueue {
+  can_decide: boolean; review: LectureReview[]; pending: ContributionView[]; decided: ContributionView[];
+  stats: { pending: number; validated: number; rejected: number; people: number; evidence: number };
+}
+export interface LocInstructor { track_id: string; person_id: string; name: string; name_ar: string; state: string; tenths: number }
+export interface LocBoardItem {
+  id: string; programme_id: string | null; programme_code: string | null; programme_en: string; programme_ar: string; title_en: string; title_ar: string; scope: string;
+  partner_org_id: string; partner_en: string; partner_ar: string; partner_role_en: string; partner_role_ar: string; standard_ids: string[]; discipline: string;
+  instructors_needed: number; baseline_on: string; target_on: string; status: string; status_note: string; status_at: string | null; history: unknown[];
+  readiness: { needed: number; ready_now: number; pipeline: number; lapsed: number; tenths: number; pct: number; gap: number };
+  risk: { level: string; overdue: boolean; days_left: number; regressed: boolean; reasons: Reason[] };
+  instructors: LocInstructor[] | null;
+}
+export interface LocBoard {
+  can_edit: boolean; can_see_people: boolean; today: string; deadline: string; items: LocBoardItem[];
+  summary: { items: number; transferred: number; overdue: number; high: number; medium: number; low: number; avg_pct: number; days_to_2030: number; by_year: { year: number; items: number; transferred: number }[] };
+}
+export interface LocOverdue { today: string; items: { id: string; title_en: string; title_ar: string; partner_en: string; partner_ar: string; programme_id: string | null; target_on: string; days_overdue: number; pct: number; status: string }[] }
+export interface LocStatusInput { status: string; target_on?: string | null; note?: string }
+
+export interface Fs44Rpc {
+  /** Save a lecture draft or submit it for publication (staff for their own talks; the KM owner on behalf of a speaker). The KLRA position
+   *  is linked automatically from the speaker's own positions. Security-restricted topics are refused (`security_restricted`). Audited. */
+  saveLecture(input: LectureInput): Promise<Result<{ id: string; status: string; position_id: string | null }>>;
+  /** KM owner (knowledge A) publishes a submitted lecture (never their own); re-screens it; opens the speaker's contribution. Ledger row. */
+  publishLecture(id: string): Promise<Result<{ status: string; contribution_id: string | null }>>;
+  /** The speaker or the KM owner withdraws a submitted or published lecture with a reason. Ledger row when it was published. */
+  withdrawLecture(id: string, reason: string): Promise<Result<{ status: string }>>;
+  /** KM owner: open a pending contribution for every published lecture and knowledge asset that has none yet. Audited. */
+  syncContributions(): Promise<Result<{ created: number; ids: string[] }>>;
+  /** Contributions to validate (KM owner) or to read (auditors). Null for everyone else. */
+  contributionQueue(): Promise<ContributionQueue | null>;
+  /** KM owner validates (writes F01 evidence and recomputes the person's skills) or rejects (with a reason) a contribution; never their own. */
+  validateContribution(id: string, decision: 'validate' | 'reject', note?: string): Promise<Result<{ status: string; evidence_ids: string[] }>>;
+  /** The localisation countdown with computed readiness and risk (staff; instructor names only for SAT readers). Null for everyone else. */
+  localisationBoard(): Promise<LocBoard | null>;
+  /** Items past their target date and not yet transferred (the F22 handover board panel). Null without knowledge R. */
+  localisationOverdue(): Promise<LocOverdue | null>;
+  /** Training manager sets an item's status and, with a reason, its target date (no later than 2030-12-31). Ledger row. */
+  setLocalisationStatus(id: string, input: LocStatusInput): Promise<Result<{ status: string; target_on: string }>>;
+}
+
+export interface M24Rpc extends Fs44Rpc {
   // ── F20 KLRA
   /** The register for a quarter: KM owner (knowledge A) every position, a department head (Scope) their scope, HR (Agg) none (mode 'agg'). */
   klraRegister(period?: string | null): Promise<KlraRegister>;

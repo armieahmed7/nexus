@@ -147,7 +147,7 @@ describe('FS wave A · FS04 -> FS02 keyspace', () => {
     for (const sc of [...new Set(T.future_skills.map((f) => f.scenario))]) {
       // FS10: states backed only by the AI and digital fitness check (recorded F01 evidence on FS02 skills) are left out here, so the
       // invariant still isolates the keyspace rows; with them, the ai-governance key gains holders (see fs22-ai-fluency).
-      const fit = new Set((T.skill_evidence as { active: boolean; ref_table: string; person_id: string; skill_id: string }[]).filter((e) => e.active && ['fitness_attempts', 'cohort_capstones', 'adaptive_attempts', 'task_attempts', 'ai_drill_attempts', 'rpl_requests'].includes(e.ref_table)) /* FS21/FS22 too */.map((e) => `ps:${e.person_id}:${e.skill_id}`));
+      const fit = new Set((T.skill_evidence as { active: boolean; ref_table: string; person_id: string; skill_id: string }[]).filter((e) => e.active && ['fitness_attempts', 'cohort_capstones', 'adaptive_attempts', 'task_attempts', 'ai_drill_attempts', 'rpl_requests', 'lectures', 'knowledge_assets'].includes(e.ref_table)) /* FS21/FS22 too; FS44 validated contributions */.map((e) => `ps:${e.person_id}:${e.skill_id}`));
       const inp = (m: MapRow[]) => ({ futureSkills: T.future_skills as never, map: m, people: T.people as never, states: (T.person_skills as { id: string }[]).filter((x) => !fit.has(x.id)) as never });
       const a = futureRadar(inp(map), sc as string).rows.map((r) => [r.key, r.readiness, r.ready_n]);
       const b = futureRadar(inp(map.filter((m) => !qa.has(m.id))), sc as string).rows.map((r) => [r.key, r.readiness, r.ready_n]);
