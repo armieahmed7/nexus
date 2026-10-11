@@ -4,6 +4,7 @@
 import type { Result } from '../../../data/types';
 import type { Cadence, Goal, MentoringType, ProgrammeStats, Rating, SkipCode } from '../mentoring';
 import type { M04SimRpc } from './simulator.rpc'; // W4E3 (F28)
+import type { M04FsRpc } from './fs.rpc'; // FS wave C · E2 (FS19, FS20)
 
 export interface MentoringRequestInput {
   mentor_id: string;
@@ -53,7 +54,7 @@ export interface SmeNominee {
   sme_nominated_on: string | null;
 }
 
-export interface M04Rpc extends M04SimRpc {
+export interface M04Rpc extends M04SimRpc, M04FsRpc {
   /** F13: ask an opted-in mentor for mentoring of a given type, naming up to five skills. Never your own line manager (own_manager). Audited. */
   requestMentoring(input: MentoringRequestInput): Promise<Result<{ id: string }>>;
   /** F13: either person on a matched request proposes (or revises) the agreement: skill goals, cadence and dates. Audited. */

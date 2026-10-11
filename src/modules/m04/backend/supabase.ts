@@ -4,6 +4,8 @@ import type { SupabaseExtCtx } from '../../../data/ext/types';
 import type { ProgrammeStats } from '../mentoring';
 import type { CloseOutResult, M04Rpc, ReportingLine, SmeNominee } from './rpc';
 import type { DebriefResult, SimDebriefView } from './simulator.rpc';
+import type { Nominee, PackCheckResult, PackLinksResult, SignoffResult } from './fs.rpc';
+import type { StatsOut } from '../academy';
 
 export function makeSupabaseM04(x: SupabaseExtCtx): M04Rpc {
   return {
@@ -24,5 +26,14 @@ export function makeSupabaseM04(x: SupabaseExtCtx): M04Rpc {
     approveCycle: (cycleId, gapNote) => x.call('kafaa_approve_cycle', { p_cycle_id: cycleId, p_gap_note: gapNote ?? null }, ['sim_cycles', 'notifications']),
     recordDebrief: (input) => x.call<DebriefResult>('kafaa_record_debrief', { p: input }, ['crew_debriefs', 'crew_debrief_members', 'sim_scenarios', 'skill_evidence', 'person_skills', 'notifications']),
     simDebriefs: async () => (await x.rpc<SimDebriefView[]>('kafaa_sim_debriefs')) ?? [],
+    // FS wave C · E2 (FS19 course pack, FS20 academies): SQL in supabase/migrations/20261010232001_kafaa_fs32_course_pack_academies.sql
+    saveCourseSkills: (courseId, links) => x.call<PackLinksResult>('kafaa_save_course_skills', { p_course_id: courseId, p_links: links }, ['course_skill_links', 'course_pack_items', 'skills']),
+    checkCoursePack: () => x.call<PackCheckResult>('kafaa_check_course_pack', {}, ['course_pack_items']),
+    nominateAcademy: (input) => x.call('kafaa_nominate_academy', { p: input }, ['academy_members', 'notifications']),
+    decideAcademyNomination: (input) => x.call('kafaa_decide_academy_nomination', { p: input }, ['academy_members', 'enrolments', 'cohort_capstones', 'notifications']),
+    saveCapstone: (input) => x.call('kafaa_save_capstone', { p: input }, ['cohort_capstones', 'notifications']),
+    signoffCapstone: (input) => x.call<SignoffResult>('kafaa_signoff_capstone', { p: input }, ['cohort_capstones', 'academy_members', 'skill_evidence', 'person_skills', 'notifications']),
+    academyStats: async () => (await x.rpc<StatsOut>('kafaa_academy_stats')) ?? { min_group: 10, academies: [] },
+    academyNominees: async () => (await x.rpc<Nominee[]>('kafaa_academy_nominees')) ?? [],
   };
 }

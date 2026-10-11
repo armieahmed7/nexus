@@ -2120,6 +2120,135 @@ create table if not exists kafaa_crew_debrief_members (
 );
 comment on table kafaa_crew_debrief_members is '[M04] Crew member on a debrief: position, present or absent, and the F01 evidence written for them (F28)';
 
+-- M04 · FS19 future-skills course pack: theme, core or cross-over, hour envelope and the copy and link check result per course
+create table if not exists kafaa_course_pack_items (
+  id text primary key,
+  course_id text not null unique,
+  pack text not null default 'fs19',
+  theme text not null check (theme in ('data_ai', 'digital_plant', 'advanced_reactor', 'green', 'human', 'cyber')),
+  kind text not null default 'core' check (kind in ('core', 'crossover')),
+  crossover_of text,
+  for_industries text[] not null default '{}'::text[],
+  weeks integer not null,
+  weekly_hours numeric not null,
+  simulated boolean not null default true,
+  no_decision boolean not null default false,
+  copy_check text not null default 'pending' check (copy_check in ('passed', 'failed', 'pending')),
+  copy_problems jsonb not null default '[]'::jsonb,
+  copy_checked_at timestamptz,
+  benchmark_ids text[] not null default '{}'::text[],
+  sort integer not null default 0
+);
+comment on table kafaa_course_pack_items is '[M04] FS19 future-skills course pack: theme, core or cross-over, hour envelope and the copy and link check result per course';
+
+-- M04 · FS19 course objective linked to a skill at a stated level (1-3); also the course's evidence key on that skill
+create table if not exists kafaa_course_skill_links (
+  id text primary key,
+  course_id text not null,
+  skill_id text not null,
+  level integer not null,
+  objective_n integer not null default 1,
+  objective_en text not null,
+  objective_ar text not null,
+  active boolean not null default true,
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_course_skill_links is '[M04] FS19 course objective linked to a skill at a stated level (1-3); also the course''s evidence key on that skill';
+
+-- M04 · FS20 future-skills academy on the module + project + mentor template (Nordic NNTP pattern)
+create table if not exists kafaa_academies (
+  id text primary key,
+  programme_id text not null,
+  code text not null unique,
+  name_en text not null,
+  name_ar text not null,
+  tagline_en text not null,
+  tagline_ar text not null,
+  theme text not null check (theme in ('data_ai', 'digital_plant', 'advanced_reactor', 'green')),
+  module_course_ids text[] not null default '{}'::text[],
+  project_en text not null,
+  project_ar text not null,
+  deliverable_en text not null,
+  deliverable_ar text not null,
+  artefact_kind text not null check (artefact_kind in ('automation', 'analysis', 'twin_validation', 'study', 'role_delta')),
+  mentor_role_en text not null,
+  mentor_role_ar text not null,
+  reviewer_role_en text not null,
+  reviewer_role_ar text not null,
+  criteria_en text not null,
+  criteria_ar text not null,
+  weeks integer not null,
+  weekly_hours numeric not null,
+  capacity integer not null default 16,
+  capstone_skills jsonb not null default '[]'::jsonb,
+  no_decision boolean not null default false,
+  simulated boolean not null default true,
+  benchmark_ids text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb,
+  sort integer not null default 0
+);
+comment on table kafaa_academies is '[M04] FS20 future-skills academy on the module + project + mentor template (Nordic NNTP pattern)';
+
+-- M04 · FS20 academy cohort (intake): dates, capacity and status
+create table if not exists kafaa_academy_cohorts (
+  id text primary key,
+  academy_id text not null,
+  code text not null unique,
+  label_en text not null,
+  label_ar text not null,
+  starts_on date not null,
+  ends_on date not null,
+  nominations_close_on date,
+  status text not null default 'planned' check (status in ('planned', 'nominating', 'running', 'completed')),
+  capacity integer not null default 16,
+  sort integer not null default 0
+);
+comment on table kafaa_academy_cohorts is '[M04] FS20 academy cohort (intake): dates, capacity and status';
+
+-- M04 · FS20 academy nomination and place: who nominated, the decision, mentor and reviewer, alumni date
+create table if not exists kafaa_academy_members (
+  id text primary key,
+  cohort_id text not null,
+  academy_id text not null,
+  person_id text not null,
+  status text not null default 'nominated' check (status in ('nominated', 'accepted', 'declined', 'active', 'completed', 'withdrawn')),
+  source text not null check (source in ('self', 'manager', 'programme')),
+  nominated_by text not null,
+  nominated_at timestamptz not null default now(),
+  note text,
+  decided_by text,
+  decided_at timestamptz,
+  decision_note text,
+  mentor_person_id text,
+  reviewer_person_id text,
+  completed_on date
+);
+comment on table kafaa_academy_members is '[M04] FS20 academy nomination and place: who nominated, the decision, mentor and reviewer, alumni date';
+
+-- M04 · FS20 capstone project: the built artefact, the reviewer's sign-off and the F01 evidence it wrote
+create table if not exists kafaa_cohort_capstones (
+  id text primary key,
+  member_id text not null unique,
+  cohort_id text not null,
+  academy_id text not null,
+  person_id text not null,
+  mentor_person_id text,
+  reviewer_person_id text not null,
+  artefact_kind text not null check (artefact_kind in ('automation', 'analysis', 'twin_validation', 'study', 'role_delta')),
+  title text not null default '',
+  summary text not null default '',
+  lang text not null default 'en' check (lang in ('en', 'ar')),
+  status text not null default 'draft' check (status in ('draft', 'submitted', 'signed_off', 'returned')),
+  result text check (result in ('merit', 'pass', 'not_yet')),
+  feedback text,
+  submitted_at timestamptz,
+  reviewed_at timestamptz,
+  evidence_ids text[] not null default '{}'::text[],
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_cohort_capstones is '[M04] FS20 capstone project: the built artefact, the reviewer''s sign-off and the F01 evidence it wrote';
+
 -- M06 · Student journey interest explorer: 10 questions mapping answers to job families (public, non-scoring) (F34)
 create table if not exists kafaa_journey_questions (
   id text primary key,
@@ -4728,6 +4857,26 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_cr
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_crew_debrief_members_debrief_id_fk') then alter table kafaa_crew_debrief_members add constraint kafaa_crew_debrief_members_debrief_id_fk foreign key (debrief_id) references kafaa_crew_debriefs(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_crew_debrief_members_person_id_fk') then alter table kafaa_crew_debrief_members add constraint kafaa_crew_debrief_members_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_crew_debrief_members_scenario_id_fk') then alter table kafaa_crew_debrief_members add constraint kafaa_crew_debrief_members_scenario_id_fk foreign key (scenario_id) references kafaa_sim_scenarios(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_course_pack_items_course_id_fk') then alter table kafaa_course_pack_items add constraint kafaa_course_pack_items_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_course_pack_items_crossover_of_fk') then alter table kafaa_course_pack_items add constraint kafaa_course_pack_items_crossover_of_fk foreign key (crossover_of) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_course_skill_links_course_id_fk') then alter table kafaa_course_skill_links add constraint kafaa_course_skill_links_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_course_skill_links_skill_id_fk') then alter table kafaa_course_skill_links add constraint kafaa_course_skill_links_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_course_skill_links_updated_by_fk') then alter table kafaa_course_skill_links add constraint kafaa_course_skill_links_updated_by_fk foreign key (updated_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_academies_programme_id_fk') then alter table kafaa_academies add constraint kafaa_academies_programme_id_fk foreign key (programme_id) references kafaa_programmes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_academy_cohorts_academy_id_fk') then alter table kafaa_academy_cohorts add constraint kafaa_academy_cohorts_academy_id_fk foreign key (academy_id) references kafaa_academies(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_academy_members_cohort_id_fk') then alter table kafaa_academy_members add constraint kafaa_academy_members_cohort_id_fk foreign key (cohort_id) references kafaa_academy_cohorts(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_academy_members_academy_id_fk') then alter table kafaa_academy_members add constraint kafaa_academy_members_academy_id_fk foreign key (academy_id) references kafaa_academies(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_academy_members_person_id_fk') then alter table kafaa_academy_members add constraint kafaa_academy_members_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_academy_members_nominated_by_fk') then alter table kafaa_academy_members add constraint kafaa_academy_members_nominated_by_fk foreign key (nominated_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_academy_members_decided_by_fk') then alter table kafaa_academy_members add constraint kafaa_academy_members_decided_by_fk foreign key (decided_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_academy_members_mentor_person_id_fk') then alter table kafaa_academy_members add constraint kafaa_academy_members_mentor_person_id_fk foreign key (mentor_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_academy_members_reviewer_person_id_fk') then alter table kafaa_academy_members add constraint kafaa_academy_members_reviewer_person_id_fk foreign key (reviewer_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_cohort_capstones_member_id_fk') then alter table kafaa_cohort_capstones add constraint kafaa_cohort_capstones_member_id_fk foreign key (member_id) references kafaa_academy_members(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_cohort_capstones_cohort_id_fk') then alter table kafaa_cohort_capstones add constraint kafaa_cohort_capstones_cohort_id_fk foreign key (cohort_id) references kafaa_academy_cohorts(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_cohort_capstones_academy_id_fk') then alter table kafaa_cohort_capstones add constraint kafaa_cohort_capstones_academy_id_fk foreign key (academy_id) references kafaa_academies(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_cohort_capstones_person_id_fk') then alter table kafaa_cohort_capstones add constraint kafaa_cohort_capstones_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_cohort_capstones_mentor_person_id_fk') then alter table kafaa_cohort_capstones add constraint kafaa_cohort_capstones_mentor_person_id_fk foreign key (mentor_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_cohort_capstones_reviewer_person_id_fk') then alter table kafaa_cohort_capstones add constraint kafaa_cohort_capstones_reviewer_person_id_fk foreign key (reviewer_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_journey_facts_programme_id_fk') then alter table kafaa_journey_facts add constraint kafaa_journey_facts_programme_id_fk foreign key (programme_id) references kafaa_talent_programmes(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_journey_facts_role_id_fk') then alter table kafaa_journey_facts add constraint kafaa_journey_facts_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_journey_facts_source_id_fk') then alter table kafaa_journey_facts add constraint kafaa_journey_facts_source_id_fk foreign key (source_id) references kafaa_sources(id) deferrable initially deferred; end if; end $$;
@@ -5203,6 +5352,28 @@ create index if not exists kafaa_crew_debriefs_instructor_person_id_idx on kafaa
 create index if not exists kafaa_crew_debrief_members_debrief_id_idx on kafaa_crew_debrief_members (debrief_id);
 create index if not exists kafaa_crew_debrief_members_person_id_idx on kafaa_crew_debrief_members (person_id);
 create index if not exists kafaa_crew_debrief_members_scenario_id_idx on kafaa_crew_debrief_members (scenario_id);
+create index if not exists kafaa_course_pack_items_theme_idx on kafaa_course_pack_items (theme);
+create index if not exists kafaa_course_pack_items_crossover_of_idx on kafaa_course_pack_items (crossover_of);
+create index if not exists kafaa_course_skill_links_course_id_idx on kafaa_course_skill_links (course_id);
+create index if not exists kafaa_course_skill_links_skill_id_idx on kafaa_course_skill_links (skill_id);
+create index if not exists kafaa_course_skill_links_updated_by_idx on kafaa_course_skill_links (updated_by);
+create index if not exists kafaa_academies_programme_id_idx on kafaa_academies (programme_id);
+create index if not exists kafaa_academy_cohorts_academy_id_idx on kafaa_academy_cohorts (academy_id);
+create index if not exists kafaa_academy_cohorts_status_idx on kafaa_academy_cohorts (status);
+create index if not exists kafaa_academy_members_cohort_id_idx on kafaa_academy_members (cohort_id);
+create index if not exists kafaa_academy_members_academy_id_idx on kafaa_academy_members (academy_id);
+create index if not exists kafaa_academy_members_person_id_idx on kafaa_academy_members (person_id);
+create index if not exists kafaa_academy_members_status_idx on kafaa_academy_members (status);
+create index if not exists kafaa_academy_members_nominated_by_idx on kafaa_academy_members (nominated_by);
+create index if not exists kafaa_academy_members_decided_by_idx on kafaa_academy_members (decided_by);
+create index if not exists kafaa_academy_members_mentor_person_id_idx on kafaa_academy_members (mentor_person_id);
+create index if not exists kafaa_academy_members_reviewer_person_id_idx on kafaa_academy_members (reviewer_person_id);
+create index if not exists kafaa_cohort_capstones_cohort_id_idx on kafaa_cohort_capstones (cohort_id);
+create index if not exists kafaa_cohort_capstones_academy_id_idx on kafaa_cohort_capstones (academy_id);
+create index if not exists kafaa_cohort_capstones_person_id_idx on kafaa_cohort_capstones (person_id);
+create index if not exists kafaa_cohort_capstones_mentor_person_id_idx on kafaa_cohort_capstones (mentor_person_id);
+create index if not exists kafaa_cohort_capstones_reviewer_person_id_idx on kafaa_cohort_capstones (reviewer_person_id);
+create index if not exists kafaa_cohort_capstones_status_idx on kafaa_cohort_capstones (status);
 create index if not exists kafaa_journey_facts_step_idx on kafaa_journey_facts (step);
 create index if not exists kafaa_journey_facts_programme_id_idx on kafaa_journey_facts (programme_id);
 create index if not exists kafaa_journey_facts_role_id_idx on kafaa_journey_facts (role_id);
@@ -5546,4 +5717,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 251) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 257) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

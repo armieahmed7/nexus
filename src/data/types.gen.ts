@@ -1759,6 +1759,117 @@ export interface CrewDebriefMembersRow {
   held_on: string;
   evidence_ids: string[];
 }
+export interface CoursePackItemsRow {
+  id: string;
+  course_id: string;
+  pack: string;
+  theme: 'data_ai' | 'digital_plant' | 'advanced_reactor' | 'green' | 'human' | 'cyber';
+  kind: 'core' | 'crossover';
+  crossover_of?: string | null;
+  for_industries: string[];
+  weeks: number;
+  weekly_hours: number;
+  simulated: boolean;
+  no_decision: boolean;
+  copy_check: 'passed' | 'failed' | 'pending';
+  copy_problems: any;
+  copy_checked_at?: string | null;
+  benchmark_ids: string[];
+  sort: number;
+}
+export interface CourseSkillLinksRow {
+  id: string;
+  course_id: string;
+  skill_id: string;
+  level: number;
+  objective_n: number;
+  objective_en: string;
+  objective_ar: string;
+  active: boolean;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface AcademiesRow {
+  id: string;
+  programme_id: string;
+  code: string;
+  name_en: string;
+  name_ar: string;
+  tagline_en: string;
+  tagline_ar: string;
+  theme: 'data_ai' | 'digital_plant' | 'advanced_reactor' | 'green';
+  module_course_ids: string[];
+  project_en: string;
+  project_ar: string;
+  deliverable_en: string;
+  deliverable_ar: string;
+  artefact_kind: 'automation' | 'analysis' | 'twin_validation' | 'study' | 'role_delta';
+  mentor_role_en: string;
+  mentor_role_ar: string;
+  reviewer_role_en: string;
+  reviewer_role_ar: string;
+  criteria_en: string;
+  criteria_ar: string;
+  weeks: number;
+  weekly_hours: number;
+  capacity: number;
+  capstone_skills: any;
+  no_decision: boolean;
+  simulated: boolean;
+  benchmark_ids: string[];
+  sources: any;
+  sort: number;
+}
+export interface AcademyCohortsRow {
+  id: string;
+  academy_id: string;
+  code: string;
+  label_en: string;
+  label_ar: string;
+  starts_on: string;
+  ends_on: string;
+  nominations_close_on?: string | null;
+  status: 'planned' | 'nominating' | 'running' | 'completed';
+  capacity: number;
+  sort: number;
+}
+export interface AcademyMembersRow {
+  id: string;
+  cohort_id: string;
+  academy_id: string;
+  person_id: string;
+  status: 'nominated' | 'accepted' | 'declined' | 'active' | 'completed' | 'withdrawn';
+  source: 'self' | 'manager' | 'programme';
+  nominated_by: string;
+  nominated_at: string;
+  note?: string | null;
+  decided_by?: string | null;
+  decided_at?: string | null;
+  decision_note?: string | null;
+  mentor_person_id?: string | null;
+  reviewer_person_id?: string | null;
+  completed_on?: string | null;
+}
+export interface CohortCapstonesRow {
+  id: string;
+  member_id: string;
+  cohort_id: string;
+  academy_id: string;
+  person_id: string;
+  mentor_person_id?: string | null;
+  reviewer_person_id: string;
+  artefact_kind: 'automation' | 'analysis' | 'twin_validation' | 'study' | 'role_delta';
+  title: string;
+  summary: string;
+  lang: 'en' | 'ar';
+  status: 'draft' | 'submitted' | 'signed_off' | 'returned';
+  result?: 'merit' | 'pass' | 'not_yet' | null;
+  feedback?: string | null;
+  submitted_at?: string | null;
+  reviewed_at?: string | null;
+  evidence_ids: string[];
+  updated_at: string;
+}
 export interface JourneyQuestionsRow {
   id: string;
   sort: number;
@@ -3930,6 +4041,12 @@ export interface Tables {
   sim_cycle_items: SimCycleItemsRow;
   crew_debriefs: CrewDebriefsRow;
   crew_debrief_members: CrewDebriefMembersRow;
+  course_pack_items: CoursePackItemsRow;
+  course_skill_links: CourseSkillLinksRow;
+  academies: AcademiesRow;
+  academy_cohorts: AcademyCohortsRow;
+  academy_members: AcademyMembersRow;
+  cohort_capstones: CohortCapstonesRow;
   journey_questions: JourneyQuestionsRow;
   journey_facts: JourneyFactsRow;
   student_journeys: StudentJourneysRow;

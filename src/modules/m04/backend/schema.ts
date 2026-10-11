@@ -8,6 +8,7 @@
 // notes live in their own table because row-level security works on rows: each note is readable by its author only. The training
 // manager sees the programme only as aggregates (rpc.mentoringProgramme, suppressed under 10 pairs).
 import type { TableDef } from '../../../data/schema';
+import { TABLES_M04_FS } from './fs.schema.ts'; // FS wave C · E2 (FS19, FS20)
 
 const PAIR = [{ res: 'own_profile', person: 'person_id' }, { res: 'own_profile', person: 'mentor_person_id' }];
 
@@ -111,3 +112,5 @@ export const TABLES_M04_SIM: Record<string, TableDef> = {
 
 // W4E3: one M04 block for src/data/ext/schema.ts (mentoring tables first, then the simulator tables).
 Object.assign(TABLES_M04, TABLES_M04_SIM);
+// FS wave C · E2 (FS19 course pack, FS20 academies): backend/fs.schema.ts
+Object.assign(TABLES_M04, TABLES_M04_FS);
