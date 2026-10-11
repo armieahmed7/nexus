@@ -1,0 +1,15 @@
+# Dependencies and build output (rebuilt by npm ci / npm run build:deploy)
+node_modules/
+dist/
+deploy_out/
+.netlify/
+test-results/
+playwright-report/
+
+# Local environment files: never commit (VITE_NEXUS_DEMO_PASSWORD lives in .env.local)
+.env
+.env.*
+!.env.example
+
+*.log
+.DS_Store
