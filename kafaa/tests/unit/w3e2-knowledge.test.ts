@@ -383,7 +383,8 @@ describe('F21 · capture workflow, enrichment and seed', () => {
     expect(T.klra_positions.filter((p) => p.kind === 'ossa')).toHaveLength(16);
     expect(T.klra_positions.some((p) => ['security', 'cyber', 'safeguards'].includes(p.family_id))).toBe(false);
     expect(TEMPLATE_IDS.every((id) => TEMPLATES[id].prompts.length >= 3)).toBe(true);
-    expect(routes.map((r) => r.id)).toEqual(['knowledge', 'knowledge-asset', 'knowledge-capture', 'knowledge-capture-session', 'knowledge-review', 'knowledge-klra', 'knowledge-klra-position']);
+    expect(routes.map((r) => r.id)).toEqual(['knowledge', 'knowledge-asset', 'knowledge-capture', 'knowledge-capture-session', 'knowledge-review', 'knowledge-klra', 'knowledge-klra-position',
+      'knowledge-lectures', 'knowledge-lecture', 'knowledge-contributions', 'knowledge-localisation']); // FS44/FS45 (fsEe3): four routes added
     const klra = routes.find((r) => r.id === 'knowledge-klra')!;
     expect(klra.guard.grant?.levels).toEqual(['A', 'Scope', 'Agg']);
     for (const r of routes) expect(hasKey(`m24.routes.${r.id}.title`) && hasKey(`m24.routes.${r.id}.purpose`)).toBe(true);

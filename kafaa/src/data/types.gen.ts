@@ -3751,6 +3751,84 @@ export interface AssetUsesRow {
   person_id: string;
   used_on: string;
 }
+export interface LecturesRow {
+  id: string;
+  title_en: string;
+  title_ar: string;
+  abstract_en: string;
+  abstract_ar: string;
+  speaker_id: string;
+  speaker_name: string;
+  speaker_name_ar: string;
+  speaker_role_id?: string | null;
+  format: 'talk' | 'masterclass' | 'walkthrough' | 'panel';
+  lang: 'en' | 'ar';
+  delivered_on: string;
+  duration_min: number;
+  recording_code?: string | null;
+  chapters: any;
+  skill_ids: string[];
+  position_id?: string | null;
+  position_title_en: string;
+  position_title_ar: string;
+  system_family: 'reactor_core' | 'primary' | 'secondary' | 'electrical' | 'i_and_c' | 'chemistry' | 'radiation_protection' | 'maintenance' | 'outage' | 'human_performance' | 'emergency_preparedness' | 'training';
+  status: 'draft' | 'review' | 'published' | 'withdrawn';
+  published: boolean;
+  published_by?: string | null;
+  published_at?: string | null;
+  withdrawn_reason?: string | null;
+  synthetic: boolean;
+  history: any;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+export interface ContributionsRow {
+  id: string;
+  person_id: string;
+  person_name: string;
+  person_name_ar: string;
+  kind: 'lecture' | 'asset';
+  contributor_role: 'speaker' | 'author' | 'sme';
+  ref_table: 'lectures' | 'knowledge_assets';
+  ref_id: string;
+  title_en: string;
+  title_ar: string;
+  skill_ids: string[];
+  level: number;
+  status: 'pending' | 'validated' | 'rejected';
+  submitted_on: string;
+  decided_by?: string | null;
+  decided_role?: string | null;
+  decided_on?: string | null;
+  note?: string | null;
+  evidence_ids: string[];
+  created_at: string;
+}
+export interface LocalisationItemsRow {
+  id: string;
+  programme_id?: string | null;
+  title_en: string;
+  title_ar: string;
+  scope: 'delivery' | 'signoff' | 'both';
+  partner_org_id: string;
+  partner_role_en: string;
+  partner_role_ar: string;
+  standard_ids: string[];
+  discipline: string;
+  instructors_needed: number;
+  baseline_on: string;
+  target_on: string;
+  status: 'partner_led' | 'co_delivery' | 'uae_led_supervised' | 'transferred' | 'on_hold';
+  status_note: string;
+  status_by?: string | null;
+  status_at?: string | null;
+  history: any;
+  sample: boolean;
+  sort: number;
+  created_at: string;
+  updated_at: string;
+}
 export interface EvalSurveysRow {
   id: string;
   course_id: string;
@@ -5033,6 +5111,9 @@ export interface Tables {
   knowledge_assets: KnowledgeAssetsRow;
   asset_reviews: AssetReviewsRow;
   asset_uses: AssetUsesRow;
+  lectures: LecturesRow;
+  contributions: ContributionsRow;
+  localisation_items: LocalisationItemsRow;
   eval_surveys: EvalSurveysRow;
   eval_responses: EvalResponsesRow;
   l3_observations: L3ObservationsRow;

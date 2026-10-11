@@ -4457,6 +4457,93 @@ create table if not exists kafaa_asset_uses (
 );
 comment on table kafaa_asset_uses is '[M24] A person marked a knowledge asset as used (feeds the "used by N" count, shown from 10) (F21)';
 
+-- M24 · Expert lecture library: recorded talk metadata (synthetic), linked skills and the KLRA position it protects (FS44)
+create table if not exists kafaa_lectures (
+  id text primary key,
+  title_en text not null,
+  title_ar text not null,
+  abstract_en text not null,
+  abstract_ar text not null,
+  speaker_id text not null,
+  speaker_name text not null default '',
+  speaker_name_ar text not null default '',
+  speaker_role_id text,
+  format text not null default 'talk' check (format in ('talk', 'masterclass', 'walkthrough', 'panel')),
+  lang text not null default 'en' check (lang in ('en', 'ar')),
+  delivered_on date not null,
+  duration_min integer not null,
+  recording_code text,
+  chapters jsonb not null default '[]'::jsonb,
+  skill_ids text[] not null default '{}'::text[],
+  position_id text,
+  position_title_en text not null default '',
+  position_title_ar text not null default '',
+  system_family text not null check (system_family in ('reactor_core', 'primary', 'secondary', 'electrical', 'i_and_c', 'chemistry', 'radiation_protection', 'maintenance', 'outage', 'human_performance', 'emergency_preparedness', 'training')),
+  status text not null default 'draft' check (status in ('draft', 'review', 'published', 'withdrawn')),
+  published boolean not null default false,
+  published_by text,
+  published_at timestamptz,
+  withdrawn_reason text,
+  synthetic boolean not null default true,
+  history jsonb not null default '[]'::jsonb,
+  created_by text not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_lectures is '[M24] Expert lecture library: recorded talk metadata (synthetic), linked skills and the KLRA position it protects (FS44)';
+
+-- M24 · Expert contribution (delivered lecture or published knowledge asset) waiting for or given validation; validated ones write F01 evidence (FS44)
+create table if not exists kafaa_contributions (
+  id text primary key,
+  person_id text not null,
+  person_name text not null default '',
+  person_name_ar text not null default '',
+  kind text not null check (kind in ('lecture', 'asset')),
+  contributor_role text not null check (contributor_role in ('speaker', 'author', 'sme')),
+  ref_table text not null check (ref_table in ('lectures', 'knowledge_assets')),
+  ref_id text not null,
+  title_en text not null default '',
+  title_ar text not null default '',
+  skill_ids text[] not null default '{}'::text[],
+  level integer not null default 2,
+  status text not null default 'pending' check (status in ('pending', 'validated', 'rejected')),
+  submitted_on date not null,
+  decided_by text,
+  decided_role text,
+  decided_on date,
+  note text,
+  evidence_ids text[] not null default '{}'::text[],
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_contributions is '[M24] Expert contribution (delivered lecture or published knowledge asset) waiting for or given validation; validated ones write F01 evidence (FS44)';
+
+-- M24 · Localisation countdown: a programme or qualification step a partner still delivers or signs off, with its 2030 target (SAMPLE plan; readiness computed, never stored) (FS45)
+create table if not exists kafaa_localisation_items (
+  id text primary key,
+  programme_id text,
+  title_en text not null,
+  title_ar text not null,
+  scope text not null default 'delivery' check (scope in ('delivery', 'signoff', 'both')),
+  partner_org_id text not null,
+  partner_role_en text not null default '',
+  partner_role_ar text not null default '',
+  standard_ids text[] not null default '{}'::text[],
+  discipline text not null default '',
+  instructors_needed integer not null default 1,
+  baseline_on date not null,
+  target_on date not null,
+  status text not null default 'partner_led' check (status in ('partner_led', 'co_delivery', 'uae_led_supervised', 'transferred', 'on_hold')),
+  status_note text not null default '',
+  status_by text,
+  status_at timestamptz,
+  history jsonb not null default '[]'::jsonb,
+  sample boolean not null default true,
+  sort integer not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_localisation_items is '[M24] Localisation countdown: a programme or qualification step a partner still delivers or signs off, with its 2030 target (SAMPLE plan; readiness computed, never stored) (FS45)';
+
 -- M25 · Evaluation design per course: L1 form items, L2 pre/post knowledge checks, L3 checklist and timing, committee (F25)
 create table if not exists kafaa_eval_surveys (
   id text primary key,
@@ -6094,6 +6181,11 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_as
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_asset_reviews_reviewer_id_fk') then alter table kafaa_asset_reviews add constraint kafaa_asset_reviews_reviewer_id_fk foreign key (reviewer_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_asset_uses_asset_id_fk') then alter table kafaa_asset_uses add constraint kafaa_asset_uses_asset_id_fk foreign key (asset_id) references kafaa_knowledge_assets(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_asset_uses_person_id_fk') then alter table kafaa_asset_uses add constraint kafaa_asset_uses_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_lectures_speaker_id_fk') then alter table kafaa_lectures add constraint kafaa_lectures_speaker_id_fk foreign key (speaker_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_lectures_created_by_fk') then alter table kafaa_lectures add constraint kafaa_lectures_created_by_fk foreign key (created_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_contributions_person_id_fk') then alter table kafaa_contributions add constraint kafaa_contributions_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_localisation_items_programme_id_fk') then alter table kafaa_localisation_items add constraint kafaa_localisation_items_programme_id_fk foreign key (programme_id) references kafaa_programmes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_localisation_items_partner_org_id_fk') then alter table kafaa_localisation_items add constraint kafaa_localisation_items_partner_org_id_fk foreign key (partner_org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_eval_surveys_course_id_fk') then alter table kafaa_eval_surveys add constraint kafaa_eval_surveys_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_eval_surveys_pre_form_id_fk') then alter table kafaa_eval_surveys add constraint kafaa_eval_surveys_pre_form_id_fk foreign key (pre_form_id) references kafaa_assessment_forms(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_eval_surveys_post_form_id_fk') then alter table kafaa_eval_surveys add constraint kafaa_eval_surveys_post_form_id_fk foreign key (post_form_id) references kafaa_assessment_forms(id) deferrable initially deferred; end if; end $$;
@@ -6734,6 +6826,18 @@ create index if not exists kafaa_asset_reviews_asset_author_id_idx on kafaa_asse
 create index if not exists kafaa_asset_reviews_reviewer_id_idx on kafaa_asset_reviews (reviewer_id);
 create index if not exists kafaa_asset_uses_asset_id_idx on kafaa_asset_uses (asset_id);
 create index if not exists kafaa_asset_uses_person_id_idx on kafaa_asset_uses (person_id);
+create index if not exists kafaa_lectures_speaker_id_idx on kafaa_lectures (speaker_id);
+create index if not exists kafaa_lectures_delivered_on_idx on kafaa_lectures (delivered_on);
+create index if not exists kafaa_lectures_system_family_idx on kafaa_lectures (system_family);
+create index if not exists kafaa_lectures_status_idx on kafaa_lectures (status);
+create index if not exists kafaa_lectures_created_by_idx on kafaa_lectures (created_by);
+create index if not exists kafaa_contributions_person_id_idx on kafaa_contributions (person_id);
+create index if not exists kafaa_contributions_ref_id_idx on kafaa_contributions (ref_id);
+create index if not exists kafaa_contributions_status_idx on kafaa_contributions (status);
+create index if not exists kafaa_localisation_items_programme_id_idx on kafaa_localisation_items (programme_id);
+create index if not exists kafaa_localisation_items_partner_org_id_idx on kafaa_localisation_items (partner_org_id);
+create index if not exists kafaa_localisation_items_target_on_idx on kafaa_localisation_items (target_on);
+create index if not exists kafaa_localisation_items_status_idx on kafaa_localisation_items (status);
 create index if not exists kafaa_eval_surveys_committee_idx on kafaa_eval_surveys (committee);
 create index if not exists kafaa_eval_surveys_pre_form_id_idx on kafaa_eval_surveys (pre_form_id);
 create index if not exists kafaa_eval_surveys_post_form_id_idx on kafaa_eval_surveys (post_form_id);
@@ -6873,4 +6977,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 300) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 303) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

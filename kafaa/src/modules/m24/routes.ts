@@ -1,6 +1,8 @@
 // M24 routes (Knowledge continuity; owner W3 · E2, features F20 Knowledge loss risk assessment and F21 Knowledge capture studio).
 // Registered once by F01 in src/routes/registry.ts. Route ids are i18n keys (m24.routes.<id>.title|purpose) and are visited by the
 // smoke suite automatically; param routes take their sample params from smoke.json.
+// FS44/FS45 (wave E · E3): the lecture library and the localisation countdown are for staff (knowledge R); publishing lectures and
+// validating contributions for the knowledge-management owner (knowledge A).
 // Access: the knowledge base and the capture studio are for staff (knowledge R); the review queue for interviewers and the KM owner
 // (knowledge W/A); the KLRA for the KM owner (A), department heads (Scope) and HR aggregates (Agg) only, never staff-wide.
 import { lazy } from 'react';
@@ -9,6 +11,7 @@ import type { RouteDef } from '../../routes/types';
 const STAFF = { signedIn: true, grant: { res: 'knowledge' as const, levels: ['R' as const] } };
 const REVIEW = { signedIn: true, grant: { res: 'knowledge' as const, levels: ['W' as const, 'A' as const] } };
 const KLRA = { signedIn: true, grant: { res: 'knowledge' as const, levels: ['A' as const, 'Scope' as const, 'Agg' as const] } };
+const OWNER = { signedIn: true, grant: { res: 'knowledge' as const, levels: ['A' as const] } };
 const KLRA_ROWS = { signedIn: true, grant: { res: 'knowledge' as const, levels: ['A' as const, 'Scope' as const] } };
 
 export const routes: RouteDef[] = [
@@ -19,4 +22,9 @@ export const routes: RouteDef[] = [
   { id: 'knowledge-review', path: '/knowledge/review', module: 'M24', zone: 'staff', guard: REVIEW, nav: { lens: 'my', section: 'knowledge', order: 60 }, parent: 'knowledge', spec: 'BACKLOG F21 · two-person review (technical + security and content check) and publish', component: lazy(() => import('./ReviewPage')) },
   { id: 'knowledge-klra', path: '/knowledge/klra', module: 'M24', zone: 'staff', guard: KLRA, nav: { lens: 'my', section: 'knowledge', order: 61 }, parent: 'knowledge', spec: 'BACKLOG F20 · /knowledge/klra (register, risk matrix, department heatmap, thresholds)', component: lazy(() => import('./KlraPage')) },
   { id: 'knowledge-klra-position', path: '/knowledge/klra/:positionId', module: 'M24', zone: 'staff', guard: KLRA_ROWS, parent: 'knowledge-klra', spec: 'BACKLOG F20 · position: factors with reasons, quarterly history, mitigation plan', component: lazy(() => import('./KlraPositionPage')) },
+  // FS wave E · E3: FS44 expert lecture library and contributions, FS45 localisation countdown (route-count pins left to the integration lead)
+  { id: 'knowledge-lectures', path: '/knowledge/lectures', module: 'M24', zone: 'staff', guard: STAFF, nav: { lens: 'my', section: 'knowledge', order: 58.5 }, parent: 'knowledge', spec: 'PLAN FS44 · /knowledge/lectures (expert lecture library: skills, KLRA position protected; my lectures and contributions)', component: lazy(() => import('./LecturesPage')) },
+  { id: 'knowledge-lecture', path: '/knowledge/lectures/:lectureId', module: 'M24', zone: 'staff', guard: STAFF, parent: 'knowledge-lectures', spec: 'PLAN FS44 · one lecture: chapters, skills, protected position, related knowledge, my contribution', component: lazy(() => import('./LecturePage')) },
+  { id: 'knowledge-contributions', path: '/knowledge/contributions', module: 'M24', zone: 'staff', guard: OWNER, nav: { lens: 'my', section: 'knowledge', order: 60.5 }, parent: 'knowledge', spec: 'PLAN FS44 · publish lectures and validate contributions (knowledge A): validated contributions write skill evidence', component: lazy(() => import('./ContributionsPage')) },
+  { id: 'knowledge-localisation', path: '/knowledge/localisation', module: 'M24', zone: 'staff', guard: STAFF, nav: { lens: 'my', section: 'knowledge', order: 61.5 }, parent: 'knowledge', spec: 'PLAN FS45 · localisation countdown to 2030: computed instructor readiness, target, status, risk; overdue items on F22', component: lazy(() => import('./LocalisationPage')) },
 ];

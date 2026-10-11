@@ -19,7 +19,8 @@ export default function ReviewPage() {
   const refs = useKcRefs();
   const q = useQuery(['knowledge_assets', 'asset_reviews'], () => repo.rpc.reviewQueue(), [s.identity.personId]);
   return (
-    <Page title={t('m24.routes.knowledge-review.title')} intro={t('m24.review.intro')} wide eyebrow={<L to="/knowledge" className="link">{t('m24.kb.back')}</L>}>
+    <Page title={t('m24.routes.knowledge-review.title')} intro={t('m24.review.intro')} wide eyebrow={<L to="/knowledge" className="link">{t('m24.kb.back')}</L>}
+      actions={s.can('knowledge', ['A']) ? <L to="/knowledge/contributions" className="btn-outline btn-sm" data-testid="m24-review-to-contributions">{t('m24.routes.knowledge-contributions.title')}</L> : undefined}>
       <Async state={refs}>
         {(r) => (
           <Async state={q} isEmpty={(d) => d.items.length === 0} empty={<EmptyState icon="check" title={t('m24.review.empty')}>{t('m24.review.emptyBody')}</EmptyState>}>

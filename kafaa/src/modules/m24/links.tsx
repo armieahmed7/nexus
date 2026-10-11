@@ -1,11 +1,12 @@
 // W3 integration: small M24 widgets other modules render (pages never import backend/*).
 //  - ReadBeforeRequal (F21 -> M02): published knowledge assets attached to a qualification standard as "read before requal".
 //  - KlraRoleLinks (F20 -> F19): the KLRA positions of a role, for viewers who may open the KLRA (knowledge A or Scope).
+//  - LocalisationOverduePanel (FS45 -> F22, wave E · E3): overdue localisation items for the Handover 2030 board (M07).
 import { useQuery, useRepo, type RowOf } from '../../data';
 import { useSession } from '../../auth/session';
 import { checkGuard } from '../../auth/guards';
 import { ROUTES } from '../../routes/registry';
-import { L, usePick, useT } from '../../i18n';
+import { L, useFormat, usePick, useT } from '../../i18n';
 import { Card, Icon } from '../../ui';
 import { BandPill } from './ui';
 
@@ -62,6 +63,35 @@ export function KlraRoleLinks({ roleId }: { roleId: string }) {
         <p className="text-[12.5px] text-ink-2">{t('m24.link.klraNone')}</p>
       )}
       <L to="/knowledge/klra" className="link mt-2 inline-block text-[12.5px]">{t('m24.link.klraOpen')}</L>
+    </Card></div>
+  );
+}
+
+/** FS45 -> F22 (M07): localisation items past their target transfer date and not yet transferred, for the Handover 2030 board
+ *  (/workforce/handover). Reads rpc.localisationOverdue (knowledge R: managers, HR and auditors all hold it). The integration lead mounts
+ *  it in m07/HandoverPage.tsx with one line: <LocalisationOverduePanel />. Renders nothing when there is nothing overdue. */
+export function LocalisationOverduePanel() {
+  const t = useT();
+  const f = useFormat();
+  const pick = usePick();
+  const repo = useRepo();
+  const s = useSession();
+  const q = useQuery(['localisation_items', 'instructor_tracks'], () => repo.rpc.localisationOverdue().catch(() => null), [s.identity.personId]);
+  const items = q.data?.items ?? [];
+  if (!items.length) return null;
+  return (
+    <div data-testid="m24-lz-handover-panel"><Card title={t('m24.lz.panel.title')}>
+      <p className="mb-2 text-[12.5px] text-ink-2">{t('m24.lz.panel.body')}</p>
+      <ul className="space-y-1.5">
+        {items.map((i) => (
+          <li key={i.id} className="flex flex-wrap items-center gap-2 text-[13.5px]" data-testid="m24-lz-handover-item" data-id={i.id}>
+            <Icon name="alert" size={14} className="text-bad" />
+            <span className="font-semibold">{pick(i, 'title')}</span>
+            <span className="text-[12px] text-ink-3">{pick({ p_en: i.partner_en, p_ar: i.partner_ar }, 'p')} · {t('m24.lz.panel.overdue', { n: f.num(i.days_overdue), pct: f.pct(i.pct, 0) })}</span>
+          </li>
+        ))}
+      </ul>
+      <L to="/knowledge/localisation" className="link mt-2 inline-block text-[12.5px]">{t('m24.lz.panel.open')}</L>
     </Card></div>
   );
 }
