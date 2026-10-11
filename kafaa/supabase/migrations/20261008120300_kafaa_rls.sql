@@ -2531,6 +2531,34 @@ create policy kafaa_read on kafaa_transformation_archetypes for select to anon, 
 grant select on kafaa_transformation_archetypes to anon, authenticated;
 -- writes: reference data, no client writes
 
+-- cec_competences
+alter table kafaa_cec_competences enable row level security;
+drop policy if exists kafaa_read on kafaa_cec_competences;
+create policy kafaa_read on kafaa_cec_competences for select to anon, authenticated using (kafaa_rule_read('skills_taxonomy', null::text, null::text, true));
+grant select on kafaa_cec_competences to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- cec_role_targets
+alter table kafaa_cec_role_targets enable row level security;
+drop policy if exists kafaa_read on kafaa_cec_role_targets;
+create policy kafaa_read on kafaa_cec_role_targets for select to anon, authenticated using (kafaa_rule_read('skills_taxonomy', null::text, null::text, true));
+grant select on kafaa_cec_role_targets to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- value_chains
+alter table kafaa_value_chains enable row level security;
+drop policy if exists kafaa_read on kafaa_value_chains;
+create policy kafaa_read on kafaa_value_chains for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, true));
+grant select on kafaa_value_chains to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- transition_tracks
+alter table kafaa_transition_tracks enable row level security;
+drop policy if exists kafaa_read on kafaa_transition_tracks;
+create policy kafaa_read on kafaa_transition_tracks for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, true));
+grant select on kafaa_transition_tracks to anon, authenticated;
+-- writes: reference data, no client writes
+
 -- core_skills
 alter table kafaa_core_skills enable row level security;
 drop policy if exists kafaa_read on kafaa_core_skills;

@@ -2,5 +2,392 @@
   "module": {
     "name": "Energy Transition Skills"
   },
-  "routes": {}
+  "routes": {
+    "skills-clean-energy": {
+      "title": "CleanEnergyComp",
+      "purpose": "ENEC's sustainability competence framework: twelve competences in four areas, with learning outcomes and role targets."
+    },
+    "skills-clean-energy-competence": {
+      "title": "CleanEnergyComp competence",
+      "purpose": "One competence: what it means at a nuclear plant, learning outcomes in English and Arabic, skills and learning."
+    },
+    "my-clean-energy": {
+      "title": "My CleanEnergyComp",
+      "purpose": "My level in each competence and overall against my job family's target, with what to grow next."
+    },
+    "workforce-clean-energy": {
+      "title": "CleanEnergyComp across the workforce",
+      "purpose": "Share of staff at each level and at their family target, by area and family; small groups suppressed."
+    },
+    "learn-energy-transition": {
+      "title": "Energy transition learning",
+      "purpose": "Hydrogen, process heat and grid value chains, the energy-system pathway and the ESG and GHG track for managers."
+    },
+    "learn-esg-managers": {
+      "title": "ESG and GHG literacy for managers",
+      "purpose": "A short, sourced pathway completable in under 10 hours, with a micro-credential route."
+    },
+    "learn-energy-chain": {
+      "title": "Value chain explainer",
+      "purpose": "One energy-system value chain: stages, sourced facts, skills and the pathway."
+    }
+  },
+  "area": {
+    "values": "Embodying values",
+    "complexity": "Embracing complexity",
+    "futures": "Envisioning futures",
+    "acting": "Acting for sustainability"
+  },
+  "areaSub": {
+    "values": "Public trust, stewardship and fairness across generations.",
+    "complexity": "Systems thinking under uncertainty, lifecycle carbon and critical use of evidence.",
+    "futures": "Net-zero pathways, the role of nuclear in an integrated energy system and new technologies.",
+    "acting": "Waste stewardship, circularity and advocacy with evidence."
+  },
+  "greencomp": {
+    "values": "GreenComp area: embodying sustainability values",
+    "complexity": "GreenComp area: embracing complexity in sustainability",
+    "futures": "GreenComp area: envisioning sustainable futures",
+    "acting": "GreenComp area: acting for sustainability"
+  },
+  "level": {
+    "0": "No counted evidence yet",
+    "1": "Aware",
+    "2": "Practitioner",
+    "3": "Advocate"
+  },
+  "levelShort": "L{n}",
+  "status": {
+    "met": "At target",
+    "below": "Below target",
+    "none": "No counted evidence",
+    "no_target": "No family target"
+  },
+  "bar": {
+    "aria": "Level {level} against target {target}"
+  },
+  "hoursN": "{n} h",
+  "monthsN": "{n} months",
+  "ofN": "{a} of {b}",
+  "kind": {
+    "course": "Course",
+    "pathway": "Pathway",
+    "external": "Reading or external course",
+    "adaptive": "Adaptive check",
+    "task": "Performance task",
+    "credential": "Micro-credential",
+    "lane": "Horizon lane",
+    "chain": "Value chain",
+    "academy": "Academy cohort",
+    "opportunity": "Gig"
+  },
+  "itemType": {
+    "course": "Course",
+    "external": "Reading or external",
+    "opportunity": "Gig",
+    "credential": "Micro-credential",
+    "fitness": "Fitness check",
+    "adaptive": "Adaptive check",
+    "task": "Performance task"
+  },
+  "stepKind": {
+    "learn": "Learn",
+    "practice": "Practise",
+    "assess": "Show it"
+  },
+  "tag": {
+    "jahiz": "Jahiz: New Economy skills",
+    "netZero": "Net Zero 2050"
+  },
+  "cta": {
+    "signInTitle": "See your own progress",
+    "signIn": "Sign in"
+  },
+  "fw": {
+    "intro": "Twelve sustainability competences for a nuclear energy company, in four areas authored with the GreenComp method. Each has learning outcomes in English and Arabic, the skills that evidence it, learning items and a target for every job family.",
+    "tile": {
+      "competences": "Competences",
+      "competencesSub": "Three in each area",
+      "areas": "Areas",
+      "areasSub": "As in GreenComp",
+      "outcomes": "Learning outcomes",
+      "outcomesSub": "In English and Arabic",
+      "targets": "Family targets",
+      "targetsSub": "One for every job family"
+    },
+    "method": {
+      "title": "Authored with the GreenComp method",
+      "body": "GreenComp (European Commission JRC, 2022) sets out twelve sustainability competences in four areas and is a reference for designing learning, not a curriculum. CleanEnergyComp keeps its structure and writes each competence for a nuclear plant."
+    },
+    "national": {
+      "title": "Linked to national frames",
+      "body": "Every competence is tagged to the New Economy group of the federal Jahiz future-skills platform (net zero, circular economy and sustainability) and to the UAE Net Zero 2050 strategic initiative."
+    },
+    "rule": {
+      "title": "How a level is reached",
+      "body": "Your level in a competence is your best counted skill state among its linked skills (verified, evidenced or validated; self-ratings never count). Your CleanEnergyComp level is the highest level you reach in all four areas."
+    },
+    "filter": "Filter by area",
+    "all": "All areas",
+    "links": "{skills} linked skills · {learning} learning items",
+    "sources": "Sources",
+    "cta": {
+      "mine": "Your progress",
+      "body": "See your level in each competence, what counts as evidence and what to grow next.",
+      "mineBtn": "My CleanEnergyComp",
+      "learnBtn": "Energy transition learning"
+    }
+  },
+  "matrix": {
+    "title": "Framework at a glance",
+    "intro": "Each competence with its GreenComp area, learning outcomes, FS02 future skills, learning items and national tags.",
+    "competence": "Competence",
+    "greencomp": "GreenComp area",
+    "outcomes": "Outcomes",
+    "fs02": "Future skills",
+    "learning": "Learning items",
+    "tags": "National tags"
+  },
+  "levels": {
+    "title": "Levels",
+    "intro": "Three levels, described the same way for every competence.",
+    "d1": "Explains the idea and its basis, and applies it with guidance in their own work.",
+    "d2": "Applies it independently in their role and helps the team do the same.",
+    "d3": "Leads and advises others, shapes decisions and explains them outside the team."
+  },
+  "targets": {
+    "title": "Role targets",
+    "intro": "A target level and focus competences for every job family, with the reason.",
+    "family": "Job family",
+    "level": "Target",
+    "focus": "Focus competences",
+    "why": "Why"
+  },
+  "check": {
+    "title": "Framework check",
+    "eyebrow": "Run live on the rows",
+    "pass": "All {n} competences and {m} family targets pass: outcomes in both languages, GreenComp area and source, a future skill and learning for each.",
+    "clean": "Public copy passes the check: no staffing figures, location or project claims.",
+    "unclean": "Public copy fails the check.",
+    "problem": {
+      "code": "code format",
+      "area": "area",
+      "name": "name or description",
+      "outcomes": "learning outcomes in both languages",
+      "greencomp": "GreenComp area or source",
+      "skills": "linked skills",
+      "fs02": "no future skill",
+      "learning": "learning items",
+      "sources": "sources",
+      "clean": "copy check",
+      "count": "twelve competences, three per area"
+    }
+  },
+  "comp": {
+    "intro": "What the competence means at a nuclear plant, its learning outcomes in both languages, and how to build it.",
+    "back": "CleanEnergyComp",
+    "notFound": "Competence not found",
+    "atPlant": "At a plant",
+    "greencomp": "Authored from the {area}",
+    "outcomes": "Learning outcomes",
+    "outcomesIntro": "Each outcome in English and in Arabic.",
+    "colEn": "English",
+    "colAr": "Arabic",
+    "skills": "Skills that evidence it",
+    "skillsEyebrow": "{n} skills",
+    "skillsNote": "Highlighted chips are FS02 future skills; the others are established catalogue skills that also count.",
+    "learning": "Learning items",
+    "learningEyebrow": "{n} items",
+    "focusTitle": "Families that focus on it",
+    "focusIntro": "Job families whose target names this competence as a focus.",
+    "noFocus": "No family names it as a focus yet"
+  },
+  "my": {
+    "intro": "Your level in each CleanEnergyComp competence comes from your counted skill states on its linked skills. Self-ratings are shown but never counted.",
+    "framework": "The framework",
+    "none": "CleanEnergyComp progress is for ENEC staff",
+    "tile": {
+      "level": "My CleanEnergyComp level",
+      "target": "My family target",
+      "targetSub": "Job family: {family}",
+      "met": "Competences at target",
+      "metSub": "Out of twelve",
+      "evidenced": "Competences with evidence",
+      "evidencedSub": "Counted evidence only"
+    },
+    "overall": "The four areas",
+    "areaBest": "Best: {name}",
+    "areaNone": "No counted evidence in this area yet",
+    "statusLine": {
+      "met": "You are at level {level}, which meets your family target of level {target}.",
+      "below": "You are at level {level}; your family target is level {target}. Grow the competences in the list below.",
+      "none": "At least one area has no counted evidence yet, so your overall level is 0. One counted skill in that area gets you to level 1.",
+      "no_target": "You are at level {level}. Your job family has no CleanEnergyComp target."
+    },
+    "nextTitle": "Grow next",
+    "nextIntro": "Focus competences of your family first, then the largest gaps to your target.",
+    "goal": "Add {skill} to my goals",
+    "goalTitle": "Add a skill goal?",
+    "goalBody": "This adds {skill} at level {level} by {date} to Skills I want to grow. Only you see it unless you share it with your manager.",
+    "goalSaved": "Goal added",
+    "filter": "Show",
+    "show": {
+      "all": "All competences",
+      "grow": "To grow"
+    },
+    "focus": "Family focus",
+    "claimedChip": "{n} self-rated, not counted",
+    "noTarget": "No family target",
+    "target": "Target L{n}",
+    "credTitle": "Clean energy foundations micro-credential",
+    "credNone": "Eligibility is not available for this account.",
+    "credEligible": "You meet every criterion: earn it on the credential page",
+    "credOpen": "Open the credential page",
+    "how": {
+      "title": "What counts",
+      "body": "Verified, evidenced and validated skill states count: qualifications, courses, assessments, checks and validated check-ins. Ask your manager to validate a self-rating in a skill check-in."
+    },
+    "private": {
+      "title": "Private to you",
+      "body": "Your CleanEnergyComp profile is computed for you only. HR sees only aggregates of at least ten people."
+    }
+  },
+  "wf": {
+    "intro": "CleanEnergyComp across active staff: share at level 1 or above and at their family target. Any cell naming fewer than ten people is suppressed.",
+    "none": "This view is for HR aggregate readers",
+    "tile": {
+      "staff": "Active staff",
+      "staffSub": "In the population",
+      "l1": "At level 1 or above",
+      "l1Sub": "Counted evidence in all four areas",
+      "met": "At their family target",
+      "metSub": "Of staff with a target",
+      "families": "Families shown",
+      "familiesSub": "Security, safeguards and cyber never broken out"
+    },
+    "areaTitle": "Level 1 or above, by area",
+    "areaIntro": "Share of staff with at least one counted competence in each area.",
+    "levelTitle": "Staff by overall level",
+    "levelIntro": "Counts under ten are suppressed.",
+    "famTitle": "By job family",
+    "famIntro": "Families with fewer than ten active staff show as suppressed.",
+    "col": {
+      "staff": "Staff",
+      "met": "At target"
+    },
+    "how": {
+      "title": "How it is computed",
+      "body": "The same rule as each person's own view: best counted skill state per competence, lowest area as the overall level, compared with the family target."
+    }
+  },
+  "hub": {
+    "intro": "How nuclear energy could connect with hydrogen, industrial heat and the grid, and the skills that go with it. Concept learning with sourced facts; no ENEC project, site or deployment decision is implied.",
+    "tile": {
+      "chains": "Value chains",
+      "chainsSub": "Hydrogen, process heat, grid",
+      "facts": "Sourced facts",
+      "factsSub": "Each with a source and as-of date",
+      "tracks": "Learning tracks",
+      "tracksSub": "Built on future-skill pathways",
+      "competences": "CleanEnergyComp competences",
+      "competencesSub": "The framework they build"
+    },
+    "concept": {
+      "title": "Concept learning",
+      "body": "These explainers describe how energy systems can work and which skills they need. They make no claim about ENEC projects or sites, and no deployment decision is implied."
+    },
+    "chainsTitle": "Value chains",
+    "chainsIntro": "From the energy source to the user, with the role a nuclear plant could play at each stage.",
+    "chainFacts": "{n} sourced facts",
+    "tracksTitle": "Learning tracks",
+    "tracksIntro": "Each track is a future-skill pathway with an envelope and a weekly hour cost, like every other pathway.",
+    "weekly": "{n} h a week",
+    "underCap": "Under {n} hours",
+    "openTrack": "Open the track",
+    "academyEyebrow": "Cohort route (FS20)",
+    "academyOpen": "See the cohort",
+    "cecTitle": "CleanEnergyComp",
+    "cecBody": "The tracks build the futures and acting competences of ENEC's sustainability competence framework.",
+    "cecOpen": "Open the framework"
+  },
+  "chain": {
+    "intro": "One value chain: its stages, the role a nuclear plant could play, sourced facts and the pathway that builds the skills.",
+    "back": "Energy transition learning",
+    "notFound": "Value chain not found",
+    "stages": "Stages",
+    "stagesIntro": "Read from the energy source to the user.",
+    "facts": "Sourced facts",
+    "factsIntro": "Every fact links its source and the date it was read. Secondary sources report a primary publication.",
+    "secondary": "Secondary source",
+    "skills": "Skills it builds",
+    "cec": "CleanEnergyComp competences",
+    "lanes": "Horizon lanes",
+    "pathway": "The awareness-to-practitioner pathway",
+    "pathwayIntro": "Envelope, weekly hours and steps; your progress comes from your own records.",
+    "more": "Other value chains"
+  },
+  "track": {
+    "notFound": "Track not found",
+    "staffOnly": "Pathways are for ENEC staff",
+    "envelope": "Envelope",
+    "weeksN": "{n} weeks",
+    "weekly": "Weekly cost",
+    "weeklySub": "Planned hours a week",
+    "total": "Planned hours",
+    "capacity": "Fits {n} h of capacity",
+    "cap": "Cap: under {n} hours",
+    "steps": "Steps",
+    "stepsSub": "Learn, practise, show it",
+    "start": "Start this pathway",
+    "startTitle": "Start the pathway?",
+    "startBody": "You start {title}. Progress is worked out from your own records; you can leave at any time.",
+    "started": "Pathway started",
+    "open": "Open in pathways",
+    "mine": {
+      "active": "You follow this pathway",
+      "completed": "Completed",
+      "withdrawn": "You left this pathway"
+    },
+    "progress": "{done} of {total} steps done",
+    "stepDone": "Done",
+    "shortItem": "short",
+    "quickest": "Quickest route",
+    "quickOk": "Every step has an item that fits its planned hours: {n} h in total.",
+    "quickNo": "Some steps have no item that fits their planned hours ({n} h planned)."
+  },
+  "cred": {
+    "title": "Counts toward {code}",
+    "status": {
+      "current": "Published",
+      "draft": "Draft"
+    },
+    "draftBody": "This micro-credential is still a draft, so it cannot be earned yet. The pathway already covers its criteria.",
+    "via": "through step {steps}",
+    "notOnRoute": "Not covered by this pathway",
+    "open": "Open the credential"
+  },
+  "esg": {
+    "intro": "A shared baseline for managers who report on sustainability and human capital: greenhouse-gas accounting basics, disclosure and reporting concepts, in under 10 hours.",
+    "outcome": "Outcome:",
+    "cost": "{total} hours in total, about {weekly} h a week over {months} months.",
+    "route": "The route",
+    "routeIntro": "Four steps; the quickest item in each fits its planned hours. The check counts toward MC-CLEAN-ENERGY.",
+    "whyTitle": "Why managers",
+    "whyBody": "Managers increasingly report on sustainability and human capital. ISO 30414:2025 asks for quantitative and qualitative disclosure with explanations; this track gives everyone the same baseline.",
+    "cecTitle": "CleanEnergyComp competences it builds"
+  },
+  "reason": {
+    "evidence": "{skill} at level {level} ({basis})",
+    "claimed": "{n} linked skill(s) are self-rated only; a self-rating counts once a manager validates it",
+    "none": "No counted evidence yet on its {n} linked skills",
+    "met": "Level {level} meets your family target of {target}",
+    "below": "Level {level} is below your family target of {target}",
+    "noTarget": "Level {level}; your job family has no target",
+    "focus": "A focus competence for your job family",
+    "area": "{area}: best competence at level {level}",
+    "levelNone": "At least one area has no counted evidence, so the overall level is 0",
+    "levelMet": "Overall level {level} (the lowest area) meets your family target of {target}",
+    "levelBelow": "Overall level {level} (the lowest area) is below your family target of {target}",
+    "levelNoTarget": "Overall level {level} (the lowest area); no family target"
+  }
 }

@@ -4400,6 +4400,71 @@ export interface TransformationArchetypesRow {
   as_of: string;
   sort: number;
 }
+export interface CecCompetencesRow {
+  id: string;
+  code: string;
+  area: 'values' | 'complexity' | 'futures' | 'acting';
+  name_en: string;
+  name_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  plant_en: string;
+  plant_ar: string;
+  outcomes: any;
+  greencomp_area: string;
+  skill_ids: string[];
+  learning: any;
+  jahiz_group: string;
+  net_zero: boolean;
+  benchmark_ids: string[];
+  sources: any;
+  status: 'active' | 'retired';
+  version: number;
+  as_of: string;
+  sort: number;
+}
+export interface CecRoleTargetsRow {
+  id: string;
+  family_id: string;
+  level: number;
+  focus_ids: string[];
+  rationale_en: string;
+  rationale_ar: string;
+}
+export interface ValueChainsRow {
+  id: string;
+  code: string;
+  name_en: string;
+  name_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  stages: any;
+  facts: any;
+  skill_ids: string[];
+  lane_ids: string[];
+  pathway_ids: string[];
+  cec_ids: string[];
+  benchmark_ids: string[];
+  sources: any;
+  status: 'active' | 'retired';
+  as_of: string;
+  sort: number;
+}
+export interface TransitionTracksRow {
+  id: string;
+  feature: 'FS42' | 'FS43';
+  pathway_id: string;
+  credential_code?: string | null;
+  max_hours?: number | null;
+  audience_en: string;
+  audience_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  chain_ids: string[];
+  benchmark_ids: string[];
+  sources: any;
+  sort: number;
+}
 export interface CoreSkillsRow {
   id: string;
   code: string;
@@ -4904,6 +4969,10 @@ export interface Tables {
   transformation_drafts: TransformationDraftsRow;
   transformation_milestones: TransformationMilestonesRow;
   transformation_archetypes: TransformationArchetypesRow;
+  cec_competences: CecCompetencesRow;
+  cec_role_targets: CecRoleTargetsRow;
+  value_chains: ValueChainsRow;
+  transition_tracks: TransitionTracksRow;
   core_skills: CoreSkillsRow;
   core_skill_targets: CoreSkillTargetsRow;
   core_skill_candidates: CoreSkillCandidatesRow;
