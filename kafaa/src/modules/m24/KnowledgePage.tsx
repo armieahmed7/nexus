@@ -26,7 +26,7 @@ export default function KnowledgePage() {
   }, [s.identity.personId]);
   return (
     <Page title={t('m24.routes.knowledge.title')} intro={t('m24.kb.intro')} wide
-      actions={<span className="flex flex-wrap gap-2"><L to="/knowledge/capture" className="btn-outline btn-sm">{t('m24.kb.toCapture')}</L>{s.can('knowledge', ['W', 'A']) && <L to="/knowledge/review" className="btn-outline btn-sm">{t('m24.kb.toReview')}</L>}</span>}>
+      actions={<span className="flex flex-wrap gap-2"><L to="/knowledge/lectures" className="btn-outline btn-sm" data-testid="m24-kb-to-lectures">{t('m24.routes.knowledge-lectures.title')}</L><L to="/knowledge/localisation" className="btn-outline btn-sm">{t('m24.routes.knowledge-localisation.title')}</L><L to="/knowledge/capture" className="btn-outline btn-sm">{t('m24.kb.toCapture')}</L>{s.can('knowledge', ['W', 'A']) && <L to="/knowledge/review" className="btn-outline btn-sm">{t('m24.kb.toReview')}</L>}</span>}>
       <Async state={refs}>
         {(r) => (
           <Async state={q}>

@@ -2219,6 +2219,29 @@ create policy kafaa_read on kafaa_asset_uses for select to anon, authenticated u
 grant select on kafaa_asset_uses to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- lectures
+alter table kafaa_lectures enable row level security;
+drop policy if exists kafaa_read on kafaa_lectures;
+create policy kafaa_read on kafaa_lectures for select to anon, authenticated using (kafaa_rule_read('knowledge', null::text, null::text, published)
+    or kafaa_rule_read('own_profile', speaker_id, null::text, true)
+    or kafaa_rule_read('own_profile', created_by, null::text, true));
+grant select on kafaa_lectures to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- contributions
+alter table kafaa_contributions enable row level security;
+drop policy if exists kafaa_read on kafaa_contributions;
+create policy kafaa_read on kafaa_contributions for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_contributions to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- localisation_items
+alter table kafaa_localisation_items enable row level security;
+drop policy if exists kafaa_read on kafaa_localisation_items;
+create policy kafaa_read on kafaa_localisation_items for select to anon, authenticated using (kafaa_rule_read('knowledge', null::text, null::text, true));
+grant select on kafaa_localisation_items to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- eval_surveys
 alter table kafaa_eval_surveys enable row level security;
 drop policy if exists kafaa_read on kafaa_eval_surveys;

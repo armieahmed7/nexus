@@ -1,7 +1,7 @@
 // M24 SupabaseBackend RPC mappings (owner: W3 · E2 · F20 KLRA, F21 Knowledge capture studio). Installed by src/data/ext/supabase.ts.
 // SQL: supabase/migrations/20261009132001_kafaa_w3e2_knowledge.sql. Pages never import this file.
 import type { SupabaseExtCtx } from '../../../data/ext/types';
-import type { CaptureBoard, Heatmap, KlraPositionDetail, KlraRegister, M24Rpc, ReviewQueue } from './rpc';
+import type { CaptureBoard, ContributionQueue, Heatmap, KlraPositionDetail, KlraRegister, LocBoard, LocOverdue, M24Rpc, ReviewQueue } from './rpc';
 
 export function makeSupabaseM24(x: SupabaseExtCtx): M24Rpc {
   return {
@@ -24,5 +24,15 @@ export function makeSupabaseM24(x: SupabaseExtCtx): M24Rpc {
     withdrawAsset: (id, reason) => x.call('kafaa_withdraw_asset', { p_id: id, p_reason: reason ?? '' }, ['knowledge_assets']),
     attachAssetRequal: (id, standardIds) => x.call('kafaa_attach_asset_requal', { p_id: id, p_standard_ids: standardIds ?? [] }, ['knowledge_assets']),
     markAssetUsed: (id) => x.call('kafaa_mark_asset_used', { p_id: id }, ['asset_uses', 'knowledge_assets']),
+    // FS44 / FS45 (wave E · E3): 20261010253001_kafaa_fs53_lectures_localisation.sql
+    saveLecture: (input) => x.call('kafaa_save_lecture', { p: input ?? {} }, ['lectures']),
+    publishLecture: (id) => x.call('kafaa_publish_lecture', { p_id: id }, ['lectures', 'contributions', 'notifications']),
+    withdrawLecture: (id, reason) => x.call('kafaa_withdraw_lecture', { p_id: id, p_reason: reason ?? '' }, ['lectures']),
+    syncContributions: () => x.call('kafaa_sync_contributions', {}, ['contributions']),
+    contributionQueue: async () => (await x.rpc<ContributionQueue | null>('kafaa_contribution_queue')) ?? null,
+    validateContribution: (id, decision, note = '') => x.call('kafaa_validate_contribution', { p_id: id, p_decision: decision, p_note: note ?? '' }, ['contributions', 'skill_evidence', 'person_skills', 'notifications']),
+    localisationBoard: async () => (await x.rpc<LocBoard | null>('kafaa_localisation_board')) ?? null,
+    localisationOverdue: async () => (await x.rpc<LocOverdue | null>('kafaa_localisation_overdue')) ?? null,
+    setLocalisationStatus: (id, input) => x.call('kafaa_set_localisation_status', { p_id: id, p: input ?? {} }, ['localisation_items']),
   };
 }
