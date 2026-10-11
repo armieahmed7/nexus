@@ -96,8 +96,8 @@ describe('FS wave C · FS21/FS22 -> FS17 pathways', () => {
     const r = resolvePathway(p as never, T.pathway_steps as never, content);
     const assess = r.steps.find((s) => s.kind === 'assess')!;
     expect(assess.items.some((i) => i.type === 'adaptive' && i.id === 'ab-ai-literacy')).toBe(true);
-    // k-ro also has a fitness check (listed first in the step); without it the adaptive result alone ticks the step
-    const noFit = { ...rec, fitness_attempts: rec.fitness_attempts.filter((a) => a.person_id !== 'p-k-ro') };
+    // k-ro also has a fitness check (listed first in the step) and, since FS31, the MC-AI-ASSURER credential; without both the adaptive result alone ticks the step
+    const noFit = { ...rec, fitness_attempts: rec.fitness_attempts.filter((a) => a.person_id !== 'p-k-ro'), microcred_awards: rec.microcred_awards.filter((a) => a.person_id !== 'p-k-ro') };
     const done = pathwayProgress(r, recordsOf('p-k-ro', noFit));
     expect(done.steps.find((s) => s.step_id === assess.step_id)!.via).toBe('adaptive:ab-ai-literacy');
     const voided = { ...noFit, adaptive_attempts: rec.adaptive_attempts.map((a) => (a.person_id === 'p-k-ro' ? { ...a, counts: false } : a)) };
@@ -106,7 +106,10 @@ describe('FS wave C · FS21/FS22 -> FS17 pathways', () => {
     b.setPersona('k-ro'); await b.whenReady();
     const det = await b.rpc.pathwayDetail('pw-ai-verify-l2');
     const step = det!.resolved.steps.find((s: { kind: string }) => s.kind === 'assess')!;
-    expect(step.items.map((i: { type: string }) => i.type)).toEqual(expect.arrayContaining(['adaptive', 'task']));
+    // FS31 (wave D) added MC-AI-ASSURER, aligned to this skill at level 2: with the cap of 4 the step now shows the pinned and the
+    // strategic credential, the fitness check and the FS21 bank; the FS22 task is still discovered for the step, just past the cap
+    expect(step.items.map((i: { type: string }) => i.type)).toEqual(expect.arrayContaining(['credential', 'adaptive']));
+    expect(discover('assess', p.skill_id, Number(p.level), content).some((i) => i.type === 'task')).toBe(true);
   });
   it('the gap backlog keeps FS17\'s rows: open rows are exactly the requested steps; FS19 courses and FS21/FS22 assessments filled the rest on the QA refresh', async () => {
     const pub = T.pathways.filter((p) => p.status === 'published');

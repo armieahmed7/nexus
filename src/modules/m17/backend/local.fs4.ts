@@ -21,7 +21,7 @@ const hex = (n: number) => Array.from(crypto.getRandomValues(new Uint8Array(Math
 const trim = (x: unknown) => String(x ?? '').trim();
 
 export function makeLocalM17Fs4(b: LocalBackend, h: LocalRpcHelpers): Fs4Rpc {
-  const raw = (t: string) => b.raw(t as never) as unknown as Row[];
+  const raw = (t: string) => ((b.raw(t as never) as unknown as Row[] | undefined) ?? []); // empty until the store has loaded (a persona switch can emit first)
   const get = (t: string, id: string | null | undefined) => (id ? (b.rawGet(t as never, id) as unknown as Row | undefined) : undefined);
   const ins = (t: string, row: Row) => b.rawInsert(t as never, row as never);
   const upd = (t: string, id: string, patch: Row) => b.rawUpdate(t as never, id, patch as never);
