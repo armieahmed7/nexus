@@ -8,7 +8,7 @@
 // grants; additive SQL. Flows run inside a rolled-back transaction, so later validators see the seeded state.
 import { readFileSync } from 'node:fs';
 import { BEHAVIOUR_IDS, BEHAVIOUR_IDS_V2, FUTURE_BEHAVIOUR_IDS, computeLeadershipStats, summarise360, validScores } from '../../src/modules/m22/domain.ts';
-import { FL_MSG, FL_PROGRAMME_ID, WFN_MSG, computeFlStats, computeProgrammeStats, flCohortFor, flReadiness, rankCircles, rankOffers, wfnStats } from '../../src/modules/m22/future.ts';
+import { FL_MSG, FL_PROGRAMME_ID, WFN_MSG, circleFlags, circleMembersView, computeFlStats, computeProgrammeStats, flCohortFor, flReadiness, rankCircles, rankOffers, wfnStats } from '../../src/modules/m22/future.ts';
 
 const canon = (x) => (Array.isArray(x) ? x.map(canon) : x && typeof x === 'object' ? Object.fromEntries(Object.keys(x).sort().map((k) => [k, canon(x[k])])) : x);
 const same = (a, b) => JSON.stringify(canon(a)) === JSON.stringify(canon(b));
@@ -116,6 +116,12 @@ export default async function fs54Checks({ db, one, count, ok, uid }) {
   ok(same(wsSql, wsTs) && wsTs.network.participants >= 10 && wsTs.pipeline.find((r) => r.id === 'staff').share !== null && wsTs.pipeline.some((r) => r.suppressed && r.women === null && r.men === null && r.share === null)
     && wsTs.network.requests.every((r) => r.suppressed ? r.n === null : r.n >= 10),
     'acceptance (FS48): network statistics = wfnStats; every aggregate cell under 10 suppressed, gender only as a share per programme, suppressed whole when either group is under 10');
+
+  const flagsOk = async () => { const ms = await rows('wfn_circle_members'); return (await rows('wfn_circles')).every((c) => c.is_full === circleFlags(c, ms).is_full && c.mentor_open === circleFlags(c, ms).mentor_open); };
+  const ms0 = await rows('wfn_circle_members');
+  const cs0 = await rows('wfn_circles');
+  const viewSame = (await rows('wfn_participants', 'active')).every((p) => same(rankCircles(p, cs0, ms0, area), rankCircles(p, cs0, circleMembersView(cs0, ms0.filter((m) => m.person_id === p.person_id)), area)));
+  ok(await flagsOk() && cs0.some((c) => c.is_full) && viewSame, 'circle flags (is_full, mentor_open) = circleFlags over the private memberships; ranking with the flags and my own rows (circleMembersView) = ranking with every membership, for every participant');
 
   // ── RLS
   ok(await count(null, 'kafaa_leadership_behaviours') === 12 && await count(null, 'kafaa_fl_competencies') === 5 && await count(null, 'kafaa_fl_external') === T.fl_external.length && await count(null, 'kafaa_wfn_programmes') === 3
@@ -275,7 +281,7 @@ export default async function fs54Checks({ db, one, count, ok, uid }) {
     const sqlStats1 = (await q('select kafaa_wfn_stats_compute() j'))[0].j;
     ok(wd.ok && kro && !kro.active && kro.interests.length === 0 && kro.strands.length === 0 && !kro.mentor && after.members.filter((m) => m.person_id === 'p-k-ro' && m.active).length === 0
       && after.requests.filter((r) => r.person_id === 'p-k-ro' && ['interested', 'shortlisted'].includes(r.status)).length === 0
-      && same(rankC0, rankC1) && same(rankO0, rankO1) && same(stats0, stats1) && same(sqlStats1, stats1),
+      && same(rankC0, rankC1) && same(rankO0, rankO1) && same(stats0, stats1) && same(sqlStats1, stats1) && await flagsOk() && same(await rows('wfn_circles'), cs0),
       'acceptance (FS48): withdrawal leaves no trace in any ranking: choices blanked, memberships ended, open requests withdrawn; another participant\'s circle and offer rankings and the network statistics equal the state before the opt-in');
     const a1 = await auditN();
     const acts = await q(`select action from (select * from kafaa_audit_events order by seq desc limit ${a1 - a0}) t`);
@@ -293,7 +299,7 @@ export default async function fs54Checks({ db, one, count, ok, uid }) {
   const rpcs = ['kafaa_decide_wfn_request', 'kafaa_fl_readiness', 'kafaa_future_leaders_stats', 'kafaa_join_wfn_circle', 'kafaa_leadership_programme_stats', 'kafaa_nominate_future_leader', 'kafaa_record_fl_module',
     'kafaa_request_360', 'kafaa_request_wfn_offer', 'kafaa_review_policy_project', 'kafaa_save_policy_project', 'kafaa_set_wfn_optin', 'kafaa_submit_360', 'kafaa_wfn_desk', 'kafaa_wfn_stats'];
   const helpers = ['kafaa_lead_form_ids', 'kafaa_lead_scores_v', 'kafaa_fs54_stats_gate', 'kafaa_fs54_cell', 'kafaa_fs54_programme_stats_compute', 'kafaa_fl_cohort_for', 'kafaa_fs54_ts', 'kafaa_fs54_hist', 'kafaa_fs54_notify',
-    'kafaa_fl_readiness_of', 'kafaa_fl_stats_compute', 'kafaa_fs54_participant', 'kafaa_fs54_gender_row', 'kafaa_wfn_stats_compute', 'kafaa_lead_360_summary', 'kafaa_lead_stats_compute'];
+    'kafaa_fl_readiness_of', 'kafaa_fl_stats_compute', 'kafaa_fs54_participant', 'kafaa_fs54_gender_row', 'kafaa_fs54_circle_flags', 'kafaa_wfn_stats_compute', 'kafaa_lead_360_summary', 'kafaa_lead_stats_compute'];
   const exec = await q(`select p.proname, has_function_privilege('anon', p.oid, 'execute') anon, has_function_privilege('authenticated', p.oid, 'execute') auth from pg_proc p where p.proname = any($1)`, [[...rpcs, ...helpers]]);
   ok(exec.length === rpcs.length + helpers.length && exec.every((x) => !x.anon) && exec.filter((x) => x.auth).map((x) => x.proname).sort().join() === [...rpcs].sort().join(),
     `anon executes none of the FS46-FS48 functions; authenticated only the ${rpcs.length} RPCs`);

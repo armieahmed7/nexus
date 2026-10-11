@@ -3571,6 +3571,8 @@ export interface WfnCirclesRow {
   mentor_role_ar: string;
   cadence_en: string;
   cadence_ar: string;
+  is_full: boolean;
+  mentor_open: boolean;
 }
 export interface WfnCircleMembersRow {
   id: string;

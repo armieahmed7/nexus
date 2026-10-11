@@ -8,7 +8,7 @@ import { todayIso } from '../../../domain/rules';
 import { MIN_GROUP_SIZE } from '../../../auth/policy';
 import { BEHAVIOUR_IDS_V2, COP_MSG, cycleOf, hasContactDetails, postGuard, restrictedMessage } from '../domain';
 import {
-  FL_MSG, FL_PROGRAMME_ID, WFN_INTERESTS, WFN_MAX_OPEN_REQUESTS, WFN_MSG, WFN_STRANDS, circleOpen, computeFlStats, computeProgrammeStats, flCohortFor, flReadiness, wfnStats,
+  FL_MSG, FL_PROGRAMME_ID, WFN_INTERESTS, WFN_MAX_OPEN_REQUESTS, WFN_MSG, WFN_STRANDS, circleFlags, circleOpen, computeFlStats, computeProgrammeStats, flCohortFor, flReadiness, wfnStats,
   type FlComp, type FlReadiness, type WfnMember,
 } from '../future';
 import type { M22Rpc, WfnDeskRow } from './rpc';
@@ -26,6 +26,8 @@ export function makeLocalM22Fs(b: LocalBackend, h: LocalRpcHelpers): FsRpc {
   const get = (t: string, id: string) => b.rawGet(t as never, id) as unknown as Row | undefined;
   const ins = (t: string, row: Row) => b.rawInsert(t as never, row as never);
   const upd = (t: string, id: string, patch: Row) => b.rawUpdate(t as never, id, patch as never);
+  // FS48: keep the two public circle flags (full, mentor seat free) in step with the private memberships (circleFlags)
+  const syncCircles = (cids: string[]) => { const ms = raw('wfn_circle_members') as unknown as WfnMember[]; for (const cid of new Set(cids)) { const c = get('wfn_circles', cid); if (c) upd('wfn_circles', cid, circleFlags(c as never, ms)); } };
   const person = (id: string) => get('people', id);
   const notify = (id: string, pid: string | null | undefined, kind: string, en: string, ar: string, link: string, severity = 'info') => {
     if (!pid || !person(pid) || get('notifications', id)) return;
@@ -218,9 +220,11 @@ export function makeLocalM22Fs(b: LocalBackend, h: LocalRpcHelpers): FsRpc {
       }
       // withdraw: no trace left in any ranking (choices blanked, memberships ended, open requests withdrawn)
       if (cur) upd('wfn_participants', id, { active: false, interests: [], strands: [], mentor: false, withdrawn_on: today, updated_at: nowTs() });
-      for (const m of raw('wfn_circle_members').filter((m) => m.person_id === who && m.active)) upd('wfn_circle_members', m.id, { active: false, left_on: today });
+      const ended = raw('wfn_circle_members').filter((m) => m.person_id === who && m.active);
+      for (const m of ended) upd('wfn_circle_members', m.id, { active: false, left_on: today });
+      syncCircles(ended.map((m) => m.circle_id));
       for (const q of raw('wfn_requests').filter((q) => q.person_id === who && ['interested', 'shortlisted'].includes(q.status))) upd('wfn_requests', q.id, { status: 'withdrawn', history: [...(q.history ?? []), hist('withdrawn')], updated_at: nowTs() });
-      return h.done<R>('wfn.withdraw', 'wfn_participants', id, 'withdrawn', role, null, '', 'You left the network. Your choices were cleared and you no longer appear anywhere in it', { active: false }, ['wfn_participants', 'wfn_circle_members', 'wfn_requests']);
+      return h.done<R>('wfn.withdraw', 'wfn_participants', id, 'withdrawn', role, null, '', 'You left the network. Your choices were cleared and you no longer appear anywhere in it', { active: false }, ['wfn_participants', 'wfn_circle_members', 'wfn_circles', 'wfn_requests']);
     },
 
     async joinWfnCircle(circleId, join) {
@@ -239,8 +243,8 @@ export function makeLocalM22Fs(b: LocalBackend, h: LocalRpcHelpers): FsRpc {
       const cur = get('wfn_circle_members', id);
       const today = todayIso();
       if (join === false) {
-        if (cur && cur.active) upd('wfn_circle_members', id, { active: false, left_on: today });
-        return h.done<R>('wfn.circle', 'wfn_circle_members', id, 'left', role, null, '', 'You left the circle', { member: false, role: null }, ['wfn_circle_members']);
+        if (cur && cur.active) { upd('wfn_circle_members', id, { active: false, left_on: today }); syncCircles([circleId]); }
+        return h.done<R>('wfn.circle', 'wfn_circle_members', id, 'left', role, null, '', 'You left the circle', { member: false, role: null }, ['wfn_circle_members', 'wfn_circles']);
       }
       if (circ.status !== 'active') return refuse('invalid', WFN_MSG.circle_closed, role);
       if (cur && cur.active) return h.done<R>('wfn.circle', 'wfn_circle_members', id, `already ${cur.role}`, role, null, '', 'You are already in this circle', { member: true, role: cur.role }, ['wfn_circle_members']);
@@ -250,7 +254,8 @@ export function makeLocalM22Fs(b: LocalBackend, h: LocalRpcHelpers): FsRpc {
       const r = asMentor ? 'mentor' : 'member';
       if (cur) upd('wfn_circle_members', id, { active: true, role: r, joined_on: today, left_on: null });
       else ins('wfn_circle_members', { id, circle_id: circleId, person_id: who, role: r, active: true, joined_on: today, left_on: null });
-      return h.done<R>('wfn.circle', 'wfn_circle_members', id, `joined as ${r}`, role, null, '', asMentor ? 'You joined the circle as its mentor' : 'You joined the circle', { member: true, role: r }, ['wfn_circle_members']);
+      syncCircles([circleId]);
+      return h.done<R>('wfn.circle', 'wfn_circle_members', id, `joined as ${r}`, role, null, '', asMentor ? 'You joined the circle as its mentor' : 'You joined the circle', { member: true, role: r }, ['wfn_circle_members', 'wfn_circles']);
     },
 
     async requestWfnOffer(offerId, statement) {

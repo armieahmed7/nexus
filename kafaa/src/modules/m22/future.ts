@@ -178,6 +178,16 @@ export function computeFlStats(noms: (NomLite & { id: string; cycle: string })[]
 // ═════════════════════════════ FS48 · Women in future nuclear skills
 export const WFN_INTERESTS = ['ai_data', 'digital_plant', 'advanced_reactor', 'green_energy', 'leadership', 'project_delivery'] as const;
 export const WFN_STRANDS = ['circles', 'visiting', 'sponsored'] as const;
+/** Labels of the future-skill areas (reason variables carry both languages, F02). */
+export const WFN_AREA_LABELS: Record<string, Bi> = {
+  ai_data: { en: 'AI and data', ar: 'الذكاء الاصطناعي والبيانات' },
+  digital_plant: { en: 'Digital plant and I&C', ar: 'المحطة الرقمية والقياس والتحكم' },
+  advanced_reactor: { en: 'Advanced reactors and SMRs', ar: 'المفاعلات المتقدمة والمفاعلات الصغيرة' },
+  green_energy: { en: 'Clean energy systems', ar: 'أنظمة الطاقة النظيفة' },
+  leadership: { en: 'Leadership', ar: 'القيادة' },
+  project_delivery: { en: 'Project delivery', ar: 'تنفيذ المشاريع' },
+};
+export const wfnArea = (id: string): Bi => WFN_AREA_LABELS[id] ?? { en: id, ar: id };
 export const WFN_REQUEST_STATUSES = ['interested', 'shortlisted', 'placed', 'completed', 'declined'] as const;
 export const WFN_MAX_OPEN_REQUESTS = 3;
 export const WFN_MSG = {
@@ -209,6 +219,21 @@ export interface WfnRequest { id: string; offer_id: string; person_id: string; s
 /** A circle has room while its active members (mentors excluded) are fewer than its seats. */
 export const circleOpen = (c: { id: string; seats: number }, members: WfnMember[]) => members.filter((m) => m.circle_id === c.id && m.active && m.role === 'member').length < c.seats;
 const hasMentor = (cid: string, members: WfnMember[]) => members.some((m) => m.circle_id === cid && m.active && m.role === 'mentor');
+/** The two public flags of a circle (staff never read other people's memberships): is_full, and whether the mentor seat is free. */
+export const circleFlags = (c: { id: string; seats: number }, members: WfnMember[]) => ({ is_full: !circleOpen(c, members), mentor_open: !hasMentor(c.id, members) });
+/**
+ * The membership view a participant's page can rank with: my own rows plus placeholder rows rebuilt from the circle flags, so
+ * rankCircles() gives the same order as with every membership (seat room and mentor seat are all it reads of other people).
+ */
+export function circleMembersView(circles: { id: string; seats: number; is_full?: boolean | null; mentor_open?: boolean | null }[], mine: WfnMember[]): WfnMember[] {
+  const out = mine.filter((m) => m.active);
+  for (const c of circles) {
+    const own = out.filter((m) => m.circle_id === c.id && m.role === 'member').length;
+    if (c.is_full) for (let i = own; i < c.seats; i++) out.push({ circle_id: c.id, person_id: `_seat${i}`, role: 'member', active: true });
+    if (c.mentor_open === false && !out.some((m) => m.circle_id === c.id && m.role === 'mentor')) out.push({ circle_id: c.id, person_id: '_mentor', role: 'mentor', active: true });
+  }
+  return out;
+}
 
 /** Mentor circles for an opted-in participant: overlap with my future-skill areas, room in the circle, a mentor seat if I mentor. */
 export function rankCircles(p: WfnParticipant, circles: WfnCircle[], members: WfnMember[], area: Label): Ranked<WfnCircle>[] {

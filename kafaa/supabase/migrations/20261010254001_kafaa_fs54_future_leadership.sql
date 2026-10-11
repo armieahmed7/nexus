@@ -180,8 +180,12 @@ create table if not exists kafaa_wfn_circles (
   mentor_role_en text not null,
   mentor_role_ar text not null,
   cadence_en text not null,
-  cadence_ar text not null
+  cadence_ar text not null,
+  is_full boolean not null default false,
+  mentor_open boolean not null default true
 );
+alter table kafaa_wfn_circles add column if not exists is_full boolean not null default false;
+alter table kafaa_wfn_circles add column if not exists mentor_open boolean not null default true;
 comment on table kafaa_wfn_circles is '[M22] Mentor circles on a future-skills theme with a mentor role card and seats (FS48)';
 
 -- M22 · Mentor circle membership (member or mentor), ended rather than removed (FS48; private)
@@ -697,10 +701,18 @@ begin
 end $$;
 
 -- ═════════════ FS48 · Women in future nuclear skills (opt-in; HR aggregates only)
+-- The two public flags of a circle (circleFlags()): is_full (active members, mentors excluded, at the seat count) and mentor seat free.
+create or replace function kafaa_fs54_circle_flags(p_circle text) returns void language plpgsql security definer set search_path = public as $$
+begin
+  update kafaa_wfn_circles c set
+    is_full = (select count(*) from kafaa_wfn_circle_members m where m.circle_id = c.id and m.active and m.role = 'member') >= c.seats,
+    mentor_open = not exists (select 1 from kafaa_wfn_circle_members m where m.circle_id = c.id and m.active and m.role = 'mentor')
+   where c.id = p_circle;
+end $$;
 -- Opt in (areas, ways to take part, mentor) or withdraw: choices blanked, memberships ended, open requests withdrawn (no trace in any ranking).
 create or replace function kafaa_set_wfn_optin(p jsonb) returns jsonb language plpgsql security definer set search_path = public as $$
 declare
-  me text := kafaa_me(); v_active boolean := coalesce((p->>'active')::boolean, false); v_action text; v_role text; pp kafaa_people; v_id text; cur kafaa_wfn_participants;
+  me text := kafaa_me(); v_active boolean := coalesce((p->>'active')::boolean, false); v_action text; v_role text; pp kafaa_people; v_id text; cur kafaa_wfn_participants; v_cid text;
   v_int text[]; v_str text[]; a kafaa_audit_events;
 begin
   v_action := case when v_active then 'wfn.optin' else 'wfn.withdraw' end;
@@ -732,7 +744,10 @@ begin
     return kafaa_result(true, 'ok', 'You joined the network. Only you can see your choices', a, null, jsonb_build_object('active', true));
   end if;
   if cur.id is not null then update kafaa_wfn_participants set active = false, interests = '{}'::text[], strands = '{}'::text[], mentor = false, withdrawn_on = current_date, updated_at = now() where id = v_id; end if;
-  update kafaa_wfn_circle_members set active = false, left_on = current_date where person_id = me and active;
+  for v_cid in select distinct circle_id from kafaa_wfn_circle_members where person_id = me and active loop
+    update kafaa_wfn_circle_members set active = false, left_on = current_date where person_id = me and circle_id = v_cid and active;
+    perform kafaa_fs54_circle_flags(v_cid);
+  end loop;
   update kafaa_wfn_requests set status = 'withdrawn', history = history || jsonb_build_array(kafaa_fs54_hist('withdrawn')), updated_at = now() where person_id = me and status in ('interested', 'shortlisted');
   a := kafaa_audit('wfn.withdraw', 'wfn_participants', v_id, 'ok', 'withdrawn', 'not_applicable', null, v_role);
   return kafaa_result(true, 'ok', 'You left the network. Your choices were cleared and you no longer appear anywhere in it', a, null, jsonb_build_object('active', false));
@@ -752,7 +767,7 @@ begin
   v_id := 'wcm:' || p_circle_id || ':' || me;
   select * into cur from kafaa_wfn_circle_members where id = v_id;
   if p_join is false then
-    if cur.id is not null and cur.active then update kafaa_wfn_circle_members set active = false, left_on = current_date where id = v_id; end if;
+    if cur.id is not null and cur.active then update kafaa_wfn_circle_members set active = false, left_on = current_date where id = v_id; perform kafaa_fs54_circle_flags(p_circle_id); end if;
     return kafaa_result(true, 'ok', 'You left the circle', kafaa_audit('wfn.circle', 'wfn_circle_members', v_id, 'ok', 'left', 'not_applicable', null, v_role), null, jsonb_build_object('member', false, 'role', null));
   end if;
   if c.status <> 'active' then return kafaa_refuse('wfn.circle', 'wfn_circle_members', p_circle_id, 'invalid', 'This circle is closed', v_role); end if;
@@ -767,6 +782,7 @@ begin
   if cur.id is not null then update kafaa_wfn_circle_members set active = true, role = v_r, joined_on = current_date, left_on = null where id = v_id;
   else insert into kafaa_wfn_circle_members (id, circle_id, person_id, role, active, joined_on, left_on) values (v_id, p_circle_id, me, v_r, true, current_date, null);
   end if;
+  perform kafaa_fs54_circle_flags(p_circle_id);
   return kafaa_result(true, 'ok', case when v_mentor then 'You joined the circle as its mentor' else 'You joined the circle' end,
     kafaa_audit('wfn.circle', 'wfn_circle_members', v_id, 'ok', 'joined as ' || v_r, 'not_applicable', null, v_role), null, jsonb_build_object('member', true, 'role', v_r));
 end $$;
@@ -906,6 +922,7 @@ revoke all on function kafaa_lead_form_ids(integer),
   kafaa_fl_stats_compute(),
   kafaa_fs54_participant(kafaa_leadership_nominations),
   kafaa_fs54_gender_row(text, text[]),
+  kafaa_fs54_circle_flags(text),
   kafaa_wfn_stats_compute(),
   kafaa_lead_360_summary(text, text),
   kafaa_lead_stats_compute() from public, anon, authenticated;

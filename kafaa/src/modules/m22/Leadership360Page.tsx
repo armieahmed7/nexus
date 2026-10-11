@@ -1,12 +1,15 @@
 // /leadership/360 (M22 · F16): leadership behaviours 360. My results appear only as aggregates and only once at least five
 // colleagues responded (self excluded); otherwise "not enough responses". I can ask 5 to 12 colleagues, rate myself, and give the
 // feedback I was asked for. Ratings are stored without the rater's identity; nobody (not HR, not admins) reads individual answers.
+// FS46 (fsEe4): each request carries its form version (new cycles use form 2 with the four future behaviours; cycles already started
+// and older results stay on form 1 and remain readable); the sheet shows the anchor of every rating point in the reader's language.
 import { useMemo, useState } from 'react';
-import { Page, Section, Card, Async, EmptyState, Callout, Tabs, ProgressBar, ConfirmDialog, Icon, StatTile, Grid } from '../../ui';
+import { Page, Section, Card, Async, EmptyState, Callout, Tabs, ProgressBar, ConfirmDialog, Icon, StatTile, Grid, BenchmarkChips, StatusPill } from '../../ui';
 import { useAction, useQuery, useRepo } from '../../data';
 import { useSession } from '../../auth/session';
 import { L, useFormat, usePick, useT } from '../../i18n';
-import { BEHAVIOURS, BEHAVIOUR_IDS, MAX_360_INVITES, MIN_360_RATERS, RATER_KINDS, type My360 } from './domain';
+import { BEHAVIOURS, CURRENT_FORM_VERSION, MAX_360_INVITES, MIN_360_RATERS, RATER_KINDS, formBehaviours, type My360 } from './domain';
+import { useAnchor, useBehaviours } from './fsui';
 import { M22Pill, usePersonName } from './ui';
 
 export default function Leadership360Page() {
@@ -20,7 +23,9 @@ export default function Leadership360Page() {
   const traits = useQuery(['sc_traits'], () => repo.list('sc_traits').catch(() => []), []);
   const pending = (inbox.data ?? []).filter((x) => x.status === 'invited' && x.subject_id !== me).length;
   return (
-    <Page title={t('m22.routes.leadership-360.title')} intro={t('m22.r360.intro')} eyebrow={<L to="/leadership">{t('m22.programme.back')}</L>} wide>
+    <Page title={t('m22.routes.leadership-360.title')} intro={t('m22.r360.intro')} eyebrow={<L to="/leadership">{t('m22.programme.back')}</L>} wide
+      actions={<L to="/leadership/behaviours" className="btn-outline btn-sm" data-testid="m22-360-behaviours"><Icon name="sparkle" size={14} />{t('m22.r360.behavioursLink')}</L>}>
+      <div className="mb-4"><BenchmarkChips feature="FS46" /></div>
       <Tabs tabs={[
         { id: 'results', label: t('m22.r360.tabResults'), content: <Async state={mine}>{(d) => <Results d={d} traits={traits.data ?? []} onCycle={setCycle} />}</Async> },
         { id: 'give', label: t('m22.r360.tabGive'), badge: pending ? <span className="chip border-info-line bg-info-bg text-info">{pending}</span> : undefined, content: <Async state={inbox}>{(rows) => <Give rows={rows} me={me} />}</Async> },
@@ -41,7 +46,9 @@ function Results({ d, traits, onCycle }: { d: My360; traits: { id: string; name_
       <div className="flex flex-wrap items-center gap-2">
         <span className="caps">{t('m22.r360.cycle')}</span>
         {d.cycles.map((c) => <button key={c} className={`chip ${c === d.cycle ? 'border-accent bg-accent-soft text-eyebrow' : 'border-line bg-panel text-ink-2'}`} onClick={() => onCycle(c)} aria-pressed={c === d.cycle}>{c}</button>)}
+        <span data-testid="m22-360-form-version"><StatusPill tone={d.form_version === 2 ? 'accent' : 'neutral'}>{t('m22.r360.formVersion', { v: f.num(d.form_version) })}</StatusPill></span>
       </div>
+      {d.form_version === 1 && d.cycles.length > 0 && <p className="text-[12px] text-ink-3" data-testid="m22-360-v1-note">{t('m22.r360.v1Note')}</p>}
       <Grid cols={3}>
         <StatTile label={t('m22.r360.invited')} value={f.num(d.invited)} />
         <StatTile label={t('m22.r360.responded')} value={f.num(d.responded)} tone={d.enough ? 'ok' : 'sim'} sub={t('m22.r360.threshold', { n: f.num(d.min_raters) })} />
@@ -89,7 +96,7 @@ function Results({ d, traits, onCycle }: { d: My360; traits: { id: string; name_
   );
 }
 
-function Give({ rows, me }: { rows: { id: string; cycle: string; subject_id: string; subject_name: string; subject_name_ar: string; rater_kind: string; status: string; invited_at: string }[]; me: string | null }) {
+function Give({ rows, me }: { rows: { id: string; cycle: string; subject_id: string; subject_name: string; subject_name_ar: string; rater_kind: string; status: string; invited_at: string; form_version?: number | null }[]; me: string | null }) {
   const t = useT();
   const f = useFormat();
   const pick = usePick();
@@ -103,30 +110,34 @@ function Give({ rows, me }: { rows: { id: string; cycle: string; subject_id: str
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <div className="font-semibold">{r.subject_id === me ? t('m22.r360.selfRating') : pick({ name_en: r.subject_name, name_ar: r.subject_name_ar }, 'name')}</div>
-              <div className="text-[12.5px] text-ink-2">{t('m22.r360.asKind', { kind: t(`m22.raterKind.${r.rater_kind}`), cycle: r.cycle, date: f.date(r.invited_at) })}</div>
+              <div className="text-[12.5px] text-ink-2">{t('m22.r360.asKind', { kind: t(`m22.raterKind.${r.rater_kind}`), cycle: r.cycle, date: f.date(r.invited_at) })} · {t('m22.r360.formVersion', { v: f.num(r.form_version ?? 1) })}</div>
             </div>
             <div className="flex items-center gap-2">
               <M22Pill kind="invite" status={r.status} />
               {r.status === 'invited' && <button className="btn-primary btn-sm" onClick={() => setOpen(open === r.id ? null : r.id)} data-testid="m22-360-rate">{t('m22.r360.rate')}</button>}
             </div>
           </div>
-          {open === r.id && <ScoreSheet requestId={r.id} onDone={() => setOpen(null)} />}
+          {open === r.id && <ScoreSheet requestId={r.id} version={r.form_version ?? 1} onDone={() => setOpen(null)} />}
         </li>
       ))}
     </ul>
   );
 }
 
-function ScoreSheet({ requestId, onDone }: { requestId: string; onDone: () => void }) {
+function ScoreSheet({ requestId, version, onDone }: { requestId: string; version: number; onDone: () => void }) {
   const t = useT();
   const repo = useRepo();
   const run = useAction();
+  const beh = useBehaviours();
+  const anchor = useAnchor();
   const [scores, setScores] = useState<Record<string, number>>({});
   const [confirm, setConfirm] = useState(false);
-  const complete = BEHAVIOUR_IDS.every((b) => scores[b] >= 1);
+  const ids = formBehaviours(version);
+  const complete = ids.every((b) => scores[b] >= 1);
   return (
-    <div className="mt-3 space-y-3 border-t border-line pt-3" data-testid="m22-360-sheet">
-      {BEHAVIOUR_IDS.map((b) => (
+    <div className="mt-3 space-y-3 border-t border-line pt-3" data-testid="m22-360-sheet" data-form-version={version}>
+      <p className="text-[12px] text-ink-3">{t('m22.r360.sheetNote', { n: ids.length })}</p>
+      {ids.map((b) => (
         <fieldset key={b}>
           <legend className="text-[13px] font-semibold">{t(`m22.behaviours.${b}.title`)}</legend>
           <p className="text-[12px] text-ink-2">{t(`m22.behaviours.${b}.statement`)}</p>
@@ -138,6 +149,7 @@ function ScoreSheet({ requestId, onDone }: { requestId: string; onDone: () => vo
               </label>
             ))}
           </div>
+          {scores[b] >= 1 && <p className="mt-1 text-[12px] text-ink-2" data-testid="m22-360-anchor">{t('m22.r360.anchorAt', { v: scores[b] })} {anchor(beh.data?.find((x) => x.id === b), scores[b])}</p>}
         </fieldset>
       ))}
       <button className="btn-primary" disabled={!complete} onClick={() => setConfirm(true)} data-testid="m22-360-submit"><Icon name="check" size={14} />{t('m22.r360.submit')}</button>
@@ -168,6 +180,7 @@ function Request({ d, me }: { d: My360; me: string | null }) {
   return (
     <div className="space-y-4 pt-4">
       <p className="text-[13.5px] text-ink-2">{t('m22.r360.requestBody', { min: MIN_360_RATERS, max: MAX_360_INVITES })}</p>
+      <p className="text-[12.5px] text-ink-3">{t('m22.r360.requestForm', { v: CURRENT_FORM_VERSION })}</p>
       {already > 0 && <Callout>{t('m22.r360.alreadyInvited', { n: already })}</Callout>}
       <input className="input" placeholder={t('m22.r360.searchColleagues')} value={filter} onChange={(e) => setFilter(e.target.value)} aria-label={t('m22.r360.searchColleagues')} />
       <Async state={dir}>

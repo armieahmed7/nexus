@@ -141,7 +141,8 @@ export const TABLES_M22: Record<string, TableDef> = {
   // ═════════════ FS46 · FS47 · FS48 (wave E · E4, fsEe4). Migration 20261010254001_kafaa_fs54_future_leadership.sql.
   // Read rules:
   //  - leadership_behaviours, fl_competencies, fl_external, wfn_programmes: public reference rows with sources (public_content).
-  //  - fl_cohorts, wfn_circles, wfn_offers: staff (knowledge R). Circles show the mentor role card, never names or member counts.
+  //  - fl_cohorts, wfn_circles, wfn_offers: staff (knowledge R). Circles show the mentor role card and two flags kept by the RPCs (is_full,
+  //    mentor seat free), never names or member counts.
   //  - fl_participants: the participant (skills_profile Own), managers in scope (Scope), the training manager (skills_profile A), the
   //    HR authority (talent_review R/A; analysts in scope) and auditors (audit_log). Same audience as the F16 nominations.
   //  - wfn_participants, wfn_circle_members, wfn_requests: the person only (own_profile Own). HR sees aggregates only (rpc.wfnStats);
@@ -214,6 +215,7 @@ export const TABLES_M22: Record<string, TableDef> = {
     cols: {
       id: 'text pk', sort: 'int =0', status: 'text enum:active|closed', seats: 'int =6', focus: 'text[] =[]', skill_ids: 'text[] =[]', starts_on: 'date',
       title_en: 'text', title_ar: 'text', mentor_role_en: 'text', mentor_role_ar: 'text', cadence_en: 'text', cadence_ar: 'text',
+      is_full: 'bool =false', mentor_open: 'bool =true',
     },
     read: STAFF_ALL, write: { mode: 'none' },
   },

@@ -12,7 +12,7 @@
 // Synthetic people only; dates on or before the demo day.
 import { lineManagerOf } from '../../../src/modules/m20/domain.ts';
 import { BEHAVIOUR_IDS_V2, FUTURE_BEHAVIOUR_IDS, validScores } from '../../../src/modules/m22/domain.ts';
-import { FL_PROGRAMME_ID, flCohortFor, WFN_INTERESTS } from '../../../src/modules/m22/future.ts';
+import { FL_PROGRAMME_ID, circleFlags, flCohortFor, WFN_INTERESTS } from '../../../src/modules/m22/future.ts';
 import { BEHAVIOUR_DEFS, FL_COHORTS, FL_COMPETENCIES, FL_EXTERNAL, FL_PROGRAMME_ROW, FS54_AS_OF, WFN_CIRCLES, WFN_OFFERS, WFN_PROGRAMMES } from '../../../src/modules/m22/fs54data.ts';
 
 /** FNV-1a for stable synthetic picks. */
@@ -244,6 +244,8 @@ export default function build(T, ctx) {
   for (const pid of [...withdrawn]) M('wc-lead', pid, 'member', false, '2026-02-15', '2026-09-30');
   for (const pid of women.slice(0, 6)) M('wc-pilot-2025', pid, 'member', false, '2025-01-15', '2025-12-15');
   T.wfn_circle_members.sort((a, b) => (a.id < b.id ? -1 : 1));
+  // the two public flags of a circle (full; mentor seat free), kept by kafaa_join_wfn_circle / kafaa_set_wfn_optin (circleFlags)
+  for (const c of T.wfn_circles) Object.assign(c, circleFlags(c, T.wfn_circle_members));
 
   // requests: placements and sponsored study in every state; withdrawn participants' open requests are withdrawn
   T.wfn_requests = [];

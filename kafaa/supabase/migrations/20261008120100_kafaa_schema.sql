@@ -4247,7 +4247,9 @@ create table if not exists kafaa_wfn_circles (
   mentor_role_en text not null,
   mentor_role_ar text not null,
   cadence_en text not null,
-  cadence_ar text not null
+  cadence_ar text not null,
+  is_full boolean not null default false,
+  mentor_open boolean not null default true
 );
 comment on table kafaa_wfn_circles is '[M22] Mentor circles on a future-skills theme with a mentor role card and seats (FS48)';
 
