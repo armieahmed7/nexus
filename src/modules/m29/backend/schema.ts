@@ -1,4 +1,4 @@
-// M29 tables (owners: wave B E2 (FS09, FS10), wave D E5 (FS36, FS37) and wave I E2 (FS80)). Merged into SCHEMA by src/data/schema.ts; `npm run gen` regenerates types, SQL and RLS.
+// M29 tables (owners: wave B E2 (FS09, FS10), wave D E5 (FS36, FS37) and wave I E2 (FS80)). FS36/FS37 tables: ai_systems, ai_system_users, ai_drills, ai_drill_keys, ai_drill_attempts. Merged into SCHEMA by src/data/schema.ts; `npm run gen` regenerates types, SQL and RLS.
 // Same DSL as src/data/schema.ts. Table names must not start with "kafaa_" (the prefix is added) and must be unique.
 // Keep this file import-free except for `import type` (node scripts load it directly). New taxonomies carry _en/_ar columns.
 import type { TableDef } from '../../../data/schema';
@@ -68,6 +68,56 @@ export const TABLES_M29: Record<string, TableDef> = {
       id: 'text pk', person_id: 'text ref:people idx', period: 'text idx', attempt_no: 'int', status: 'text enum:in_progress|completed =\'in_progress\' idx',
       started_at: 'ts =now', completed_at: 'ts?', responses: 'json =[]', current_item_id: 'text?', item_count: 'int =0', area_levels: 'json ={}',
       score: 'int?', band: 'text? enum:limited|basic|above_basic|advanced', reasons: 'json =[]', evidence: 'json =[]',
+    },
+    read: [{ res: 'own_profile', person: 'person_id' }],
+    write: { mode: 'rpc', res: 'ai_literacy' },
+  },
+
+  // ───────────── FS36 AI-literacy register (wave D E5)
+  ai_systems: {
+    module: 'M29', label: 'AI-literacy register entry: one AI system (synthetic example), ENEC as provider or deployer, approved-use class, maturity label, owner role card, literacy measures and sources (FS36)',
+    cols: {
+      id: 'text pk', name_en: 'text', name_ar: 'text', purpose_en: 'text', purpose_ar: 'text', ai_role: 'text enum:provider|deployer', use_class: 'text enum:information|decision_support|automation',
+      maturity: 'text enum:planned|partial|full idx', simulated: 'bool =true', owner_person_id: 'text ref:people idx', owner_en: 'text', owner_ar: 'text', oversight_en: 'text', oversight_ar: 'text',
+      measures: 'json =[]', sources: 'json =[]', benchmark_ids: 'text[] =[]', status: 'text enum:draft|published|retired =\'draft\' idx', listed: 'bool =false', version: 'int =1', review_due: 'date?',
+      as_of: 'date', sort: 'int =0', updated_by: 'text?', updated_at: 'ts =now',
+    },
+    read: [{ res: 'ai_literacy', where: 'listed' }, { res: 'audit_log' }],
+    write: { mode: 'rpc', res: 'ai_literacy' },
+  },
+  ai_system_users: {
+    module: 'M29', label: 'A user group of an AI system: job families (or all staff), provider or deployer side, the FS09 rung it needs and extra cells (FS36)',
+    cols: {
+      id: 'text pk', system_id: 'text ref:ai_systems idx', label_en: 'text', label_ar: 'text', family_ids: 'text[] =[]', all_staff: 'bool =false', side: 'text enum:provider|deployer',
+      required_rung: 'int', required_cells: 'text[] =[]', rationale_en: 'text =\'\'', rationale_ar: 'text =\'\'', active: 'bool =true', listed: 'bool =false', sort: 'int =0',
+    },
+    read: [{ res: 'ai_literacy', where: 'listed' }, { res: 'audit_log' }],
+    write: { mode: 'rpc', res: 'ai_literacy' },
+  },
+
+  // ───────────── FS37 Governed AI sandbox drills (wave D E5)
+  ai_drills: {
+    module: 'M29', label: 'Sandbox drill: a synthetic controlled procedure, an AI-styled summary in segments and a challenge protocol (no answers; the key is in ai_drill_keys) (FS37)',
+    cols: {
+      id: 'text pk', title_en: 'text', title_ar: 'text', summary_en: 'text', summary_ar: 'text', scenario_en: 'text', scenario_ar: 'text', difficulty: 'int', level: 'int',
+      skill_id: 'text ref:skills idx', doc: 'json ={}', output: 'json ={}', protocol: 'json =[]', est_minutes: 'int =10', synthetic: 'bool =true', sources: 'json =[]',
+      status: 'text enum:draft|published|retired =\'draft\' idx', listed: 'bool =false', version: 'int =1', sort: 'int =0', updated_by: 'text?', updated_at: 'ts =now',
+    },
+    read: [{ res: 'ai_literacy', where: 'listed' }, { res: 'secure_items' }],
+    write: { mode: 'rpc', res: 'ai_literacy' },
+  },
+  ai_drill_keys: {
+    module: 'M29', label: 'Answer key of a sandbox drill: the planted errors (segment, kind, step) and the protocol answers; training staff only (FS37)',
+    cols: { id: 'text pk', drill_id: 'text ref:ai_drills uniq', errors: 'json =[]', protocol: 'json =[]', pass_pct: 'int =70' },
+    read: [{ res: 'secure_items' }],
+    write: { mode: 'rpc', res: 'ai_literacy' },
+  },
+  ai_drill_attempts: {
+    module: 'M29', label: 'One person\'s submitted sandbox drill: flags, protocol answers, score, pass, level and the capped evidence it wrote (FS37)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', drill_id: 'text ref:ai_drills idx', drill_version: 'int', attempt_no: 'int', flags: 'json =[]', answers: 'json =[]',
+      points: 'int', max_points: 'int', pct: 'int', found: 'int', errors: 'int', false_flags: 'int', critical_ok: 'bool', passed: 'bool', level: 'int =0',
+      feedback: 'json ={}', reasons: 'json =[]', evidence: 'json =[]', submitted_at: 'ts =now',
     },
     read: [{ res: 'own_profile', person: 'person_id' }],
     write: { mode: 'rpc', res: 'ai_literacy' },

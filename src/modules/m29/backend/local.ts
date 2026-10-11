@@ -15,6 +15,7 @@ import {
   MAX_ITEMS, MIN_ITEMS_PER_CELL, fitnessStats, isAboveBasic, isStaff, itemProblem, nextQuarterStart, nextStep, pickItem, quarterOfDate, scoreAttempt,
   type FitArea, type FitItem, type FitResponse, type ItemInput,
 } from '../fitness';
+import { makeLocalFs36 } from './local.fs36';
 import type { AiFluencyStats, AiFluencyView, FitnessContext, FitnessItemView, FitnessResult, FitnessStep, M29Rpc } from './rpc';
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -67,6 +68,7 @@ export function makeLocalM29(b: LocalBackend, h: LocalRpcHelpers): M29Rpc {
   const stats = () => fitnessStats(raw('fitness_attempts') as never, raw('people') as never, areas(), todayIso(), MIN_GROUP_SIZE);
 
   return {
+    ...makeLocalFs36(b, h), // FS36/FS37 (wave D E5)
     async aiFluency() {
       await b.whenReady();
       const pid = me();

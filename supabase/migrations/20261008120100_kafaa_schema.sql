@@ -4889,6 +4889,117 @@ create table if not exists kafaa_fitness_attempts (
 );
 comment on table kafaa_fitness_attempts is '[M29] One person''s fitness-check attempt in a quarter: answers in order, area levels, score, band and the capped evidence it wrote (FS10)';
 
+-- M29 · AI-literacy register entry: one AI system (synthetic example), ENEC as provider or deployer, approved-use class, maturity label, owner role card, literacy measures and sources (FS36)
+create table if not exists kafaa_ai_systems (
+  id text primary key,
+  name_en text not null,
+  name_ar text not null,
+  purpose_en text not null,
+  purpose_ar text not null,
+  ai_role text not null check (ai_role in ('provider', 'deployer')),
+  use_class text not null check (use_class in ('information', 'decision_support', 'automation')),
+  maturity text not null check (maturity in ('planned', 'partial', 'full')),
+  simulated boolean not null default true,
+  owner_person_id text not null,
+  owner_en text not null,
+  owner_ar text not null,
+  oversight_en text not null,
+  oversight_ar text not null,
+  measures jsonb not null default '[]'::jsonb,
+  sources jsonb not null default '[]'::jsonb,
+  benchmark_ids text[] not null default '{}'::text[],
+  status text not null default 'draft' check (status in ('draft', 'published', 'retired')),
+  listed boolean not null default false,
+  version integer not null default 1,
+  review_due date,
+  as_of date not null,
+  sort integer not null default 0,
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_ai_systems is '[M29] AI-literacy register entry: one AI system (synthetic example), ENEC as provider or deployer, approved-use class, maturity label, owner role card, literacy measures and sources (FS36)';
+
+-- M29 · A user group of an AI system: job families (or all staff), provider or deployer side, the FS09 rung it needs and extra cells (FS36)
+create table if not exists kafaa_ai_system_users (
+  id text primary key,
+  system_id text not null,
+  label_en text not null,
+  label_ar text not null,
+  family_ids text[] not null default '{}'::text[],
+  all_staff boolean not null default false,
+  side text not null check (side in ('provider', 'deployer')),
+  required_rung integer not null,
+  required_cells text[] not null default '{}'::text[],
+  rationale_en text not null default '',
+  rationale_ar text not null default '',
+  active boolean not null default true,
+  listed boolean not null default false,
+  sort integer not null default 0
+);
+comment on table kafaa_ai_system_users is '[M29] A user group of an AI system: job families (or all staff), provider or deployer side, the FS09 rung it needs and extra cells (FS36)';
+
+-- M29 · Sandbox drill: a synthetic controlled procedure, an AI-styled summary in segments and a challenge protocol (no answers; the key is in ai_drill_keys) (FS37)
+create table if not exists kafaa_ai_drills (
+  id text primary key,
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  scenario_en text not null,
+  scenario_ar text not null,
+  difficulty integer not null,
+  level integer not null,
+  skill_id text not null,
+  doc jsonb not null default '{}'::jsonb,
+  output jsonb not null default '{}'::jsonb,
+  protocol jsonb not null default '[]'::jsonb,
+  est_minutes integer not null default 10,
+  synthetic boolean not null default true,
+  sources jsonb not null default '[]'::jsonb,
+  status text not null default 'draft' check (status in ('draft', 'published', 'retired')),
+  listed boolean not null default false,
+  version integer not null default 1,
+  sort integer not null default 0,
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_ai_drills is '[M29] Sandbox drill: a synthetic controlled procedure, an AI-styled summary in segments and a challenge protocol (no answers; the key is in ai_drill_keys) (FS37)';
+
+-- M29 · Answer key of a sandbox drill: the planted errors (segment, kind, step) and the protocol answers; training staff only (FS37)
+create table if not exists kafaa_ai_drill_keys (
+  id text primary key,
+  drill_id text not null unique,
+  errors jsonb not null default '[]'::jsonb,
+  protocol jsonb not null default '[]'::jsonb,
+  pass_pct integer not null default 70
+);
+comment on table kafaa_ai_drill_keys is '[M29] Answer key of a sandbox drill: the planted errors (segment, kind, step) and the protocol answers; training staff only (FS37)';
+
+-- M29 · One person's submitted sandbox drill: flags, protocol answers, score, pass, level and the capped evidence it wrote (FS37)
+create table if not exists kafaa_ai_drill_attempts (
+  id text primary key,
+  person_id text not null,
+  drill_id text not null,
+  drill_version integer not null,
+  attempt_no integer not null,
+  flags jsonb not null default '[]'::jsonb,
+  answers jsonb not null default '[]'::jsonb,
+  points integer not null,
+  max_points integer not null,
+  pct integer not null,
+  found integer not null,
+  errors integer not null,
+  false_flags integer not null,
+  critical_ok boolean not null,
+  passed boolean not null,
+  level integer not null default 0,
+  feedback jsonb not null default '{}'::jsonb,
+  reasons jsonb not null default '[]'::jsonb,
+  evidence jsonb not null default '[]'::jsonb,
+  submitted_at timestamptz not null default now()
+);
+comment on table kafaa_ai_drill_attempts is '[M29] One person''s submitted sandbox drill: flags, protocol answers, score, pass, level and the capped evidence it wrote (FS37)';
+
 -- M30 · Role transformation map per current role: archetype, technology drivers, staff and public summaries (FS11)
 create table if not exists kafaa_role_transformations (
   id text primary key,
@@ -5510,6 +5621,12 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ai
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ai_role_targets_family_id_fk') then alter table kafaa_ai_role_targets add constraint kafaa_ai_role_targets_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_fitness_items_area_id_fk') then alter table kafaa_fitness_items add constraint kafaa_fitness_items_area_id_fk foreign key (area_id) references kafaa_fitness_areas(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_fitness_attempts_person_id_fk') then alter table kafaa_fitness_attempts add constraint kafaa_fitness_attempts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ai_systems_owner_person_id_fk') then alter table kafaa_ai_systems add constraint kafaa_ai_systems_owner_person_id_fk foreign key (owner_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ai_system_users_system_id_fk') then alter table kafaa_ai_system_users add constraint kafaa_ai_system_users_system_id_fk foreign key (system_id) references kafaa_ai_systems(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ai_drills_skill_id_fk') then alter table kafaa_ai_drills add constraint kafaa_ai_drills_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ai_drill_keys_drill_id_fk') then alter table kafaa_ai_drill_keys add constraint kafaa_ai_drill_keys_drill_id_fk foreign key (drill_id) references kafaa_ai_drills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ai_drill_attempts_person_id_fk') then alter table kafaa_ai_drill_attempts add constraint kafaa_ai_drill_attempts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ai_drill_attempts_drill_id_fk') then alter table kafaa_ai_drill_attempts add constraint kafaa_ai_drill_attempts_drill_id_fk foreign key (drill_id) references kafaa_ai_drills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_transformations_role_id_fk') then alter table kafaa_role_transformations add constraint kafaa_role_transformations_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_transformations_family_id_fk') then alter table kafaa_role_transformations add constraint kafaa_role_transformations_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_transformation_drafts_role_id_fk') then alter table kafaa_transformation_drafts add constraint kafaa_transformation_drafts_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
@@ -6129,6 +6246,14 @@ create index if not exists kafaa_fitness_items_status_idx on kafaa_fitness_items
 create index if not exists kafaa_fitness_attempts_person_id_idx on kafaa_fitness_attempts (person_id);
 create index if not exists kafaa_fitness_attempts_period_idx on kafaa_fitness_attempts (period);
 create index if not exists kafaa_fitness_attempts_status_idx on kafaa_fitness_attempts (status);
+create index if not exists kafaa_ai_systems_maturity_idx on kafaa_ai_systems (maturity);
+create index if not exists kafaa_ai_systems_owner_person_id_idx on kafaa_ai_systems (owner_person_id);
+create index if not exists kafaa_ai_systems_status_idx on kafaa_ai_systems (status);
+create index if not exists kafaa_ai_system_users_system_id_idx on kafaa_ai_system_users (system_id);
+create index if not exists kafaa_ai_drills_skill_id_idx on kafaa_ai_drills (skill_id);
+create index if not exists kafaa_ai_drills_status_idx on kafaa_ai_drills (status);
+create index if not exists kafaa_ai_drill_attempts_person_id_idx on kafaa_ai_drill_attempts (person_id);
+create index if not exists kafaa_ai_drill_attempts_drill_id_idx on kafaa_ai_drill_attempts (drill_id);
 create index if not exists kafaa_role_transformations_family_id_idx on kafaa_role_transformations (family_id);
 create index if not exists kafaa_role_transformations_status_idx on kafaa_role_transformations (status);
 create index if not exists kafaa_core_skills_cluster_idx on kafaa_core_skills (cluster);
@@ -6157,4 +6282,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 274) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 279) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

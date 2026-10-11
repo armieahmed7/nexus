@@ -33,6 +33,8 @@ export default function MyFluencyPage() {
       actions={<span className="flex flex-wrap gap-2">
         <L to="/my/ai-fluency/check" className="btn-primary btn-sm no-underline" data-testid="m29-my-to-check"><Icon name="check" size={14} /> {t('m29.my.toCheck')}</L>
         <L to="/learn/ai-fluency" className="btn-outline btn-sm no-underline" data-testid="m29-my-to-ladder">{t('m29.my.toLadder')}</L>
+        <L to="/my/ai-fluency/drills" className="btn-outline btn-sm no-underline" data-testid="m29-my-to-drills">{t('m29.my.toDrills')}</L>{/* FS37 */}
+        <L to="/workforce/ai-register" className="btn-outline btn-sm no-underline" data-testid="m29-my-to-register">{t('m29.my.toRegister')}</L>{/* FS36 */}
       </span>}>
       <Async state={ref}>{(d) => <Async state={mine}>{(m) => (m.view ? <Mine d={d} v={m.view} attempts={m.attempts} evidence={m.evidence} /> : <EmptyState title={t('m29.my.none')} />)}</Async>}</Async>
     </Page>
@@ -54,7 +56,7 @@ function Mine({ d, v, attempts, evidence }: { d: M29Ref; v: AiFluencyView; attem
   const evLabel = (id: string | null) => {
     const e = evidence.find((x) => x.id === id);
     if (!e) return null;
-    return t(e.ref_table === 'fitness_attempts' ? 'm29.my.ev.fitness' : `m29.my.ev.${e.kind}`, { date: f.date(String(e.observed_on)), level: f.num(e.level) });
+    return t(e.ref_table === 'fitness_attempts' ? 'm29.my.ev.fitness' : e.ref_table === 'ai_drill_attempts' ? 'm29.my.ev.drill' : `m29.my.ev.${e.kind}`, { date: f.date(String(e.observed_on)), level: f.num(e.level) });
   };
   return (
     <div className="space-y-6">
