@@ -5,6 +5,8 @@ import type { CareerReadiness } from '../career';
 import type { Agenda, AspirationSignal, ConversationInsights, PrepInput, TeamRow } from '../conversations';
 import type { ConceptReadiness, TransitionEvidence } from '../futureRoles';
 import type { Components, OutlookLabel } from '../outlookLabels';
+import type { Translation } from '../translate';
+import type { HealthResult } from '../careerHealth';
 
 export interface RoadmapToPlanResult {
   plan_id: string;
@@ -30,6 +32,11 @@ export interface ReminderResult { pairs: number; overdue: number; created: numbe
 export interface OutlookPreviewRow { role_id: string; label: OutlookLabel; components: Components; stored_label: OutlookLabel | null; changed: boolean }
 export interface OutlookPreview { year: number; criteria_id: string; rows: OutlookPreviewRow[]; counts: Record<OutlookLabel, number>; changed: number }
 export interface OutlookPublishResult { year: number; criteria_id: string; published: number; changed: number; counts: Record<OutlookLabel, number> }
+/** FS34: the staff variant of the translator (my passport instead of an occupation template). */
+export interface TranslateMine extends Translation { held: number; role_id: string | null }
+/** FS35: save my health check (Chart: with a plan) or record the conversation it ended in (Execute). */
+export interface SaveHealthInput { snapshot_id?: string | null; plan?: unknown; conversation_id?: string | null }
+export interface SaveHealthResult { id: string; step: 'assessed' | 'charted' | 'executed'; created: boolean; components: HealthResult['components'] | null }
 export interface M18Rpc {
   /** F05: per-role readiness %, gates and reasons for a person (read-only; same computation in SQL and TS). Self, or a line manager in scope when the person shares a shortlist or roadmap. */
   careerReadiness(personId: string, roleIds: string[]): Promise<Result<CareerReadiness[]>>;
@@ -65,4 +72,13 @@ export interface M18Rpc {
   outlookLabelsPreview(year: number): Promise<Result<OutlookPreview>>;
   /** FS16: publish this year's labels (past years are kept and locked); HR director (transformation A). Audited and ledgered. */
   publishOutlookLabels(year: number): Promise<Result<OutlookPublishResult>>;
+  /** FS34: translate my own passport (active skill states) into the nearest ENEC roles, delta skills and a bridging route, with the
+   *  same rule as the public translator (no industry cross-over; my own role excluded). Own only (skills_profile Own, staff). Stores nothing. */
+  translateMine(): Promise<Result<TranslateMine>>;
+  /** FS35: my Career Health check now: five visible components with their inputs and reasons (no single hidden score). Own only
+   *  (skills_profile Own, staff); never available for another person. Stores nothing. */
+  careerHealth(): Promise<Result<HealthResult>>;
+  /** FS35: save a snapshot of my health check with my plan (Chart), or link my own shared career conversation (Execute, after
+   *  rpc.submitPrep). Own only; audited, never ledgered (private). */
+  saveHealthSnapshot(input: SaveHealthInput): Promise<Result<SaveHealthResult>>;
 }

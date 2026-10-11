@@ -21,5 +21,9 @@ export function makeSupabaseM18(x: SupabaseExtCtx): M18Rpc {
     transitionEvidence: (fromRoleId, toRoleIds) => x.call('kafaa_transition_evidence', { p_from: fromRoleId, p_to: toRoleIds }, []),
     outlookLabelsPreview: (year) => x.call('kafaa_outlook_labels_preview', { p_year: year }, []),
     publishOutlookLabels: (year) => x.call('kafaa_publish_outlook_labels', { p_year: year }, ['role_outlook_labels', 'role_outlook_components']),
+    // FS34 / FS35 (FS wave D · E4)
+    translateMine: () => x.call('kafaa_translate_mine', {}, []),
+    careerHealth: () => x.call('kafaa_career_health', {}, []),
+    saveHealthSnapshot: (input) => x.call('kafaa_save_health_snapshot', { p_input: input ?? {} }, ['health_snapshots']),
   };
 }

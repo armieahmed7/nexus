@@ -2637,6 +2637,41 @@ export interface RoleOutlookComponentsRow {
   components: any;
   computed_at: string;
 }
+export interface OccupationTemplatesRow {
+  id: string;
+  esco_uri: string;
+  esco_code: string;
+  isco_code?: string | null;
+  title_en: string;
+  title_ar: string;
+  esco_label_en: string;
+  esco_label_ar: string;
+  industry: 'oil_gas' | 'power' | 'process' | 'aviation' | 'defence' | 'utilities';
+  summary_en: string;
+  summary_ar: string;
+  skills: any;
+  sources: any;
+  benchmark_ids: string[];
+  as_of: string;
+  status: 'draft' | 'published' | 'retired';
+  listed: boolean;
+  sort: number;
+}
+export interface HealthSnapshotsRow {
+  id: string;
+  person_id: string;
+  taken_at: string;
+  as_of: string;
+  role_id?: string | null;
+  components: any;
+  good: number;
+  watch: number;
+  act: number;
+  plan: any;
+  step: 'assessed' | 'charted' | 'executed';
+  conversation_id?: string | null;
+  updated_at: string;
+}
 export interface CoachFeedbackRow {
   id: string;
   person_id: string;
@@ -4668,6 +4703,8 @@ export interface Tables {
   role_outlook_criteria: RoleOutlookCriteriaRow;
   role_outlook_labels: RoleOutlookLabelsRow;
   role_outlook_components: RoleOutlookComponentsRow;
+  occupation_templates: OccupationTemplatesRow;
+  health_snapshots: HealthSnapshotsRow;
   coach_feedback: CoachFeedbackRow;
   learning_goals: LearningGoalsRow;
   refresh_state: RefreshStateRow;
