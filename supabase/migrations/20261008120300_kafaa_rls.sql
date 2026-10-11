@@ -2464,6 +2464,44 @@ create policy kafaa_read on kafaa_fitness_attempts for select to anon, authentic
 grant select on kafaa_fitness_attempts to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- ai_systems
+alter table kafaa_ai_systems enable row level security;
+drop policy if exists kafaa_read on kafaa_ai_systems;
+create policy kafaa_read on kafaa_ai_systems for select to anon, authenticated using (kafaa_rule_read('ai_literacy', null::text, null::text, listed)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_ai_systems to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- ai_system_users
+alter table kafaa_ai_system_users enable row level security;
+drop policy if exists kafaa_read on kafaa_ai_system_users;
+create policy kafaa_read on kafaa_ai_system_users for select to anon, authenticated using (kafaa_rule_read('ai_literacy', null::text, null::text, listed)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_ai_system_users to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- ai_drills
+alter table kafaa_ai_drills enable row level security;
+drop policy if exists kafaa_read on kafaa_ai_drills;
+create policy kafaa_read on kafaa_ai_drills for select to anon, authenticated using (kafaa_rule_read('ai_literacy', null::text, null::text, listed)
+    or kafaa_rule_read('secure_items', null::text, null::text, true));
+grant select on kafaa_ai_drills to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- ai_drill_keys
+alter table kafaa_ai_drill_keys enable row level security;
+drop policy if exists kafaa_read on kafaa_ai_drill_keys;
+create policy kafaa_read on kafaa_ai_drill_keys for select to anon, authenticated using (kafaa_rule_read('secure_items', null::text, null::text, true));
+grant select on kafaa_ai_drill_keys to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- ai_drill_attempts
+alter table kafaa_ai_drill_attempts enable row level security;
+drop policy if exists kafaa_read on kafaa_ai_drill_attempts;
+create policy kafaa_read on kafaa_ai_drill_attempts for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_ai_drill_attempts to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- role_transformations
 alter table kafaa_role_transformations enable row level security;
 drop policy if exists kafaa_read on kafaa_role_transformations;

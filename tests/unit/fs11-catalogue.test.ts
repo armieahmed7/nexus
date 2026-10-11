@@ -98,7 +98,7 @@ describe('FS02 · F01 recompute stays deterministic', () => {
   it('the digest of the original 71 skills equals the pre-FS02 digest, and no future skill gains a derived state', async () => {
     const ids = new Set(original.map((s) => s.id));
     const states = T.person_skills;
-    const fit = new Set(T.skill_evidence.filter((e) => e.active && ['fitness_attempts', 'cohort_capstones', 'adaptive_attempts', 'task_attempts', 'rpl_requests'].includes(e.ref_table)) /* FS21/FS22 too */.map((e) => `ps:${e.person_id}:${e.skill_id}`)); // FS10: recorded fitness-check evidence
+    const fit = new Set(T.skill_evidence.filter((e) => e.active && ['fitness_attempts', 'cohort_capstones', 'adaptive_attempts', 'task_attempts', 'ai_drill_attempts', 'rpl_requests'].includes(e.ref_table)) /* FS21/FS22 too */.map((e) => `ps:${e.person_id}:${e.skill_id}`)); // FS10: recorded fitness-check evidence
     expect(states.every((s) => ids.has(s.skill_id) || fit.has(s.id))).toBe(true);
     expect(createHash('sha256').update(statesDigestText(states.filter((s) => ids.has(s.skill_id)))).digest('hex')).toBe(F01_DIGEST_71);
     const again = deriveStates(T.skill_evidence as Evidence[], S.meta.demo_today, decayModelFrom(T.engine_settings as never, T.skills as never)); // FS03 decay model (wave-A merge)

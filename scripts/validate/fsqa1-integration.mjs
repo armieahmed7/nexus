@@ -80,7 +80,7 @@ export default async function fsqa1Checks({ ok }) {
   ok(sk.every((s) => s.decay_class === (AREA_DECAY_CLASS[s.area] ?? 'standard')), `FS02 <-> FS03: all ${sk.length} F01 skills store FS03's area decay class`);
   // FS10 (wave B): the AI and digital fitness check now evidences some FS02 AI skills (level <= 2); no other source does yet.
   const holders = (await q(`select count(*)::int n from kafaa_person_skills p where p.active and p.level > 0 and p.skill_id in (select sk_id from kafaa_future_skill_map where id in (${qaIds}))
-    and exists (select 1 from kafaa_skill_evidence e where e.person_id = p.person_id and e.skill_id = p.skill_id and e.active and e.ref_table not in ('fitness_attempts', 'cohort_capstones', 'adaptive_attempts', 'task_attempts', 'microcred_awards', 'rpl_requests'))` /* FS21/FS22 recorded results too */))[0].n;
+    and exists (select 1 from kafaa_skill_evidence e where e.person_id = p.person_id and e.skill_id = p.skill_id and e.active and e.ref_table not in ('fitness_attempts', 'cohort_capstones', 'adaptive_attempts', 'task_attempts', 'ai_drill_attempts', 'microcred_awards', 'rpl_requests'))` /* FS21/FS22 recorded results too */))[0].n;
   ok(holders === 0, 'nobody holds the FS02 skills of the new keyspace rows except through FS10 fitness-check evidence (level <= 2)');
   await db.close();
 }

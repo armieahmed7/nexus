@@ -4245,6 +4245,102 @@ export interface FitnessAttemptsRow {
   reasons: any;
   evidence: any;
 }
+export interface AiSystemsRow {
+  id: string;
+  name_en: string;
+  name_ar: string;
+  purpose_en: string;
+  purpose_ar: string;
+  ai_role: 'provider' | 'deployer';
+  use_class: 'information' | 'decision_support' | 'automation';
+  maturity: 'planned' | 'partial' | 'full';
+  simulated: boolean;
+  owner_person_id: string;
+  owner_en: string;
+  owner_ar: string;
+  oversight_en: string;
+  oversight_ar: string;
+  measures: any;
+  sources: any;
+  benchmark_ids: string[];
+  status: 'draft' | 'published' | 'retired';
+  listed: boolean;
+  version: number;
+  review_due?: string | null;
+  as_of: string;
+  sort: number;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface AiSystemUsersRow {
+  id: string;
+  system_id: string;
+  label_en: string;
+  label_ar: string;
+  family_ids: string[];
+  all_staff: boolean;
+  side: 'provider' | 'deployer';
+  required_rung: number;
+  required_cells: string[];
+  rationale_en: string;
+  rationale_ar: string;
+  active: boolean;
+  listed: boolean;
+  sort: number;
+}
+export interface AiDrillsRow {
+  id: string;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  scenario_en: string;
+  scenario_ar: string;
+  difficulty: number;
+  level: number;
+  skill_id: string;
+  doc: any;
+  output: any;
+  protocol: any;
+  est_minutes: number;
+  synthetic: boolean;
+  sources: any;
+  status: 'draft' | 'published' | 'retired';
+  listed: boolean;
+  version: number;
+  sort: number;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface AiDrillKeysRow {
+  id: string;
+  drill_id: string;
+  errors: any;
+  protocol: any;
+  pass_pct: number;
+}
+export interface AiDrillAttemptsRow {
+  id: string;
+  person_id: string;
+  drill_id: string;
+  drill_version: number;
+  attempt_no: number;
+  flags: any;
+  answers: any;
+  points: number;
+  max_points: number;
+  pct: number;
+  found: number;
+  errors: number;
+  false_flags: number;
+  critical_ok: boolean;
+  passed: boolean;
+  level: number;
+  feedback: any;
+  reasons: any;
+  evidence: any;
+  submitted_at: string;
+}
 export interface RoleTransformationsRow {
   id: string;
   role_id: string;
@@ -4799,6 +4895,11 @@ export interface Tables {
   fitness_areas: FitnessAreasRow;
   fitness_items: FitnessItemsRow;
   fitness_attempts: FitnessAttemptsRow;
+  ai_systems: AiSystemsRow;
+  ai_system_users: AiSystemUsersRow;
+  ai_drills: AiDrillsRow;
+  ai_drill_keys: AiDrillKeysRow;
+  ai_drill_attempts: AiDrillAttemptsRow;
   role_transformations: RoleTransformationsRow;
   transformation_drafts: TransformationDraftsRow;
   transformation_milestones: TransformationMilestonesRow;

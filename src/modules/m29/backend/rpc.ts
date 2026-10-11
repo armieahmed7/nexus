@@ -5,6 +5,8 @@ import type { Result } from '../../../data/types';
 import type { AiRungResult, RungStats } from '../fluency';
 import type { Band, FitnessStats, ItemInput } from '../fitness';
 import type { Reason } from '../../../domain/engines/types';
+import type { Coverage, SystemInput } from '../register';
+import type { Answer, DrillInput, DrillScore, DrillStats, Flag } from '../drills';
 
 // ── FS09
 export interface AiFluencyView {
@@ -45,6 +47,23 @@ export interface FitnessContext {
   enec_n: number | null;
 }
 
+// ── FS36
+export interface AiCoverageView extends Coverage {
+  /** 'all': ai_literacy Agg/A or audit_log R; 'owner': only the systems the caller owns. */
+  scope: 'all' | 'owner';
+  as_of: string;
+}
+// ── FS37
+export interface DrillResult extends Omit<DrillScore, 'reasons'> {
+  attempt_id: string;
+  drill_id: string;
+  attempt_no: number;
+  /** The drill's pass mark (from the key; shown with the result). */
+  pass_pct: number;
+  evidence: { skill_id: string; level: number }[];
+  reasons: Reason[];
+}
+
 export interface M29Rpc {
   /** FS09: my AI fluency rung (Own): the 16 cells with evidence, the rung, reasons, the next rung's gaps and my family target. Null when signed out or without ai_literacy Own. */
   aiFluency(): Promise<AiFluencyView | null>;
@@ -61,4 +80,16 @@ export interface M29Rpc {
   fitnessStats(): Promise<FitnessStats | null>;
   /** FS10: add, edit or retire an item (ai_literacy W: training manager). Keeps two active items per area and difficulty. */
   saveFitnessItem(input: ItemInput): Promise<Result<{ id: string; version: number; status: string }>>;
+  /** FS36: AI-literacy coverage per system and user group, computed from FS09 rungs (ai_literacy Agg or A, audit_log R; a system
+   *  owner sees their own systems). Groups under 10 suppressed. Null when the caller may see no coverage. */
+  aiLiteracyCoverage(): Promise<AiCoverageView | null>;
+  /** FS36: add or edit a register entry with its user groups (ai_literacy A: admin / AI governance). Versioned; groups are
+   *  deactivated, never deleted; "fully implemented" needs THRESHOLD % coverage; compliance or certification wording is refused. */
+  saveAiSystem(input: SystemInput): Promise<Result<{ id: string; version: number; status: string; maturity: string }>>;
+  /** FS37: submit a sandbox drill (ai_literacy Own): scored server-side against the key; a pass writes F01 assessment evidence <= L2. */
+  submitDrill(input: { drill_id: string; flags: Flag[]; answers: Answer[] }): Promise<Result<DrillResult>>;
+  /** FS37: drill results for training (ai_literacy W or Agg, or secure_items W/A): pass rates and missed error kinds, suppressed under 10. */
+  drillStats(): Promise<DrillStats | null>;
+  /** FS37: add, edit or retire a drill with its key (training manager: ai_literacy W and secure_items W/A). Versioned; synthetic only. */
+  saveDrill(input: DrillInput): Promise<Result<{ id: string; version: number; status: string }>>;
 }

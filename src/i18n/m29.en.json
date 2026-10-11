@@ -22,6 +22,34 @@
     "training-ai-fitness-items": {
       "title": "Fitness check item bank",
       "purpose": "The bilingual items behind the AI and digital fitness check, their coverage and their versions."
+    },
+    "workforce-ai-register": {
+      "title": "AI-literacy register",
+      "purpose": "Every AI system ENEC provides or deploys, the literacy each user group needs and how many are covered, computed from the AI fluency ladder."
+    },
+    "workforce-ai-system": {
+      "title": "AI system",
+      "purpose": "One register entry: its user groups, the rung each needs, coverage and gaps, measures and sources."
+    },
+    "workforce-ai-pack": {
+      "title": "AI-literacy pack",
+      "purpose": "An exportable pack of the register: a voluntary alignment with the EU AI Act Article 4 practice repository, not a compliance statement."
+    },
+    "admin-ai-register": {
+      "title": "Maintain the AI-literacy register",
+      "purpose": "Add and edit register entries and their user groups; versioned and audited."
+    },
+    "my-ai-drills": {
+      "title": "AI sandbox drills",
+      "purpose": "Practise catching a wrong AI output against a synthetic controlled procedure, then follow the challenge protocol."
+    },
+    "my-ai-drill": {
+      "title": "Sandbox drill",
+      "purpose": "Compare, flag, challenge, and see a scored result with reasons."
+    },
+    "training-ai-drills": {
+      "title": "Sandbox drill bank",
+      "purpose": "The drills, their keys and how people do on them, suppressed under 10."
     }
   },
   "rung": {
@@ -183,7 +211,8 @@
       "jpm": "JPM, {date}",
       "rating": "Validated rating, {date}",
       "ojt": "Work evidence, {date}",
-      "credential": "Credential, {date}"
+      "credential": "Credential, {date}",
+      "drill": "Sandbox drill, {date}"
     },
     "next": {
       "eyebrow": "Next step",
@@ -209,7 +238,9 @@
     "honest": {
       "title": "An honest ladder",
       "body": "{max} rungs, no points and no streaks. Your rung changes only when evidence changes, and evidence ages: digital and AI skills fall in the fast-changing decay class."
-    }
+    },
+    "toDrills": "Sandbox drills",
+    "toRegister": "AI systems I use"
   },
   "fit": {
     "intro": "A short adaptive check of your digital and AI skills. It takes about ten minutes, adapts to your answers and is scored on the server. You can take it once a quarter.",
@@ -447,5 +478,428 @@
     "retireTitle": "Retire {id}?",
     "retireBody": "The item stops being served. It stays in the bank, and the server refuses if its area and difficulty would drop below two active items."
   },
-  "evidenceLabel": "AI and digital fitness check"
+  "evidenceLabel": "AI and digital fitness check",
+  "reg": {
+    "intro": "Which AI systems ENEC provides or deploys, who uses each one, the AI literacy each user group needs on the AI fluency ladder and how many people are covered today. Coverage is computed from skill evidence, never typed in.",
+    "toPack": "Export the pack",
+    "toAdmin": "Maintain the register",
+    "none": "No register entries to show.",
+    "notRegulator": {
+      "title": "Voluntary alignment, not a regulator",
+      "body": "Kafa'a is not a regulator. The register follows the practice collected in the EU AI Office repository of AI-literacy practices (EU AI Act Article 4) as a voluntary alignment; it does not state compliance."
+    },
+    "tile": {
+      "systems": "Systems in the register",
+      "systemsSub": "{p} as provider · {d} as deployer",
+      "overall": "Users covered on every system",
+      "overallSub": "Computed from rungs · {scope}",
+      "full": "Labelled fully implemented",
+      "fullSub": "{ok} carried by coverage · {low} below 80%",
+      "fullSub0": "Coverage is shown to AI governance, HR and auditors",
+      "mine": "Systems I use",
+      "mineSub": "{n} of {of} requirements met",
+      "mineNone": "Sign in as staff to see yours"
+    },
+    "scope": {
+      "all": "all systems",
+      "owner": "systems you own"
+    },
+    "mine": {
+      "title": "AI systems I use",
+      "intro": "The groups your job family belongs to, the rung each needs and your own rung. Only you see this.",
+      "met": "Requirement met",
+      "notYet": "Not yet",
+      "needs": "Needs",
+      "you": "You",
+      "close": "See what closes the gap",
+      "drills": "Practise with sandbox drills"
+    },
+    "list": {
+      "title": "Register",
+      "intro": "Published entries. Each card shows ENEC's role, the approved-use class, the maturity label and coverage against the 80% line."
+    },
+    "filter": "Filter by ENEC's role",
+    "filterOpt": {
+      "all": "All",
+      "provider": "Provider",
+      "deployer": "Deployer"
+    },
+    "owner": "Owner",
+    "groups": "User groups",
+    "simulated": "SIMULATED",
+    "others": {
+      "title": "Drafts and retired entries",
+      "intro": "Visible to AI governance and auditors only; kept for the audit trail."
+    },
+    "maturity": {
+      "planned": "Planned",
+      "partial": "Partially rolled out",
+      "full": "Fully implemented"
+    },
+    "role": {
+      "provider": "Provider",
+      "deployer": "Deployer"
+    },
+    "roleLong": {
+      "provider": "Provider: ENEC builds or configures it",
+      "deployer": "Deployer: ENEC uses a tool built by others"
+    },
+    "use": {
+      "information": "Information only",
+      "decision_support": "Decision support",
+      "automation": "Automation"
+    },
+    "side": {
+      "provider": "Provider side",
+      "deployer": "Deployer side"
+    },
+    "allStaff": "All staff",
+    "cov": {
+      "hidden": "Coverage shown to AI governance, HR, auditors and the system owner",
+      "suppressed": "Suppressed: fewer than 10 people",
+      "system": "Users covered",
+      "threshold": "{pct} for fully implemented",
+      "why": "How is this computed?"
+    },
+    "label": {
+      "ok": "Label carried by coverage",
+      "low": "Label above coverage"
+    },
+    "legend": {
+      "title": "How to read the register",
+      "eyebrow": "Labels from the EU AI-literacy repository",
+      "planned": "The literacy measures are designed but not yet running for the users.",
+      "partial": "Measures run for some user groups; coverage is still growing.",
+      "full": "Measures run for every user group and at least 80% of users meet their required rung.",
+      "provider": "People who build or configure the system need provider-side literacy, usually Builder.",
+      "deployer": "People who use its outputs to make decisions need deployer-side literacy.",
+      "covT": "Coverage",
+      "cov": "The share of a group whose AI fluency rung (from skill evidence) meets the group's requirement. Groups under 10 people are suppressed."
+    },
+    "reason": {
+      "computed": "Coverage is computed from the AI fluency rungs of every user in {groups} groups; nobody types it in.",
+      "suppressed": "Fewer than {min} users: the figure is suppressed.",
+      "pct": "{pct}% of the system's users meet their group's required rung.",
+      "labelOk": "The fully implemented label is carried by coverage of {threshold}% or more.",
+      "labelLow": "The label says fully implemented, but coverage is below {threshold}%: review the label.",
+      "groupSuppressed": "One group has fewer than {min} people and is suppressed."
+    }
+  },
+  "sys": {
+    "intro": "One AI system in the register: who uses it, what literacy they need and how many are covered.",
+    "notFound": "This register entry is not available.",
+    "back": "Back to the register",
+    "facts": "Facts",
+    "role": "ENEC's role",
+    "use": "Approved use",
+    "version": "Version",
+    "review": "Next review",
+    "asOf": "As of",
+    "oversight": "Human oversight rule",
+    "coverage": "Coverage",
+    "coverageEyebrow": "Computed from AI fluency rungs",
+    "coverageNote": "Users across all groups: {n}. A person counts as covered when they meet every group they belong to.",
+    "you": {
+      "title": "Your requirement",
+      "eyebrow": "Only you see this"
+    },
+    "groups": {
+      "title": "User groups",
+      "intro": "Each group, the rung it needs (plus any single cells from a higher rung), its coverage and the most common gaps."
+    },
+    "col": {
+      "group": "Group",
+      "side": "Side",
+      "needs": "Needs",
+      "n": "Users",
+      "cov": "Covered",
+      "gaps": "Most common gaps"
+    },
+    "measures": "Literacy measures",
+    "measuresEyebrow": "What covers the users",
+    "sources": "Sources",
+    "noSources": "No public source: an internal synthetic example."
+  },
+  "pack": {
+    "intro": "The register as a pack you can download or print: entries, user groups, required rungs, measures and computed coverage.",
+    "statementTitle": "Statement carried by the pack",
+    "json": "Download JSON",
+    "csv": "Download CSV",
+    "print": "Print",
+    "generated": "Generated",
+    "systems": "Entries",
+    "groups": "User groups",
+    "aligned": "Aligned with (voluntary)",
+    "alignedEyebrow": "Benchmarks, not authorities",
+    "entries": "Entries",
+    "groupsCov": "User groups and coverage",
+    "rung": "rung {n}"
+  },
+  "adm": {
+    "intro": "Add or edit register entries and their user groups. Every save is versioned and audited; publishing writes the NEXUS ledger.",
+    "toRegister": "Open the register",
+    "rules": {
+      "title": "What the server refuses",
+      "body": "Compliance or certification wording (Kafa'a is not a regulator), a fully implemented label while fewer than 80% of users are covered, and groups without a rung or families. Groups are deactivated, never deleted."
+    },
+    "add": "Add a system",
+    "edit": "Edit",
+    "addTitle": "Add a register entry",
+    "editTitle": "Edit the register entry",
+    "save": "Save",
+    "col": {
+      "name": "System",
+      "status": "Status",
+      "role": "ENEC's role",
+      "maturity": "Label",
+      "cov": "Coverage",
+      "version": "Version"
+    },
+    "f": {
+      "name_en": "Name (English)",
+      "name_ar": "Name (Arabic)",
+      "purpose_en": "Purpose (English)",
+      "purpose_ar": "Purpose (Arabic)",
+      "role": "ENEC's role",
+      "use": "Approved-use class",
+      "maturity": "Maturity label",
+      "maturityHint": "Fully implemented needs 80% coverage",
+      "status": "Status",
+      "owner": "Owner (role card)",
+      "ownerPick": "Choose an owner",
+      "review": "Next review",
+      "simulated": "Simulated (synthetic example)",
+      "oversight_en": "Human oversight rule (English)",
+      "oversight_ar": "Human oversight rule (Arabic)",
+      "measures": "Literacy measures",
+      "groups": "User groups",
+      "label_en": "Group (English)",
+      "label_ar": "Group (Arabic)",
+      "side": "Side",
+      "rung": "Required rung",
+      "rationale_en": "Why (English)",
+      "rationale_ar": "Why (Arabic)"
+    },
+    "measure": {
+      "ladder": "AI fluency ladder",
+      "check": "AI and digital fitness check",
+      "drill": "Sandbox drills",
+      "course": "Governed use of AI tools (course)",
+      "briefing": "Briefing by the system owner"
+    },
+    "removeGroup": "Remove this group",
+    "addGroup": "Add a group",
+    "confirm": {
+      "title": "Save this register entry?",
+      "publish": "The entry is published to all staff, versioned, audited and written to the NEXUS ledger.",
+      "draft": "The entry is saved as a draft (or retired), versioned and audited."
+    }
+  },
+  "dr": {
+    "intro": "Catch the wrong AI output before it reaches the plant. Each drill puts an AI-styled summary next to a synthetic controlled procedure: flag what is wrong, name the kind of error, then follow the challenge protocol.",
+    "toFluency": "My AI fluency",
+    "none": "No drills are open yet.",
+    "evidenceLabel": "AI sandbox drill",
+    "synthetic": {
+      "title": "Synthetic documents, no model",
+      "body": "Every procedure is a synthetic SYN- document and every summary is authored text styled as AI output. Nothing calls a model; drills are scored with fixed rules and reasons."
+    },
+    "tile": {
+      "drills": "Open drills",
+      "passed": "Passed (latest attempt)",
+      "level": "Best evidence level",
+      "levelSub": "AI output verification, never above level 2",
+      "attempts": "My attempts"
+    },
+    "list": {
+      "title": "Drills",
+      "intro": "Start with the easier drills. Your latest attempt on a drill is the one that counts."
+    },
+    "passedL": "Passed · level {n}",
+    "notYet": "Not yet",
+    "new": "New",
+    "upTo": "Evidence up to level {n}",
+    "minutes": "About {n} min",
+    "levelN": "Level {n}",
+    "last": "Last attempt {pct} on {date}",
+    "retake": "Try again",
+    "start": "Start",
+    "difficulty": "Difficulty {n} of 3",
+    "kinds": {
+      "title": "Kinds of error",
+      "eyebrow": "Name them when you flag"
+    },
+    "kind": {
+      "omitted_step": "Omitted step",
+      "wrong_value": "Wrong value",
+      "wrong_order": "Wrong order",
+      "invented": "Invented content",
+      "overreach": "Overreach",
+      "stale_revision": "Stale revision"
+    },
+    "kindHelp": {
+      "omitted_step": "A required step or check is missing from the summary.",
+      "wrong_value": "A number, limit, setting or identifier differs from the procedure.",
+      "wrong_order": "The summary changes the sequence the procedure requires.",
+      "invented": "The summary adds a step, exception or claim that is not in the procedure.",
+      "overreach": "The summary concludes more than the source supports, such as a false all-clear.",
+      "stale_revision": "The summary cites an old revision of the document."
+    },
+    "scoring": {
+      "title": "How drills are scored",
+      "eyebrow": "Same rules in the browser and on the server",
+      "found": "Each planted error you flag: 2 points.",
+      "kind": "Naming its kind right: 1 more point.",
+      "false": "Each flag on a correct segment: minus 1 point.",
+      "protocol": "Each protocol answer right: 2 points; a wrong critical answer means not yet, whatever the score.",
+      "pass": "Pass: every critical step right, at least two thirds of the errors found and the drill's pass mark reached.",
+      "level": "Evidence: level 1, or level 2 on a level-2 drill with every error found and 85% or more. Never above level 2.",
+      "latest": "Your latest attempt on a drill replaces your earlier evidence from it."
+    },
+    "reason": {
+      "found": "You found {found} of {errors} planted errors.",
+      "kinds": "You named the kind right for {kinds} of the {found} you found.",
+      "false": "Flags on correct segments: {n}.",
+      "protocol": "Challenge protocol: {right} of {total} right.",
+      "critical": "A critical protocol step was wrong, so the drill is not passed.",
+      "level": "Passed with {pct}%: evidence at level {level}.",
+      "notPassed": "Not yet: {pct}% (pass mark {pass}%, and at least {need} errors found)."
+    }
+  },
+  "drill": {
+    "back": "All drills",
+    "notFound": "This drill is not available.",
+    "attempts": "{n} earlier attempts",
+    "step": {
+      "compare": "Compare and flag",
+      "protocol": "Challenge protocol",
+      "result": "Result"
+    },
+    "task": {
+      "title": "Your task",
+      "body": "Read the controlled procedure. Then flag every segment of the AI summary that is wrong and choose the kind of error. Correct segments should stay unflagged."
+    },
+    "doc": "Controlled procedure",
+    "syntheticChip": "SYNTHETIC",
+    "rev": "Revision {r}",
+    "outputEyebrow": "SIMULATED AI output, not a source",
+    "flag": "Flag",
+    "unflag": "Remove flag",
+    "kindQ": "Kind of error:",
+    "flagged": "Flagged: {n}",
+    "needKind": "Choose a kind of error for every flagged segment.",
+    "toProtocol": "Continue to the challenge protocol",
+    "protocol": {
+      "title": "Challenge the output",
+      "body": "Answer as you would at work. Some steps are critical: getting them wrong means not yet."
+    },
+    "backCompare": "Back to the comparison",
+    "submit": "Submit for scoring",
+    "confirm": {
+      "title": "Submit this drill?",
+      "body": "You flagged {n} segments. The server scores your answers against the key; a pass writes evidence for AI output verification (level 1 or 2)."
+    },
+    "res": {
+      "passed": "Passed: evidence at level {n}",
+      "notYet": "Not yet",
+      "summary": "Errors found {found} of {errors} · protocol {right} of {total} · flags on correct segments {false}",
+      "line": "Your score",
+      "passMark": "Pass mark {pct}",
+      "l2": "Level 2 at {pct}",
+      "criticalTitle": "A critical step was missed",
+      "critical": "Working from the AI summary, or giving in to time pressure, is the error this drill exists to prevent.",
+      "errors": "Planted errors",
+      "foundRight": "Found, kind right",
+      "foundKind": "Found, other kind",
+      "missed": "Missed",
+      "step": "Procedure step {n}",
+      "falseFlag": "Flag on a correct segment",
+      "falseHelp": "This segment matches the procedure.",
+      "protocol": "Challenge protocol",
+      "right": "Right",
+      "wrong": "Not right",
+      "criticalChip": "Critical",
+      "yours": "Your answer: {a}",
+      "best": "Best answer: {a}",
+      "evidence": "Evidence",
+      "evidenceWritten": "Written to your skills passport: AI output verification at level {n}.",
+      "toFluency": "See your AI fluency",
+      "noEvidence": "No evidence written. Your earlier evidence from this drill, if any, is replaced by this attempt.",
+      "more": "More drills"
+    }
+  },
+  "tdr": {
+    "intro": "The sandbox drills, their keys and how people do on them. Results use each person's latest attempt; cells under 10 are suppressed.",
+    "rules": "Documents must be synthetic (SYN- codes, marked SYNTHETIC); evidence is level 1 or 2; nothing may touch plant security. No drill calls a model.",
+    "tile": {
+      "drills": "Published drills",
+      "drillsSub": "{n} drafts",
+      "attempts": "Attempts",
+      "people": "People (latest attempt)",
+      "missed": "Most missed kind",
+      "missedSub": "Share of planted errors missed"
+    },
+    "bank": "Drill bank",
+    "bankIntro": "Pass rate and average score per drill. Open the key to see the planted errors and protocol answers.",
+    "col": {
+      "drill": "Drill",
+      "status": "Status",
+      "diff": "Difficulty",
+      "level": "Evidence",
+      "people": "People",
+      "pass": "Pass rate",
+      "avg": "Average score"
+    },
+    "key": "Key",
+    "edit": "Edit",
+    "copy": "Duplicate",
+    "keyTitle": "Key: {title}",
+    "passMark": "Pass mark {pct}",
+    "missed": {
+      "title": "Missed by kind of error",
+      "eyebrow": "Where to focus the training"
+    },
+    "addTitle": "New drill (draft)",
+    "editTitle": "Edit the drill",
+    "save": "Save",
+    "f": {
+      "title_en": "Title (English)",
+      "title_ar": "Title (Arabic)",
+      "summary_en": "Summary (English)",
+      "summary_ar": "Summary (Arabic)",
+      "scenario_en": "Scenario (English)",
+      "scenario_ar": "Scenario (Arabic)",
+      "difficulty": "Difficulty",
+      "level": "Evidence level",
+      "levelHint": "Never above 2",
+      "minutes": "Minutes",
+      "status": "Status",
+      "doc": "Synthetic controlled procedure",
+      "code": "Code",
+      "codeHint": "SYN-XX-000",
+      "revision": "Revision",
+      "docTitle_en": "Title (English)",
+      "docTitle_ar": "Title (Arabic)",
+      "steps": "Steps",
+      "stepsHint": "One step per line: English || Arabic",
+      "output": "AI-styled summary and planted errors",
+      "segments": "Segments",
+      "segmentsHint": "One segment per line: id || English || Arabic",
+      "errors": "Planted errors",
+      "segment": "Segment",
+      "kind": "Kind",
+      "explain_en": "Explanation (English)",
+      "explain_ar": "Explanation (Arabic)",
+      "protocol": "Challenge protocol key",
+      "correct": "Best answer",
+      "critical": "Critical step",
+      "pass": "Pass mark (%)"
+    },
+    "removeError": "Remove",
+    "addError": "Add a planted error",
+    "confirm": {
+      "title": "Save this drill?",
+      "body": "The drill and its key are versioned and audited. A published drill opens to all staff."
+    }
+  }
 }

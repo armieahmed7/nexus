@@ -17,7 +17,7 @@ export default async function w0Checks({ db, as, one, count, ok }) {
 
   // ── parity: SQL derive/compute over the seeded tables gives exactly the seeded (TS-derived) evidence and states
   const ev = await fq(`select id, level, basis, status, observed_on::text as observed_on from kafaa_skill_evidence_derive(null, $1::date) order by id collate "C"`, [now]);
-  const seedDerived = T.skill_evidence.filter((e) => ['qual', 'course', 'assessment', 'jpm'].includes(e.kind) && !['fitness_attempts', 'adaptive_attempts', 'task_attempts'].includes(e.ref_table) /* FS10, FS21/FS22 */).sort((a, b) => (a.id < b.id ? -1 : 1));
+  const seedDerived = T.skill_evidence.filter((e) => ['qual', 'course', 'assessment', 'jpm'].includes(e.kind) && !['fitness_attempts', 'adaptive_attempts', 'task_attempts', 'ai_drill_attempts'].includes(e.ref_table) /* FS10, FS21/FS22 */).sort((a, b) => (a.id < b.id ? -1 : 1));
   const evSame = ev.length === seedDerived.length && ev.every((r, i) => r.id === seedDerived[i].id && r.level === seedDerived[i].level && r.basis === seedDerived[i].basis && r.status === seedDerived[i].status && r.observed_on === seedDerived[i].observed_on);
   ok(evSame, `SQL derived evidence equals the TS seed (${ev.length} rows)`);
   const st = await fq(`select id, level, confidence::float8 as confidence, basis, reasons, evidence_count from kafaa_skill_states_compute(null, $1::date) order by id collate "C"`, [now]);
