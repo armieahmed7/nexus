@@ -3,7 +3,7 @@
 import { useQuery, useRepo } from '../../data';
 import { useSession } from '../../auth/session';
 import { L, useFormat, usePick, useT } from '../../i18n';
-import { Async, Callout, Card, Icon, Page, Section, SourceLink, StatusPill } from '../../ui';
+import { Async, BenchmarkChips, Callout, Card, Icon, Page, Section, SourceLink, StatusPill } from '../../ui';
 import { SourcesList, useContentPage, type SourceRef } from '../m12/parts';
 
 const VALUES = ['A', 'T', 'S', 'I', 'T2', 'E'] as const;
@@ -17,7 +17,7 @@ export default function SafetyCulturePage() {
   const s = useSession();
   const page = useContentPage('safety-culture');
   const traits = useQuery('sc_traits', () => repo.list('sc_traits', { order: [['n', 'asc']] }));
-  const hu = useQuery('hu_tools', () => repo.list('hu_tools'));
+  const hu = useQuery('hu_tools', () => repo.list('hu_tools', { order: [['sort', 'asc']] }));
   const staff = s.can('internal_content', ['R']);
   return (
     <Page
@@ -91,7 +91,7 @@ export default function SafetyCulturePage() {
               {(['core', 'conditional'] as const).map((k) => (
                 <Card key={k} title={t(`m08.sc.hu.${k}`)} eyebrow={t(`m08.sc.hu.${k}Hint`)}>
                   <ul className="space-y-2">
-                    {rows.filter((r) => r.kind === k).map((r) => (
+                    {rows.filter((r) => r.kind === k && r.topic !== 'ai_automation').map((r) => (
                       <li key={r.id}>
                         <div className="text-[13.5px] font-semibold">{pick(r, 'name')}</div>
                         <div className="text-[12.5px] text-ink-2">{pick(r, 'description')}</div>
@@ -100,6 +100,20 @@ export default function SafetyCulturePage() {
                   </ul>
                 </Card>
               ))}
+              {/* FS49: HU tools for an AI-augmented plant (public card text; drills and lessons open for staff) */}
+              <div className="md:col-span-2">
+                <Card title={t('m08.sc.huAiTitle')} eyebrow={t('m08.sc.huAiHint')} actions={staff ? <L to="/my/safety-culture/ai" className="btn-outline btn-sm no-underline" data-testid="m08-sc-to-ai">{t('m08.sc.huAiLink')}</L> : undefined}>
+                  <ul className="grid gap-3 sm:grid-cols-2" data-testid="m08-hu-ai">
+                    {rows.filter((r) => r.topic === 'ai_automation').map((r) => (
+                      <li key={r.id}>
+                        <div className="text-[13.5px] font-semibold">{pick(r, 'name')}</div>
+                        <div className="text-[12.5px] text-ink-2">{pick(r, 'description')}</div>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="mt-3"><BenchmarkChips feature="FS49" /></div>
+                </Card>
+              </div>
             </div>
           )}
         </Async>
