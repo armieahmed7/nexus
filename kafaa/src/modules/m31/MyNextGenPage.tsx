@@ -40,7 +40,7 @@ export default function MyNextGenPage() {
   const eng = useEngine('transform');
   return (
     <Page title={t('m31.routes.my-next-gen.title')} intro={t('m31.my.intro')} wide
-      eyebrow={<span className="inline-flex flex-wrap items-center gap-2"><SimChip label={t('m31.ng.planningChip')} /><BenchmarkChips feature="FS38" /><EngineBadge engine={eng} /></span>}
+      eyebrow={<span className="flex min-w-0 max-w-full flex-wrap items-center gap-2"><SimChip label={t('m31.ng.planningChip')} /><BenchmarkChips feature="FS38" /><EngineBadge engine={eng} /></span>}
       actions={<L to="/careers/next-gen" className="btn-outline btn-sm no-underline" data-testid="m31-to-public">{t('m31.my.toPublic')}</L>}>
       <Async state={ref}>{(d) => (
         <Async state={q}>{(m) => (

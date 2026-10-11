@@ -10,6 +10,7 @@ import { SignatureChip, shareUrl } from './WalletPage';
 import { McAction } from './MicrocredsPage';
 import { AreaChip, CriteriaList, McMedal, McStatusPill, ProgressLine, cardState, eligibilityReasons } from './mcUi';
 import { HowToEarn, StrategicChip, TakesYou, useFcData, type FcData } from './fcUi';
+import { CecCitations } from '../m32/links'; // FS wave E integration (FS41 -> FS31: criteria cite CleanEnergyComp competences)
 
 export default function CredentialPage() {
   const t = useT();
@@ -67,6 +68,7 @@ function One({ d, code }: { d: FcData; code: string }) {
           <HowToEarn d={d} def={def} />
         </Card>
       </div>
+      <CecCitations criteria={(def.criteria ?? []) as never} />
 
       <Card title={t('m17.fc.takes.title')} eyebrow={t('m17.fc.takes.eyebrow')}>
         <TakesYou d={d} def={def} />

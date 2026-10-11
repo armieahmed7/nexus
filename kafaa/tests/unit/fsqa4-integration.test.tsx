@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 /** [FS QA · wave D integration] Cross-feature wiring of FS27-FS37 on master, one test per integration criterion:
- *   routes      288 routes (259 after wave C + 29 wave-D routes), each wave-D path registered
+ *   routes      288 routes after wave D (259 after wave C + 29 wave-D routes; 315 after wave E), each wave-D path registered
  *   benchmarks  every wave-D page names its card's FS01 benchmark chips; every chip is a published row with an https source and an as-of date
  *   FS31-FS27   a gig that names a strategic credential refuses a non-holder (credential_required) and accepts a holder; ungated gigs unchanged;
  *               the apply card shows the gate (unlocked / locked, with links to the credential)
@@ -57,10 +57,10 @@ function componentOf(path: string): string {
 }
 
 describe('FS wave D · route registry', () => {
-  it('288 routes, and the 29 wave-D routes are registered', async () => {
+  it('288 routes after wave D (315 after wave E), and the 29 wave-D routes are registered', async () => {
     const { loadRoutes } = await import('../smoke/routes');
     const R = loadRoutes();
-    expect(R.length).toBe(288);
+    expect(R.length).toBe(315); // FS wave E QA: + 27 wave-E routes (tests/unit/fsqa5-integration.test.tsx)
     const paths = new Set(R.map((r) => r.path));
     expect(WAVE_D.length).toBe(29);
     for (const [p] of WAVE_D) expect(paths.has(p), p).toBe(true);

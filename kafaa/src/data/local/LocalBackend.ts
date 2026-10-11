@@ -204,7 +204,7 @@ export class LocalBackend implements Repository {
       await this.audit(`insert:${table}`, table, String(row.id), 'refused', 'RLS: insert not permitted');
       return { ok: false, code: 'forbidden', message: 'Not permitted' };
     }
-    const guard = directWriteGuard(table, null, row, ctx); // G2: column guards (./guards.ts), mirrored by SQL triggers
+    const guard = directWriteGuard(table, null, row, ctx, (t) => (this.raw(t as never) ?? []) as unknown as Record<string, unknown>[]); // G2: column guards (./guards.ts), mirrored by SQL triggers; FS49 reference checks read other tables
     if (guard) {
       await this.audit(`insert:${table}`, table, String(row.id), 'refused', `guard: ${guard}`);
       return { ok: false, code: 'forbidden', message: guard };
@@ -232,7 +232,7 @@ export class LocalBackend implements Repository {
       await this.audit(`update:${table}`, table, id, 'refused', 'RLS: update not permitted');
       return { ok: false, code: 'forbidden', message: 'Not permitted' };
     }
-    const guard = directWriteGuard(table, current, next, ctx); // G2: column guards (./guards.ts), mirrored by SQL triggers
+    const guard = directWriteGuard(table, current, next, ctx, (t) => (this.raw(t as never) ?? []) as unknown as Record<string, unknown>[]); // G2: column guards (./guards.ts), mirrored by SQL triggers; FS49 reference checks read other tables
     if (guard) {
       await this.audit(`update:${table}`, table, id, 'refused', `guard: ${guard}`);
       return { ok: false, code: 'forbidden', message: guard };

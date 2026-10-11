@@ -16,7 +16,7 @@ export default function PlantLiteracyPage() {
   const score = quizScore(answers);
   return (
     <Page title={t('m31.routes.learn-plant-literacy.title')} intro={t('m31.pl.intro')} wide
-      eyebrow={<span className="inline-flex flex-wrap items-center gap-2"><SimChip /><BenchmarkChips feature="FS39" /></span>}
+      eyebrow={<span className="flex min-w-0 max-w-full flex-wrap items-center gap-2"><SimChip /><BenchmarkChips feature="FS39" /></span>}
       actions={<L to="/my/plant-log" className="btn-outline btn-sm no-underline" data-testid="m31-pl-to-log">{t('m31.pl.toLog')}</L>}>
       <div className="space-y-5" data-testid="m31-pl" data-offline="true">
         <Callout tone="sim" title={t('m31.pl.simTitle')}><span data-testid="m31-pl-sim">{t('m31.pl.simBody')}</span></Callout>

@@ -675,3 +675,96 @@ for (const s of SET_FSD) {
     await page.screenshot({ path: join(SHOTS_FSD, `${s.name}.png`), fullPage: false });
   });
 }
+
+// FS wave E (FS38-FS49): every new page (and the pages the wave-E wiring touched) in Arabic RTL and at 390 px, plus the feature set
+// saved to KAFAA_SHOTS_FSE. LOCAL backend: the wave-E QA session had no live access (no demo password); rerun in supabase mode after
+// the live apply by switching openFse to open().
+async function openFse(page: Page, s: Shot) {
+  await pinBackend(page, 'local', s.persona ?? null);
+  if (s.mobile) await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(`${BASE}${s.ar ? '/ar' : ''}${s.path === '/' && s.ar ? '' : s.path}`);
+  await settle(page);
+  if (s.then) {
+    await s.then(page);
+    await settle(page);
+  }
+  await page.evaluate(() => document.fonts.ready);
+  await page.waitForTimeout(400);
+}
+const FSE_PAGES: Shot[] = [
+  { name: 'fse-careers-next-gen', path: '/careers/next-gen?role=reactor-operator' },
+  { name: 'fse-my-next-gen', path: '/my/next-gen', persona: 'k-ro' },
+  { name: 'fse-workforce-next-gen', path: '/workforce/next-gen', persona: 'chco' },
+  { name: 'fse-admin-next-gen', path: '/admin/next-gen', persona: 'training-mgr' },
+  { name: 'fse-plant-literacy', path: '/learn/plant-literacy', persona: 'buyer' },
+  { name: 'fse-plant-literacy-step', path: '/learn/plant-literacy', persona: 'buyer', then: async (p) => { await p.locator('[data-testid="m31-pl-start"]').first().click(); await p.locator('[data-testid="m31-pl-next"]').click(); } },
+  { name: 'fse-plant-log', path: '/my/plant-log', persona: 'buyer' },
+  { name: 'fse-plant-log-host', path: '/my/plant-log?tab=host', persona: 'k-instructor' },
+  { name: 'fse-twin-drills', path: '/my/twin-drills', persona: 'qc-inspector' },
+  { name: 'fse-twin-drill', path: '/my/twin-drills/tw-fw-bearing', persona: 'buyer' },
+  { name: 'fse-training-twin-drills', path: '/training/twin-drills', persona: 'training-mgr' },
+  { name: 'fse-clean-energy', path: '/skills/clean-energy' },
+  { name: 'fse-cec-competence', path: '/skills/clean-energy/cec-3-2' },
+  { name: 'fse-my-clean-energy', path: '/my/clean-energy', persona: 'head-sustainability' },
+  { name: 'fse-workforce-clean-energy', path: '/workforce/clean-energy', persona: 'chco' },
+  { name: 'fse-energy-transition', path: '/learn/energy-transition', persona: 'k-ro' },
+  { name: 'fse-esg-managers', path: '/learn/energy-transition/esg-managers', persona: 'k-ro' },
+  { name: 'fse-value-chain', path: '/learn/energy-transition/vc-hydrogen', persona: 'k-ro' },
+  { name: 'fse-lectures', path: '/knowledge/lectures', persona: 'nse' },
+  { name: 'fse-lecture', path: '/knowledge/lectures/lec-001', persona: 'nse' },
+  { name: 'fse-contributions', path: '/knowledge/contributions', persona: 'training-mgr' },
+  { name: 'fse-localisation', path: '/knowledge/localisation', persona: 'training-mgr' },
+  { name: 'fse-behaviours', path: '/leadership/behaviours', persona: 'qc-inspector' },
+  { name: 'fse-future-leaders', path: '/leadership/future-leaders', persona: 'qc-inspector' },
+  { name: 'fse-future-leaders-manage', path: '/leadership/future-leaders/manage', persona: 'chco' },
+  { name: 'fse-women-in-nuclear', path: '/communities/women-in-nuclear', persona: 'qc-inspector' },
+  { name: 'fse-women-programme', path: '/communities/women-in-nuclear/programme', persona: 'training-mgr' },
+  { name: 'fse-safety-culture-ai', path: '/my/safety-culture/ai', persona: 'qc-inspector' },
+  { name: 'fse-hu-tools-admin', path: '/admin/hu-tools', persona: 'training-mgr' },
+  { name: 'fse-handover-panel', path: '/workforce/handover', persona: 'chco' },
+  { name: 'fse-credential-twins', path: '/my/skills/credentials/c/MC-TWINS', persona: 'nse' },
+  { name: 'fse-credential-clean-energy', path: '/my/skills/credentials/c/MC-CLEAN-ENERGY', persona: 'nse' },
+  { name: 'fse-gig-twin-drills', path: '/opportunities/fg-dig-twin-validation', persona: 'nse' },
+  { name: 'fse-future-me', path: '/my/future', persona: 'nse' },
+];
+for (const s of FSE_PAGES) {
+  test(`rtl ${s.name}`, async ({ page }) => {
+    const w = watchErrors(page);
+    await openFse(page, { ...s, ar: true });
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
+    expect(await overflowX(page), 'no horizontal scroll').toBeLessThanOrEqual(1);
+    expect(await textIssues(page)).toEqual([]);
+    await page.screenshot({ path: join(OUT, 'rtl', `${s.name}.png`), fullPage: true });
+    expect(w.take()).toEqual([]);
+  });
+  test(`mobile ${s.name}`, async ({ page }) => {
+    const w = watchErrors(page);
+    await openFse(page, { ...s, mobile: true });
+    expect(await overflowX(page), `${s.name}: page scrolls sideways at 390 px`).toBeLessThanOrEqual(1);
+    expect(await textIssues(page)).toEqual([]);
+    await page.screenshot({ path: join(OUT, 'mobile', `${s.name}.png`), fullPage: true });
+    expect(w.take()).toEqual([]);
+  });
+}
+const SHOTS_FSE = process.env.KAFAA_SHOTS_FSE || 'test-results/shots_fsE';
+mkdirSync(SHOTS_FSE, { recursive: true });
+const SET_FSE: Shot[] = [
+  { name: '01-smr-delta-grid-en', path: '/careers/next-gen?role=reactor-operator' },
+  { name: '02-my-smr-delta-en', path: '/my/next-gen', persona: 'k-ro' },
+  { name: '03-plant-literacy-en', path: '/learn/plant-literacy', persona: 'buyer', then: async (p) => { await p.locator('[data-testid="m31-pl-start"]').first().click(); } },
+  { name: '04-twin-drill-en', path: '/my/twin-drills/tw-fw-bearing', persona: 'buyer' },
+  { name: '05-clean-energy-comp-en', path: '/skills/clean-energy' },
+  { name: '06-value-chain-en', path: '/learn/energy-transition/vc-hydrogen', persona: 'k-ro' },
+  { name: '07-lecture-library-en', path: '/knowledge/lectures', persona: 'nse' },
+  { name: '08-localisation-countdown-en', path: '/knowledge/localisation', persona: 'training-mgr' },
+  { name: '09-future-leaders-ar', path: '/leadership/future-leaders', persona: 'qc-inspector', ar: true },
+  { name: '10-safety-culture-ai-mobile', path: '/my/safety-culture/ai', persona: 'qc-inspector', mobile: true },
+];
+for (const s of SET_FSE) {
+  test(`shot fse ${s.name}`, async ({ page }) => {
+    if (!s.mobile) await page.setViewportSize({ width: 1440, height: 900 });
+    await openFse(page, s);
+    await page.screenshot({ path: join(SHOTS_FSE, `${s.name}.png`), fullPage: false });
+  });
+}

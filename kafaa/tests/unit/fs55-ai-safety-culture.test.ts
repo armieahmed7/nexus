@@ -166,7 +166,7 @@ describe('FS49 · "which tool fits this moment?" matcher', () => {
   });
   it('every cue and situation has EN and AR labels', () => {
     for (const c of CUE_IDS) expect(CUES[c].en && AR.test(CUES[c].ar)).toBeTruthy();
-    for (const s of SITUATIONS) { expect(get(en, `ai.sit.${s.id}`)).toBeTruthy(); expect(AR.test(get(ar, `ai.sit.${s.id}`))).toBe(true); }
+    for (const s of SITUATIONS) { expect(get(en, `ai.sit.${s.id}`)).toBeTruthy(); expect(AR.test(String(get(ar, `ai.sit.${s.id}`)))).toBe(true); }
   });
 });
 
@@ -209,7 +209,7 @@ describe('FS49 · seed, coverage tiles, benchmarks and i18n', () => {
     for (const id of FEATURE_BENCHMARKS.FS49) expect(T.benchmarks.find((x) => x.id === id)?.listed).toBe(true);
   });
   it('new routes and all FS49 strings exist in EN and AR', () => {
-    for (const id of ['my-safety-culture-ai', 'admin-hu-tools']) { expect(get(en, `routes.${id}.title`)).toBeTruthy(); expect(AR.test(get(ar, `routes.${id}.title`))).toBe(true); }
+    for (const id of ['my-safety-culture-ai', 'admin-hu-tools']) { expect(get(en, `routes.${id}.title`)).toBeTruthy(); expect(AR.test(String(get(ar, `routes.${id}.title`)))).toBe(true); }
     const keys = (o: Row, p = ''): string[] => Object.entries(o).flatMap(([k, v]) => (v && typeof v === 'object' ? keys(v, `${p}${k}.`) : [`${p}${k}`]));
     for (const k of keys({ ai: (en as Row).ai, hu: (en as Row).hu, adm: (en as Row).adm })) expect(String(get(ar, k) ?? '').trim(), k).not.toBe('');
   });

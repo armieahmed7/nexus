@@ -358,6 +358,7 @@
     }
   },
   "ctb": {
+    "evidenceLabel": "Validated expert contribution", "evidenceSystem": "Knowledge library (reviewer-validated)",
     "intro": "Publish lectures that experts submitted and validate contributions. Validated contributions become skill evidence; nothing is written before.",
     "toLibrary": "Lecture library",
     "noAccess": "Only the knowledge-management owner reviews lectures and contributions",

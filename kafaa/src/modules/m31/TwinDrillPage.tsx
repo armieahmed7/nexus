@@ -24,7 +24,7 @@ export default function TwinDrillPage() {
     <Async state={q}>{(d) => {
       const sc = d.scenarios.find((x) => x.id === id);
       return (
-        <Page title={sc ? pick(sc, 'title') : t('m31.routes.my-twin-drill.title')} intro={sc ? pick(sc, 'scenario') : undefined} wide eyebrow={<span className="inline-flex flex-wrap items-center gap-2"><SimChip /><BenchmarkChips feature="FS40" /></span>}
+        <Page title={sc ? pick(sc, 'title') : t('m31.routes.my-twin-drill.title')} intro={sc ? pick(sc, 'scenario') : undefined} wide eyebrow={<span className="flex min-w-0 max-w-full flex-wrap items-center gap-2"><SimChip /><BenchmarkChips feature="FS40" /></span>}
           actions={<L to="/my/twin-drills" className="btn-outline btn-sm no-underline" data-testid="m31-twd-back">{t('m31.twd.back')}</L>}>
           {sc ? <Player key={sc.id} sc={sc} attempts={d.attempts.filter((a) => a.scenario_id === sc.id)} skills={d.skills} /> : <EmptyState title={t('m31.twd.notFound')} />}
         </Page>
@@ -171,10 +171,10 @@ function Trend({ series, g }: { series: Series; g: Signal }) {
         <text x={W - 6} y={H - 2} fontSize="9" textAnchor="end" fill="rgb(var(--ink-3))">{series.t[series.t.length - 1]}</text>
         <text x={W - 8} y={12} fontSize="9" textAnchor="end" fontWeight="700" fill="rgb(var(--sim))">{t('common.simulated')}</text>
       </svg>
-      <table className="sr-only">
+      <div className="sr-only"><table>
         <caption>{t('m31.twd.tableCaption', { name, lo: g.band[0], hi: g.band[1] })}</caption>
         <tbody>{g.values.map((v, i) => <tr key={i}><th scope="row">{series.t[i]}</th><td>{v}</td></tr>)}</tbody>
-      </table>
+      </table></div>
     </figure>
   );
 }

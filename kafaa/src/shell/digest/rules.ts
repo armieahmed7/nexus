@@ -6,7 +6,8 @@
  * A digest holds at most 7 items, each with a deep link and its reasons ("why"):
  *   expiry       my current qualifications (non-restricted standards) and mirrored licences expiring within 90 days     urgency 1
  *   approval     things I owe someone: skill ratings asked of me, mentoring requests and agreement proposals addressed to me,
- *                opportunity releases waiting for me, my own career-conversation record to acknowledge                      urgency 2
+ *                opportunity releases waiting for me, my own career-conversation record to acknowledge, OJT entries and
+ *                evaluation requests (W5), reference-plant visits naming me as host (FS39, wave E integration)              urgency 2
  *   coach        the top Learning Coach action (F07 engine card passed as a hint by the page), else my soonest mandatory
  *                training due within 60 days (the coach's "must keep" rule)                                                urgency 3
  *   opportunity  open opportunities posted in the last 21 days that match me at 70% or more (F08 match formula, below)      urgency 3
@@ -115,6 +116,8 @@ export interface DigestData {
   /** W5 integration (F38): OJT practice entries and evaluation requests that name me (optional: older callers omit them). */
   ojt_logs?: Row[];
   ojt_eval_requests?: Row[];
+  /** FS wave E integration (FS39): reference-plant visits and simulator observations that name me as host (optional). */
+  plant_visits?: Row[];
 }
 
 // ───────────── dates (ISO yyyy-mm-dd, UTC)
@@ -324,6 +327,14 @@ export function gatherDigest(d: DigestData, me: string, today: string, hints: Di
     const [en, ar] = nameOf(d.people, r.person_id);
     out.push(item({ id: `approval:ojt_eval_requests:${r.id}`, kind: 'approval', ref_table: 'ojt_eval_requests', ref_id: r.id, title_en: `OJT evaluation requested: ${en}`, title_ar: `طلب تقييم تدريب عملي: ${ar}`, meta_en: en, meta_ar: ar,
       link: '/my/ojt?tab=evaluate', why: [{ code: 'approval_ojt_eval', vars: { date: at } }] }));
+  }
+  // approvals (FS wave E integration, FS39): reference-plant visits naming me as host, logged by today and waiting for my confirmation
+  for (const v of d.plant_visits ?? []) {
+    const on = String(v.created_at).slice(0, 10);
+    if (v.host_person_id !== me || v.status !== 'logged' || v.person_id === me || on > today) continue;
+    const [en, ar] = nameOf(d.people, v.person_id);
+    out.push(item({ id: `approval:plant_visits:${v.id}`, kind: 'approval', ref_table: 'plant_visits', ref_id: v.id, title_en: `Plant visit to confirm: ${en}`, title_ar: `زيارة محطة بانتظار تأكيدك: ${ar}`, meta_en: en, meta_ar: ar,
+      link: '/my/plant-log?tab=host', why: [{ code: 'approval_plant_visit', vars: { date: on } }] }));
   }
   // coach: the F07 top card (hint), else my soonest mandatory training due within 60 days
   const coachOff = optedOut(d, me, 'coach');

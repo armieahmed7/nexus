@@ -641,5 +641,6 @@
       "pass": "Pass mark 50 to 95.",
       "restricted": "Remove plant security wording."
     }
-  }
+  },
+  "link": {"mine": "What changes in my role on an SMR or advanced-reactor fleet", "public": "What changes for each Barakah role on an SMR or advanced-reactor fleet", "body": "The role-by-technology delta: what changes, what stays the same and the training that closes the gap.", "noDecision": "Planning view only: no deployment decision implied.", "twinLane": "Practise diagnosis on digital-twin drills", "twinTitle": "Practise first: digital-twin drills", "twinBody": "Synthetic trend sets where you diagnose a degrading component and justify a conservative action. A passed drill writes evidence (level 2 at most) for the skills this gig names."}
 }

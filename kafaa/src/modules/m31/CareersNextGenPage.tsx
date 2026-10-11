@@ -17,7 +17,7 @@ export default function CareersNextGenPage() {
   const q = useQuery(['smr_deltas'], () => (repo.list('smr_deltas', { order: [['sort', 'asc']] } as never) as Promise<Row[]>).then((xs) => xs.filter((x) => x.status === 'published')), []);
   return (
     <Page title={t('m31.routes.careers-next-gen.title')} intro={t('m31.pub.intro')} wide
-      eyebrow={<span className="inline-flex flex-wrap items-center gap-2"><SimChip label={t('m31.ng.planningChip')} /><BenchmarkChips feature="FS38" /></span>}
+      eyebrow={<span className="flex min-w-0 max-w-full flex-wrap items-center gap-2"><SimChip label={t('m31.ng.planningChip')} /><BenchmarkChips feature="FS38" /></span>}
       actions={<L to="/my/next-gen" className="btn-primary btn-sm no-underline" data-testid="m31-pub-mine">{t('m31.pub.mine')}</L>}>
       <Async state={ref}>{(d) => <Async state={q} isEmpty={(xs) => xs.length === 0} empty={<EmptyState title={t('m31.pub.none')} />}>{(deltas) => <Body d={d} deltas={deltas} />}</Async>}</Async>
     </Page>

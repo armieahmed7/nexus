@@ -8,6 +8,8 @@ import { Section, Drawer, Tabs, Icon, SimChip, StatusPill, BenchmarkChips } from
 import { useT, usePick, useFormat, L } from '../../i18n';
 import { AXIS, LANE_HORIZONS, axisPos, laneLevel2, laneMilestones, linksOf, openGigs, type LaneHorizon } from './lanes';
 import { GoalButton, InterestToggle, LevelDots, SourceLinks, type FutureMeData, type FutureSource } from './shared';
+import { NextGenLink, TwinLaneLink } from '../m31/links'; // FS wave E integration (FS38/FS40 -> FS14)
+import { CleanEnergyLink, EnergyTransitionLink } from '../m32/links'; // FS wave E integration (FS41/FS42 -> FS14)
 
 type Lane = FutureMeData['lanes'][number];
 const HZ = Object.keys(LANE_HORIZONS) as LaneHorizon[];
@@ -190,6 +192,7 @@ function LaneDrawer({ d, lane, onClose }: { d: FutureMeData; lane: Lane; onClose
         {lk.pathway.length === 0 ? <Empty /> : <ul className="flex flex-wrap gap-1.5 text-[12.5px]">{lk.pathway.map((c) => <li key={c.id}><L to={`/learn/paths/${c.ref_id}`} className="chip border-line bg-panel text-ink">{t(`m21.hz2.path.${c.ref_id}`)}</L></li>)}</ul>}
         <H>{t('m21.hz2.resources')}</H>
         {res.length === 0 ? <Empty /> : <ul className="space-y-1.5 text-[13px]">{res.map((r) => <li key={r.id}><span className="chip me-1 border-line bg-sunken text-ink-2">{t(`m21.res.kind.${r.kind}`)}</span>{r.course_id ? <L to={`/learn/course/${r.course_id}`}>{pick(r, 'title')}</L> : pick(r, 'title')}</li>)}</ul>}
+        <WaveELaneLinks laneId={lane.id} />
         <H>{t('m21.hz2.gigs')}</H>
         {gigs.length === 0 ? <Empty /> : <ul className="space-y-1 text-[13px]" data-testid="m21-lane-gigs">{gigs.map((g) => <li key={g.id}><Icon name="briefcase" size={12} /> <L to={`/opportunities/${g.id}`}>{pick(g, 'title')}</L></li>)}</ul>}
         <H>{t('m21.hz2.milestones')}</H>
@@ -202,5 +205,20 @@ function LaneDrawer({ d, lane, onClose }: { d: FutureMeData; lane: Lane; onClose
         <p className="mt-3 flex items-center gap-1.5 text-[11.5px] text-sim"><SimChip /> {t('m11.common.noDecision')}</p>
       </div>
     </Drawer>
+  );
+}
+
+/** FS wave E integration: lanes that a wave-E feature serves link to it (HZ-4/HZ-8 SMR delta, HZ-1/HZ-7 twin drills, HZ-5 CleanEnergyComp, HZ-9/HZ-10 energy-system pathway). */
+export const WAVE_E_LANE_LINKS: Record<string, ('next_gen' | 'twin' | 'cec' | 'transition')[]> = {
+  'lane-advanced': ['next_gen'], 'lane-manufacturing': ['next_gen'], 'lane-digital': ['twin'], 'lane-ai-maint': ['twin'],
+  'lane-netzero': ['cec'], 'lane-hydrogen': ['transition'], 'lane-grid': ['transition'],
+};
+function WaveELaneLinks({ laneId }: { laneId: string }) {
+  const links = WAVE_E_LANE_LINKS[laneId] ?? [];
+  if (!links.length) return null;
+  return (
+    <div className="mt-4 space-y-1.5" data-testid="m21-lane-wave-e">
+      {links.map((k) => (k === 'next_gen' ? <NextGenLink key={k} compact /> : k === 'twin' ? <TwinLaneLink key={k} /> : k === 'cec' ? <CleanEnergyLink key={k} /> : <EnergyTransitionLink key={k} />))}
+    </div>
   );
 }

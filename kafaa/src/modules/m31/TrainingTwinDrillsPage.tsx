@@ -30,7 +30,7 @@ export default function TrainingTwinDrillsPage() {
   const t = useT();
   const q = useBank();
   return (
-    <Page title={t('m31.routes.training-twin-drills.title')} intro={t('m31.ttw.intro')} wide eyebrow={<span className="inline-flex flex-wrap items-center gap-2"><SimChip /><BenchmarkChips feature="FS40" /></span>}>
+    <Page title={t('m31.routes.training-twin-drills.title')} intro={t('m31.ttw.intro')} wide eyebrow={<span className="flex min-w-0 max-w-full flex-wrap items-center gap-2"><SimChip /><BenchmarkChips feature="FS40" /></span>}>
       <Async state={q}>{(d) => (d.scenarios.length ? <Body d={d} /> : <EmptyState title={t('m31.tw.none')} />)}</Async>
     </Page>
   );

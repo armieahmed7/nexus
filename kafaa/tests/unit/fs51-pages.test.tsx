@@ -205,7 +205,7 @@ describe('FS40 pages', () => {
     await renderPage(<TwinDrillPage />, { persona: 'buyer', path: `/my/twin-drills/${sc.id}`, route: '/my/twin-drills/:id' });
     const trends = await screen.findByTestId('m31-twd-trends', {}, W);
     expect(trends.querySelectorAll('figure[data-signal]')).toHaveLength(sc.series.signals.length);
-    expect(trends.querySelectorAll('table.sr-only').length).toBe(sc.series.signals.length);
+    expect(trends.querySelectorAll('.sr-only > table').length).toBe(sc.series.signals.length);
     const checks = screen.getByTestId('m31-twd-checks');
     for (const id of k.useful_checks) fireEvent.click(within(checks.querySelector(`[data-check="${id}"]`) as HTMLElement).getByTestId('m31-twd-run'));
     expect(within(checks).getAllByTestId('m31-twd-result')).toHaveLength(k.useful_checks.length);

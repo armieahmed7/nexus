@@ -33,7 +33,7 @@ export const RECORDED_KINDS: EvidenceKind[] = ['rating', 'ojt', 'credential'];
 /** FS10: evidence of a derived kind that a feature records itself (not rebuilt from source records): the AI and digital fitness check
  *  writes `assessment` rows with ref_table fitness_attempts. Recompute keeps them like recorded kinds (SQL: kafaa_skill_states_v2 /
  *  kafaa_skills_apply as redefined in 20261010222001_kafaa_fs22_ai_fluency.sql). */
-export const RECORDED_REF_TABLES = ['fitness_attempts', 'adaptive_attempts', 'task_attempts', 'ai_drill_attempts', 'plant_visits', 'twin_attempts', 'lectures', 'knowledge_assets']; // FS21/FS22 (fsCe3): adaptive and performance-task results are recorded too; FS37 (fsDe5): sandbox drills; FS44 (fsEe3): validated expert contributions (kind rating)
+export const RECORDED_REF_TABLES = ['fitness_attempts', 'adaptive_attempts', 'task_attempts', 'ai_drill_attempts', 'plant_visits', 'twin_attempts', 'lectures', 'knowledge_assets']; // FS21/FS22 (fsCe3): adaptive and performance-task results are recorded too; FS37 (fsDe5): sandbox drills; FS39/FS40 (fsEe1): confirmed plant visits, twin drills; FS44 (fsEe3): validated expert contributions (kind rating)
 export const isRecordedEvidence = (e: { kind: string; ref_table?: string | null }) => (RECORDED_KINDS as string[]).includes(e.kind) || RECORDED_REF_TABLES.includes(e.ref_table ?? '');
 export const isDerivedEvidence = (e: { kind: string; ref_table?: string | null }) => (DERIVED_KINDS as string[]).includes(e.kind) && !RECORDED_REF_TABLES.includes(e.ref_table ?? '');
 /** Standard-class half-life at the default setting (36 months). FS03: the live value comes from the DecayModel. */

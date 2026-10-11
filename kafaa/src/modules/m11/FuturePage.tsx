@@ -8,6 +8,7 @@ import { useQuery, useRepo, type RowOf } from '../../data';
 import { publicTextIsClean } from '../../domain/future';
 import { SourceList, useSourceDates, type Source } from '../m09/shared';
 import { AREAS, NoDecision, RELATION_CLS, techSlug } from './shared';
+import { NextGenLink } from '../m31/links'; // FS wave E integration (FS38 -> ADVANCE pages)
 
 export type FutureData = {
   techs: RowOf<'adv_technologies'>[];
@@ -63,6 +64,7 @@ function Body({ d }: { d: FutureData }) {
   const clean = publicTextIsClean([...d.techs, ...d.skills, ...d.roles, ...d.tracks, ...d.bridges]);
   return (
     <>
+      <div className="mb-4"><NextGenLink /></div>
       <Section title={t('m11.pub.advanceTitle')}>
         <Grid cols={3}>
           <Card eyebrow={t('m11.pub.advanceDate')} title={t('m11.pub.advanceLaunch')}>

@@ -206,3 +206,17 @@ export function twinStats(attempts: TwinAttemptLite[], keys: { scenario_id: stri
   });
   return { attempts: attempts.length, people: people >= minGroup ? people : null, scenarios };
 }
+
+// ───────────── wave E integration (FS40 -> FS31/FS27): twin drills as a route to the skills they evidence
+export interface TwinRouteLite { id: string; status: string; level: number | string; skill_ids?: string[] | null; sort?: number | string; listed?: boolean | null }
+/**
+ * Published twin drills that evidence any of the given skills at `minLevel` or above (a drill writes evidence at most at its own level,
+ * never above TWIN_EVIDENCE_CAP), in drill-bank order. Used by the M17 "how to earn" routes (MC-TWINS, satisfiability) and the M20 gig
+ * page (fg-dig-twin-validation). Drafts and retired drills are never a route.
+ */
+export function twinDrillsFor<T extends TwinRouteLite>(scenarios: T[], skillIds: string[], minLevel = 1): T[] {
+  const want = new Set(skillIds);
+  return scenarios
+    .filter((s) => s.status === 'published' && s.listed !== false && Math.min(Number(s.level) || 1, TWIN_EVIDENCE_CAP) >= minLevel && (s.skill_ids ?? []).some((k) => want.has(k)))
+    .sort((a, b) => Number(a.sort ?? 0) - Number(b.sort ?? 0) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+}

@@ -216,3 +216,19 @@ export function targetProblems(targets: CecTargetRow[], familyIds: string[], com
   }
   return out;
 }
+
+// ───────────── wave E integration (FS41 -> FS31): the competences a micro-credential's criteria cite
+export interface CriterionLite { key: string; kind: string; ref: string }
+/**
+ * CleanEnergyComp competences cited by credential criteria: a skill criterion cites every competence that links the skill; any other
+ * criterion cites the competences that list its item (course, adaptive bank, performance task, pathway, opportunity) as learning.
+ * Framework order; each with the criterion keys that cite it. Same rule as the SQL helper kafaa_cec_cites (fs5qa migration).
+ */
+export function cecCitations(criteria: CriterionLite[], comps: CecRow[]): { id: string; code: string; keys: string[] }[] {
+  const out: { id: string; code: string; keys: string[] }[] = [];
+  for (const c of [...comps].filter((x) => x.status !== 'retired').sort(byCecSort)) {
+    const keys = criteria.filter((k) => (k.kind === 'skill' ? (c.skill_ids ?? []).includes(k.ref) : (c.learning ?? []).some((l) => l.kind === k.kind && l.ref === k.ref))).map((k) => k.key);
+    if (keys.length) out.push({ id: c.id, code: c.code, keys });
+  }
+  return out;
+}

@@ -389,5 +389,6 @@
     "levelMet": "Overall level {level} (the lowest area) meets your family target of {target}",
     "levelBelow": "Overall level {level} (the lowest area) is below your family target of {target}",
     "levelNoTarget": "Overall level {level} (the lowest area); no family target"
-  }
+  },
+  "link": {"cec": "CleanEnergyComp: the 12 sustainability competences behind this lane", "transition": "Energy-system integration: value chains, sourced facts and the pathway", "citesTitle": "CleanEnergyComp competences these criteria cite", "citesBody": "Meeting the criteria builds these competences of ENEC's sustainability framework (GreenComp method)."}
 }

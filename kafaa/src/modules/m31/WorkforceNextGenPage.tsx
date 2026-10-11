@@ -16,7 +16,7 @@ export default function WorkforceNextGenPage() {
   const q = useQuery(['smr_deltas', 'person_skills'], () => repo.rpc.nextGenMatrix(), []);
   return (
     <Page title={t('m31.routes.workforce-next-gen.title')} intro={t('m31.wf.intro')} wide
-      eyebrow={<span className="inline-flex flex-wrap items-center gap-2"><SimChip label={t('m31.ng.planningChip')} /><BenchmarkChips feature="FS38" /></span>}
+      eyebrow={<span className="flex min-w-0 max-w-full flex-wrap items-center gap-2"><SimChip label={t('m31.ng.planningChip')} /><BenchmarkChips feature="FS38" /></span>}
       actions={<L to="/careers/next-gen" className="btn-outline btn-sm no-underline">{t('m31.wf.toPublic')}</L>}>
       <Async state={ref}>{(d) => <Async state={q}>{(m) => (m ? <Body d={d} m={m} /> : <EmptyState title={t('m31.wf.noAccess')} />)}</Async>}</Async>
     </Page>
