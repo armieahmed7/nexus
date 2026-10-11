@@ -40,7 +40,7 @@ describe('FS wave C · route registry', () => {
   it('259 routes after wave C (288 after wave D), and the 32 wave-C routes are registered', async () => {
     const { loadRoutes } = await import('../smoke/routes');
     const R = loadRoutes();
-    expect(R.length).toBe(288); // FS wave D QA: + 29 wave-D routes (tests/unit/fsqa4-integration.test.tsx)
+    expect(R.length).toBe(315); // FS wave E QA: + 27 (FS38-FS40 M31 9, FS41-FS43 M32 7, FS44/FS45 M24 4, FS46-FS48 M22 5, FS49 M08 2). FS wave D QA: + 29 wave-D routes (tests/unit/fsqa4-integration.test.tsx)
     const paths = new Set(R.map((r) => r.path));
     expect(WAVE_C.length).toBe(32);
     for (const p of WAVE_C) expect(paths.has(p), p).toBe(true);

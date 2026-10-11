@@ -3971,7 +3971,8 @@ create table if not exists kafaa_leadership_360_requests (
   subject_name text not null default '',
   subject_name_ar text not null default '',
   invited_at timestamptz not null default now(),
-  submitted_at timestamptz
+  submitted_at timestamptz,
+  form_version integer not null default 1
 );
 comment on table kafaa_leadership_360_requests is '[M22] Leadership behaviours 360: an invitation to rate a colleague (rater-only rows) (F16)';
 
@@ -3983,7 +3984,8 @@ create table if not exists kafaa_leadership_360 (
   rater_kind text not null check (rater_kind in ('self', 'manager', 'peer', 'report')),
   scores jsonb not null default '{}'::jsonb,
   submitted_at timestamptz not null default now(),
-  open_read boolean not null default false
+  open_read boolean not null default false,
+  form_version integer not null default 1
 );
 comment on table kafaa_leadership_360 is '[M22] Leadership behaviours 360 responses: anonymous scores, read only as aggregates through RPCs (F16)';
 
@@ -4112,6 +4114,215 @@ create table if not exists kafaa_ks_sessions (
   sources jsonb not null default '[]'::jsonb
 );
 comment on table kafaa_ks_sessions is '[M22] Knowledge-sharing session catalogue: held sessions with recordings (synthetic links) and upcoming events (F17)';
+
+-- M22 · Leadership behaviours rated in the 360, with anchors at every rating point and coach cards; form 2 adds four future behaviours (FS46)
+create table if not exists kafaa_leadership_behaviours (
+  id text primary key,
+  form_from integer not null default 1,
+  sort integer not null default 0,
+  trait_id text,
+  title_en text not null,
+  title_ar text not null,
+  short_en text not null,
+  short_ar text not null,
+  statement_en text not null,
+  statement_ar text not null,
+  framework_en text not null,
+  framework_ar text not null,
+  anchors jsonb not null default '{}'::jsonb,
+  coach jsonb not null default '{}'::jsonb,
+  links jsonb not null default '[]'::jsonb,
+  programme_ids text[] not null default '{}'::text[],
+  benchmark_ids text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb
+);
+comment on table kafaa_leadership_behaviours is '[M22] Leadership behaviours rated in the 360, with anchors at every rating point and coach cards; form 2 adds four future behaviours (FS46)';
+
+-- M22 · Future Leaders nuclear-management competencies (INMA pattern): descriptors per level, skill targets, learning route (FS47)
+create table if not exists kafaa_fl_competencies (
+  id text primary key,
+  code text not null unique,
+  sort integer not null default 0,
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  area_en text not null,
+  area_ar text not null,
+  descriptors jsonb not null default '{}'::jsonb,
+  skill_targets jsonb not null default '{}'::jsonb,
+  route jsonb not null default '[]'::jsonb,
+  external_ids text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb
+);
+comment on table kafaa_fl_competencies is '[M22] Future Leaders nuclear-management competencies (INMA pattern): descriptors per level, skill targets, learning route (FS47)';
+
+-- M22 · External management programmes linked to the Future Leaders track, with sources and dates (FS47)
+create table if not exists kafaa_fl_external (
+  id text primary key,
+  kind text not null check (kind in ('summer_school', 'school', 'masters', 'mobility', 'trainee', 'internship')),
+  sort integer not null default 0,
+  owner_en text not null,
+  owner_ar text not null,
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  dates_en text not null,
+  dates_ar text not null,
+  year_from integer,
+  year_to integer,
+  competency_ids text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb
+);
+comment on table kafaa_fl_external is '[M22] External management programmes linked to the Future Leaders track, with sources and dates (FS47)';
+
+-- M22 · Future Leaders cohorts: modules, policy-project brief, mentor, seats and dates (FS47)
+create table if not exists kafaa_fl_cohorts (
+  id text primary key,
+  code text not null unique,
+  year integer not null,
+  status text not null check (status in ('planned', 'open', 'running', 'completed')),
+  seats integer not null default 12,
+  starts_on date not null,
+  ends_on date not null,
+  title_en text not null,
+  title_ar text not null,
+  modules jsonb not null default '[]'::jsonb,
+  brief_en text not null,
+  brief_ar text not null,
+  mentor_en text not null,
+  mentor_ar text not null,
+  sort integer not null default 0
+);
+comment on table kafaa_fl_cohorts is '[M22] Future Leaders cohorts: modules, policy-project brief, mentor, seats and dates (FS47)';
+
+-- M22 · A selected Future Leaders participant: modules completed and the policy project with its review (FS47)
+create table if not exists kafaa_fl_participants (
+  id text primary key,
+  nomination_id text not null unique,
+  person_id text not null,
+  cohort_id text not null,
+  person_name text not null default '',
+  person_name_ar text not null default '',
+  modules_done text[] not null default '{}'::text[],
+  project_title text,
+  project_question text,
+  project_summary text,
+  project_sponsor_role text,
+  project_status text not null default 'none' check (project_status in ('none', 'draft', 'submitted', 'returned', 'accepted')),
+  project_submitted_on date,
+  project_reviewed_by text,
+  project_review_note text,
+  project_decided_on date,
+  status text not null default 'active' check (status in ('active', 'completed', 'withdrawn')),
+  completed_on date,
+  history jsonb not null default '[]'::jsonb,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_fl_participants is '[M22] A selected Future Leaders participant: modules completed and the policy project with its review (FS47)';
+
+-- M22 · Women in future nuclear skills: the three strands with their international patterns and sources (FS48)
+create table if not exists kafaa_wfn_programmes (
+  id text primary key,
+  strand text not null unique check (strand in ('circles', 'visiting', 'sponsored')),
+  sort integer not null default 0,
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  pattern_en text not null,
+  pattern_ar text not null,
+  fact_en text not null,
+  fact_ar text not null,
+  sources jsonb not null default '[]'::jsonb
+);
+comment on table kafaa_wfn_programmes is '[M22] Women in future nuclear skills: the three strands with their international patterns and sources (FS48)';
+
+-- M22 · Opt-in to the women in future nuclear skills network: areas, ways to take part, mentor; withdrawable (FS48; private)
+create table if not exists kafaa_wfn_participants (
+  id text primary key,
+  person_id text not null unique,
+  active boolean not null default true,
+  interests text[] not null default '{}'::text[],
+  strands text[] not null default '{}'::text[],
+  mentor boolean not null default false,
+  joined_on date,
+  withdrawn_on date,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_wfn_participants is '[M22] Opt-in to the women in future nuclear skills network: areas, ways to take part, mentor; withdrawable (FS48; private)';
+
+-- M22 · Mentor circles on a future-skills theme with a mentor role card and seats (FS48)
+create table if not exists kafaa_wfn_circles (
+  id text primary key,
+  sort integer not null default 0,
+  status text not null check (status in ('active', 'closed')),
+  seats integer not null default 6,
+  focus text[] not null default '{}'::text[],
+  skill_ids text[] not null default '{}'::text[],
+  starts_on date not null,
+  title_en text not null,
+  title_ar text not null,
+  mentor_role_en text not null,
+  mentor_role_ar text not null,
+  cadence_en text not null,
+  cadence_ar text not null,
+  is_full boolean not null default false,
+  mentor_open boolean not null default true
+);
+comment on table kafaa_wfn_circles is '[M22] Mentor circles on a future-skills theme with a mentor role card and seats (FS48)';
+
+-- M22 · Mentor circle membership (member or mentor), ended rather than removed (FS48; private)
+create table if not exists kafaa_wfn_circle_members (
+  id text primary key,
+  circle_id text not null,
+  person_id text not null,
+  role text not null default 'member' check (role in ('member', 'mentor')),
+  active boolean not null default true,
+  joined_on date,
+  left_on date
+);
+comment on table kafaa_wfn_circle_members is '[M22] Mentor circle membership (member or mentor), ended rather than removed (FS48; private)';
+
+-- M22 · Visiting-professional placements and sponsored study with a placement (concept offers) (FS48)
+create table if not exists kafaa_wfn_offers (
+  id text primary key,
+  strand text not null check (strand in ('visiting', 'sponsored')),
+  sort integer not null default 0,
+  status text not null check (status in ('open', 'closed')),
+  seats integer not null default 1,
+  weeks integer,
+  months integer,
+  closes_on date not null,
+  focus text[] not null default '{}'::text[],
+  title_en text not null,
+  title_ar text not null,
+  host_en text not null,
+  host_ar text not null,
+  placement_en text not null,
+  placement_ar text not null
+);
+comment on table kafaa_wfn_offers is '[M22] Visiting-professional placements and sponsored study with a placement (concept offers) (FS48)';
+
+-- M22 · A participant's request for a placement or sponsored study, decided by the programme owner (FS48; private)
+create table if not exists kafaa_wfn_requests (
+  id text primary key,
+  offer_id text not null,
+  person_id text not null,
+  person_name text not null default '',
+  person_name_ar text not null default '',
+  statement text not null,
+  status text not null default 'interested' check (status in ('interested', 'shortlisted', 'placed', 'completed', 'declined', 'withdrawn')),
+  outcome text check (outcome in ('progressed', 'same_role')),
+  decided_by text,
+  decided_on date,
+  note text,
+  history jsonb not null default '[]'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_wfn_requests is '[M22] A participant''s request for a placement or sponsored study, decided by the programme owner (FS48; private)';
 
 -- M23 · Talent review cycle per organisation unit: open → calibration → locked (F18, confidential)
 create table if not exists kafaa_review_cycles (
@@ -4476,6 +4687,93 @@ create table if not exists kafaa_asset_uses (
   used_on date not null
 );
 comment on table kafaa_asset_uses is '[M24] A person marked a knowledge asset as used (feeds the "used by N" count, shown from 10) (F21)';
+
+-- M24 · Expert lecture library: recorded talk metadata (synthetic), linked skills and the KLRA position it protects (FS44)
+create table if not exists kafaa_lectures (
+  id text primary key,
+  title_en text not null,
+  title_ar text not null,
+  abstract_en text not null,
+  abstract_ar text not null,
+  speaker_id text not null,
+  speaker_name text not null default '',
+  speaker_name_ar text not null default '',
+  speaker_role_id text,
+  format text not null default 'talk' check (format in ('talk', 'masterclass', 'walkthrough', 'panel')),
+  lang text not null default 'en' check (lang in ('en', 'ar')),
+  delivered_on date not null,
+  duration_min integer not null,
+  recording_code text,
+  chapters jsonb not null default '[]'::jsonb,
+  skill_ids text[] not null default '{}'::text[],
+  position_id text,
+  position_title_en text not null default '',
+  position_title_ar text not null default '',
+  system_family text not null check (system_family in ('reactor_core', 'primary', 'secondary', 'electrical', 'i_and_c', 'chemistry', 'radiation_protection', 'maintenance', 'outage', 'human_performance', 'emergency_preparedness', 'training')),
+  status text not null default 'draft' check (status in ('draft', 'review', 'published', 'withdrawn')),
+  published boolean not null default false,
+  published_by text,
+  published_at timestamptz,
+  withdrawn_reason text,
+  synthetic boolean not null default true,
+  history jsonb not null default '[]'::jsonb,
+  created_by text not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_lectures is '[M24] Expert lecture library: recorded talk metadata (synthetic), linked skills and the KLRA position it protects (FS44)';
+
+-- M24 · Expert contribution (delivered lecture or published knowledge asset) waiting for or given validation; validated ones write F01 evidence (FS44)
+create table if not exists kafaa_contributions (
+  id text primary key,
+  person_id text not null,
+  person_name text not null default '',
+  person_name_ar text not null default '',
+  kind text not null check (kind in ('lecture', 'asset')),
+  contributor_role text not null check (contributor_role in ('speaker', 'author', 'sme')),
+  ref_table text not null check (ref_table in ('lectures', 'knowledge_assets')),
+  ref_id text not null,
+  title_en text not null default '',
+  title_ar text not null default '',
+  skill_ids text[] not null default '{}'::text[],
+  level integer not null default 2,
+  status text not null default 'pending' check (status in ('pending', 'validated', 'rejected')),
+  submitted_on date not null,
+  decided_by text,
+  decided_role text,
+  decided_on date,
+  note text,
+  evidence_ids text[] not null default '{}'::text[],
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_contributions is '[M24] Expert contribution (delivered lecture or published knowledge asset) waiting for or given validation; validated ones write F01 evidence (FS44)';
+
+-- M24 · Localisation countdown: a programme or qualification step a partner still delivers or signs off, with its 2030 target (SAMPLE plan; readiness computed, never stored) (FS45)
+create table if not exists kafaa_localisation_items (
+  id text primary key,
+  programme_id text,
+  title_en text not null,
+  title_ar text not null,
+  scope text not null default 'delivery' check (scope in ('delivery', 'signoff', 'both')),
+  partner_org_id text not null,
+  partner_role_en text not null default '',
+  partner_role_ar text not null default '',
+  standard_ids text[] not null default '{}'::text[],
+  discipline text not null default '',
+  instructors_needed integer not null default 1,
+  baseline_on date not null,
+  target_on date not null,
+  status text not null default 'partner_led' check (status in ('partner_led', 'co_delivery', 'uae_led_supervised', 'transferred', 'on_hold')),
+  status_note text not null default '',
+  status_by text,
+  status_at timestamptz,
+  history jsonb not null default '[]'::jsonb,
+  sample boolean not null default true,
+  sort integer not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_localisation_items is '[M24] Localisation countdown: a programme or qualification step a partner still delivers or signs off, with its 2030 target (SAMPLE plan; readiness computed, never stored) (FS45)';
 
 -- M25 · Evaluation design per course: L1 form items, L2 pre/post knowledge checks, L3 checklist and timing, committee (F25)
 create table if not exists kafaa_eval_surveys (
@@ -5377,6 +5675,83 @@ create table if not exists kafaa_twin_attempts (
 );
 comment on table kafaa_twin_attempts is '[M31] One person''s submitted digital-twin drill: checks, diagnosis, action, rationales, score, pass, level and the capped evidence it wrote (FS40)';
 
+-- M32 · CleanEnergyComp competence (12 in four GreenComp-method areas): EN/AR description, nuclear angle, learning outcomes, the FS02 skills that evidence it, learning items, the Jahiz New Economy group and Net Zero 2050 tag, sources (FS41)
+create table if not exists kafaa_cec_competences (
+  id text primary key,
+  code text not null unique,
+  area text not null check (area in ('values', 'complexity', 'futures', 'acting')),
+  name_en text not null,
+  name_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  plant_en text not null,
+  plant_ar text not null,
+  outcomes jsonb not null default '[]'::jsonb,
+  greencomp_area text not null,
+  skill_ids text[] not null default '{}'::text[],
+  learning jsonb not null default '[]'::jsonb,
+  jahiz_group text not null default 'new_economy',
+  net_zero boolean not null default true,
+  benchmark_ids text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb,
+  status text not null default 'active' check (status in ('active', 'retired')),
+  version integer not null default 1,
+  as_of date not null,
+  sort integer not null default 0
+);
+comment on table kafaa_cec_competences is '[M32] CleanEnergyComp competence (12 in four GreenComp-method areas): EN/AR description, nuclear angle, learning outcomes, the FS02 skills that evidence it, learning items, the Jahiz New Economy group and Net Zero 2050 tag, sources (FS41)';
+
+-- M32 · CleanEnergyComp target level (1 Aware, 2 Practitioner, 3 Advocate) for each job family, with its focus competences and the reason (FS41)
+create table if not exists kafaa_cec_role_targets (
+  id text primary key,
+  family_id text not null,
+  level integer not null,
+  focus_ids text[] not null default '{}'::text[],
+  rationale_en text not null,
+  rationale_ar text not null
+);
+comment on table kafaa_cec_role_targets is '[M32] CleanEnergyComp target level (1 Aware, 2 Practitioner, 3 Advocate) for each job family, with its focus competences and the reason (FS41)';
+
+-- M32 · Energy-system value chain explainer (hydrogen, process heat, grid): stages with the role nuclear could play, sourced facts with as-of dates, skills, horizon lanes, pathways; concept only, no ENEC project claims (FS42)
+create table if not exists kafaa_value_chains (
+  id text primary key,
+  code text not null unique,
+  name_en text not null,
+  name_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  stages jsonb not null default '[]'::jsonb,
+  facts jsonb not null default '[]'::jsonb,
+  skill_ids text[] not null default '{}'::text[],
+  lane_ids text[] not null default '{}'::text[],
+  pathway_ids text[] not null default '{}'::text[],
+  cec_ids text[] not null default '{}'::text[],
+  benchmark_ids text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb,
+  status text not null default 'active' check (status in ('active', 'retired')),
+  as_of date not null,
+  sort integer not null default 0
+);
+comment on table kafaa_value_chains is '[M32] Energy-system value chain explainer (hydrogen, process heat, grid): stages with the role nuclear could play, sourced facts with as-of dates, skills, horizon lanes, pathways; concept only, no ENEC project claims (FS42)';
+
+-- M32 · Energy-transition learning track: the FS17 pathway it runs on (M19 rows), audience, the matching micro-credential, the hour cap (FS43: under 10 hours), value chains and sources (FS42, FS43)
+create table if not exists kafaa_transition_tracks (
+  id text primary key,
+  feature text not null check (feature in ('FS42', 'FS43')),
+  pathway_id text not null,
+  credential_code text,
+  max_hours numeric,
+  audience_en text not null,
+  audience_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  chain_ids text[] not null default '{}'::text[],
+  benchmark_ids text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb,
+  sort integer not null default 0
+);
+comment on table kafaa_transition_tracks is '[M32] Energy-transition learning track: the FS17 pathway it runs on (M19 rows), audience, the matching micro-credential, the hour cap (FS43: under 10 hours), value chains and sources (FS42, FS43)';
+
 -- M33 · Nuclear critical core skill (16 in three SkillsFuture clusters), written for a nuclear plant, with benchmark mappings, INPO traits, linked catalogue skills, level descriptors and its own development and assessment routes (FS25)
 create table if not exists kafaa_core_skills (
   id text primary key,
@@ -5993,6 +6368,14 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ex
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_expert_requests_requester_id_fk') then alter table kafaa_expert_requests add constraint kafaa_expert_requests_requester_id_fk foreign key (requester_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_expert_requests_skill_id_fk') then alter table kafaa_expert_requests add constraint kafaa_expert_requests_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ks_sessions_community_id_fk') then alter table kafaa_ks_sessions add constraint kafaa_ks_sessions_community_id_fk foreign key (community_id) references kafaa_communities(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_fl_participants_nomination_id_fk') then alter table kafaa_fl_participants add constraint kafaa_fl_participants_nomination_id_fk foreign key (nomination_id) references kafaa_leadership_nominations(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_fl_participants_person_id_fk') then alter table kafaa_fl_participants add constraint kafaa_fl_participants_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_fl_participants_cohort_id_fk') then alter table kafaa_fl_participants add constraint kafaa_fl_participants_cohort_id_fk foreign key (cohort_id) references kafaa_fl_cohorts(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_wfn_participants_person_id_fk') then alter table kafaa_wfn_participants add constraint kafaa_wfn_participants_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_wfn_circle_members_circle_id_fk') then alter table kafaa_wfn_circle_members add constraint kafaa_wfn_circle_members_circle_id_fk foreign key (circle_id) references kafaa_wfn_circles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_wfn_circle_members_person_id_fk') then alter table kafaa_wfn_circle_members add constraint kafaa_wfn_circle_members_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_wfn_requests_offer_id_fk') then alter table kafaa_wfn_requests add constraint kafaa_wfn_requests_offer_id_fk foreign key (offer_id) references kafaa_wfn_offers(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_wfn_requests_person_id_fk') then alter table kafaa_wfn_requests add constraint kafaa_wfn_requests_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_review_cycles_opened_by_fk') then alter table kafaa_review_cycles add constraint kafaa_review_cycles_opened_by_fk foreign key (opened_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_review_cycles_calibration_started_by_fk') then alter table kafaa_review_cycles add constraint kafaa_review_cycles_calibration_started_by_fk foreign key (calibration_started_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_review_cycles_calibrated_by_fk') then alter table kafaa_review_cycles add constraint kafaa_review_cycles_calibrated_by_fk foreign key (calibrated_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -6037,6 +6420,11 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_as
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_asset_reviews_reviewer_id_fk') then alter table kafaa_asset_reviews add constraint kafaa_asset_reviews_reviewer_id_fk foreign key (reviewer_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_asset_uses_asset_id_fk') then alter table kafaa_asset_uses add constraint kafaa_asset_uses_asset_id_fk foreign key (asset_id) references kafaa_knowledge_assets(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_asset_uses_person_id_fk') then alter table kafaa_asset_uses add constraint kafaa_asset_uses_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_lectures_speaker_id_fk') then alter table kafaa_lectures add constraint kafaa_lectures_speaker_id_fk foreign key (speaker_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_lectures_created_by_fk') then alter table kafaa_lectures add constraint kafaa_lectures_created_by_fk foreign key (created_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_contributions_person_id_fk') then alter table kafaa_contributions add constraint kafaa_contributions_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_localisation_items_programme_id_fk') then alter table kafaa_localisation_items add constraint kafaa_localisation_items_programme_id_fk foreign key (programme_id) references kafaa_programmes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_localisation_items_partner_org_id_fk') then alter table kafaa_localisation_items add constraint kafaa_localisation_items_partner_org_id_fk foreign key (partner_org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_eval_surveys_course_id_fk') then alter table kafaa_eval_surveys add constraint kafaa_eval_surveys_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_eval_surveys_pre_form_id_fk') then alter table kafaa_eval_surveys add constraint kafaa_eval_surveys_pre_form_id_fk foreign key (pre_form_id) references kafaa_assessment_forms(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_eval_surveys_post_form_id_fk') then alter table kafaa_eval_surveys add constraint kafaa_eval_surveys_post_form_id_fk foreign key (post_form_id) references kafaa_assessment_forms(id) deferrable initially deferred; end if; end $$;
@@ -6106,6 +6494,8 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_pl
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_twin_keys_scenario_id_fk') then alter table kafaa_twin_keys add constraint kafaa_twin_keys_scenario_id_fk foreign key (scenario_id) references kafaa_twin_scenarios(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_twin_attempts_person_id_fk') then alter table kafaa_twin_attempts add constraint kafaa_twin_attempts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_twin_attempts_scenario_id_fk') then alter table kafaa_twin_attempts add constraint kafaa_twin_attempts_scenario_id_fk foreign key (scenario_id) references kafaa_twin_scenarios(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_cec_role_targets_family_id_fk') then alter table kafaa_cec_role_targets add constraint kafaa_cec_role_targets_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_transition_tracks_pathway_id_fk') then alter table kafaa_transition_tracks add constraint kafaa_transition_tracks_pathway_id_fk foreign key (pathway_id) references kafaa_pathways(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_core_skill_targets_family_id_fk') then alter table kafaa_core_skill_targets add constraint kafaa_core_skill_targets_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_core_skill_targets_core_skill_id_fk') then alter table kafaa_core_skill_targets add constraint kafaa_core_skill_targets_core_skill_id_fk foreign key (core_skill_id) references kafaa_core_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_core_skill_candidates_merged_into_fk') then alter table kafaa_core_skill_candidates add constraint kafaa_core_skill_candidates_merged_into_fk foreign key (merged_into) references kafaa_core_skills(id) deferrable initially deferred; end if; end $$;
@@ -6623,6 +7013,13 @@ create index if not exists kafaa_expert_requests_expert_id_idx on kafaa_expert_r
 create index if not exists kafaa_expert_requests_requester_id_idx on kafaa_expert_requests (requester_id);
 create index if not exists kafaa_expert_requests_skill_id_idx on kafaa_expert_requests (skill_id);
 create index if not exists kafaa_ks_sessions_community_id_idx on kafaa_ks_sessions (community_id);
+create index if not exists kafaa_fl_participants_person_id_idx on kafaa_fl_participants (person_id);
+create index if not exists kafaa_fl_participants_cohort_id_idx on kafaa_fl_participants (cohort_id);
+create index if not exists kafaa_wfn_circle_members_circle_id_idx on kafaa_wfn_circle_members (circle_id);
+create index if not exists kafaa_wfn_circle_members_person_id_idx on kafaa_wfn_circle_members (person_id);
+create index if not exists kafaa_wfn_requests_offer_id_idx on kafaa_wfn_requests (offer_id);
+create index if not exists kafaa_wfn_requests_person_id_idx on kafaa_wfn_requests (person_id);
+create index if not exists kafaa_wfn_requests_status_idx on kafaa_wfn_requests (status);
 create index if not exists kafaa_review_cycles_period_idx on kafaa_review_cycles (period);
 create index if not exists kafaa_review_cycles_status_idx on kafaa_review_cycles (status);
 create index if not exists kafaa_review_cycles_opened_by_idx on kafaa_review_cycles (opened_by);
@@ -6677,6 +7074,18 @@ create index if not exists kafaa_asset_reviews_asset_author_id_idx on kafaa_asse
 create index if not exists kafaa_asset_reviews_reviewer_id_idx on kafaa_asset_reviews (reviewer_id);
 create index if not exists kafaa_asset_uses_asset_id_idx on kafaa_asset_uses (asset_id);
 create index if not exists kafaa_asset_uses_person_id_idx on kafaa_asset_uses (person_id);
+create index if not exists kafaa_lectures_speaker_id_idx on kafaa_lectures (speaker_id);
+create index if not exists kafaa_lectures_delivered_on_idx on kafaa_lectures (delivered_on);
+create index if not exists kafaa_lectures_system_family_idx on kafaa_lectures (system_family);
+create index if not exists kafaa_lectures_status_idx on kafaa_lectures (status);
+create index if not exists kafaa_lectures_created_by_idx on kafaa_lectures (created_by);
+create index if not exists kafaa_contributions_person_id_idx on kafaa_contributions (person_id);
+create index if not exists kafaa_contributions_ref_id_idx on kafaa_contributions (ref_id);
+create index if not exists kafaa_contributions_status_idx on kafaa_contributions (status);
+create index if not exists kafaa_localisation_items_programme_id_idx on kafaa_localisation_items (programme_id);
+create index if not exists kafaa_localisation_items_partner_org_id_idx on kafaa_localisation_items (partner_org_id);
+create index if not exists kafaa_localisation_items_target_on_idx on kafaa_localisation_items (target_on);
+create index if not exists kafaa_localisation_items_status_idx on kafaa_localisation_items (status);
 create index if not exists kafaa_eval_surveys_committee_idx on kafaa_eval_surveys (committee);
 create index if not exists kafaa_eval_surveys_pre_form_id_idx on kafaa_eval_surveys (pre_form_id);
 create index if not exists kafaa_eval_surveys_post_form_id_idx on kafaa_eval_surveys (post_form_id);
@@ -6777,6 +7186,9 @@ create index if not exists kafaa_plant_visits_status_idx on kafaa_plant_visits (
 create index if not exists kafaa_twin_scenarios_status_idx on kafaa_twin_scenarios (status);
 create index if not exists kafaa_twin_attempts_person_id_idx on kafaa_twin_attempts (person_id);
 create index if not exists kafaa_twin_attempts_scenario_id_idx on kafaa_twin_attempts (scenario_id);
+create index if not exists kafaa_cec_competences_area_idx on kafaa_cec_competences (area);
+create index if not exists kafaa_cec_role_targets_family_id_idx on kafaa_cec_role_targets (family_id);
+create index if not exists kafaa_transition_tracks_pathway_id_idx on kafaa_transition_tracks (pathway_id);
 create index if not exists kafaa_core_skills_cluster_idx on kafaa_core_skills (cluster);
 create index if not exists kafaa_core_skill_targets_family_id_idx on kafaa_core_skill_targets (family_id);
 create index if not exists kafaa_core_skill_targets_core_skill_id_idx on kafaa_core_skill_targets (core_skill_id);
@@ -6813,4 +7225,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 296) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 314) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
