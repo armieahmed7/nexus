@@ -1362,6 +1362,58 @@ create policy kafaa_read on kafaa_cohort_capstones for select to anon, authentic
 grant select on kafaa_cohort_capstones to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- adaptive_banks
+alter table kafaa_adaptive_banks enable row level security;
+drop policy if exists kafaa_read on kafaa_adaptive_banks;
+create policy kafaa_read on kafaa_adaptive_banks for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, true));
+grant select on kafaa_adaptive_banks to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- adaptive_items
+alter table kafaa_adaptive_items enable row level security;
+drop policy if exists kafaa_read on kafaa_adaptive_items;
+create policy kafaa_read on kafaa_adaptive_items for select to anon, authenticated using (kafaa_rule_read('secure_items', null::text, null::text, true));
+grant select on kafaa_adaptive_items to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- adaptive_attempts
+alter table kafaa_adaptive_attempts enable row level security;
+drop policy if exists kafaa_read on kafaa_adaptive_attempts;
+create policy kafaa_read on kafaa_adaptive_attempts for select to anon, authenticated using (kafaa_rule_read('skills_profile', person_id, null::text, true));
+grant select on kafaa_adaptive_attempts to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- performance_tasks
+alter table kafaa_performance_tasks enable row level security;
+drop policy if exists kafaa_read on kafaa_performance_tasks;
+create policy kafaa_read on kafaa_performance_tasks for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, true));
+grant select on kafaa_performance_tasks to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- perf_task_keys
+alter table kafaa_perf_task_keys enable row level security;
+drop policy if exists kafaa_read on kafaa_perf_task_keys;
+create policy kafaa_read on kafaa_perf_task_keys for select to anon, authenticated using (kafaa_rule_read('secure_items', null::text, null::text, true));
+grant select on kafaa_perf_task_keys to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- task_attempts
+alter table kafaa_task_attempts enable row level security;
+drop policy if exists kafaa_read on kafaa_task_attempts;
+create policy kafaa_read on kafaa_task_attempts for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('signoff', null::text, null::text, true));
+grant select on kafaa_task_attempts to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- integrity_reports
+alter table kafaa_integrity_reports enable row level security;
+drop policy if exists kafaa_read on kafaa_integrity_reports;
+create policy kafaa_read on kafaa_integrity_reports for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('signoff', null::text, null::text, true)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_integrity_reports to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- journey_questions
 alter table kafaa_journey_questions enable row level security;
 drop policy if exists kafaa_read on kafaa_journey_questions;
