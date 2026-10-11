@@ -20,7 +20,7 @@ describe('F15 pages', { timeout: 90000 }, () => { // FS wave C QA: seed boot abo
     await renderPage(<RotationsPage />, { persona: 'k-ro', path: '/opportunities/rotations' });
     const list = await screen.findByTestId('m20-rot-programmes', {}, T);
     const cards = within(list).getAllByTestId('m20-rot-programme');
-    expect(cards.length).toBe(5);
+    expect(cards.length).toBe(8); // FS wave D QA: + 3 published FS28 future-role templates (rt-fs-*)
     expect(within(list).getAllByTestId('m20-rot-why')).toHaveLength(cards.length);
     fireEvent.click(within(list).getAllByTestId('m20-rot-why')[0]);
     expect((await screen.findAllByTestId('m20-rot-why-panel'))[0].textContent).toMatch(/objectives would grow|already meet/);

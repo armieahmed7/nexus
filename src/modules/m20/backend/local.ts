@@ -14,6 +14,7 @@ import { makeLocalF15 } from './rotation.local';
 import { makeLocalF23 } from './reserve.local';
 import { makeLocalFS27 } from './fs27.local';
 import { channelProblem, envelopeFit } from '../futureGigs';
+import { targetCheck } from '../../m17/futureCreds'; // FS wave D QA: strategic-credential gate (FS31)
 
 type Opp = RowOf<'opportunities'>;
 type App = RowOf<'opportunity_applications'>;
@@ -95,6 +96,10 @@ export function makeLocalM20(b: LocalBackend, h: LocalRpcHelpers): M20Rpc {
       if (o.posted_by === who) return refuse('conflict', MSG.own_opportunity, role);
       const p = b.rawGet('people', who)!;
       if ((o.eligible_families ?? []).length && !(o.eligible_families ?? []).includes(p.job_family_id ?? '')) return refuse('not_eligible', MSG.not_eligible, role);
+      // FS wave D QA (FS31 -> FS27/F08): a gig that names a strategic credential is open to holders only (kafaa_fc_target_check)
+      const tc = targetCheck(who, 'opportunity', opportunityId, { today: todayIso(), defs: b.raw('microcred_defs') as never, awards: b.raw('microcred_awards') as never,
+        unlocks: b.raw('microcred_unlocks' as never) as never, opportunities: b.raw('opportunities') as never, rotation_templates: b.raw('rotation_templates') as never });
+      if (tc.named && !tc.unlocked) return refuse('credential_required', MSG.credential_required, role);
       if (b.raw('opportunity_applications').some((a) => a.opportunity_id === opportunityId && a.person_id === who && LIVE_APP_STATUSES.includes(a.status as never))) return refuse('conflict', MSG.already_applied, role);
       const text = String(note ?? '').trim();
       if (text.length > 500) return refuse('invalid', MSG.invalid_note, role);

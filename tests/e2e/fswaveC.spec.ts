@@ -148,7 +148,7 @@ test('C1 FS17/FS18: an L1 pathway for every future skill with envelope and weekl
   await chips(page, 'main', 'FS17');
   await page.getByRole('tab', { name: /Gap backlog/ }).click();
   await expect(page.locator('[data-testid="m19-adm-refresh"]')).toBeVisible();
-  await expect(page.locator('main')).toContainText(/172/); // open gaps after the wave-C refresh
+  await expect(page.locator("main")).toContainText(/145/); // open gaps after the wave-C refresh (172) and the wave-D refresh (FS27 gigs: 145)
   // the auditor reads the training pages, writes nothing; staff without a training role are refused
   await as(page, 'presenter');
   await go(page, '/training/pathways');

@@ -270,6 +270,7 @@ function Mine({ s }: { s: SkillsRow }) {
           <div className="flex items-center gap-2">
             <StatusPill tone="accent">{t('m28.mine.goal', { n: f.num(d.goal.target_level) })}</StatusPill>
             <button type="button" className="btn-outline" data-testid="m28-goal-remove" onClick={() => run(() => repo.rpc.setSkillGoal(s.id, d.goal!.target_level, false))}>{t('m28.mine.remove')}</button>
+            <L to="/my/skills/goals" className="text-[12.5px] font-semibold underline" data-testid="m28-goal-plan">{t('m28.mine.planGoal')}</L>
           </div>
         ) : (
           <div className="flex items-end gap-2">

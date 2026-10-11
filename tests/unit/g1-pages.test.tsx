@@ -128,7 +128,7 @@ describe('M03 pages', () => {
   it('a shift supervisor sees crew availability but no medical dates or flags', async () => {
     await renderPage(<TeamPage />, { persona: 'sro', path: '/team' });
     const crew = await screen.findByTestId('m02-crew-licences', {}, { timeout: 5000 });
-    expect(crew.textContent).toMatch(/Available|Not available/);
+    expect(crew.textContent).toMatch(/Available|Not available|Cannot confirm/); // licence rows go stale 72 h after the seed date
     expect(crew.textContent).not.toMatch(/Fit for duty|Medical overdue|Not yet confirmed/);
   });
 });

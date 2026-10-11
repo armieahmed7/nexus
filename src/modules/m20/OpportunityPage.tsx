@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Page, Section, Card, Async, EmptyState, Callout, KeyValue, WhyThis, EngineBadge, Modal, Icon, ConfirmDialog, ProgressBar } from '../../ui';
-import { useAction, useRepo } from '../../data';
+import { useAction, useQuery, useRepo } from '../../data';
 import { L, useFormat, usePick, useT } from '../../i18n';
 import { NEED_LEVEL, roleNeed } from './match';
 import { useMarket, useMatches, useLabels, defaultTarget, KindChip, FlagChips, MatchRing, OppPill, AppStepper, AppTimeline, usePersonName, useRange, seatsLeft, AppPill, type MarketData, type Opp } from './ui';
@@ -130,6 +130,8 @@ function Detail({ d, o, me, currentRole, family }: { d: MarketData; o: Opp; me: 
 function ApplyCard({ o, app, eligible }: { o: Opp; app?: MarketData['apps'][number]; eligible: boolean }) {
   const t = useT();
   const repo = useRepo();
+  // FS wave D QA (FS31 -> FS27/F08): does this gig name a strategic credential, and do I hold one? (kafaa_credential_target_check)
+  const gate = useQuery(['microcred_unlocks', 'microcred_awards'], () => repo.rpc.credentialTargetCheck('opportunity', o.id), [o.id]);
   const run = useAction();
   const name = usePersonName();
   const [open, setOpen] = useState(false);
@@ -157,8 +159,10 @@ function ApplyCard({ o, app, eligible }: { o: Opp; app?: MarketData['apps'][numb
         <li>{t('m20.detail.flow1')}</li><li>{t('m20.detail.flow2')}</li><li>{t('m20.detail.flow3')}</li><li>{t('m20.detail.flow4')}</li>
       </ol>
       {o.channel && <EnvelopeFitNote o={o} />}
+      <StrategicGateNote check={gate.data} />
       {o.status !== 'open' ? <p className="text-[13px] text-ink-3">{t('m20.detail.closed')}</p>
         : !eligible ? <p className="text-[13px] text-ink-3">{t('m20.detail.notEligible')}</p>
+        : gate.data?.named && !gate.data.unlocked ? null
         : <button className="btn-primary w-full" onClick={() => setOpen(true)} data-testid="m20-apply"><Icon name="check" size={14} />{app ? t('m20.detail.applyAgain') : t('m20.detail.apply')}</button>}
       <Modal open={open} onClose={() => !busy && setOpen(false)} title={t('m20.detail.applyModal')}
         footer={<>
@@ -178,5 +182,21 @@ function ApplyCard({ o, app, eligible }: { o: Opp; app?: MarketData['apps'][numb
         </div>
       </Modal>
     </Card>
+  );
+}
+
+/** FS wave D QA: the strategic-credential gate on a gig's apply card (FS31 strategic tier unlocks the gigs that name it). */
+function StrategicGateNote({ check }: { check?: { named: boolean; unlocked: boolean; codes: string[]; held: string[] } | null }) {
+  const t = useT();
+  if (!check?.named) return null;
+  const codes = check.unlocked ? check.held : check.codes;
+  return (
+    <div className={`mb-3 rounded-card border p-3 text-[13px] ${check.unlocked ? 'border-ok-line bg-ok-bg' : 'border-line bg-sunken'}`} data-testid="m20-strategic-gate" data-unlocked={check.unlocked ? 'yes' : 'no'}>
+      <p className="font-semibold text-ink">{check.unlocked ? t('m20.detail.gateUnlocked') : t('m20.detail.gateLocked')}</p>
+      <p className="mt-1 text-ink-2">{check.unlocked ? t('m20.detail.gateUnlockedBody') : t('m20.detail.gateLockedBody')}</p>
+      <ul className="mt-1 flex flex-wrap gap-2">
+        {codes.map((c) => <li key={c}><L to={`/my/skills/credentials/c/${c}`} className="font-mono text-[12px] font-semibold underline" data-testid="m20-strategic-code">{c}</L></li>)}
+      </ul>
+    </div>
   );
 }

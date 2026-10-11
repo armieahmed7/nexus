@@ -37,10 +37,10 @@ const WAVE_C = ['/learn/pathways', '/learn/pathways/:id', '/my/pathways', '/trai
   '/learn/core-skills', '/learn/core-skills/:id', '/my/core-skills', '/my/core-skills/practice', '/workforce/core-skills', '/training/sjt/items'];
 
 describe('FS wave C · route registry', () => {
-  it('259 routes, and the 32 wave-C routes are registered', async () => {
+  it('259 routes after wave C (288 after wave D), and the 32 wave-C routes are registered', async () => {
     const { loadRoutes } = await import('../smoke/routes');
     const R = loadRoutes();
-    expect(R.length).toBe(259);
+    expect(R.length).toBe(288); // FS wave D QA: + 29 wave-D routes (tests/unit/fsqa4-integration.test.tsx)
     const paths = new Set(R.map((r) => r.path));
     expect(WAVE_C.length).toBe(32);
     for (const p of WAVE_C) expect(paths.has(p), p).toBe(true);
@@ -118,7 +118,7 @@ describe('FS wave C · FS21/FS22 -> FS17 pathways', () => {
     const filled = T.pathway_gaps.filter((g) => g.status === 'filled');
     expect(open.map((g) => g.id).sort()).toEqual(req);
     expect(filled.length).toBeGreaterThan(0);
-    expect(filled.every((g) => g.filled_on === '2026-10-11' && (g.kind === 'learn' || g.kind === 'assess'))).toBe(true);
+    expect(filled.every((g) => g.filled_on === '2026-10-11' && (g.kind === 'learn' || g.kind === 'assess' || g.kind === 'practice'))).toBe(true); // FS wave D QA: FS27 channel gigs filled practice steps on the same day (fsqa4)
     expect(T.pathway_gaps.length).toBe(215); // the rows FS17 loaded live; none removed
     b.setPersona('training-mgr'); await b.whenReady();
     const g = await b.rpc.refreshPathwayGaps();

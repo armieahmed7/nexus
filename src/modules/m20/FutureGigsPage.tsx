@@ -53,7 +53,7 @@ function Hub({ d, me }: { d: FutureData; me: string | null }) {
       <Grid cols={4}>
         <StatTile label={t('m20.fs.hub.statOpen')} value={f.num(open.length)} sub={t('m20.fs.hub.statOpenSub', { all: f.num(allOpen) })} tone="info" />
         <StatTile label={t('m20.fs.hub.statChannels')} value={f.num(CHANNELS.filter((c) => open.some((o) => o.channel === c)).length)} sub={t('m20.fs.hub.statChannelsSub')} />
-        <StatTile label={t('m20.fs.hub.statEnvelope')} value={view ? t('m20.fs.hours', { n: f.num(view.remaining) }) : cur ? t(`m20.fs.envStatus.${cur.status}`) : '—'} sub={view ? t('m20.fs.hub.statEnvelopeSub', { cap: f.num(view.cap), period: cur!.period }) : t('m20.fs.hub.statEnvelopeNone')} tone={view ? 'ok' : undefined} />
+        <StatTile label={t('m20.fs.hub.statEnvelope')} value={view ? t('m20.fs.hours', { n: f.num(view.remaining) }) : cur ? t(`m20.fs.envStatus.${cur.status}`) : '—'} sub={view ? t('m20.fs.hub.statEnvelopeSub', { cap: f.num(view.cap), period: cur!.period }) : cur ? `${f.num(cur.pct)}% · ${cur.period}` /* FS wave D QA: a requested or declined envelope is not "no envelope" */ : t('m20.fs.hub.statEnvelopeNone')} tone={view ? 'ok' : undefined} />
         <StatTile label={t('m20.fs.hub.statFits')} value={f.num(fits)} sub={t('m20.fs.hub.statFitsSub')} tone={fits ? 'ok' : undefined} />
       </Grid>
 

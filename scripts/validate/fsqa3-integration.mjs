@@ -75,12 +75,14 @@ export default async function fsqa3Checks({ ok }) {
   try {
     await db.exec(`select set_config('kafaa.seeding', 'on', true); update kafaa_pathway_gaps set status = 'open', filled_on = null, last_checked = date '2026-10-10'`);
     const live = await dig();
-    await db.exec(sql);
+    // FS wave D QA: the wave-D QA migration (FS27 gigs fill practice steps on the same day) runs after this one, as it did live
+    const sql4 = readFileSync('supabase/migrations/20261010249001_kafaa_fs4qa_integration.sql', 'utf8');
+    await db.exec(sql); await db.exec(sql4);
     const once = await dig();
-    await db.exec(sql);
+    await db.exec(sql); await db.exec(sql4);
     ok(live !== final && once === final && (await dig()) === final, 'FS17 backlog: rows at the values FS17 loaded live become the seed after the migration; a second run changes nothing');
     await db.exec(`select set_config('kafaa.seeding', 'on', true); update kafaa_pathway_gaps set status = 'open', filled_on = null, last_checked = date '2026-10-12' where id = '${T.pathway_gaps.find((g) => g.status === 'filled').id}'`);
-    await db.exec(sql);
+    await db.exec(sql); await db.exec(sql4);
     ok((await q1('select status from kafaa_pathway_gaps where id = $1', [T.pathway_gaps.find((g) => g.status === 'filled').id])).status === 'open', 'FS17 backlog: guarded: a row refreshed live after the QA date is left alone');
   } finally { await db.exec('rollback'); }
 

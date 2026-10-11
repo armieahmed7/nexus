@@ -82,7 +82,7 @@ describe('F21 pages', () => {
   it('the capture board shows every state for the KM owner and "who to capture next" from the KLRA', async () => {
     await renderPage(<CapturePage />, { persona: 'training-mgr', path: '/knowledge/capture' });
     const board = await screen.findByTestId('m24-capture-board', {}, T);
-    expect(within(board).getAllByTestId('m24-session-card').length).toBe(16);
+    expect(within(board).getAllByTestId('m24-session-card').length).toBe(21); // FS wave D QA: + 5 knowledge-capture sessions planned by FS28 secondment returns (cs-sec-*)
     expect(await screen.findByTestId('m24-capture-who', {}, T)).toBeTruthy();
   }, 90000); // FS wave C QA: the first test boots the 19 MB seed (about 27 s)
   it('an interview workspace blocks restricted text before upload', async () => {

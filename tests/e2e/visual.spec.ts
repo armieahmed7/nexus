@@ -34,6 +34,41 @@ const ask = async (p: Page) => {
   await expect(p.locator('[data-testid="m13-answer"]').last()).toBeVisible();
 };
 
+// FS wave D (FS27-FS37): every new page, shared by the RTL and 390 px sets
+const FSD_PAGES: Shot[] = [
+  { name: 'fsd-future-gigs', path: '/opportunities/future', persona: 'nse' },
+  { name: 'fsd-envelope', path: '/opportunities/envelope', persona: 'nse' },
+  { name: 'fsd-team-envelopes', path: '/opportunities/envelopes', persona: 'ops-ceo' },
+  { name: 'fsd-future-rotations', path: '/opportunities/rotations/future', persona: 'nse' },
+  { name: 'fsd-secondments', path: '/opportunities/secondments', persona: 'fuel-pm' },
+  { name: 'fsd-secondment-desk', path: '/opportunities/secondments/hr', persona: 'chco' },
+  { name: 'fsd-gated-gig', path: '/opportunities/fg-ai-chem-trend-flags', persona: 'sro' },
+  { name: 'fsd-recognition', path: '/recognition' },
+  { name: 'fsd-recognition-nqf', path: '/recognition?tab=nqf' },
+  { name: 'fsd-my-recognition', path: '/my/recognition', persona: 'sro' },
+  { name: 'fsd-rpl-request', path: '/my/recognition/rpl/rpl-p-sro-01', persona: 'sro' },
+  { name: 'fsd-my-credits', path: '/my/credits', persona: 'sro' },
+  { name: 'fsd-rpl-queue', path: '/recognition/review', persona: 'training-mgr' },
+  { name: 'fsd-rpl-review', path: '/recognition/review/rpl-p-sro-02', persona: 'training-mgr' },
+  { name: 'fsd-credit-tags', path: '/admin/credit-tags', persona: 'training-mgr' },
+  { name: 'fsd-my-goals', path: '/my/skills/goals', persona: 'nse' },
+  { name: 'fsd-team-goals', path: '/team/skills/goals', persona: 'sro' },
+  { name: 'fsd-my-record', path: '/my/skills/record', persona: 'sro' },
+  { name: 'fsd-verify-record', path: '/verify/record/c8bf757ef81c15cc24d72db6e4c6be8b' },
+  { name: 'fsd-future-creds', path: '/my/skills/credentials/future', persona: 'sro' },
+  { name: 'fsd-credential', path: '/my/skills/credentials/c/MC-AI-ASSURER', persona: 'sro' },
+  { name: 'fsd-strategic-tier', path: '/training/credentials/strategic', persona: 'training-mgr' },
+  { name: 'fsd-translate', path: '/careers/translate' },
+  { name: 'fsd-career-health', path: '/my/career/health', persona: 'nse' },
+  { name: 'fsd-ai-register', path: '/workforce/ai-register', persona: 'chco' },
+  { name: 'fsd-ai-system', path: '/workforce/ai-register/ais-doc-search', persona: 'chco' },
+  { name: 'fsd-ai-pack', path: '/workforce/ai-literacy-pack', persona: 'chco' },
+  { name: 'fsd-ai-register-admin', path: '/admin/ai-register', persona: 'ai-governance' },
+  { name: 'fsd-drills', path: '/my/ai-fluency/drills', persona: 'qc-inspector' },
+  { name: 'fsd-drill', path: '/my/ai-fluency/drills/ad-valve-lineup', persona: 'qc-inspector' },
+  { name: 'fsd-training-drills', path: '/training/ai-drills', persona: 'training-mgr' },
+];
+
 const RTL: Shot[] = [
   { name: 'home', path: '/' },
   { name: 'careers', path: '/careers' },
@@ -203,6 +238,7 @@ const RTL: Shot[] = [
   { name: 'fsc-workforce-core', path: '/workforce/core-skills', persona: 'chco' },
   { name: 'fsc-sjt-items', path: '/training/sjt/items', persona: 'training-mgr' },
   { name: 'fsc-skill-indicators', path: '/skills/sk-fs-ai-verify' },
+  ...FSD_PAGES,
 ];
 for (const s of RTL) {
   test(`rtl ${s.name}`, async ({ page }) => {
@@ -394,6 +430,7 @@ const MOBILE: Shot[] = [
   { name: 'fsc-workforce-core', path: '/workforce/core-skills', persona: 'chco' },
   { name: 'fsc-sjt-items', path: '/training/sjt/items', persona: 'training-mgr' },
   { name: 'fsc-skill-indicators', path: '/skills/sk-fs-ai-verify' },
+  ...FSD_PAGES,
 ];
 for (const s of MOBILE) {
   test(`mobile ${s.name}`, async ({ page }) => {
@@ -613,5 +650,28 @@ for (const s of SET_FSC) {
     if (!s.mobile) await page.setViewportSize({ width: 1440, height: 900 });
     await open(page, s);
     await page.screenshot({ path: join(SHOTS_FSC, `${s.name}.png`), fullPage: false });
+  });
+}
+
+// FS wave D feature set (FS27-FS37): saved to KAFAA_SHOTS_FSD.
+const SHOTS_FSD = process.env.KAFAA_SHOTS_FSD || 'test-results/shots_fsD';
+mkdirSync(SHOTS_FSD, { recursive: true });
+const SET_FSD: Shot[] = [
+  { name: '01-future-gigs-en', path: '/opportunities/future', persona: 'nse' },
+  { name: '02-strategic-gig-unlocked-en', path: '/opportunities/fg-ai-chem-trend-flags', persona: 'sro', then: async (p) => { await p.locator('[data-testid="m20-strategic-gate"]').scrollIntoViewIfNeeded(); } },
+  { name: '03-rpl-request-decided-en', path: '/my/recognition/rpl/rpl-p-sro-01', persona: 'sro' },
+  { name: '04-my-credits-en', path: '/my/credits', persona: 'sro' },
+  { name: '05-future-credentials-en', path: '/my/skills/credentials/future', persona: 'sro' },
+  { name: '06-translator-en', path: '/careers/translate', then: async (p) => { await p.locator('[data-testid="m18-fs34-occupation"]').first().click(); await p.locator('[data-testid="m18-fs34-results"]').scrollIntoViewIfNeeded(); } },
+  { name: '07-career-health-en', path: '/my/career/health', persona: 'nse' },
+  { name: '08-ai-literacy-register-en', path: '/workforce/ai-register', persona: 'chco' },
+  { name: '09-recognition-nqf-ar', path: '/recognition?tab=nqf', ar: true },
+  { name: '10-ai-drill-mobile', path: '/my/ai-fluency/drills/ad-valve-lineup', persona: 'qc-inspector', mobile: true },
+];
+for (const s of SET_FSD) {
+  test(`shot fsd ${s.name}`, async ({ page }) => {
+    if (!s.mobile) await page.setViewportSize({ width: 1440, height: 900 });
+    await open(page, s);
+    await page.screenshot({ path: join(SHOTS_FSD, `${s.name}.png`), fullPage: false });
   });
 }

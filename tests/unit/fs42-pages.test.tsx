@@ -79,7 +79,7 @@ describe('FS29/FS30 pages', () => {
     await renderPage(<MyCreditsPage />, { persona: 'sro', path: '/my/credits' });
     expect(await screen.findByTestId('m34-cr-tiles', {}, T)).toBeTruthy();
     expect(screen.getByTestId('m34-cr-stacks').children.length).toBe(4);
-    await waitFor(() => expect(screen.getByTestId('m34-cr-ledger').querySelectorAll('tbody tr').length).toBe(5), T);
+    await waitFor(() => expect(screen.getByTestId('m34-cr-ledger').querySelectorAll('tbody tr').length).toBe(8), T); // 5 + 3 FS31 credentials (MC-AI-ASSURER, MC-SMR-FOUND, MC-TWINS) tagged by the wave-D QA
     await waitFor(() => expect(screen.getByTestId('m34-cr-sync').textContent).toMatch(/Up to date/), T);
     expect(screen.getByTestId('m34-indicative')).toBeTruthy();
     await chips(['ENTITLE', 'UAE-NQF']);

@@ -300,7 +300,9 @@ describe('FS09/FS10 · seed, routes and i18n', () => {
     expect(DIMENSIONS.length).toBe(4);
   });
   it('routes: five M29 routes with the right guards; i18n EN/AR in parity with titles for every route', () => {
-    expect(routes.map((r) => r.id)).toEqual(['learn-ai-fluency', 'my-ai-fluency', 'my-ai-fitness', 'workforce-ai-fluency', 'training-ai-fitness-items']);
+    // FS wave D QA: M29 also holds the seven FS36/FS37 routes (tests/unit/fs45-*); the five FS09/FS10 routes come first
+    expect(routes.map((r) => r.id).slice(0, 5)).toEqual(['learn-ai-fluency', 'my-ai-fluency', 'my-ai-fitness', 'workforce-ai-fluency', 'training-ai-fitness-items']);
+    expect(routes.length).toBe(12);
     expect(routes[0].guard).toEqual({});
     expect(routes[3].guard.grant).toEqual({ res: 'ai_literacy', levels: ['Agg'] });
     const flat = (o: Row, p = ''): string[] => Object.entries(o).flatMap(([k, v]) => (v && typeof v === 'object' ? flat(v, `${p}${k}.`) : [`${p}${k}`]));

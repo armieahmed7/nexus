@@ -7,20 +7,23 @@
 //     on QA_REFRESH: a row whose step now resolves becomes "filled", the rest stay "open", and any newly empty step is added.
 // The live database gets the same rows from supabase/migrations/20261010239001_kafaa_fs3qa_integration.sql (guarded DML).
 import { resolvePathway } from '../../../src/modules/m19/pathways.ts';
-import { FS31_DEFS } from './fs31-future-credentials.mjs'; // FS wave D · E3: FS31 credentials came after wave C
-
+import { FS31_CODES } from '../../../src/modules/m17/futureCreds.ts';
 export const FINALIZE_LAST = true;
 export const QA_REFRESH = '2026-10-11';
 
+/** Wave-D content is left out here (FS wave D QA): the FS27 channel gigs and the FS31 micro-credentials came after wave C and are
+ *  replayed by scripts/seed/ext/fsqa4-integration.mjs, so this builder keeps producing the backlog exactly as the wave-C QA migration
+ *  left it live. */
+const waveCOpps = (T) => T.opportunities.filter((o) => !o.channel);
+const waveCCreds = (T) => (T.microcred_defs ?? []).filter((d) => !FS31_CODES.includes(d.code));
 /** FS17's content before wave C's other branches: no FS19 pack courses, no FS21 banks, no FS22 tasks. */
 export function contentBefore(T) {
   const pack = new Set((T.course_pack_items ?? []).map((p) => p.course_id));
-  const fs31 = new Set(FS31_DEFS.map((d) => `mcd-${d[0].toLowerCase()}-v${d[1]}`));
-  return { courses: T.courses.filter((c) => !pack.has(c.id)), externals: T.external_resources, opportunities: T.opportunities, credentials: (T.microcred_defs ?? []).filter((d) => !fs31.has(d.id)), fitness: T.fitness_areas ?? [] };
+  return { courses: T.courses.filter((c) => !pack.has(c.id)), externals: T.external_resources, opportunities: waveCOpps(T), credentials: waveCCreds(T), fitness: T.fitness_areas ?? [] };
 }
-/** Content after the wave C merge (what kafaa_pw_resolve reads). */
+/** Content after the wave C merge (what kafaa_pw_resolve read when the wave-C QA migration ran live). */
 export function contentAfter(T) {
-  return { courses: T.courses, externals: T.external_resources, opportunities: T.opportunities, credentials: T.microcred_defs ?? [], fitness: T.fitness_areas ?? [], adaptive: T.adaptive_banks ?? [], tasks: T.performance_tasks ?? [] };
+  return { courses: T.courses, externals: T.external_resources, opportunities: waveCOpps(T), credentials: waveCCreds(T), fitness: T.fitness_areas ?? [], adaptive: T.adaptive_banks ?? [], tasks: T.performance_tasks ?? [] };
 }
 function requested(T, content) {
   const out = new Map();

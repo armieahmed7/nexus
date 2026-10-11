@@ -282,7 +282,11 @@
     "releaseBody": "Your line manager is asked to release you for the hours shown. The poster can only select you after that release.",
     "send": "Send application",
     "mirrorTitle": "Development record, not a qualification",
-    "mirrorBody": "Kafa'a records development evidence from signed-off work. It does not qualify, certify or license anyone; qualification and FANR licensing stay with the licensee's systems."
+    "mirrorBody": "Kafa'a records development evidence from signed-off work. It does not qualify, certify or license anyone; qualification and FANR licensing stay with the licensee's systems.",
+    "gateLocked": "Open to holders of a strategic credential",
+    "gateLockedBody": "This gig names a strategic-tier micro-credential. Earn one of these to apply:",
+    "gateUnlocked": "Unlocked by your strategic credential",
+    "gateUnlockedBody": "You hold a strategic-tier micro-credential this gig names:"
   },
   "my": {
     "intro": "Every application, from your line manager's release to the poster's sign-off.",

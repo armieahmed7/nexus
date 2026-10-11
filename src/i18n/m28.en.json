@@ -147,9 +147,10 @@
     "remove": "Remove from my goals",
     "add": "Add to my goals",
     "target": "Target level",
-    "goalNote": "Goals are private to you. \"Skills I want to grow\" will build on them.",
+    "goalNote": "Goals are private to you. Add a target date under \"Skills I want to grow\" to plan it and, if you choose, share it with your manager.",
     "securityNote": "Security skills follow the security career path and are not personal goals.",
-    "obsoleteNote": "This skill is obsolete: add its replacement to your goals instead."
+    "obsoleteNote": "This skill is obsolete: add its replacement to your goals instead.",
+    "planGoal": "Add a target date (Skills I want to grow)"
   },
   "basis": {
     "verified": "verified",

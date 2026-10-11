@@ -43,6 +43,7 @@ export const MSG = {
   not_open: 'This opportunity is not open for applications',
   own_opportunity: 'You cannot apply to your own opportunity',
   not_eligible: 'This opportunity is open to other job families',
+  credential_required: 'This gig is open to holders of a strategic credential it names', // FS wave D QA (FS31)
   already_applied: 'You already have an application for this opportunity',
   invalid_note: 'Keep your note under 500 characters',
   no_line_manager: 'No line manager is recorded for you; ask HR to update your record',
