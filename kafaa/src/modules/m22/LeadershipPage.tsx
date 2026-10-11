@@ -9,6 +9,7 @@ import { useEngine } from '../../data/useEngine';
 import { L, useFormat, usePick, useT } from '../../i18n';
 import { LEAD_TARGETS, STEPS, isShiftTrack, leadershipReadiness, rankProgrammes, requiredFor, stepOf, targetStep, BEHAVIOURS } from './domain';
 import { useLeadership, useLabels, StepName, NomPill, Sources, Fact, LevelDots, type LeadData, type Programme } from './ui';
+import { FutureLeadershipStrip } from './fsui';
 
 export default function LeadershipPage() {
   const t = useT();
@@ -79,6 +80,9 @@ function Body({ d, me, person, canSelf }: { d: LeadData; me: string | null; pers
           </Card>
         </div>
       )}
+
+      {/* FS46-FS48 (fsEe4): future behaviours, the Future Leaders track and the women-in-future-nuclear network */}
+      <FutureLeadershipStrip />
 
       <Section title={t('m22.leadership.ladderTitle')} description={t('m22.leadership.ladderSub')}>
         <ol className="grid grid-cols-1 gap-3 md:grid-cols-5" data-testid="m22-ladder">

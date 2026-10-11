@@ -1,11 +1,13 @@
 // /leadership/insights (M22 · F16): HR view of the academy. Leadership-behaviour 360 averages by grade and nominations by status,
 // both aggregate-only with every cell under 10 suppressed (rpc.leadershipStats), plus the published 2024 programme completions
 // with their source. No individual 360 answer is ever shown.
-import { Page, Section, Async, EmptyState, Callout, Heatmap, BarChart, StatTile, Grid } from '../../ui';
+// FS46 (fsEe4): the form-2 view by programme (12 behaviours incl. the four future ones; rpc.leadershipProgrammeStats, cells under 10
+// subjects suppressed). The grade view above stays on form 1, so older results keep their meaning.
+import { Page, Section, Async, EmptyState, Callout, Heatmap, BarChart, StatTile, Grid, BenchmarkChips } from '../../ui';
 import { useQuery, useRepo } from '../../data';
 import { useSession } from '../../auth/session';
 import { L, useFormat, usePick, useT } from '../../i18n';
-import { BEHAVIOUR_IDS } from './domain';
+import { BEHAVIOUR_IDS, BEHAVIOUR_IDS_V2 } from './domain';
 import { Sources } from './ui';
 
 export default function LeadershipInsightsPage() {
@@ -16,9 +18,11 @@ export default function LeadershipInsightsPage() {
   const me = useSession().identity.personId;
   const stats = useQuery(['leadership_360', 'leadership_nominations'], () => repo.rpc.leadershipStats(), [me]);
   const progs = useQuery(['leadership_programmes'], () => repo.list('leadership_programmes', { order: [['sort', 'asc']] }), []);
+  const byProg = useQuery(['leadership_360', 'leadership_nominations'], () => repo.rpc.leadershipProgrammeStats(), [me]);
   return (
     <Page title={t('m22.routes.leadership-insights.title')} intro={t('m22.insights.intro')} eyebrow={<L to="/leadership">{t('m22.programme.back')}</L>} wide>
       <div className="space-y-8">
+        <BenchmarkChips feature="FS46" />
         <Async state={stats} isEmpty={(s) => !s} empty={<EmptyState icon="lock" title={t('m22.insights.noAccess')} />}>
           {(s) => (
             <>
@@ -38,6 +42,24 @@ export default function LeadershipInsightsPage() {
               </Section>
             </>
           )}
+        </Async>
+        <Async state={byProg} isEmpty={(s) => !s} empty={<span />}>
+          {(s) => {
+            const rows = ['all', ...s!.rows.map((r) => r.programme_id)];
+            const cell = (r: string) => (r === 'all' ? s!.all : s!.rows.find((x) => x.programme_id === r)!);
+            const title = (id: string) => { const g = progs.data?.find((x) => x.id === id); return g ? pick(g, 'title') : id; };
+            return (
+              <Section title={t('m22.insights.progTitle', { cycle: s!.cycle ?? '—' })} description={t('m22.insights.progSub')}>
+                <div data-testid="m22-insights-programmes">
+                  <Heatmap title={t('m22.insights.progTitle', { cycle: s!.cycle ?? '—' })} rows={rows} cols={BEHAVIOUR_IDS_V2}
+                    rowLabel={(r) => { const c = cell(r); return `${r === 'all' ? t('m22.insights.progAll') : title(r)}${c.subjects != null ? ` (${f.num(c.subjects)})` : ''}`; }}
+                    colLabel={(c) => t(`m22.behaviours.${c}.short`)}
+                    value={(r, c) => { const x = cell(r); return x.suppressed || !x.scores ? { v: null, suppressed: true } : { v: x.scores[c] ?? null }; }} />
+                </div>
+                <p className="mt-2 text-[12px] text-ink-3">{t('m22.insights.progNote')}</p>
+              </Section>
+            );
+          }}
         </Async>
         <Async state={progs}>
           {(rows) => (

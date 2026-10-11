@@ -3323,6 +3323,7 @@ export interface Leadership360RequestsRow {
   subject_name_ar: string;
   invited_at: string;
   submitted_at?: string | null;
+  form_version: number;
 }
 export interface Leadership360Row {
   id: string;
@@ -3332,6 +3333,7 @@ export interface Leadership360Row {
   scores: any;
   submitted_at: string;
   open_read: boolean;
+  form_version: number;
 }
 export interface CommunitiesRow {
   id: string;
@@ -3437,6 +3439,182 @@ export interface KsSessionsRow {
   skill_ids: string[];
   synthetic: boolean;
   sources: any;
+}
+export interface LeadershipBehavioursRow {
+  id: string;
+  form_from: number;
+  sort: number;
+  trait_id?: string | null;
+  title_en: string;
+  title_ar: string;
+  short_en: string;
+  short_ar: string;
+  statement_en: string;
+  statement_ar: string;
+  framework_en: string;
+  framework_ar: string;
+  anchors: any;
+  coach: any;
+  links: any;
+  programme_ids: string[];
+  benchmark_ids: string[];
+  sources: any;
+}
+export interface FlCompetenciesRow {
+  id: string;
+  code: string;
+  sort: number;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  area_en: string;
+  area_ar: string;
+  descriptors: any;
+  skill_targets: any;
+  route: any;
+  external_ids: string[];
+  sources: any;
+}
+export interface FlExternalRow {
+  id: string;
+  kind: 'summer_school' | 'school' | 'masters' | 'mobility' | 'trainee' | 'internship';
+  sort: number;
+  owner_en: string;
+  owner_ar: string;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  dates_en: string;
+  dates_ar: string;
+  year_from?: number | null;
+  year_to?: number | null;
+  competency_ids: string[];
+  sources: any;
+}
+export interface FlCohortsRow {
+  id: string;
+  code: string;
+  year: number;
+  status: 'planned' | 'open' | 'running' | 'completed';
+  seats: number;
+  starts_on: string;
+  ends_on: string;
+  title_en: string;
+  title_ar: string;
+  modules: any;
+  brief_en: string;
+  brief_ar: string;
+  mentor_en: string;
+  mentor_ar: string;
+  sort: number;
+}
+export interface FlParticipantsRow {
+  id: string;
+  nomination_id: string;
+  person_id: string;
+  cohort_id: string;
+  person_name: string;
+  person_name_ar: string;
+  modules_done: string[];
+  project_title?: string | null;
+  project_question?: string | null;
+  project_summary?: string | null;
+  project_sponsor_role?: string | null;
+  project_status: 'none' | 'draft' | 'submitted' | 'returned' | 'accepted';
+  project_submitted_on?: string | null;
+  project_reviewed_by?: string | null;
+  project_review_note?: string | null;
+  project_decided_on?: string | null;
+  status: 'active' | 'completed' | 'withdrawn';
+  completed_on?: string | null;
+  history: any;
+  updated_at: string;
+}
+export interface WfnProgrammesRow {
+  id: string;
+  strand: 'circles' | 'visiting' | 'sponsored';
+  sort: number;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  pattern_en: string;
+  pattern_ar: string;
+  fact_en: string;
+  fact_ar: string;
+  sources: any;
+}
+export interface WfnParticipantsRow {
+  id: string;
+  person_id: string;
+  active: boolean;
+  interests: string[];
+  strands: string[];
+  mentor: boolean;
+  joined_on?: string | null;
+  withdrawn_on?: string | null;
+  updated_at: string;
+}
+export interface WfnCirclesRow {
+  id: string;
+  sort: number;
+  status: 'active' | 'closed';
+  seats: number;
+  focus: string[];
+  skill_ids: string[];
+  starts_on: string;
+  title_en: string;
+  title_ar: string;
+  mentor_role_en: string;
+  mentor_role_ar: string;
+  cadence_en: string;
+  cadence_ar: string;
+  is_full: boolean;
+  mentor_open: boolean;
+}
+export interface WfnCircleMembersRow {
+  id: string;
+  circle_id: string;
+  person_id: string;
+  role: 'member' | 'mentor';
+  active: boolean;
+  joined_on?: string | null;
+  left_on?: string | null;
+}
+export interface WfnOffersRow {
+  id: string;
+  strand: 'visiting' | 'sponsored';
+  sort: number;
+  status: 'open' | 'closed';
+  seats: number;
+  weeks?: number | null;
+  months?: number | null;
+  closes_on: string;
+  focus: string[];
+  title_en: string;
+  title_ar: string;
+  host_en: string;
+  host_ar: string;
+  placement_en: string;
+  placement_ar: string;
+}
+export interface WfnRequestsRow {
+  id: string;
+  offer_id: string;
+  person_id: string;
+  person_name: string;
+  person_name_ar: string;
+  statement: string;
+  status: 'interested' | 'shortlisted' | 'placed' | 'completed' | 'declined' | 'withdrawn';
+  outcome?: 'progressed' | 'same_role' | null;
+  decided_by?: string | null;
+  decided_on?: string | null;
+  note?: string | null;
+  history: any;
+  created_at: string;
+  updated_at: string;
 }
 export interface ReviewCyclesRow {
   id: string;
@@ -5029,6 +5207,17 @@ export interface Tables {
   expert_optin: ExpertOptinRow;
   expert_requests: ExpertRequestsRow;
   ks_sessions: KsSessionsRow;
+  leadership_behaviours: LeadershipBehavioursRow;
+  fl_competencies: FlCompetenciesRow;
+  fl_external: FlExternalRow;
+  fl_cohorts: FlCohortsRow;
+  fl_participants: FlParticipantsRow;
+  wfn_programmes: WfnProgrammesRow;
+  wfn_participants: WfnParticipantsRow;
+  wfn_circles: WfnCirclesRow;
+  wfn_circle_members: WfnCircleMembersRow;
+  wfn_offers: WfnOffersRow;
+  wfn_requests: WfnRequestsRow;
   review_cycles: ReviewCyclesRow;
   perf_ratings: PerfRatingsRow;
   review_placements: ReviewPlacementsRow;

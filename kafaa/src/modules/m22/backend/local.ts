@@ -10,10 +10,11 @@ import { todayIso } from '../../../domain/rules';
 import { MIN_GROUP_SIZE } from '../../../auth/policy';
 import {
   COP_MSG, EXPERT_MIN_LEVEL, EXPERT_REQUESTS_PER_DAY, MAX_360_INVITES, MIN_360_RATERS, NOM_MSG, POST_LIMIT_PER_DAY, RATER_KINDS,
-  computeLeadershipStats, cycleOf, firstPostHeld, hasContactDetails, postGuard, restrictedMessage, summarise360, validScores,
+  computeLeadershipStats, cycleOf, firstPostHeld, formVersionFor, hasContactDetails, postGuard, restrictedMessage, summarise360, validScores,
   type ExpertRow, type R360, type Req360,
 } from '../domain';
 import type { M22Rpc, QueueItem } from './rpc';
+import { makeLocalM22Fs } from './local.fs54';
 
 const rid = (p: string) => `${p}-${Array.from(crypto.getRandomValues(new Uint8Array(12)), (x) => x.toString(16).padStart(2, '0')).join('')}`;
 const isAr = (s: string) => /[؀-ۿ]/.test(s);
@@ -49,6 +50,7 @@ export function makeLocalM22(b: LocalBackend, h: LocalRpcHelpers): M22Rpc {
   };
 
   return {
+    ...makeLocalM22Fs(b, h), // FS46-FS48 (wave E · E4)
     // ───────────────────────────── F16
     async nominateLeader(personId, programmeId, reason) {
       await b.whenReady();
@@ -132,10 +134,12 @@ export function makeLocalM22(b: LocalBackend, h: LocalRpcHelpers): M22Rpc {
       if (total > MAX_360_INVITES) return refuse('limit', `Invite at most ${MAX_360_INVITES} colleagues in a cycle`, role);
       const subj = person(who)!;
       const ts = nowTs();
+      // FS46: a new cycle uses the current form (2); a cycle already started keeps its version (old results stay readable)
+      const version = formVersionFor(who, cycle, b.raw('leadership_360_requests') as Req360[]);
       const add = (rater: string, kind: string) => {
         const id = `l3q-${cycle}-${who}-${rater}`;
         if (b.rawGet('leadership_360_requests', id)) return;
-        b.rawInsert('leadership_360_requests', { id, cycle, subject_id: who, rater_id: rater, rater_kind: kind, status: 'invited', subject_name: subj.display_name, subject_name_ar: subj.display_name_ar || subj.display_name, invited_at: ts, submitted_at: null } as never);
+        b.rawInsert('leadership_360_requests', { id, cycle, subject_id: who, rater_id: rater, rater_kind: kind, status: 'invited', subject_name: subj.display_name, subject_name_ar: subj.display_name_ar || subj.display_name, invited_at: ts, submitted_at: null, form_version: version } as never);
         if (kind !== 'self') notify(`nt-${id}`, rater, 'leadership', `Leadership 360: ${subj.display_name} asked for your feedback`, `تقييم 360 القيادي: طلب ${subj.display_name_ar || subj.display_name} ملاحظاتك`, '/leadership/360', 'info');
       };
       add(who, 'self');
@@ -153,10 +157,11 @@ export function makeLocalM22(b: LocalBackend, h: LocalRpcHelpers): M22Rpc {
       const q = b.rawGet('leadership_360_requests', requestId);
       if (!q || q.rater_id !== who) return refuse('not_found', 'Feedback request not found', role);
       if (q.status === 'submitted') return refuse('conflict', 'You have already given this feedback', role);
-      const s = validScores(scores);
+      const version = (q as { form_version?: number }).form_version ?? 1;
+      const s = validScores(scores, version);
       if (!s) return refuse('invalid', 'Rate every behaviour from 1 to 5', role);
       const ts = nowTs();
-      b.rawInsert('leadership_360', { id: rid('l3'), cycle: q.cycle, subject_id: q.subject_id, rater_kind: q.rater_kind, scores: s, submitted_at: ts, open_read: false } as never);
+      b.rawInsert('leadership_360', { id: rid('l3'), cycle: q.cycle, subject_id: q.subject_id, rater_kind: q.rater_kind, scores: s, submitted_at: ts, open_read: false, form_version: version } as never);
       b.rawUpdate('leadership_360_requests', q.id, { status: 'submitted', submitted_at: ts } as never);
       return h.done<R>('leadership.360.submit', 'leadership_360_requests', q.id, q.rater_kind, role, null, '', 'Thank you: your feedback is recorded without your name', { status: 'submitted' }, ['leadership_360_requests', 'leadership_360']);
     },

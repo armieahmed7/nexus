@@ -29,8 +29,9 @@ const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}/;
 
 describe('F16 programme facts (acceptance: every fact links to the CNS report with an as-of date)', () => {
   it('every programme cites the CNS national report with an https URL and an as-of date', () => {
-    expect(T.leadership_programmes).toHaveLength(11);
-    for (const g of T.leadership_programmes) {
+    // FS47 (fsEe4): the Future Leaders track row cites its own research sources (INMA, NNTP), not the CNS report
+    expect(T.leadership_programmes).toHaveLength(12);
+    for (const g of T.leadership_programmes.filter((x: { id: string }) => x.id !== 'prog-future-leaders')) {
       expect(g.sources.length, g.id).toBeGreaterThan(0);
       for (const s of g.sources) {
         expect(s.id).toBe('cns10');
