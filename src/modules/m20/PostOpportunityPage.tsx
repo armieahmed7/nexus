@@ -6,6 +6,7 @@ import { Page, Card, Async, Callout, Icon, ConfirmDialog, TextField, TextArea, S
 import { useAction, useQuery, useRepo } from '../../data';
 import { useFormat, useNav, usePick, useT } from '../../i18n';
 import { useSession } from '../../auth/session';
+import { CHANNELS, channelProblem } from './futureGigs';
 import { OPP_KINDS, LOCATIONS, PRIORITY_FLAGS, MAX_SKILLS, RESTRICTED_SKILL_AREAS, validateOpportunity, type OpportunityInput } from './domain';
 import type { JobFamiliesRow, SkillsRow } from '../../data/types';
 
@@ -33,7 +34,7 @@ function PostForm({ skills, families }: { skills: SkillsRow[]; families: JobFami
   const run = useAction();
   const nav = useNav();
   const s = useSession();
-  const [v, setV] = useState({ kind: 'project', title_en: '', title_ar: '', summary_en: '', summary_ar: '', hours_week: '4', start_on: addDays(14), end_on: addDays(70), seats: '1', location_type: 'office' });
+  const [v, setV] = useState({ kind: 'project', title_en: '', title_ar: '', summary_en: '', summary_ar: '', hours_week: '4', start_on: addDays(14), end_on: addDays(70), seats: '1', location_type: 'office', channel: '' });
   // W2 integration (F11 -> F08): the team heatmap's "post an opportunity" action passes ?skill=<id>; the gig is pre-filled to
   // develop that skill (restricted areas are never pre-filled).
   const [params] = useSearchParams();
@@ -44,8 +45,9 @@ function PostForm({ skills, families }: { skills: SkillsRow[]; families: JobFami
   const [flags, setFlags] = useState<string[]>([]);
   const [confirm, setConfirm] = useState<'draft' | 'open' | null>(null);
   const [touched, setTouched] = useState(false);
-  const input = (status: 'draft' | 'open'): OpportunityInput => ({ ...v, hours_week: Number(v.hours_week), seats: Number(v.seats), skills_needed: need, skills_gained: gain, eligible_families: fams, priority_flags: flags, status });
-  const problem = validateOpportunity(input('open'), skills, families.map((x) => x.id), new Date().toISOString().slice(0, 10));
+  const input = (status: 'draft' | 'open'): OpportunityInput => ({ ...v, hours_week: Number(v.hours_week), seats: Number(v.seats), skills_needed: need, skills_gained: gain, eligible_families: fams, priority_flags: flags, status, channel: v.channel || null });
+  // FS27: a future-skills channel needs at least one future skill gained (same rule as the RPC)
+  const problem = validateOpportunity(input('open'), skills, families.map((x) => x.id), new Date().toISOString().slice(0, 10)) ?? channelProblem(v.channel || null, gain, skills);
   const fld = (k: keyof typeof v) => ({ name: k, value: v[k], onChange: (x: string) => setV((c) => ({ ...c, [k]: x })) });
   const selectable = skills.filter((x) => !RESTRICTED_SKILL_AREAS.includes(x.area));
   return (
@@ -54,6 +56,7 @@ function PostForm({ skills, families }: { skills: SkillsRow[]; families: JobFami
         <Card title={t('m20.post.what')}>
           <div className="grid gap-3 sm:grid-cols-2">
             <SelectField label={t('m20.f.kind')} required options={OPP_KINDS.map((k) => ({ value: k, label: t(`m20.kind.${k}`) }))} {...fld('kind')} />
+            <SelectField label={t('m20.fs.post.channel')} hint={t('m20.fs.post.channelHint')} options={[{ value: '', label: t('m20.fs.post.noChannel') }, ...CHANNELS.map((c) => ({ value: c, label: t(`m20.fs.channel.${c}`) }))]} {...fld('channel')} />
             <RadioGroup label={t('m20.f.location')} name="location_type" value={v.location_type} onChange={(x) => setV((c) => ({ ...c, location_type: x }))} options={LOCATIONS.map((k) => ({ value: k, label: t(`m20.location.${k}`) }))} />
             <TextField label={t('m20.post.titleEn')} required {...fld('title_en')} />
             <TextField label={t('m20.post.titleAr')} required {...fld('title_ar')} />

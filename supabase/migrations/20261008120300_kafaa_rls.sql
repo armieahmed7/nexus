@@ -1896,6 +1896,24 @@ create policy kafaa_read on kafaa_alumni_stories for select to anon, authenticat
 grant select on kafaa_alumni_stories to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- time_envelopes
+alter table kafaa_time_envelopes enable row level security;
+drop policy if exists kafaa_read on kafaa_time_envelopes;
+create policy kafaa_read on kafaa_time_envelopes for select to anon, authenticated using (kafaa_rule_read('opportunities', person_id, null::text, open_read)
+    or kafaa_rule_read('opportunities', line_manager_id, null::text, open_read)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_time_envelopes to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- secondments
+alter table kafaa_secondments enable row level security;
+drop policy if exists kafaa_read on kafaa_secondments;
+create policy kafaa_read on kafaa_secondments for select to anon, authenticated using (kafaa_rule_read('opportunities', person_id, null::text, open_read)
+    or kafaa_rule_read('opportunities', line_manager_id, null::text, open_read)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_secondments to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- horizon_lanes
 alter table kafaa_horizon_lanes enable row level security;
 drop policy if exists kafaa_read on kafaa_horizon_lanes;

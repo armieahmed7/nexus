@@ -119,6 +119,8 @@ export interface OpportunityInput {
   hours_week: number; start_on: string; end_on: string; seats: number;
   location_type: string; eligible_families?: string[]; priority_flags?: string[];
   status?: 'draft' | 'open';
+  /** FS27: future-skills gig channel (src/modules/m20/futureGigs.ts CHANNELS); null for an ordinary stretch assignment. */
+  channel?: string | null;
 }
 const dayNo = (d: string) => Math.floor(Date.parse(`${String(d).slice(0, 10)}T00:00:00Z`) / 86_400_000);
 const isDate = (d: unknown) => typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d) && !Number.isNaN(Date.parse(`${d}T00:00:00Z`));

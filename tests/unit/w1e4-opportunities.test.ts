@@ -27,7 +27,9 @@ const audits = (action: string, outcome?: string) => b.raw('audit_events').filte
 
 describe('F08 seed', () => {
   it('has 25 synthetic opportunities across all seven kinds, none restricted, posted by people who may post', () => {
-    expect(T.opportunities).toHaveLength(25);
+    // FS27 (fsDe1) adds 15 channelled future-skills gigs; the 25 F08 opportunities are the ones without a channel.
+    expect(T.opportunities.filter((o) => !o.channel)).toHaveLength(25);
+    expect(T.opportunities.filter((o) => o.channel)).toHaveLength(15);
     expect(new Set(T.opportunities.map((o) => o.kind))).toEqual(new Set(OPP_KINDS));
     expect(T.opportunities.some((o) => RESTRICTED_KINDS.includes(o.kind) || o.location_type === 'protected_area')).toBe(false);
     const secSkills = new Set(T.skills.filter((s) => s.area === 'security').map((s) => s.id));
@@ -62,7 +64,7 @@ describe('F08 match engine', () => {
     matchOpportunities({ opps: T.opportunities.filter((o) => o.status !== 'draft'), states, skills: T.skills, roleComps: T.role_competencies, currentRole: 'reactor-operator', targetRole: target, family });
   it('every card carries reasons with i18n keys in English and Arabic (lintRanked)', () => {
     const r = run();
-    expect(r).toHaveLength(24);
+    expect(r).toHaveLength(24 + 15); // 24 non-draft F08 opportunities + 15 FS27 future gigs
     expect(lintRanked(r)).toEqual([]);
     for (const x of r) for (const reason of x.reasons) {
       expect(hasKey(reason.key), reason.key).toBe(true);

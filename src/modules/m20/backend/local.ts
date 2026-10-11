@@ -12,6 +12,8 @@ import { MSG, LIVE_APP_STATUSES, canTransition, cleanLevels, computeStats, ojtEv
 import type { M20Rpc } from './rpc';
 import { makeLocalF15 } from './rotation.local';
 import { makeLocalF23 } from './reserve.local';
+import { makeLocalFS27 } from './fs27.local';
+import { channelProblem, envelopeFit } from '../futureGigs';
 
 type Opp = RowOf<'opportunities'>;
 type App = RowOf<'opportunity_applications'>;
@@ -33,6 +35,7 @@ export function makeLocalM20(b: LocalBackend, h: LocalRpcHelpers): M20Rpc {
   return {
     ...makeLocalF15(b, h),
     ...makeLocalF23(b, h),
+    ...makeLocalFS27(b, h),
     async postOpportunity(p) {
       await b.whenReady();
       type R = { id: string; status: string };
@@ -43,6 +46,9 @@ export function makeLocalM20(b: LocalBackend, h: LocalRpcHelpers): M20Rpc {
       if (!role) return refuse('forbidden', MSG.forbidden_post);
       const bad = validateOpportunity(p, b.raw('skills') as never, b.raw('job_families').map((f) => f.id), todayIso());
       if (bad) return refuse(bad.code, bad.message, role);
+      // FS27: a future-skills channel must be known and the gig must grow at least one future skill
+      const cbad = channelProblem(p.channel, p.skills_gained ?? [], b.raw('skills') as never);
+      if (cbad) return refuse(cbad.code, cbad.message, role);
       const poster = b.rawGet('people', who)!;
       const id = rid('opp');
       const status = p.status ?? 'open';
@@ -52,7 +58,7 @@ export function makeLocalM20(b: LocalBackend, h: LocalRpcHelpers): M20Rpc {
         kind: p.kind as never, title_en: p.title_en.trim(), title_ar: p.title_ar.trim(), summary_en: p.summary_en.trim(), summary_ar: p.summary_ar.trim(),
         skills_needed: [...p.skills_needed], skills_gained: [...p.skills_gained], hours_week: p.hours_week, start_on: p.start_on, end_on: p.end_on, seats: p.seats, seats_taken: 0,
         location_type: p.location_type as never, eligible_families: [...(p.eligible_families ?? [])], priority_flags: [...(p.priority_flags ?? [])],
-        status, listed: status !== 'draft', created_at: ts, updated_at: ts,
+        status, listed: status !== 'draft', created_at: ts, updated_at: ts, channel: p.channel ? p.channel : null,
       } as never);
       return h.done<R>('opportunity.post', 'opportunities', id, `${p.kind} ${status}`, role, null, '', status === 'draft' ? 'Draft saved' : 'Opportunity posted', { id, status }, ['opportunities']);
     },
@@ -77,7 +83,7 @@ export function makeLocalM20(b: LocalBackend, h: LocalRpcHelpers): M20Rpc {
 
     async applyOpportunity(opportunityId, note) {
       await b.whenReady();
-      type R = { id: string; releaser_id: string; skip_level: boolean };
+      type R = { id: string; releaser_id: string; skip_level: boolean; envelope_id: string | null };
       const refuse = (code: string, msg: string, role: string | null = null) => h.refuse<R>('opportunity.apply', 'opportunities', opportunityId, code, msg, role);
       const who = me();
       if (!who) return refuse('not_signed_in', MSG.not_signed_in);
@@ -96,13 +102,24 @@ export function makeLocalM20(b: LocalBackend, h: LocalRpcHelpers): M20Rpc {
       if (!r.releaser) return refuse('no_line_manager', MSG.no_line_manager, role);
       const id = rid('oa');
       const ts = nowTs();
+      // FS27: inside an approved time envelope the per-gig release is skipped (released at once by the envelope's approver)
+      const fit = envelopeFit(who, o as never, b.raw('time_envelopes') as never, b.raw('opportunity_applications') as never, new Map(b.raw('opportunities').map((x) => [x.id, x])), todayIso());
+      const env = fit.fits ? b.rawGet('time_envelopes', fit.envelope_id!) : undefined;
+      const history: HistoryEntry[] = [{ at: ts, status: 'applied', by: who, note: text || null }];
+      if (env) history.push({ at: ts, status: 'released', by: env.approver_id ?? null, note: `Within the approved time envelope ${env.period} (${env.pct}%)` });
       b.rawInsert('opportunity_applications', {
-        id, opportunity_id: opportunityId, person_id: who, note: text, status: 'applied', history: [{ at: ts, status: 'applied', by: who, note: text || null }],
+        id, opportunity_id: opportunityId, person_id: who, note: text, status: env ? 'released' : 'applied', history,
         applicant_name: p.display_name, applicant_name_ar: p.display_name_ar || p.display_name, applicant_role_id: p.job_role_id ?? null, applicant_family_id: p.job_family_id ?? null,
         poster_id: o.posted_by, line_manager_id: r.lineManager, releaser_id: r.releaser, skip_level: r.skipLevel, outcome_levels: {}, evidence_ids: [], open_read: false, created_at: ts, updated_at: ts,
+        released_by: env ? env.approver_id ?? null : null, released_at: env ? ts : null, envelope_id: env ? env.id : null,
       } as never);
+      if (env) {
+        notify(`nt-${id}-released`, o.posted_by, 'opportunity', `Applicant released (time envelope): ${o.title_en}`, `تم الإفراج عن متقدّم (وقت مخصص): ${o.title_ar}`, '/opportunities/manage', 'info');
+        notify(`nt-${id}-envelope`, env.approver_id, 'opportunity', `Time envelope used: ${p.display_name} joined ${o.title_en}`, `استُخدم الوقت المخصص: ${p.display_name_ar || p.display_name} انضم إلى ${o.title_ar}`, '/opportunities/envelopes', 'info');
+        return h.done<R>('opportunity.apply', 'opportunity_applications', id, `${opportunityId} -> released within envelope ${env.id}`, role, null, '', 'Application released within your approved time envelope', { id, releaser_id: r.releaser, skip_level: r.skipLevel, envelope_id: env.id }, ['opportunity_applications', 'notifications']);
+      }
       notify(`nt-${id}-applied`, r.releaser, 'opportunity', `Release request: ${o.title_en}`, `طلب إفراج: ${o.title_ar}`, '/opportunities/manage', 'info');
-      return h.done<R>('opportunity.apply', 'opportunity_applications', id, `${opportunityId} -> release by ${r.releaser}${r.skipLevel ? ' (skip level)' : ''}`, role, null, '', 'Application sent to your line manager for release', { id, releaser_id: r.releaser, skip_level: r.skipLevel }, ['opportunity_applications', 'notifications']);
+      return h.done<R>('opportunity.apply', 'opportunity_applications', id, `${opportunityId} -> release by ${r.releaser}${r.skipLevel ? ' (skip level)' : ''}`, role, null, '', 'Application sent to your line manager for release', { id, releaser_id: r.releaser, skip_level: r.skipLevel, envelope_id: null }, ['opportunity_applications', 'notifications']);
     },
 
     async releaseDecision(applicationId, decision, note = '') {

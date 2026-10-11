@@ -7,6 +7,7 @@ import { L, useFormat, usePick, useT } from '../../i18n';
 import { Can } from '../../auth/guards';
 import { OPP_KINDS, LOCATIONS, PRIORITY_FLAGS } from './domain';
 import { NEED_LEVEL } from './match';
+import { ChannelChip } from './fsUi';
 import { useMarket, useMatches, useLabels, defaultTarget, KindChip, FlagChips, MatchRing, NeededSkills, GainedSkills, Meta, useRange, seatsLeft, AppPill, type MarketData, type Opp } from './ui';
 import type { Ranked } from '../../domain/engines/types';
 import type { MatchItem } from './match';
@@ -24,6 +25,8 @@ export default function MarketplacePage() {
       actions={
         <>
           <L to="/opportunities/my" className="btn-outline btn-sm" data-testid="m20-my-link"><Icon name="user" size={14} />{t('m20.market.myApps')}</L>
+          <L to="/opportunities/future" className="btn-outline btn-sm" data-testid="m20-future-link"><Icon name="sparkle" size={14} />{t('m20.fs.link.future')}</L>
+          <L to="/opportunities/secondments" className="btn-outline btn-sm" data-testid="m20-secondments-link"><Icon name="globe" size={14} />{t('m20.fs.link.secondments')}</L>
           <L to="/opportunities/rotations" className="btn-outline btn-sm" data-testid="m20-rotations-link"><Icon name="grad" size={14} />{t('m20.market.rotations')}</L>
           <Can res="opportunities" levels={['W', 'A']}><L to="/opportunities/manage" className="btn-outline btn-sm"><Icon name="check" size={14} />{t('m20.market.manage')}</L></Can>
           <Can res="opportunities" levels={['W']}><L to="/opportunities/post" className="btn-primary btn-sm" data-testid="m20-post-link"><Icon name="plus" size={14} />{t('m20.market.post')}</L></Can>
@@ -158,7 +161,7 @@ function OppCard({ r, d, saved, app, feature, unranked }: { r: Ranked<MatchItem<
     <Card as="article" className={`flex flex-col ${feature ? 'border-accent/40 shadow-card' : ''}`}>
       <div className="flex items-start gap-3" data-testid="m20-card">
         <div className="min-w-0 flex-1">
-          <div className="mb-1 flex flex-wrap items-center gap-1.5"><KindChip kind={o.kind} /><FlagChips flags={o.priority_flags} />{!r.item!.eligible && <span className="chip border-line bg-sunken text-ink-3">{t('m20.market.otherFamilies')}</span>}</div>
+          <div className="mb-1 flex flex-wrap items-center gap-1.5"><KindChip kind={o.kind} /><ChannelChip channel={o.channel} /><FlagChips flags={o.priority_flags} />{!r.item!.eligible && <span className="chip border-line bg-sunken text-ink-3">{t('m20.market.otherFamilies')}</span>}</div>
           <h3 className="text-[15.5px] font-semibold leading-snug"><L to={`/opportunities/${o.id}`} className="link-plain hover:underline">{pick(o, 'title')}</L></h3>
           <div className="mt-1 flex flex-wrap gap-x-3 gap-y-1">
             <Meta icon="user">{lab.role(o.host_role_id)}</Meta>

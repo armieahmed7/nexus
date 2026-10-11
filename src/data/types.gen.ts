@@ -2772,6 +2772,7 @@ export interface OpportunitiesRow {
   listed: boolean;
   created_at: string;
   updated_at: string;
+  channel?: 'advance_study' | 'digital_innovation' | 'ai_pilot' | 'data_cleanup' | 'knowledge_capture' | null;
 }
 export interface OpportunityApplicationsRow {
   id: string;
@@ -2799,6 +2800,7 @@ export interface OpportunityApplicationsRow {
   open_read: boolean;
   created_at: string;
   updated_at: string;
+  envelope_id?: string | null;
 }
 export interface OpportunitySavesRow {
   id: string;
@@ -2825,6 +2827,9 @@ export interface RotationTemplatesRow {
   listed: boolean;
   created_at: string;
   updated_at: string;
+  future_track?: 'digital_twin' | 'data_office' | 'advance_study' | 'energy_transition' | null;
+  future_role_ids: string[];
+  career_level_only: boolean;
 }
 export interface RotationCohortsRow {
   id: string;
@@ -3023,6 +3028,65 @@ export interface AlumniStoriesRow {
   synthetic: boolean;
   listed: boolean;
   sort: number;
+}
+export interface TimeEnvelopesRow {
+  id: string;
+  person_id: string;
+  line_manager_id?: string | null;
+  approver_id?: string | null;
+  pct: number;
+  cap_hours: number;
+  period: string;
+  starts_on: string;
+  ends_on: string;
+  channels: string[];
+  reason: string;
+  status: 'requested' | 'approved' | 'declined' | 'withdrawn';
+  decision_note?: string | null;
+  decided_at?: string | null;
+  person_name: string;
+  person_name_ar: string;
+  person_role_id?: string | null;
+  person_family_id?: string | null;
+  history: any;
+  open_read: boolean;
+  created_at: string;
+  updated_at: string;
+}
+export interface SecondmentsRow {
+  id: string;
+  person_id: string;
+  host_kind: 'iaea' | 'partner_utility' | 'vendor' | 'university' | 'research_centre';
+  host_org_id?: string | null;
+  host_name_en: string;
+  host_name_ar: string;
+  host_country: string;
+  supervisor_en: string;
+  supervisor_ar: string;
+  objectives: any;
+  future_role_id?: string | null;
+  track?: 'digital_twin' | 'data_office' | 'advance_study' | 'energy_transition' | null;
+  start_on: string;
+  end_on: string;
+  months: number;
+  line_manager_id?: string | null;
+  planned_by: string;
+  status: 'planned' | 'returned' | 'cancelled';
+  returned_on?: string | null;
+  closed_by?: string | null;
+  closed_at?: string | null;
+  outcome_note?: string | null;
+  objectives_met: any;
+  transfer_due_on?: string | null;
+  capture_session_id?: string | null;
+  person_name: string;
+  person_name_ar: string;
+  person_role_id?: string | null;
+  person_family_id?: string | null;
+  history: any;
+  open_read: boolean;
+  created_at: string;
+  updated_at: string;
 }
 export interface HorizonLanesRow {
   id: string;
@@ -4445,6 +4509,8 @@ export interface Tables {
   reserve_requests: ReserveRequestsRow;
   reserve_engagements: ReserveEngagementsRow;
   alumni_stories: AlumniStoriesRow;
+  time_envelopes: TimeEnvelopesRow;
+  secondments: SecondmentsRow;
   horizon_lanes: HorizonLanesRow;
   future_resources: FutureResourcesRow;
   future_interest: FutureInterestRow;

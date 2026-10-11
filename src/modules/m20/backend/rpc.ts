@@ -5,6 +5,9 @@ import type { Result } from '../../../data/types';
 import type { OpportunityInput, OppStats } from '../domain';
 import type { HostInput, RotationBoard, RotationCandidate, ShadowInput, TemplateInput } from '../rotation';
 import type { JoinInput, RequestInput, ReserveBoard, ReserveDesk } from '../reserve';
+import type { EnvelopeInput, FutureGigStats } from '../futureGigs';
+import type { CloseInput, SecDeskStats, SecondmentInput, TagInput } from '../secondment';
+import type { SecondmentsRow } from '../../../data/types';
 
 export type { OpportunityInput, OppStats, HostInput, RotationBoard, RotationCandidate, ShadowInput, TemplateInput, JoinInput, RequestInput, ReserveBoard, ReserveDesk };
 export interface CohortInput { id?: string | null; template_id: string; name_en: string; name_ar: string; intake_on: string; status?: 'planned' | 'running' | 'completed' }
@@ -63,14 +66,52 @@ export interface F23Rpc {
   reserveDesk(): Promise<ReserveDesk | null>;
 }
 
-export interface M20Rpc extends F15Rpc, F23Rpc {
+export type { EnvelopeInput, FutureGigStats, CloseInput, SecDeskStats, SecondmentInput, TagInput };
+/** FS28: the HR secondment desk (all secondments with the linked capture-session status, aggregates, people HR may plan for). */
+export interface SecondmentDesk {
+  rows: SecondmentsRow[];
+  sessions: { id: string; status: string; planned_on: string }[];
+  stats: SecDeskStats;
+  people: { id: string; name: string; name_ar: string; family_id: string | null; role_id: string | null }[];
+  can_edit: boolean;
+}
+
+/** FS27 Future-skills gig channel with a time envelope (FS wave D · E1). SQL: supabase/migrations/20261010241001_kafaa_fs41_future_gigs_secondments.sql. Rules: src/modules/m20/futureGigs.ts. */
+export interface FS27Rpc {
+  /** FS27: ask my line manager once for a share of my time (5-20 %) for future-skills gigs in this or next quarter. Staff (Own). Audited. */
+  requestEnvelope(input: EnvelopeInput): Promise<Result<{ id: string; status: string; line_manager_id: string; cap_hours: number }>>;
+  /** FS27: the line manager of record approves (ledger) or declines (reason) a requested envelope; maker-checker: never the person.
+   *  The person withdraws a requested or approved envelope. */
+  approveEnvelope(id: string, decision: 'approve' | 'decline' | 'withdraw', note?: string): Promise<Result<{ status: string }>>;
+  /** FS27: future-gig aggregates for HR (Agg/A on opportunities) and auditors: open gigs per channel, envelopes and applications made
+   *  through them (people suppressed below 10), evidence rows written by completed future gigs. Null otherwise. */
+  futureGigStats(): Promise<FutureGigStats | null>;
+}
+/** FS28 Future-role rotations and external secondments (FS wave D · E1). Rules: src/modules/m20/secondment.ts. */
+export interface FS28Rpc {
+  /** FS28: tag a rotation template as a future-role rotation (track + FS05 concept roles; ADVANCE study is career-level only), or untag it.
+   *  Programme owners (template owner or the training manager). Security, cyber and safeguards roles refused. Audited. */
+  tagFutureRotation(input: TagInput): Promise<Result<{ id: string; future_track: string | null }>>;
+  /** FS28: HR plans an external secondment (host, objectives, dates, host supervisor role). Security, cyber and safeguards refused. Ledger row. */
+  planSecondment(input: SecondmentInput): Promise<Result<{ id: string; end_on: string; line_manager_id: string }>>;
+  /** FS28: HR closes a secondment: return (outcome, objectives met; creates the knowledge-capture session due within 60 days; ledger)
+   *  or cancel (reason). */
+  closeSecondment(id: string, decision: 'return' | 'cancel', input: CloseInput): Promise<Result<{ status: string; capture_session_id: string | null; transfer_due_on: string | null }>>;
+  /** FS28: the HR secondment desk (hr_analyst, hr_director; auditors read-only). Null otherwise. */
+  secondmentDesk(): Promise<SecondmentDesk | null>;
+  /** FS28: secondment aggregates for any staff member (host-kind cells and people suppressed below 10). Null when not signed in as staff. */
+  secondmentOverview(): Promise<SecDeskStats | null>;
+}
+
+export interface M20Rpc extends F15Rpc, F23Rpc, FS27Rpc, FS28Rpc {
   /** F08: post an opportunity (draft or open). Managers and the training manager (W). Security, cyber, safeguards and
    *  protected-area work is refused (restricted_kind) and audited. */
   postOpportunity(input: OpportunityInput): Promise<Result<{ id: string; status: string }>>;
   /** F08: open, close or reopen an opportunity (poster, or the training manager). Closing ends pending applications. */
   setOpportunityStatus(id: string, status: 'open' | 'closed'): Promise<Result<{ status: string }>>;
-  /** F08: apply with a short note. Routes the release to the line manager (or the skip-level manager when the line manager is the poster). */
-  applyOpportunity(opportunityId: string, note: string): Promise<Result<{ id: string; releaser_id: string; skip_level: boolean }>>;
+  /** F08: apply with a short note. Routes the release to the line manager (or the skip-level manager when the line manager is the poster).
+   *  FS27: a future-skills gig inside my approved time envelope is released at once (no per-gig release; envelope_id set). */
+  applyOpportunity(opportunityId: string, note: string): Promise<Result<{ id: string; releaser_id: string; skip_level: boolean; envelope_id?: string | null }>>;
   /** F08: line-manager release (maker-checker: the poster can never release). Decline needs a reason. */
   releaseDecision(applicationId: string, decision: 'release' | 'decline', note?: string): Promise<Result<{ status: string }>>;
   /** F08: poster selects (only after release: release_required) or does not select. Ledger row. */
