@@ -3316,7 +3316,8 @@ create table if not exists kafaa_opportunities (
   status text not null default 'open' check (status in ('draft', 'open', 'closed', 'filled')),
   listed boolean not null default true,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  channel text check (channel in ('advance_study', 'digital_innovation', 'ai_pilot', 'data_cleanup', 'knowledge_capture'))
 );
 comment on table kafaa_opportunities is '[M20] Opportunity marketplace: short stretch assignments posted by managers (F08)';
 
@@ -3346,7 +3347,8 @@ create table if not exists kafaa_opportunity_applications (
   evidence_ids text[] not null default '{}'::text[],
   open_read boolean not null default false,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  envelope_id text
 );
 comment on table kafaa_opportunity_applications is '[M20] Application to an opportunity: release by the line manager, selection, completion sign-off (F08)';
 
@@ -3378,7 +3380,10 @@ create table if not exists kafaa_rotation_templates (
   status text not null default 'active' check (status in ('draft', 'active', 'retired')),
   listed boolean not null default true,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  future_track text check (future_track in ('digital_twin', 'data_office', 'advance_study', 'energy_transition')),
+  future_role_ids text[] not null default '{}'::text[],
+  career_level_only boolean not null default false
 );
 comment on table kafaa_rotation_templates is '[M20] Rotation programme templates: placement sequence, durations, host role cards and skill objectives (F15)';
 
@@ -3603,6 +3608,71 @@ create table if not exists kafaa_alumni_stories (
   sort integer not null default 0
 );
 comment on table kafaa_alumni_stories is '[M20] Alumni stories: consented, synthetic and labelled; hidden when the alumnus withdraws consent (F23)';
+
+-- M20 · Time envelope: a share of working time for future-skills gigs in a quarter, approved once by the line manager (FS27)
+create table if not exists kafaa_time_envelopes (
+  id text primary key,
+  person_id text not null,
+  line_manager_id text,
+  approver_id text,
+  pct integer not null,
+  cap_hours integer not null,
+  period text not null,
+  starts_on date not null,
+  ends_on date not null,
+  channels text[] not null default '{}'::text[],
+  reason text not null default '',
+  status text not null default 'requested' check (status in ('requested', 'approved', 'declined', 'withdrawn')),
+  decision_note text,
+  decided_at timestamptz,
+  person_name text not null default '',
+  person_name_ar text not null default '',
+  person_role_id text,
+  person_family_id text,
+  history jsonb not null default '[]'::jsonb,
+  open_read boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_time_envelopes is '[M20] Time envelope: a share of working time for future-skills gigs in a quarter, approved once by the line manager (FS27)';
+
+-- M20 · External secondment: host, objectives, duration, host supervisor role and a return-and-transfer obligation (FS28)
+create table if not exists kafaa_secondments (
+  id text primary key,
+  person_id text not null,
+  host_kind text not null check (host_kind in ('iaea', 'partner_utility', 'vendor', 'university', 'research_centre')),
+  host_org_id text,
+  host_name_en text not null,
+  host_name_ar text not null,
+  host_country text not null,
+  supervisor_en text not null,
+  supervisor_ar text not null,
+  objectives jsonb not null default '[]'::jsonb,
+  future_role_id text,
+  track text check (track in ('digital_twin', 'data_office', 'advance_study', 'energy_transition')),
+  start_on date not null,
+  end_on date not null,
+  months integer not null,
+  line_manager_id text,
+  planned_by text not null,
+  status text not null default 'planned' check (status in ('planned', 'returned', 'cancelled')),
+  returned_on date,
+  closed_by text,
+  closed_at timestamptz,
+  outcome_note text,
+  objectives_met jsonb not null default '{}'::jsonb,
+  transfer_due_on date,
+  capture_session_id text,
+  person_name text not null default '',
+  person_name_ar text not null default '',
+  person_role_id text,
+  person_family_id text,
+  history jsonb not null default '[]'::jsonb,
+  open_read boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_secondments is '[M20] External secondment: host, objectives, duration, host supervisor role and a return-and-transfer obligation (FS28)';
 
 -- M21 · Horizon roadmap lanes 2026-2035 with public sources (F09; no headcount, no sites)
 create table if not exists kafaa_horizon_lanes (
@@ -5382,6 +5452,14 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_re
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_reserve_engagements_poster_read_id_fk') then alter table kafaa_reserve_engagements add constraint kafaa_reserve_engagements_poster_read_id_fk foreign key (poster_read_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_reserve_engagements_hr_by_fk') then alter table kafaa_reserve_engagements add constraint kafaa_reserve_engagements_hr_by_fk foreign key (hr_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_alumni_stories_alumni_id_fk') then alter table kafaa_alumni_stories add constraint kafaa_alumni_stories_alumni_id_fk foreign key (alumni_id) references kafaa_alumni(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_time_envelopes_person_id_fk') then alter table kafaa_time_envelopes add constraint kafaa_time_envelopes_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_time_envelopes_line_manager_id_fk') then alter table kafaa_time_envelopes add constraint kafaa_time_envelopes_line_manager_id_fk foreign key (line_manager_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_time_envelopes_approver_id_fk') then alter table kafaa_time_envelopes add constraint kafaa_time_envelopes_approver_id_fk foreign key (approver_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_secondments_person_id_fk') then alter table kafaa_secondments add constraint kafaa_secondments_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_secondments_host_org_id_fk') then alter table kafaa_secondments add constraint kafaa_secondments_host_org_id_fk foreign key (host_org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_secondments_future_role_id_fk') then alter table kafaa_secondments add constraint kafaa_secondments_future_role_id_fk foreign key (future_role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_secondments_line_manager_id_fk') then alter table kafaa_secondments add constraint kafaa_secondments_line_manager_id_fk foreign key (line_manager_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_secondments_planned_by_fk') then alter table kafaa_secondments add constraint kafaa_secondments_planned_by_fk foreign key (planned_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_resources_course_id_fk') then alter table kafaa_future_resources add constraint kafaa_future_resources_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_resources_track_id_fk') then alter table kafaa_future_resources add constraint kafaa_future_resources_track_id_fk foreign key (track_id) references kafaa_adv_tracks(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_resources_org_id_fk') then alter table kafaa_future_resources add constraint kafaa_future_resources_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -5907,17 +5985,20 @@ create index if not exists kafaa_opportunities_family_id_idx on kafaa_opportunit
 create index if not exists kafaa_opportunities_host_role_id_idx on kafaa_opportunities (host_role_id);
 create index if not exists kafaa_opportunities_kind_idx on kafaa_opportunities (kind);
 create index if not exists kafaa_opportunities_status_idx on kafaa_opportunities (status);
+create index if not exists kafaa_opportunities_channel_idx on kafaa_opportunities (channel);
 create index if not exists kafaa_opportunity_applications_opportunity_id_idx on kafaa_opportunity_applications (opportunity_id);
 create index if not exists kafaa_opportunity_applications_person_id_idx on kafaa_opportunity_applications (person_id);
 create index if not exists kafaa_opportunity_applications_status_idx on kafaa_opportunity_applications (status);
 create index if not exists kafaa_opportunity_applications_poster_id_idx on kafaa_opportunity_applications (poster_id);
 create index if not exists kafaa_opportunity_applications_line_manager_id_idx on kafaa_opportunity_applications (line_manager_id);
 create index if not exists kafaa_opportunity_applications_releaser_id_idx on kafaa_opportunity_applications (releaser_id);
+create index if not exists kafaa_opportunity_applications_envelope_id_idx on kafaa_opportunity_applications (envelope_id);
 create index if not exists kafaa_opportunity_saves_person_id_idx on kafaa_opportunity_saves (person_id);
 create index if not exists kafaa_opportunity_saves_opportunity_id_idx on kafaa_opportunity_saves (opportunity_id);
 create index if not exists kafaa_rotation_templates_programme_idx on kafaa_rotation_templates (programme);
 create index if not exists kafaa_rotation_templates_owner_id_idx on kafaa_rotation_templates (owner_id);
 create index if not exists kafaa_rotation_templates_status_idx on kafaa_rotation_templates (status);
+create index if not exists kafaa_rotation_templates_future_track_idx on kafaa_rotation_templates (future_track);
 create index if not exists kafaa_rotation_cohorts_template_id_idx on kafaa_rotation_cohorts (template_id);
 create index if not exists kafaa_rotation_cohorts_owner_id_idx on kafaa_rotation_cohorts (owner_id);
 create index if not exists kafaa_rotation_placements_enrolment_id_idx on kafaa_rotation_placements (enrolment_id);
@@ -5957,6 +6038,18 @@ create index if not exists kafaa_reserve_engagements_poster_read_id_idx on kafaa
 create index if not exists kafaa_reserve_engagements_status_idx on kafaa_reserve_engagements (status);
 create index if not exists kafaa_reserve_engagements_hr_by_idx on kafaa_reserve_engagements (hr_by);
 create index if not exists kafaa_alumni_stories_alumni_id_idx on kafaa_alumni_stories (alumni_id);
+create index if not exists kafaa_time_envelopes_person_id_idx on kafaa_time_envelopes (person_id);
+create index if not exists kafaa_time_envelopes_line_manager_id_idx on kafaa_time_envelopes (line_manager_id);
+create index if not exists kafaa_time_envelopes_approver_id_idx on kafaa_time_envelopes (approver_id);
+create index if not exists kafaa_time_envelopes_period_idx on kafaa_time_envelopes (period);
+create index if not exists kafaa_time_envelopes_status_idx on kafaa_time_envelopes (status);
+create index if not exists kafaa_secondments_person_id_idx on kafaa_secondments (person_id);
+create index if not exists kafaa_secondments_host_kind_idx on kafaa_secondments (host_kind);
+create index if not exists kafaa_secondments_host_org_id_idx on kafaa_secondments (host_org_id);
+create index if not exists kafaa_secondments_future_role_id_idx on kafaa_secondments (future_role_id);
+create index if not exists kafaa_secondments_line_manager_id_idx on kafaa_secondments (line_manager_id);
+create index if not exists kafaa_secondments_planned_by_idx on kafaa_secondments (planned_by);
+create index if not exists kafaa_secondments_status_idx on kafaa_secondments (status);
 create index if not exists kafaa_future_resources_kind_idx on kafaa_future_resources (kind);
 create index if not exists kafaa_future_resources_course_id_idx on kafaa_future_resources (course_id);
 create index if not exists kafaa_future_resources_track_id_idx on kafaa_future_resources (track_id);
@@ -6157,4 +6250,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 274) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 276) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

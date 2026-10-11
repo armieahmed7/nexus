@@ -8,6 +8,7 @@ import { L, useFormat, usePick, useT } from '../../i18n';
 import { NEED_LEVEL, roleNeed } from './match';
 import { useMarket, useMatches, useLabels, defaultTarget, KindChip, FlagChips, MatchRing, OppPill, AppStepper, AppTimeline, usePersonName, useRange, seatsLeft, AppPill, type MarketData, type Opp } from './ui';
 import { ApplicantCard } from './Pipeline';
+import { ChannelChip, EnvelopeFitNote } from './fsUi';
 
 export default function OpportunityPage() {
   const t = useT();
@@ -42,7 +43,7 @@ function Detail({ d, o, me, currentRole, family }: { d: MarketData; o: Opp; me: 
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
       <div className="space-y-6">
         <Card>
-          <div className="mb-2 flex flex-wrap items-center gap-1.5"><KindChip kind={o.kind} /><OppPill status={o.status} /><FlagChips flags={o.priority_flags} /></div>
+          <div className="mb-2 flex flex-wrap items-center gap-1.5"><KindChip kind={o.kind} /><ChannelChip channel={o.channel} /><OppPill status={o.status} /><FlagChips flags={o.priority_flags} /></div>
           <p className="text-[14.5px] leading-relaxed text-ink">{pick(o, 'summary')}</p>
           <div className="mt-4">
             <KeyValue items={[
@@ -155,6 +156,7 @@ function ApplyCard({ o, app, eligible }: { o: Opp; app?: MarketData['apps'][numb
       <ol className="mb-3 list-decimal space-y-1 ps-5 text-[13px] text-ink-2">
         <li>{t('m20.detail.flow1')}</li><li>{t('m20.detail.flow2')}</li><li>{t('m20.detail.flow3')}</li><li>{t('m20.detail.flow4')}</li>
       </ol>
+      {o.channel && <EnvelopeFitNote o={o} />}
       {o.status !== 'open' ? <p className="text-[13px] text-ink-3">{t('m20.detail.closed')}</p>
         : !eligible ? <p className="text-[13px] text-ink-3">{t('m20.detail.notEligible')}</p>
         : <button className="btn-primary w-full" onClick={() => setOpen(true)} data-testid="m20-apply"><Icon name="check" size={14} />{app ? t('m20.detail.applyAgain') : t('m20.detail.apply')}</button>}

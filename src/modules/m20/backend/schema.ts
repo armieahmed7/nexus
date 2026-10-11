@@ -21,6 +21,8 @@ export const TABLES_M20: Record<string, TableDef> = {
       location_type: 'text enum:office|site_non_protected|remote', eligible_families: 'text[] =[]', priority_flags: 'text[] =[]',
       status: 'text enum:draft|open|closed|filled =\'open\' idx', listed: 'bool =true',
       created_at: 'ts =now', updated_at: 'ts =now',
+      // FS27 (fsDe1): future-skills gig channel (null = an ordinary stretch assignment)
+      channel: 'text? enum:advance_study|digital_innovation|ai_pilot|data_cleanup|knowledge_capture idx',
     },
     read: [{ res: 'opportunities', person: 'posted_by', where: 'listed' }, { res: 'audit_log' }],
     write: { mode: 'rpc', res: 'opportunities' },
@@ -37,6 +39,8 @@ export const TABLES_M20: Record<string, TableDef> = {
       released_by: 'text?', released_at: 'ts?', decided_by: 'text?', decided_at: 'ts?', completed_at: 'ts?',
       outcome_note: 'text?', outcome_levels: 'json ={}', evidence_ids: 'text[] =[]',
       open_read: 'bool =false', created_at: 'ts =now', updated_at: 'ts =now',
+      // FS27 (fsDe1): the approved time envelope that released this application (no per-gig release)
+      envelope_id: 'text? idx',
     },
     read: [
       { res: 'opportunities', person: 'person_id', where: 'open_read' },
@@ -64,6 +68,8 @@ export const TABLES_M20: Record<string, TableDef> = {
       title_en: 'text', title_ar: 'text', summary_en: 'text', summary_ar: 'text', duration_min_months: 'int', duration_max_months: 'int',
       steps: 'json =[]', eligible_families: 'text[] =[]', sources: 'json =[]',
       status: 'text enum:draft|active|retired =\'active\' idx', listed: 'bool =true', created_at: 'ts =now', updated_at: 'ts =now',
+      // FS28 (fsDe1): rotations aimed at future roles (FS05 concept roles); ADVANCE study is career-level only
+      future_track: 'text? enum:digital_twin|data_office|advance_study|energy_transition idx', future_role_ids: 'text[] =[]', career_level_only: 'bool =false',
     },
     read: [{ res: 'opportunities', person: 'owner_id', where: 'listed' }, { res: 'audit_log' }],
     write: { mode: 'rpc', res: 'opportunities' },
@@ -179,6 +185,48 @@ export const TABLES_M20: Record<string, TableDef> = {
       quote_en: 'text?', quote_ar: 'text?', author_en: 'text', author_ar: 'text', consent_on: 'date', published_on: 'date', synthetic: 'bool =true', listed: 'bool =true', sort: 'int =0',
     },
     read: [{ res: 'opportunities', where: 'listed' }],
+    write: { mode: 'rpc', res: 'opportunities' },
+  },
+
+  // ───────────── FS27 Future-skills gig channel with a time envelope (FS wave D · E1). A person asks once for a share of their time
+  // for a period (a quarter); their line manager approves once (maker-checker), instead of releasing them for every gig. Rows are
+  // private to the person and their line manager (`open_read` always false); auditors read all; HR sees rpc.futureGigStats (suppressed).
+  time_envelopes: {
+    module: 'M20', label: 'Time envelope: a share of working time for future-skills gigs in a quarter, approved once by the line manager (FS27)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', line_manager_id: 'text? ref:people idx', approver_id: 'text? ref:people idx',
+      pct: 'int', cap_hours: 'int', period: 'text idx', starts_on: 'date', ends_on: 'date', channels: 'text[] =[]', reason: 'text =\'\'',
+      status: 'text enum:requested|approved|declined|withdrawn =\'requested\' idx', decision_note: 'text?', decided_at: 'ts?',
+      person_name: 'text =\'\'', person_name_ar: 'text =\'\'', person_role_id: 'text?', person_family_id: 'text?',
+      history: 'json =[]', open_read: 'bool =false', created_at: 'ts =now', updated_at: 'ts =now',
+    },
+    read: [
+      { res: 'opportunities', person: 'person_id', where: 'open_read' },
+      { res: 'opportunities', person: 'line_manager_id', where: 'open_read' },
+      { res: 'audit_log' },
+    ],
+    write: { mode: 'rpc', res: 'opportunities' },
+  },
+  // ───────────── FS28 External secondments (FS wave D · E1): outbound placements with a vendor, university, the IAEA, a partner utility or a
+  // research centre, with objectives, a host supervisor (role, never a name), dates and a return-and-transfer obligation (a knowledge-capture
+  // session due within 60 days of return, created in M24 on close). HR plans and closes (rpc); the person and their line manager read their row.
+  secondments: {
+    module: 'M20', label: 'External secondment: host, objectives, duration, host supervisor role and a return-and-transfer obligation (FS28)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', host_kind: 'text enum:iaea|partner_utility|vendor|university|research_centre idx', host_org_id: 'text? ref:organisations',
+      host_name_en: 'text', host_name_ar: 'text', host_country: 'text', supervisor_en: 'text', supervisor_ar: 'text', objectives: 'json =[]',
+      future_role_id: 'text? ref:job_roles', track: 'text? enum:digital_twin|data_office|advance_study|energy_transition', start_on: 'date', end_on: 'date', months: 'int',
+      line_manager_id: 'text? ref:people idx', planned_by: 'text ref:people', status: 'text enum:planned|returned|cancelled =\'planned\' idx',
+      returned_on: 'date?', closed_by: 'text?', closed_at: 'ts?', outcome_note: 'text?', objectives_met: 'json ={}',
+      transfer_due_on: 'date?', capture_session_id: 'text?',
+      person_name: 'text =\'\'', person_name_ar: 'text =\'\'', person_role_id: 'text?', person_family_id: 'text?',
+      history: 'json =[]', open_read: 'bool =false', created_at: 'ts =now', updated_at: 'ts =now',
+    },
+    read: [
+      { res: 'opportunities', person: 'person_id', where: 'open_read' },
+      { res: 'opportunities', person: 'line_manager_id', where: 'open_read' },
+      { res: 'audit_log' },
+    ],
     write: { mode: 'rpc', res: 'opportunities' },
   },
 };

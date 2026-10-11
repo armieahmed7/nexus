@@ -27,6 +27,7 @@ export default function RotationsPage() {
           <L to="/opportunities/rotations/my" className="btn-outline btn-sm" data-testid="m20-rot-my-link"><Icon name="user" size={14} />{t('m20.rot.hub.myRotation')}</L>
           <L to="/opportunities/rotations/shadow" className="btn-outline btn-sm"><Icon name="users" size={14} />{t('m20.rot.hub.shadow')}</L>
           <L to="/opportunities/rotations/host" className="btn-outline btn-sm"><Icon name="check" size={14} />{t('m20.rot.hub.host')}</L>
+          <L to="/opportunities/rotations/future" className="btn-outline btn-sm" data-testid="m20-rot-future-link"><Icon name="sparkle" size={14} />{t('m20.fs.link.futureRotations')}</L>
           <Can res="opportunities" levels={['Agg', 'A']}><L to="/opportunities/rotations/board" className="btn-outline btn-sm"><Icon name="chart" size={14} />{t('m20.rot.hub.board')}</L></Can>
           {owner && <L to="/opportunities/rotations/design" className="btn-primary btn-sm"><Icon name="plus" size={14} />{t('m20.rot.hub.design')}</L>}
         </>
