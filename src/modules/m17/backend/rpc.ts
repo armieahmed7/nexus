@@ -5,6 +5,9 @@ import type { Result } from '../../../data/types';
 import type { CheckinSkill, CoverageRow, CrewRow, Distribution, Group, RaterOffset, TargetRow } from '../checkins';
 import type { AwardView, DefInput, Eligibility } from '../microcred'; // W5 · E1 (F32)
 import type { ConfidenceStats, HalfLivesInput } from '../decay'; // FS03 (future-skills wave A · E2)
+import type { UnlockInput, UnlockView, ReportRow } from '../futureCreds'; // FS31 (wave D · E3)
+import type { RecordItem, ShareInput, VerifyResult } from '../learnerRecord'; // FS32
+import type { GoalInput } from '../skillGoals'; // FS33
 
 export interface ClaimInput {
   skill_id: string;
@@ -119,7 +122,37 @@ export interface Fs03Rpc {
    *  change (cards versioned, ledger kafaa.ai.engine_change) and every skill state is recomputed. */
   setSkillHalfLives(input: HalfLivesInput): Promise<Result<SetHalfLivesResult>>;
 }
-export interface M17Rpc extends Fs03Rpc {
+// ───────────── FS · wave D · E3 · FS31 strategic tier, FS32 learner record, FS33 skill goals.
+// SQL: supabase/migrations/20261010243001_kafaa_fs43_credentials_record_goals.sql. Rules: futureCreds.ts, learnerRecord.ts, skillGoals.ts.
+export interface StrategicReport { allowed: boolean; rows: ReportRow[]; baseline: { people: number | null; moved: number | null; rate: number | null; suppressed: boolean }; window_days: number }
+export interface TargetCheck { named: boolean; unlocked: boolean; codes: string[]; held: string[] }
+export interface Fs4Rpc {
+  /** FS31: framework owners put a published micro-credential in (or out of) the strategic tier, with a reason. Audited; ledger. */
+  setMicrocredStrategic(code: string, strategic: boolean, note: string): Promise<Result<{ code: string; strategic: boolean }>>;
+  /** FS31: framework owners name a strategic credential on a gig (F08 opportunity) or rotation (F15 template), or switch it off. Audited. */
+  setCredentialUnlock(input: UnlockInput): Promise<Result<{ id: string; active: boolean }>>;
+  /** FS31: the gigs and rotations that name a credential, with my state (read; yourself, a person in your scope, or anyone with skills_profile A). */
+  credentialUnlocks(personId?: string | null): Promise<{ allowed: boolean; person_id: string | null; items: UnlockView[] }>;
+  /** FS31 eligibility rule extension (F08/F15 hand-off): does a gig or rotation name a strategic credential, and do I hold one of them? */
+  credentialTargetCheck(kind: 'opportunity' | 'rotation', targetId: string): Promise<TargetCheck>;
+  /** FS31: strategic credentials against internal moves (correlation, never causation; under 10 suppressed). Training manager, HR, auditors. */
+  strategicReport(): Promise<StrategicReport>;
+  /** FS32: my shareable record items and the CLR-shaped bundle for a selection (all items when refs is null). Own read. */
+  learnerRecord(refs?: string[] | null): Promise<{ allowed: boolean; items: RecordItem[]; bundle: Record<string, unknown> | null }>;
+  /** FS32: create a share link after the three consent gates (1-30 items, expiry 1-90 days, up to 10 active links). Audited; ledger. */
+  createRecordShare(input: ShareInput): Promise<Result<{ id: string; token: string; expires_on: string }>>;
+  /** FS32: revoke one of my share links (the link then shows nothing personal). Audited; ledger. */
+  revokeRecordShare(id: string, reason?: string | null): Promise<Result<{ id: string }>>;
+  /** FS32: public verification by token (anyone; rate-limited; audited). Active: the shared items only, initials only. */
+  verifyRecordShare(token: string): Promise<Result<VerifyResult>>;
+  /** FS33: set or change a skill goal with a target level and date (and whether my manager may see it). Own; audited. */
+  saveSkillGoal(input: GoalInput): Promise<Result<{ id: string; status: string; shared: boolean }>>;
+  /** FS33: withdraw a goal at any time (it is unshared and the Coach stops weighing it). Own; audited. */
+  withdrawSkillGoal(skillId: string): Promise<Result<{ id: string }>>;
+  /** FS33: share an active goal with my manager, or make it private again. Own; audited. */
+  shareSkillGoal(skillId: string, shared: boolean): Promise<Result<{ id: string; shared: boolean }>>;
+}
+export interface M17Rpc extends Fs03Rpc, Fs4Rpc {
   /** F03: self-claim a skill level. Own only; 20 claims a day; refused for security competencies (security_restricted). */
   claimSkill(input: ClaimInput): Promise<Result<{ id: string; level: number; state_level: number }>>;
   /** F04: wrap one of my valid Kafa'a course certificates or course completions in a signed badge (not_eligible otherwise). */

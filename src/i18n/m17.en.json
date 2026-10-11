@@ -50,6 +50,34 @@
     "admin-skills-confidence": {
       "title": "Skill decay and confidence",
       "purpose": "Decay classes, half-lives, confidence bands across the workforce and the evidence back-fill, for engine owners."
+    },
+    "my-skills-goals": {
+      "title": "Skills I want to grow",
+      "purpose": "Set a target level and date for the skills you want to build; the Coach weighs them, and your manager sees them only if you share."
+    },
+    "team-skills-goals": {
+      "title": "Shared skill goals",
+      "purpose": "The skill goals people in your team chose to share with you, with their target dates and progress."
+    },
+    "my-skills-record": {
+      "title": "My learner record",
+      "purpose": "One verifiable record of your credentials, qualification status and skills; share a chosen part of it with a link that expires."
+    },
+    "verify-record": {
+      "title": "Check a learner record",
+      "purpose": "Check a shared Kafa'a learner record: only the items the holder chose, with their initials."
+    },
+    "my-skills-credentials-future": {
+      "title": "Future-skills credentials",
+      "purpose": "Credentials for AI assurance, plant data, digital twins, SMR foundations, clean energy, cyber hygiene and the core skills, with the gigs they open."
+    },
+    "my-credential": {
+      "title": "Micro-credential",
+      "purpose": "What a credential asks for, how to earn it and where it takes you."
+    },
+    "training-credentials-strategic": {
+      "title": "Strategic credentials",
+      "purpose": "The strategic tier: which gigs and rotations each credential unlocks, and how holders move internally."
     }
   },
   "mirror": "Mirror",
@@ -75,7 +103,27 @@
     "mc_manual": "Needs a training manager's approval: {label}",
     "mc_part_ok": "Part held and valid: {code}",
     "mc_part_missing": "Part not held or not valid: {code}",
-    "mc_none": "No criteria to check yet"
+    "mc_none": "No criteria to check yet",
+    "fc_tier_off": "{code} is not in the strategic tier at the moment, so it does not unlock this placement",
+    "fc_unlocked": "You hold {code}, a strategic credential this placement asks for",
+    "fc_lapsed": "Your {code} has lapsed: renew it to open this placement again",
+    "fc_locked": "This placement asks for {code}, which you do not hold yet",
+    "fc_target_opportunity": "Gig: {title}",
+    "fc_target_rotation": "Rotation: {title}",
+    "sg_reached": "You reached level {target} in {skill}",
+    "sg_overdue": "The target date for {skill} (level {target} by {date}) has passed",
+    "sg_due_soon": "{skill}: level {target} is due by {date}",
+    "sg_on_track": "{skill}: level {target} by {date}",
+    "sg_removed": "You withdrew this goal: it is not shared and the Coach no longer weighs it",
+    "sg_gap": "{gap} level(s) to go in {skill}",
+    "sg_shared": "Shared with your manager (you can make it private at any time)",
+    "sg_private": "Private: only you see this goal",
+    "lr_mc": "Micro-credential {title}: the signed credential is embedded",
+    "lr_badge": "Badge {title}: the signed credential is embedded",
+    "lr_qual": "{title}: mirrored as qualified or not qualified only",
+    "lr_skill": "Skill {title} from your skills passport",
+    "lr_provenance": "Level {level}, basis: {basis}",
+    "lr_never": "Security and medical detail is never part of the record"
   },
   "passport": {
     "intro": "Your skills as Kafa'a derives them from recorded evidence: qualification records, courses, assessments, JPMs, validated ratings and credentials. Every level shows how it was evidenced.",
@@ -767,7 +815,12 @@
       "leadership": "Leadership",
       "quality": "Quality",
       "maintenance": "Maintenance",
-      "safety": "Safety culture"
+      "safety": "Safety culture",
+      "ai_data": "AI and data",
+      "green_energy": "Clean energy",
+      "advanced_reactor": "Advanced reactors",
+      "cyber_hygiene": "Cyber hygiene",
+      "transversal": "Core skills"
     },
     "level": {
       "foundation": "Foundation",
@@ -783,7 +836,9 @@
       "assessment": "Assessment",
       "opportunity": "Opportunity",
       "skill": "Skill",
-      "manual": "Manual check"
+      "manual": "Manual check",
+      "adaptive": "Adaptive check",
+      "task": "Performance task"
     },
     "defStatus": {
       "draft": "Draft",
@@ -796,7 +851,9 @@
       "attempts": "assessment",
       "opportunity_applications": "opportunity",
       "person_skills": "skills profile",
-      "microcred_awards": "approval"
+      "microcred_awards": "approval",
+      "adaptive_attempts": "adaptive check",
+      "task_attempts": "performance task"
     },
     "crit": {
       "met": "Met",
@@ -812,7 +869,11 @@
       "missing_manual": "Needs approval",
       "skill_met": "Level {level} of {min} needed, with evidence",
       "skill_missing": "Level {level} of {min} needed",
-      "skill_claimed": "Level {level} is self-assessed: needs evidence or a validation"
+      "skill_claimed": "Level {level} is self-assessed: needs evidence or a validation",
+      "adaptive_met": "Adaptive check at level {level} (of {min} needed)",
+      "adaptive_missing": "Adaptive check: level {level} of {min} needed",
+      "missing_adaptive": "Adaptive check not at the level yet",
+      "missing_task": "Performance task not passed yet"
     },
     "tile": {
       "held": "Held",
@@ -1205,6 +1266,374 @@
       "noChange": "No change since the baseline.",
       "toLog": "Full change log and engine cards",
       "howIntro": "The three classes, the published blend and the benchmarks behind them."
+    }
+  },
+  "fc": {
+    "intro": "Credentials for the skills the plant will need next. Each is earned from work you can already do here, and the strategic ones open named gigs and rotations.",
+    "toAll": "All micro-credentials",
+    "toFuture": "Future-skills credentials",
+    "toRecord": "My learner record",
+    "addToRecord": "Add to my learner record",
+    "strategic": "Strategic",
+    "empty": "No future-skills credentials are published yet",
+    "emptyBody": "Framework owners publish them in the micro-credentials catalogue.",
+    "tile": {
+      "held": "Held",
+      "heldSub": "of {n} future-skills credentials",
+      "ready": "Ready to claim",
+      "readySub": "every criterion met",
+      "open": "Gigs open to you",
+      "openSub": "{n} name a strategic credential",
+      "strategic": "Strategic tier",
+      "strategicSub": "credentials that open placements"
+    },
+    "tierTitle": "Strategic tier",
+    "tierBody": "Holding one of these makes you eligible for the gigs and rotations that name it.",
+    "moreTitle": "More future-skills credentials",
+    "moreBody": "Also recognised on your passport and learner record; they do not gate placements.",
+    "gigsTitle": "Gigs and rotations that ask for a strategic credential",
+    "gigsEyebrow": "Eligibility",
+    "gigsNone": "No placement names a strategic credential at the moment.",
+    "gigsNote": "A placement that names a strategic credential is open to its holders; everything else about applying stays the same.",
+    "namesN": "{n} placement(s) ask for it · {open} open to you",
+    "details": "Details",
+    "openToYou": "Open to you",
+    "tierOff": "{code} is outside the strategic tier: this does not gate the placement",
+    "lockedNeed": "Needs {code}",
+    "kind": {
+      "opportunity": "Gig",
+      "rotation": "Rotation"
+    },
+    "takes": {
+      "title": "Where this credential takes you",
+      "eyebrow": "Roles, gigs and rotations",
+      "roles": "Roles that ask for it",
+      "gigs": "Gigs and rotations that name it",
+      "none": "No role or placement names this credential yet."
+    },
+    "route": {
+      "fs19": "FS19",
+      "manual": "A training manager checks it",
+      "none": "No content route yet"
+    },
+    "howTitle": "How to earn it",
+    "howEyebrow": "Existing and FS19 content",
+    "tierCalloutTitle": "In the strategic tier",
+    "tierCallout": "Holders are eligible for the gigs and rotations that name this credential.",
+    "tierSince": "Since {date}.",
+    "detailsTitle": "Details",
+    "noAward": "You do not hold this credential yet.",
+    "notFound": "Credential not found",
+    "notFoundBody": "It may have been retired or not published yet.",
+    "adm": {
+      "intro": "Which credentials are strategic, which placements they unlock, and how holders move inside the organisation.",
+      "corrTitle": "Correlation, not cause",
+      "corrBody": "Internal moves (completed gigs and rotation placements) in the last {days} days, for holders and for all staff. People who earn credentials may move for other reasons. Groups under 10 are not shown.",
+      "reportTitle": "Holders and internal moves",
+      "reportBody": "Share of holders with an internal move in the window, next to the staff baseline.",
+      "reportForbidden": "Report not available for your role",
+      "reportForbiddenBody": "The training manager, HR and auditors read this report.",
+      "baseline": "Staff baseline",
+      "baselineSub": "{moved} of {people} staff moved",
+      "baselineRow": "All staff (baseline)",
+      "tierN": "Strategic credentials",
+      "tierNSub": "in the tier today",
+      "shown": "Shown",
+      "shownSub": "groups of 10 or more",
+      "suppressed": "Under 10: not shown",
+      "suppressedN": "Under 10",
+      "rateLine": "{rate} · {moved} of {n}",
+      "reportNote": "Counts come from the opportunity and rotation records; nothing is typed in.",
+      "tierTitle": "The tier",
+      "tierBody": "Framework owners move a credential into or out of the tier, with a reason.",
+      "tierBodyOwner": "Move a credential into or out of the tier. The reason is recorded in the ledger.",
+      "standard": "Standard",
+      "addTier": "Add to tier",
+      "remove": "Remove from tier",
+      "reason": "Reason (recorded)",
+      "addTitle": "Add {code} to the strategic tier?",
+      "addBody": "Its holders become eligible for the gigs and rotations that name it.",
+      "removeTitle": "Remove {code} from the strategic tier?",
+      "removeBody": "It stops unlocking placements; holders keep the credential.",
+      "unlocksTitle": "Placements that name a strategic credential",
+      "unlocksBody": "Gigs (F08) and rotations (F15). Security placements cannot be gated this way.",
+      "unlocksEmpty": "No placement names a credential yet",
+      "col": {
+        "credential": "Credential",
+        "kind": "Kind",
+        "target": "Placement",
+        "note": "Why",
+        "state": "State"
+      },
+      "on": "On",
+      "off": "Off",
+      "switchOff": "Switch off",
+      "switchOn": "Switch on",
+      "offTitle": "Stop gating this placement?",
+      "offBody": "The placement no longer asks for the credential.",
+      "onTitle": "Gate this placement again?",
+      "onBody": "The placement asks for the credential again.",
+      "addUnlock": "Name a credential on a placement",
+      "noteEn": "Why (English)",
+      "noteAr": "Why (Arabic)",
+      "addNote": "Up to 8 placements per credential.",
+      "save": "Save",
+      "saveTitle": "Name this credential on the placement?",
+      "saveBody": "{code} will be asked for on {target}; holders are eligible."
+    }
+  },
+  "lr": {
+    "intro": "Your credentials, qualification status and skills in one record shaped like the 1EdTech Comprehensive Learner Record. Share only what you choose, for as long as you choose.",
+    "toRecord": "Learner record",
+    "neverTitle": "Never in your record",
+    "neverBody": "Security standards and skills, medical and fitness-for-duty detail, and your name. A shared record shows your initials only.",
+    "forbidden": "No learner record",
+    "forbiddenBody": "Learner records are for staff with a skills passport.",
+    "tile": {
+      "mc": "Micro-credentials",
+      "mcSub": "and {n} badge(s)",
+      "qual": "Qualification lines",
+      "qualSub": "qualified or not only",
+      "skill": "Skills",
+      "skillSub": "with provenance",
+      "links": "Active links",
+      "linksSub": "up to {max} at a time"
+    },
+    "recordTitle": "My record",
+    "recordBody": "Everything that can be shared, by kind.",
+    "download": "Download record (JSON)",
+    "countN": "{n} item(s)",
+    "kind": {
+      "mc": "Micro-credentials",
+      "badge": "Badges",
+      "qual": "Qualification mirror",
+      "skill": "Skills"
+    },
+    "kindEmpty": {
+      "mc": "No micro-credentials yet.",
+      "badge": "No badges yet.",
+      "qual": "No qualification lines.",
+      "skill": "No skills at level 1 or above yet."
+    },
+    "empty": "Nothing to share yet",
+    "emptyBody": "Credentials, qualification lines and skills appear here as you earn them.",
+    "status": {
+      "active": "Active",
+      "renewal_due": "Renewal due",
+      "qualified": "Qualified",
+      "not_qualified": "Not qualified",
+      "claimed": "Self-assessed",
+      "evidenced": "Evidenced",
+      "validated": "Validated",
+      "verified": "Verified"
+    },
+    "band": {
+      "high": "High confidence",
+      "medium": "Medium confidence",
+      "low": "Low confidence"
+    },
+    "share": {
+      "active": "Active",
+      "expired": "Expired",
+      "revoked": "Revoked"
+    },
+    "problem": {
+      "invalid": "Choose 1 to 30 items, a label of 3 to 80 characters and an expiry within 90 days",
+      "consent_required": "All three consents are needed",
+      "not_shareable": "One of the items can no longer be shared"
+    },
+    "wizard": {
+      "title": "Share part of my record",
+      "eyebrow": "Three steps, your consent at each",
+      "step": {
+        "choose": "Choose",
+        "preview": "Preview",
+        "share": "Share"
+      },
+      "chooseBody": "Pick what the person you share with should see (up to {max} items).",
+      "all": "Select all",
+      "none": "Clear",
+      "consentItems": "I choose these {n} item(s) and nothing else",
+      "consentItemsHint": "Nothing you did not tick is shown.",
+      "previewBody": "This is exactly what the verifier sees.",
+      "previewNoName": "No name, no photo, no employee number.",
+      "previewJson": "Download the preview (JSON)",
+      "consentPreview": "I have checked the preview",
+      "next": "Next",
+      "back": "Back",
+      "label": "Label (for you)",
+      "labelHint": "For example the application or secondment it is for.",
+      "expiry": "Link expires after",
+      "days": "{n} days",
+      "expiresOn": "Expires on {date}.",
+      "consentShare": "Create a link anyone with it can open until it expires",
+      "consentShareHint": "You can revoke it at any time; each view is counted.",
+      "create": "Create link",
+      "confirmTitle": "Create this share link?",
+      "confirmBody": "{n} item(s) until {date}: {items}",
+      "madeTitle": "Link created",
+      "madeBody": "It works until {date}. Send it to the person who needs it.",
+      "another": "Share something else"
+    },
+    "copy": "Copy link",
+    "open": "Open",
+    "linksTitle": "My share links",
+    "linksBody": "Every link you created, with its expiry and how often it was opened.",
+    "linksEmpty": "No share links yet",
+    "linksEmptyBody": "Create one above when you need to show part of your record.",
+    "col": {
+      "label": "Label",
+      "items": "Items",
+      "changed": "(some changed since)",
+      "status": "Status",
+      "expires": "Expires",
+      "views": "Views",
+      "lastViewed": "last {date}"
+    },
+    "revoke": "Revoke",
+    "revokeTitle": "Revoke \"{label}\"?",
+    "revokeBody": "The link stops showing anything about you straight away.",
+    "revokeReason": "Reason (optional for you, kept in the audit)",
+    "verify": {
+      "intro": "A Kafa'a learner record shared by its holder. Only the items they chose are shown, with their initials.",
+      "bannerTitle": "Internal recognition",
+      "banner": "Kafa'a records are internal recognition. Qualification lines mirror the licensee's systems as qualified or not qualified only; nothing here is a FANR certificate or licence.",
+      "error": "The record could not be checked",
+      "notFoundTitle": "No record at this link",
+      "notFoundBody": "Check the link with the person who shared it.",
+      "rateTitle": "Too many checks",
+      "rateBody": "Try again in a minute.",
+      "expiredTitle": "This link has expired",
+      "revokedTitle": "This link was revoked",
+      "closedBody": "Nothing about the holder is shown. Ask them for a new link if you still need it.",
+      "checkedOn": "Checked on {date}",
+      "holder": "Holder",
+      "initialsOnly": "Initials only",
+      "items": "Items shared",
+      "validUntil": "Link valid until",
+      "signed": "Signed credentials",
+      "signedN": "{ok} of {n} signatures valid",
+      "sigTitle": "Signatures",
+      "notice": "Signatures are checked in your browser against the published Kafa'a issuer keys."
+    }
+  },
+  "sg": {
+    "intro": "Pick the skills you want to grow, the level you aim for and by when. The Coach weighs your goals, and they stay private unless you share them with your manager.",
+    "eyebrow": "Skills I want to grow",
+    "add": "Add a goal",
+    "addFirst": "Add a goal",
+    "manage": "Manage goals",
+    "addToGoals": "Add to my goals",
+    "onGoals": "On my goals",
+    "privacyTitle": "Private by default",
+    "privacyBody": "Only you see your goals. Share a goal with your manager if you want their help; you can make it private or withdraw it at any time. HR and colleagues never see them.",
+    "tile": {
+      "active": "Active goals",
+      "activeSub": "up to {max}",
+      "reached": "Reached",
+      "reachedSub": "at or above the target level",
+      "soon": "Due soon",
+      "soonSub": "{n} past the date",
+      "shared": "Shared",
+      "sharedSub": "with your manager"
+    },
+    "unplannedTitle": "Goals without a date",
+    "unplannedBody": "You added these from a skill page. Add a target date to plan them (and to be able to share them).",
+    "addDate": "add a date",
+    "listTitle": "My goals",
+    "listBody": "Ordered by what needs attention first.",
+    "empty": "No skill goals yet",
+    "emptyBody": "Add one here, from your passport or from any skill page.",
+    "status": {
+      "reached": "Reached",
+      "overdue": "Past the date",
+      "due_soon": "Due soon",
+      "on_track": "On track",
+      "removed": "Withdrawn"
+    },
+    "sharedChip": "Shared",
+    "privateChip": "Private",
+    "levelNow": "Now L{level}",
+    "levelTarget": "Target L{level}",
+    "climb": "Level {level} of {target}",
+    "by": "By {date}",
+    "noDate": "No date yet",
+    "edit": "Change",
+    "share": "Share",
+    "unshare": "Make private",
+    "withdraw": "Withdraw",
+    "coachTitle": "How the Coach uses your goals",
+    "coachEyebrow": "Coach",
+    "coachBody": "When the Coach ranks pathways and learning, it adds weight to anything that builds a skill on your goals.",
+    "coachRole": "A gap for a role you are working towards (2030) counts most.",
+    "coachGoal": "A skill goal counts next: you see \"one of your skill goals\" in the reasons.",
+    "coachWithdraw": "Withdraw a goal and the Coach stops weighing it at once.",
+    "toCoach": "Open the Coach",
+    "removedTitle": "Withdrawn goals",
+    "removedBody": "Kept for your history; not shared and not weighed.",
+    "editorTitle": "Add a skill goal",
+    "editorTitleSkill": "Goal: {skill}",
+    "skill": "Skill",
+    "levelNowLong": "Your level today: {level}",
+    "targetLevel": "Target level",
+    "level": {
+      "1": "L1 Aware",
+      "2": "L2 Practitioner",
+      "3": "L3 Proficient",
+      "4": "L4 Expert"
+    },
+    "targetDate": "Target date",
+    "dateHint": "Between {min} and {max}.",
+    "note": "Note (optional)",
+    "noteHint": "{n} characters left",
+    "shareLabel": "Share this goal with my manager",
+    "shareHint": "Your line manager (and managers above them) can then see it. You can undo this.",
+    "problem": {
+      "not_found": "Choose a skill",
+      "restricted": "Security skills are not personal goals: they follow the security career path",
+      "obsolete": "This skill is obsolete: choose its replacement",
+      "invalid": "Choose a level from 1 to 4 and a date between two weeks and three years from today (note up to 300 characters)"
+    },
+    "save": "Save goal",
+    "confirmSave": "Save the goal for {skill}?",
+    "confirmSavePrivate": "Level {level} by {date}. Private: only you see it.",
+    "confirmSaveShared": "Level {level} by {date}. Shared with your manager.",
+    "confirmShare": "Share {skill} with your manager?",
+    "confirmShareBody": "Managers whose scope covers you can see this goal, its date and your note.",
+    "confirmUnshare": "Make {skill} private?",
+    "confirmUnshareBody": "Your manager no longer sees this goal.",
+    "confirmWithdraw": "Withdraw the goal for {skill}?",
+    "confirmWithdrawBody": "It is unshared straight away and the Coach stops weighing it. You can add it again later.",
+    "stripTitle": "Skills I want to grow",
+    "stripTitleTeam": "Goals shared with you",
+    "stripLine": "L{level} of {target} · by {date}",
+    "stripEmpty": "No skill goals yet",
+    "stripEmptyBody": "Pick a skill and a date; the Coach will weigh it.",
+    "stripNoneShared": "No skill goals shared with you.",
+    "team": {
+      "intro": "Goals people in your scope chose to share with you. Private goals are never shown or counted.",
+      "optInTitle": "Opt-in only",
+      "optInBody": "Each person decides which goals you see and can take them back at any time.",
+      "empty": "No goals shared with you",
+      "emptyBody": "When someone in your team shares a skill goal, it appears here.",
+      "tile": {
+        "people": "People sharing",
+        "peopleSub": "in your scope",
+        "goals": "Shared goals",
+        "goalsSub": "active",
+        "soon": "Due soon or past",
+        "soonSub": "a chance to help"
+      },
+      "listTitle": "Shared goals",
+      "everyone": "Everyone",
+      "note": "Use this to support development conversations, not to rate performance.",
+      "col": {
+        "person": "Person",
+        "skill": "Skill",
+        "level": "Level",
+        "date": "Target date",
+        "status": "Status"
+      }
     }
   }
 }

@@ -5,6 +5,7 @@ import { Page, Async, Callout } from '../../ui';
 import { useT } from '../../i18n';
 import { PassportView } from './PassportView';
 import { usePassportData } from './ui';
+import { GoalsStrip } from './goalsUi'; // FS33: goals shared with me (opt-in, RLS)
 
 export default function TeamPassportPage() {
   const t = useT();
@@ -13,6 +14,7 @@ export default function TeamPassportPage() {
   return (
     <Page title={t('m17.routes.team-passport.title')} intro={t('m17.team.intro')}>
       <Callout tone="info" title={t('m17.team.readOnly')}>{t('m17.team.readOnlyBody')}</Callout>
+      <GoalsStrip person={personId} readOnly />
       <Async state={q}>{(d) => <PassportView d={d} readOnly />}</Async>
     </Page>
   );

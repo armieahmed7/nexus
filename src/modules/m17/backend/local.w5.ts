@@ -41,6 +41,8 @@ export function makeLocalM17W5(b: LocalBackend, h: LocalRpcHelpers, offlineSeed:
   const world = (today: string): McWorld => ({
     today, defs: defs(), awards: awards(), courses: raw('courses'), training_records: raw('training_records'), attempts: raw('attempts'),
     opportunities: raw('opportunities'), opportunity_applications: raw('opportunity_applications'), person_skills: raw('person_skills'),
+    // FS31: FS21/FS22 results for the adaptive and task criteria
+    adaptive_attempts: raw('adaptive_attempts'), task_attempts: raw('task_attempts'), integrity_reports: raw('integrity_reports'),
   });
   const notify = (id: string, pid: string | null | undefined, en: string, ar: string, link: string, severity = 'info'): boolean => {
     if (!pid || !get('people', pid) || get('notifications', id)) return false;
@@ -211,7 +213,8 @@ export function makeLocalM17W5(b: LocalBackend, h: LocalRpcHelpers, offlineSeed:
       const role = ctx().actingRole('frameworks', ['W', 'A']);
       if (!role) return h.refuse<R>(A, 'microcred_defs', code || null, 'forbidden', MCMSG.forbidden_def);
       const all = defs();
-      const v = validateDef(input, { defs: all, courses: raw('courses'), forms: raw('assessment_forms'), opportunities: raw('opportunities'), skills: raw('skills'), competencies: raw('competencies'), job_roles: raw('job_roles'), qual_standards: raw('qual_standards') });
+      const v = validateDef(input, { defs: all, courses: raw('courses'), forms: raw('assessment_forms'), opportunities: raw('opportunities'), skills: raw('skills'), competencies: raw('competencies'), job_roles: raw('job_roles'), qual_standards: raw('qual_standards'),
+        adaptive_banks: raw('adaptive_banks'), performance_tasks: raw('performance_tasks') }); // FS31: adaptive / task criteria
       if (v.code !== 'ok') return h.refuse<R>(A, 'microcred_defs', code || null, v.code, v.message, role);
       const base = input.id ? all.find((d) => d.id === input.id) : undefined;
       if (input.id && (!base || base.code !== code)) return h.refuse<R>(A, 'microcred_defs', code, 'invalid', MCMSG.invalid_def, role);

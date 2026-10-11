@@ -2934,7 +2934,10 @@ create table if not exists kafaa_microcred_defs (
   updated_by text,
   updated_at timestamptz not null default now(),
   published_by text,
-  published_at timestamptz
+  published_at timestamptz,
+  strategic boolean not null default false,
+  strategic_note text,
+  strategic_since date
 );
 comment on table kafaa_microcred_defs is '[M17] Micro-credential definitions: criteria over skills evidence, validity, stacking; versioned (F32)';
 
@@ -2982,6 +2985,56 @@ create table if not exists kafaa_skill_decay_classes (
   sort integer not null default 0
 );
 comment on table kafaa_skill_decay_classes is '[M17] Skill decay classes with default half-lives, area defaults and sourced rationale (FS03)';
+
+-- M17 · Gigs and rotations that name a strategic micro-credential (FS31)
+create table if not exists kafaa_microcred_unlocks (
+  id text primary key,
+  def_code text not null,
+  target_kind text not null check (target_kind in ('opportunity', 'rotation')),
+  target_id text not null,
+  note_en text not null,
+  note_ar text not null,
+  active boolean not null default true,
+  set_by text,
+  set_at timestamptz not null default now()
+);
+comment on table kafaa_microcred_unlocks is '[M17] Gigs and rotations that name a strategic micro-credential (FS31)';
+
+-- M17 · Curated learner-record share links with consent, expiry and revocation (FS32)
+create table if not exists kafaa_record_shares (
+  id text primary key,
+  person_id text not null,
+  token text not null unique,
+  label text not null,
+  items text[] not null default '{}'::text[],
+  holder_initials text not null default '',
+  consents jsonb not null default '{}'::jsonb,
+  expires_on date not null,
+  revoked_at timestamptz,
+  revoke_reason text,
+  views integer not null default 0,
+  last_viewed_at timestamptz,
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_record_shares is '[M17] Curated learner-record share links with consent, expiry and revocation (FS32)';
+
+-- M17 · Skill goals with a target date, shared with the manager only by choice (FS33)
+create table if not exists kafaa_skill_goal_plans (
+  id text primary key,
+  person_id text not null,
+  skill_id text not null,
+  target_level integer not null default 2,
+  target_date date not null,
+  note text,
+  shared boolean not null default false,
+  share_person text,
+  status text not null default 'active' check (status in ('active', 'removed')),
+  open_read boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  removed_at timestamptz
+);
+comment on table kafaa_skill_goal_plans is '[M17] Skill goals with a target date, shared with the manager only by choice (FS33)';
 
 -- M18 · Career Navigator shortlist: up to three target roles per person, optionally shared with the line manager (F05)
 create table if not exists kafaa_career_targets (
@@ -5531,6 +5584,9 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sk
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_team_skill_targets_skill_id_fk') then alter table kafaa_team_skill_targets add constraint kafaa_team_skill_targets_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_microcred_awards_def_id_fk') then alter table kafaa_microcred_awards add constraint kafaa_microcred_awards_def_id_fk foreign key (def_id) references kafaa_microcred_defs(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_microcred_awards_person_id_fk') then alter table kafaa_microcred_awards add constraint kafaa_microcred_awards_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_record_shares_person_id_fk') then alter table kafaa_record_shares add constraint kafaa_record_shares_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_goal_plans_person_id_fk') then alter table kafaa_skill_goal_plans add constraint kafaa_skill_goal_plans_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_goal_plans_skill_id_fk') then alter table kafaa_skill_goal_plans add constraint kafaa_skill_goal_plans_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_career_targets_person_id_fk') then alter table kafaa_career_targets add constraint kafaa_career_targets_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_career_targets_role_id_fk') then alter table kafaa_career_targets add constraint kafaa_career_targets_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_roadmaps_person_id_fk') then alter table kafaa_roadmaps add constraint kafaa_roadmaps_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -6093,10 +6149,19 @@ create index if not exists kafaa_team_skill_targets_skill_id_idx on kafaa_team_s
 create index if not exists kafaa_microcred_defs_code_idx on kafaa_microcred_defs (code);
 create index if not exists kafaa_microcred_defs_stacks_into_idx on kafaa_microcred_defs (stacks_into);
 create index if not exists kafaa_microcred_defs_status_idx on kafaa_microcred_defs (status);
+create index if not exists kafaa_microcred_defs_strategic_idx on kafaa_microcred_defs (strategic);
 create index if not exists kafaa_microcred_awards_def_id_idx on kafaa_microcred_awards (def_id);
 create index if not exists kafaa_microcred_awards_def_code_idx on kafaa_microcred_awards (def_code);
 create index if not exists kafaa_microcred_awards_person_id_idx on kafaa_microcred_awards (person_id);
 create index if not exists kafaa_microcred_awards_status_idx on kafaa_microcred_awards (status);
+create index if not exists kafaa_microcred_unlocks_def_code_idx on kafaa_microcred_unlocks (def_code);
+create index if not exists kafaa_microcred_unlocks_target_id_idx on kafaa_microcred_unlocks (target_id);
+create index if not exists kafaa_microcred_unlocks_active_idx on kafaa_microcred_unlocks (active);
+create index if not exists kafaa_record_shares_person_id_idx on kafaa_record_shares (person_id);
+create index if not exists kafaa_skill_goal_plans_person_id_idx on kafaa_skill_goal_plans (person_id);
+create index if not exists kafaa_skill_goal_plans_skill_id_idx on kafaa_skill_goal_plans (skill_id);
+create index if not exists kafaa_skill_goal_plans_share_person_idx on kafaa_skill_goal_plans (share_person);
+create index if not exists kafaa_skill_goal_plans_status_idx on kafaa_skill_goal_plans (status);
 create index if not exists kafaa_career_targets_person_id_idx on kafaa_career_targets (person_id);
 create index if not exists kafaa_career_targets_role_id_idx on kafaa_career_targets (role_id);
 create index if not exists kafaa_career_targets_shared_person_id_idx on kafaa_career_targets (shared_person_id);
@@ -6416,4 +6481,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 281) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 284) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

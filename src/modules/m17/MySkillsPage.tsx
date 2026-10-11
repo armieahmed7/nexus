@@ -7,6 +7,7 @@ import { useT, usePick, L, useNav } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { PassportView, useExportModel, usePassportModel, downloadPassportJson } from './PassportView';
 import { usePassportData, type PassportData } from './ui';
+import { GoalsStrip } from './goalsUi'; // FS33
 
 export default function MySkillsPage() {
   const t = useT();
@@ -16,6 +17,7 @@ export default function MySkillsPage() {
   return (
     <Page title={t('m17.routes.my-skills.title')} intro={t('m17.passport.intro')} actions={q.data ? <Exports d={q.data} /> : undefined}>
       {s.can('skills_profile', ['Scope', 'A']) && <TeamPicker me={me} />}
+      <GoalsStrip person={me} />
       <Async state={q}>{(d) => <PassportView d={d} />}</Async>
     </Page>
   );
@@ -32,6 +34,9 @@ function Exports({ d }: { d: PassportData }) {
       </L>
       <L to="/my/skills/confidence" className="btn-outline btn-sm no-underline" data-testid="m17-to-confidence">
         <Icon name="chart" size={14} /> {t('m17.dk.howSureLink')}
+      </L>
+      <L to="/my/skills/record" className="btn-outline btn-sm no-underline" data-testid="m17-to-record">
+        <Icon name="link" size={14} /> {t('m17.lr.toRecord')}
       </L>
       <L to="/my/skills/wallet" className="btn-outline btn-sm no-underline" data-testid="m17-to-wallet">
         <Icon name="shield" size={14} /> {t('m17.passport.wallet')}
