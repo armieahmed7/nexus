@@ -183,7 +183,7 @@ describe('FS32 · learner record', () => {
     expect((r.data!.clr as Row).kafaaItems.map((i: Row) => i.ref)).toEqual(s.items);
     expect(validateClr(r.data!.clr)).toEqual([]);
     expect(JSON.stringify(r.data)).not.toContain(T.people.find((p) => p.id === 'p-k-ro')!.display_name);
-    expect(b.raw('record_shares' as never).find((x: Row) => x.id === s.id)!.views).toBe(Number(s.views) + 1);
+    expect((b.raw('record_shares' as never) as Row[]).find((x: Row) => x.id === s.id)!.views).toBe(Number(s.views) + 1);
   });
 
   it('createRecordShare: three consent gates, own shareable items only, expiry within 90 days; revoke by the holder only', async () => {
@@ -257,7 +257,7 @@ describe('FS33 · skills I want to grow', () => {
     const w = await b.rpc.withdrawSkillGoal('sk-fs-ai-verify');
     expect(w.ok, w.message).toBe(true);
     expect(b.raw('skill_goal_plans' as never).find((p: Row) => p.id === 'sg:p-k-ro:sk-fs-ai-verify')).toMatchObject({ status: 'removed', shared: false, share_person: null });
-    expect(b.raw('skill_goals' as never).find((p: Row) => p.id === 'sg:p-k-ro:sk-fs-ai-verify')!.status).toBe('removed');
+    expect((b.raw('skill_goals' as never) as Row[]).find((p: Row) => p.id === 'sg:p-k-ro:sk-fs-ai-verify')!.status).toBe('removed');
     expect((await b.rpc.withdrawSkillGoal('sk-fs-ai-verify')).code).toBe('no_goal');
     for (const st of ['reached', 'overdue', 'due_soon', 'on_track', 'removed']) {
       expect((en.sg.status as Row)[st]).toBeTruthy(); expect((ar.sg.status as Row)[st]).toBeTruthy();
