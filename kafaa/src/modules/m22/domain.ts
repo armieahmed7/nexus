@@ -169,22 +169,38 @@ export const BEHAVIOURS = [
   { id: 'b-concerns', trait: 'trait-9' },
 ] as const;
 export const BEHAVIOUR_IDS: string[] = BEHAVIOURS.map((b) => b.id);
+/**
+ * FS46 (wave E · E4): 360 form version 2 adds four future-leadership behaviours (leading digital change, leading AI-augmented teams
+ * incl. when to override a tool, intrapreneurship (EntreComp) and inclusion). Form 1 keeps its eight behaviours and its generic
+ * scale; a subject's cycle keeps the version of its first request, so results recorded under version 1 stay readable unchanged.
+ */
+export const FUTURE_BEHAVIOUR_IDS = ['b-digital-change', 'b-ai-teams', 'b-intrapreneurship', 'b-inclusion'] as const;
+export const BEHAVIOUR_IDS_V2: string[] = [...BEHAVIOUR_IDS, ...FUTURE_BEHAVIOUR_IDS];
+export const FORM_VERSIONS = [1, 2] as const;
+export const CURRENT_FORM_VERSION = 2;
+export const formBehaviours = (v: number | null | undefined): string[] => (v === 2 ? BEHAVIOUR_IDS_V2 : BEHAVIOUR_IDS);
+/** The form version of a subject's cycle: the version its requests carry (all equal by construction), else the current one. */
+export function formVersionFor(subject: string, cycle: string, reqs: { subject_id: string; cycle: string; form_version?: number | null }[]): number {
+  const v = reqs.filter((q) => q.subject_id === subject && q.cycle === cycle).map((q) => q.form_version ?? 1);
+  return v.length ? Math.max(...v) : CURRENT_FORM_VERSION;
+}
 export const MIN_360_RATERS = 5; // results appear only with at least 5 responses (self excluded)
 export const MAX_360_INVITES = 12;
 export const RATER_KINDS = ['manager', 'peer', 'report'] as const;
 export const cycleOf = (iso: string) => `${iso.slice(0, 4)}-H${Number(iso.slice(5, 7)) <= 6 ? 1 : 2}`;
 export const avg2 = (sum: number, n: number) => (n ? Math.round((sum * 100) / n) / 100 : null);
 
-export interface R360 { cycle: string; subject_id: string; rater_kind: string; scores: Record<string, number> }
-export interface Req360 { id: string; cycle: string; subject_id: string; rater_id: string; rater_kind: string; status: string }
+export interface R360 { cycle: string; subject_id: string; rater_kind: string; scores: Record<string, number>; form_version?: number | null }
+export interface Req360 { id: string; cycle: string; subject_id: string; rater_id: string; rater_kind: string; status: string; form_version?: number | null }
 
-/** Validate a 360 score sheet: every behaviour scored with a whole number from 1 to 5, nothing else. */
-export function validScores(s: unknown): Record<string, number> | null {
+/** Validate a 360 score sheet: every behaviour of the form version scored with a whole number from 1 to 5, nothing else. */
+export function validScores(s: unknown, version = 1): Record<string, number> | null {
   if (!s || typeof s !== 'object' || Array.isArray(s)) return null;
   const o = s as Record<string, unknown>;
-  if (Object.keys(o).length !== BEHAVIOUR_IDS.length) return null;
+  const ids = formBehaviours(version);
+  if (Object.keys(o).length !== ids.length) return null;
   const out: Record<string, number> = {};
-  for (const id of BEHAVIOUR_IDS) {
+  for (const id of ids) {
     const v = o[id];
     if (typeof v !== 'number' || !Number.isInteger(v) || v < 1 || v > 5) return null;
     out[id] = v;
@@ -203,6 +219,8 @@ export interface My360 {
   min_raters: number;
   invitees: { name: string; name_ar: string; kind: string }[];
   behaviours: { id: string; self: number | null; others: number; low: number; high: number }[] | null;
+  /** FS46: the form version of this cycle (1: eight behaviours, 2: twelve with anchors). */
+  form_version: number;
 }
 /** The subject's own 360 view: aggregates only, and nothing until at least MIN_360_RATERS people (self excluded) responded. */
 export function summarise360(me: string, cycle: string | null, reqs: Req360[], resps: R360[], names: Map<string, { name: string; name_ar: string }>): My360 {
@@ -210,17 +228,20 @@ export function summarise360(me: string, cycle: string | null, reqs: Req360[], r
   const cycles = [...new Set(mine.map((q) => q.cycle))].sort().reverse();
   const c = cycle && cycles.includes(cycle) ? cycle : cycles[0] ?? null;
   const rq = mine.filter((q) => q.cycle === c);
+  const version = rq.length ? Math.max(...rq.map((q) => q.form_version ?? 1)) : 1;
+  const ids = formBehaviours(version);
   const others = rq.filter((q) => q.rater_kind !== 'self');
   const selfReq = rq.find((q) => q.rater_kind === 'self') ?? null;
-  const rs = resps.filter((x) => x.subject_id === me && x.cycle === c);
+  const rs = resps.filter((x) => x.subject_id === me && x.cycle === c && (x.form_version ?? 1) === version);
   const oth = rs.filter((x) => x.rater_kind !== 'self');
   const self = rs.find((x) => x.rater_kind === 'self') ?? null;
   const enough = oth.length >= MIN_360_RATERS;
   const invitees = [...others].sort((a, b) => (a.rater_id < b.rater_id ? -1 : 1)).map((q) => ({ name: names.get(q.rater_id)?.name ?? '', name_ar: names.get(q.rater_id)?.name_ar ?? '', kind: q.rater_kind }));
   return {
     cycle: c, cycles, invited: others.length, responded: oth.length, self_submitted: !!self, self_request_id: selfReq?.id ?? null, enough, min_raters: MIN_360_RATERS, invitees,
+    form_version: version,
     behaviours: enough
-      ? BEHAVIOUR_IDS.map((id) => {
+      ? ids.map((id) => {
           const v = oth.map((x) => x.scores[id]);
           return { id, self: self ? self.scores[id] : null, others: avg2(v.reduce((a, b) => a + b, 0), v.length)!, low: Math.min(...v), high: Math.max(...v) };
         })
@@ -235,7 +256,9 @@ export interface LeadershipStats {
 }
 export const LEVELS = ['entry', 'professional', 'senior', 'leadership', 'unknown'] as const;
 /** HR aggregates: 360 averages per grade for subjects with enough responses, and nominations per status; cells under minGroup suppressed. */
-export function computeLeadershipStats(resps: R360[], people: PersonLite[], noms: { status: string }[], minGroup: number): LeadershipStats {
+export function computeLeadershipStats(all360: R360[], people: PersonLite[], noms: { status: string }[], minGroup: number): LeadershipStats {
+  // FS46: this view stays the form-1 view (eight behaviours); form-2 results are aggregated by programme (computeProgrammeStats)
+  const resps = all360.filter((x) => (x.form_version ?? 1) === 1);
   // the latest cycle in which at least one subject reached the response threshold (else the latest cycle at all)
   const cnt = new Map<string, number>();
   for (const x of resps) if (x.rater_kind !== 'self') cnt.set(`${x.cycle}|${x.subject_id}`, (cnt.get(`${x.cycle}|${x.subject_id}`) ?? 0) + 1);

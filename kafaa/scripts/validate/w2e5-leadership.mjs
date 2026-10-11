@@ -65,7 +65,8 @@ export default async function w2e5Checks({ db, as, one, count, ok, uid }) {
   // ── RLS
   ok((await count(null, 'kafaa_leadership_programmes')) === T.leadership_programmes.length && (await count(null, 'kafaa_leadership_nominations')) === 0 && (await count(null, 'kafaa_communities')) === 0
     && (await count(null, 'kafaa_threads')) === 0 && (await count(null, 'kafaa_expert_optin')) === 0, 'anonymous visitors read the public programme facts only');
-  const progs = await as(null, 'select * from kafaa_leadership_programmes');
+  // FS47 (fsEe4): the Future Leaders track row cites its own research sources (INMA, NNTP), not the CNS report
+  const progs = await as(null, `select * from kafaa_leadership_programmes where id <> 'prog-future-leaders'`);
   ok(progs.every((g) => Array.isArray(g.sources) && g.sources.length && g.sources.every((s) => /^https:\/\//.test(s.url) && s.id === 'cns10' && /^\d{4}-\d{2}-\d{2}$/.test(s.as_of ?? ''))) && progs.filter((g) => g.completions != null).every((g) => g.fact_en.length > 10 && [null, 2024].includes(g.completions_year)),
     'every programme fact (duration, 2024 completions) links to the CNS report with an as-of date');
   ok((await count('k-ro', 'kafaa_leadership_nominations')) === T.leadership_nominations.filter((x) => x.person_id === 'p-k-ro').length, 'an employee reads only their own nominations');

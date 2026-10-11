@@ -54,6 +54,7 @@ export const TABLES_M22: Record<string, TableDef> = {
     cols: {
       id: 'text pk', cycle: 'text idx', subject_id: 'text ref:people idx', rater_id: 'text ref:people idx', rater_kind: 'text enum:self|manager|peer|report',
       status: 'text enum:invited|submitted =\'invited\'', subject_name: 'text =\'\'', subject_name_ar: 'text =\'\'', invited_at: 'ts =now', submitted_at: 'ts?',
+      form_version: 'int =1', // FS46: 1 = eight behaviours (F16), 2 = twelve with anchors; a subject's cycle keeps one version
     },
     read: [{ res: 'own_profile', person: 'rater_id' }],
     write: { mode: 'rpc', res: 'own_profile' },
@@ -63,6 +64,7 @@ export const TABLES_M22: Record<string, TableDef> = {
     cols: {
       id: 'text pk', cycle: 'text idx', subject_id: 'text ref:people idx', rater_kind: 'text enum:self|manager|peer|report',
       scores: 'json ={}', submitted_at: 'ts =now', open_read: 'bool =false',
+      form_version: 'int =1', // FS46
     },
     read: [{ res: 'audit_log', where: 'open_read' }],
     write: { mode: 'rpc', res: 'own_profile' },
@@ -134,5 +136,112 @@ export const TABLES_M22: Record<string, TableDef> = {
       synthetic: 'bool =true', sources: 'json =[]',
     },
     read: STAFF_ALL, write: { mode: 'none' },
+  },
+
+  // ═════════════ FS46 · FS47 · FS48 (wave E · E4, fsEe4). Migration 20261010254001_kafaa_fs54_future_leadership.sql.
+  // Read rules:
+  //  - leadership_behaviours, fl_competencies, fl_external, wfn_programmes: public reference rows with sources (public_content).
+  //  - fl_cohorts, wfn_circles, wfn_offers: staff (knowledge R). Circles show the mentor role card, never names or member counts.
+  //  - fl_participants: the participant (skills_profile Own), managers in scope (Scope), the training manager (skills_profile A), the
+  //    HR authority (talent_review R/A; analysts in scope) and auditors (audit_log). Same audience as the F16 nominations.
+  //  - wfn_participants, wfn_circle_members, wfn_requests: the person only (own_profile Own). HR sees aggregates only (rpc.wfnStats);
+  //    the training manager (programme owner) sees requests made to offers through rpc.wfnDesk. Nobody else reads opt-in data.
+  leadership_behaviours: {
+    module: 'M22', label: 'Leadership behaviours rated in the 360, with anchors at every rating point and coach cards; form 2 adds four future behaviours (FS46)',
+    cols: {
+      id: 'text pk', form_from: 'int =1', sort: 'int =0', trait_id: 'text?', title_en: 'text', title_ar: 'text', short_en: 'text', short_ar: 'text',
+      statement_en: 'text', statement_ar: 'text', framework_en: 'text', framework_ar: 'text', anchors: 'json ={}', coach: 'json ={}', links: 'json =[]',
+      programme_ids: 'text[] =[]', benchmark_ids: 'text[] =[]', sources: 'json =[]',
+    },
+    read: [{ res: 'public_content' }], write: { mode: 'none' },
+  },
+  fl_competencies: {
+    module: 'M22', label: 'Future Leaders nuclear-management competencies (INMA pattern): descriptors per level, skill targets, learning route (FS47)',
+    cols: {
+      id: 'text pk', code: 'text uniq', sort: 'int =0', title_en: 'text', title_ar: 'text', summary_en: 'text', summary_ar: 'text', area_en: 'text', area_ar: 'text',
+      descriptors: 'json ={}', skill_targets: 'json ={}', route: 'json =[]', external_ids: 'text[] =[]', sources: 'json =[]',
+    },
+    read: [{ res: 'public_content' }], write: { mode: 'none' },
+  },
+  fl_external: {
+    module: 'M22', label: 'External management programmes linked to the Future Leaders track, with sources and dates (FS47)',
+    cols: {
+      id: 'text pk', kind: 'text enum:summer_school|school|masters|mobility|trainee|internship', sort: 'int =0', owner_en: 'text', owner_ar: 'text',
+      title_en: 'text', title_ar: 'text', summary_en: 'text', summary_ar: 'text', dates_en: 'text', dates_ar: 'text', year_from: 'int?', year_to: 'int?',
+      competency_ids: 'text[] =[]', sources: 'json =[]',
+    },
+    read: [{ res: 'public_content' }], write: { mode: 'none' },
+  },
+  fl_cohorts: {
+    module: 'M22', label: 'Future Leaders cohorts: modules, policy-project brief, mentor, seats and dates (FS47)',
+    cols: {
+      id: 'text pk', code: 'text uniq', year: 'int', status: 'text enum:planned|open|running|completed', seats: 'int =12', starts_on: 'date', ends_on: 'date',
+      title_en: 'text', title_ar: 'text', modules: 'json =[]', brief_en: 'text', brief_ar: 'text', mentor_en: 'text', mentor_ar: 'text', sort: 'int =0',
+    },
+    read: STAFF_ALL, write: { mode: 'none' },
+  },
+  fl_participants: {
+    module: 'M22', label: 'A selected Future Leaders participant: modules completed and the policy project with its review (FS47)',
+    cols: {
+      id: 'text pk', nomination_id: 'text ref:leadership_nominations uniq', person_id: 'text ref:people idx', cohort_id: 'text ref:fl_cohorts idx',
+      person_name: 'text =\'\'', person_name_ar: 'text =\'\'', modules_done: 'text[] =[]',
+      project_title: 'text?', project_question: 'text?', project_summary: 'text?', project_sponsor_role: 'text?',
+      project_status: 'text enum:none|draft|submitted|returned|accepted =\'none\'', project_submitted_on: 'date?', project_reviewed_by: 'text?', project_review_note: 'text?', project_decided_on: 'date?',
+      status: 'text enum:active|completed|withdrawn =\'active\'', completed_on: 'date?', history: 'json =[]', updated_at: 'ts =now',
+    },
+    read: [{ res: 'skills_profile', person: 'person_id' }, { res: 'talent_review', person: 'person_id' }, { res: 'audit_log' }],
+    write: { mode: 'rpc', res: 'talent_review' },
+  },
+  wfn_programmes: {
+    module: 'M22', label: 'Women in future nuclear skills: the three strands with their international patterns and sources (FS48)',
+    cols: {
+      id: 'text pk', strand: 'text enum:circles|visiting|sponsored uniq', sort: 'int =0', title_en: 'text', title_ar: 'text', summary_en: 'text', summary_ar: 'text',
+      pattern_en: 'text', pattern_ar: 'text', fact_en: 'text', fact_ar: 'text', sources: 'json =[]',
+    },
+    read: [{ res: 'public_content' }], write: { mode: 'none' },
+  },
+  wfn_participants: {
+    module: 'M22', label: 'Opt-in to the women in future nuclear skills network: areas, ways to take part, mentor; withdrawable (FS48; private)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people uniq', active: 'bool =true', interests: 'text[] =[]', strands: 'text[] =[]', mentor: 'bool =false',
+      joined_on: 'date?', withdrawn_on: 'date?', updated_at: 'ts =now',
+    },
+    read: [{ res: 'own_profile', person: 'person_id' }],
+    write: { mode: 'rpc', res: 'own_profile' },
+  },
+  wfn_circles: {
+    module: 'M22', label: 'Mentor circles on a future-skills theme with a mentor role card and seats (FS48)',
+    cols: {
+      id: 'text pk', sort: 'int =0', status: 'text enum:active|closed', seats: 'int =6', focus: 'text[] =[]', skill_ids: 'text[] =[]', starts_on: 'date',
+      title_en: 'text', title_ar: 'text', mentor_role_en: 'text', mentor_role_ar: 'text', cadence_en: 'text', cadence_ar: 'text',
+    },
+    read: STAFF_ALL, write: { mode: 'none' },
+  },
+  wfn_circle_members: {
+    module: 'M22', label: 'Mentor circle membership (member or mentor), ended rather than removed (FS48; private)',
+    cols: {
+      id: 'text pk', circle_id: 'text ref:wfn_circles idx', person_id: 'text ref:people idx', role: 'text enum:member|mentor =\'member\'', active: 'bool =true',
+      joined_on: 'date?', left_on: 'date?',
+    },
+    read: [{ res: 'own_profile', person: 'person_id' }],
+    write: { mode: 'rpc', res: 'own_profile' },
+  },
+  wfn_offers: {
+    module: 'M22', label: 'Visiting-professional placements and sponsored study with a placement (concept offers) (FS48)',
+    cols: {
+      id: 'text pk', strand: 'text enum:visiting|sponsored', sort: 'int =0', status: 'text enum:open|closed', seats: 'int =1', weeks: 'int?', months: 'int?',
+      closes_on: 'date', focus: 'text[] =[]', title_en: 'text', title_ar: 'text', host_en: 'text', host_ar: 'text', placement_en: 'text', placement_ar: 'text',
+    },
+    read: STAFF_ALL, write: { mode: 'none' },
+  },
+  wfn_requests: {
+    module: 'M22', label: 'A participant\'s request for a placement or sponsored study, decided by the programme owner (FS48; private)',
+    cols: {
+      id: 'text pk', offer_id: 'text ref:wfn_offers idx', person_id: 'text ref:people idx', person_name: 'text =\'\'', person_name_ar: 'text =\'\'', statement: 'text',
+      status: 'text enum:interested|shortlisted|placed|completed|declined|withdrawn =\'interested\' idx', outcome: 'text? enum:progressed|same_role',
+      decided_by: 'text?', decided_on: 'date?', note: 'text?', history: 'json =[]', created_at: 'ts =now', updated_at: 'ts =now',
+    },
+    read: [{ res: 'own_profile', person: 'person_id' }],
+    write: { mode: 'rpc', res: 'own_profile' },
   },
 };
