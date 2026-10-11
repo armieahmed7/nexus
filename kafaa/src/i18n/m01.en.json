@@ -1,0 +1,471 @@
+{
+  "module": {},
+  "routes": {
+    "careers": {
+      "title": "Career Map",
+      "purpose": "Job family tiles, search and filters for entry level, regulated role and education."
+    },
+    "careers-role": {
+      "title": "Role",
+      "purpose": "What the role does, qualifications, training path, licensing body, entry routes, next roles and related competencies."
+    },
+    "careers-paths": {
+      "title": "Career paths",
+      "purpose": "Hierarchy, family and path views plus the licensed operator ladder with conditions on each step."
+    },
+    "careers-plan": {
+      "title": "Path to a role",
+      "purpose": "Plan a route from your current role (or from outside) to a target role: steps, conditions, indicative months and the competency gap."
+    },
+    "careers-compare": {
+      "title": "Compare roles",
+      "purpose": "Compare up to three roles side by side: qualifications, training, regulation, entry routes and competency levels."
+    },
+    "careers-jobs": {
+      "title": "Vacancies",
+      "purpose": "Vacancy listing linked to ENEC's official careers channel."
+    },
+    "careers-horizons": {
+      "title": "Roles in 2030 and 2035",
+      "purpose": "How every role is expected to change by 2030 and 2035, the technology drivers and the concept future roles."
+    },
+    "careers-profile-edit": {
+      "title": "Role profile editor",
+      "purpose": "Edit, check, save and publish a role profile for now, 2030 or 2035; version history."
+    }
+  },
+  "sources": "Sources",
+  "months": "{n} months",
+  "groups": {
+    "operations": "Operations",
+    "maintenance_engineering": "Maintenance & Engineering",
+    "rp_chem_env": "RP, Chemistry & Environment",
+    "safety_quality_oversight": "Safety, Quality & Oversight",
+    "ep_security_safeguards": "EP, Security & Safeguards",
+    "training_supply_corporate": "Training, Supply & Corporate"
+  },
+  "level": {
+    "entry": "Entry",
+    "professional": "Professional",
+    "senior": "Senior",
+    "leadership": "Leadership"
+  },
+  "education": {
+    "high_school": "High-school diploma",
+    "diploma": "Diploma",
+    "bachelor": "Bachelor's degree",
+    "master": "Master's degree"
+  },
+  "importance": {
+    "core": "Core",
+    "important": "Important",
+    "useful": "Useful"
+  },
+  "edgeType": {
+    "entry": "Entry",
+    "vertical": "Vertical",
+    "lateral": "Lateral",
+    "cross_functional": "Cross-functional"
+  },
+  "basis": {
+    "barakah": "Barakah-specific",
+    "barakahHint": "Described by an ENEC or FANR source for Barakah.",
+    "generic": "Generic reference",
+    "genericHint": "Follows the generic IAEA SSG-75 benchmark; the Barakah detail is not public.",
+    "uncertain": "Uncertain",
+    "uncertainHint": "The Barakah structure for this role is not confirmed by a public source."
+  },
+  "badge": {
+    "regulated": "Regulated role",
+    "entry": "Entry level",
+    "reserved": "UAE nationals only",
+    "careerOnly": "Career path only"
+  },
+  "f": {
+    "family": "Job family",
+    "entry": "Entry level",
+    "regulated": "Regulated",
+    "education": "Education",
+    "level": "Level",
+    "basis": "Basis"
+  },
+  "careers": {
+    "eyebrow": "Nuclear Career Map",
+    "intro": "Twenty job families and 28 roles at Barakah, with real responsibilities, qualifications, training paths and the body that licenses or authorises each one.",
+    "toPaths": "Career paths",
+    "toPlan": "Plan a path to a role",
+    "calloutTitle": "Built from public sources",
+    "calloutBody": "Each role carries a basis badge: Barakah-specific when ENEC or FANR describe it, Generic when it follows IAEA SSG-75, Uncertain when the Barakah structure is not public. No role names or pictures an incumbent, and pay and headcount are not shown.",
+    "familiesTitle": "Job families",
+    "familiesDesc": "{n} families, grouped as in the spec. Select a family to filter the roles.",
+    "groupsLabel": "Family groups",
+    "allGroups": "All ({n})",
+    "rolesCount": "{n} roles",
+    "rolesTitle": "Roles",
+    "showing": "Showing {n} of {total}",
+    "noRoles": "No role matches these filters"
+  },
+  "compare": {
+    "add": "Compare",
+    "tray": "Compare ({n} of 3)",
+    "remove": "Remove {role}",
+    "clear": "Clear",
+    "go": "Compare roles",
+    "intro": "Up to three roles side by side. Add or remove roles; the comparison is kept in the link so you can share it.",
+    "addRole": "Add a role",
+    "max": "You can compare up to three roles.",
+    "needTwo": "Choose at least two roles to compare",
+    "oneChosen": "{role} is selected. Add one or two more.",
+    "competencies": "Required competency levels",
+    "levelOf": "Level {n} of 4"
+  },
+  "role": {
+    "notFound": "Role not found",
+    "notFoundBody": "There is no published role called \"{slug}\".",
+    "backToMap": "Back to the Career Map",
+    "askDalil": "Ask Dalil about this role",
+    "askQuestion": "Tell me about the {role} role at Barakah",
+    "planTo": "Plan a path to this role",
+    "securityTitle": "Career path only",
+    "securityBody": "For security, safeguards and cyber roles Kafa'a shows the career path only. Training content, post orders and security arrangements are not published here.",
+    "what": "What the role does",
+    "facts": "Key facts",
+    "function": "Function",
+    "licensingBody": "Licensing or authorising body",
+    "regulation": "Regulation",
+    "notRegulated": "No role-specific regulation",
+    "qualifications": "Qualifications",
+    "trainingPath": "Training path",
+    "seeCatalogue": "See the programme catalogue",
+    "entryRoutes": "Entry routes",
+    "entryRoutesDesc": "Any one of these routes, each with its article reference.",
+    "routeN": "Route {n}",
+    "eligibilityNote": "General guidance only: eligibility is determined by ENEC and FANR.",
+    "progression": "Progression",
+    "progressionDesc": "Moves into and out of this role. Conditions are structured data with a rule reference where one exists.",
+    "noEdges": "No progression edges recorded for this role yet",
+    "nextRoles": "Next roles",
+    "prevRoles": "Roles that lead here",
+    "noNext": "No onward move recorded.",
+    "noPrev": "No feeder role recorded.",
+    "competencies": "Related competencies",
+    "competenciesDesc": "Development levels from the competency library (Awareness 1 to Expert 4).",
+    "noCompetencies": "No competencies linked yet",
+    "competency": "Competency",
+    "domain": "Domain",
+    "requiredLevel": "Required level",
+    "importance": "Importance",
+    "seeLibrary": "Open the competency library",
+    "futureSkills": "Skills advanced reactors may need",
+    "standards": "Qualification standards",
+    "standardsDesc": "Qualification cards held by people in this role (authorisation layer, mirrored from the licensee's records).",
+    "requalEvery": "Requalification every {n} months",
+    "noRequal": "No requalification interval",
+    "noIncumbent": "No role page names or pictures an incumbent. Every statement cites a source."
+  },
+  "paths": {
+    "intro": "Four ways to read progression at Barakah: the licensed operator ladder, a hierarchy by level, a single family, and the full path graph.",
+    "tabLadder": "Operator ladder",
+    "tabHierarchy": "Hierarchy",
+    "tabFamily": "Family",
+    "tabGraph": "Path graph",
+    "hierarchyDesc": "Roles by family and level. Select a role to open it.",
+    "familyEdges": "Moves into and out of this family",
+    "noFamilyEdges": "No moves recorded for this family yet",
+    "edgeTypes": "Move types",
+    "graphHint": "Each box is a role; lines are recorded moves. Select a role to open it. The list below is the same graph as text.",
+    "asList": "Show as a list ({n} moves)",
+    "isolated": "{n} roles have no recorded moves yet."
+  },
+  "ladder": {
+    "calloutTitle": "Licensed operations ladder",
+    "calloutBody": "Entry requirements follow FANR-REG-17 Art. 4. Every route also needs a UAE security clearance, which Kafa'a records only as confirmed or pending.",
+    "title": "Local Operator → Reactor Operator → Senior Reactor Operator → Shift Supervisor",
+    "desc": "The condition on each step, as structured data.",
+    "loCondition": "High-school diploma; DNT (24 months) or LOIT (60 weeks / 1,920 h); qualified by the licensee (REG-17 Art. 12)",
+    "entryTitle": "Entry routes into the ladder",
+    "whileTitle": "While certified (RO and SRO)",
+    "w1": "Certificate valid 5 years, renewable, for the named facility only (Art. 8)",
+    "w2": "Medical within 6 months of certification, then every 12 months (Art. 10)",
+    "w3": "Each quarter at least 7 eight-hour or 5 twelve-hour shifts; an SRO works at least 2 of them in the SRO role (Art. 11)",
+    "w4": "Biennial requalification exam; COCT 5 to 6 weeks per crew per year",
+    "w5": "A validity lapse is reported within 3 working days (Art. 13)",
+    "toLicensing": "How operator licensing works",
+    "ssNote": "The Shift Supervisor step is generic (IAEA SSG-75: 4 to 6 years' experience); the Barakah title and structure are unconfirmed."
+  },
+  "plan": {
+    "intro": "Choose where you are and where you want to go. Kafa'a lists the recorded routes, the conditions on each step, an indicative minimum time and the competency gap.",
+    "from": "From",
+    "to": "Target role",
+    "fromNone": "Not in a role yet (entry routes)",
+    "fromMine": "Pre-filled with your current role.",
+    "pickTarget": "Choose a target role",
+    "pickTargetBody": "Pick any of the 28 roles. The planner works for the public too.",
+    "reachable": "Roles you can reach from here",
+    "steps": "{n} steps",
+    "same": "You are already in this role.",
+    "routesTitle": "Routes",
+    "routesDesc": "{n} recorded routes, shortest first.",
+    "export": "Export plan",
+    "noRoute": "No recorded route",
+    "noRouteBody": "No progression edge links these roles yet. Talk to your manager or HR about a cross-functional move.",
+    "shortest": "Shortest route",
+    "alternative": "Alternative",
+    "routeN": "Route {n}",
+    "minMonths": "at least {n} months",
+    "gapTitle": "Competency gap",
+    "gapDesc": "{done} of {total} competencies already at the level the target role needs.",
+    "noGap": "No competency requirements recorded for the target role",
+    "have": "Current",
+    "need": "Needed",
+    "gap": "Gap",
+    "met": "Met",
+    "levelsToGo": "{n} levels to go",
+    "standardsTitle": "Qualification cards in the target role",
+    "standardsDesc": "Completed through on-the-job training and task evaluations after you join the role.",
+    "regulatedTitle": "This is a regulated role",
+    "regulatedBody": "Certification follows FANR-REG-17. Kafa'a gives general guidance; eligibility is determined by ENEC and FANR.",
+    "disclaimer": "Indicative only. Months are the minimum stated in the conditions; real timing depends on programmes, vacancies and the licensee's decisions.",
+    "toIdp": "Turn this into my development plan"
+  },
+  "jobs": {
+    "intro": "Current openings at ENEC, with a link to apply through ENEC's official careers channel.",
+    "official": "ENEC careers",
+    "calloutTitle": "Applications go through ENEC",
+    "calloutBody": "Kafa'a lists vacancies and links out. It does not collect job applications. Listings marked as sample are illustrative.",
+    "status": "Status",
+    "nationals": "UAE nationals only",
+    "none": "No vacancies listed",
+    "noneMatch": "No vacancy matches these filters",
+    "title": "Vacancy",
+    "role": "Role",
+    "location": "Location",
+    "posted": "Posted",
+    "closes": "Closes",
+    "apply": "Apply",
+    "applyOfficial": "Apply on enec.ae",
+    "programmes": "Looking for a programme rather than a job?",
+    "toPathways": "See the talent programmes"
+  },
+  "fs05": {
+    "tab": "Now, 2030, 2035",
+    "tabOverview": "Overview",
+    "h": {
+      "now": "Now",
+      "2030": "2030",
+      "2035": "2035"
+    },
+    "driver": {
+      "digital_ic": "Digital I&C",
+      "ai_assistance": "AI assistance",
+      "robotics": "Robotics and remote inspection",
+      "smr_design": "SMR and advanced reactor design",
+      "digital_twin": "Digital twins"
+    },
+    "kind": {
+      "competency": "Competency",
+      "skill": "Skill"
+    },
+    "change": {
+      "new": "New",
+      "raised": "Raised",
+      "same": "Unchanged",
+      "lowered": "Lowered",
+      "dropped": "No longer listed"
+    },
+    "frHorizon": {
+      "watch": "Horizon: watch",
+      "explore": "Horizon: explore",
+      "prepare": "Horizon: prepare"
+    },
+    "planning": {
+      "title": "Planning assumption",
+      "body": "2030 and 2035 profiles describe how this work may change so people can plan their learning. They are planning assumptions: no deployment decision is implied, and they say nothing about headcount or sites."
+    },
+    "concept": {
+      "pill": "Concept role",
+      "banner": "Concept role: no vacancy and no deployment decision implied. Use it to plan learning and career conversations.",
+      "about": "What this concept role would do",
+      "qualTitle": "Requirements and learning",
+      "seeFuture": "Explore the ADVANCE technologies",
+      "howTitle": "How to get here",
+      "howDesc": "Current roles with a \"future\" move to this concept role, with the indicative experience and bridge learning.",
+      "profileTitle": "Concept profile for 2030 and 2035",
+      "profileDesc": "The skills and competencies this concept role is expected to need, with the reason for each."
+    },
+    "leadsTo": {
+      "title": "Concept roles this role can lead to",
+      "desc": "Future moves for planning only: no vacancy and no deployment decision implied."
+    },
+    "panel": {
+      "horizons": "Horizon",
+      "version": "Version {n}",
+      "publishedOn": "published {date}",
+      "edit": "Edit profile",
+      "editDrafts": "Edit profile ({n} draft)",
+      "none": "No published profile yet",
+      "noneBody": "Profiles for this role have not been published.",
+      "pathOnlyTitle": "Career-path level only",
+      "pathOnlyBody": "Security, safeguards and cyber roles are shown at career-path level only. Status is qualified or not qualified; requirements are not published here.",
+      "why": "Why the role changes",
+      "drivers": "Technology drivers",
+      "vs": "Change against {h}",
+      "today": "Today's profile",
+      "conceptStart": "New concept profile",
+      "caption": "Requirements at {h} and how they change",
+      "requirement": "Requirement",
+      "level": "Level",
+      "importance": "Importance",
+      "change": "Change",
+      "sourcesNote": "Each profile cites its sources and an as-of date. Benchmarks show the international practice this view follows."
+    },
+    "why": {
+      "new": "New at {horizon}: required at level {level}.",
+      "raised": "Raised at {horizon}: from level {from} to {to}.",
+      "same": "Already required at level {level}; unchanged.",
+      "lowered": "Lowered from level {from} to {to}.",
+      "text": "{text}",
+      "driver": {
+        "digital_ic": "Driver: digital I&C and plant-data tools.",
+        "ai_assistance": "Driver: AI assistance that people verify before acting.",
+        "robotics": "Driver: robotics and remote inspection.",
+        "smr_design": "Driver: SMR and advanced reactor design (no deployment decision implied).",
+        "digital_twin": "Driver: digital twins, kept separate from reactor control."
+      },
+      "importance": {
+        "core": "Core to the role.",
+        "important": "Important for the role.",
+        "useful": "Useful for the role."
+      },
+      "planning": "Planning assumption: no deployment decision implied."
+    },
+    "bench": {
+      "label": "Benchmarks",
+      "borrow": "What Kafa'a borrows from this benchmark:",
+      "note": "Benchmarks are sourced reference rows; Kafa'a follows their method and does not claim their results."
+    },
+    "careers": {
+      "futureTitle": "Future roles (concept)",
+      "futureDesc": "{n} concept roles linked to today's roles by future moves. No vacancy and no deployment decision implied.",
+      "toHorizons": "Roles in 2030 and 2035"
+    },
+    "paths": {
+      "tab": "Future roles",
+      "graphTitle": "Future moves from current roles to concept roles",
+      "listTitle": "Future moves",
+      "listDesc": "Each move lists indicative experience and the bridge learning it needs."
+    },
+    "plan": {
+      "skillsTitle": "Skills this concept role asks for",
+      "seeProfile": "See the full concept profile"
+    },
+    "overview": {
+      "eyebrow": "Future role profiles",
+      "intro": "How every role's requirements are expected to change by 2030 and 2035, and the concept roles today's roles can lead to. Counts are of roles, never of people.",
+      "toGraph": "Future moves graph",
+      "with2030": "Roles with a 2030 profile",
+      "with2030Sub": "Published; security roles at career-path level",
+      "concepts": "Concept roles profiled",
+      "conceptsSub": "At least 4 requirements and 1 inbound move each",
+      "digital": "Roles asking for digital skills",
+      "digitalSub": "Now {now} · 2030 {y30} · 2035 {y35}",
+      "ai": "Roles asking for AI skills",
+      "aiSub": "Now {now} · 2030 {y30} · 2035 {y35}",
+      "digitalChart": "Roles asking for digital skills, by horizon",
+      "aiChart": "Roles asking for AI skills, by horizon",
+      "aiShort": "AI",
+      "driversTitle": "Roles by technology driver",
+      "mapTitle": "Size of change by role",
+      "mapDesc": "Change score against the previous horizon: a new requirement counts its level, a raised one the increase.",
+      "group": "Group",
+      "vsPrev": "{h} vs previous",
+      "pathOnly": "Path level only",
+      "cell": "{added} new, {raised} raised",
+      "scoreNote": "Security, safeguards and cyber roles are shown at career-path level only and carry no score.",
+      "tableTitle": "Every role across the three horizons",
+      "role": "Role",
+      "reqs": "{n} requirements",
+      "delta": "+{added} new, {raised} raised",
+      "conceptTitle": "Concept future roles",
+      "conceptDesc": "Each has a published profile and at least one future move from a current role.",
+      "conceptReqs": "{n} requirements in the {h} profile",
+      "from": "From:"
+    },
+    "method": {
+      "title": "How the profiles are built",
+      "s1": "Estimate what each role will need at each horizon (the 2030 and 2035 profiles).",
+      "s2": "Assess today's capability against the current profile (skills passport and readiness).",
+      "s3": "Identify the gaps: new and raised requirements per role.",
+      "s4": "Plan how to fill them: learning, moves and future roles, reviewed every year."
+    },
+    "review": {
+      "title": "Drafts awaiting review",
+      "none": "No drafts are open. {n} earlier versions are kept as history.",
+      "open": "Open"
+    },
+    "edit": {
+      "title": "Role profile: {role}",
+      "intro": "Edit the requirements for one horizon, check them, save a draft or publish. Publishing supersedes the previous version, is audited and is recorded in the NEXUS evidence ledger.",
+      "back": "Back to roles in 2030 and 2035",
+      "viewPublic": "View the public page",
+      "pathOnly": "This role stays at career-path level: requirements cannot be added. You can still update the rationale and sources.",
+      "history": "Version history",
+      "noHistory": "No versions yet for this horizon.",
+      "updatedOn": "updated {date}",
+      "status": "Starting point",
+      "new": "New profile",
+      "startsDraft": "Saving starts a new draft from this version.",
+      "size": {
+        "added": "Added",
+        "raised": "Raised",
+        "dropped": "Removed"
+      },
+      "checks": "Checks",
+      "okDraft": "Ready to save as a draft.",
+      "okPublish": "Ready to publish.",
+      "checksNote": "The same rules run again on the server when you save.",
+      "reqs": "Requirements",
+      "reqsDesc": "Competencies and skills with a level from 1 to 4, an importance, an optional technology driver and a short reason in both languages.",
+      "noReqs": "No requirements yet",
+      "remove": "Remove {name}",
+      "driver": "Technology driver",
+      "noDriver": "None",
+      "whyEn": "Why (English)",
+      "whyAr": "Why (Arabic)",
+      "addKind": "Add a",
+      "addRef": "Competency or skill",
+      "add": "Add",
+      "securityNote": "Security-area skills and competencies are not offered: security content stays at career-path level.",
+      "rationale": "Rationale",
+      "ratEn": "Rationale (English)",
+      "ratAr": "Rationale (Arabic)",
+      "sourcesDesc": "Publishing needs at least one https source.",
+      "srcLabel": "Source label",
+      "srcUrl": "Source link",
+      "addSource": "Add source",
+      "footer": "Drafts are visible to training, admins and auditors only. Published versions are public.",
+      "saveDraft": "Save draft",
+      "publish": "Publish",
+      "saved": "Draft saved",
+      "published": "Profile published",
+      "confirmTitle": "Publish the {h} profile?",
+      "confirmBody": "The new version becomes public and the previous one is kept as history. The action is audited and recorded in the NEXUS evidence ledger."
+    },
+    "check": {
+      "invalid": "Choose a horizon, known drivers and a rationale of at least 20 characters in English and Arabic.",
+      "not_found": "Role not found.",
+      "invalid_requirements": "Each requirement needs a level from 1 to 4 and an importance; no duplicates; at most 30.",
+      "unknown_ref": "A requirement points at an unknown competency or skill.",
+      "security_restricted": "Security, safeguards and cyber content stays at career-path level.",
+      "unclean_text": "Remove any mention of headcount, sites or a deployment decision.",
+      "source_required": "Publishing needs at least one https source with a label.",
+      "too_few": "A published profile needs requirements (a concept role at least 4)."
+    }
+  },
+  "wb": {
+    "tfTitle": "How this role changes by 2030",
+    "tfBody": "The role transformation map shows the technology drivers, the tasks that grow, shrink or are augmented, and the skills added (public summary).",
+    "tfLink": "Open the transformation map",
+    "conceptRoadmap": "Plan a roadmap to this concept role"
+  }
+}

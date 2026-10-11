@@ -1,0 +1,344 @@
+{
+  "module": {
+    "name": "Skills Intelligence"
+  },
+  "routes": {
+    "skills": {
+      "title": "Skills catalogue",
+      "purpose": "Every published skill, what it means at each level, who needs it now and in 2030, and how it maps to international frameworks."
+    },
+    "skills-frameworks": {
+      "title": "International crosswalk",
+      "purpose": "How Kafa'a skills map to ESCO, O*NET, SFIA 9, SkillsFuture, DigComp and other frameworks, with a machine-readable export."
+    },
+    "skills-skill": {
+      "title": "Skill",
+      "purpose": "Definition, level essence, roles now and in 2030, learning that builds it, crosswalk and sources."
+    },
+    "admin-skills-alignments": {
+      "title": "Skills crosswalk editor",
+      "purpose": "Add, edit, review and retire crosswalk rows. Framework owners edit; auditors read."
+    }
+  },
+  "asOf": "read {date}",
+  "area": {
+    "plant_systems": "Plant systems",
+    "operations": "Operations",
+    "maintenance": "Maintenance",
+    "radiation_chemistry": "Radiation protection and chemistry",
+    "engineering": "Engineering",
+    "safety": "Nuclear safety",
+    "human_performance": "Human performance",
+    "emergency": "Emergency preparedness",
+    "security": "Security (career path only)",
+    "quality": "Quality",
+    "leadership": "Leadership",
+    "digital": "Digital and AI",
+    "project": "Projects"
+  },
+  "match": {
+    "exact": {
+      "label": "Exact",
+      "help": "Same meaning and scope: the external entry and the Kafa'a skill can be used interchangeably."
+    },
+    "close": {
+      "label": "Close",
+      "help": "Nearly the same: small differences in scope or wording."
+    },
+    "broad": {
+      "label": "Broad",
+      "help": "The external entry is wider: the Kafa'a skill is one part of it."
+    },
+    "partial": {
+      "label": "Partial",
+      "help": "Overlap only: some of the Kafa'a skill is covered, some is not."
+    },
+    "legendTitle": "What the match types mean",
+    "indicativeNote": "A row stays \"indicative\" until a second framework owner reviews it. Codes are stored only when copied from the framework's own source; otherwise the row is label-level and the code is pending review."
+  },
+  "review": {
+    "indicative": "Indicative",
+    "reviewed": "Reviewed",
+    "indicativeHelp": "Not yet reviewed by a framework owner: use as a guide only.",
+    "reviewedHelp": "Reviewed by the {role} on {date}."
+  },
+  "role": {
+    "admin": "platform admin",
+    "instructor": "instructor",
+    "training_manager": "training manager"
+  },
+  "code": {
+    "pending": "Code pending review"
+  },
+  "levels": {
+    "caption": "Kafa'a level to external level",
+    "kafaa": "Kafa'a",
+    "external": "External",
+    "level": "Level {n}",
+    "none": "No level map: this framework has no proficiency levels."
+  },
+  "levelName": {
+    "1": "Awareness",
+    "2": "Practitioner",
+    "3": "Independent",
+    "4": "Expert"
+  },
+  "xw": {
+    "none": "No published alignment yet.",
+    "arOfficial": "Arabic label from the framework",
+    "arKafaa": "Arabic label by Kafa'a",
+    "source": "{fw} source"
+  },
+  "export": {
+    "case": "Download CASE JSON",
+    "csv": "Download CSV",
+    "schema": "JSON schema",
+    "valid": "The export validates against the CASE-shaped schema: {items} items, {assoc} associations.",
+    "invalid": "The export has {n} schema problems."
+  },
+  "explorer": {
+    "eyebrow": "Skills Intelligence · public",
+    "intro": "What each skill means at each level, which roles need it now and in 2030, what builds it, and how it maps to international frameworks. Search in English or Arabic.",
+    "toFrameworks": "Frameworks and export",
+    "empty": "No skills published yet",
+    "tPublished": "Published skills",
+    "tPublishedSub": "{n} obsolete kept by link (never deleted)",
+    "tFuture": "Future skills",
+    "tFutureSub": "In {n} future-skills areas",
+    "tAligned": "Mapped internationally",
+    "tAlignedSub": "Across {n} frameworks",
+    "tMine": "Skills I hold",
+    "tMineSub": "{n} on my goals",
+    "tMineAnon": "Sign in to see yours",
+    "searchLabel": "Search skills",
+    "searchPh": "e.g. data analysis, تحليل البيانات, systems thinking",
+    "tryLabel": "Try:",
+    "count": "{n} of {total} skills",
+    "obsoleteHidden": "{n} obsolete skill hidden; it stays reachable by link:",
+    "noHits": "No skill matches",
+    "noHitsBody": "Try another word, the Arabic or English name, or clear the filters.",
+    "mapsTo": "{n} frameworks"
+  },
+  "f": {
+    "area": "Area",
+    "reuse": "Reusability",
+    "life": "Lifecycle",
+    "group": "Jahiz group",
+    "future": "Future skill",
+    "futureAny": "Any future skill"
+  },
+  "why": {
+    "name_exact": "Name matches \"{name}\" exactly",
+    "name": "Name contains your search: \"{name}\"",
+    "alt": "Alternative label: \"{label}\"",
+    "code": "Skill code {code}",
+    "crosswalk": "International label: \"{label}\"",
+    "words": "All {n} words appear in the name, labels or description"
+  },
+  "mine": {
+    "signIn": "Sign in to see your level for this skill and keep it as a goal.",
+    "hold": "You hold this at L{n} ({basis})",
+    "holdShort": "You: L{n}",
+    "band": "How sure: {band}",
+    "notHeld": "Not in your skills passport yet.",
+    "passport": "Open my skills passport",
+    "goal": "My goal: L{n}",
+    "onGoals": "On my goals",
+    "remove": "Remove from my goals",
+    "add": "Add to my goals",
+    "target": "Target level",
+    "goalNote": "Goals are private to you. Add a target date under \"Skills I want to grow\" to plan it and, if you choose, share it with your manager.",
+    "securityNote": "Security skills follow the security career path and are not personal goals.",
+    "obsoleteNote": "This skill is obsolete: add its replacement to your goals instead.",
+    "planGoal": "Add a target date (Skills I want to grow)"
+  },
+  "basis": {
+    "verified": "verified",
+    "evidenced": "evidenced",
+    "validated": "validated",
+    "claimed": "self-assessed",
+    "none": "no evidence"
+  },
+  "band": {
+    "low": "low",
+    "medium": "medium",
+    "high": "high"
+  },
+  "importance": {
+    "core": "core",
+    "important": "important",
+    "useful": "useful"
+  },
+  "skill": {
+    "notFound": "Skill not found",
+    "back": "All skills",
+    "obsoleteSince": "Obsolete since {date}",
+    "replacedBy": "Replaced by",
+    "noReplacement": "No replacement: kept for the record.",
+    "noDeployment": "Awareness for planning only: no deployment decision implied.",
+    "tab": {
+      "overview": "Overview",
+      "roles": "Roles now and in 2030",
+      "learning": "Learning",
+      "crosswalk": "Crosswalk",
+      "sources": "Sources"
+    },
+    "allFrameworks": "See every framework and download the crosswalk",
+    "follows": "Benchmarks this skill follows",
+    "owner": "Owner",
+    "version": "Version",
+    "review": "Next review",
+    "ladder": "What it means at each level",
+    "keyLevel": "Key level",
+    "ladderNote": "The key level carries the skill's own essence line; each level lists the observable indicators published for this skill (FS23), or says why the skill is not defined there.",
+    "facts": "At a glance",
+    "area": "Area",
+    "type": "Skill type",
+    "halfLife": "How fast it fades",
+    "halfLifeV": "Half-life {n} months without use",
+    "altLabels": "Also known as",
+    "h": {
+      "now": "Now",
+      "2030": "2030 (planning assumption)",
+      "2035": "2035 (planning assumption)"
+    },
+    "noRoles": "No published role profile asks for it at this horizon.",
+    "concept": "Concept role",
+    "needs": "Needs L{n}",
+    "viaComp": "through its competency",
+    "more": "and {n} more",
+    "rolesNote": "From the published role profiles (FS05). 2030 and 2035 profiles are planning assumptions: no deployment decision or headcount implied.",
+    "noLearning": "Nothing builds this skill yet",
+    "noLearningBody": "Courses, pathways and credentials for future skills arrive in the next wave.",
+    "courses": "Courses",
+    "paths": "Training paths",
+    "credentials": "Micro-credentials",
+    "hours": "{n} h",
+    "via": {
+      "evidence": "counts as evidence",
+      "competency": "builds the competency"
+    },
+    "credVia": {
+      "skill": "requires this skill",
+      "course": "through a course that builds it"
+    },
+    "descriptorsLink": "All descriptors and levels"
+  },
+  "fw": {
+    "eyebrow": "Skills Intelligence · crosswalk",
+    "intro": "How each Kafa'a skill maps to international frameworks, so a profile, a course or a vacancy can be compared and exchanged. Codes are stored only when copied from the framework's own source; rows stay indicative until a second framework owner reviews them.",
+    "toExplorer": "Skills catalogue",
+    "empty": "No frameworks registered",
+    "tCoverage": "Skills mapped",
+    "tCoverageSub": "{n} of {total} published skills have at least one alignment",
+    "tRows": "Published alignments",
+    "tRowsSub": "In {n} of {total} frameworks",
+    "tCoded": "With a copied code",
+    "tCodedSub": "{n} label-level rows, code pending review",
+    "tReviewed": "Reviewed",
+    "tReviewedSub": "{n} still indicative",
+    "exportTitle": "Machine-readable export",
+    "exportDesc": "The published framework as a CASE-shaped package (1EdTech Competencies and Academic Standards Exchange) in the page language, and the crosswalk as CSV. Identifiers are stable between exports.",
+    "registry": "Frameworks",
+    "registryDesc": "Each framework, what Kafa'a uses from it, and how its codes and levels work.",
+    "notYet": "Not yet mapped",
+    "codes": "Codes",
+    "copied": "copied from the source",
+    "pending": "pending review",
+    "levels": "Levels",
+    "rows": "Rows",
+    "rowsV": "{n} rows · {skills} skills",
+    "showRows": "Show its rows",
+    "matrix": "Coverage by framework and skill group",
+    "matrixDesc": "Skills with at least one published alignment, per framework and skill group.",
+    "established": "Established catalogue",
+    "matrixNote": "Cells show mapped skills out of the skills in that group; darker means more coverage.",
+    "gaps": "Not yet mapped",
+    "gapFramework": "{fw}: no rows yet.",
+    "gapSkill": "Skill without an alignment:",
+    "listTitle": "Alignments by framework",
+    "listDesc": "Filter by framework, match type or review state.",
+    "colSkill": "Kafa'a skill",
+    "colExternal": "External entry",
+    "colCode": "Code",
+    "colMatch": "Match",
+    "colReview": "Review",
+    "colSource": "Source",
+    "colFramework": "Framework",
+    "noRows": "No alignment matches these filters"
+  },
+  "status": {
+    "draft": "Draft",
+    "published": "Published",
+    "retired": "Retired"
+  },
+  "admin": {
+    "intro": "Every crosswalk row with its status and review state. Framework owners add, edit, review and retire rows; every action is audited. Reviews follow maker-checker: never your own edit.",
+    "public": "Public crosswalk",
+    "readOnly": "Read-only",
+    "readOnlyBody": "Auditors read every row, including drafts and retired rows. Framework owners edit.",
+    "tTotal": "All rows",
+    "tTotalSub": "Never deleted: retired instead",
+    "tDraftSub": "Visible to framework owners only",
+    "tQueueSub": "{n} you can review",
+    "tReviewedSub": "By a second framework owner",
+    "tRetiredSub": "Kept with a reason",
+    "listTitle": "Crosswalk rows",
+    "add": "Add alignment",
+    "colStatus": "Status",
+    "colVersion": "Version",
+    "colAsOf": "Read on",
+    "colActions": "Actions",
+    "edit": "Edit",
+    "review": "Review",
+    "retire": "Retire",
+    "retiredOn": "Retired {date}",
+    "reviewTitle": "Mark this alignment as reviewed?",
+    "reviewConsequence": "The row stops showing \"indicative\" in English and Arabic. Your role and the date are recorded and audited.",
+    "retireTitle": "Retire this alignment?",
+    "retireConsequence": "It leaves the public crosswalk and the export, but is kept with your reason (never deleted).",
+    "retireReason": "Why retire it?",
+    "addTitle": "Add an alignment",
+    "editTitle": "Edit alignment",
+    "choose": "Choose…",
+    "fSkill": "Kafa'a skill",
+    "fLabelEn": "External label (English)",
+    "fLabelAr": "External label (Arabic)",
+    "fCode": "External code (only if copied from the source)",
+    "codeHint": "Format: {p}. Leave empty when you have not copied it.",
+    "codeHintNone": "Leave empty unless you copied the code from the source: the row then shows \"code pending review\".",
+    "fUrl": "Source (https)",
+    "fAsOf": "Read on",
+    "fLevels": "Level map (Kafa'a level → external level)",
+    "fNoteEn": "Note (English)",
+    "fNoteAr": "Note (Arabic)",
+    "fArOfficial": "The Arabic label comes from the framework itself",
+    "fPublish": "Publish (public crosswalk and export)",
+    "fPublishHint": "Unpublished rows stay drafts for framework owners.",
+    "editNote": "Saving an edit adds a version and makes the row indicative again until another framework owner reviews it.",
+    "saveConsequence": "The change is saved through the audited crosswalk RPC."
+  },
+  "check": {
+    "skill_not_found": "Choose a Kafa'a skill.",
+    "obsolete": "This skill is obsolete: keep its existing alignments, but do not add new ones.",
+    "framework": "Choose one of the listed frameworks.",
+    "label": "Give the external label in English and Arabic (up to 200 characters each).",
+    "match": "Choose a match type.",
+    "code": "This code does not have the format the framework publishes. Leave it empty if you have not copied it from the source.",
+    "url": "Cite the source with an https link.",
+    "as_of": "Give the date you read the source (not in the future).",
+    "level_map": "Each level-map entry takes up to 40 characters.",
+    "note": "Keep notes under 500 characters.",
+    "duplicate": "This skill already has an active alignment to that framework entry.",
+    "immutable": "The skill and framework of an alignment cannot change: retire it and add a new one.",
+    "retired": "This alignment is retired."
+  },
+  "wb": {
+    "aiTitle": {
+      "literacy": "Part of the AI fluency ladder (literacy)",
+      "engineering": "AI engineering skill (specialists; not part of the literacy rung)"
+    },
+    "aiLadder": "See the AI fluency ladder",
+    "aiMine": "My AI fluency"
+  }
+}

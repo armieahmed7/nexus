@@ -1,0 +1,1104 @@
+{
+  "module": {
+    "name": "Career Navigator"
+  },
+  "routes": {
+    "my-career": {
+      "title": "Career Navigator",
+      "purpose": "Where can I go from here? Personal readiness for every next role, with gates and gaps."
+    },
+    "my-career-roadmap": {
+      "title": "Career Roadmap",
+      "purpose": "A quarter-by-quarter plan to a target role, with what-if scenarios."
+    },
+    "team-career": {
+      "title": "Team career plans",
+      "purpose": "Shortlists and roadmaps that your team members chose to share with you."
+    },
+    "my-career-conversations": {
+      "title": "Career conversations",
+      "purpose": "Prepare your six-monthly career conversation, share it with your line manager and acknowledge what was agreed."
+    },
+    "team-conversations": {
+      "title": "Team career conversations",
+      "purpose": "Hold and record career conversations with the people who report to you, with a pre-filled agenda and suggested actions."
+    },
+    "workforce-career-conversations": {
+      "title": "Career conversation insights",
+      "purpose": "Aspirations, mobility and conversation coverage by job family: aggregates of 10 or more only."
+    },
+    "careers-outlook-criteria": {
+      "title": "Role outlook labels",
+      "purpose": "Which roles are growing, changing or stable, and the published criteria behind every label."
+    },
+    "careers-translate": {
+      "title": "Your skills in nuclear",
+      "purpose": "Already skilled in oil and gas, power, aviation, defence or utilities? See the nearest ENEC roles, what transfers and the route to bridge the gap."
+    },
+    "my-career-health": {
+      "title": "Career Health check",
+      "purpose": "Assess five visible parts of your career health, chart a plan and book a career conversation. Private to you."
+    }
+  },
+  "nav": {
+    "intro": "Your personal map of next roles: how ready you are on the required competencies, which entry conditions you already meet, and what would close the gap. Indicative guidance only: ENEC and FANR decide eligibility.",
+    "toRoadmap": "Open my roadmap",
+    "noRole": "No current role on file",
+    "noRoleBody": "The Career Navigator starts from your current job role. Your profile has none, so explore the career map instead.",
+    "browseCareers": "Browse careers",
+    "youAre": "You are here",
+    "since": {
+      "licence": "{n} months since your licence ({date})",
+      "qualification": "{n} months since you qualified ({date})",
+      "hire": "{n} months in role (since {date})",
+      "none": "Not yet qualified in this role"
+    },
+    "notQualifiedYet": "Not yet fully qualified in this role: months count from qualification",
+    "within": "Roles within two steps",
+    "withinSub": "Reachable over published progression routes",
+    "readyNow": "Ready now",
+    "readyNowSub": "85% or more on competencies and no unmet gate",
+    "shortlist": "Shortlist",
+    "topMove": "Top suggestion: {role}"
+  },
+  "map": {
+    "title": "Opportunity map",
+    "desc": "Your role, the roles one step away and two steps away. Colour shows readiness; the line shows the kind of move. Select a role for its gates and gaps.",
+    "aria": "Opportunity map: roles reachable from your current role",
+    "you": "Your role",
+    "pathOnly": "Career path only",
+    "careerOnly": "no % computed",
+    "colRole": "Role",
+    "colSteps": "Steps away",
+    "colReadiness": "Readiness",
+    "noneTitle": "No published progression route starts from your role yet",
+    "noneBody": "Look at the roles like yours below: they share most of your role's competencies and make good lateral moves."
+  },
+  "legend": {
+    "ready_now": "Ready now",
+    "ready_in": "Ready in about N months",
+    "stretch": "Stretch",
+    "path_only": "Career path only"
+  },
+  "band": {
+    "ready_now": "Ready now",
+    "ready_in": "Ready in about {n} months",
+    "stretch": "Stretch (about {n} months)",
+    "path_only": "Career path only",
+    "current": "Your current role"
+  },
+  "gate": {
+    "met": "Gates met",
+    "pending": "Gates pending",
+    "not_met": "Gate not met",
+    "none": "No published gates"
+  },
+  "gates": {
+    "none": "No published route into this role.",
+    "from": "From {role}",
+    "entry": "Entry route (from outside)",
+    "mine": "Your route"
+  },
+  "edgeType": {
+    "vertical": "Vertical",
+    "lateral": "Lateral",
+    "cross_functional": "Cross-functional",
+    "entry": "Entry"
+  },
+  "note": {
+    "months_met": "met from your record",
+    "months_short": "{n} months to go",
+    "not_qualified_yet": "counts once you are fully qualified ({n} months)",
+    "other_role": "needs experience in another role ({n} months)",
+    "degree_role": "your current role already requires it",
+    "degree_unknown": "not on file in Kafa'a: your HR record decides",
+    "programme_done": "completed",
+    "programme_in_progress": "in progress",
+    "programme_to_do": "part of the route",
+    "exam_to_do": "taken on the route",
+    "licensee": "checked by the licensee outside Kafa'a (status only)",
+    "other": "to confirm"
+  },
+  "importance": {
+    "core": "core",
+    "important": "important",
+    "useful": "useful"
+  },
+  "noPct": "No %",
+  "pathOnlyHint": "Security, safeguards and cyber roles show the career path only: readiness and gate detail are not computed.",
+  "moves": {
+    "title": "Your next moves",
+    "desc": "Ranked by readiness, kind of move and distance. Readiness counts competencies only; gates are listed separately and never raise the %."
+  },
+  "card": {
+    "steps": "{n} step(s)",
+    "typical": "Typically {n}+ months",
+    "topGaps": "Top gaps and how to close them",
+    "level": "level {from} → {to}",
+    "closeWith": "Close with {course}",
+    "hours": "{n} h",
+    "noGaps": "No competency gaps: you meet every required level.",
+    "details": "Gates and gaps",
+    "shortlist": "Shortlist",
+    "shortlisted": "Shortlisted",
+    "roadmap": "Plan a roadmap",
+    "coachLink": "More ways to close these gaps in the Learning Coach"
+  },
+  "similar": {
+    "title": "Roles like mine",
+    "desc": "Roles that need a similar mix of competencies to your current role: lateral moves you might not have considered.",
+    "none": "No closely similar roles found",
+    "match": "{pct}% similar"
+  },
+  "short": {
+    "title": "My shortlist",
+    "desc": "Up to {n} target roles. Your shortlist drives your roadmap, learning suggestions and opportunity matches.",
+    "empty": "No target roles yet",
+    "emptyBody": "Shortlist a role from your next moves or from the roles like yours.",
+    "full": "Your shortlist already holds three roles: remove one first.",
+    "added": "Added to your shortlist",
+    "removed": "Removed from your shortlist",
+    "reordered": "Shortlist reordered",
+    "up": "Move up",
+    "down": "Move down",
+    "roadmap": "Roadmap",
+    "remove": "Remove",
+    "share": "Share my shortlist with my line manager",
+    "shareHint": "Only people with you in their scope see it, and only while it is shared. You can stop sharing at any time.",
+    "sharedOn": "Shared with your line manager",
+    "sharedOff": "No longer shared"
+  },
+  "detail": {
+    "loading": "Loading readiness…",
+    "readinessNote": "Readiness is weighted competency coverage (core 3, important 2, useful 1). Gates are shown separately.",
+    "gates": "Gates: entry routes and their conditions",
+    "gatesNote": "Each published route into the role, checked against your own records. Licensee checks stay pending: Kafa'a is a mirror, not an authority.",
+    "gaps": "Competency gaps ({n})",
+    "competency": "Competency",
+    "have": "You",
+    "need": "Needed",
+    "close": "Closing action",
+    "onTheJob": "On-the-job experience",
+    "rolePage": "Role page"
+  },
+  "disclaimer": "Indicative guidance from your Kafa'a records. Readiness and gates do not decide eligibility: ENEC qualifies staff and FANR certifies operators.",
+  "reasons": {
+    "gates_met": "Every condition on the route \"{route}\" is met in your records",
+    "gates_pending": "Route \"{route}\": nothing blocks you; {n} condition(s) still to do or checked by the licensee",
+    "gates_not_met": "Route \"{route}\": a gate is not met yet (about {months} months to go), so this role cannot be \"ready now\"",
+    "gates_none": "No published entry route or gate for this role",
+    "gap": "Gap: {skill} at level {from} of {to}",
+    "band_ready_now": "At least 85% of the required competencies and no unmet gate",
+    "band_ready_in": "Indicative time to close the gaps and gates: about {months} months",
+    "band_stretch": "A stretch: about {months} months of experience and development",
+    "cc_gap": "Closes {skill} from level {from} to {to}, needed for {role}",
+    "cc_target": "{role} is on the shortlist",
+    "cc_expiring": "{std} expires on {date}",
+    "cc_aspiration": "Answers the stated aspiration: {asp}",
+    "cc_support": "Support asked for: {need}"
+  },
+  "rm": {
+    "intro": "Lay your route to a target role out quarter by quarter: programmes with their published durations, FANR milestones, experience you still need and development. Change the what-ifs and the timeline recomputes.",
+    "toNavigator": "Back to the Career Navigator",
+    "target": "Target role",
+    "targetHint": "Your shortlist first, then every role your progression routes reach.",
+    "inShortlist": "shortlisted",
+    "name": "Scenario name",
+    "defaultName": "Route to {role}",
+    "pick": "Pick a target role",
+    "noRoute": "No progression route from your role to this one",
+    "noRouteBody": "The published career map has no route between these roles yet. Use the Navigator's \"roles like mine\" to find a lateral first step.",
+    "scenario": "Scenario",
+    "whatIf": "What if…",
+    "scenarioA": "Scenario A",
+    "scenarioB": "Scenario B",
+    "route": "Route",
+    "routeHint": "Alternative routes, for example the graduate route straight to SRO.",
+    "delay": "Start {programme}",
+    "theProgramme": "the programme",
+    "nextIntake": "Next intake",
+    "plusQ": "+{n} quarters",
+    "rotation": "Add a 3-month rotation first",
+    "rotationHint": "Taken before the first programme: it can push the intake back.",
+    "mentoring": "Mentoring (6 months)",
+    "leadership": "Leadership course (INTILAQA)",
+    "courses": "Courses that close my gaps",
+    "result": "In this scenario you reach the target on {date}.",
+    "compare": "Compare with a second scenario",
+    "earliest": "Earliest feasible date",
+    "vsEarliest": "{n} months after the earliest possible ({date})",
+    "isEarliest": "The earliest the gate conditions allow on this route",
+    "duration": "Total duration",
+    "years": "{n} years",
+    "months": "{n} months",
+    "weeks": "{n} weeks",
+    "firstProgramme": "First programme",
+    "startsOn": "Starts {date}",
+    "none": "None on this route",
+    "diff": "Scenario B vs A",
+    "diffSub": "A: {a} · B: {b}",
+    "same": "Same date",
+    "later": "{n} months later",
+    "earlier": "{n} months earlier",
+    "devBlocks": "Development blocks",
+    "devBlocksSub": "Become plan activities when sent",
+    "beyond": "This scenario runs beyond the {n}-year horizon; the timeline shows the first {n} years.",
+    "timeline": "Timeline",
+    "timelineDesc": "Quarter by quarter. The ringed blocks form the critical path; dashed blocks have indicative (SAMPLE) durations.",
+    "export": "Export (CSV)",
+    "print": "Print",
+    "exportNote": "Durations marked indicative are SAMPLE values, not published figures. Kafa'a is not an authority: ENEC and FANR decide.",
+    "indicative": "indicative",
+    "indicativeDate": "Indicative date",
+    "published": "published",
+    "sample": "SAMPLE · indicative",
+    "critical": "Critical path",
+    "today": "Today",
+    "until": "until {date}",
+    "milestones": "Milestones",
+    "sources": "Durations and sources",
+    "sourcesDesc": "Every duration shows where it comes from, or a SAMPLE tag when it is indicative.",
+    "col": {
+      "block": "Block",
+      "lane": "Lane",
+      "start": "Start",
+      "end": "End",
+      "duration": "Duration",
+      "basis": "Basis",
+      "source": "Source"
+    },
+    "actions": "Save and act",
+    "save": "Save scenario",
+    "savedState": "Saved",
+    "saved": "Scenario saved",
+    "send": "Send to my development plan",
+    "sendHint": "Adds {n} development activities to your plan for this target (a draft plan is created if you have none). Sending again adds nothing twice.",
+    "sendNone": "Turn on mentoring, a rotation, the leadership course or gap courses to have something to send.",
+    "sentTo": "In plan {id}",
+    "openPlan": "Open my plan",
+    "confirmTitle": "Send this roadmap to your development plan?",
+    "confirmBody": "{n} activities will be added to your development plan for {role}, as planned items. The change is recorded in the audit log and the NEXUS evidence ledger.",
+    "savedTitle": "My saved roadmaps",
+    "savedDesc": "Share a roadmap with your line manager for your next career conversation.",
+    "savedNone": "No saved roadmaps yet",
+    "endsOn": "reaches the target {date}",
+    "sharedPill": "Shared",
+    "inPlan": "In my plan",
+    "load": "Open",
+    "open": "Open now",
+    "share": "Share with my manager",
+    "unshare": "Stop sharing",
+    "archive": "Archive",
+    "archived": "Roadmap archived",
+    "disclaimer": "Programme durations come from ENEC's published reports (SR2024, CNS) where available; exam and certification dates are indicative. FANR certifies operators; Kafa'a only mirrors."
+  },
+  "lane": {
+    "experience": "Experience",
+    "programme": "Programmes",
+    "milestone": "Milestones",
+    "development": "Development"
+  },
+  "team": {
+    "intro": "Career shortlists and roadmaps your team members chose to share with you, with their readiness. Use them in career conversations.",
+    "privacy": "You see only what each person shares, and only while it is shared. Nothing here is used for selection decisions.",
+    "none": "Nobody in your scope shares a career plan yet",
+    "noneBody": "People share a shortlist or a roadmap from their Career Navigator.",
+    "shared": "Shared with you",
+    "target": "Shortlisted target",
+    "roadmapOnly": "Roadmap",
+    "roadmap": "Roadmap \"{name}\" reaches the target {date}"
+  },
+  "cc": {
+    "asp": {
+      "stay_deepen": "Stay and deepen",
+      "grow_vertical": "Grow into the next role",
+      "move_lateral": "Move laterally",
+      "lead": "Lead people",
+      "specialise": "Specialise"
+    },
+    "aspHint": {
+      "stay_deepen": "Become the expert in my current role",
+      "grow_vertical": "Take the next step on my ladder",
+      "move_lateral": "Try a neighbouring discipline",
+      "lead": "Supervise or lead a team",
+      "specialise": "Build deep technical expertise"
+    },
+    "mob": {
+      "current_site": "My current site only",
+      "other_sites": "Open to other ENEC sites and offices",
+      "any": "Open to any location, including assignments abroad"
+    },
+    "lead": {
+      "not_now": "Not now",
+      "curious": "Curious about leading",
+      "ready": "Ready for a leadership step"
+    },
+    "support": {
+      "course": "Courses",
+      "mentoring": "Mentoring",
+      "rotation": "Rotation or shadowing",
+      "stretch": "Stretch assignment",
+      "coaching": "Coaching",
+      "time": "Protected learning time",
+      "other": "Something else"
+    },
+    "kind": {
+      "course": "Course",
+      "ojt": "On-the-job",
+      "mentoring": "Mentoring",
+      "project": "Project",
+      "assessment": "Assessment",
+      "reading": "Reading"
+    },
+    "owner": {
+      "employee": "Employee",
+      "manager": "Line manager"
+    },
+    "status": {
+      "draft": "Preparing (private)",
+      "shared": "Preparation shared",
+      "held": "Held: waiting for acknowledgement",
+      "acknowledged": "Acknowledged",
+      "ack_comment": "Acknowledged with a comment"
+    },
+    "cadence": {
+      "ok": "Next due {date}",
+      "due_soon": "Due soon: {date}",
+      "overdue": "Overdue since {date}",
+      "never": "No conversation yet: overdue"
+    },
+    "step": {
+      "prepare": "Prepare",
+      "share": "Share with your manager",
+      "held": "Conversation held",
+      "ack": "Acknowledge"
+    },
+    "tab": {
+      "cycle": "This cycle",
+      "history": "History"
+    },
+    "privacy": {
+      "title": "Who sees what",
+      "body": "Your draft is private. When you share it, your line manager of record sees your preparation and agenda. HR only sees totals for groups of 10 or more. Talent review sees your aspiration only if you switch that on. Nobody else reads this record."
+    },
+    "refuse": {
+      "not_signed_in": "Sign in first.",
+      "forbidden": "You are not allowed to do this.",
+      "invalid": "Some answers are missing or not valid. Check the form and try again.",
+      "no_line_manager": "No line manager is recorded for you. Ask HR to update your record.",
+      "not_found": "This conversation was not found.",
+      "self_record": "You cannot record your own career conversation.",
+      "not_manager": "Only the line manager of record can record this conversation.",
+      "locked": "This conversation is already acknowledged. Start a new one next cycle.",
+      "not_person": "Only the employee can acknowledge their career conversation."
+    },
+    "my": {
+      "intro": "Every six months you and your line manager talk about where you want to go. Kafa'a fills the agenda from your own records, you add your aspirations and goals, and the agreed actions go into your development plan.",
+      "toNavigator": "Career Navigator",
+      "toPlan": "My development plan",
+      "fromNavigator": "Career conversation",
+      "next": "Next conversation",
+      "now": "Now",
+      "last": "Last conversation",
+      "noneYet": "None yet",
+      "manager": "Line manager of record",
+      "managerSub": "Holds the conversation and records the actions",
+      "talent": "Aspiration in talent review",
+      "talentSub": "Your choice, any time",
+      "on": "Shared",
+      "off": "Not shared"
+    },
+    "agenda": {
+      "title": "Pre-filled agenda",
+      "desc": "Built from your own records. Choose what to include before you share.",
+      "builtOn": "Built from your records on {date}",
+      "sharedOnly": "Your manager's view on {date}: only what you share",
+      "include": "Include",
+      "notIncluded": "Not included in this conversation.",
+      "passport": "Skills passport highlights",
+      "passportNone": "No skills on record yet.",
+      "level": "level {n}",
+      "openPassport": "Open my skills passport",
+      "targets": "Shortlisted roles and readiness",
+      "targetsNone": "No shortlist yet. Add up to three target roles in the Career Navigator.",
+      "targetsNoneShared": "No shortlist shared with you.",
+      "openNavigator": "Open the Career Navigator",
+      "roadmap": "Career roadmap",
+      "roadmapNone": "No saved roadmap.",
+      "roadmapLine": "Towards {role} · target date {date} · {n} development blocks",
+      "openRoadmap": "Open my roadmap",
+      "quals": "Qualifications expiring within a year",
+      "qualsNone": "Nothing expires in the next 12 months.",
+      "expires": "Expires {date} · {n} days",
+      "expired": "Expired {date}",
+      "mirror": "Mirrored from the licensee's training records. Kafa'a does not issue or extend qualifications.",
+      "coach": "Learning Coach progress",
+      "hours": "hours a week (goal)",
+      "enrolled": "enrolments via the coach (6 months)",
+      "passed": "courses passed (6 months)",
+      "focus": "Coach focus: {roles}",
+      "openCoach": "Open the Learning Coach",
+      "last": "Last conversation held on {date}",
+      "lastNone": "No conversation on record yet."
+    },
+    "prep": {
+      "title": "Your preparation",
+      "desc": "Your aspirations, mobility and goals. Save a draft any time; nothing is shared until you choose to share it.",
+      "aspirations": "What do you want next?",
+      "aspHint": "Choose up to {n}. The first one you pick is your main aspiration.",
+      "primary": "main",
+      "needAsp": "Choose at least one aspiration to share your preparation.",
+      "mobility": "Mobility",
+      "leadership": "Interest in leading people",
+      "shiftOk": "Open to shift work",
+      "rotationOk": "Open to a rotation or job shadowing",
+      "rotationHint": "Rotations are short placements in another team",
+      "goal12": "Goal for the next 12 months",
+      "goal12Hint": "One or two sentences in your own words",
+      "needGoal": "Write your 12-month goal (at least 3 characters).",
+      "goal3": "Where would you like to be in 3 years?",
+      "support": "Support you would like",
+      "supportNote": "Anything specific about that support?",
+      "topics": "Other topics you want to raise",
+      "shareTalent": "Show my aspiration in talent review",
+      "shareTalentHint": "Off by default. When on, talent review sees your aspirations, mobility and goals from your latest conversation. You can switch it off at any time.",
+      "save": "Save draft",
+      "share": "Share with my line manager",
+      "update": "Update what I shared",
+      "saveHint": "A draft stays private to you.",
+      "updateHint": "Your manager sees the latest version.",
+      "savedOk": "Draft saved",
+      "sharedOk": "Shared with your line manager",
+      "sharedTitle": "Shared with your line manager on {date}",
+      "sharedBody": "You can still update it until the conversation is recorded.",
+      "confirmTitle": "Share your preparation?",
+      "confirmBody": "Your line manager of record will see your aspirations, goals and the agenda items you included, and gets a notification. HR sees only totals of 10 or more.",
+      "none": "No preparation was shared for this conversation."
+    },
+    "held": {
+      "title": "Conversation held on {date}",
+      "by": "Recorded by {name}",
+      "notes": "Manager's notes",
+      "focus": "Focus role: {role}",
+      "hours": "{n} hours a week for learning",
+      "actions": "Agreed actions",
+      "prep": "Your preparation",
+      "agenda": "Agenda used"
+    },
+    "actions": {
+      "none": "No actions were agreed.",
+      "due": "due {date}",
+      "inPlan": "In your development plan as draft activities"
+    },
+    "ack": {
+      "title": "Acknowledge the record",
+      "question": "Does this record reflect the conversation?",
+      "agree": "Yes, I agree with the record",
+      "disagree": "I acknowledge it, but I disagree with part of it",
+      "comment": "Comment (optional)",
+      "commentNeeded": "What do you disagree with?",
+      "needComment": "Say briefly what you disagree with.",
+      "coach": "Add the focus role and weekly learning hours to my Learning Coach",
+      "coachHint": "The coach will plan your suggestions for this role.",
+      "button": "Acknowledge",
+      "confirmTitle": "Acknowledge this conversation?",
+      "confirmAgree": "The record is locked and your manager is notified. The agreed actions stay in your development plan.",
+      "confirmDisagree": "The record is locked with your comment and your manager is notified. The agreed actions stay in your development plan.",
+      "done": "Conversation acknowledged",
+      "doneComment": "Conversation acknowledged with your comment"
+    },
+    "history": {
+      "none": "No conversations held yet",
+      "noneBody": "Your first conversation will appear here once your line manager records it.",
+      "timeline": "Conversations",
+      "item": "Career conversation {cycle}",
+      "agreed": "Acknowledged: agreed",
+      "disagreed": "Acknowledged with a disagreement",
+      "noComment": "No comment.",
+      "employeeComment": "Employee's comment"
+    },
+    "consent": {
+      "title": "Talent review",
+      "body": "Talent review (succession and development panels) can see the aspiration from your latest conversation only if you allow it.",
+      "on": "Talent review can see your aspiration.",
+      "off": "Talent review sees \"aspiration not shared\".",
+      "confirmOn": "Talent review will see your aspirations, mobility and goals from your latest conversation. The change is recorded.",
+      "confirmOff": "Talent review will see \"aspiration not shared\". The change is recorded.",
+      "doneOn": "Your aspiration is now visible in talent review",
+      "doneOff": "Your aspiration is no longer visible in talent review"
+    },
+    "team": {
+      "intro": "The people who report to you, with the six-monthly cadence. Open a person to see what they shared, the pre-filled agenda and suggested actions, and record the conversation. Only they can acknowledge it.",
+      "toCareer": "Shared career plans",
+      "fromCareer": "Career conversations",
+      "none": "Nobody reports to you on record",
+      "noneBody": "Career conversations are held by the line manager of record. If this is wrong, ask HR to update the reporting line.",
+      "reports": "Reports of record",
+      "reportsSub": "People whose line manager you are",
+      "held": "Held in the last 6 months",
+      "heldSub": "{n} people",
+      "overdue": "Overdue",
+      "overdueSub": "No conversation in the last 6 months",
+      "waiting": "Waiting for you",
+      "waitingSub": "Preparation shared · {n} waiting for acknowledgement",
+      "list": "People",
+      "listDesc": "Shared preparations first, then by how overdue the conversation is.",
+      "filter": "Filter",
+      "f": {
+        "all": "All",
+        "overdue": "Overdue",
+        "waiting": "Preparation shared",
+        "awaiting_ack": "Waiting for acknowledgement"
+      },
+      "noneFilter": "Nobody matches this filter.",
+      "never": "No conversation yet",
+      "lastHeld": "Last held {date}",
+      "noRecord": "No conversation on record",
+      "record": "Record conversation",
+      "view": "View and amend",
+      "start": "Open",
+      "remind": "Send reminders",
+      "remindTitle": "Send six-monthly reminders?",
+      "remindBody": "Everyone in an overdue pair gets a notification ({n} overdue now). Each person is reminded at most once a month.",
+      "remindDone": "Reminders sent"
+    },
+    "ws": {
+      "now": "Conversation",
+      "prep": "What they shared",
+      "noPrep": "{name} has not shared a preparation yet. You can still record the conversation; the agenda below holds only what they share with you.",
+      "heldTitle": "Recorded on {date}",
+      "heldBody": "Waiting for {name} to acknowledge. You can amend the record until then."
+    },
+    "sugg": {
+      "title": "Suggested actions",
+      "desc": "From the agenda and the preparation: courses that close the top target's gaps, requalification, and actions that answer the stated aspirations. Each one says why.",
+      "none": "No suggestions for this agenda.",
+      "add": "Add",
+      "added": "Added"
+    },
+    "rec": {
+      "title": "Record the conversation",
+      "amend": "Amend the record",
+      "desc": "Your notes, the focus role and the agreed actions. The actions go into {name}'s development plan as draft activities.",
+      "heldOn": "Held on",
+      "focus": "Focus role",
+      "focusNone": "No focus role",
+      "hours": "Weekly learning hours",
+      "hoursHint": "0 to 40, agreed together",
+      "notes": "Notes",
+      "notesHint": "Factual and respectful: the employee reads these notes.",
+      "actions": "Agreed actions ({n} of {max})",
+      "kind": "Kind",
+      "actionTitle": "Action",
+      "due": "Due",
+      "owner": "Owner",
+      "remove": "Remove",
+      "addAction": "Add an action",
+      "save": "Record conversation",
+      "saveAmend": "Save the amended record",
+      "onlyEmployee": "Only {name} can acknowledge the record.",
+      "confirmTitle": "Record this career conversation?",
+      "confirmBody": "{name} is notified and asked to acknowledge it. The {n} agreed actions are added to their development plan as draft activities. The record is written to the NEXUS evidence ledger.",
+      "actingAs": "Line manager of record",
+      "done": "Conversation recorded",
+      "doneActions": "Conversation recorded; the agreed actions are in the development plan as draft activities"
+    },
+    "ins": {
+      "intro": "How career conversations are going across the organisation: coverage of the six-monthly cadence, and the aspiration signal by job family. Aggregates only; no individual record is shown.",
+      "synthetic": "Synthetic demo data",
+      "rule": "Groups under {n} people are suppressed",
+      "ruleBody": "A job family with fewer than 10 people in a conversation pair shows nothing. Inside a shown family, any aspiration or mobility count below 10 is suppressed too.",
+      "pairs": "People in a conversation pair",
+      "pairsSub": "Active staff with a line manager of record",
+      "coverage": "Held in the last 6 months",
+      "coverageSub": "Share of people",
+      "overdue": "Overdue",
+      "overdueSub": "No conversation in the last 6 months",
+      "disagreed": "Acknowledged with a disagreement",
+      "disagreedSub": "Out of {n} acknowledged",
+      "aspTitle": "Main aspiration",
+      "aspDesc": "From each person's latest conversation.",
+      "mobTitle": "Mobility",
+      "mobDesc": "Where people are open to work.",
+      "heatTitle": "Main aspiration by job family",
+      "heatDesc": "Hatched cells are suppressed.",
+      "heatNote": "{n} of {m} job families are large enough to show.",
+      "tableTitle": "Coverage by job family",
+      "family": "Job family",
+      "people": "People",
+      "suppressed": "suppressed",
+      "suppressedShort": "—",
+      "unassigned": "No family recorded",
+      "asOf": "As of {date}."
+    },
+    "signal": {
+      "notShared": "Aspiration not shared",
+      "none": "No career conversation on record",
+      "goal": "12-month goal: {goal}",
+      "asOf": "From the conversation of {date}"
+    }
+  },
+  "fs15": {
+    "title": "Future roles (concept)",
+    "desc": "{n} concept roles for the ADVANCE era, measured against their 2030 or 2035 role profiles; {mine} have a bridge from your role.",
+    "none": "No concept roles to show yet.",
+    "conceptChip": "Concept role",
+    "banner": {
+      "title": "Concept role: no vacancy and no deployment decision",
+      "body": "Concept roles describe skills ENEC may need in the future. There is no vacancy, no staffing number and no deployment decision implied; readiness is a planning signal against the published role profile, never \"ready now\"."
+    },
+    "band": {
+      "profile_met": "Profile met",
+      "within": "Profile within about {n} months",
+      "stretch": "Stretch (about {n} months)"
+    },
+    "profileOf": "{horizon} profile · version {v}",
+    "bridge": {
+      "met": "Bridge from your role ({role}): experience condition met",
+      "wait": "Bridge from your role ({role}): {n} months in role, {left} to go",
+      "other": "Bridge from {role} ({n} months there): not your current role",
+      "none": "No bridge edge published yet"
+    },
+    "topGaps": "Top gaps ({n} in total)",
+    "newSkill": "New skill",
+    "noGaps": "You meet every requirement of this profile.",
+    "why": "Why the profile asks for it",
+    "gapsTitle": "Requirements still to build ({n})",
+    "detailNote": "Readiness is weighted coverage of the {horizon} role profile (FS05), a planning assumption.",
+    "horizons": "Roles in 2030 and 2035",
+    "rmBridge": "Bridge learning sized from your profile gaps: about {n} months (indicative, {horizon} profile)",
+    "tr": {
+      "count": "{n} colleagues made this move · median {months} months in the previous role",
+      "suppressed": "Fewer than 10 colleagues made this move: not shown, to protect privacy",
+      "conceptNone": "Nobody can have made this move yet: concept role",
+      "conceptAnalogue": "Nobody has made this move yet (concept role). Closest evidence: {n} colleagues moved from your role into {family} roles, median {months} months",
+      "conceptSuppressed": "Nobody has made this move yet (concept role); fewer than 10 colleagues moved from your role into {family} roles, so that is not shown either"
+    },
+    "reason": {
+      "profile": "Measured against the {horizon} role profile, version {version} (FS05, planning assumption)",
+      "bridge_met": "Bridge from {role}: the experience condition is met",
+      "bridge_wait": "Bridge from your role: {months} more months of experience",
+      "bridge_other": "The bridge starts from {role} ({months} months there), not from your current role",
+      "bridge_none": "No published bridge edge into this role yet",
+      "gap": "Gap: {skill} at level {from} of {to}",
+      "band_met": "Your evidence meets the profile",
+      "band_within": "About {months} months to meet the profile",
+      "band_stretch": "A stretch: about {months} months to meet the profile",
+      "concept": "Concept role: no vacancy and no deployment decision implied",
+      "tr_count": "{n} colleagues made this move; median {months} months in the previous role",
+      "tr_suppressed": "Fewer than {min} colleagues made this move, so the count is suppressed",
+      "tr_concept": "Nobody can have made a move into a concept role yet",
+      "tr_analogue": "Closest evidence: {n} colleagues moved into the same job family, median {months} months",
+      "tr_analogue_suppressed": "Closest evidence (same job family) has fewer than {min} moves and is suppressed"
+    }
+  },
+  "fs16": {
+    "eyebrow": "Career outlook",
+    "intro": "Every current role carries one of three labels: Growing, Changing or Stable. The criteria and thresholds are published here, and past years' labels are kept so anyone can check whether a label held up.",
+    "toHorizons": "Roles in 2030 and 2035",
+    "simChip": "Planning inputs SIMULATED",
+    "none": "No outlook labels published yet.",
+    "label": {
+      "growing": "Growing",
+      "changing": "Changing",
+      "stable": "Stable"
+    },
+    "short": {
+      "growing": "Growing",
+      "changing": "Changing",
+      "stable": "Stable"
+    },
+    "meaning": {
+      "growing": "Demand for the skills this role needs is projected to grow and to outrun the people who hold them. Good moment to move in.",
+      "changing": "The role's 2030 profile adds or raises a large share of its requirements. Plan your learning now; the work is being redesigned, not removed.",
+      "stable": "Neither the demand signal nor the profile-change signal crosses its threshold."
+    },
+    "rolesIn": "roles in {year}",
+    "why": "Why this label?",
+    "howTitle": "How a label is decided",
+    "howDesc": "Criteria version {v}, in force from {year}. The first rule that matches decides the label.",
+    "firstMatch": "Rules are checked in this order. Components are percentages from the released skills outlook and the role profiles; no staffing numbers are ever used or shown.",
+    "rule": {
+      "changing": "The 2030 role profile adds or raises at least {pct} of today's requirement weight.",
+      "growing": "Projected demand for the role's skill families grows by at least {pct} to {year}, and demand stays above the people who hold those skills.",
+      "stable": "Everything else."
+    },
+    "thresholdsTitle": "Published thresholds",
+    "col": {
+      "component": "Component",
+      "threshold": "Threshold",
+      "basis": "Basis",
+      "role": "Role",
+      "label": "Label",
+      "history": "Label by year",
+      "growth": "Demand growth",
+      "shortfall": "Shortfall",
+      "change": "Profile change"
+    },
+    "comp": {
+      "change": "Profile change (now to 2030)",
+      "growth": "Demand growth ({from} to {to})",
+      "shortfall": "Demand above holders in {year}"
+    },
+    "basis": {
+      "change": "FS05 role profiles: new requirements count their full level, raised ones the increase, weighted core 3, important 2, useful 1",
+      "growth": "Released skills outlook (SIMULATED), skill families weighted by how much the role needs them; the 5% line follows O*NET Bright Outlook",
+      "shortfall": "Pressure, kept apart from later demand: projected demand minus holders, as a share of demand"
+    },
+    "lineStaff": "Median demand growth across labelled roles",
+    "linePublic": "Growth threshold",
+    "lineKafaa": "Kafa'a threshold",
+    "rolesTitle": "Labels by role",
+    "rolesDescPublic": "Every current role and its label for each year. Past labels stay as they were published.",
+    "rolesDescStaff": "Every current role, its label for each year, and the components behind it (staff view).",
+    "yearPick": "Year",
+    "current": "current",
+    "filter": "Filter by label",
+    "all": "All",
+    "notMeasured": "not measured",
+    "publicNote": "Public pages show the label only. Staff see the components behind each label when signed in. Security, safeguards and cyber roles appear at career-path level only and concept roles have no vacancy, so neither carries a label.",
+    "versionsTitle": "Criteria versions",
+    "versionsDesc": "When the criteria change, a new version is published; labels keep the version they were made under.",
+    "version": "Version {v}",
+    "status": {
+      "published": "In force",
+      "retired": "Retired"
+    },
+    "yearsRange": "Used for {from} to {to}",
+    "yearsFrom": "Used from {from}",
+    "hr": {
+      "title": "This year's labels",
+      "desc": "Recompute the {year} labels from today's inputs and compare them with what is published. Only the HR director publishes; past years cannot be changed.",
+      "preview": "Preview from today's inputs",
+      "publish": "Publish labels",
+      "onlyDirector": "Only the HR director can publish.",
+      "changed": "{n} would change",
+      "confirmTitle": "Publish the {year} outlook labels?",
+      "confirmBody": "{n} role labels are published ({changed} change). The labels are public; the components stay staff-only. This is audited and recorded in the NEXUS evidence ledger.",
+      "done": "Outlook labels published"
+    },
+    "disclaimer": "Labels are planning signals built from SIMULATED outlook inputs and FS05 planning assumptions. They are not forecasts, carry no staffing numbers and imply no deployment decision. ENEC decides roles and vacancies.",
+    "reason": {
+      "growing": "Growing: demand growth and shortfall both cross their thresholds",
+      "changing": "Changing: the 2030 profile change crosses its threshold",
+      "stable": "Stable: no signal crosses its threshold",
+      "change": "Profile change by 2030: {pct}% of today's requirement weight (threshold {min}%)",
+      "change_none": "No profile change measured for this role",
+      "growth": "Demand growth {from} to {to}: {pct}% (threshold {min}%)",
+      "growth_none": "Demand growth not available (families suppressed in the outlook)",
+      "shortfall": "Demand above holders in {year}: {pct}% of demand",
+      "archived": "Archived label: kept as it was published that year",
+      "simulated": "Inputs are SIMULATED planning numbers, not forecasts"
+    }
+  },
+  "wb": {
+    "outlook": "Role outlook",
+    "criteria": "How labels are set"
+  },
+  "fs34": {
+    "eyebrow": "Career-changers · transferable skills",
+    "intro": "Pick the job you do today. Kafa'a lines up the skills it usually brings against ENEC roles, shows what already counts, what is missing and a bridging route with its duration. Nothing you choose is stored.",
+    "toCareers": "All careers",
+    "privacyTitle": "Nothing is stored",
+    "privacy": "The translation runs in your browser from published reference data. Kafa'a does not save your choice, does not ask who you are and sends nothing to anyone.",
+    "none": "No source occupations are published yet",
+    "fig": {
+      "uk": "New nuclear jobs the UK plans by 2030",
+      "fr": "Nuclear hires France expects over 2023-2033",
+      "esco": "Occupations described in ESCO"
+    },
+    "tab": {
+      "occupation": "From my current occupation",
+      "passport": "From my skills passport"
+    },
+    "pickTitle": "1. What do you do today?",
+    "pickDesc": "{n} occupations from outside nuclear, each an ESCO occupation with the skills it usually brings.",
+    "skillsN": "{n} skills",
+    "industry": {
+      "oil_gas": "Oil and gas",
+      "power": "Power generation",
+      "process": "Process industries",
+      "aviation": "Aviation maintenance",
+      "defence": "Defence",
+      "utilities": "Water and utilities"
+    },
+    "pickFirst": "Choose an occupation to see where it leads",
+    "pickFirstBody": "You will see the nearest ENEC roles, what transfers, the delta skills and the bridging route.",
+    "bringTitle": "2. What a {occ} usually brings",
+    "escoLabel": "ESCO label",
+    "escoSource": "ESCO occupation page",
+    "col": {
+      "skill": "Kafa'a skill",
+      "level": "Typical level",
+      "esco": "ESCO skill it rests on",
+      "tie": "Alignment"
+    },
+    "level": {
+      "1": "Awareness",
+      "2": "Practitioner",
+      "3": "Qualified",
+      "4": "Expert"
+    },
+    "levelAria": "Level {n} of 4",
+    "rel": {
+      "essential": "essential",
+      "optional": "optional"
+    },
+    "match": {
+      "exact": "Exact (crosswalk)",
+      "related": "Related"
+    },
+    "levelsNote": "Levels are typical for an experienced practitioner (a template assumption, not a measurement of you). ESCO concepts read {date}.",
+    "resultsTitle": "3. Your nearest ENEC roles",
+    "resultsDesc": "The {n} roles open to experienced entrants that your skills cover best, each with what transfers, what is missing and how to bridge it.",
+    "noResults": "No role could be matched",
+    "rank": "Match {n}",
+    "coverLine": "Your skills cover {pct} of the role's requirements; {n} of {of} competencies already count.",
+    "duration": "About {weeks} weeks (≈ {months} months)",
+    "hours": "{hours} hours of learning and practice",
+    "transfersTitle": "What transfers",
+    "noTransfers": "Nothing counts yet: start with the cross-over course.",
+    "gapsTitle": "Delta skills",
+    "noGaps": "No gap: you meet every requirement.",
+    "routeTitle": "Bridging route",
+    "noRoute": "No bridging needed.",
+    "practice": "Supervised practice: {skill}",
+    "kind": {
+      "crossover": "Cross-over",
+      "course": "Course",
+      "practice": "Practice"
+    },
+    "itemTime": "{hours} h · {weeks} weeks",
+    "passportTitle": "Your own passport",
+    "passportBody": "The same rule, run on your own skill states instead of an occupation template. Your current role is left out; nothing is saved.",
+    "passportEmpty": "Your skills passport has no skill states yet",
+    "toPassport": "Open my skills passport",
+    "heldN": "Translated from {n} skills in your passport.",
+    "methodTitle": "How the translator works",
+    "method": {
+      "cover": "Coverage is the Career Navigator formula: for each competency a role needs, the level you bring (up to the level needed) divided by the level needed, weighted core 3, important 2, useful 1.",
+      "roles": "Only current roles open to experienced entrants (entry and professional levels) are proposed. Security, safeguards and cyber roles are shown at career-path level only and never here; concept future roles have no vacancy.",
+      "route": "The route starts with the cross-over courses for your industry, then for each gap the shortest published course that teaches it (one level), then supervised practice at {per} hours per level left. Weeks assume {week} study hours a week.",
+      "templates": "Each occupation is an ESCO v1.2 concept; every skill listed rests on an essential or optional ESCO skill of that occupation, marked exact when the Kafa'a crosswalk already aligns the two.",
+      "limits": "This is guidance, not an offer or an assessment: it does not measure you, and entry still follows ENEC's recruitment and qualification rules. SMR content is concept learning; no deployment decision implied."
+    },
+    "reason": {
+      "cover": "Your skills cover {pct}% of what this role needs",
+      "transfer": "{n} of the role's {of} competencies already count",
+      "transfer_item": "{skill} transfers: level {have} for a level {need} requirement",
+      "gap": "Delta skill: {skill} from level {from} to {to}",
+      "route": "Bridging route: {hours} hours, about {weeks} weeks ({months} months) at 4 hours a week",
+      "route_none": "No bridging needed: every requirement is met",
+      "crossover": "Starts with {n} cross-over course(s) for your industry (SMR and new-build workforce models)",
+      "entry": "Entry route for experienced people: {route}",
+      "education_high_school": "Entry asks for a secondary school certificate and the role's qualification programme",
+      "education_diploma": "Entry asks for a technical diploma",
+      "education_bachelor": "Entry asks for a bachelor's degree",
+      "education_master": "Entry asks for a master's degree",
+      "education_none": "Entry requirements are on the role page",
+      "b_crossover": "Cross-over course for people from your industry: {hours} hours",
+      "b_course": "Shortest published course that teaches {skill}: {hours} hours (one level)",
+      "b_also": "The same course also teaches {skill}",
+      "b_practice": "Supervised practice for {skill}: {levels} level(s) × {per} hours = {hours} hours"
+    }
+  },
+  "fs35": {
+    "eyebrow": "Assess · Chart · Execute",
+    "intro": "Five visible parts of your career health, each with its inputs and rule, then a plan and a career conversation. There is no hidden score.",
+    "toNavigator": "Career Navigator",
+    "privateTitle": "Only you can see this",
+    "private": "Your health check is never shown to your manager, HR or talent review. Only what you choose to write in a conversation request is shared.",
+    "step": {
+      "assess": "Assess",
+      "chart": "Chart",
+      "execute": "Execute"
+    },
+    "stepHint": {
+      "assess": "See the five components and what drives each one.",
+      "chart": "Choose what you will do about the ones to watch or act on.",
+      "execute": "Book a career conversation with your line manager to agree the plan."
+    },
+    "assessTitle": "Your career health today",
+    "assessDesc": "Each tile shows its value, the rule behind its status and the inputs it used.",
+    "goodOf": "{n} of {of} in good shape",
+    "count": {
+      "good": "{n} good",
+      "watch": "{n} to watch",
+      "act": "{n} to act on"
+    },
+    "asOf": "As of {date}",
+    "noScore": "Kafa'a does not combine these into one number: read each component on its own.",
+    "status": {
+      "good": "Good",
+      "watch": "Watch",
+      "act": "Act",
+      "na": "Not applicable"
+    },
+    "comp": {
+      "currency": "Skill currency",
+      "breadth": "Breadth",
+      "recency": "Recency of learning",
+      "mobility": "Mobility options",
+      "change": "Change exposure (2030)"
+    },
+    "rule": {
+      "currency": "Share of your skills with current evidence. Good from {good}, watch from {watch}. \"Due\" means within {due} months of the skill's half-life.",
+      "breadth": "Skill areas where you hold level {level} or more. Good from {good} areas, watch from {watch}.",
+      "recency": "Months since your last completed learning. Good up to {good}, watch up to {watch}.",
+      "mobility": "Other current roles whose competencies you cover at {reach} or more. Good from {good}, watch from {watch}.",
+      "change": "Your readiness for your role's 2030 profile (Role in 2030). Good from {good}, watch from {watch}."
+    },
+    "value": {
+      "months": "{n} months",
+      "none": {
+        "currency": "No skills yet",
+        "breadth": "None",
+        "recency": "No learning recorded",
+        "mobility": "None",
+        "change": "Not applicable"
+      }
+    },
+    "input": {
+      "currency": {
+        "total": "Active skills",
+        "current": "Current",
+        "due": "Due for refresh",
+        "ageing": "Ageing"
+      },
+      "breadth": {
+        "areas": "Areas at level 2+",
+        "of": "Areas in the catalogue",
+        "transferable": "Transferable skills",
+        "beyond_role": "Skills beyond my role"
+      },
+      "recency": {
+        "months_since": "Months since last",
+        "last_12m": "Completed in 12 months",
+        "total": "Completed in total"
+      },
+      "mobility": {
+        "reach": "Roles within reach",
+        "stretch": "Stretch roles (50-69%)",
+        "roles": "Roles compared",
+        "best_pct": "Best coverage (%)"
+      },
+      "change": {
+        "rated": "Tasks rated",
+        "exposure_pct": "Tasks changing",
+        "change_pct": "Profile new or raised",
+        "ready_pct": "My readiness for 2030",
+        "months": "Months to ready"
+      }
+    },
+    "changeLine": "Share of my role's 2030 profile that is new or raised",
+    "refs": {
+      "currency": "Refresh first",
+      "mobility": "Closest roles",
+      "change": "Bridge courses for 2030"
+    },
+    "lastLearning": "Last completed: {date}",
+    "area": {
+      "plant_systems": "Plant systems",
+      "operations": "Operations",
+      "maintenance": "Maintenance",
+      "radiation_chemistry": "Radiation and chemistry",
+      "engineering": "Engineering",
+      "project": "Projects",
+      "safety": "Nuclear safety",
+      "human_performance": "Human performance",
+      "emergency": "Emergency preparedness",
+      "quality": "Quality",
+      "leadership": "Leadership",
+      "digital": "Digital and AI"
+    },
+    "historyTitle": "My health checks over time",
+    "historyDesc": "Each saved check keeps the components as they were computed that day.",
+    "historyNone": "No saved health checks yet",
+    "trendTitle": "Components in good shape",
+    "trendSeries": "In good shape (of 5)",
+    "col": {
+      "date": "Date",
+      "good": "In good shape",
+      "step": "Reached"
+    },
+    "stepDone": {
+      "assessed": "Assessed",
+      "charted": "Plan charted",
+      "executed": "Conversation booked"
+    },
+    "toChart": "Chart my plan",
+    "chartTitle": "Chart your plan",
+    "chartDesc": "Suggested actions come from the components to watch or act on. Keep what fits you.",
+    "suggested": "Suggested",
+    "action": {
+      "refresh": "Refresh ageing skills",
+      "broaden": "Broaden into a new skill area",
+      "learn": "Restart regular learning",
+      "explore": "Explore roles within reach",
+      "bridge": "Bridge to my role in 2030",
+      "conversation": "Talk it through with my line manager"
+    },
+    "actionHint": {
+      "refresh": "Add recent evidence: a refresher, a check-in or work evidence for the skills listed.",
+      "broaden": "Pick a transferable skill outside your role and practise it on a project or gig.",
+      "learn": "Set a weekly learning goal in the Learning Coach.",
+      "explore": "Shortlist one of the closest roles in the Career Navigator.",
+      "bridge": "Start the first bridge course for your role's 2030 profile.",
+      "conversation": "Book a career conversation to agree the plan and the support you need."
+    },
+    "focus": "Focus role (optional)",
+    "focusNone": "No focus role",
+    "review": "Review my plan on",
+    "note": "Note to myself",
+    "noteHint": "Up to {n} characters; private.",
+    "back": "Back",
+    "savePlan": "Save my plan",
+    "saved": "Your plan is saved",
+    "executeTitle": "Book a career conversation",
+    "executeDesc": "Your request goes to your line manager through Career conversations.",
+    "shareTitle": "What is shared",
+    "shareBody": "Only your aspiration, your 12-month goal and the topics below. Your health check scores are not sent.",
+    "aspiration": "What do you want next?",
+    "goal": "My goal for the next 12 months",
+    "topics": "Topics to discuss",
+    "topicsHint": "Edit freely before you share; up to 500 characters.",
+    "topic": {
+      "refresh": "Refreshing my ageing skills",
+      "broaden": "Broadening into a new skill area",
+      "learn": "Making time for regular learning",
+      "explore": "Roles I could move to",
+      "bridge": "Preparing for my role in 2030"
+    },
+    "book": "Share and book the conversation",
+    "confirmTitle": "Share with your line manager?",
+    "confirmBody": "Your line manager will see your aspiration, goal and topics and can record the conversation. Your health check stays private.",
+    "shared": "Shared with your line manager",
+    "booked": "Conversation booked and plan saved",
+    "doneTitle": "Your conversation is booked",
+    "doneBody": "Your line manager has your request. Your plan is saved with this health check.",
+    "toConversations": "Open Career conversations",
+    "toCoach": "Open the Learning Coach",
+    "snapshotRef": "This will be health check number {n} in your history.",
+    "reason": {
+      "currency_rule": "{current} of {total} skills have current evidence ({pct}%)",
+      "currency_split": "{due} due for a refresh (within {months} months of their half-life), {ageing} ageing",
+      "currency_none": "No skill states yet",
+      "breadth_rule": "You hold level {level} or more in {n} of {of} skill areas",
+      "breadth_transfer": "{n} of them are transferable (transversal or cross-sectoral)",
+      "breadth_beyond": "{n} sit outside your role's competencies",
+      "breadth_none": "No skill at level 2 or more yet",
+      "recency_last": "Last completed learning on {date}, {months} months ago",
+      "recency_window": "{n} completed in the last {months} months",
+      "recency_none": "No completed learning on record",
+      "mobility_rule": "{n} of {of} current roles are within reach (coverage {pct}% or more)",
+      "mobility_stretch": "{n} more are a stretch ({from}-{to}%)",
+      "mobility_best": "Your best match covers {pct}% of its requirements",
+      "change_no_role": "No current role on record",
+      "change_path_only": "Your role is shown at career-path level only",
+      "change_no_tasks": "Your role has no rated task analysis yet",
+      "change_tasks": "{pct}% of your role's rated tasks change by 2030 ({n} of {of}: AI-assisted or partly automatable)",
+      "change_profile": "{n} of {of} requirements in the 2030 profile are new or raised ({pct}%)",
+      "change_ready": "You are {pct}% ready for 2030; about {months} months of learning and practice to go"
+    }
+  }
+}

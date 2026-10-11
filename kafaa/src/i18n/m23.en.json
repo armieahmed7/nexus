@@ -1,0 +1,495 @@
+{
+  "module": {
+    "name": "Talent review and succession"
+  },
+  "routes": {
+    "talent-review": {
+      "title": "Talent review",
+      "purpose": "Evidence-based performance and potential review: managers place their people, HR calibrates, the HR director locks the cycle."
+    },
+    "talent-review-insights": {
+      "title": "Talent review insights",
+      "purpose": "HR aggregates of placements; every cell under 10 people is suppressed, including women and Emirati splits."
+    },
+    "talent-review-pool": {
+      "title": "HiPo pool",
+      "purpose": "High-potential people from locked review cycles, with nominations to ESTADAD through the Leadership Academy."
+    },
+    "talent-review-cycle": {
+      "title": "Review board",
+      "purpose": "Place people on the 3×3 grid next to their evidence: skills, validated check-ins, opportunities, learning agility and shared aspirations."
+    },
+    "talent-review-calibration": {
+      "title": "Calibration session",
+      "purpose": "HR facilitator view across managers: distribution, rater patterns and outlier flags; adjustments with reasons; lock by the HR director."
+    },
+    "my-development-priorities": {
+      "title": "My development priorities",
+      "purpose": "Development priorities agreed for you in talent review. Your placement is confidential and never shown."
+    },
+    "talent-succession": {
+      "title": "Succession planning",
+      "purpose": "Succession slates for critical and leadership roles: readiness horizons, hard gates, gap actions, risk flags and bench roll-up."
+    },
+    "talent-succession-slate": {
+      "title": "Succession slate",
+      "purpose": "One slate: successors with readiness and gates, emergency cover, candidates with reasons and confirmation."
+    }
+  },
+  "common": {
+    "back": "← Talent review",
+    "confidential": "Confidential: talent review data is visible only to your scope, never to the person reviewed, and every view is audited.",
+    "roleCard": "Role card",
+    "simulatedHr": "HR mirror · SIMULATED"
+  },
+  "cycle": {
+    "stepsLabel": "Cycle stage"
+  },
+  "cycleStatus": {
+    "open": "Open",
+    "calibration": "Calibration",
+    "locked": "Locked"
+  },
+  "box": {
+    "1": "Needs support",
+    "2": "Solid professional",
+    "3": "Trusted expert",
+    "4": "Developing contributor",
+    "5": "Core contributor",
+    "6": "High performer",
+    "7": "Emerging potential",
+    "8": "Growth candidate",
+    "9": "Future leader",
+    "caption": "Nine-box grid: potential by performance, with the people placed in each box",
+    "performance": "Performance",
+    "potential": "Potential"
+  },
+  "perf": {
+    "1": "Below expectations",
+    "2": "Meets expectations",
+    "3": "Exceeds expectations"
+  },
+  "pot": {
+    "1": "Low potential",
+    "2": "Moderate potential",
+    "3": "High potential"
+  },
+  "anchor": {
+    "agility": "Learning agility: learns fast and applies it",
+    "influence": "Influence: leads beyond the role",
+    "drive": "Drive: seeks stretch and responsibility"
+  },
+  "anchorLevel": {
+    "1": "Rarely",
+    "2": "Sometimes",
+    "3": "Consistently"
+  },
+  "anchorHint": {
+    "agility": {
+      "1": "Needs repeated support to apply new procedures or systems.",
+      "2": "Picks up new tasks at the expected pace.",
+      "3": "Masters new systems quickly and helps others learn them."
+    },
+    "influence": {
+      "1": "Works well within own tasks.",
+      "2": "Coordinates with peers and shares knowledge in the crew.",
+      "3": "Leads pre-job briefs, coaches others and is sought out for advice."
+    },
+    "drive": {
+      "1": "Prefers a stable scope.",
+      "2": "Takes on extra work when asked.",
+      "3": "Volunteers for stretch assignments and owns the outcome."
+    }
+  },
+  "actionKind": {
+    "training": "Training",
+    "rotation": "Rotation",
+    "mentoring": "Mentoring",
+    "stretch": "Stretch work",
+    "coaching": "Coaching"
+  },
+  "ev": {
+    "title": "Evidence panel",
+    "desc": "Facts from Kafa'a records, so the placement rests on evidence rather than opinion alone.",
+    "index": "Evidence index",
+    "indexSub": "0 to 100, from skills and evidence as of {date}",
+    "breadth": "Skills breadth",
+    "breadthHint": "Skills at level 2 or above",
+    "depth": "Skills depth",
+    "depthHint": "Skills at level 3 or above",
+    "growth": "Growth (12 months)",
+    "growthHint": "Skills with fresh evidence, not self-claimed",
+    "validated": "Validated check-ins",
+    "validatedHint": "Skills validated by a manager",
+    "opportunities": "Opportunities completed",
+    "opportunitiesHint": "Gigs, rotations and shadowing with signed-off evidence",
+    "agility": "Learning agility",
+    "agilityHint": "Skills brought to their key level in 12 months",
+    "perfRecord": "Performance rating on record",
+    "perfValue": "{rating} of 5 ({period})",
+    "aspiration": "Aspiration (if the person shares it)"
+  },
+  "reasons": {
+    "index": "Evidence index {n} of 100 (integer points per component)",
+    "breadth": "{n} skills at level 2 or above: {pts} points",
+    "depth": "{n} skills at level 3 or above: {pts} points",
+    "growth": "{n} skills with fresh evidence in 12 months: {pts} points",
+    "validated": "{n} skills validated by a manager: {pts} points",
+    "opportunities": "{n} completed opportunities or rotations: {pts} points",
+    "agility": "{n} skills brought to their key level in 12 months: {pts} points",
+    "gate_licence_met": "Licence route met ({req}, licensee register mirror)",
+    "gate_licence_not_met": "Licence route not met: needs {req} (licensee register mirror)",
+    "gate_qualification_met": "Current qualification on {req}",
+    "gate_qualification_not_met": "No current qualification on {req}",
+    "gate_route_met": "Entry route conditions not failed ({req})",
+    "gate_route_not_met": "An entry condition is not met ({req})"
+  },
+  "flag": {
+    "potential_high_evidence_low": "High potential, low evidence",
+    "potential_low_evidence_high": "Low potential, strong evidence",
+    "no_ready_now": "No ready-now successor",
+    "successor_overloaded": "Successor on more than 2 slates",
+    "external_cover": "Depends on KHNP or contractor cover",
+    "no_emergency": "No emergency cover named"
+  },
+  "flagHelp": {
+    "potential_high_evidence_low": "Potential is placed at high but the evidence index is in the bottom third of the cycle: discuss the evidence at calibration.",
+    "potential_low_evidence_high": "Potential is placed at low but the evidence index is in the top third: check for overlooked potential.",
+    "no_ready_now": "Nobody on this slate could step in today. Build at least one ready-now successor or name emergency cover.",
+    "successor_overloaded": "At least one successor is counted on more than two slates, so the bench is thinner than it looks.",
+    "external_cover": "Emergency cover relies on KHNP secondees or contractors. KHNP support ends by 2030 (per source): plan internal cover.",
+    "no_emergency": "Name who covers the role at short notice."
+  },
+  "readiness": {
+    "ready_now": "Ready now",
+    "1_2y": "1 to 2 years",
+    "3_5y": "3 to 5 years",
+    "external": "External cover"
+  },
+  "gate": {
+    "licence": "Licence route",
+    "qualification": "Qualification",
+    "route": "Entry conditions",
+    "none": "No hard gate for this role"
+  },
+  "hub": {
+    "intro": "Review cycles per organisation unit. Placements rest on an evidence panel; HR calibrates across managers and the HR director locks the outcome. Employees see only their agreed development priorities.",
+    "howTitle": "Your part in this cycle",
+    "howDirector": "You read every cycle, review calibrated outcomes and lock cycles. You cannot lock a cycle you calibrated or placed people in (maker-checker).",
+    "howHr": "You facilitate calibration: compare distributions across managers, discuss outliers, adjust with a reason and finish the session for the HR director.",
+    "howManager": "Place each person in your team on the grid while the cycle is open. Look at the evidence panel first; a note is required when you depart from the HR rating.",
+    "none": "No review cycle in your scope",
+    "noneBody": "When HR opens a cycle for your unit it appears here.",
+    "cycles": "Cycles",
+    "inView": "People in your view",
+    "inViewSub": "Never yourself",
+    "toPlace": "Still to place",
+    "toPlaceSub": "In open cycles",
+    "inCalibration": "In calibration",
+    "list": "Review cycles",
+    "placed": "{n} of {of} placed",
+    "members": "{n} in the cycle",
+    "progress": "Placement progress",
+    "lockedOn": "Locked on {date}",
+    "calibratedOn": "Calibrated on {date}: awaiting the HR director",
+    "calibrating": "Calibration in progress",
+    "dueOn": "Placements due by {date}",
+    "open": "Open board"
+  },
+  "board": {
+    "allPlaced": "Everyone in your view is placed",
+    "calBody": "Placements now change only through the HR facilitator.",
+    "calDone": "Calibration finished on {date} by {name}. Waiting for the HR director to lock.",
+    "calTitle": "In calibration",
+    "calibrated": "Calibrated",
+    "colBox": "Box",
+    "colCalibrated": "Status",
+    "colFlags": "Flags",
+    "colIndex": "Evidence",
+    "colPerson": "Person",
+    "colRole": "Role",
+    "crew": "Crew {crew}",
+    "cuts": "Bottom third ≤ {low}, top third ≥ {high}",
+    "flagged": "Outlier flags",
+    "gridSub": "{n} of {of} placed",
+    "gridTitle": "Nine-box grid",
+    "hipo": "HiPo",
+    "hipoSub": "Boxes 8 and 9",
+    "inView": "In your view",
+    "indexShort": "evidence {n}",
+    "lockedBody": "Development priorities are published to employees; the HiPo pool feeds ESTADAD nominations.",
+    "lockedTitle": "Locked on {date}",
+    "noCuts": "Too few people for terciles",
+    "notPlaced": "Not placed yet",
+    "notPlacedBody": "The evidence panel below is live; the snapshot is taken when you place.",
+    "openBody": "Place each person in your team. The evidence panel shows what Kafa'a knows; a note is required when you depart from the HR rating.",
+    "openBodyView": "Line managers are placing their people. You can follow progress here.",
+    "openTitle": "Cycle open",
+    "place": "Place",
+    "placed": "Placed",
+    "placedTile": "Placed",
+    "tabGrid": "Grid",
+    "tabHipo": "HiPo pool",
+    "tabPeople": "People",
+    "unplacedTitle": "Still to place",
+    "update": "Update",
+    "viewAll": "Whole cycle: {n} people",
+    "viewScope": "Your scope, of {n} in the cycle"
+  },
+  "place": {
+    "actions": "Development actions",
+    "actionsDesc": "Up to {n}. They become the employee's agreed priorities when the cycle is locked.",
+    "add": "Add",
+    "by": "Placed by",
+    "confirmBody": "Place {name} in box {box}? The evidence snapshot is saved with the placement and the change is audited.",
+    "confirmTitle": "Save placement",
+    "custom": "Another development action",
+    "customPh": "For example: shadow the outage control room for two weeks",
+    "hipo": "Enters the HiPo pool when locked",
+    "note": "Note",
+    "noteHint": "Optional. Visible to HR and in calibration, never to the employee.",
+    "noteRequired": "Required: explain why performance differs from the HR record (10 characters or more).",
+    "perf": "Performance",
+    "perfFromHr": "HR record {rating}/5 ({period}) → {level}",
+    "potential": "Potential",
+    "potentialIs": "Potential (median of the three anchors): {level}",
+    "preview": "Placement",
+    "save": "Save placement",
+    "snapshot": "Evidence index at placement",
+    "title": "Place {name}"
+  },
+  "sugg": {
+    "hipo": "High potential with at least solid performance: the ESTADAD path, a leadership rotation and a senior mentor are the usual next steps.",
+    "validated": "Fewer than two skills validated by a manager: a skill check-in turns claims into validated evidence.",
+    "opportunities": "No completed opportunity yet: a gig or project builds evidence outside the day job.",
+    "growth": "Little fresh evidence in 12 months: the Learning Coach ranks courses that close the top gap.",
+    "delivery": "High potential but below expectations on performance: regular coaching on delivery.",
+    "support": "Low box: an agreed support plan with frequent check-ins.",
+    "depth": "Deep skills: sharing them builds influence and protects knowledge."
+  },
+  "pool": {
+    "feedTitle": "From the pool to ESTADAD",
+    "feedBody": "A line manager nominates a pool member through the Leadership Academy; HR decides the nomination (maker-checker).",
+    "intro": "People placed in boxes 8 and 9 when this cycle was locked.",
+    "nom": {
+      "nominated": "Nominated for ESTADAD",
+      "approved": "ESTADAD approved",
+      "completed": "ESTADAD completed"
+    },
+    "nominate": "Nominate for ESTADAD",
+    "nominateBody": "Nominate {name} for ESTADAD? HR decides the nomination; the nominee is notified.",
+    "nominateTitle": "Nominate for ESTADAD",
+    "none": "Nobody in the HiPo pool in your view",
+    "noneBody": "The pool fills when a cycle is locked.",
+    "notNominated": "Not nominated yet",
+    "pageIntro": "High-potential people from locked talent review cycles, in your scope.",
+    "reason": "Why this nomination (10 characters or more)",
+    "toNominations": "Open leadership nominations"
+  },
+  "cal": {
+    "adjust": "Adjust",
+    "adjustBody": "Currently box {box} with an evidence index of {index}.",
+    "adjustTitle": "Adjust {name}",
+    "adjusted": "Adjusted (staged)",
+    "apply": "Apply {n} changes",
+    "applyShort": "Apply changes",
+    "back": "← Review board",
+    "blocker": {
+      "locked": "The cycle is locked.",
+      "not_calibrated": "Lock opens once the HR facilitator finishes calibration.",
+      "maker_checker": "You calibrated or placed people in this cycle, so another HR director must lock it (maker-checker)."
+    },
+    "calibrated": "Calibrated placements",
+    "colAvg": "Average evidence",
+    "colHigh": "High potential",
+    "colLow": "Low potential",
+    "colManager": "Placing manager",
+    "colPattern": "Pattern",
+    "colPlaced": "Placed",
+    "confirm": {
+      "apply": {
+        "title": "Apply calibration changes",
+        "body": "Apply {n} adjustments? Each is recorded with its reason in the placement history and the audit log."
+      },
+      "finish": {
+        "title": "Finish calibration",
+        "body": "Apply {n} staged changes and mark every placement as calibrated? The HR director can then lock the cycle."
+      },
+      "lock": {
+        "title": "Lock the cycle",
+        "body": "Lock this cycle? Decisions can no longer change; development priorities are shared with employees and the HiPo pool is created. This is recorded in the NEXUS ledger."
+      }
+    },
+    "distribution": "Distribution by box",
+    "distributionNote": "Staged adjustments are already reflected. There is no forced curve: use the distribution to start the conversation.",
+    "facilitator": "You facilitate this session",
+    "facilitatorBody": "Compare managers, discuss the flagged outliers, stage adjustments with a reason, then finish calibration. The HR director locks the cycle.",
+    "finish": "Finish calibration",
+    "finishedOn": "Finished on {date}",
+    "hasOutliers": "{n} outliers",
+    "inLine": "In line with evidence",
+    "intro": "HR facilitator view across managers: the distribution, rater patterns and outlier flags (placement against the evidence index).",
+    "lenient": "Many high-potential placements",
+    "lock": "Lock cycle",
+    "lockNote": "Lock note (5 characters or more)",
+    "lockedBody": "Locked by {name}. Decisions can no longer change.",
+    "newBox": "New box",
+    "noOutliers": "No outlier flags",
+    "noPlacements": "No placements yet",
+    "notFinished": "Not finished",
+    "outlierLine": "Box {box}, evidence index {index}",
+    "outliers": "Outlier flags",
+    "outliersDesc": "Deterministic: potential 3 with an evidence index of {low} or less (bottom third), or potential 1 with {high} or more (top third).",
+    "raters": "Rater patterns",
+    "ratersDesc": "Placements by manager against the evidence of the people they placed.",
+    "reason": "Reason",
+    "reasonHint": "Required, 10 characters or more. Recorded in the placement history.",
+    "stage": "Stage change",
+    "staged": "Staged changes",
+    "stagedTitle": "Staged changes (not applied yet)",
+    "unplaced": "{n} not placed",
+    "viewOnly": "View only",
+    "viewOnlyBody": "HR facilitates calibration; you can see the session for your scope."
+  },
+  "ins": {
+    "allCycles": "All cycles",
+    "allSuppressed": "Group too small",
+    "allSuppressedBody": "Fewer than {n} placements: every figure is suppressed.",
+    "byCycle": "By cycle",
+    "calibrated": "Calibrated",
+    "cellSplit": "Women {women} · Emirati {emirati}",
+    "cycle": "Cycle",
+    "emirati": "Emirati",
+    "export": "Export aggregates (CSV)",
+    "grid": "Placements by box",
+    "gridNote": "Cells under {n} people are suppressed, including the women and Emirati splits. No names are ever shown here.",
+    "hipo": "HiPo",
+    "intro": "Aggregate view for HR: counts only, suppressed below the minimum group size.",
+    "minGroup": "Shown only for groups of {n} or more",
+    "note": "Aggregates only. Reads are audited.",
+    "placed": "Placements",
+    "suppressed": "Suppressed",
+    "women": "Women"
+  },
+  "my": {
+    "agreed": "Agreed on {date}",
+    "footer": "Talk about these priorities in your next career conversation.",
+    "howTitle": "What you see here",
+    "howBody": "After each talent review your manager and HR agree development priorities with you in mind. Ratings and grid placements stay confidential to the review; what matters for you is the plan below.",
+    "intro": "Development priorities agreed for you in talent review.",
+    "noActions": "No specific actions were recorded this time; agree them in your next career conversation.",
+    "none": "No agreed priorities yet",
+    "noneBody": "They appear here when a talent review cycle for your unit is locked.",
+    "open": "Open",
+    "toCoach": "Learning Coach",
+    "toConversations": "Career conversations"
+  },
+  "cover": {
+    "khnp": "KHNP secondee",
+    "contractor": "Contractor"
+  },
+  "relation": {
+    "peer": "In the role",
+    "feeder": "Feeder role",
+    "other": "Other"
+  },
+  "slateStatus": {
+    "draft": "Draft",
+    "proposed": "Proposed",
+    "confirmed": "Confirmed"
+  },
+  "successorStatus": {
+    "proposed": "Proposed",
+    "confirmed": "Confirmed",
+    "withdrawn": "Withdrawn"
+  },
+  "sx": {
+    "addCover": "Add external cover",
+    "aggTitle": "Successor bench (aggregates)",
+    "alsoOn": "on {n} slates",
+    "atRisk": "Slates at risk",
+    "atRiskSub": "No ready-now, overloaded or external cover",
+    "back": "← Succession planning",
+    "bench": "{n} internal successors (target {target})",
+    "candidatesDesc": "People in the role and in feeder roles, ranked by computed readiness (F05 skills and gates). Ready now needs every hard gate.",
+    "candidatesTitle": "Candidates",
+    "computedWas": "computed: {r}",
+    "confirmBody": "Confirm this slate with {n} entries? Ready-now successors are re-checked against the hard gates. Recorded in the NEXUS ledger.",
+    "confirmSlate": "Confirm slate",
+    "confirmed": "{n} confirmed",
+    "confirmedBody": "Changes go into the next period. Confirmed slates count in the bench roll-up.",
+    "confirmedTitle": "Confirmed on {date} by {name}",
+    "coverDesc": "Role cards only (never a named person): who covers at short notice while the internal bench is built.",
+    "coverHint": "External cover is a role card, for example a KHNP secondee or a contracted technician. It never counts towards the internal bench.",
+    "coverLabelAr": "Role card label (Arabic)",
+    "coverLabelEn": "Role card label (English)",
+    "coverPhAr": "مثال: معار من كيبكو (بطاقة دور)",
+    "coverPhEn": "e.g. KHNP secondee (role card)",
+    "coverSource": "Source",
+    "coverTitle": "Emergency and external cover",
+    "critical": "Critical role",
+    "emergency": "Emergency cover",
+    "emergencyCover": "Emergency cover for this role",
+    "emergencyHint": "One emergency cover per slate; naming a new one replaces the previous one.",
+    "emiratiShare": "Emirati successors",
+    "f": {
+      "all": "All",
+      "critical": "Critical roles",
+      "leadership": "Leadership roles",
+      "flagged": "At risk"
+    },
+    "filter": "Filter slates",
+    "functionView": "Your function",
+    "functionViewBody": "You see the slates for roles in your own function, read-only. HR maintains them.",
+    "gapActions": "Gap actions",
+    "gaps": "Top gaps",
+    "gateBlocked": "Ready now is not possible: a hard gate (licence route, qualification or entry condition) is not met.",
+    "gates": "Hard gates",
+    "intro": "Person-level slates for critical and leadership roles: readiness computed from skills and gates and confirmed by HR, gap actions per successor, risk flags and the bench roll-up into workforce analytics.",
+    "lastRoll": "Last roll-up {date} ({period}).",
+    "leadership": "Leadership role",
+    "months": "about {n} months",
+    "noCandidates": "No candidates in the role or its feeder roles",
+    "noCover": "No external cover named.",
+    "noGaps": "No competency gap",
+    "noSuccessors": "No successor on this slate yet",
+    "none": "No succession slates",
+    "noneBody": "HR has not opened slates yet.",
+    "noneFilter": "No slate matches this filter",
+    "noneFunction": "No slate covers roles in your function.",
+    "notFound": "Slate not found",
+    "note": "Note for HR",
+    "noteEarlier": "Required: you chose an earlier readiness than the computed one (10 characters or more).",
+    "noteHint": "Optional.",
+    "ofSuccessors": "of {n} distinct successors",
+    "onSlate": "Already on this slate",
+    "onSlates": "on {n} slates",
+    "open": "Open slate",
+    "period": "Period",
+    "propose": "Propose",
+    "proposeBody": "Computed readiness: {r}. You confirm the horizon; an earlier one needs a reason.",
+    "proposeConfirm": "Propose {name} as a successor ({r})? Audited.",
+    "proposeTitle": "Propose {name}",
+    "readiness": "Readiness horizon",
+    "readinessPct": "Readiness (F05)",
+    "roll": "Roll up bench",
+    "rollBody": "Writes the confirmed slates of critical roles into the workforce bench counts for the period: ready now as qualified, 1 to 2 years as in training, 3 to 5 years as pipeline.",
+    "rollConfirm": "Roll up the bench",
+    "rollConfirmBody": "Update the critical-role bench counts for {period} from the confirmed slates? Audited and recorded in the NEXUS ledger.",
+    "rollTitle": "Bench roll-up to workforce analytics",
+    "rolled": "rolled up ({period})",
+    "slates": "Slates",
+    "successors": "Successors",
+    "successorsSub": "Distinct people",
+    "successorsDesc": "Readiness is computed from skills and the role's hard gates and confirmed by HR. Gate chips: green met, red not met.",
+    "successorsTitle": "Successors",
+    "toBench": "Open bench depth",
+    "withReady": "With a ready-now successor",
+    "withReadyOf": "{n} of {total}",
+    "withdraw": "Withdraw",
+    "withdrawBody": "Withdraw this entry from the slate? Give a reason of 10 characters or more; it is audited.",
+    "withdrawReason": "Reason (10 characters or more)",
+    "withdrawTitle": "Withdraw from slate",
+    "womenShare": "Women successors"
+  }
+}

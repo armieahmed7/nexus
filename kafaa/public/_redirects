@@ -1,0 +1,4 @@
+/ /kafaa/ 302
+/kafaa /kafaa/ 301
+/kafaa/.well-known/* /.well-known/:splat 200!
+/kafaa/* /kafaa/index.html 200

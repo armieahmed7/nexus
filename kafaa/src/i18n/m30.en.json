@@ -1,0 +1,321 @@
+{
+  "module": {
+    "name": "Role Transformation"
+  },
+  "routes": {
+    "my-role-2030": {
+      "title": "My role in 2030",
+      "purpose": "How your role changes by 2030 and 2035: drivers, tasks, skills added, a bridge curriculum and your time to get ready."
+    },
+    "my-role-2030-tasks": {
+      "title": "What the tool will do, what you will still own",
+      "purpose": "Every task of a role in three bands with the AI capability reason, and the skills that complement AI."
+    },
+    "careers-role-transformation": {
+      "title": "Role transformation",
+      "purpose": "A public summary of how a role is expected to change, without numbers."
+    },
+    "workforce-transformation": {
+      "title": "Role transformation overview",
+      "purpose": "All role transformation maps, readiness for the 2030 profiles and task exposure by family, suppressed under 10 people."
+    },
+    "workforce-transformation-edit": {
+      "title": "Edit role transformation map",
+      "purpose": "Edit, check and publish a role transformation map."
+    }
+  },
+  "bench": {
+    "label": "Benchmarks"
+  },
+  "planning": {
+    "chip": "Planning assumption",
+    "title": "Planning assumption, no deployment decision implied",
+    "body": "Role maps, 2030 and 2035 profiles and the timeline are planning assumptions for learning. They imply no deployment decision, no headcount and no site. Task ratings use a simulated AI capability reference on the OECD scale."
+  },
+  "my": {
+    "intro": "How your role is expected to change by 2030 and 2035, what stays with people, which skills come in, and how long it takes you to get ready from your own skills.",
+    "toTasks": "Task exposure view",
+    "noAccess": "Role transformation maps are for staff.",
+    "noRole": "Pick a role",
+    "noRoleBody": "Your profile has no current role. Pick any current role to explore its map and see your time-to-ready for it.",
+    "myRole": "My role",
+    "exploring": "Exploring a role",
+    "version": "Version {v}",
+    "draftPending": "Draft pending",
+    "edit": "Edit this map"
+  },
+  "driverCounts": "· {tasks} tasks · {skills} skills",
+  "ready": {
+    "label": "Time to {h}-ready",
+    "now": "Ready now",
+    "months": "About {n} months",
+    "basis": "Based on {n} gaps in {of} requirements"
+  },
+  "tiles": {
+    "grow": "Tasks that grow",
+    "growSub": "Stay with people; their share grows",
+    "augmented": "Tasks augmented",
+    "augmentedSub": "AI assists; you own the outcome",
+    "shrink": "Tasks that shrink",
+    "shrinkSub": "Parts move to tools; you verify",
+    "added": "Skills added by 2030",
+    "addedSub": "{n} more by 2035"
+  },
+  "work": {
+    "title": "How the work moves",
+    "desc": "From the task layer of the SAT workbench: each rated task compared with a simulated AI capability reference at its change horizon. Open \"Why this?\" for the reason.",
+    "none": "No task-level analysis for this role yet",
+    "noneBody": "Training staff have not rated this role's tasks in the SAT workbench yet. The skills added and the bridge curriculum below still apply.",
+    "emptyMove": "No task in this group.",
+    "critical": "Critical"
+  },
+  "move": {
+    "grow": "Grows",
+    "augmented": "Augmented",
+    "shrink": "Shrinks"
+  },
+  "moveHint": {
+    "grow": "Human core: people own it",
+    "augmented": "AI-assisted: you own the outcome",
+    "shrink": "Partly automatable: you verify"
+  },
+  "band": {
+    "augment": "AI-assisted",
+    "automate_partly": "Partly automatable",
+    "human_core": "Human core"
+  },
+  "bandHint": {
+    "augment": "What the tool will do: draft, check, summarise. What you still own: the decision and the result.",
+    "automate_partly": "What the tool will do: routine parts end to end. What you still own: verifying, and acting when it is wrong.",
+    "human_core": "What you still own: all of it. AI capability does not reach what the task needs."
+  },
+  "driver": {
+    "ai_assist": "AI assistance",
+    "digital_ic": "Digital I&C",
+    "robotics": "Robotics and remote inspection",
+    "digital_twin": "Digital twin",
+    "smr_design": "SMR and advanced-reactor design"
+  },
+  "horizon": {
+    "now": "Now",
+    "2030": "2030",
+    "2035": "2035"
+  },
+  "status": {
+    "published": "Published",
+    "draft": "Draft",
+    "none": "No map"
+  },
+  "importance": {
+    "core": "core",
+    "important": "important",
+    "useful": "useful"
+  },
+  "added": {
+    "title": "Skills added",
+    "desc": "What the 2030 profile asks for that today's does not, and what 2035 adds again (published role profiles).",
+    "none": "No new or raised requirements.",
+    "col": {
+      "skill": "Skill or competency",
+      "horizon": "By",
+      "change": "Change",
+      "driver": "Driver"
+    },
+    "new": "New · level {to}",
+    "raised": "Raised · {from} to {to}"
+  },
+  "archetype": {
+    "eyebrow": "Role archetype",
+    "forLearning": "For learning",
+    "example": "Typical roles: {roles}",
+    "mastery_builder": "Mastery Builder",
+    "analytical_specialist": "Analytical Specialist",
+    "human_connector": "Human Connector"
+  },
+  "bridge": {
+    "title": "Bridge curriculum",
+    "eyebrow": "About {h} hours in total",
+    "none": "Nothing to bridge: the profile does not change.",
+    "practice": "Guided practice (no short course in the catalogue yet)",
+    "hours": "{n} h",
+    "note": "One step per skill added. A short course (staff, not initial qualification training, 80 hours or less) when the catalogue has one; otherwise guided practice at 20 hours per level."
+  },
+  "gaps": {
+    "title": "My time-to-ready for {h}",
+    "eyebrow": "From my own skill states",
+    "noMe": "Sign in as a staff member to see your own gaps.",
+    "readyBody": "Your current skill states meet every requirement of this profile.",
+    "level": "Level {have} of {need}",
+    "toNavigator": "Open my Career Navigator",
+    "toLearn": "Browse learning"
+  },
+  "timeline": {
+    "title": "Timeline",
+    "desc": "Dated milestones with their sources. Planning gates are simulated for the demo.",
+    "sim": "Planning gate"
+  },
+  "pathOnly": {
+    "title": "Career-path level only",
+    "body": "Security, safeguards and cyber roles are shown at career-path level only. Task and skill detail stays outside Kafa'a.",
+    "toCareer": "See the career path"
+  },
+  "picker": {
+    "role": "Role",
+    "myRole": "My role",
+    "horizon": "Horizon"
+  },
+  "tx": {
+    "intro": "Every task of a role in one of three bands, each with the reason behind it: what the tool will do, and what you will still own. It helps you decide what to learn; it is not a score of you.",
+    "toMap": "My role in 2030",
+    "principleTitle": "How change is described here",
+    "principleBody": "We describe how tasks move between people and tools. Every band shows the capability comparison behind it, and the people who do the work stay accountable for it.",
+    "mixTitle": "Band mix for this role",
+    "mixEyebrow": "Rated tasks",
+    "refTitle": "Reference line",
+    "refEyebrow": "SkillsFuture Singapore, 2025",
+    "refLabel": "Tasks AI can assist or partly automate in this role ({n} rated)",
+    "refNote": "The Singapore figure uses a different method across many sectors; it is a reference line, not a target.",
+    "compTitle": "Skills that complement AI",
+    "compDesc": "The skills behind the human-core tasks of this role: they grow in value as tools take on routine work.",
+    "compNone": "No complementary skills identified yet.",
+    "compTasks": "Needed by {n} human-core tasks, up to level {level}",
+    "compProfile": "From the 2030 profile, level {level} (no task analysis yet)"
+  },
+  "pub": {
+    "title": "{role}: how the role changes",
+    "intro": "A public summary of how this role is expected to change. Signed-in staff also see the tasks, the skills and their own time to get ready.",
+    "crumb": "{role}: transformation",
+    "mine": "See my time-to-ready",
+    "notFound": "Role not found",
+    "toCareers": "Back to careers",
+    "noMap": "No published map for this role yet.",
+    "skillsTitle": "Skills that come in",
+    "skillsEyebrow": "From the published role profiles",
+    "by": {
+      "2030": "By 2030",
+      "2035": "By 2035"
+    },
+    "none": "No new skills at this horizon."
+  },
+  "wf": {
+    "intro": "Every role's transformation map, how ready people are for their role's 2030 profile, and task exposure by family. People counts and shares under 10 people are suppressed.",
+    "tab": {
+      "maps": "Maps",
+      "ready": "Readiness",
+      "exposure": "Task exposure"
+    },
+    "hrOnly": "For HR",
+    "hrOnlyBody": "People aggregates are for the HR analyst and the HR director.",
+    "col": {
+      "role": "Role",
+      "archetype": "Archetype",
+      "drivers": "Drivers",
+      "status": "Status",
+      "published": "Published",
+      "group": "Family group / family",
+      "people": "People",
+      "readyNow": "Ready now",
+      "readyPct": "Share ready",
+      "median": "Median time to ready",
+      "analysed": "In analysed roles",
+      "mix": "Mix"
+    },
+    "edit": "Edit",
+    "pathOnly": "Path level only",
+    "tileMaps": "Published maps",
+    "tileMapsSub": "Current roles with a published map",
+    "tilePath": "Path-level roles",
+    "tilePathSub": "Security, safeguards and cyber",
+    "tileDrivers": "Technology drivers",
+    "tileDriversSub": "Distinct drivers named in the maps",
+    "tileHistory": "Maps revised",
+    "tileHistorySub": "With an earlier published version",
+    "archMix": "Archetype mix",
+    "driverFreq": "Maps naming each driver",
+    "readyDesc": "For staff in current roles: how many already meet every requirement of their role's profile at the horizon, and the median time to get there from their own skills (2 months per level of gap).",
+    "medianTitle": "Median months to {h}-ready by family group",
+    "expDesc": "Rated tasks of each person's role, counted once per person, so the mix shows where people's work moves. People in roles without task analysis are counted but add no tasks.",
+    "suppressNote": "Groups under {n} people are suppressed: no count and no share is shown.",
+    "suppressed": "Suppressed (fewer than 10)",
+    "notBroken": "Security, safeguards and cyber families are never broken out.",
+    "total": "All staff in current roles",
+    "none": "No groups to show.",
+    "grp": {
+      "operations": "Operations and outage",
+      "maintenance_engineering": "Maintenance, engineering and fuel",
+      "rp_chem_env": "Radiation protection, chemistry and environment",
+      "safety_quality_oversight": "Safety, quality and oversight",
+      "training_supply_corporate": "Training, supply chain and corporate",
+      "ep_security_safeguards": "Emergency preparedness (security not broken out)"
+    }
+  },
+  "ed": {
+    "intro": "Edit the map, check it against the publishing rules as you type, save a draft or publish it.",
+    "readOnly": "Read only",
+    "readOnlyBody": "Only the training manager and the HR director edit role transformation maps.",
+    "draftFrom": "Draft saved {when}",
+    "pathBody": "This role stays at career-path level: no archetype and no drivers. Only the summaries can change.",
+    "shape": "Archetype and drivers",
+    "archetype": "Archetype",
+    "archetypeNone": "No archetype",
+    "drivers": "Technology drivers",
+    "texts": "Summaries",
+    "summaryEn": "Staff summary (English)",
+    "summaryAr": "Staff summary (Arabic)",
+    "publicEn": "Public summary (English)",
+    "publicAr": "Public summary (Arabic)",
+    "len": "{n} of {max} characters",
+    "publicHint": "No numbers; up to {max} characters",
+    "sources": "Sources",
+    "srcLabel": "Label",
+    "srcUrl": "https link",
+    "srcRemove": "Remove",
+    "srcAdd": "Add a source",
+    "checks": "Checks",
+    "checkDraftOk": "Ready to save as a draft",
+    "checkPubOk": "Ready to publish",
+    "bannedFound": "Wording not used here: \"{word}\"",
+    "rule": "Describe how tasks change, not people.",
+    "save": "Save draft",
+    "publish": "Publish",
+    "saved": "Draft saved",
+    "published": "Role transformation map published",
+    "confirmTitle": "Publish this map?",
+    "confirmBody": "The public summary becomes visible to everyone, staff see the new map at once, the previous version moves to the history, and the action is recorded in the audit log and the NEXUS evidence ledger.",
+    "history": "Published versions",
+    "code": {
+      "not_found": "Role not found (current roles only)",
+      "invalid": "Choose an archetype and known drivers; summaries 40 to 700 characters, public summaries 20 to 320, in English and Arabic",
+      "security_restricted": "Security, safeguards and cyber roles stay at career-path level: no archetype and no drivers",
+      "unclean_text": "Remove headcount, site or deployment wording",
+      "banned_wording": "Describe how tasks change, not people: some wording is not used (English and Arabic)",
+      "public_numbers": "The public summary carries no numbers",
+      "source_required": "Publishing needs at least one https source with a label"
+    }
+  },
+  "reasons": {
+    "move_grow": "Human core: AI capability does not reach what this task needs, so it stays with people and its share of the role grows",
+    "move_augmented": "AI-assisted: the tool helps, and a person keeps ownership of the outcome",
+    "move_shrink": "Partly automatable: parts of the task move to tools and a person verifies the result, so time on it shrinks",
+    "added_new": "New for {horizon}: required at level {to}",
+    "added_raised": "Raised for {horizon}: from level {from} to {to}",
+    "driver_ai_assist": "Driven by AI assistance",
+    "driver_digital_ic": "Driven by digital I&C",
+    "driver_robotics": "Driven by robotics and remote inspection",
+    "driver_digital_twin": "Driven by digital twins",
+    "driver_smr_design": "Driven by SMR and advanced-reactor design (no deployment decision implied)",
+    "importance_core": "Core requirement of the profile",
+    "importance_important": "Important requirement of the profile",
+    "importance_useful": "Useful requirement of the profile",
+    "complement_tasks": "Needed by {n} human-core tasks of this role, up to level {level}",
+    "complement_profile": "A human or transversal skill the {horizon} profile asks for at level {level}",
+    "bridge_course": "Shortest short course in the catalogue that teaches this skill ({hours} h)",
+    "bridge_practice": "No short course yet: guided practice, {levels} levels x {per} h = {hours} h",
+    "bridge_for": "Needed for the {horizon} profile",
+    "gap": "You are at level {have}; the profile asks for {need} (gap {gap})",
+    "time_ready": "You already meet every requirement of the {horizon} profile",
+    "time_rule": "{levels} levels of gap x {per} months per level = about {months} months (the Career Navigator's estimate)",
+    "time_gaps": "Based on {n} gaps in {of} requirements, from your own skill states",
+    "copy_rule": "SkillsFuture Singapore shows AI potential per task as what the tool will do and what people still own; corporate reskilling programmes pair honest change signals with a personal path. Kafa'a describes how tasks move between people and tools."
+  }
+}

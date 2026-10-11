@@ -1,0 +1,905 @@
+{
+  "module": {
+    "name": "AI and Digital Fluency"
+  },
+  "routes": {
+    "learn-ai-fluency": {
+      "title": "AI Fluency Ladder",
+      "purpose": "What good AI use looks like at ENEC: four rungs across four dimensions, with plant examples and a target for every job family."
+    },
+    "my-ai-fluency": {
+      "title": "My AI fluency",
+      "purpose": "Your rung on the AI fluency ladder from your skill evidence, why, and the next step."
+    },
+    "my-ai-fitness": {
+      "title": "AI and digital fitness check",
+      "purpose": "A short adaptive check of your digital and AI skills, once a quarter; the trend is yours."
+    },
+    "workforce-ai-fluency": {
+      "title": "AI and digital fluency across ENEC",
+      "purpose": "The share of staff above basic, the fluency rungs and progress against the leadership target, suppressed under 10."
+    },
+    "training-ai-fitness-items": {
+      "title": "Fitness check item bank",
+      "purpose": "The bilingual items behind the AI and digital fitness check, their coverage and their versions."
+    },
+    "workforce-ai-register": {
+      "title": "AI-literacy register",
+      "purpose": "Every AI system ENEC provides or deploys, the literacy each user group needs and how many are covered, computed from the AI fluency ladder."
+    },
+    "workforce-ai-system": {
+      "title": "AI system",
+      "purpose": "One register entry: its user groups, the rung each needs, coverage and gaps, measures and sources."
+    },
+    "workforce-ai-pack": {
+      "title": "AI-literacy pack",
+      "purpose": "An exportable pack of the register: a voluntary alignment with the EU AI Act Article 4 practice repository, not a compliance statement."
+    },
+    "admin-ai-register": {
+      "title": "Maintain the AI-literacy register",
+      "purpose": "Add and edit register entries and their user groups; versioned and audited."
+    },
+    "my-ai-drills": {
+      "title": "AI sandbox drills",
+      "purpose": "Practise catching a wrong AI output against a synthetic controlled procedure, then follow the challenge protocol."
+    },
+    "my-ai-drill": {
+      "title": "Sandbox drill",
+      "purpose": "Compare, flag, challenge, and see a scored result with reasons."
+    },
+    "training-ai-drills": {
+      "title": "Sandbox drill bank",
+      "purpose": "The drills, their keys and how people do on them, suppressed under 10."
+    }
+  },
+  "rung": {
+    "none": "Not yet on the ladder",
+    "aware": "Aware",
+    "practitioner": "Practitioner",
+    "builder": "Builder",
+    "assurer": "Assurer"
+  },
+  "dim": {
+    "mindset": "Human-centred mindset",
+    "ethics": "Ethics and assurance",
+    "techniques": "Techniques and applications",
+    "design": "System design"
+  },
+  "dimSub": {
+    "mindset": "People stay in charge",
+    "ethics": "Verify and challenge",
+    "techniques": "Use tools well",
+    "design": "Data, limits, review points"
+  },
+  "track": {
+    "literacy": "AI literacy (counts for the rung)",
+    "engineering": "AI engineering (shown apart)"
+  },
+  "band": {
+    "limited": "Below basic",
+    "basic": "Basic",
+    "above_basic": "Above basic",
+    "advanced": "Advanced"
+  },
+  "diff": {
+    "1": "Foundation",
+    "2": "Intermediate",
+    "3": "Advanced"
+  },
+  "cell": {
+    "minLevel": "level {level}+"
+  },
+  "steps": {
+    "aria": "AI fluency ladder, current rung {rung}",
+    "target": "Target"
+  },
+  "target": {
+    "plus": "plus {rung} · {dim}"
+  },
+  "learn": {
+    "kind": {
+      "course": "course",
+      "check": "check",
+      "practice": "practice with a mentor"
+    }
+  },
+  "reason": {
+    "rung": "Rung {rung} of 4: every dimension is evidenced at each rung up to this one.",
+    "met": {
+      "mindset": "Human-centred mindset shown at rung {rung} (skill level {level}).",
+      "ethics": "Ethics and assurance shown at rung {rung} (skill level {level}).",
+      "techniques": "Techniques and applications shown at rung {rung} (skill level {level}).",
+      "design": "System design shown at rung {rung} (skill level {level})."
+    },
+    "gap": {
+      "mindset": "For rung {rung}: human-centred mindset needs level {level} evidence.",
+      "ethics": "For rung {rung}: ethics and assurance needs level {level} evidence.",
+      "techniques": "For rung {rung}: techniques and applications need level {level} evidence.",
+      "design": "For rung {rung}: system design needs level {level} evidence."
+    },
+    "engineering": "{n} AI-engineering skills are shown apart and do not raise the literacy rung."
+  },
+  "lad": {
+    "intro": "What good use of AI looks like in a plant where AI must be challenged, not obeyed. Four rungs, each revisiting the same four dimensions at a deeper level, with plant examples. Your rung comes from evidence, never from points.",
+    "rungN": "Rung {n}",
+    "indicatorRung": "counted in the indicator",
+    "grid": {
+      "title": "The ladder",
+      "intro": "Each cell says what the rung looks like in one dimension, an example from plant work, and the literacy skills (with the level) that evidence it.",
+      "rung": "Rung",
+      "example": "Plant example",
+      "dimFilter": "Dimension",
+      "allDims": "All four dimensions"
+    },
+    "spiral": {
+      "title": "Spiral progression",
+      "body": "Every rung covers all four dimensions again, more deeply. You reach a rung when all four are evidenced at it and at every rung below; self-ratings alone never move you up."
+    },
+    "tracks": {
+      "title": "AI literacy is not AI engineering",
+      "eyebrow": "Two tracks",
+      "intro": "Everyone needs AI literacy. AI engineering is a specialist track: useful, but it never raises the literacy rung.",
+      "note": "An engineer who builds data pipelines still needs to show verification and judgement to climb the ladder."
+    },
+    "how": {
+      "title": "How your rung is worked out",
+      "eyebrow": "Method",
+      "s1": "Your skill evidence (qualifications, training, assessments, work, credentials and the fitness check) sets a level on each skill.",
+      "s2": "Only AI-literacy skills count; self-claimed levels do not.",
+      "s3": "A cell is met when one of its skills is at or above the cell's level.",
+      "s4": "Your rung is the highest rung with all four dimensions met at it and below.",
+      "learn": "Where to start"
+    },
+    "cta": {
+      "mine": "See my rung",
+      "signin": "Sign in to see your rung"
+    },
+    "targets": {
+      "title": "Targets by job family",
+      "intro": "What each job family aims for, and why. Operators: Practitioner, plus the verification cell of Assurer.",
+      "family": "Job family",
+      "target": "Target",
+      "score": "Check target",
+      "why": "Why"
+    },
+    "noGame": {
+      "title": "No points, no streaks, no leaderboards",
+      "body": "The ladder describes evidence. It does not rank people, award points or reward streaks, and nobody else sees your rung; leaders see only suppressed aggregates."
+    }
+  },
+  "my": {
+    "intro": "Your rung on the AI fluency ladder, worked out from your skill evidence. Each reason points at the evidence behind it.",
+    "toCheck": "Take the fitness check",
+    "toLadder": "The ladder",
+    "none": "The AI fluency ladder is for ENEC staff.",
+    "hero": {
+      "eyebrow": "My rung",
+      "title": "You are at",
+      "zero": "No dimension is evidenced at every rung yet. The fitness check is the quickest way to show where you stand.",
+      "rule": "Only AI-literacy evidence counts; self-ratings alone and AI-engineering skills never raise the rung."
+    },
+    "tile": {
+      "next": "Next rung",
+      "nextSub": "dimensions met for {rung}",
+      "top": "Top rung",
+      "target": "Family target",
+      "targetMet": "Met",
+      "targetGap": "{n} cells to go",
+      "check": "Latest check",
+      "checkSub": "{band} · {date}",
+      "checkNone": "Not taken yet",
+      "cells": "Cells shown",
+      "cellsSub": "of the 16 on the ladder"
+    },
+    "grid": {
+      "title": "My ladder",
+      "intro": "Green cells are evidenced; the highlighted row is your next rung."
+    },
+    "state": {
+      "met": "Shown",
+      "next": "Next",
+      "gap": "Not yet",
+      "later": "Later"
+    },
+    "metBy": "{skill} at level {level}",
+    "have": "Best level now {have}; needs {need}",
+    "ev": {
+      "fitness": "Fitness check, {date}",
+      "qual": "Qualification, {date}",
+      "course": "Training, {date}",
+      "assessment": "Assessment, {date}",
+      "jpm": "JPM, {date}",
+      "rating": "Validated rating, {date}",
+      "ojt": "Work evidence, {date}",
+      "credential": "Credential, {date}",
+      "drill": "Sandbox drill, {date}"
+    },
+    "next": {
+      "eyebrow": "Next step",
+      "title": "To reach {rung}",
+      "top": "You are at the top rung",
+      "ready": "All four dimensions are met at the next rung.",
+      "topBody": "Keep your evidence current: it ages, and the check is quarterly."
+    },
+    "target": {
+      "title": "Target for {family}",
+      "eyebrow": "My job family",
+      "none": "No target is set for your family.",
+      "met": "You meet your family target.",
+      "missing": "Still to show: {list}"
+    },
+    "eng": {
+      "title": "AI engineering skills",
+      "eyebrow": "Shown apart",
+      "none": "No AI-engineering skills on record.",
+      "level": "level {level}",
+      "note": "These are valuable specialist skills. They are kept apart from the literacy rung on purpose."
+    },
+    "honest": {
+      "title": "An honest ladder",
+      "body": "{max} rungs, no points and no streaks. Your rung changes only when evidence changes, and evidence ages: digital and AI skills fall in the fast-changing decay class."
+    },
+    "toDrills": "Sandbox drills",
+    "toRegister": "AI systems I use"
+  },
+  "fit": {
+    "intro": "A short adaptive check of your digital and AI skills. It takes about ten minutes, adapts to your answers and is scored on the server. You can take it once a quarter.",
+    "toMine": "My AI fluency",
+    "none": "The fitness check is for ENEC staff.",
+    "error": "That did not work",
+    "q": {
+      "progress": "Item {n} of up to {max}",
+      "progressLabel": "Progress through the check",
+      "noKey": "Answers are checked on the server; you see your result at the end.",
+      "next": "Next"
+    },
+    "start": {
+      "eyebrow": "This quarter: {period}",
+      "title": "About the check",
+      "b1": "18 to {max} items: it stops as soon as every area is settled.",
+      "b2": "Nine areas: the five DigComp areas and the four AI dimensions. Safety and problem solving carry extra weight.",
+      "b3": "Your result is written to your skills passport as assessment evidence, never above level {cap}. Higher levels need work evidence.",
+      "b4": "Once a quarter. Your quarterly trend is the result that matters.",
+      "go": "Start the check",
+      "resume": "Resume my check",
+      "nextOn": "You have taken this quarter's check. The next one opens on {date}."
+    },
+    "areas": {
+      "title": "What it covers",
+      "eyebrow": "Nine areas",
+      "weighted": "weight ×{w}"
+    },
+    "doneTitle": "Check complete",
+    "doneBody": "You answered {n} items. Your result and the evidence it wrote are below.",
+    "noResult": "No result yet",
+    "noResultBody": "Take the check to see your result, the ENEC average and your family's target.",
+    "res": {
+      "title": "Result for {period}",
+      "intro": "Your score with the ENEC average and your family's target as comparison lines, your profile by area and the evidence written to your skills.",
+      "line": "My score (0-100)",
+      "enecAvg": "ENEC average ({n} people)",
+      "roleTarget": "My family's target",
+      "enecSuppressed": "The ENEC average appears once 10 or more people have a result.",
+      "areas": "Profile by area",
+      "areasEyebrow": "Level 0-3",
+      "levelsKey": "0 below basic · 1 foundation · 2 intermediate · 3 advanced",
+      "evidence": "Evidence written to my skills",
+      "evidenceEyebrow": "Capped at level {cap}",
+      "level": "level {level}",
+      "noEvidence": "No area reached level 1, so no evidence was written.",
+      "evidenceNote": "This check replaces the evidence of your earlier checks; it says where you stand now.",
+      "toPassport": "Open my skills passport"
+    },
+    "bandText": {
+      "limited": "Below basic: start with the governed-use course and the Aware cells of the ladder.",
+      "basic": "Basic: you know the essentials. The Practitioner cells show what to practise next.",
+      "above_basic": "Above basic: you use digital and AI tools with care. Keep verifying what tools produce.",
+      "advanced": "Advanced: strong across most areas. Higher rungs need evidence from real work."
+    },
+    "trend": {
+      "title": "My quarterly trend",
+      "eyebrow": "The artefact",
+      "mine": "My score",
+      "one": "Your trend appears after your second quarterly check."
+    },
+    "privacy": {
+      "title": "Who sees this",
+      "body": "Only you see your answers and score. HR sees organisation aggregates only, with any group under 10 people suppressed. The check never asks about plant security."
+    },
+    "reason": {
+      "band": {
+        "limited": "Score {score} from {n} items: below basic.",
+        "basic": "Score {score} from {n} items: basic.",
+        "above_basic": "Score {score} from {n} items: above basic.",
+        "advanced": "Score {score} from {n} items: advanced."
+      },
+      "level0": "{area}: not yet at foundation level.",
+      "level1": "{area}: foundation level.",
+      "level2": "{area}: intermediate level.",
+      "level3": "{area}: advanced level.",
+      "confirmed": "{area}: a confirming item settled your level (weighted area).",
+      "cap": "Evidence from the check is capped at level {level}; higher levels need work evidence."
+    }
+  },
+  "wf": {
+    "intro": "How digital and AI fluency is spreading across ENEC staff: the DigComp-style \"% above basic\" indicator from the fitness check, and the fluency rungs from skill evidence. Aggregates only; cells under 10 people are suppressed.",
+    "none": "These aggregates are for HR analysts and the HR director.",
+    "tile": {
+      "above": "Staff above basic",
+      "aboveSub": "of {n} tested in the last four quarters",
+      "coverage": "Coverage",
+      "coverageSub": "{n} of {staff} staff tested",
+      "avg": "Average score",
+      "avgSub": "latest check per person, 0-100",
+      "prac": "At Practitioner or above",
+      "pracSub": "leadership parameter {pct} by {date}"
+    },
+    "above": {
+      "title": "% of staff above basic",
+      "eyebrow": "Fitness check indicator",
+      "line": "ENEC staff above basic",
+      "apart": "The EU figure is a separate external benchmark line; it is not an ENEC measurement and the two are not merged."
+    },
+    "prac": {
+      "title": "AI fluency: Practitioner or above",
+      "eyebrow": "Ladder indicator",
+      "line": "Staff at Practitioner or above",
+      "target": "Leadership parameter by {date}"
+    },
+    "trend": {
+      "title": "Quarterly trend",
+      "eyebrow": "Latest check per person in each quarter",
+      "above": "% above basic",
+      "avg": "Average score",
+      "note": "A quarter with fewer than 10 results is suppressed and shows as a gap."
+    },
+    "bands": {
+      "title": "Result bands",
+      "eyebrow": "Latest check per person"
+    },
+    "rungs": {
+      "title": "Fluency rungs"
+    },
+    "areas": {
+      "title": "Average level by area",
+      "intro": "Mean level (0-3) across the latest results; weighted areas in the accent colour."
+    },
+    "fam": {
+      "title": "By job family",
+      "intro": "Families with fewer than 10 people tested are suppressed. Security, safeguards and cyber are never broken out.",
+      "family": "Job family",
+      "n": "Tested",
+      "pct": "% above basic",
+      "avg": "Average score",
+      "prac": "% Practitioner+",
+      "tgt": "% meeting family target"
+    },
+    "def": {
+      "title": "Definitions",
+      "eyebrow": "How each number is made",
+      "above": {
+        "t": "Above basic",
+        "d": "A result band of above basic or advanced (score 50 or more) on the latest check."
+      },
+      "window": {
+        "t": "Window",
+        "d": "The latest completed check per active staff member in the quarters {window}."
+      },
+      "prac": {
+        "t": "Practitioner or above",
+        "d": "Rung 2 or higher on the AI fluency ladder, computed from skill evidence for every active staff member."
+      },
+      "target": {
+        "t": "Leadership parameter",
+        "d": "A dated target chosen by leadership for the demo, shown beside the measured value. It is not a claim about the future."
+      },
+      "suppress": {
+        "t": "Suppression",
+        "d": "Any cell naming fewer than 10 people is shown as suppressed, never as a value."
+      },
+      "restricted": {
+        "t": "Restricted families",
+        "d": "Security, safeguards and cyber appear in totals only, never as their own rows."
+      }
+    },
+    "noRank": {
+      "title": "Aggregates, not rankings",
+      "body": "No individual's score or rung is shown here, and families are not ranked. Use the numbers to target learning, not to judge people."
+    }
+  },
+  "bank": {
+    "intro": "The bilingual items behind the AI and digital fitness check. Training staff read the bank and its key; the training manager adds, edits and retires items. The server re-checks every rule on save.",
+    "coverage": {
+      "title": "Coverage by area and difficulty",
+      "eyebrow": "At least {min} active items per cell",
+      "thin": "Below the minimum: {list}",
+      "ok": "Every area and difficulty has enough active items for re-takes."
+    },
+    "rules": {
+      "title": "Item rules",
+      "eyebrow": "Checked on every save",
+      "r1": "A question and 3 or 4 options in English and Arabic, with one key.",
+      "r2": "Never about plant security: wording that touches security arrangements is refused.",
+      "r3": "Each area and difficulty keeps at least two active items so re-takes vary.",
+      "r4": "Edits raise the version; items are retired, never deleted."
+    },
+    "add": "Add an item",
+    "edit": "Edit",
+    "retire": "Retire",
+    "readonly": "You can read the bank. Only the training manager edits it.",
+    "list": {
+      "title": "Items ({n})",
+      "caption": "Fitness check items",
+      "none": "No item matches these filters."
+    },
+    "col": {
+      "id": "Item",
+      "area": "Area",
+      "diff": "Difficulty",
+      "stem": "Question",
+      "status": "Status",
+      "version": "Version"
+    },
+    "status": {
+      "active": "Active",
+      "retired": "Retired"
+    },
+    "lang": {
+      "en": "English",
+      "ar": "Arabic"
+    },
+    "key": "key",
+    "meta": "Version {v}, last changed {date}",
+    "security": {
+      "title": "Awareness only",
+      "body": "Cyber items cover personal hygiene (phishing, removable media, passwords) only. Plant security arrangements never appear in the bank."
+    },
+    "form": {
+      "addTitle": "Add an item",
+      "editTitle": "Edit {id}",
+      "stemEn": "Question (English)",
+      "stemAr": "Question (Arabic)",
+      "optEn": "Option {n} (English)",
+      "optAr": "Option {n} (Arabic)",
+      "optN": "Option {n}",
+      "correct": "Correct option",
+      "explainEn": "Explanation (English)",
+      "explainAr": "Explanation (Arabic)",
+      "save": "Save item"
+    },
+    "problem": {
+      "area": "Choose an area.",
+      "difficulty": "Choose a difficulty.",
+      "stem": "Write the question in both languages (up to 400 characters).",
+      "options": "Give 3 or 4 options in both languages.",
+      "correct": "The correct option must be one of the options.",
+      "restricted": "Items never touch plant security."
+    },
+    "retireTitle": "Retire {id}?",
+    "retireBody": "The item stops being served. It stays in the bank, and the server refuses if its area and difficulty would drop below two active items."
+  },
+  "evidenceLabel": "AI and digital fitness check",
+  "reg": {
+    "intro": "Which AI systems ENEC provides or deploys, who uses each one, the AI literacy each user group needs on the AI fluency ladder and how many people are covered today. Coverage is computed from skill evidence, never typed in.",
+    "toPack": "Export the pack",
+    "toAdmin": "Maintain the register",
+    "none": "No register entries to show.",
+    "notRegulator": {
+      "title": "Voluntary alignment, not a regulator",
+      "body": "Kafa'a is not a regulator. The register follows the practice collected in the EU AI Office repository of AI-literacy practices (EU AI Act Article 4) as a voluntary alignment; it does not state compliance."
+    },
+    "tile": {
+      "systems": "Systems in the register",
+      "systemsSub": "{p} as provider · {d} as deployer",
+      "overall": "Users covered on every system",
+      "overallSub": "Computed from rungs · {scope}",
+      "full": "Labelled fully implemented",
+      "fullSub": "{ok} carried by coverage · {low} below 80%",
+      "fullSub0": "Coverage is shown to AI governance, HR and auditors",
+      "mine": "Systems I use",
+      "mineSub": "{n} of {of} requirements met",
+      "mineNone": "Sign in as staff to see yours"
+    },
+    "scope": {
+      "all": "all systems",
+      "owner": "systems you own"
+    },
+    "mine": {
+      "title": "AI systems I use",
+      "intro": "The groups your job family belongs to, the rung each needs and your own rung. Only you see this.",
+      "met": "Requirement met",
+      "notYet": "Not yet",
+      "needs": "Needs",
+      "you": "You",
+      "close": "See what closes the gap",
+      "drills": "Practise with sandbox drills"
+    },
+    "list": {
+      "title": "Register",
+      "intro": "Published entries. Each card shows ENEC's role, the approved-use class, the maturity label and coverage against the 80% line."
+    },
+    "filter": "Filter by ENEC's role",
+    "filterOpt": {
+      "all": "All",
+      "provider": "Provider",
+      "deployer": "Deployer"
+    },
+    "owner": "Owner",
+    "groups": "User groups",
+    "simulated": "SIMULATED",
+    "others": {
+      "title": "Drafts and retired entries",
+      "intro": "Visible to AI governance and auditors only; kept for the audit trail."
+    },
+    "maturity": {
+      "planned": "Planned",
+      "partial": "Partially rolled out",
+      "full": "Fully implemented"
+    },
+    "role": {
+      "provider": "Provider",
+      "deployer": "Deployer"
+    },
+    "roleLong": {
+      "provider": "Provider: ENEC builds or configures it",
+      "deployer": "Deployer: ENEC uses a tool built by others"
+    },
+    "use": {
+      "information": "Information only",
+      "decision_support": "Decision support",
+      "automation": "Automation"
+    },
+    "side": {
+      "provider": "Provider side",
+      "deployer": "Deployer side"
+    },
+    "allStaff": "All staff",
+    "cov": {
+      "hidden": "Coverage shown to AI governance, HR, auditors and the system owner",
+      "suppressed": "Suppressed: fewer than 10 people",
+      "system": "Users covered",
+      "threshold": "{pct} for fully implemented",
+      "why": "How is this computed?"
+    },
+    "label": {
+      "ok": "Label carried by coverage",
+      "low": "Label above coverage"
+    },
+    "legend": {
+      "title": "How to read the register",
+      "eyebrow": "Labels from the EU AI-literacy repository",
+      "planned": "The literacy measures are designed but not yet running for the users.",
+      "partial": "Measures run for some user groups; coverage is still growing.",
+      "full": "Measures run for every user group and at least 80% of users meet their required rung.",
+      "provider": "People who build or configure the system need provider-side literacy, usually Builder.",
+      "deployer": "People who use its outputs to make decisions need deployer-side literacy.",
+      "covT": "Coverage",
+      "cov": "The share of a group whose AI fluency rung (from skill evidence) meets the group's requirement. Groups under 10 people are suppressed."
+    },
+    "reason": {
+      "computed": "Coverage is computed from the AI fluency rungs of every user in {groups} groups; nobody types it in.",
+      "suppressed": "Fewer than {min} users: the figure is suppressed.",
+      "pct": "{pct}% of the system's users meet their group's required rung.",
+      "labelOk": "The fully implemented label is carried by coverage of {threshold}% or more.",
+      "labelLow": "The label says fully implemented, but coverage is below {threshold}%: review the label.",
+      "groupSuppressed": "One group has fewer than {min} people and is suppressed."
+    }
+  },
+  "sys": {
+    "intro": "One AI system in the register: who uses it, what literacy they need and how many are covered.",
+    "notFound": "This register entry is not available.",
+    "back": "Back to the register",
+    "facts": "Facts",
+    "role": "ENEC's role",
+    "use": "Approved use",
+    "version": "Version",
+    "review": "Next review",
+    "asOf": "As of",
+    "oversight": "Human oversight rule",
+    "coverage": "Coverage",
+    "coverageEyebrow": "Computed from AI fluency rungs",
+    "coverageNote": "Users across all groups: {n}. A person counts as covered when they meet every group they belong to.",
+    "you": {
+      "title": "Your requirement",
+      "eyebrow": "Only you see this"
+    },
+    "groups": {
+      "title": "User groups",
+      "intro": "Each group, the rung it needs (plus any single cells from a higher rung), its coverage and the most common gaps."
+    },
+    "col": {
+      "group": "Group",
+      "side": "Side",
+      "needs": "Needs",
+      "n": "Users",
+      "cov": "Covered",
+      "gaps": "Most common gaps"
+    },
+    "measures": "Literacy measures",
+    "measuresEyebrow": "What covers the users",
+    "sources": "Sources",
+    "noSources": "No public source: an internal synthetic example."
+  },
+  "pack": {
+    "intro": "The register as a pack you can download or print: entries, user groups, required rungs, measures and computed coverage.",
+    "statementTitle": "Statement carried by the pack",
+    "json": "Download JSON",
+    "csv": "Download CSV",
+    "print": "Print",
+    "generated": "Generated",
+    "systems": "Entries",
+    "groups": "User groups",
+    "aligned": "Aligned with (voluntary)",
+    "alignedEyebrow": "Benchmarks, not authorities",
+    "entries": "Entries",
+    "groupsCov": "User groups and coverage",
+    "rung": "rung {n}"
+  },
+  "adm": {
+    "intro": "Add or edit register entries and their user groups. Every save is versioned and audited; publishing writes the NEXUS ledger.",
+    "toRegister": "Open the register",
+    "rules": {
+      "title": "What the server refuses",
+      "body": "Compliance or certification wording (Kafa'a is not a regulator), a fully implemented label while fewer than 80% of users are covered, and groups without a rung or families. Groups are deactivated, never deleted."
+    },
+    "add": "Add a system",
+    "edit": "Edit",
+    "addTitle": "Add a register entry",
+    "editTitle": "Edit the register entry",
+    "save": "Save",
+    "col": {
+      "name": "System",
+      "status": "Status",
+      "role": "ENEC's role",
+      "maturity": "Label",
+      "cov": "Coverage",
+      "version": "Version"
+    },
+    "f": {
+      "name_en": "Name (English)",
+      "name_ar": "Name (Arabic)",
+      "purpose_en": "Purpose (English)",
+      "purpose_ar": "Purpose (Arabic)",
+      "role": "ENEC's role",
+      "use": "Approved-use class",
+      "maturity": "Maturity label",
+      "maturityHint": "Fully implemented needs 80% coverage",
+      "status": "Status",
+      "owner": "Owner (role card)",
+      "ownerPick": "Choose an owner",
+      "review": "Next review",
+      "simulated": "Simulated (synthetic example)",
+      "oversight_en": "Human oversight rule (English)",
+      "oversight_ar": "Human oversight rule (Arabic)",
+      "measures": "Literacy measures",
+      "groups": "User groups",
+      "label_en": "Group (English)",
+      "label_ar": "Group (Arabic)",
+      "side": "Side",
+      "rung": "Required rung",
+      "rationale_en": "Why (English)",
+      "rationale_ar": "Why (Arabic)"
+    },
+    "measure": {
+      "ladder": "AI fluency ladder",
+      "check": "AI and digital fitness check",
+      "drill": "Sandbox drills",
+      "course": "Governed use of AI tools (course)",
+      "briefing": "Briefing by the system owner"
+    },
+    "removeGroup": "Remove this group",
+    "addGroup": "Add a group",
+    "confirm": {
+      "title": "Save this register entry?",
+      "publish": "The entry is published to all staff, versioned, audited and written to the NEXUS ledger.",
+      "draft": "The entry is saved as a draft (or retired), versioned and audited."
+    }
+  },
+  "dr": {
+    "intro": "Catch the wrong AI output before it reaches the plant. Each drill puts an AI-styled summary next to a synthetic controlled procedure: flag what is wrong, name the kind of error, then follow the challenge protocol.",
+    "toFluency": "My AI fluency",
+    "none": "No drills are open yet.",
+    "evidenceLabel": "AI sandbox drill",
+    "synthetic": {
+      "title": "Synthetic documents, no model",
+      "body": "Every procedure is a synthetic SYN- document and every summary is authored text styled as AI output. Nothing calls a model; drills are scored with fixed rules and reasons."
+    },
+    "tile": {
+      "drills": "Open drills",
+      "passed": "Passed (latest attempt)",
+      "level": "Best evidence level",
+      "levelSub": "AI output verification, never above level 2",
+      "attempts": "My attempts"
+    },
+    "list": {
+      "title": "Drills",
+      "intro": "Start with the easier drills. Your latest attempt on a drill is the one that counts."
+    },
+    "passedL": "Passed · level {n}",
+    "notYet": "Not yet",
+    "new": "New",
+    "upTo": "Evidence up to level {n}",
+    "minutes": "About {n} min",
+    "levelN": "Level {n}",
+    "last": "Last attempt {pct} on {date}",
+    "retake": "Try again",
+    "start": "Start",
+    "difficulty": "Difficulty {n} of 3",
+    "kinds": {
+      "title": "Kinds of error",
+      "eyebrow": "Name them when you flag"
+    },
+    "kind": {
+      "omitted_step": "Omitted step",
+      "wrong_value": "Wrong value",
+      "wrong_order": "Wrong order",
+      "invented": "Invented content",
+      "overreach": "Overreach",
+      "stale_revision": "Stale revision"
+    },
+    "kindHelp": {
+      "omitted_step": "A required step or check is missing from the summary.",
+      "wrong_value": "A number, limit, setting or identifier differs from the procedure.",
+      "wrong_order": "The summary changes the sequence the procedure requires.",
+      "invented": "The summary adds a step, exception or claim that is not in the procedure.",
+      "overreach": "The summary concludes more than the source supports, such as a false all-clear.",
+      "stale_revision": "The summary cites an old revision of the document."
+    },
+    "scoring": {
+      "title": "How drills are scored",
+      "eyebrow": "Same rules in the browser and on the server",
+      "found": "Each planted error you flag: 2 points.",
+      "kind": "Naming its kind right: 1 more point.",
+      "false": "Each flag on a correct segment: minus 1 point.",
+      "protocol": "Each protocol answer right: 2 points; a wrong critical answer means not yet, whatever the score.",
+      "pass": "Pass: every critical step right, at least two thirds of the errors found and the drill's pass mark reached.",
+      "level": "Evidence: level 1, or level 2 on a level-2 drill with every error found and 85% or more. Never above level 2.",
+      "latest": "Your latest attempt on a drill replaces your earlier evidence from it."
+    },
+    "reason": {
+      "found": "You found {found} of {errors} planted errors.",
+      "kinds": "You named the kind right for {kinds} of the {found} you found.",
+      "false": "Flags on correct segments: {n}.",
+      "protocol": "Challenge protocol: {right} of {total} right.",
+      "critical": "A critical protocol step was wrong, so the drill is not passed.",
+      "level": "Passed with {pct}%: evidence at level {level}.",
+      "notPassed": "Not yet: {pct}% (pass mark {pass}%, and at least {need} errors found)."
+    }
+  },
+  "drill": {
+    "back": "All drills",
+    "notFound": "This drill is not available.",
+    "attempts": "{n} earlier attempts",
+    "step": {
+      "compare": "Compare and flag",
+      "protocol": "Challenge protocol",
+      "result": "Result"
+    },
+    "task": {
+      "title": "Your task",
+      "body": "Read the controlled procedure. Then flag every segment of the AI summary that is wrong and choose the kind of error. Correct segments should stay unflagged."
+    },
+    "doc": "Controlled procedure",
+    "syntheticChip": "SYNTHETIC",
+    "rev": "Revision {r}",
+    "outputEyebrow": "SIMULATED AI output, not a source",
+    "flag": "Flag",
+    "unflag": "Remove flag",
+    "kindQ": "Kind of error:",
+    "flagged": "Flagged: {n}",
+    "needKind": "Choose a kind of error for every flagged segment.",
+    "toProtocol": "Continue to the challenge protocol",
+    "protocol": {
+      "title": "Challenge the output",
+      "body": "Answer as you would at work. Some steps are critical: getting them wrong means not yet."
+    },
+    "backCompare": "Back to the comparison",
+    "submit": "Submit for scoring",
+    "confirm": {
+      "title": "Submit this drill?",
+      "body": "You flagged {n} segments. The server scores your answers against the key; a pass writes evidence for AI output verification (level 1 or 2)."
+    },
+    "res": {
+      "passed": "Passed: evidence at level {n}",
+      "notYet": "Not yet",
+      "summary": "Errors found {found} of {errors} · protocol {right} of {total} · flags on correct segments {false}",
+      "line": "Your score",
+      "passMark": "Pass mark {pct}",
+      "l2": "Level 2 at {pct}",
+      "criticalTitle": "A critical step was missed",
+      "critical": "Working from the AI summary, or giving in to time pressure, is the error this drill exists to prevent.",
+      "errors": "Planted errors",
+      "foundRight": "Found, kind right",
+      "foundKind": "Found, other kind",
+      "missed": "Missed",
+      "step": "Procedure step {n}",
+      "falseFlag": "Flag on a correct segment",
+      "falseHelp": "This segment matches the procedure.",
+      "protocol": "Challenge protocol",
+      "right": "Right",
+      "wrong": "Not right",
+      "criticalChip": "Critical",
+      "yours": "Your answer: {a}",
+      "best": "Best answer: {a}",
+      "evidence": "Evidence",
+      "evidenceWritten": "Written to your skills passport: AI output verification at level {n}.",
+      "toFluency": "See your AI fluency",
+      "noEvidence": "No evidence written. Your earlier evidence from this drill, if any, is replaced by this attempt.",
+      "more": "More drills"
+    }
+  },
+  "tdr": {
+    "intro": "The sandbox drills, their keys and how people do on them. Results use each person's latest attempt; cells under 10 are suppressed.",
+    "rules": "Documents must be synthetic (SYN- codes, marked SYNTHETIC); evidence is level 1 or 2; nothing may touch plant security. No drill calls a model.",
+    "tile": {
+      "drills": "Published drills",
+      "drillsSub": "{n} drafts",
+      "attempts": "Attempts",
+      "people": "People (latest attempt)",
+      "missed": "Most missed kind",
+      "missedSub": "Share of planted errors missed"
+    },
+    "bank": "Drill bank",
+    "bankIntro": "Pass rate and average score per drill. Open the key to see the planted errors and protocol answers.",
+    "col": {
+      "drill": "Drill",
+      "status": "Status",
+      "diff": "Difficulty",
+      "level": "Evidence",
+      "people": "People",
+      "pass": "Pass rate",
+      "avg": "Average score"
+    },
+    "key": "Key",
+    "edit": "Edit",
+    "copy": "Duplicate",
+    "keyTitle": "Key: {title}",
+    "passMark": "Pass mark {pct}",
+    "missed": {
+      "title": "Missed by kind of error",
+      "eyebrow": "Where to focus the training"
+    },
+    "addTitle": "New drill (draft)",
+    "editTitle": "Edit the drill",
+    "save": "Save",
+    "f": {
+      "title_en": "Title (English)",
+      "title_ar": "Title (Arabic)",
+      "summary_en": "Summary (English)",
+      "summary_ar": "Summary (Arabic)",
+      "scenario_en": "Scenario (English)",
+      "scenario_ar": "Scenario (Arabic)",
+      "difficulty": "Difficulty",
+      "level": "Evidence level",
+      "levelHint": "Never above 2",
+      "minutes": "Minutes",
+      "status": "Status",
+      "doc": "Synthetic controlled procedure",
+      "code": "Code",
+      "codeHint": "SYN-XX-000",
+      "revision": "Revision",
+      "docTitle_en": "Title (English)",
+      "docTitle_ar": "Title (Arabic)",
+      "steps": "Steps",
+      "stepsHint": "One step per line: English || Arabic",
+      "output": "AI-styled summary and planted errors",
+      "segments": "Segments",
+      "segmentsHint": "One segment per line: id || English || Arabic",
+      "errors": "Planted errors",
+      "segment": "Segment",
+      "kind": "Kind",
+      "explain_en": "Explanation (English)",
+      "explain_ar": "Explanation (Arabic)",
+      "protocol": "Challenge protocol key",
+      "correct": "Best answer",
+      "critical": "Critical step",
+      "pass": "Pass mark (%)"
+    },
+    "removeError": "Remove",
+    "addError": "Add a planted error",
+    "confirm": {
+      "title": "Save this drill?",
+      "body": "The drill and its key are versioned and audited. A published drill opens to all staff."
+    }
+  }
+}

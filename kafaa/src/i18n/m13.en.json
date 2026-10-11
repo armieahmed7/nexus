@@ -1,0 +1,708 @@
+{
+  "module": {},
+  "routes": {
+    "ask": {
+      "title": "Ask Dalil",
+      "purpose": "Dalil, the governed AI guide: answers from approved sources with citations, refuses out-of-scope topics, hands off to people."
+    },
+    "admin-dalil": {
+      "title": "Dalil",
+      "purpose": "Corpus, refusal policy, evaluation runs, logs and the kill switch."
+    },
+    "admin-digest": {
+      "title": "Digest and nudges",
+      "purpose": "Open rates and the item mix of the personal digest, aggregated: every count under 10 is suppressed."
+    }
+  },
+  "engine": {
+    "hello": {
+      "public": "I'm Dalil, Kafa'a's guide. I answer questions about nuclear careers, talent programmes, training, partnering and public facts about Barakah, only from approved sources, and I cite them. I can't take concerns, give plant operating or security details, or decide eligibility.",
+      "applicant": "I'm Dalil. As well as careers and programmes, I can tell you the status of your own applications. I answer only from approved sources and cite them.",
+      "staff": "I'm Dalil in staff mode. I can answer from the catalogue and internal guides cleared for me, and tell you about your own qualifications, licence, learning and plan. I never decide qualification or licensing outcomes.",
+      "partner": "I'm Dalil in partner mode. I can help with supplier readiness, the supplier academy and In-Country Value guidance, and your organisation's onboarding status.",
+      "career": "Career mode: ask where you can go next, what you need for a role, which courses close a gap, which opportunities fit you or when you could reach a role. I answer from your own records and cite them; answers are indicative, never a decision."
+    },
+    "aboutDalil": "FAQ · What is Dalil?",
+    "contactPage": "Contact form",
+    "signInPage": "Sign in",
+    "speakUpPage": "Raise a concern: ECP channels",
+    "emergencyPage": "Emergency information (official links)",
+    "practicePage": "Practice quizzes",
+    "licensingPage": "How RO and SRO certification works",
+    "pathwaysPage": "Talent programmes",
+    "faqLink": "Browse the FAQ",
+    "handoff": {
+      "offer": "I can pass your question to a person: the careers team, a training coordinator or the partner desk. Choose a team below; you decide whether the conversation goes with it.",
+      "anon": "To reach a person, use the contact form (it routes to a role mailbox) or sign in and ask me to hand off."
+    },
+    "notDecision": "This is general guidance from published sources; ENEC and FANR decide eligibility.",
+    "openRole": "Open the {role} page",
+    "openProgramme": "Open {name}",
+    "checkRoutes": "Entry-route explainer",
+    "entry": {
+      "intro": "{role}: {ref} sets {n} entry routes.",
+      "noRoutes": "{role}: the role page lists the qualifications and training path; no regulatory entry routes are published for it."
+    },
+    "role": {
+      "training": "Training path",
+      "authority": "Licensing or authorising body",
+      "securityCareerOnly": "Kafa'a shows the career path only for this role; no security detail is held here."
+    },
+    "nationality": {
+      "uae_only": "UAE nationals",
+      "uae_priority": "UAE nationals first",
+      "open": "open to all nationalities"
+    },
+    "prog": {
+      "who": "Who it is for",
+      "duration": "Duration",
+      "outcome": "Leads to",
+      "apply": {
+        "in_kafaa": "You can express interest through Kafa'a (Apply).",
+        "link_out": "Applications go through the official ENEC or partner channel (linked on the programme page).",
+        "closed": "Applications are closed at the moment."
+      },
+      "sourcesDiffer": "Sources differ",
+      "scholarships": "Two sponsored study routes are published:"
+    },
+    "fact": {
+      "answer": "{label}: {value} (as of {date}).",
+      "conflict": "Note:",
+      "sample": "This is a SAMPLE figure from the demo tenant."
+    },
+    "noAnswer": "I couldn't find this in Kafa'a's approved sources, so I won't guess. Try rephrasing, browse the FAQ, or ask for a person.",
+    "personal": {
+      "signIn": "Sign in to ask about your own records. I only ever show your own information.",
+      "publicMode": "You're in public mode. Switch to staff, applicant or partner mode above to ask about your own records.",
+      "intro": {
+        "qual": "Your qualification records (mirrored from the training records system):",
+        "licence": "Your licence record (mirrored from the licensee's certification records; FANR decides):",
+        "enrolment": "Your training:",
+        "plan": "Your development plan:",
+        "application": "Your applications (decisions are mirrored from ENEC HR):",
+        "onboarding": "Your organisation's onboarding:"
+      },
+      "none": {
+        "qual": "I can't see any qualification records for you.",
+        "licence": "I can't see a licence record for you. Licence tracking applies to certified operators.",
+        "enrolment": "You have no assigned or requested training.",
+        "plan": "You don't have a development plan yet.",
+        "application": "You have no applications.",
+        "onboarding": "Your organisation has no onboarding case."
+      },
+      "page": {
+        "qual": "My qualifications",
+        "licence": "My licence",
+        "enrolment": "My learning",
+        "plan": "My development plan",
+        "application": "My applications",
+        "onboarding": "Partner onboarding"
+      },
+      "expires": "expires {date}",
+      "due": "due {date}",
+      "synced": "last synced {date}",
+      "progress": "{done} of {total} activities done",
+      "noDate": "no date",
+      "securityMirror": "{status} (security qualifications show qualified or not qualified only)"
+    },
+    "st": {
+      "planned": "planned",
+      "in_progress": "in progress",
+      "qualified": "qualified",
+      "due": "due",
+      "expired": "expired",
+      "suspended": "suspended",
+      "renewed": "renewed",
+      "valid": "valid",
+      "lapsed": "lapsed",
+      "withdrawn": "withdrawn",
+      "pending": "pending",
+      "assigned": "assigned",
+      "requested": "requested",
+      "approved": "approved",
+      "waitlisted": "waitlisted",
+      "enrolled": "enrolled",
+      "completed": "completed",
+      "failed": "failed",
+      "cancelled": "cancelled",
+      "draft": "draft",
+      "submitted": "submitted",
+      "active": "active",
+      "closed": "closed",
+      "interest": "interest registered",
+      "screening": "screening",
+      "assessment": "assessment",
+      "interview": "interview",
+      "offer": "offer",
+      "accepted": "accepted",
+      "unsuccessful": "unsuccessful",
+      "invited": "invited",
+      "returned": "returned",
+      "handed_off": "handed off to NEXUS"
+    },
+    "refuse": {
+      "concern": "I can't take concerns. Please use the Employee Concerns Program channels below.",
+      "injection": "I can't change how I work. I answer only from Kafa'a's approved sources, with citations.",
+      "security": "I can't discuss plant security. If you are interested in a security career, the Career Map shows the path and the public requirements.",
+      "safeguards": "Safeguards details are out of scope. The IAEA and FANR publish general information.",
+      "cyber": "I can't discuss cyber security details.",
+      "operations": "I can't help with plant operating procedures.",
+      "emergency": "For emergency guidance, use official ENEC and NCEMA pages: Go In, Stay In, Listen In.",
+      "medical": "I can't discuss medical matters. Occupational health can help.",
+      "exam": "I can't share exam content.",
+      "personal": "I can't share information about other people.",
+      "decision": "I can explain the published criteria, but I can't decide or predict eligibility, admission or licensing outcomes."
+    },
+    "careers": {
+      "security": "Career path: Security Officer",
+      "safeguards": "Career path: Safeguards Specialist",
+      "cyber": "Career path: Cyber Security Engineer",
+      "operations": "Career Map: operations roles"
+    },
+    "follow": {
+      "capabilities": {
+        "1": "What are the RO entry requirements?",
+        "2": "Which programmes are open to school leavers?",
+        "3": "How much of UAE electricity does Barakah produce?"
+      },
+      "staff": {
+        "1": "When do my qualifications expire?",
+        "2": "What training is assigned to me?"
+      },
+      "partner": {
+        "1": "What is the supplier readiness path?",
+        "2": "Which supplier academy courses are there?"
+      },
+      "entry": {
+        "1": "What does the SRO route require?",
+        "2": "How long is RO initial training?",
+        "3": "Which programmes lead to Local Operator?"
+      },
+      "entrySro": {
+        "1": "What does a Shift Supervisor do?",
+        "2": "How long is an operator certificate valid?",
+        "3": "What is the Graduate Plant Operator programme?"
+      },
+      "role": {
+        "1": "What are the entry requirements for this role?",
+        "2": "Which programmes lead to this role?",
+        "3": "What is the safety culture at Barakah?"
+      },
+      "programme": {
+        "1": "Which scholarships are available?",
+        "2": "What is the Diploma in Nuclear Technology?",
+        "3": "How do I become a Reactor Operator?"
+      },
+      "fact": {
+        "1": "How many people work for the ENEC group?",
+        "2": "What is the Emiratization rate?",
+        "3": "How much CO2 does Barakah avoid?"
+      },
+      "personal": {
+        "1": "What training is assigned to me?",
+        "2": "When do my qualifications expire?"
+      },
+      "security": {
+        "1": "What qualifications does a security officer career need?",
+        "2": "Where can I find emergency information?"
+      },
+      "faq": {
+        "1": "What is Dalil?",
+        "2": "Where do I raise a safety concern?"
+      },
+      "news": {
+        "1": "What is the Diploma in Nuclear Technology?",
+        "2": "Which scholarships are available?"
+      },
+      "page": {
+        "1": "What are the traits of a healthy safety culture?",
+        "2": "How can my company become a supplier?"
+      }
+    }
+  },
+  "modes": {
+    "public": "Public",
+    "applicant": "Applicant",
+    "staff": "Staff",
+    "partner": "Partner",
+    "career": "Career"
+  },
+  "handoff": {
+    "careers": "Careers team",
+    "training": "Training team",
+    "partner_desk": "Partner desk"
+  },
+  "cat": {
+    "concern": "Safety concern",
+    "cyber": "Cyber security",
+    "decision": "Decisions about a person",
+    "emergency": "Emergency",
+    "exam": "Exam content",
+    "medical": "Medical",
+    "operations": "Plant operations",
+    "personal": "Someone else's data",
+    "safeguards": "Safeguards",
+    "security": "Plant security",
+    "injection": "Instruction override",
+    "other": "Other"
+  },
+  "ask": {
+    "eyebrow": "Kafa'a guide",
+    "intro": "Dalil answers questions about careers, programmes, qualifications and partners using only approved Kafa'a content, and shows where each answer comes from.",
+    "newChat": "New conversation",
+    "offTitle": "Dalil is switched off",
+    "offBody": "The AI owner has paused Dalil. The FAQ and contact form are still available.",
+    "faq": "Read the FAQ",
+    "contact": "Contact us",
+    "signInTitle": "Sign in to use Dalil",
+    "signInBody": "Dalil is available to signed-in users only at the moment.",
+    "conversation": "Conversation with Dalil",
+    "mode": "Mode",
+    "quota": "{n} of {limit} questions left this hour",
+    "placeholder": "Ask about careers, programmes, qualifications or partners…",
+    "send": "Send",
+    "disclaimer": "Dalil is a guide, not a decision-maker. It cannot approve, qualify, license or hire anyone, and it does not answer questions about plant operations or security.",
+    "howTitle": "How Dalil works",
+    "how": {
+      "1": "It searches only approved Kafa'a pages, programme facts, FAQs and public ENEC and FANR sources.",
+      "2": "Every answer lists its sources so you can check them.",
+      "3": "It declines operational, security, medical and personal-data questions and points you to the right channel.",
+      "4": "You can ask for a person from the careers, training or partner team to follow up."
+    },
+    "concernTitle": "Raising a safety concern?",
+    "concernBody": "Dalil does not take concerns. Use the Employee Concerns Program channels, which can be anonymous.",
+    "concernLink": "Speak-up channels",
+    "corpusInfo": "{n} approved documents in scope",
+    "loadingCorpus": "Loading approved content…",
+    "retention": "Conversations are kept for {n} days for quality review, then deleted.",
+    "limited": "You have reached the hourly question limit. Please try again later.",
+    "dalil": "Dalil",
+    "outOfScope": "Out of scope",
+    "concernStop": "Dalil has stopped this conversation so the concern can go to the right channel. Start a new conversation for other questions.",
+    "yourRecords": "From your records",
+    "sources": "Sources",
+    "followUps": "You could also ask",
+    "handoffDone": "Request sent. A member of the team will contact you.",
+    "handoffTitle": "Talk to a person",
+    "handoffNote": "What would you like help with?",
+    "handoffConsent": "Share this conversation with the team",
+    "handoffConsentHint": "Without consent, only your note is shared.",
+    "handoffSend": "Request a call-back",
+    "starters": {
+      "s1": "How do I become a reactor operator?",
+      "s2": "What scholarships are available?",
+      "s3": "What is the Energy Pioneers programme?",
+      "s4": "How many units does Barakah have?",
+      "a1": "What are the entry requirements for a senior reactor operator?",
+      "st1": "When does my licence expire?",
+      "st2": "What is my next qualification renewal?",
+      "st3": "What are the human performance tools?",
+      "p1": "How does a partner join the training network?",
+      "p2": "What is the In-Country Value programme?",
+      "p3": "Which courses can partners deliver?",
+      "c1": "Where can I go next?",
+      "c2": "What are my gaps for my target role?",
+      "c3": "Which opportunities fit me?",
+      "c4": "Practise an interview"
+    }
+  },
+  "admin": {
+    "intro": "Switch Dalil on or off, curate the approved corpus and refusal policies, run the evaluation set before each release, and review conversation logs and hand-offs.",
+    "roleOwner": "Acting as AI owner",
+    "roleEditor": "Acting as content editor",
+    "roleAuditor": "Read-only (auditor)",
+    "tabOverview": "Overview",
+    "tabCorpus": "Corpus",
+    "tabPolicies": "Refusal policies",
+    "tabEval": "Evaluation",
+    "tabLogs": "Logs",
+    "tabHandoffs": "Hand-offs",
+    "killTitle": "Kill switch",
+    "on": "Dalil is on",
+    "off": "Dalil is off",
+    "killHelp": "Turning Dalil off hides the launcher and blocks every new question within one minute. The server refuses turns while it is off.",
+    "lastChange": "Last changed {when}",
+    "turnOff": "Turn Dalil off",
+    "turnOn": "Turn Dalil on",
+    "ownerOnly": "Only the AI owner can switch Dalil",
+    "offConsequence": "Every user, public and staff, loses access to Dalil until it is turned back on. This is recorded in the audit log.",
+    "onConsequence": "Dalil becomes available again under the current corpus, policies and rate limits. This is recorded in the audit log.",
+    "mSessions": "Sessions",
+    "mAnswers": "Answers",
+    "mRefusals": "Refusal rate",
+    "mHandoffs": "Open hand-offs",
+    "settingsTitle": "Settings",
+    "engine": "Engine",
+    "gateway": "Model gateway",
+    "publicLimit": "Public rate limit",
+    "signedInLimit": "Signed-in rate limit",
+    "perHour": "{n} per hour",
+    "retention": "Log retention",
+    "days": "{n} days",
+    "staffMode": "Staff mode enabled",
+    "settingsNote": "Settings change through a reviewed release. The engine is retrieval-only: no external model is called and no question leaves the platform.",
+    "refusalsByCat": "Refusals by category",
+    "noRefusals": "No refusals recorded yet.",
+    "gateOpen": "Release {release} passed the gate",
+    "gateBlocked": "Release {release} is blocked",
+    "lastEval": "Last run {when}: {cite} cited correctly, {ref} refused correctly.",
+    "corpusIntro": "Dalil answers only from approved documents plus structured Kafa'a content (roles, programmes, FAQs, facts, safety culture). Withdrawing a document removes it from answers immediately. Internal documents reach signed-in staff only.",
+    "docsPublic": "Public documents",
+    "docsPublicSub": "what an anonymous visitor's Dalil sees",
+    "roles": "Roles",
+    "programmes": "Programmes",
+    "faqFacts": "FAQs and facts",
+    "docTitle": "Title",
+    "kind": "Type",
+    "modes": "Modes",
+    "public": "Public",
+    "internal": "Internal",
+    "approved": "Approved",
+    "approvedYes": "Approved",
+    "approvedNo": "Withdrawn",
+    "updated": "Updated",
+    "kinds": {
+      "kafaa_page": "Kafa'a page",
+      "enec_page": "ENEC page",
+      "fanr_page": "FANR page",
+      "internal": "Internal"
+    },
+    "approve": "Approve",
+    "withdraw": "Withdraw",
+    "approveBody": "\"{title}\" will be used in Dalil answers for the selected modes.",
+    "withdrawBody": "\"{title}\" will no longer be used in any Dalil answer.",
+    "saved": "Saved",
+    "addDoc": "Add document",
+    "docRulesTitle": "Corpus rules",
+    "docRules": "Only add published, approved text. No plant procedures, security arrangements, personal data or exam content. Public documents must cite a public source URL.",
+    "url": "Source URL",
+    "urlHint": "Public page the text comes from",
+    "textEn": "Text (English)",
+    "textAr": "Text (Arabic)",
+    "isPublic": "Public document",
+    "isPublicHint": "Visible to anonymous visitors. Leave off for internal staff content.",
+    "probeTitle": "Test console",
+    "probeHelp": "Ask a question as a chosen mode to see the answer, citations and intent. Test questions are not logged.",
+    "probeQ": "Question",
+    "probeRun": "Run",
+    "policiesIntro": "Refusal policies decide what Dalil declines and what it says instead. Plant security, safeguards, cyber, operations, concerns and instruction overrides also have a built-in floor that cannot be switched off.",
+    "stops": "Stops conversation",
+    "floor": "Built-in floor: {n} patterns",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "enable": "Enable",
+    "disable": "Disable",
+    "editPolicy": "Edit policy: {cat}",
+    "patterns": "Patterns (one per line)",
+    "patternsHint": "Plain words or phrases, at least 3 characters. The built-in floor still applies.",
+    "responseEn": "Response (English)",
+    "responseAr": "Response (Arabic)",
+    "evalTitle": "Release gate",
+    "evalIntro": "The evaluation set has {n} questions in English and Arabic, including red-team security probes. A release passes when at least {floor} of in-scope answers cite a correct source and every security probe is refused.",
+    "runEval": "Run evaluation",
+    "saveRun": "Save run",
+    "evalSaved": "Evaluation run saved",
+    "citeRate": "Cited correctly",
+    "floorSub": "floor {floor}",
+    "securityRate": "Security probes refused",
+    "securitySub": "must be 100%",
+    "refusalRate": "Refused correctly",
+    "gate": "Gate",
+    "pass": "Pass",
+    "fail": "Fail",
+    "failuresOnly": "Failures only",
+    "case": "Case",
+    "question": "Question",
+    "in_scope": "In scope",
+    "refusal": "Refusal",
+    "redTeam": "Red team",
+    "got": "Result",
+    "result": "Pass/fail",
+    "history": "Evaluation history",
+    "logsIntro": "Conversation logs support quality review. Concern questions are never stored; they appear as withheld. Logs are deleted after the retention period.",
+    "refusedFilter": "Refused",
+    "noLogs": "No conversations match these filters.",
+    "started": "Started",
+    "who": "User",
+    "signedIn": "Signed in",
+    "anonymous": "Anonymous",
+    "page": "Opened from",
+    "turns": "Turns",
+    "retentionUntil": "Kept until",
+    "expired": "Due for deletion",
+    "conversation": "Conversation",
+    "user": "User",
+    "redacted": "Withheld: concern question not stored.",
+    "noHandoffs": "No hand-off requests.",
+    "shared": "Conversation shared",
+    "notShared": "Note only",
+    "pickUp": "Pick up",
+    "close": "Close",
+    "hs": {
+      "none": "None",
+      "requested": "Requested",
+      "picked_up": "Picked up",
+      "closed": "Closed"
+    }
+  },
+  "career": {
+    "noProfile": "Career mode needs your staff record and skills profile. Open the Career Navigator to see what Kafa'a holds for you.",
+    "notDecision": "This is indicative guidance from your records, not an eligibility decision: ENEC and FANR decide.",
+    "cite": {
+      "navigator": "My Career Navigator",
+      "coach": "My Learning Coach",
+      "reg17": "FANR-REG-17 Art. 4",
+      "passport": "My Skills Passport (evidence)",
+      "marketplace": "Opportunity marketplace",
+      "roadmap": "My career roadmap",
+      "conversations": "My career conversations"
+    },
+    "help": {
+      "intro": "Career mode answers from your own records and cites them. Try:",
+      "notFound": "I could not answer that from your records or the approved guides. In career mode I can help with:",
+      "b1": "Where can I go next? (roles in reach and how ready you are)",
+      "b2": "What do I need for a role? (gates on your route and your top three gaps, with evidence)",
+      "b3": "Which courses improve a skill or close my gaps?",
+      "b4": "Which opportunities fit me?",
+      "b5": "When could I reach a role? (dated, indicative roadmap) and practice for an interview or career conversation"
+    },
+    "follow": {
+      "gap": "What do I need for {role}?",
+      "when": "When could I be {role}?",
+      "opps": "Which opportunities fit me?",
+      "next": "Where can I go next?",
+      "courses": "Which courses close my gaps for {role}?",
+      "practice": "Practise an interview for {role}"
+    },
+    "next": {
+      "noRole": "Your record has no current role, so I cannot list the roles in reach. The Career Navigator shows every path.",
+      "unranked": "You opted out of ranked career suggestions, so here are the {n} roles in reach from {role}, alphabetically and without readiness scores.",
+      "oneStep": "One step away",
+      "twoSteps": "Two steps away",
+      "none": "No published path leads on from {role} yet.",
+      "intro": "From {role}, the {n} closest moves on the published paths:"
+    },
+    "link": {
+      "navigator": "Open my Career Navigator",
+      "role": "About the {role} role",
+      "roadmap": "Open my roadmap",
+      "passport": "Open my Skills Passport",
+      "coach": "Open my Learning Coach",
+      "marketplace": "Open the marketplace"
+    },
+    "band": {
+      "path_only": "career path only (security role)",
+      "ready_in": "{pct}% ready, about {months} months to go",
+      "stretch": "{pct}% ready, a stretch of about {months} months",
+      "ready_now": "{pct}% ready now",
+      "current": "your current role ({pct}%)"
+    },
+    "gap": {
+      "pathOnly": "{role} is shown as a career path only: Kafa'a does not compute readiness or show gate details for security, safeguards or cyber roles. The role page explains the path and its public requirements.",
+      "route": "Your route: {route} ({ref})",
+      "evidence": "evidence: {kind} at level {level} ({date})",
+      "noEvidence": "no evidence yet",
+      "line": "{skill}: level {from} of {to}",
+      "card": "Level {from} of {to}",
+      "current": "You already hold the {role} role; {n} of its competencies are below the required level.",
+      "introNoPct": "{role}: you have {n} competency gaps (you opted out of readiness scores).",
+      "intro": "{role}: you are {pct}% ready on the required competencies, with {n} gaps.",
+      "noGates": "No published entry route applies to you yet.",
+      "gatesMet": "Every gate on your route is met in your records.",
+      "gatesNotMet": "A gate on your route is not met yet (about {months} months to go).",
+      "gatesPending": "Nothing blocks you; some gates are still to do or are checked by the licensee."
+    },
+    "gate": {
+      "met": "met",
+      "pending": "to do or checked by the licensee",
+      "not_met": "not met yet",
+      "months": "about {n} months to go"
+    },
+    "ev": {
+      "qual": "qualification",
+      "course": "course",
+      "assessment": "assessment",
+      "jpm": "job performance measure",
+      "rating": "validated rating",
+      "ojt": "on-the-job evidence",
+      "credential": "credential"
+    },
+    "why": {
+      "evidence": "Strongest evidence in your passport: {kind} at level {level} ({date})",
+      "noEvidence": "No evidence for this competency in your passport yet",
+      "importance_core": "A core competency for this role",
+      "importance_important": "An important competency for this role",
+      "importance_useful": "A useful competency for this role"
+    },
+    "courses": {
+      "hours": "About {n} hours",
+      "none": "I found no open staff course for {subject} that you have not completed.",
+      "unranked": "You opted out of ranked learning suggestions, so here are {n} courses for {subject} in code order.",
+      "noGap": "You already meet the level for {subject}; these courses keep it current.",
+      "introSkill": "The {n} courses that close the most of your gap in {subject} per hour of effort:",
+      "introRole": "The {n} courses that close the most of your gaps for {subject} per hour of effort:"
+    },
+    "opps": {
+      "none": "There are no open opportunities you have not applied to.",
+      "unranked": "You opted out of ranked opportunities, so here are {n} open ones by start date.",
+      "starts": "Starts {date}",
+      "noneEligible": "None of the open opportunities is open to your job family right now.",
+      "intro": "{n} open opportunities fit you best (eligible first):",
+      "match": "{pct}% match"
+    },
+    "roadmap": {
+      "noTarget": "Tell me which role you mean, or shortlist a target in the Career Navigator.",
+      "already": "You already hold the {role} role.",
+      "noRoute": "There is no published route from your role to {role}.",
+      "intro": "On the default plan ({route}) you could reach {role} around {quarter}, about {months} months from now.",
+      "indicative": "Dates are indicative: programme intakes and FANR exams are scheduled by ENEC and FANR.",
+      "sample": "indicative"
+    },
+    "roleplay": {
+      "offerInterview": "Let's practise an interview for {role}. I will ask five questions and check each answer against a short rubric. Your answers stay in this browser.",
+      "offerConversation": "Let's practise your career conversation with your line manager. I will ask five questions and check each answer against a short rubric. Your answers stay in this browser.",
+      "yourTarget": "your target role"
+    },
+    "ui": {
+      "banner": "Career mode answers from your own records (passport, qualifications, targets, applications) and cites them. Only you can see this conversation.",
+      "indicative": "Indicative",
+      "loading": "Loading your career records…",
+      "unranked": "Unranked (you opted out)",
+      "start": {
+        "interview": "Practise an interview",
+        "career_conversation": "Practise a career conversation"
+      },
+      "status": {
+        "met": "Met",
+        "pending": "To do",
+        "not_met": "Not met",
+        "ready_now": "Ready now",
+        "ready_in": "Ready in time",
+        "stretch": "Stretch",
+        "path_only": "Path only",
+        "current": "Current role"
+      },
+      "usesTitle": "What career mode uses",
+      "uses": {
+        "passport": {
+          "label": "Skills Passport",
+          "to": "/my/skills"
+        },
+        "navigator": {
+          "label": "Career Navigator",
+          "to": "/my/career"
+        },
+        "roadmap": {
+          "label": "Career roadmap",
+          "to": "/my/career/roadmap"
+        },
+        "coach": {
+          "label": "Learning Coach",
+          "to": "/my/coach"
+        },
+        "marketplace": {
+          "label": "Opportunity marketplace",
+          "to": "/opportunities"
+        }
+      },
+      "usesNote": "The same deterministic engines as those pages; no language model. Your opt-outs apply here too.",
+      "practiceTitle": "Role-play practice",
+      "practiceBody": "Scripted questions with a rubric checklist. Practice only: not an assessment."
+    },
+    "rp": {
+      "title": {
+        "interview": "Interview practice",
+        "career_conversation": "Career conversation practice"
+      },
+      "practiceOnly": "Practice only",
+      "close": "Back to chat",
+      "privacy": "Not an assessment and not recorded in your file. Your answers stay in this browser; Dalil logs only that you practised and how many rubric points you met.",
+      "step": "Question {n}",
+      "concern": "That sounds like a concern. Kafa'a does not handle concerns in practice: use the speak-up channels.",
+      "decline": "Keep practice examples free of security, operating, exam, medical or personal details. Try another example.",
+      "summaryTitle": "How the practice went",
+      "score": "{passed} of {total} rubric points",
+      "workOn": "To work on next",
+      "gapsHint": "Your gaps for this role: {gaps}. Bring one of them into your answers next time.",
+      "prepare": "Prepare my career conversation",
+      "again": "Practise again",
+      "answer": "Your answer",
+      "check": "Check my answer",
+      "words": "{n} words",
+      "rubric": "Rubric",
+      "next": "Next question",
+      "finish": "See the summary",
+      "anyCompetency": "a skill the role needs",
+      "interview": {
+        "why_role": "Why do you want to become {role}, and why now?",
+        "star": "Tell me about a time you used {competency}. Use the STAR shape: situation, task, action, result.",
+        "questioning": "Describe a time you stopped or questioned work because something did not look right.",
+        "procedure": "How do you make sure you follow a procedure exactly, even under time pressure?",
+        "gap_plan": "Which of your gaps for {role} are you working on, and how?"
+      },
+      "career_conversation": {
+        "goal_12m": "What would you like to achieve in the next 12 months?",
+        "goal_3y": "Where do you see yourself in three years, and why?",
+        "strengths": "What are your strengths, and what shows them?",
+        "support": "What support do you need from me to get there?",
+        "risks": "What could get in the way, and how would you handle it?"
+      },
+      "hint": {
+        "why_role": "Say why the role matters to you and what you bring.",
+        "star": "One real event, told as situation, task, action and result.",
+        "questioning": "Show the moment you paused, and what happened next.",
+        "procedure": "Concrete habits beat general statements.",
+        "gap_plan": "Name a gap and a concrete plan.",
+        "goal_12m": "Make it specific and dated.",
+        "goal_3y": "Name a role or a direction, and why.",
+        "strengths": "Back each strength with evidence.",
+        "support": "Ask for something your manager can act on.",
+        "risks": "Be honest; show a plan."
+      },
+      "crit": {
+        "length": "Between 25 and 250 words",
+        "first_person": "Speaks about what you did (I, my)",
+        "specific": "A specific moment, with a date or number",
+        "situation": "Situation: when and where it happened",
+        "task": "Task: what you were responsible for",
+        "action": "Action: what you did yourself",
+        "result": "Result: what changed, and what you learned",
+        "questioning": "Shows a questioning attitude (stop, question, check, escalate)",
+        "procedure": "Shows procedure use (place-keeping, verification, three-way communication)",
+        "plan": "Names how you will build the skill (course, mentor, practice, simulator)",
+        "support": "Names the support you need (course, mentoring, rotation, time)",
+        "evidence": "Backs strengths with evidence (qualification, course, assessment, feedback)",
+        "motivation": "Explains why (motivation or goal)",
+        "horizon": "Gives a time frame (months or years)",
+        "risk": "Names what could get in the way (shifts, outages, exams, time)",
+        "names_role": "Names the target role",
+        "names_gap": "Names one of your actual skill gaps"
+      },
+      "tip": {
+        "length": "Aim for a short story: three to six sentences.",
+        "first_person": "Say what you did: \"I checked…\", \"I stopped…\".",
+        "specific": "Anchor it in one real event: when it was, which unit or task, a number.",
+        "situation": "Start with when and where: \"During the 2025 outage on Unit 2…\".",
+        "task": "Say what you were responsible for.",
+        "action": "Describe the steps you took yourself.",
+        "result": "Close with the outcome and what you learned.",
+        "questioning": "Show the moment you paused or questioned: STAR, peer check, or escalating to your supervisor.",
+        "procedure": "Mention place-keeping, verification or three-way communication.",
+        "plan": "Name a course, a mentor, simulator practice or a rotation.",
+        "support": "Ask for something concrete: a course, a mentor, a rotation or protected time.",
+        "evidence": "Point to evidence: a qualification, a course result, feedback or a project.",
+        "motivation": "Say why this matters to you.",
+        "horizon": "Put a time on it: in 12 months, by 2028.",
+        "risk": "Name one obstacle and how you would handle it.",
+        "names_role": "Use the role's name so your goal is clear.",
+        "names_gap": "Name one of the gaps Dalil showed you for this role."
+      }
+    },
+    "admin": {
+      "evalTitle": "Career mode ({n} cases, synthetic evaluation persona)",
+      "persona": "Evaluation persona",
+      "personaValue": "RO → SRO",
+      "personaSub": "Synthetic: RO licence since 2023, SRO target, set gaps"
+    }
+  }
+}

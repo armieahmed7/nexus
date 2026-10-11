@@ -1,0 +1,31 @@
+{
+  "@context": [
+    "https://www.w3.org/ns/credentials/v2",
+    "https://purl.imsglobal.org/spec/ob/v3p0/context-3.0.3.json"
+  ],
+  "id": "urn:kafaa:issuer:demo-tenant",
+  "type": [
+    "Profile"
+  ],
+  "name": "Kafa'a demo tenant",
+  "description": "Internal Kafa'a credential; not a FANR certificate or licence. Demo tenant of a concept platform with synthetic data; not affiliated with or endorsed by ENEC or FANR.",
+  "cryptosuite": "kafaa-jcs-eddsa-2026",
+  "verificationMethod": [
+    {
+      "id": "urn:kafaa:issuer:demo-tenant#key-1",
+      "type": "Multikey",
+      "controller": "urn:kafaa:issuer:demo-tenant",
+      "publicKeyMultibase": "z6Mkf5si8WcGwNnN3cMUH7AmM9cPiBJZz2A5qSNQQkZUp3yN",
+      "publicKeyHex": "09613c2d60072a14352f5d1055a0cfdd868dd928a097ace9eef0a438188f6455",
+      "label": "Kafa'a issuer key (server)"
+    },
+    {
+      "id": "urn:kafaa:issuer:demo-tenant#key-offline",
+      "type": "Multikey",
+      "controller": "urn:kafaa:issuer:demo-tenant",
+      "publicKeyMultibase": "z6MkuAbT9UYQw8affAen4kynwS2k8FvKTnQuEo1Rmps1Pgcu",
+      "publicKeyHex": "da9a5f6ae4735980fc10dcf3af89373d998249ec128495a549702a4ae4a0cd0e",
+      "label": "Offline demo key (in-browser demo backend only)"
+    }
+  ]
+}

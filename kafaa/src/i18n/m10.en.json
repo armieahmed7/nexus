@@ -1,0 +1,347 @@
+{
+  "module": {},
+  "routes": {
+    "universities": {
+      "title": "Universities",
+      "purpose": "Academic partners, scholarships and curriculum alignment."
+    },
+    "research": {
+      "title": "Research challenges",
+      "purpose": "Screened public research challenges and how to propose work."
+    },
+    "partner-university": {
+      "title": "University workspace",
+      "purpose": "Internship intakes, consenting scholar cohorts and curriculum alignment."
+    },
+    "partner-research": {
+      "title": "Research proposals",
+      "purpose": "Research challenges, proposals and IP routing."
+    },
+    "admin-research": {
+      "title": "Research screening",
+      "purpose": "Curate challenges, sign off security and export-control screening, and decide partner proposals."
+    }
+  },
+  "theme": {
+    "learning": "Learning",
+    "health_safety": "Health and safety",
+    "environment": "Environment",
+    "training": "Training",
+    "future_workforce": "Future workforce"
+  },
+  "uni": {
+    "eyebrow": "Universities and research",
+    "intro": "Academic partners connect to the competency framework and the talent pipeline. Every partner listed here has a public source.",
+    "programmesTitle": "Programmes and partnerships",
+    "fact": {
+      "ku": {
+        "eyebrow": "Khalifa University",
+        "title": "Nuclear engineering degrees",
+        "body": "MSc in Nuclear Engineering since 2010, aimed at careers at FANR, ENEC and ENEC Operations; a PhD in Engineering with a nuclear concentration since 2012; and a BSc nuclear minor.",
+        "source": "Khalifa University · MSc in Nuclear Engineering"
+      },
+      "entc": {
+        "eyebrow": "Khalifa University",
+        "title": "Emirates Nuclear Technology Center",
+        "body": "Launched in November 2019 with ENEC and FANR. Works on nuclear safety, materials and chemistry, and radiation safety.",
+        "source": "Khalifa University"
+      },
+      "ep": {
+        "eyebrow": "Scholarships",
+        "title": "Energy Pioneers",
+        "body": "Since 2009, \"over 500 UAE Nationals benefitted\". Partner universities in the UAE, the United States (Penn State, Texas A&M, NC State) and Korea.",
+        "source": "ENEC · Talent pipeline programmes"
+      },
+      "nitss": {
+        "eyebrow": "Summer school",
+        "title": "Nuclear Innovation & Technology Summer School",
+        "body": "The 2024 summer school had 60 participants from 20 universities.",
+        "source": "UAE National Report, 10th CNS Review Meeting"
+      },
+      "iat": {
+        "eyebrow": "Technical education",
+        "title": "Technical school routes",
+        "body": "The Institute of Applied Technology feeds the technician pipeline. Abu Dhabi Polytechnic ran the former Higher Diploma in Nuclear Technology, which the Diploma in Nuclear Technology replaced in 2023.",
+        "source": "UAE National Report, 10th CNS Review Meeting"
+      },
+      "src": {
+        "eyebrow": "Research partners",
+        "title": "Saskatchewan Research Council and GIEMS",
+        "body": "A January 2026 memorandum of understanding on small modular reactors, AI and robotics, waste and capacity building. MoUs are non-binding evaluations.",
+        "source": "ENEC · SRC and GIEMS MoU (Jan 2026)"
+      }
+    },
+    "epLink": "See the Energy Pioneers programme",
+    "partnersTitle": "Academic and research partners",
+    "partnersHint": "Filter by type or country. Relationships are listed only where a public source exists.",
+    "type": "Type",
+    "country": "Country",
+    "kind": {
+      "university": "University",
+      "research": "Research organisation"
+    },
+    "status": {
+      "active": "Active",
+      "historic": "Historic",
+      "exploratory": "Exploratory"
+    },
+    "none": "No partners are listed.",
+    "noMatch": "No partner matches these filters.",
+    "since": "Since {dates}",
+    "nonBinding": "non-binding",
+    "digestNote": "Entries marked \"search digest only\" come from secondary summaries and are kept until a primary source is found.",
+    "internshipsTitle": "Internship placements",
+    "internshipsHint": "Placements ENEC publishes for university students. Applications are made through the internships programme.",
+    "noInternships": "No open placements are listed.",
+    "placement": "Placement",
+    "host": "Host",
+    "openTo": "Open to",
+    "anyUniversity": "Any university",
+    "seats": "Seats",
+    "starts": "Starts",
+    "internshipsApply": "How to apply for an internship",
+    "alignTitle": "Curriculum alignment",
+    "alignHint": "Choose the roles your graduates target to see and export the competencies and levels they need.",
+    "joinTitle": "Becoming a university partner",
+    "joinHint": "How a university joins Kafa'a.",
+    "join": {
+      "interest": "Expression of interest",
+      "agreement": "Agreement with ENEC",
+      "consent": "Student consent set-up",
+      "workspace": "University workspace"
+    },
+    "joinRule1": "The university workspace shows only students who have consented to share their progress with that university.",
+    "joinRule2": "Sponsors see individual scholar progress; universities see consenting students and cohort totals only.",
+    "joinRule3": "Research proposals are screened for security sensitivity and export control before any public mention.",
+    "contact": "Contact the partnerships team",
+    "toResearch": "See research challenges",
+    "consentTitle": "Consent comes first",
+    "consentBody": "Students decide whether their university can see their progress, and can withdraw that consent at any time."
+  },
+  "curr": {
+    "title": "Competencies for target roles",
+    "eyebrow": "Competency library",
+    "intro": "Pick one or more roles. The table lists every competency those roles need, the highest required proficiency level and whether it is core.",
+    "targetRoles": "Target roles",
+    "pick": "Choose at least one role.",
+    "code": "Code",
+    "domain": "Domain",
+    "competency": "Competency",
+    "level": "Required level",
+    "importance": "Importance",
+    "roles": "Needed by",
+    "imp": {
+      "core": "Core",
+      "important": "Important",
+      "useful": "Useful"
+    },
+    "export": "Export for curriculum mapping",
+    "note": "Security, safeguards and cyber roles are not listed here: they show the career path only."
+  },
+  "ch": {
+    "screened": "Screened",
+    "closes": "Closes {date}",
+    "signedOn": "Screening signed {date}",
+    "st": {
+      "draft": "Draft",
+      "screening": "In screening",
+      "published": "Published",
+      "closed": "Closed"
+    }
+  },
+  "ip": {
+    "moet": "Refer inventions to the MoET patents route (May 2026)",
+    "none": "No invention expected",
+    "source": "ENEC and the Ministry of Economy and Tourism: IP agreement (May 2026)"
+  },
+  "res": {
+    "intro": "Curated public problem statements. Researchers respond with a proposal; inventions are referred to the patents route agreed with the Ministry of Economy and Tourism in May 2026.",
+    "screenTitle": "Screened before any public mention",
+    "screenBody": "A challenge is published only after a screening sign-off for security sensitivity and export control, recorded in the audit log. Research data about the plant never goes on public pages.",
+    "openTitle": "Open challenges",
+    "theme": "Theme",
+    "none": "No challenges are published yet.",
+    "noMatch": "No challenge matches these filters.",
+    "propose": "Propose work",
+    "partnersOnly": "Proposals come from partner organisations and universities.",
+    "signInPartner": "Sign in as a partner to propose",
+    "processTitle": "How proposals work",
+    "step": {
+      "propose": "Propose",
+      "screen": "Security and export-control screening",
+      "ip": "IP routing",
+      "decide": "Decision"
+    },
+    "rule1": "Do not include plant data, security-sensitive information or export-controlled content in a proposal.",
+    "rule2": "Each proposal is screened before it is accepted or mentioned publicly.",
+    "rule3": "Partners see only their own organisation's proposals.",
+    "ipBody": "Where a proposal may lead to an invention, it is referred to the patents route that ENEC agreed with the Ministry of Economy and Tourism."
+  },
+  "pu": {
+    "intro": "Your university's internship placements, consenting scholars, cohort totals and curriculum alignment.",
+    "consentTitle": "Only consenting students are shown",
+    "consentBody": "A student appears here only if they consented to share their progress with your university. Students who have not consented are not shown, not counted and not hinted at.",
+    "tabOverview": "Overview",
+    "tabScholars": "Scholars",
+    "tabInternships": "Internships",
+    "tabCurriculum": "Curriculum alignment",
+    "noOrg": "Your organisation could not be loaded.",
+    "consentingScholars": "Consenting scholars",
+    "consentingSub": "visible to your university",
+    "cohorts": "Cohorts at your university",
+    "seats": "Placement seats",
+    "seatsSub": "across {n} open placements",
+    "proposals": "Research proposals",
+    "toResearch": "Open research proposals",
+    "relationship": "Relationship with ENEC",
+    "agType": {
+      "binding": "Agreement",
+      "nonBinding": "Non-binding"
+    },
+    "onboarding": "Onboarding",
+    "status": "Status",
+    "started": "Started",
+    "decided": "Decided",
+    "noOnboarding": "No onboarding case is recorded for your organisation.",
+    "onboardingNote": "Onboarding is handled by ENEC's partnerships team; the status here is read-only.",
+    "onb": {
+      "invited": "Invited",
+      "in_progress": "In progress",
+      "submitted": "Submitted",
+      "approved": "Approved",
+      "returned": "Returned",
+      "handed_off": "Handed off"
+    },
+    "cohortTitle": "Cohort totals at your university",
+    "noCohorts": "No cohorts are recorded at your university.",
+    "pathway": "Pathway",
+    "intake": "Intake",
+    "size": "Size",
+    "inStudy": "In study",
+    "graduated": "Graduated",
+    "suppressed": "Under {n}",
+    "scholarsTitle": "Scholars who consented to share",
+    "consentOnly": "Consent required",
+    "noScholars": "No consenting scholars",
+    "noScholarsBody": "No student has consented to share their progress with your university yet.",
+    "ref": "Reference",
+    "cohort": "Cohort",
+    "yearOfStudy": "Year of study",
+    "consent": "Consent",
+    "consented": "Consented",
+    "sst": {
+      "in_study": "In study",
+      "graduated": "Graduated",
+      "placed": "Placed",
+      "withdrawn": "Withdrawn"
+    },
+    "scholarsNote": "Scholars are identified by reference only. Progress notes and grades stay with the sponsor.",
+    "internshipsTitle": "Placements for your students",
+    "internshipsHint": "Placements reserved for your university and placements open to any university.",
+    "family": "Job family",
+    "yourUniversity": "Your university",
+    "ist": {
+      "open": "Open",
+      "closed": "Closed",
+      "filled": "Filled"
+    },
+    "internshipsNote": "Students apply through the internships programme; ENEC HR screens every application."
+  },
+  "pr": {
+    "intro": "Respond to a published challenge or propose open research. Proposals are screened for security sensitivity and export control before any decision or public mention.",
+    "new": "New proposal",
+    "edit": "Edit proposal",
+    "safeTitle": "Keep proposals safe to share",
+    "safeBody": "Do not include plant data, security arrangements, export-controlled technical data or personal data. Screening will decline any proposal that does.",
+    "mineTitle": "Your organisation's proposals",
+    "mineHint": "Only your organisation can see these. Drafts can be edited; submitted proposals are locked.",
+    "none": "No proposals yet.",
+    "title": "Title",
+    "challenge": "Challenge",
+    "open": "Open proposal (no challenge)",
+    "status": "Status",
+    "screened": "Screened",
+    "ip": "IP route",
+    "ipHint": "Choose the patents route if the work may lead to an invention.",
+    "submitted": "Submitted",
+    "submit": "Submit for screening",
+    "saveDraft": "Save draft",
+    "summary": "Summary",
+    "summaryHint": "{n} characters (20 to 4,000).",
+    "respond": "Respond to this challenge",
+    "challengesTitle": "Published challenges",
+    "challengesHint": "Each challenge has passed a screening sign-off.",
+    "st": {
+      "draft": "Draft",
+      "submitted": "Submitted",
+      "screening": "In screening",
+      "accepted": "Accepted",
+      "declined": "Declined"
+    },
+    "step": {
+      "draft": "Draft",
+      "submitted": "Submitted",
+      "screening": "Screening",
+      "decided": "Decision"
+    },
+    "stepsNote": "ENEC's research screening authority checks security sensitivity and export control, routes IP, then accepts or declines.",
+    "confirmTitle": "Submit this proposal?",
+    "confirmBody": "The proposal is locked and sent for security and export-control screening. ENEC records the decision; you will see it here.",
+    "asPartner": "Partner organisation"
+  },
+  "ar": {
+    "intro": "Curate research challenges, sign off screening and decide proposals. Every action is recorded in the audit log.",
+    "ruleTitle": "Publish only after screening",
+    "ruleBody": "A challenge is public only when both the security-sensitivity and export-control checks are signed. Editing a published challenge takes it off the public page until it is screened again.",
+    "readOnly": "Read-only view: only the research screening authority acts here.",
+    "tabChallenges": "Challenges",
+    "tabProposals": "Proposals",
+    "tabAudit": "Audit trail",
+    "newChallenge": "New challenge",
+    "editChallenge": "Edit challenge",
+    "checks": "Checks",
+    "security": "Security",
+    "export": "Export control",
+    "signed": "Signed",
+    "closes": "Closes on",
+    "signOff": "Screening sign-off",
+    "toScreening": "Send to screening",
+    "saveDraft": "Save draft",
+    "saveScreen": "Save and send to screening",
+    "titleEn": "Title (English)",
+    "titleAr": "Title (Arabic)",
+    "summaryEn": "Summary (English)",
+    "summaryAr": "Summary (Arabic)",
+    "themeHint": "For example: Learning, Environment, Health & safety.",
+    "editWarning": "Saving changes takes this challenge off the public page until a new screening sign-off.",
+    "signOffTitle": "Record the screening sign-off",
+    "signOffBody": "Record the screening result for \"{title}\".",
+    "securityCheck": "No security-sensitive content",
+    "securityHint": "No plant security arrangements, plant data or clearance-related content.",
+    "exportCheck": "No export-controlled content",
+    "exportHint": "No controlled technology or technical data.",
+    "willPublish": "Both checks signed: the challenge will be published.",
+    "wontPublish": "Not both checks signed: the result is recorded and the challenge stays unpublished.",
+    "asScreening": "Research screening authority",
+    "organisation": "Organisation",
+    "startScreening": "Start screening",
+    "accept": "Accept",
+    "decline": "Decline",
+    "note": "Decision note",
+    "decide": {
+      "screening": "Start screening this proposal?",
+      "accepted": "Accept this proposal?",
+      "declined": "Decline this proposal?"
+    },
+    "decideBody": {
+      "screening": "\"{title}\" moves to screening. The partner sees the new status.",
+      "accepted": "\"{title}\" is accepted. Acceptance needs a completed security and export-control screening.",
+      "declined": "\"{title}\" is declined. The partner sees the decision."
+    },
+    "proposalScreen": "Screened: no security-sensitive or export-controlled content",
+    "proposalScreenHint": "Required before a proposal can be accepted.",
+    "auditTitle": "Research audit trail",
+    "auditHint": "Every research action, including refusals, from the append-only audit log.",
+    "noAudit": "No research actions recorded yet."
+  }
+}

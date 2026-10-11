@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en" dir="ltr" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/kafaa/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Kafa'a — the nuclear workforce and competencies portal of ENEC NEXUS. A concept; not affiliated with or endorsed by ENEC." />
+    <meta name="robots" content="noindex" />
+    <title>Kafa'a · ENEC NEXUS</title>
+    <style>#nl-badge-frame,#nl-hud-frame{display:none!important}</style>
+    <script>
+      /* Set language and direction before first paint (the router sets them again from the URL). */
+      (function () {
+        var p = location.pathname.replace(/^\/kafaa/, "");
+        var ar = p === "/ar" || p.indexOf("/ar/") === 0;
+        document.documentElement.lang = ar ? "ar" : "en";
+        document.documentElement.dir = ar ? "rtl" : "ltr";
+        try { if (localStorage.getItem("kafaa.theme") === "dark") document.documentElement.dataset.theme = "dark"; } catch (e) {}
+      })();
+    </script>
+    <script>
+      /* NEXUS rehearsal mode: when on, no write leaves this browser. Agent runs and decisions fall back to the
+         in-browser engine; reads still come from the shared record. Turned on and off from System status or the tour. */
+      /* Copied verbatim from the NEXUS index.html; the only change is the Kafa'a read-only RPC allow-list (kafaaReads). */
+      (function () {
+        var on = false;
+        try { on = localStorage.getItem("nexus.rehearsal") === "1"; } catch (e) {}
+        window.__nexusRehearsal = on;
+        if (!on || !window.fetch) return;
+        var real = window.fetch.bind(window);
+        var reads = /rpc\/nexus_(ledger_head|ledger_verify|whoami|my_|can_|is_|case_visible|thread|persona_visible|read_all|studio_latest)/;
+        var kafaaReads = /rpc\/kafaa_(whoami|nexus_|workforce_aggregate|application_funnel|verify_certificate|get_equivalency|audit_verify|rules)/;
+        window.fetch = function (input, init) {
+          var url = typeof input === "string" ? input : (input && input.url) || "";
+          var method = ((init && init.method) || (input && input.method) || "GET").toUpperCase();
+          var supa = /supabase\.co\/(rest|functions)\/v1\//.test(url);
+          if (supa && method !== "GET" && method !== "HEAD" && !reads.test(url) && !kafaaReads.test(url)) {
+            window.__nexusRehearsalBlocked = (window.__nexusRehearsalBlocked || 0) + 1;
+            (window.__nexusRehearsalLog = window.__nexusRehearsalLog || []).push(method + " " + url.replace(/^.*supabase\.co/, ""));
+            return Promise.reject(new TypeError("NEXUS rehearsal: this write stays in your browser"));
+          }
+          return real(input, init);
+        };
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="nl-badge-frame" hidden></div>
+    <div id="root"></div>
+    <noscript>Kafa'a needs JavaScript. · كفاءة تحتاج إلى تفعيل JavaScript.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

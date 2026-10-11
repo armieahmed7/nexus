@@ -1,0 +1,788 @@
+{
+  "module": {},
+  "routes": {
+    "admin": {
+      "title": "Administration",
+      "purpose": "Access, frameworks, content, Dalil, integrations and the audit log."
+    },
+    "admin-frameworks": {
+      "title": "Frameworks",
+      "purpose": "Job families, roles, competencies and qualification standards with versions and effective dates."
+    },
+    "admin-content": {
+      "title": "Content",
+      "purpose": "Pages, translations, source citations and the review workflow."
+    },
+    "admin-integrations": {
+      "title": "Integrations",
+      "purpose": "Connectors, sync status, last success and reconciliation errors."
+    },
+    "admin-nexus": {
+      "title": "NEXUS integration",
+      "purpose": "The seven integration points with ENEC NEXUS: reads, hand-offs and ledger appends."
+    },
+    "admin-audit": {
+      "title": "Audit log",
+      "purpose": "Search the append-only, hash-chained audit log. Entries cannot be edited or deleted."
+    },
+    "admin-ai-transparency": {
+      "title": "AI transparency and fairness",
+      "purpose": "How each recommendation works, what it never uses, weekly fairness checks and the log of every engine change."
+    }
+  },
+  "hub": {
+    "intro": "The admin areas your roles open, the work waiting on you, feature flags and the contact inbox. Every change here is recorded in the audit log.",
+    "areas": "Admin areas",
+    "asAdmin": "Platform admin",
+    "open": "waiting",
+    "clear": "nothing waiting",
+    "qPending": "Grants awaiting a second admin",
+    "qReviews": "Access reviews overdue",
+    "qContacts": "New contact requests",
+    "qReview": "Pages in translation or review",
+    "qOverdue": "Published pages past review date",
+    "qHandoffs": "Dalil hand-offs requested",
+    "qConcerns": "ECP referrals to triage",
+    "qSync": "Connectors needing attention"
+  },
+  "flags": {
+    "title": "Feature flags",
+    "intro": "Switch demo features on or off for everyone. Locked flags protect rules that must not change, such as no telemetry on the speak-up page.",
+    "none": "No feature flags.",
+    "locked": "Locked",
+    "area": "Area: {area}",
+    "areas": {
+      "public": "Public site",
+      "dalil": "Dalil",
+      "nexus": "NEXUS integration",
+      "privacy": "Privacy",
+      "safety": "Safety"
+    },
+    "changed": "changed {when}",
+    "readOnly": "Only a platform admin can change flags.",
+    "turnOff": "Turn off {name}",
+    "turnOn": "Turn on {name}",
+    "saved": "Flag updated"
+  },
+  "inbox": {
+    "title": "Contact requests",
+    "intro": "Requests from the public contact form, routed to role mailboxes. Kept for 180 days, then due for deletion.",
+    "none": "No contact requests.",
+    "received": "Received",
+    "topic": "Topic",
+    "routeTo": "Routed to",
+    "message": "Message",
+    "lang": "Language",
+    "consent": "Consent to contact",
+    "retention": "Keep until",
+    "expired": "Due for deletion",
+    "status": "Status",
+    "st": {
+      "new": "New",
+      "routed": "Routed",
+      "closed": "Closed"
+    },
+    "markRouted": "Mark routed",
+    "close": "Close",
+    "routed": "Marked as routed",
+    "closed": "Closed"
+  },
+  "reset": {
+    "title": "Demo data",
+    "body": "Restore the local demo tenant to its seeded state. This clears every change made in this browser: applications, sign-offs, flags, Dalil logs and audit entries.",
+    "button": "Reset demo data",
+    "consequence": "All local demo changes in this browser are discarded and the seeded data is restored. Other browsers are not affected.",
+    "done": "Demo data reset",
+    "live": "The live backend reads ENEC NEXUS data and kafaa_* tables in the shared project. It cannot be reset from here; switch to the local demo to reset."
+  },
+  "fw": {
+    "intro": "Job families and roles, competencies and versioned qualification standards. Revising a standard creates a new version and flags affected records for review.",
+    "asOwner": "Framework owner",
+    "readOnly": "Read only",
+    "families": "Job families",
+    "roles": "Roles",
+    "regulated": "{n} regulated",
+    "competencies": "Competencies",
+    "standards": "Current standards",
+    "versions": "{n} versions in total",
+    "tabRoles": "Families and roles",
+    "tabCompetencies": "Competencies",
+    "tabStandards": "Qualification standards",
+    "role": "Role",
+    "family": "Job family",
+    "flags": "Flags",
+    "regulatedTag": "Regulated",
+    "critical": "Critical",
+    "securityTag": "Security-sensitive",
+    "version": "Version",
+    "status": "Status",
+    "noRoles": "No roles match these filters.",
+    "editRole": "Edit {role}",
+    "regulatedEdit": "Regulated role ({ref}): entry requirements follow the regulation and are not edited here.",
+    "summaryEn": "Summary (English)",
+    "summaryAr": "Summary (Arabic)",
+    "reason": "Reason for the change",
+    "reasonHint": "Saving creates a new role version; the change is recorded in the audit log.",
+    "saved": "Saved",
+    "domain": "Domain",
+    "code": "Code",
+    "competency": "Competency",
+    "levels": "Levels",
+    "usedBy": "Used by roles",
+    "standardsIntro": "Standards are versioned. Only the current version is used for new qualifications; superseded versions stay for history. Task lists are edited in the standard editor.",
+    "discipline": "Discipline",
+    "standard": "Standard",
+    "effective": "Effective",
+    "requal": "Requalification",
+    "months": "{n} months",
+    "owner": "Owner",
+    "restricted": "Restricted",
+    "st": {
+      "current": "Current",
+      "superseded": "Superseded",
+      "draft": "Draft"
+    },
+    "versionLine": "Version {v} · {status}",
+    "firstVersion": "First version",
+    "openEditor": "Open standard editor",
+    "revise": "Revise standard",
+    "reviseTitle": "Revise {code} to version {v}",
+    "reviseBody": "A new version takes effect today. The current version becomes superseded and every active qualification against it is flagged for review.",
+    "revised": "Version {id} created",
+    "flagged": "{n} qualification records flagged for review."
+  },
+  "content": {
+    "intro": "Pages and news move from draft to translation, review and publication. A page publishes only with both languages approved, sources for every factual claim and a review date.",
+    "asEditor": "Content editor",
+    "tabPages": "Pages and news",
+    "tabFacts": "Facts",
+    "tabFaqs": "FAQs",
+    "tabSources": "Source registry",
+    "tabCatalogues": "Courses and partners",
+    "mPublished": "Published",
+    "mWorkflow": "In workflow",
+    "mOverdue": "Past review date",
+    "mNews": "News items",
+    "title": "Title",
+    "kind": "Type",
+    "kinds": {
+      "page": "Page",
+      "news": "News"
+    },
+    "slug": "Address",
+    "zone": "Audience",
+    "zones": {
+      "public": "Public",
+      "staff": "Staff",
+      "partner": "Partners"
+    },
+    "status": "Status",
+    "st": {
+      "draft": "Draft",
+      "in_translation": "In translation",
+      "in_review": "In review",
+      "published": "Published"
+    },
+    "translation": "Translation",
+    "tr": {
+      "en_only": "English only",
+      "ar_draft": "Arabic draft",
+      "both_approved": "Both approved"
+    },
+    "sources": "Sources",
+    "reviewOn": "Review by",
+    "updated": "Updated",
+    "overdue": "Overdue",
+    "inDate": "In date",
+    "new": "New page or news",
+    "none": "Nothing matches these filters.",
+    "ecp": "ECP-owned",
+    "live": "Live",
+    "owner": "Owner",
+    "asOf": "As of",
+    "publishedOn": "Published on",
+    "ecpTitle": "Owned by the Employee Concerns Program",
+    "ecpBody": "The ECP owns this wording. Editors cannot change or unpublish it here.",
+    "noClaims": "No factual claims, so no sources needed.",
+    "noSources": "No sources yet.",
+    "preview": "Preview",
+    "checks": "Before publishing",
+    "block": {
+      "translation": "Both languages approved",
+      "sources": "Every factual claim cites a source",
+      "review_date": "Review date set",
+      "body": "Body text in both languages"
+    },
+    "toTranslation": "Send for translation",
+    "approveTranslation": "Approve Arabic translation",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "publishBody": "\"{title}\" goes live for its audience. The publication is recorded in the audit log.",
+    "unpublishBody": "\"{title}\" is removed from the site and returns to draft.",
+    "moved": {
+      "in_translation": "Sent for translation",
+      "in_review": "Translation approved; ready for review",
+      "published": "Published",
+      "draft": "Returned to draft"
+    },
+    "edit": "Edit {title}",
+    "liveEdit": "This page is live. Changing its text sends it back through translation and review.",
+    "slugHint": "Lower case, for example news/my-item",
+    "slugRule": "Use lower-case letters, numbers, hyphens and slashes",
+    "dateRule": "Use YYYY-MM-DD",
+    "titleEn": "Title (English)",
+    "titleAr": "Title (Arabic)",
+    "topic": "Topic",
+    "summaryEn": "Summary (English)",
+    "summaryAr": "Summary (Arabic)",
+    "bodyEn": "Body (English)",
+    "bodyAr": "Body (Arabic)",
+    "bodyArHint": "The translator completes this before review.",
+    "noClaimsLabel": "This page makes no factual claims",
+    "noClaimsHint": "For example a privacy notice or navigation page.",
+    "sourcesChosen": "{n} sources selected",
+    "rules": "No real staff names or photos, no plant procedures, security arrangements or site layouts, and no projected headcounts.",
+    "saved": "Saved",
+    "factsIntro": "Every public statistic shows its value, source and \"as of\" date, or a SAMPLE label. Facts older than a year are marked stale.",
+    "fact": "Fact",
+    "value": "Value",
+    "valueAr": "Value (Arabic digits)",
+    "source": "Source",
+    "noSource": "No source",
+    "public": "Public",
+    "editFact": "Edit {label}",
+    "factNeedsSource": "A public fact needs a source unless it is marked SAMPLE.",
+    "conflict": "Conflict note",
+    "conflictHint": "Where sources disagree, say which figure is shown and why.",
+    "newFaq": "New FAQ",
+    "question": "Question",
+    "answer": "Answer",
+    "order": "Order",
+    "questionEn": "Question (English)",
+    "questionAr": "Question (Arabic)",
+    "answerEn": "Answer (English)",
+    "answerAr": "Answer (Arabic)",
+    "sourcesIntro": "Every source cited on Kafa'a is registered here with its publisher and the date it was accessed. Only public HTTPS pages are accepted.",
+    "addSource": "Add source",
+    "sourceLabel": "Label",
+    "publisher": "Publisher",
+    "accessed": "Accessed",
+    "usedBy": "Cited by",
+    "httpsOnly": "Use a public https:// address",
+    "cataloguesIntro": "Courses belong to Nuclear Training and partner records to Partnerships. They are shown here for review; edit them in their owners' areas.",
+    "courses": "Courses ({n})",
+    "manageCourses": "Manage courses",
+    "partners": "Listed partners ({n})",
+    "viewDirectory": "Open directory",
+    "audience": "Audience"
+  },
+  "int": {
+    "intro": "Connectors to the systems of record. Each has a freshness threshold; a stale licence or medical mirror stops the portal showing \"valid\".",
+    "simulated": "Simulated connectors",
+    "connector": "Connector",
+    "domain": "Data",
+    "direction": "Direction",
+    "dir": {
+      "in": "Inbound",
+      "out": "Outbound",
+      "both": "Both ways"
+    },
+    "lastSuccess": "Last success",
+    "hoursAgo": "{n} h ago",
+    "threshold": "Threshold",
+    "hours": "{n} h",
+    "records": "Records",
+    "errors": "Errors",
+    "schedule": "Schedule",
+    "state": "State",
+    "st": {
+      "ok": "Healthy",
+      "degraded": "Degraded",
+      "stale": "Stale",
+      "error": "Error",
+      "disabled": "Disabled"
+    },
+    "runSync": "Run sync",
+    "enable": "Enable",
+    "disable": "Disable",
+    "synced": "{name} synced",
+    "disabledToast": "Connector disabled",
+    "enabledToast": "Connector enabled",
+    "confirm": {
+      "sync": "Run sync for {name}",
+      "disable": "Disable {name}",
+      "enable": "Enable {name}"
+    },
+    "consequence": {
+      "sync": "A simulated sync runs now and updates the last-success time. Open reconciliation errors stay open.",
+      "disable": "Kafa'a stops reading this system. Records mirrored from it become stale after the threshold and the portal stops showing them as valid.",
+      "enable": "Kafa'a resumes reading this system on its schedule."
+    },
+    "staleTitle": "Licensing data is stale",
+    "staleBody": "{names}: past the freshness threshold. Licence and medical views show \"status not confirmed\" instead of \"valid\" after {h} hours.",
+    "errorsTitle": "Open reconciliation errors",
+    "noErrors": "No open errors.",
+    "notesTitle": "Connector notes",
+    "footer": "In the demo, connectors are simulated; no external system is called.",
+    "rows": {
+      "int-hr": {
+        "name": "HR system of record",
+        "domain": "people, org, positions",
+        "notes": "Joiner, mover and leaver events; leavers lose access within one sync cycle."
+      },
+      "int-trs": {
+        "name": "Training records system",
+        "domain": "qualifications, training history",
+        "notes": "Kafa'a mirrors qualification records until ENEC approves it as the system of record. 3 reconciliation errors open."
+      },
+      "int-octs": {
+        "name": "Licensee certification records (OCTS mirror)",
+        "domain": "RO/SRO certificate status",
+        "notes": "FANR records decisions in OCTS; Kafa'a mirrors status from the licensee's certification records."
+      },
+      "int-roster": {
+        "name": "Shift roster feed (counts only)",
+        "domain": "quarterly shift counts",
+        "notes": "Counts only; no rosters or crew composition."
+      },
+      "int-ohs": {
+        "name": "Occupational health (flag only)",
+        "domain": "medical due dates and fit flag",
+        "notes": "Stale: last success more than 72 hours ago. Medical flags show \"not yet confirmed\"."
+      },
+      "int-careers": {
+        "name": "ENEC careers channel",
+        "domain": "vacancies (link-out)",
+        "notes": "Vacancies link out to the official careers channel."
+      },
+      "int-lms": {
+        "name": "E-learning (xAPI)",
+        "domain": "e-learning completions",
+        "notes": "12 statements rejected for unknown activity ids."
+      },
+      "int-nexus-ledger": {
+        "name": "ENEC NEXUS evidence ledger",
+        "domain": "material actions (append)",
+        "notes": "Consequential actions append to nexus_append_ledger, plane PEOPLE."
+      },
+      "int-nexus-partner": {
+        "name": "NEXUS partner lens hand-off",
+        "domain": "supplier readiness summaries",
+        "notes": "Ready suppliers hand off to /partner/readiness in NEXUS."
+      },
+      "int-uaepass": {
+        "name": "UAE Pass (concept)",
+        "domain": "verified identity when a stage needs it",
+        "notes": "Not connected in the demo tenant."
+      },
+      "int-lrs": {
+        "name": "External learning record store (xAPI 2.0)",
+        "domain": "xAPI statements forwarded from the Kafa'a store",
+        "notes": "Adapter described in Training > Learning record store > Adapters. No public endpoint in the demo; statements stay in Kafa'a (https://kafaa.example accounts, no email)."
+      }
+    }
+  },
+  "nexus": {
+    "intro": "Kafa'a is the people and skills layer next to ENEC NEXUS. These are the seven agreed integration points, read-only mirrors of NEXUS role cards and the authority matrix, and the evidence ledger entries Kafa'a has appended.",
+    "snapshot": "NEXUS snapshot",
+    "live": "Live NEXUS data",
+    "notAuthorityTitle": "Kafa'a is not an authority",
+    "notAuthority": "Kafa'a mirrors who decides; it never decides or changes the authority matrix. Licensing decisions stay with FANR, employment decisions with ENEC and Nawah.",
+    "mPersonas": "NEXUS role cards",
+    "mAuthority": "Reserved decisions",
+    "mLedger": "Ledger entries from Kafa'a",
+    "mLedgerSub": "domain KAFAA",
+    "mSkipped": "Not written to ledger",
+    "mSkippedSub": "Kafa'a-only personas have no NEXUS profile",
+    "tabPoints": "Integration points",
+    "tabPersonas": "Role cards",
+    "tabAuthority": "Authority matrix",
+    "tabLedger": "Evidence ledger",
+    "point": "Point {n}",
+    "flow": {
+      "reads": "Kafa'a reads",
+      "writes": "Kafa'a writes or hands off",
+      "shared": "Shared, to be agreed"
+    },
+    "points": {
+      "roles": {
+        "title": "Role pages and role cards",
+        "body": "Career pages read NEXUS role cards and their \"Decides\" lines so roles match how ENEC describes them."
+      },
+      "quals": {
+        "title": "Qualification outcomes",
+        "body": "NEXUS talent views receive qualification outcomes (qualified, due, expired), never the underlying records."
+      },
+      "catalogue": {
+        "title": "One learning catalogue",
+        "body": "Training programmes and courses in NEXUS and Kafa'a should be one catalogue; the owner is still to be agreed."
+      },
+      "readiness": {
+        "title": "Supplier readiness hand-off",
+        "body": "When a supplier is ready to register, Kafa'a hands off to the NEXUS partner readiness lens."
+      },
+      "partners": {
+        "title": "Shared organisation records",
+        "body": "The partners directory reads shared organisation and partnership records instead of keeping its own copy."
+      },
+      "ledger": {
+        "title": "Evidence ledger",
+        "body": "Material actions in Kafa'a append to the NEXUS evidence ledger with the same hash scheme."
+      },
+      "identity": {
+        "title": "Identity and language",
+        "body": "Kafa'a reuses the NEXUS role-card session and should share the EN/AR preference (to be agreed)."
+      }
+    },
+    "st": {
+      "ok": "Working",
+      "degraded": "Degraded",
+      "stale": "Stale",
+      "error": "Not reachable",
+      "disabled": "Disabled",
+      "proposed": "Proposed"
+    },
+    "kafaaSide": "Kafa'a: {m}",
+    "nexusSide": "NEXUS:",
+    "d": {
+      "roles": "{p} role cards and {a} reserved decisions read",
+      "quals": "Outcome feed specified; awaiting agreement with the NEXUS owner.",
+      "catalogue": "{p} NEXUS programmes and {c} courses read",
+      "readiness": "Hand-off link used from supplier onboarding.",
+      "partners": "{n} NEXUS partnership records read",
+      "ledger": "{n} entries appended by Kafa'a",
+      "identity": "Role-card session reused; language preference stays in Kafa'a for now."
+    },
+    "linksTitle": "Open in NEXUS",
+    "links": {
+      "academy": "NEXUS Academy",
+      "readiness": "Partner readiness",
+      "directory": "Leadership directory",
+      "home": "NEXUS home"
+    },
+    "linksNote": "These pages belong to ENEC NEXUS and open in the same window.",
+    "linksOff": "Links into NEXUS are switched off by a feature flag.",
+    "personasIntro": "NEXUS role cards as published by NEXUS, with the Kafa'a roles each card maps to. Read-only.",
+    "lens": "Lens",
+    "none": "Nothing to show.",
+    "roleCard": "Role card",
+    "plane": "Plane",
+    "decides": "Decides",
+    "kafaaRoles": "Kafa'a roles",
+    "authorityIntro": "The NEXUS authority matrix, mirrored for reference. Kafa'a shows who decides; it does not decide.",
+    "domain": "Domain",
+    "second": "Two-person rule",
+    "decision": "Decision",
+    "authority": "Authority",
+    "evidence": "Evidence required",
+    "ref": "Reference",
+    "twoPerson": "Second person",
+    "mirrorNote": "Mirror of the NEXUS authority matrix. Changes are made in NEXUS by its owner.",
+    "ledgerIntro": "Entries Kafa'a appended to the NEXUS evidence ledger (plane PEOPLE, domain KAFAA). Each entry chains to the one before it.",
+    "ls": {
+      "written": "{n} written",
+      "skipped": "{n} skipped",
+      "not_applicable": "{n} not applicable"
+    },
+    "action": "Action",
+    "noLedger": "No ledger entries yet",
+    "noLedgerBody": "Material actions such as sign-offs, role grants and access reviews appear here.",
+    "entry": "Ledger entry #{n}"
+  },
+  "audit": {
+    "intro": "Every write and every refusal, in order. Entries are hash-chained and cannot be edited or deleted.",
+    "verify": "Verify chain",
+    "chainOk": "Chain intact: {n} entries verified",
+    "chainBad": "Chain check failed",
+    "appendOnly": "Append-only: the database rejects any change or deletion of an audit entry, and this console has no edit or delete control.",
+    "mEntries": "Entries",
+    "mRefused": "Refusals",
+    "mLedger": "Written to NEXUS ledger",
+    "mLast": "Latest entry",
+    "when": "When",
+    "action": "Action",
+    "entity": "Record",
+    "actor": "Actor",
+    "anonymous": "anonymous",
+    "role": "Acting role",
+    "outcome": "Outcome",
+    "out": {
+      "ok": "OK",
+      "refused": "Refused",
+      "error": "Error"
+    },
+    "ledger": "NEXUS ledger",
+    "ls": {
+      "written": "Written",
+      "skipped": "Skipped",
+      "not_applicable": "Not applicable"
+    },
+    "from": "From",
+    "to": "To",
+    "entry": "Audit entry #{n}",
+    "reason": "Reason",
+    "request": "Request id",
+    "hashes": "Hashes",
+    "hash": "Hash",
+    "noEdit": "Audit entries cannot be changed. To correct a record, make a new entry through the normal workflow."
+  },
+  "ai": {
+    "eyebrow": "AI governance",
+    "intro": "How every recommendation in Kafa'a works, what it never uses, whether its outcomes are fair across groups, and every change to its settings. All engines are deterministic and explain each result; no model is connected.",
+    "synthetic": "Synthetic people and outcomes",
+    "fewer": "Fewer than 10",
+    "asGovernance": "platform admin / AI governance",
+    "footerTitle": "What this page is, and is not",
+    "footerBody": "A governance view of Kafa'a's own suggestion engines on a synthetic demo population. It makes no decision about anyone: suggestions inform people and managers, and HR and line managers decide. A flag starts a review; it does not change anyone's results.",
+    "stat": {
+      "cards": "Engine cards",
+      "cardsSub": "{n} can be switched off by each person",
+      "protected": "Protected inputs used",
+      "protectedSub": "Gender, nationality and age: checked by an automated test on every build",
+      "flagged": "Comparisons below four-fifths",
+      "flaggedSub": "Week {period} · {n} suppressed (a group under 10)",
+      "optouts": "Opted out of the Learning Coach",
+      "optoutsSub": "People who switched ranked suggestions off"
+    },
+    "tab": {
+      "cards": "Engine cards",
+      "fairness": "Fairness monitor",
+      "changes": "Change log",
+      "optouts": "Opt-outs and corrections"
+    },
+    "cards": {
+      "intro": "One card per surface that ranks or scores. Weights are live from the engine settings; a change to them gives every card on that engine a new version.",
+      "none": "No engine cards yet"
+    },
+    "card": {
+      "version": "Version {n}",
+      "uses": "Uses",
+      "never": "Never uses",
+      "neverTested": "No scoring function reads these fields: checked by an automated test on every build.",
+      "weights": "Weights ({surface} engine)",
+      "output": "What it produces",
+      "oversight": "Human oversight",
+      "limitations": "Limitations",
+      "owner": "Owner",
+      "lastChange": "Last change {date}",
+      "optOutYes": "Each person can switch it off",
+      "optOutNo": "No personal switch",
+      "optedOutFew": "(fewer than 10 opted out)",
+      "optedOutN": "({n} opted out)",
+      "open": "Open the surface",
+      "functions": "For auditors: the {n} functions behind this card"
+    },
+    "protected": {
+      "gender": "Gender",
+      "nationality_flag": "Nationality",
+      "age": "Age"
+    },
+    "surface": {
+      "navigator": "Career Navigator",
+      "coach": "Learning Coach",
+      "marketplace": "Opportunity marketplace",
+      "mentoring": "Mentor matching",
+      "talent_evidence": "Talent review evidence"
+    },
+    "metric": {
+      "navigator_ready": "Suggested as ready",
+      "opportunity_selected": "Selected for an opportunity",
+      "mentoring_matched": "Matched with a mentor",
+      "hipo_pool": "In the high-potential pool"
+    },
+    "metricHelp": {
+      "navigator_ready": "Share of staff with at least one role within two steps rated \"ready now\" or \"ready within 3 years\" (people who switched the Navigator off are left out).",
+      "opportunity_selected": "Share of applicants selected for (or who completed) at least one opportunity.",
+      "mentoring_matched": "Share of people who asked for mentoring and were matched.",
+      "hipo_pool": "Share of staff in the high-potential pool (talent review placements when present, else the leadership pipeline the pool feeds)."
+    },
+    "dimension": {
+      "gender": "by gender",
+      "nationality": "by nationality"
+    },
+    "group": {
+      "f": "Women",
+      "m": "Men",
+      "uae": "Emirati",
+      "other": "Other nationalities"
+    },
+    "source": {
+      "career_readiness": "Career Navigator readiness (F05)",
+      "opportunity_applications": "Opportunity applications and their history (F08)",
+      "mentoring_requests": "Mentoring requests (F13)",
+      "review_placements": "Talent review placements (F18)",
+      "leadership_nominations": "Leadership pipeline nominations (F16)",
+      "none": "not available"
+    },
+    "fair": {
+      "week": "Week",
+      "due": "This week's snapshot ({period}) is due",
+      "upToDate": "Snapshot for {period} saved",
+      "run": "Run this week's snapshot",
+      "howTitle": "How the monitor works",
+      "howBody": "Each week Kafa'a compares outcome rates between women and men, and between Emirati and other nationalities. A group whose rate is below {pct}% of the best group's rate is flagged (the four-fifths rule). If any group has fewer than 10 people the whole comparison is suppressed, so no small group can be worked out by subtraction. People with no recorded value are left out of that comparison.",
+      "cfr": "Four-fifths rule: US 29 CFR 1607.4(D)",
+      "none": "No snapshot yet",
+      "noneBody": "Run the weekly snapshot to compare outcomes across groups.",
+      "resultsTitle": "Week {period}",
+      "resultsDesc": "Outcomes as of {date}. Bars show each group's rate; the line marks four-fifths of the best rate.",
+      "suppressed": "Suppressed",
+      "suppressedBody": "A group has fewer than 10 people, so this comparison is not shown (no counts, no rates, no flag).",
+      "flagged": "Below four-fifths",
+      "within": "Within four-fifths",
+      "counts": "{k} of {n}",
+      "ratio": "ratio {r}",
+      "source": "Source: {source}",
+      "trendTitle": "Lowest group ratio per metric, by week",
+      "trendBody": "The lowest group rate as a percentage of the best group's rate (shown comparisons only). Below the dashed line is a flag.",
+      "threshold": "Four-fifths (80%)",
+      "flagTitle": "When a comparison is flagged",
+      "flagBody": "AI governance and HR review the engine card, the inputs and the human decisions behind the outcome within two weeks, and record what they found in the change log if weights change. No individual result is changed by the monitor, and the flag alone is not evidence of discrimination.",
+      "confirmTitle": "Run the fairness snapshot for {period}?",
+      "confirmBody": "Kafa'a recomputes this week's outcome rates for every group, replaces this week's rows and records the run in the audit log and the NEXUS ledger.",
+      "saved": "Fairness snapshot saved"
+    },
+    "log": {
+      "intro": "Every change to an engine or its weights, with before and after, the rationale, and its audit and NEXUS ledger entries.",
+      "change": "Change engine weights",
+      "when": "When",
+      "surface": "Engine",
+      "engine": "Engine kind",
+      "weights": "Weights changed",
+      "rationale": "Rationale",
+      "by": "By",
+      "evidence": "Evidence",
+      "baseline": "Baseline at deployment",
+      "noWeightChange": "Weights unchanged",
+      "noRationale": "No rationale (switched from the integrations card)",
+      "seed": "Deployment",
+      "audit": "Audit #{n}",
+      "ledger": "Ledger #{n}",
+      "ledgerSkipped": "Ledger skipped (no NEXUS profile)"
+    },
+    "role": {
+      "admin": "Platform admin",
+      "auditor": "Auditor",
+      "employee": "Employee"
+    },
+    "weights": {
+      "engine": "Engine",
+      "noModel": "No model gateway is configured, so the deterministic engine keeps serving and the surface shows \"model unavailable\".",
+      "title": "Weights (0 to 10)",
+      "none": "This engine has no adjustable weights.",
+      "range": "Each weight must be a number from 0 to 10.",
+      "rationale": "Rationale (shown in the change log)",
+      "rationaleHint": "At least {n} characters: why the change, and what evidence supports it.",
+      "review": "Review and save",
+      "confirmTitle": "Change the {surface} engine?",
+      "confirmBody": "The new settings apply at once to every surface on this engine. Each card on it gets a new version, and the change is written to the change log, the audit log and the NEXUS ledger.",
+      "saved": "Engine settings changed and logged"
+    },
+    "weight": {
+      "current_role": "Gaps to my current role",
+      "target_role": "Gaps to my target roles",
+      "core": "Core competency",
+      "important": "Important competency",
+      "useful": "Useful competency",
+      "skills": "Skills fit",
+      "development": "Development value",
+      "target": "Target-role value",
+      "half_life_months": "Evidence half-life, standard skills (months)",
+      "half_life_fast": "Evidence half-life, fast-changing skills (months)",
+      "half_life_slow": "Evidence half-life, slow-changing skills (months)",
+      "title": "Title boost",
+      "k1": "Term saturation (k1)",
+      "b": "Length normalisation (b)"
+    },
+    "opt": {
+      "title": "Opt-outs by surface",
+      "body": "People who switched ranked suggestions off. Each person decides on their settings page; nobody else sees who.",
+      "suppressedNote": "Counts under 10 are suppressed.",
+      "requestsTitle": "Correction requests about AI inferences",
+      "requestsHidden": "Visible to platform admins and auditors.",
+      "requestsNone": "No correction requests yet.",
+      "requestsNote": "Handled through the data rights queue with the same 30-day target as every other request."
+    },
+    "optedOut": {
+      "title": "You switched off {surface} suggestions",
+      "body": {
+        "coach": "No ranked learning cards are shown. Here is the full staff catalogue in plain order; your mandatory training is still assigned as usual.",
+        "navigator": "No readiness ranking is shown. Here are the published roles by job family; the career paths show every route.",
+        "marketplace": "No match scores or top picks are shown. Opportunities are listed by start date."
+      },
+      "change": "Change in my settings",
+      "note": "You can switch it back on at any time."
+    },
+    "unranked": {
+      "catalogueTitle": "Course catalogue",
+      "catalogueBody": "All staff courses by code. Nothing here is ranked for you.",
+      "filter": "Filter",
+      "none": "No courses",
+      "hours": "{n} h",
+      "mandatory": "Mandatory",
+      "modality": {
+        "classroom": "Classroom",
+        "ojt": "On the job",
+        "simulator": "Simulator",
+        "elearning": "E-learning",
+        "drill": "Drill",
+        "external": "External",
+        "blended": "Blended",
+        "clinic": "Clinic"
+      },
+      "rolesTitle": "Roles by job family",
+      "rolesBody": "Every published role, alphabetical. Nothing here is rated for you.",
+      "paths": "See the career paths"
+    },
+    "settings": {
+      "eyebrow": "Recommendations",
+      "title": "Recommendations and your data",
+      "intro": "Kafa'a's suggestions come from deterministic engines that explain every result. They never use your gender, nationality or age. You can switch ranked suggestions off on each surface below; the full lists stay available.",
+      "on": "On",
+      "off": "Off",
+      "offBody": {
+        "navigator": "You see the roles and career paths without a readiness ranking.",
+        "coach": "You see the course catalogue in plain order instead of ranked learning cards.",
+        "marketplace": "You see opportunities by start date, without match scores."
+      },
+      "how": "How this works",
+      "switchLabel": "Personalised ranking for {surface}",
+      "turnOff": "Switch off",
+      "turnOn": "Switch on",
+      "others": "Other surfaces ({n})",
+      "othersBody": "These suggest only when you ask (mentors, rotations, experts, Future Me) or support a human decision (talent review). They have no personal switch; you can read how each works and ask for a correction.",
+      "export": "Download what Kafa'a infers about me (JSON)",
+      "correct": "Ask for a correction",
+      "never": "Your choices are recorded in the audit log and the NEXUS ledger. HR and admins see only how many people switched a surface off, never who.",
+      "confirmOff": "Switch off {surface} suggestions?",
+      "confirmOn": "Switch {surface} suggestions back on?",
+      "consequenceOff": {
+        "navigator": "The Career Navigator stops rating your readiness for roles and shows the roles and paths in plain order instead.",
+        "coach": "The Learning Coach stops ranking learning for you and shows the course catalogue in plain order. Mandatory training is still assigned.",
+        "marketplace": "The marketplace stops scoring opportunities for you and lists them by start date. You can still apply to any opportunity."
+      },
+      "consequenceOn": "Ranked suggestions with their reasons come back on this surface.",
+      "asYou": "you",
+      "reason": "Why? (optional, only you see it)",
+      "reasonHint": "Up to 500 characters.",
+      "savedOff": "Ranked suggestions switched off",
+      "savedOn": "Ranked suggestions switched back on"
+    },
+    "export": {
+      "running": "Preparing your file…",
+      "done": "Your AI inferences file is downloaded",
+      "failed": "The file could not be prepared. Try again.",
+      "logged": "Self-service export: what Kafa'a infers about me (AI inferences)"
+    },
+    "correct": {
+      "title": "Ask for a correction",
+      "intro": "Tell us which inference looks wrong, for example a skill level, a piece of evidence or a readiness rating. A person reviews it; nothing changes automatically.",
+      "which": "Which surface?",
+      "what": "What is wrong?",
+      "hint": "Name the skill, record or role, and what you believe is right.",
+      "send": "Send request",
+      "sent": "Correction request sent",
+      "sla": "Answered within 30 days through the data rights process, like every other request."
+    }
+  }
+}

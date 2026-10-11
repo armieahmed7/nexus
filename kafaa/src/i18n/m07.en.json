@@ -1,0 +1,773 @@
+{
+  "module": {},
+  "routes": {
+    "workforce": {
+      "title": "Workforce analytics",
+      "purpose": "Aggregate workforce, pipeline, training and critical-role depth. Groups under 10 are suppressed."
+    },
+    "workforce-emiratization": {
+      "title": "Emiratization",
+      "purpose": "Emiratization by entity, job family and level, with definitions and reconciliation notes."
+    },
+    "workforce-pipeline": {
+      "title": "Pipeline",
+      "purpose": "From programme intake to placement (aggregate)."
+    },
+    "workforce-critical-roles": {
+      "title": "Critical roles",
+      "purpose": "Bench depth for licensed and scarce roles against targets: counts only, never names."
+    },
+    "workforce-training": {
+      "title": "Training volume",
+      "purpose": "Training hours and completions."
+    },
+    "workforce-scenarios": {
+      "title": "Scenario planner",
+      "purpose": "Headcount scenarios by technology or programme, always labelled SIMULATED."
+    },
+    "workforce-definitions": {
+      "title": "Metric definitions",
+      "purpose": "Definition, GRI disclosure, source table and public source for every workforce metric."
+    },
+    "observer": {
+      "title": "Observer reports",
+      "purpose": "Aggregate reports that ENEC has approved for release to your organisation. Not a regulatory channel."
+    },
+    "workforce-handover": {
+      "title": "Handover 2030 readiness",
+      "purpose": "Which functions depend on KHNP and partner cover, and how fast ENEC successors become ready before the OSSA ends in 2030. Counts only; groups under 10 suppressed."
+    },
+    "workforce-skills-outlook": {
+      "title": "Skills supply-and-demand outlook",
+      "purpose": "Skills supply and demand by skill family over 5 to 10 years: attrition, the KHNP handover, ADVANCE adoption, pipeline intakes and reskilling. SIMULATED, aggregate only; small groups suppressed."
+    }
+  },
+  "noData": "No aggregate data for this selection.",
+  "noKpis": "No published indicators are available.",
+  "period": "Period",
+  "total": "Organisation total",
+  "suppressed": "Suppressed",
+  "exportCsv": "Export CSV (watermarked)",
+  "sampleTenant": "Demo tenant · SAMPLE",
+  "sampleNote": "Synthetic aggregates for the demo tenant. Any group under {n} people shows \"suppressed\", never a value.",
+  "tile": {
+    "definition": "Definition",
+    "vs": "{delta} vs {period}"
+  },
+  "unit": {
+    "h": "h"
+  },
+  "unitName": {
+    "%": "Percentage",
+    "people": "People (headcount)",
+    "h": "Hours",
+    "count": "Count",
+    "days": "Days"
+  },
+  "dim": {
+    "family": "Job family",
+    "level": "Level",
+    "entity": "Entity"
+  },
+  "level": {
+    "entry": "Entry",
+    "professional": "Professional",
+    "senior": "Senior",
+    "leadership": "Leadership"
+  },
+  "metric": {
+    "emiratization": "Emiratization (organisation)",
+    "emiratization_senior": "Emiratization (senior management)",
+    "top_positions_uae": "UAE nationals in top positions",
+    "women": "Women in the workforce",
+    "employees": "Employees",
+    "training_hours": "Training hours",
+    "training_hours_per_employee": "Training hours per employee",
+    "attrition": "Attrition rate",
+    "hires": "Hires",
+    "sro_ro": "Licensed operators (SRO and RO)",
+    "coct_population": "Operators in continuing training (COCT)",
+    "loct_population": "Local operators in continuing training (LOCT)",
+    "quals_renewed_on_time": "Qualifications renewed before expiry",
+    "lapses": "Licence validity lapses",
+    "jpm_to_signed_days": "Days from JPM to signed record",
+    "equivalency_turnaround": "Equivalency decision turnaround",
+    "share_emirati": "Emirati share",
+    "share_women": "Women's share",
+    "headcount": "Headcount",
+    "attrition_rate": "Leavers in the quarter",
+    "hours_per_head": "Training hours per head",
+    "bench_depth": "Bench depth",
+    "cohort_progress": "Scholar cohort progress",
+    "completions": "Course completions",
+    "funnel": "Application funnel",
+    "bench_sro": "SRO bench depth",
+    "handover_cover": "Positions with external cover",
+    "handover_ready": "Successors ready by the OSSA end",
+    "handover_pipeline": "Pipeline in training",
+    "handover_burndown": "Handover burn-down",
+    "handover_risk": "Functions at risk",
+    "handover_emirati": "Emirati share of ready successors",
+    "handover_cover_2028": "External cover in 2028",
+    "handover_ready_2028": "Ready successors by 2028",
+    "handover_ready_end": "Ready successors by 2030",
+    "handover_functions_at_risk": "Functions with a shortfall",
+    "handover_first_shortfall": "First shortfall year",
+    "handover_emirati_share": "Emirati share of ready successors",
+    "outlook_supply": "Skills supply (outlook)",
+    "outlook_demand": "Skills demand (outlook)",
+    "outlook_gap": "Skills gap by family (outlook)",
+    "outlook_tornado": "What changes the gap most (outlook)"
+  },
+  "def": {
+    "emiratization": "UAE nationals as a share of all employees of ENEC, ENEC Operations and ENEC Commercial at year end.",
+    "emiratization_senior": "UAE nationals as a share of employees in senior management positions.",
+    "top_positions_uae": "Number of UAE nationals holding top positions, as published in the sustainability report.",
+    "women": "Women as a share of all employees at year end.",
+    "employees": "Total employees of the group at year end.",
+    "training_hours": "Total hours of training delivered to employees in the year.",
+    "training_hours_per_employee": "Training hours divided by the number of employees.",
+    "attrition": "Employees who left as a share of employees. The published chart is hard to read, so the year mapping is uncertain.",
+    "hires": "New employees hired in the year. Read from a chart; treat as approximate.",
+    "sro_ro": "Senior Reactor Operators and Reactor Operators holding a FANR operator certificate, as stated in ENEC's GPO release.",
+    "coct_population": "Licensed operators in the continuing operator training programme.",
+    "loct_population": "Local operators in the local operator continuing training programme.",
+    "quals_renewed_on_time": "Share of qualifications renewed before their expiry date in the quarter (demo tenant).",
+    "lapses": "Number of licence validity lapses detected in the quarter (demo tenant).",
+    "jpm_to_signed_days": "Average days between a JPM being performed and the record being signed (demo tenant).",
+    "equivalency_turnaround": "Average days from a contractor equivalency request to the decision (demo tenant).",
+    "share_emirati": "Emirati employees divided by headcount for the selected group and quarter.",
+    "share_women": "Women divided by headcount for the selected group and quarter.",
+    "headcount": "Employees on the last day of the quarter.",
+    "attrition_rate": "Employees who left during the quarter.",
+    "hours_per_head": "Training hours recorded in the quarter divided by headcount.",
+    "bench_depth": "For each critical role: people qualified now, people in training, people in the pipeline, against a target set by HR. Counts only.",
+    "cohort_progress": "Scholar and intern cohorts from intake to study, graduation and placement. Cohorts under the minimum group size are suppressed.",
+    "completions": "Completed training records per course. Courses with fewer than the minimum group size are suppressed.",
+    "funnel": "Applications currently at each stage, by programme. Cells under the minimum group size are suppressed.",
+    "handover_cover": "Positions held by KHNP experts under the Operating Support Services Agreement (OSSA) or by contractors, per role and plan year. A SAMPLE plan for the demo tenant, sized to the roughly 400 KHNP experts a year the OSSA provides until 2030. After the OSSA end year the cover is zero.",
+    "handover_ready": "ENEC people projected ready to take over a covered position by the end of the OSSA year: named successors on F19 succession slates (or, for roles without a slate, staff who shortlisted the role, with their F05 readiness) plus trainees in earmarked cohorts. Projected dates are SIMULATED from the F05/F06 estimate and programme lengths.",
+    "handover_pipeline": "Trainees in COIT, LOIT, GPO, DNT and discipline cohorts earmarked to replace external cover (SAMPLE). For every critical role the earmarked trainees never exceed the role's in-training plus pipeline bench count.",
+    "handover_burndown": "Per year: external cover, ready successors (cumulative) and the positions to hand over (the cover in the as-of year). A shortfall year is one where positions already handed over exceed ready successors. SIMULATED; what-if settings move the OSSA end and delay the pipeline.",
+    "handover_risk": "Number of functions with a shortfall in any plan year. A count of functions, not of people.",
+    "handover_emirati": "UAE nationals among the successors ready by the OSSA end, shown only when both the Emirati count and the total are at least 10. National direction (quality of Emiratisation), not a quota.",
+    "outlook_supply": "People holding a skill family at Practitioner level or above (F01 skill states of active staff), scaled from the measured staff sample to the organisation headcount, then projected: minus general attrition and known retirements and contract ends (F20 KLRA, weighted by risk band), plus trainees ready from the pipeline (F22 cohorts, DNT intake) and reskilled staff. SIMULATED, people-equivalents.",
+    "outlook_demand": "People whose role profile needs the skill family (M01 role competencies), scaled to the organisation, plus positions returning from KHNP OSSA and contractor cover as the handover plan steps down, times the chosen staffing scenario's growth and the ADVANCE adoption uplift (M11 adjustDemand). SIMULATED, people-equivalents.",
+    "outlook_gap": "Demand minus supply for a skill family and year: positive is a shortfall, negative a surplus. Families with fewer than 10 measured holders or role holders are suppressed and never added into a total. SIMULATED: a planning aid, not a forecast.",
+    "outlook_tornado": "Cumulative shortfall (people-years summed over the shown families from the base year to the horizon) with each assumption moved to the low and the high end of a fixed range while the others stay where they are. The longest bar changes the gap most. SIMULATED."
+  },
+  "reconcile": {
+    "title": "Why do public figures differ?",
+    "body": "Press releases and the ENEC Operations CEO message say \"around 60%\" of about 3,000 staff are Emirati. Audited GRI data for the whole group gives 54.7% for 2024 (2,979 employees; 1,581 UAE nationals, which is 53.1%). Use the GRI figure when precision matters."
+  },
+  "overview": {
+    "intro": "An accurate, aggregate view of workforce composition, pipeline health, training volume and critical-role depth. Nothing on these pages ranks or names individuals.",
+    "publicTitle": "Published baselines",
+    "publicHint": "From ENEC's 2024 sustainability report (GRI data). Each tile links to its definition and source.",
+    "trendTitle": "Emiratization and women, 2022-2024",
+    "trendNote": "Group-level GRI values. The 2024 Emiratization column is labelled 2023 twice in the source chart.",
+    "tenantTitle": "Demo tenant snapshot, {period}",
+    "hiresLeavers": "Hires / leavers",
+    "inQuarter": "in the quarter",
+    "explore": "Explore",
+    "link": {
+      "emiratization": {
+        "title": "Emiratization",
+        "body": "By entity, job family and level, with suppression."
+      },
+      "pipeline": {
+        "title": "Pipeline",
+        "body": "From programme intake to placement and the operator ladder."
+      },
+      "critical-roles": {
+        "title": "Critical roles",
+        "body": "Bench depth against HR targets. Counts only."
+      },
+      "training": {
+        "title": "Training volume",
+        "body": "Hours, continuing training and completions."
+      },
+      "scenarios": {
+        "title": "Scenario planner",
+        "body": "Headcount scenarios, always SIMULATED."
+      },
+      "applications": {
+        "title": "Application funnel",
+        "body": "Counts by programme and stage."
+      },
+      "definitions": {
+        "title": "Definitions",
+        "body": "Every metric, its source table and GRI disclosure."
+      },
+      "handover": {
+        "title": "Handover 2030",
+        "body": "External cover vs ready ENEC successors to 2030 (SIMULATED)"
+      },
+      "skills-outlook": {
+        "title": "Skills outlook",
+        "body": "Skills supply and demand to 2036 by skill family (SIMULATED)."
+      }
+    }
+  },
+  "releases": {
+    "title": "Releases to observers",
+    "hint": "HR prepares an aggregate report; the named HR authority (CHCO office) approves the release. Every step is audited.",
+    "new": "New draft report",
+    "none": "No observer reports yet.",
+    "report": "Report",
+    "status": "Status",
+    "to": "Released to",
+    "approved": "Approved",
+    "submit": "Submit for approval",
+    "approve": "Approve release",
+    "withdraw": "Withdraw",
+    "makerChecker": "The preparer cannot approve their own release.",
+    "rule": "Maker-checker: the person who prepared a report cannot approve it. Observers see a report only after approval and only if it is released to their organisation.",
+    "st": {
+      "draft": "Draft",
+      "pending_approval": "Awaiting approval",
+      "released": "Released",
+      "withdrawn": "Withdrawn"
+    },
+    "confirm": {
+      "submit": "Submit this report for approval?",
+      "approve": "Approve this release?",
+      "withdraw": "Withdraw this release?"
+    },
+    "confirmBody": {
+      "submit": "\"{title}\" goes to the CHCO office for approval, with the organisations selected below.",
+      "approve": "\"{title}\" becomes visible to the selected observer organisations. The approval is recorded with your role.",
+      "withdraw": "\"{title}\" stops being visible to observers. The withdrawal is recorded."
+    },
+    "asHr": "HR analyst",
+    "asChco": "HR authority (CHCO office)",
+    "releaseTo": "Release to",
+    "byChco": "approved by the CHCO office",
+    "emptyBody": "This report has no tiles yet.",
+    "draftHint": "Choose published, organisation-level indicators. Values are copied from the KPI series with their source; nothing below the minimum group size can be added.",
+    "titleEn": "Title (English)",
+    "titleAr": "Title (Arabic)",
+    "tiles": "Indicators",
+    "count": "{n} selected",
+    "saveDraft": "Save draft"
+  },
+  "em": {
+    "intro": "Emiratization and women's share by entity, job family and level. Aggregate only: any group under the minimum size is suppressed.",
+    "publicTitle": "Published Emiratization indicators",
+    "publicHint": "GRI 405-1 values from the 2024 sustainability report.",
+    "trendTitle": "Emiratization trend",
+    "breakdownTitle": "Breakdown, {period}",
+    "breakdownHint": "Choose a dimension and, if you like, a single group. Groups under {n} people show \"suppressed\".",
+    "dimension": "Dimension",
+    "measure": "Measure",
+    "group": "Group",
+    "ofPeople": "{a} of {b} people",
+    "suppressedGroups": "Suppressed groups",
+    "suppressedGroupsSub": "Fewer than {n} people: no value shown",
+    "howTitle": "How this is calculated",
+    "how": {
+      "emirati": "Emirati employees divided by headcount for each group. If either number belongs to a group under the minimum size, the share is suppressed.",
+      "women": "Women divided by headcount for each group. If either number belongs to a group under the minimum size, the share is suppressed."
+    },
+    "count": {
+      "emirati": "UAE nationals",
+      "women": "Women"
+    }
+  },
+  "pipe": {
+    "intro": "From programme intake to placement, in aggregate: published programme facts, scholar cohorts and the licensed operator ladder.",
+    "programmesTitle": "Programme intake (published)",
+    "programmesHint": "Public facts per programme, each with its source.",
+    "programme": "Programme",
+    "published": "Published facts",
+    "funnelTitle": "Application funnel",
+    "funnelBody": "Counts of applications by programme and stage are on the funnel page, with small cells suppressed.",
+    "funnelLink": "Open the application funnel",
+    "cohortsTitle": "Scholar and intern cohorts",
+    "cohortsHint": "Cohorts under {n} people are suppressed and left out of the totals.",
+    "noCohorts": "No cohorts are recorded.",
+    "cohortFunnel": "Cohorts from intake to placement",
+    "enrolled": "Enrolled",
+    "inStudy": "In study",
+    "graduated": "Graduated",
+    "placed": "Placed",
+    "excluded": "{n} small cohorts suppressed and excluded from the totals.",
+    "destination": "Destination",
+    "intake": "Intake",
+    "operatorTitle": "Licensed operator pipeline",
+    "operatorHint": "Local Operator to Reactor Operator to Senior Reactor Operator to Shift Supervisor, in counts.",
+    "ladderTitle": "Operator ladder (demo tenant)",
+    "step": "Step {n}",
+    "ladderNote": "Bars show people qualified against the HR target. FANR certifies ROs and SROs; Kafa'a mirrors the licensee's records.",
+    "nexusTitle": "Cohort qualification progress (NEXUS)",
+    "nexusHint": "Read-only view of NEXUS cohort qualification progress. Headcounts under 10 are suppressed.",
+    "noNexus": "No NEXUS cohort data is available to your role.",
+    "snapshot": "NEXUS snapshot",
+    "live": "Live NEXUS",
+    "nexusNote": "Progress percentages per cohort and qualification; no individual records."
+  },
+  "cr": {
+    "intro": "Bench depth for licensed and scarce roles: people qualified, in training and in the pipeline, against a target set by HR.",
+    "countsTitle": "Counts only",
+    "countsBody": "Succession is shown as counts by role, never as names on a chart. No individual is ranked or scored.",
+    "roles": "Critical roles",
+    "belowTarget": "Below target",
+    "totalQualified": "People qualified",
+    "againstTarget": "against a combined target of {n}",
+    "chartTitle": "Qualified against target",
+    "chartNote": "The vertical mark is the HR target. Green: target met; amber: 90% or more; red: below 90%.",
+    "role": "Role",
+    "target": "Target",
+    "qualified": "Qualified",
+    "inTraining": "In training",
+    "pipeline": "Pipeline",
+    "coverage": "Coverage",
+    "status": "Status",
+    "st": {
+      "met": "Target met",
+      "at_risk": "At risk",
+      "critical": "Critical"
+    },
+    "setTarget": "Set target",
+    "setTargetTitle": "Set the bench target for {role}",
+    "setTargetBody": "The new target applies to this quarter's bench-depth view. Give the reason; it is kept in the audit log.",
+    "asHr": "HR",
+    "newTarget": "New target (people)",
+    "reason": "Reason for the change",
+    "reasonHint": "For example: fifth crew planned, outage season, new unit timeline.",
+    "save": "Save target"
+  },
+  "tr": {
+    "intro": "Training volume in aggregate: published hours, continuing-training populations, hours per head by job family and completions by course.",
+    "publicTitle": "Published training indicators",
+    "publicHint": "GRI 404-1 values and continuing-training populations from the 2024 sustainability report.",
+    "hoursTrend": "Training hours, 2022-2024",
+    "perEmployeeTrend": "Training hours per employee, 2022-2024",
+    "tenantTitle": "Hours per head (demo tenant)",
+    "tenantHint": "By job family and quarter. Families under {n} people are suppressed.",
+    "perFamily": "Hours per head by job family, {period}",
+    "quarterTrend": "Organisation hours per head by quarter",
+    "completionsTitle": "Completions by course",
+    "completionsHint": "Completed training records per course. Courses with fewer than {n} completions are suppressed.",
+    "noCompletions": "No completion records are visible to your role.",
+    "noCompletionsBody": "Completions come from the training records system through the learning module.",
+    "course": "Course",
+    "completions": "Completions",
+    "hours": "Hours",
+    "qualityTitle": "Qualification quality indicators",
+    "qualityHint": "Internal indicators for the demo tenant.",
+    "qualitySample": "Sample indicators"
+  },
+  "sc": {
+    "intro": "Explore how many licensed operators a programme or technology choice might need. Every number here is SIMULATED from the assumptions you enter.",
+    "simTitle": "SIMULATED: not a forecast",
+    "simBody": "This planner multiplies your assumptions. It does not predict ENEC decisions, and ENEC is evaluating new technologies without any deployment decision implied.",
+    "assumptions": "Assumptions",
+    "kind": "Scenario type",
+    "kinds": {
+      "headcount": "Headcount",
+      "technology": "Technology",
+      "programme": "Programme"
+    },
+    "technology": "Technology family",
+    "techHint": "Label only: the staffing per unit below is your assumption.",
+    "param": {
+      "units": "Additional units",
+      "startYear": "First year crews are needed",
+      "perUnit": "Licensed operators per unit",
+      "attritionPct": "Annual attrition (%)",
+      "dntIntake": "DNT intake per year",
+      "inTraining": "Candidates in initial training now",
+      "baseline": "Licensed operators today",
+      "horizon": "Show until"
+    },
+    "range": "From {min} to {max}",
+    "reset": "Reset assumptions",
+    "peakGap": "Peak gap (SIMULATED)",
+    "required": "Required in {year}",
+    "available": "Available in {year}",
+    "chartTitle": "Licensed operators required and available (SIMULATED)",
+    "requiredSeries": "Required",
+    "availableSeries": "Available",
+    "fixInputs": "Correct the highlighted assumptions to see results.",
+    "method": "Method: current candidates license over three years; DNT graduates reach RO about five years after intake and half progress; attrition applies every year. Baseline 190 licensed operators (ENEC GPO release, Aug 2025).",
+    "save": "Save scenario",
+    "update": "Update scenario",
+    "savedTitle": "Saved scenarios",
+    "noneSaved": "No scenarios saved yet.",
+    "name": "Name",
+    "nameHint": "\"(SIMULATED)\" is added to the name automatically.",
+    "created": "Created",
+    "load": "Load"
+  },
+  "obs": {
+    "intro": "Aggregate reports that ENEC's HR authority has approved for release to your organisation.",
+    "notRegTitle": "Not a regulatory channel",
+    "notRegBody": "These reports are aggregate, approved and released by ENEC. Regulatory reporting continues through the official channels between the licensee and FANR.",
+    "auditorNote": "Auditor view: you see every report, including drafts and withdrawn releases, read-only.",
+    "none": "No reports have been released to your organisation",
+    "noneBody": "A report appears here only after the CHCO office approves its release to your organisation.",
+    "approvedOn": "Approved for release on {date} by the CHCO office."
+  },
+  "defs": {
+    "intro": "Every tile on the workforce pages links here. Each entry gives the definition, the unit, the Kafa'a source table and the public source. Aggregates under {n} people are suppressed.",
+    "uncertainTitle": "Uncertain readings",
+    "uncertainBody": "Attrition and hires were read from charts in the 2024 sustainability report; their year mapping is uncertain and they are marked as such.",
+    "internal": "Kafa'a internal measure",
+    "unit": "Unit",
+    "table": "Source table",
+    "suppression": "Suppression",
+    "orgLevel": "Organisation-level published value; no small groups.",
+    "suppressed": "Any group under {n} people is suppressed.",
+    "latest": "Latest value",
+    "uncertain": "Uncertain",
+    "back": "Back to workforce analytics"
+  },
+  "unitShort": {
+    "people": "people",
+    "days": "days",
+    "h": "h"
+  },
+  "ho": {
+    "intro": "One view of the KHNP handover: which functions still rely on external or partner cover, how many ENEC successors are ready now, in 1 to 2 years and in 3 to 5 years, what is in the training pipeline, and where ready successors fall short of the positions to hand over before 2030.",
+    "labels": "Cover plan SAMPLE · projections SIMULATED · groups under {n} suppressed · no names",
+    "mirrorTitle": "Counts only, and not an authority",
+    "mirrorBody": "Kafa'a mirrors HR and training records for planning. It names no person, issues no qualification or licence status, and every cell under 10 people reads \"suppressed\". The OSSA brings about 400 KHNP experts a year until 2030.",
+    "ossaSource": "WNN: KHNP OSSA",
+    "view": "View by",
+    "dim": {
+      "functions": "Function",
+      "roles": "Role"
+    },
+    "ossaEnd": "OSSA ends",
+    "plan": "plan",
+    "slip": "Pipeline delay",
+    "months": "{n} months",
+    "reset": "Back to the plan",
+    "whatIfTitle": "What-if (SIMULATED)",
+    "whatIfBody": "External cover ends after {year} and every successor not yet ready is {months} months later than projected. This is a scenario, not a forecast.",
+    "release": {
+      "title": "Observer-safe release",
+      "hint": "HR prepares; the CHCO office approves (maker-checker) on Workforce analytics.",
+      "body": "Drafts an aggregate report from the baseline plan: eight tiles and the burn-down, suppressed below 10, with no what-if settings and no names. Observers see it only after approval.",
+      "prepare": "Prepare release draft",
+      "saved": "Draft {id} saved.",
+      "open": "Submit it from Workforce analytics",
+      "confirmTitle": "Prepare an observer-safe release?",
+      "confirmBody": "A draft aggregate report for {period} is added to the observer releases. Nothing is released until the CHCO office approves it."
+    },
+    "footer": "National context: Nafis 2026 moves the focus to the quality and impact of Emiratisation; shown as national direction, not a quota on ENEC.",
+    "nafisSource": "Gulf News: Nafis 2026",
+    "total": "All covered roles",
+    "tile": {
+      "coverSub": "in {year}",
+      "planSource": "SAMPLE plan",
+      "readySub": "cumulative, by {year}",
+      "pipelineSub": "COIT, LOIT, GPO, DNT and discipline cohorts",
+      "firstShort": "first shortfall in {year}",
+      "noShort": "no shortfall in any year"
+    },
+    "burndown": {
+      "title": "Burn-down to the OSSA end",
+      "eyebrow": "OSSA ends {year}",
+      "cover": "External cover",
+      "ready": "Ready ENEC successors (cumulative)",
+      "need": "Positions to hand over",
+      "note": "Ready successors should meet the positions to hand over before the cover ends.",
+      "gaps": "Gaps in a line are suppressed values (under 10)."
+    },
+    "risk": {
+      "title": "Risk list",
+      "none": "No shortfall in any year",
+      "noneBody": "Ready successors cover every handed-over position under these settings.",
+      "from": "Shortfall from {year}",
+      "max": "Largest shortfall:",
+      "years": "Years:"
+    },
+    "links": {
+      "klra": "Knowledge loss risk (KLRA)",
+      "capture": "Knowledge capture plan",
+      "succession": "Succession slates",
+      "bench": "Critical-role bench",
+      "notYet": "not available to you yet"
+    },
+    "matrix": {
+      "title": "Shortfall by year",
+      "short": "short",
+      "ok": "ok",
+      "note": "\"short\": positions already handed over exceed ready successors that year. Rows whose cover is under {n} are suppressed."
+    },
+    "table": {
+      "caption": "Handover readiness by group (counts only)",
+      "cover": "Cover {year}",
+      "pipeline": "Pipeline",
+      "readyBy": "Ready by {year}",
+      "emirati": "Emirati share",
+      "source": "Successors from",
+      "status": "Status"
+    },
+    "band": {
+      "now": "Ready now",
+      "y1_2": "1 to 2 years",
+      "y3_5": "3 to 5 years"
+    },
+    "source": {
+      "f19": "Succession slates",
+      "f05": "Career shortlists (F05)",
+      "mixed": "Slates and shortlists"
+    },
+    "onTrack": "On track",
+    "pipeline": {
+      "title": "Pipeline in training",
+      "note": "GPO and DNT are UAE-national programmes. Cohort counts exclude people already named on a succession slate."
+    },
+    "route": {
+      "coit": "COIT (certified operators)",
+      "loit": "LOIT (local operators)",
+      "gpo": "GPO (graduate plant operators)",
+      "dnt": "DNT (diploma)",
+      "discipline": "Discipline programmes"
+    },
+    "emirati": {
+      "title": "Emirati share of ready successors",
+      "of": "of successors ready by {year}",
+      "body": "Successors who are UAE nationals, over all successors ready by the OSSA end. Shown only at 10 or more people on both sides."
+    },
+    "suppressed": "suppressed",
+    "reason": {
+      "cover": "{n} positions held by external or partner staff in {year}",
+      "cover_suppressed": "External cover in {year} is under 10 positions (suppressed)",
+      "ossa": "The cover ends after {year} (OSSA end)",
+      "shortfall": "Ready successors fall short of the positions handed over from {year}",
+      "on_track": "Ready successors cover every handed-over position through {year}",
+      "source_f19": "Named successors come from HR-confirmed succession slates",
+      "source_f05": "No succession slate yet: successors come from career shortlists and F05 readiness",
+      "source_mixed": "Successors come from succession slates for some roles and career shortlists for others",
+      "pipeline": "{n} trainees in earmarked cohorts",
+      "pipeline_small": "Fewer than 10 trainees in earmarked cohorts",
+      "slip": "What-if: the pipeline is {months} months late (SIMULATED)"
+    }
+  },
+  "reasons": {
+    "so_suppressed": "Fewer than {n} people measured in this skill family: suppressed",
+    "so_first_gap": "Demand first exceeds supply in {year}",
+    "so_no_gap": "Supply covers demand through {year}",
+    "so_attrition_widens": "General attrition: {band} effect, widens the gap",
+    "so_klra_widens": "Known retirements and contract ends (KLRA): {band} effect, widens the gap",
+    "so_handover_widens": "Positions coming back from KHNP and contractor cover: {band} effect, widens the gap",
+    "so_growth_widens": "Staffing scenario growth: {band} effect, widens the gap",
+    "so_advance_widens": "ADVANCE adoption: {band} effect, widens the gap",
+    "so_intake_narrows": "Pipeline intakes: {band} effect, narrows the gap",
+    "so_reskill_narrows": "Reskilling conversions: {band} effect, narrows the gap",
+    "so_basis": "Measured on {n} staff holding the family today, scaled to the organisation"
+  },
+  "so": {
+    "intro": "Skills supply and demand by skill family over the next 5 to 10 years, combining attrition, the KHNP handover, ADVANCE adoption, pipeline intakes and the reskilling effect of training. Move the assumptions and see what changes the gap most.",
+    "labels": "SIMULATED · aggregate only · skill families with fewer than {n} people measured are suppressed · people-equivalents",
+    "simTitle": "SIMULATED: a planning aid, not a forecast",
+    "simBody": "Assumptions are inputs you control. Results come from today's skill states of the demo tenant, scaled to the organisation, and from SAMPLE plans. Nothing here names or ranks a person, and nothing here is for public release without the HR director's sign-off.",
+    "managerTitle": "Released outlooks only",
+    "managerBody": "Line managers see the outlooks the HR director has released. The live workbench is for HR and auditors.",
+    "assumptions": "Assumptions",
+    "baseline": "Baseline",
+    "whatIf": "What-if",
+    "baselineMark": "Baseline value",
+    "baselineIs": "baseline {v}",
+    "scenario": "Staffing scenario",
+    "currentFleet": "Current fleet (no new units)",
+    "scenarioHint": "Saved scenarios from the scenario planner scale demand (headcount) or set the ADVANCE technology (technology).",
+    "scenarioLink": "Scenario planner",
+    "param": {
+      "horizon": "Horizon year",
+      "attrition_pct": "General attrition",
+      "klra_weight": "Known departures (KLRA)",
+      "pipeline_factor": "Pipeline delivery",
+      "annual_intake": "DNT graduate intake",
+      "reskill_rate": "Reskilling conversion",
+      "adv_factor": "ADVANCE adoption",
+      "adv_start": "ADVANCE adoption starts",
+      "ossa_end": "KHNP OSSA support ends"
+    },
+    "hint": {
+      "attrition_pct": "Share of holders leaving each year for any reason",
+      "klra_weight": "Share of KLRA retirements and contract ends that take the skill with them",
+      "pipeline_factor": "Share of the F22 cohort plan delivered on time",
+      "annual_intake": "New Local Operators a year from 2028 (24-month DNT)",
+      "reskill_rate": "Share of awareness-level staff reaching Practitioner each year",
+      "adv_factor": "Scales the M11 future-skills index (0.5 to 1.5)",
+      "adv_start": "Demand uplift ramps up over five years from this year",
+      "ossa_end": "KHNP cover steps down to zero after this year"
+    },
+    "pctYear": "{n}% a year",
+    "perYear": "{n} a year",
+    "overrides": "Per-family reskilling rates",
+    "overridesBody": "Leave a family empty to use the general rate ({n}% a year). Rates run from 0 to 40%.",
+    "overrideFor": "Reskilling rate for {family}",
+    "clearOverrides": "Clear all",
+    "done": "Done",
+    "reset": "Reset to baseline",
+    "loadedTitle": "Loaded: {name}",
+    "loadedBody": "Change any assumption to explore from here. Saving updates your own draft or saves a new outlook.",
+    "tile": {
+      "short": "Families short in {year}",
+      "shortSub": "{n} more suppressed (fewer than 10 people measured)",
+      "shortfall": "Shortfall in {year}",
+      "peopleEq": "people-equivalents, shown families only",
+      "vsBaseline": "{delta} vs the baseline",
+      "first": "First shortfall year",
+      "firstSub": "earliest year any shown family falls short",
+      "cumulative": "Cumulative shortfall",
+      "cumulativeSub": "people-years, {from} to {to}"
+    },
+    "none": "None",
+    "gapTitle": "Gap by skill family in {year}",
+    "gapNote": "Bars to the end side are shortfalls, to the start side surpluses. Hatched rows have fewer than {n} people measured and are suppressed. Select a family to see its trend.",
+    "suppressed": "Suppressed",
+    "short": "{n} short",
+    "surplus": "{n} spare",
+    "balanced": "Balanced",
+    "surplusAxis": "surplus",
+    "shortAxis": "shortfall",
+    "family": "Skill family",
+    "gapCol": "Gap in {year}",
+    "trendTitle": "Supply and demand: {family}",
+    "trendTitleNone": "Supply and demand",
+    "allSuppressed": "Every family is suppressed.",
+    "demand": "Demand",
+    "supply": "Supply",
+    "whyGap": "Why this gap?",
+    "drivers": "What drives this family",
+    "driver": {
+      "attrition": "Attrition",
+      "klra": "Known departures",
+      "handover": "KHNP handover",
+      "growth": "Scenario growth",
+      "advance": "ADVANCE",
+      "intake": "Pipeline",
+      "reskill": "Reskilling"
+    },
+    "band": {
+      "high": "major",
+      "medium": "moderate",
+      "low": "minor"
+    },
+    "tornadoTitle": "What changes the gap most",
+    "tornadoEyebrow": "Cumulative shortfall {from} to {to}",
+    "tornadoNote": "Today the biggest lever is: {top}. Each bar moves one assumption across a fixed range and holds the others.",
+    "tornadoLow": "Low end of the range",
+    "tornadoHigh": "High end of the range",
+    "tornadoNow": "Current assumptions: {n}",
+    "swing": "swing {n}",
+    "assumption": "Assumption",
+    "atLow": "Low end",
+    "atHigh": "High end",
+    "swingCol": "Swing",
+    "byYearTitle": "Shortfall by year (shown families)",
+    "byYearNote": "Sum of the shortfalls of the shown families each year; surpluses do not offset shortfalls.",
+    "tableTitle": "Outlook by skill family",
+    "tableDesc": "People-equivalents. Suppressed families show no value.",
+    "col": {
+      "supplyNow": "Supply {year}",
+      "demandNow": "Demand {year}",
+      "supplyH": "Supply {year}",
+      "demandH": "Demand {year}",
+      "gapH": "Gap {year}",
+      "first": "First shortfall"
+    },
+    "status": "Status",
+    "shortPill": "Shortfall",
+    "coveredPill": "Covered",
+    "save": "Save outlook",
+    "update": "Update my outlook",
+    "saveHint": "Saved with \"(SIMULATED)\"; the server recomputes the results.",
+    "name": "Name",
+    "nameHint": "3 to 120 characters. \"(SIMULATED)\" is added.",
+    "savedTitle": "Saved outlooks",
+    "savedDesc": "HR saves outlooks; the HR director releases one to line managers or withdraws it.",
+    "noneSaved": "No saved outlooks yet.",
+    "shortCol": "Families short",
+    "created": "Saved",
+    "releasedOn": "Released",
+    "load": "Load",
+    "st": {
+      "draft": "Draft",
+      "released": "Released",
+      "withdrawn": "Withdrawn"
+    },
+    "release": "Release",
+    "withdraw": "Withdraw",
+    "releaseTitle": "Release {name}",
+    "releaseBody": "Line managers will see this outlook with your summary. Describe it in words: no headcounts, no site information (M11 rule).",
+    "summaryEn": "Summary (English)",
+    "summaryAr": "Summary (Arabic)",
+    "summaryHint": "10 to 600 characters.",
+    "cleanOk": "Release text is clean",
+    "cleanBad": "Headcount or site wording found",
+    "cleanRule": "Checked with the M11 public-text guard.",
+    "releaseConfirmTitle": "Release this outlook?",
+    "releaseConfirmBody": "\"{name}\" becomes visible to line managers as a SIMULATED outlook. The release is recorded in the audit log and the NEXUS ledger.",
+    "asDirector": "Acting as HR director",
+    "withdrawTitle": "Withdraw this outlook?",
+    "withdrawBody": "\"{name}\" stops being visible to line managers. The withdrawal is recorded in the audit log and the NEXUS ledger.",
+    "withdrawReason": "Reason",
+    "releasedTitle": "Released outlooks",
+    "releasedDesc": "Outlooks the HR director has released to line managers. SIMULATED, aggregate only.",
+    "noneReleased": "No outlook released yet.",
+    "noneReleasedBody": "The HR director releases outlooks from the saved list.",
+    "releasedOnX": "Released {date}",
+    "horizonTo": "to {year}",
+    "openInWorkbench": "Open in the workbench",
+    "howTitle": "How the outlook is calculated",
+    "how": {
+      "demand": {
+        "t": "Demand.",
+        "b": "Active staff whose role profile needs the skill family (M01 role competencies), times the chosen staffing scenario's growth from its start year."
+      },
+      "handover": {
+        "t": "KHNP handover.",
+        "b": "Positions held today by KHNP OSSA experts or contractors in roles that need the family come back to ENEC staff as the F22 cover plan steps down, all of them after the OSSA end year."
+      },
+      "advance": {
+        "t": "ADVANCE.",
+        "b": "The family's share of skills mapped to ADVANCE technologies times the M11 future-skills index (adjustDemand with the adoption factor), ramping up over five years from the start year."
+      },
+      "supply": {
+        "t": "Supply.",
+        "b": "Active staff holding the family at Practitioner level or above in their F01 skill state, less general attrition each year."
+      },
+      "klra": {
+        "t": "Known departures.",
+        "b": "Retirements and contract ends within five years in F20 KLRA positions, spread over their band's years and weighted by risk band (high 1.0, medium 0.7, low 0.4)."
+      },
+      "pipeline": {
+        "t": "Pipeline.",
+        "b": "F22 cohorts earmarked for roles that need the family arrive at their ready year; DNT graduates join the Local Operator families from 2028."
+      },
+      "reskill": {
+        "t": "Reskilling.",
+        "b": "Staff at awareness level in the family reach Practitioner at the reskilling rate each year (per family if set)."
+      },
+      "scale": {
+        "t": "Scale.",
+        "b": "The demo tenant's staff are a sample: counts are scaled to the organisation headcount (SAMPLE workforce snapshot) and shown as people-equivalents."
+      },
+      "suppression": {
+        "t": "Suppression.",
+        "b": "A family with fewer than {n} people measured (holders or role holders) returns only its name and \"suppressed\"; totals add up shown families only. Security is out of scope (career path only)."
+      },
+      "tornado": {
+        "t": "Tornado.",
+        "b": "Each assumption is moved across a fixed plausible range with the others held; the bar shows how much the cumulative shortfall moves. Resetting the assumptions reproduces the baseline exactly."
+      }
+    },
+    "links": {
+      "scenarios": "Scenario planner (M07)",
+      "handover": "Handover 2030 board (F22)",
+      "klra": "Knowledge loss risk (F20)",
+      "future": "Future skills (M11)",
+      "skills": "Team capability (F01/F11)",
+      "definitions": "Definitions"
+    },
+    "notOpen": "not open to your role"
+  }
+}

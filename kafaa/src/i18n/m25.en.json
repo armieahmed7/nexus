@@ -1,0 +1,435 @@
+{
+  "module": {
+    "name": "Training effectiveness and needs"
+  },
+  "routes": {
+    "training-effectiveness": {
+      "title": "Training effectiveness",
+      "purpose": "Kirkpatrick levels 1 to 4 for every course: reaction, learning gain, behaviour on the job and linked results, with small groups suppressed."
+    },
+    "training-effectiveness-course": {
+      "title": "Course effectiveness",
+      "purpose": "One course in depth: the four levels, the evidence behind each and the redesign decision."
+    },
+    "training-observations": {
+      "title": "On-the-job observations",
+      "purpose": "Level 3: line managers observe how people apply a qualifying course 60 to 90 days after completing it."
+    },
+    "my-learning-feedback": {
+      "title": "Course feedback",
+      "purpose": "Give short, anonymous feedback on the courses you completed in the last 90 days."
+    },
+    "training-needs": {
+      "title": "Training needs forecast",
+      "purpose": "Demand per course and quarter from expiries, curricula, roadmaps, recommendations, future interest and knowledge-loss actions, against session capacity."
+    }
+  },
+  "common": {
+    "course": "Course",
+    "status": "Status",
+    "yes": "Yes",
+    "no": "No",
+    "cancel": "Cancel",
+    "noRole": "No job role on record",
+    "suppressed": "suppressed",
+    "suppressedHint": "Fewer than 10 people: the value is hidden to protect individuals",
+    "levelsShown": "{n} of 4 Kirkpatrick levels have enough data"
+  },
+  "committee": {
+    "all_staff": "All-staff programmes",
+    "operations": "Operations training committee",
+    "maintenance": "Maintenance training committee",
+    "rp_chem": "Radiation protection and chemistry committee",
+    "engineering": "Engineering training committee",
+    "emergency": "Emergency preparedness committee",
+    "leadership": "Leadership development committee",
+    "training": "Instructor development"
+  },
+  "dept": {
+    "operations": "Operations",
+    "maintenance_engineering": "Maintenance and engineering",
+    "rp_chem_ep": "RP, chemistry and EP",
+    "training_quality": "Training and quality",
+    "corporate": "Corporate",
+    "none": "No department"
+  },
+  "trend": {
+    "improving": "improving",
+    "worsening": "worsening",
+    "flat": "flat"
+  },
+  "verdict": {
+    "flagged": "Flagged for redesign",
+    "redesign": "Redesign candidate",
+    "insufficient": "Not enough data",
+    "onTrack": "On track"
+  },
+  "level": {
+    "l1": {
+      "name": "Reaction",
+      "what": "Learners rate relevance, clarity, delivery, confidence and time right after the course. Anonymous to instructors."
+    },
+    "l2": {
+      "name": "Learning",
+      "what": "Knowledge gain from a released check before the course to a released check after it."
+    },
+    "l3": {
+      "name": "Behaviour",
+      "what": "The line manager observes, 60 to 90 days later, whether the course objectives show in daily work."
+    },
+    "l4": {
+      "name": "Results",
+      "what": "Linked plant KPIs (SAMPLE). Association, not causation."
+    }
+  },
+  "l1": {
+    "item": {
+      "relevance": "Relevance",
+      "objectives": "Clear objectives",
+      "delivery": "Delivery",
+      "confidence": "Confidence to apply",
+      "time": "Worth the time"
+    },
+    "q": {
+      "relevance": "The course was relevant to my job",
+      "objectives": "The objectives were clear and met",
+      "delivery": "The instructor and materials helped me learn",
+      "confidence": "I feel confident applying this at work",
+      "time": "The course was worth the time away from work",
+      "recommend": "Would you recommend this course to a colleague?"
+    },
+    "scale": {
+      "1": "Strongly disagree",
+      "2": "Disagree",
+      "3": "Neutral",
+      "4": "Agree",
+      "5": "Strongly agree"
+    },
+    "scaleHint": "1 = strongly disagree, 5 = strongly agree. It takes under a minute."
+  },
+  "eff": {
+    "intro": "How well each course works, at four levels: did people like it, did they learn, do they apply it, and what moved in the plant. Results show only for groups of 10 or more; plant KPIs are SAMPLE data and show association, not causation.",
+    "labels": "Groups under {n} are suppressed. Individual L1 answers are never shown.",
+    "toL3": "L3 observations",
+    "scheduleL3": "Schedule L3 observations",
+    "scheduleL3Consequence": "Creates an observation 90 days after every completion of a qualifying course that has none yet, assigned to the learner's line manager. It is audited.",
+    "tile": {
+      "courses": "Courses with results",
+      "coursesSub": "At least one level with enough data",
+      "relevance": "Average relevance (L1)",
+      "relevanceSub": "Out of 5, courses with 10+ answers",
+      "gain": "Average learning gain (L2)",
+      "gainSub": "Normalised gain, released attempts only",
+      "applied": "Applied on the job (L3)",
+      "appliedSub": "Share of checklist items observed"
+    },
+    "committee": "Training committee",
+    "allCommittees": "All committees",
+    "withData": "Only courses with results",
+    "asOf": "As of {date}",
+    "scorecard": "Effectiveness scorecard",
+    "scorecardHint": "Open a course for the detail behind each level. \"Why this?\" lists the evidence.",
+    "none": "No course matches these filters",
+    "levels": "Levels",
+    "l1": "L1 relevance",
+    "recommend": "Would recommend",
+    "l2": "L2 gain",
+    "l3": "L3 applied",
+    "l4": "L4 KPIs (SAMPLE)",
+    "verdict": "Verdict",
+    "chartRelevance": "Relevance by course (L1, out of 5)",
+    "chartGain": "Normalised learning gain (L2)",
+    "notAuthorityTitle": "Effectiveness is not qualification",
+    "notAuthority": "These measures help training committees improve courses. They never qualify, disqualify or rate a person; qualification stays with the licensee's systems."
+  },
+  "flags": {
+    "title": "Courses flagged for redesign",
+    "hint": "Flags go to the SAT workbench (analysis, design and development) with the evidence of the day.",
+    "none": "No course is flagged for redesign",
+    "by": "Flagged by {name} on {date}",
+    "status": {
+      "open": "Open",
+      "in_sat": "In SAT review",
+      "closed": "Closed"
+    }
+  },
+  "pack": {
+    "open": "Committee pack",
+    "title": "Committee pack",
+    "print": "Print or save as PDF",
+    "csv": "Download CSV",
+    "intro": "Aggregate results for one training committee, prepared {date}. Values from groups under {n} print as <10.",
+    "empty": "No course reports to this committee",
+    "caveat": "L4 KPIs are SAMPLE data: association, not causation. Not a regulatory submission.",
+    "csvNote": "Kafa'a committee pack. Aggregates only; cells under {n} suppressed (<10). L4 KPIs are SAMPLE: association, not causation.",
+    "col": {
+      "code": "Code",
+      "course": "Course",
+      "committee": "Committee",
+      "completions": "Completions",
+      "l1_n": "L1 answers",
+      "relevance": "Relevance /5",
+      "recommend": "Would recommend",
+      "l2_pairs": "L2 pairs",
+      "gain": "L2 normalised gain",
+      "l3_done": "L3 observed",
+      "applied": "L3 applied",
+      "kpis": "L4 KPIs (SAMPLE)",
+      "redesign": "Redesign candidate"
+    }
+  },
+  "course": {
+    "back": "Training effectiveness",
+    "intro": "The four Kirkpatrick levels for this course, each with the evidence behind it.",
+    "flag": "Flag for redesign",
+    "flagConsequence": "The course goes to the SAT workbench with today's evidence. Committees see the flag. Audited and recorded in the NEXUS ledger.",
+    "flagReason": "What should change (10 to 500 characters)",
+    "completions": "Completions",
+    "responses": "L1 answers",
+    "rate": "{n}% response rate",
+    "pairs": "L2 before/after pairs",
+    "observed": "L3 observed",
+    "overdue": "{n} overdue",
+    "level": "Level {n}",
+    "smallTitle": "Not enough data yet",
+    "l1Small": "Results show when {n} or more people have answered.",
+    "responseRate": "Response rate",
+    "l1Anon": "Answers are anonymous: instructors and managers see only these aggregates.",
+    "l2None": "No knowledge checks linked",
+    "l2NoneHint": "Link a before and after check in the evaluation design to measure the gain.",
+    "l2Small": "The gain shows when {n} or more people have both a released before and after check.",
+    "before": "Before the course",
+    "after": "After the course",
+    "gain": "Average gain",
+    "points": "points",
+    "normGain": "Normalised gain",
+    "l2Released": "Only released attempts count; drafts and graded-but-unreleased results are left out.",
+    "l2Excluded": "Some unreleased attempts are waiting and are not counted yet.",
+    "l3NotQualifying": "Not a qualifying course",
+    "l3NotQualifyingHint": "On-the-job observations are scheduled for qualifying courses only.",
+    "l3Small": "Transfer shows when {n} or more observations are recorded.",
+    "appliedText": "{n}% of the checklist items were observed in daily work (yes = full, partly = half).",
+    "l3Scheduled": "Scheduled",
+    "l3Done": "Recorded",
+    "l3Overdue": "Overdue",
+    "checklist": "Observation checklist ({days} days after completion)",
+    "toL3": "Open the observations",
+    "l4CaveatTitle": "Association, not causation",
+    "l4Caveat": "SAMPLE plant KPIs linked to this course. Many things move a KPI besides one course; read a trend as a question for the committee, never as proof.",
+    "l4None": "No KPI is linked to this course",
+    "delivered": "Quarters with deliveries: {q}"
+  },
+  "l3": {
+    "intro": "Level 3: did the course show up in daily work? The line manager observes 60 to 90 days after a qualifying course and rates each objective.",
+    "notSignoffTitle": "Not a qualification sign-off",
+    "notSignoff": "This observation is about applying the course at work. It does not qualify anyone; task sign-offs stay in the qualification card.",
+    "modeAll": "All observations (training manager or auditor view)",
+    "modeMine": "Observations for your team",
+    "tab": {
+      "due": "Due now",
+      "upcoming": "Upcoming",
+      "done": "Recorded"
+    },
+    "empty": {
+      "due": "Nothing is due",
+      "upcoming": "Nothing upcoming",
+      "done": "Nothing recorded yet"
+    },
+    "person": "Person",
+    "completed": "Completed",
+    "due": "Due",
+    "opens": "Opens {date}",
+    "observer": "Observer",
+    "view": {
+      "scheduled": "Scheduled",
+      "due": "Due",
+      "overdue": "Overdue",
+      "done": "Recorded",
+      "cancelled": "Cancelled"
+    },
+    "record": "Record",
+    "view_": "View",
+    "save": "Save observation",
+    "formIntro": "Rate what you saw in the last weeks of normal work. \"Not applicable\" when there was no chance to observe it.",
+    "ratingLabel": "Observed on the job",
+    "rating": {
+      "yes": "Yes, consistently",
+      "partly": "Partly",
+      "no": "Not yet",
+      "na": "Not applicable"
+    },
+    "note": "Note (optional)",
+    "noteHint": "Up to 500 characters. Describe behaviour, not the person."
+  },
+  "my": {
+    "intro": "Tell us how your courses worked for you. Forms stay open for {days} days after completion.",
+    "anonTitle": "Anonymous to instructors and managers",
+    "anon": "Your answers are combined with others. Instructors, managers and the training team see course results only when {n} or more people answered, never your individual answers.",
+    "pending": "Waiting for your feedback",
+    "pendingHint": "One short form per completed course.",
+    "nonePending": "No feedback is waiting. Thank you.",
+    "submit": "Send feedback",
+    "completedOn": "Completed {date}",
+    "given": "Feedback you gave",
+    "noneGiven": "You have not given feedback yet",
+    "givenOn": "Sent {date}",
+    "l3": "On-the-job observations about you",
+    "l3Hint": "After a qualifying course your line manager observes how it shows in your work. It is not a qualification decision.",
+    "noL3": "No observations",
+    "l3Due": "Due {date}"
+  },
+  "needs": {
+    "intro": "How many people need each course next quarter, and why: qualification expiries, role curricula, knowledge-loss actions, career roadmaps, accepted coach recommendations and future interest, against the seats already scheduled.",
+    "labels": "Every number drills down to its sources. Cells under {n} are suppressed in exports but counted in totals.",
+    "export": "Export CSV",
+    "compute": "Recompute demand",
+    "computeConsequence": "Recomputes {q} from today's data in every source. Cells that no longer apply are set to 0. Audited.",
+    "quarter": "Quarter",
+    "scenario": "Intake scenario",
+    "dnt": "DNT trainees joining",
+    "gpo": "GPO graduates joining",
+    "reset": "Reset",
+    "computedAt": "Computed {date}",
+    "notComputed": "Not computed yet",
+    "simTitle": "SIMULATED intake",
+    "simBody": "The intake adds the initial courses every new trainee needs. It is a what-if on this screen only: nothing is stored and drafts cannot be proposed from it.",
+    "aggTitle": "Aggregate view",
+    "aggBody": "Cells under {n} people show as suppressed. Totals are exact.",
+    "tile": {
+      "demand": "Demand",
+      "demandSub": "People needing a course in {q}",
+      "seats": "Seats scheduled",
+      "seatsSub": "Sessions in the quarter × capacity",
+      "shortfall": "Shortfall",
+      "shortfallSub": "{n} courses short of seats",
+      "instructors": "Instructors",
+      "instructorsSub": "Qualified instructor pool with current currency (F31)"
+    },
+    "empty": "No demand computed for this quarter",
+    "emptyCompute": "Use \"Recompute demand\" to build it from the six sources.",
+    "chart": "Top courses by demand",
+    "table": "Demand and capacity by course",
+    "tableHint": "Select a number to see where it comes from.",
+    "drillAria": "Drill down into {source}",
+    "intake": "Intake (SIMULATED)",
+    "plusDraft": "+{n} in drafts",
+    "covered": "Covered",
+    "propose": "Propose sessions",
+    "proposeConsequence": "Drafts sessions for {course} in {q} to cover {n} more people. Drafts are not published: the scheduler creates the sessions in the training schedule.",
+    "drafts": "Draft session proposals",
+    "draftsHint": "Drafts appear in the training schedule as \"not published\" until the scheduler links a real session.",
+    "toSchedule": "Open the training schedule",
+    "noDrafts": "No draft proposals",
+    "sources": "Where demand comes from",
+    "dedupe": "A person who needs the same course for two reasons in a quarter is counted once, under the first source in this list, so the sources always add up to the total.",
+    "dept": "Department",
+    "role": "Job role",
+    "people": "People",
+    "sum": "Total",
+    "sumsMatch": "The drill-down adds up to the cell.",
+    "csvNote": "Kafa'a training needs forecast. Cells under {n} print as <10 and are counted in the totals.",
+    "col": {
+      "code": "Code",
+      "course": "Course",
+      "period": "Quarter",
+      "total": "Total",
+      "seats": "Seats",
+      "draft_seats": "Draft seats",
+      "shortfall": "Shortfall"
+    }
+  },
+  "source": {
+    "expiry": {
+      "name": "Qualification expiries",
+      "short": "Expiries",
+      "rule": "The requalification course 90 days before a qualification expires (already expired: now). Mirror of the training records system.",
+      "link": "Qualification standards"
+    },
+    "mandatory": {
+      "name": "Role curriculum",
+      "short": "Curriculum",
+      "rule": "Mandatory courses of the person's role: never completed (by the assignment due date) or a completion whose validity runs out.",
+      "link": "Course catalogue"
+    },
+    "klra": {
+      "name": "Knowledge-loss actions",
+      "short": "KLRA",
+      "rule": "Open cross-training actions from the knowledge loss risk assessment, by their due date.",
+      "link": "Knowledge loss risk"
+    },
+    "roadmap": {
+      "name": "Career roadmaps",
+      "short": "Roadmaps",
+      "rule": "Course blocks in people's career roadmaps that have not ended, by their start date.",
+      "link": "Career roadmap"
+    },
+    "coach": {
+      "name": "Accepted recommendations",
+      "short": "Coach",
+      "rule": "Courses people saved or enrolled in from the Learning Coach in the last 180 days, about 45 days later.",
+      "link": "Learning Coach"
+    },
+    "future": {
+      "name": "Future interest",
+      "short": "Future",
+      "rule": "Interest in an advanced technology or horizon lane, through its linked course, about 120 days out.",
+      "link": "Future Me"
+    }
+  },
+  "modality": {
+    "classroom": "Classroom",
+    "ojt": "On the job",
+    "simulator": "Simulator",
+    "elearning": "E-learning",
+    "drill": "Drill",
+    "external": "External",
+    "blended": "Blended",
+    "clinic": "Clinic"
+  },
+  "proposal": {
+    "draft": "Draft, not published",
+    "scheduled": "Scheduled",
+    "withdrawn": "Withdrawn",
+    "size": "{n} × {seats} seats · {q}",
+    "withdraw": "Withdraw"
+  },
+  "schedule": {
+    "title": "Proposed from the training needs forecast",
+    "notPublished": "Drafts, not published",
+    "intro": "Create the session with \"New session\", then link the draft to it. Drafts never appear to learners.",
+    "toNeeds": "Training needs forecast",
+    "pickSession": "Session to link",
+    "noSession": "No session of this course in the quarter yet",
+    "link": "Link"
+  },
+  "reasons": {
+    "l1_small": "Fewer than {min} people answered the L1 form: results are suppressed",
+    "low_relevance": "Relevance averages {v} of 5, below the {t} threshold",
+    "low_recommend": "Only {v}% would recommend it (threshold {t}%)",
+    "l2_none": "No before/after knowledge check is linked, so L2 is not measured",
+    "l2_small": "Fewer than {min} released before/after pairs: the gain is suppressed",
+    "low_gain": "Normalised learning gain is {v}%, below {t}%",
+    "l2_unreleased": "Unreleased attempts are waiting and are not counted",
+    "l3_small": "Fewer than {min} on-the-job observations recorded: transfer is suppressed",
+    "low_transfer": "Only {v}% of the objectives were observed on the job (threshold {t}%)",
+    "l3_overdue": "{n} observations are overdue",
+    "kpi_worse": "{kpi} is worsening (SAMPLE; association, not causation)",
+    "on_track": "Every measured level is above its threshold",
+    "shortfall": "{n} more people than the {seats} seats scheduled",
+    "covered": "Scheduled seats ({seats}) cover the demand",
+    "draft_cover": "{n} seats are already in draft proposals",
+    "sim_short": "Only {slots} free simulator slots in the quarter",
+    "src_expiry": "{n} qualifications expire and need requalification",
+    "src_expiry_small": "Fewer than {min} from qualification expiries (suppressed)",
+    "src_mandatory": "{n} people need it under their role curriculum",
+    "src_mandatory_small": "Fewer than {min} from role curriculum (suppressed)",
+    "src_klra": "{n} knowledge-loss cross-training actions",
+    "src_klra_small": "Fewer than {min} from knowledge-loss actions (suppressed)",
+    "src_roadmap": "{n} people planned it in their career roadmap",
+    "src_roadmap_small": "Fewer than {min} from career roadmaps (suppressed)",
+    "src_coach": "{n} people accepted it from the Learning Coach",
+    "src_coach_small": "Fewer than {min} from accepted recommendations (suppressed)",
+    "src_future": "{n} people showed future interest that leads here",
+    "src_future_small": "Fewer than {min} from future interest (suppressed)"
+  }
+}

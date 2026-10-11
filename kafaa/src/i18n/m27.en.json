@@ -1,0 +1,404 @@
+{
+  "module": {
+    "name": "Learning record store"
+  },
+  "routes": {
+    "my-learning-record": {
+      "title": "My learning record",
+      "purpose": "Every learning experience Kafa'a recorded about me as xAPI statements: courses, refreshers, opportunities, rotations, shadowing, JPMs, mentoring and knowledge, with a JSON lines download."
+    },
+    "training-lrs": {
+      "title": "Learning record store",
+      "purpose": "Explore xAPI statements for the people in your scope, see the suppressed analytics that feed effectiveness and needs analysis, and check which Kafa'a events emit statements."
+    },
+    "training-lrs-person": {
+      "title": "Learning timeline",
+      "purpose": "One person's learning statements in time order, for an instructor or manager in scope. Every read is audited."
+    },
+    "training-lrs-statement": {
+      "title": "Statement",
+      "purpose": "One stored xAPI statement with its provenance and its xAPI 2.0 JSON."
+    },
+    "training-lrs-adapters": {
+      "title": "LRS adapters",
+      "purpose": "How an external learning record store would connect to Kafa'a (SIMULATED): Statement API, field mapping, profile and emitters."
+    },
+    "training-lrs-console": {
+      "title": "LRS test console",
+      "purpose": "For platform admins: check an xAPI statement against the Kafa'a profile and store it about yourself."
+    }
+  },
+  "common": {
+    "eyebrow": "Learning record store · xAPI 2.0",
+    "mirror": "Kafa'a records learning experiences as evidence for development. A statement is not a qualification, a licence decision or a FANR record."
+  },
+  "verb": {
+    "completed": "completed",
+    "passed": "passed",
+    "failed": "did not pass",
+    "answered": "answered",
+    "attended": "attended",
+    "experienced": "experienced",
+    "attempted": "practised",
+    "progressed": "progressed"
+  },
+  "type": {
+    "course": "Course",
+    "module": "Course module",
+    "scenario": "Simulator scenario",
+    "task": "Task practice",
+    "refresher": "Knowledge refresher",
+    "opportunity": "Opportunity",
+    "rotation": "Rotation",
+    "shadowing": "Job shadowing",
+    "jpm": "Job performance measure",
+    "mentoring": "Mentoring",
+    "knowledge_asset": "Knowledge asset",
+    "activity": "Activity"
+  },
+  "source": {
+    "m04_course": "Course completion",
+    "f14_refresher": "Knowledge refresher",
+    "f08_opportunity": "Opportunity",
+    "f15_rotation": "Rotation",
+    "f15_shadowing": "Job shadowing",
+    "m05_jpm": "JPM",
+    "f13_mentoring": "Mentoring",
+    "f21_knowledge": "Knowledge",
+    "f28_simulator": "Simulator debrief",
+    "f38_ojt": "OJT practice",
+    "console": "Test console"
+  },
+  "result": {
+    "none": "No result",
+    "success": "Success",
+    "notSuccess": "Not successful",
+    "completion": "Completed",
+    "hours": "{n} h",
+    "minutes": "{n} min"
+  },
+  "reasons": {
+    "src": {
+      "m04_course": "Recorded automatically when an instructor recorded the course completion in Kafa'a (M04).",
+      "f14_refresher": "Recorded automatically for each knowledge refresher answer (F14).",
+      "f08_opportunity": "Recorded automatically when the host signed off the opportunity (F08).",
+      "f15_rotation": "Recorded automatically when the host manager signed off the rotation placement (F15).",
+      "f15_shadowing": "Recorded automatically when the job-shadowing visit was completed (F15).",
+      "m05_jpm": "Recorded automatically when an evaluator recorded the JPM result (M05). Security-restricted JPMs are never recorded.",
+      "f13_mentoring": "Recorded automatically when a mentoring session was logged (F13).",
+      "f21_knowledge": "Recorded automatically when a knowledge asset was marked as used (F21).",
+      "f28_simulator": "Recorded from a simulator crew debrief (F28).",
+      "f38_ojt": "Recorded from an OJT practice log entry (F38).",
+      "console": "Stored by the person themselves from the admin test console."
+    },
+    "record": "Source record: {ref}",
+    "noItem": "The practice question itself is never recorded, only the competency and the result.",
+    "profile": "Checked against the Kafa'a xAPI 2.0 profile: account actor (no email), registered verb, Kafa'a activity.",
+    "stored": "Stored {date}. Append-only: a statement is never edited; corrections are new statements."
+  },
+  "detail": {
+    "title": "xAPI statement",
+    "when": "Experienced",
+    "stored": "Stored",
+    "activity": "Activity",
+    "result": "Result",
+    "source": "Emitted by",
+    "id": "Statement id",
+    "why": "Why is this here?",
+    "whyShort": "Why?",
+    "immutable": "Append-only",
+    "json": "xAPI 2.0 JSON",
+    "copy": "Copy JSON",
+    "copied": "Copied",
+    "jsonNote": "The JSON keeps the xAPI field names and IRIs in English, as the standard requires.",
+    "open": "View statement",
+    "permalink": "Open as a page"
+  },
+  "mix": {
+    "statements": "Statements",
+    "statementsSub": "learning experiences recorded",
+    "completions": "Completions",
+    "completionsSub": "completed or passed",
+    "hours": "Learning hours",
+    "hoursSub": "from recorded durations (a day counts 8 h)",
+    "span": "First record",
+    "spanSub": "latest {date}",
+    "noData": "no statements yet",
+    "bySource": "Learning mix by source",
+    "byMonth": "Statements per month"
+  },
+  "timeline": {
+    "more": "Show more ({n} left)"
+  },
+  "my": {
+    "intro": "Kafa'a keeps a learning record store in the xAPI format: one statement for each learning experience, from e-learning and classroom courses to refreshers, rotations, shadowing and mentoring.",
+    "privacyTitle": "Your record, your copy",
+    "privacy": "Statements identify you by your Kafa'a account, never by your email. Your line manager or instructor can read them only while you are in their scope, and every such read is audited. Download everything at any time.",
+    "empty": "No learning statements yet",
+    "emptyBody": "Complete a course, answer a refresher or log a mentoring session and it appears here.",
+    "browse": "Browse learning",
+    "export": "Download my record (JSON lines)",
+    "timelineTitle": "My learning timeline",
+    "timelineBody": "Newest first. Open a statement to see where it came from and its xAPI JSON.",
+    "whatTitle": "What Kafa'a records",
+    "whatBody": "The events that write a statement. Planned emitters start when their features go live."
+  },
+  "filter": {
+    "all": "All",
+    "source": "Source",
+    "person": "Person",
+    "verb": "Verb",
+    "type": "Activity type",
+    "period": "Period",
+    "search": "Search",
+    "searchHint": "Course, competency, person …"
+  },
+  "period": {
+    "all": "All time",
+    "30": "Last 30 days",
+    "90": "Last 90 days",
+    "365": "Last 12 months"
+  },
+  "ex": {
+    "intro": "Statements from every Kafa'a learning emitter, for the people in your scope. Analytics roles see aggregates only.",
+    "adapters": "Adapters",
+    "console": "Test console",
+    "tab": {
+      "statements": "Statements",
+      "analytics": "Analytics",
+      "emitters": "Emitters"
+    },
+    "auditTitle": "Reads are audited",
+    "audit": "Opening statements about other people writes an audit event. You see only the people in your scope.",
+    "empty": "No statements in your scope",
+    "emptyBody": "Statements appear when people in your scope complete learning.",
+    "noMatch": "No statement matches these filters",
+    "tile": {
+      "statements": "Statements",
+      "latest": "latest {n} of {total}",
+      "scope": "visible to you: {scope}",
+      "people": "People",
+      "peopleSub": "with statements in this view"
+    },
+    "emittersBody": "Each Kafa'a event below appends exactly one statement when it happens. Emitters never change the source record and never block it.",
+    "plannedChip": "F38 live"
+  },
+  "scope": {
+    "own": "your own",
+    "scope": "your scope",
+    "all": "everyone (auditor)"
+  },
+  "col": {
+    "when": "When",
+    "person": "Person",
+    "verb": "Verb",
+    "activity": "Activity",
+    "result": "Result",
+    "source": "Source",
+    "type": "Type",
+    "people": "People",
+    "statements": "Statements"
+  },
+  "an": {
+    "privacyTitle": "Aggregates only",
+    "privacy": "A cell shows only when it covers {n} or more people; smaller groups read suppressed. No person-level data reaches this view.",
+    "empty": "No statements yet",
+    "statements": "Statements stored",
+    "statementsSub": "all emitters, all time",
+    "people": "Learners",
+    "peopleSub": "distinct people with a statement",
+    "cells": "Cells shown",
+    "cellsSub": "{n} suppressed (under 10 people)",
+    "top": "Top activities",
+    "topSub": "each with {n}+ learners",
+    "trendTitle": "Statements per month by verb",
+    "trendBody": "Last 12 months. Months with fewer than 10 learners for a verb are gaps.",
+    "bySource": "Statements by emitter",
+    "byType": "Statements by activity type",
+    "topTitle": "Most-used activities",
+    "topBody": "Activities with {n} or more learners.",
+    "verbTitle": "Statements by verb",
+    "feedsTitle": "Feeds effectiveness and needs analysis",
+    "feeds": "These suppressed aggregates are the learning-activity input for training effectiveness (F25) and the training needs forecast (F26). Association only: activity is not proof of competence."
+  },
+  "emit": {
+    "col": {
+      "event": "Kafa'a event",
+      "verbs": "Verbs",
+      "object": "Activity type",
+      "status": "Status",
+      "count": "Statements"
+    },
+    "status": {
+      "live": "Live",
+      "planned": "Planned",
+      "console": "Admin console"
+    },
+    "event": {
+      "m04_course": "An instructor records a course completion",
+      "f14_refresher": "A refresher question is answered",
+      "f08_opportunity": "The host signs off an opportunity",
+      "f15_rotation": "A rotation placement is signed off",
+      "f15_shadowing": "A job-shadowing visit is completed",
+      "m05_jpm": "An evaluator records a JPM result",
+      "f13_mentoring": "A mentoring session is logged",
+      "f21_knowledge": "A knowledge asset is marked as used",
+      "f28_simulator": "A simulator crew debrief is recorded",
+      "f38_ojt": "An OJT practice entry is logged",
+      "console": "An admin stores a test statement about themselves"
+    }
+  },
+  "person": {
+    "intro": "Learning statements for one person in your scope, newest first. This read is audited.",
+    "outTitle": "Outside your scope",
+    "out": "This person is not in your scope, so their learning record is not shown. The attempt was audited.",
+    "errorTitle": "Learning record not available",
+    "back": "Back to the explorer",
+    "audited": "Read audited",
+    "empty": "No statements for this person yet",
+    "timeline": "Timeline"
+  },
+  "stmt": {
+    "intro": "A stored xAPI statement: who, what, the result, where it came from and its JSON.",
+    "errorTitle": "Statement not available",
+    "notFound": "Statement not found",
+    "notFoundBody": "It does not exist or it is about someone outside your scope.",
+    "backExplorer": "Back to the learning record store",
+    "backMine": "Back to my learning record"
+  },
+  "ad": {
+    "intro": "How an external learning record store would exchange xAPI 2.0 statements with Kafa'a. Nothing on this page is connected.",
+    "simulated": "SIMULATED integration",
+    "noEndpointTitle": "No public endpoint in the demo",
+    "noEndpoint": "Statements are written only by Kafa'a's own emitters and the admin test console, through an RPC that checks them against the profile. A live connector would forward them to an LRS chosen by ENEC.",
+    "flowTitle": "How a statement travels",
+    "step": {
+      "emit": "Emit",
+      "validate": "Validate",
+      "store": "Store",
+      "forward": "Forward (SIMULATED)"
+    },
+    "stepBody": {
+      "emit": "A Kafa'a event (course completion, refresher answer, sign-off …) writes one statement in the same transaction.",
+      "validate": "The statement is checked against the Kafa'a xAPI 2.0 profile; invalid statements are refused with a schema error.",
+      "store": "It is appended to the store and can never be edited; access follows the person's scope.",
+      "forward": "A connector would POST batches to the external LRS and read them back with the Statement API."
+    },
+    "connectorTitle": "Outbound connector",
+    "status": "Status",
+    "endpoint": "Endpoint",
+    "auth": "Authentication",
+    "authValue": "OAuth 2.0 client credentials (not configured)",
+    "version": "Version header",
+    "direction": "Direction",
+    "directionValue": "Kafa'a to the external LRS",
+    "records": "Statements ready to forward",
+    "connectorNote": "The connector row is listed with the other integrations.",
+    "integrations": "Open integrations",
+    "state": {
+      "ok": "Connected",
+      "disabled": "Not connected",
+      "degraded": "Degraded",
+      "stale": "Stale",
+      "error": "Error"
+    },
+    "apiTitle": "Statement API an LRS exposes",
+    "api": {
+      "post": "Store one statement or a batch",
+      "put": "Store a statement with a known id (idempotent)",
+      "get": "Query by person, verb, activity and time window",
+      "about": "Supported xAPI versions"
+    },
+    "sampleTitle": "What a forwarded statement looks like",
+    "sampleBody": "A synthetic example. Field names and IRIs stay in English, as the standard requires.",
+    "mapTitle": "Field mapping",
+    "col": {
+      "kafaa": "Kafa'a column",
+      "xapi": "xAPI property"
+    },
+    "mapNote": "The actor is always an account on {home} with the Kafa'a person id; there is no mbox, email or name.",
+    "profileTitle": "The Kafa'a xAPI profile",
+    "rule": {
+      "account": "Actor: a Kafa'a account only. mbox, mbox_sha1sum, openid and names are refused.",
+      "verbs": "Verbs: eight ADL verbs (completed, passed, failed, answered, attended, experienced, attempted, progressed).",
+      "activities": "Activities: Kafa'a IRIs by type (course, scenario, task, refresher …); assessment items are not activities.",
+      "response": "No free-text result.response: it could carry assessment content.",
+      "secure": "No secure assessment item id anywhere in a statement.",
+      "append": "Append-only: no update and no removal; a correction is a new statement.",
+      "scope": "Reads follow the person's scope; analytics see suppressed aggregates."
+    },
+    "verbsTitle": "Verbs",
+    "typesTitle": "Activity types",
+    "emittersTitle": "Emitters",
+    "emittersBody": "Simulator crew debriefs (F28) emit one statement per crew member present. OJT practice logs (F38) emit one statement per entry through the same function, once, however often an offline entry is re-sent.",
+    "sourcesTitle": "Sources",
+    "src": {
+      "adl": "ADL · Experience API (xAPI 2.0, IEEE 9274.1.1-2023)",
+      "spec": "ADL · xAPI specification (GitHub)"
+    }
+  },
+  "con": {
+    "intro": "Check an xAPI 2.0 statement against the Kafa'a profile and store it about yourself. Use it to show what the store accepts and refuses.",
+    "warnTitle": "Stored statements are permanent",
+    "warn": "The store is append-only. Console statements are about you only and are marked \"Test console\" everywhere.",
+    "noPerson": "Your account has no Kafa'a person record",
+    "templates": "Start from a template",
+    "tpl": {
+      "valid": "Valid statement",
+      "mbox": "Email as actor",
+      "verb": "Unknown verb",
+      "response": "Free-text response",
+      "item": "Assessment item as activity",
+      "future": "Timestamp in the future"
+    },
+    "editor": "Statement (JSON)",
+    "store": "Store statement",
+    "storedLink": "Stored: view the statement",
+    "checkTitle": "Profile check",
+    "parseError": "Not valid JSON",
+    "valid": "Matches the profile",
+    "validBody": "The server checks it again when you store it.",
+    "errors": "{n} problem(s)",
+    "serverNote": "Checked in your browser. The server also checks that the person exists, that the statement is about you and that it carries no secure item id.",
+    "confirmTitle": "Store this statement?",
+    "confirmBody": "It is added to your learning record permanently and cannot be edited or removed. Invalid statements are refused with a schema error.",
+    "actingAs": "Acting as platform admin (test console)",
+    "mine": "Statements I stored from the console",
+    "mineBody": "They also appear in My learning record.",
+    "mineEmpty": "None yet"
+  },
+  "err": {
+    "not_object": "The statement must be a JSON object.",
+    "too_large": "The statement is too large (8,000 characters at most).",
+    "unknown_field": "This field is not part of the Kafa'a profile.",
+    "lrs_field": "Set by the store, not by the sender.",
+    "id_format": "The id must be a UUID.",
+    "actor_required": "An actor is required.",
+    "actor_type": "The actor must be an Agent.",
+    "mbox_not_allowed": "Email-style identifiers are not allowed: use the Kafa'a account.",
+    "name_not_allowed": "Names are not stored in statements.",
+    "account_required": "The actor needs an account with homePage and name.",
+    "account_home": "The account must be on the Kafa'a home page.",
+    "unknown_person": "No Kafa'a person has this id.",
+    "verb_required": "A verb with an id is required.",
+    "verb_unknown": "This verb is not in the Kafa'a registry.",
+    "display_format": "The display must be a language map of short texts.",
+    "object_required": "An object with an id is required.",
+    "object_type": "The object must be an Activity.",
+    "object_iri": "Use a Kafa'a activity IRI (…/xapi/activities/<type>/<id>).",
+    "object_kind": "This activity type is not allowed.",
+    "name_format": "Names and descriptions must be language maps of short texts.",
+    "secure_content": "Secure assessment items can never appear in a statement.",
+    "result_format": "The result must be an object.",
+    "score_range": "The score must be numbers in range (scaled between -1 and 1).",
+    "bool_format": "Success and completion must be true or false.",
+    "duration_format": "The duration must be ISO 8601, for example PT1H30M.",
+    "response_not_allowed": "Free-text responses are not stored: they could carry assessment content.",
+    "context_format": "The context fields must be short texts.",
+    "registration_format": "The registration must be a UUID.",
+    "extension_key": "Extension keys must be IRIs.",
+    "timestamp_format": "The timestamp must be ISO 8601 with a time zone.",
+    "timestamp_future": "The timestamp is in the future.",
+    "version_unsupported": "Only xAPI 2.0 (and 1.0) statements are accepted."
+  }
+}
