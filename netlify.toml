@@ -1,0 +1,14 @@
+# Netlify continuous deployment for the Kafa'a portal (site: enec-kafaa).
+# The app lives in kafaa/; paths below (publish) are relative to the base directory.
+# `npm run build:deploy` = gen + i18n check + tsc + vite build, then scripts/make-deploy.mjs assembles
+# deploy_out/ (_redirects, .well-known/kafaa-issuer.json, kafaa/ with index.html, ojt-sw.js, issuer JSON, assets).
+# The netlify.toml that make-deploy writes INTO deploy_out/ (publish = ".", command = "") is only for
+# prebuilt zip uploads; Netlify ignores it in a git-linked build because it sits inside the publish directory.
+[build]
+  base = "kafaa"
+  command = "npm run build:deploy"
+  publish = "deploy_out"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # Set VITE_NEXUS_DEMO_PASSWORD in the Netlify UI (Site configuration > Environment variables), never here.
