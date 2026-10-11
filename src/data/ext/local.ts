@@ -5,6 +5,7 @@ import type { ExtRpc } from './rpc';
 import { makeLocalM01 } from '../../modules/m01/backend/local'; // FS05 (fsAe4)
 import { makeLocalM02 } from '../../modules/m02/backend/local'; // W4E5 (F31)
 import { makeLocalM04 } from '../../modules/m04/backend/local'; // W2E3 (F13)
+import { makeLocalM05 } from '../../modules/m05/backend/local'; // FS wave C E3 (FS21/FS22)
 import { makeLocalM06 } from '../../modules/m06/backend/local'; // W5E3 (F34)
 import { makeLocalM07 } from '../../modules/m07/backend/local'; // W3E3 (F22)
 import { makeLocalM09 } from '../../modules/m09/backend/local'; // W5E2 (F33)
@@ -36,6 +37,6 @@ import { makeLocalM36 } from '../../modules/m36/backend/local';
 import { makeLocalM37 } from '../../modules/m37/backend/local';
 
 export function makeExtLocalRpc(b: LocalBackend, h: LocalRpcHelpers): ExtRpc {
-  return { ...makeLocalM01(b, h), ...makeLocalM02(b, h), ...makeLocalM13(b, h), ...makeLocalDigest(b, h), ...makeLocalM04(b, h), ...makeLocalM06(b, h), ...makeLocalM07(b, h), ...makeLocalM09(b, h), ...makeLocalM11(b, h), ...makeLocalM16(b, h), ...makeLocalM17(b, h), ...makeLocalM18(b, h), ...makeLocalM19(b, h), ...makeLocalM20(b, h), ...makeLocalM21(b, h), ...makeLocalM22(b, h), ...makeLocalM23(b, h), ...makeLocalM24(b, h), ...makeLocalM25(b, h), ...makeLocalM26(b, h), ...makeLocalM27(b, h),
+  return { ...makeLocalM01(b, h), ...makeLocalM02(b, h), ...makeLocalM13(b, h), ...makeLocalDigest(b, h), ...makeLocalM04(b, h), ...makeLocalM05(b, h), ...makeLocalM06(b, h), ...makeLocalM07(b, h), ...makeLocalM09(b, h), ...makeLocalM11(b, h), ...makeLocalM16(b, h), ...makeLocalM17(b, h), ...makeLocalM18(b, h), ...makeLocalM19(b, h), ...makeLocalM20(b, h), ...makeLocalM21(b, h), ...makeLocalM22(b, h), ...makeLocalM23(b, h), ...makeLocalM24(b, h), ...makeLocalM25(b, h), ...makeLocalM26(b, h), ...makeLocalM27(b, h),
     ...makeLocalM28(b, h), ...makeLocalM29(b, h), ...makeLocalM30(b, h), ...makeLocalM31(b, h), ...makeLocalM32(b, h), ...makeLocalM33(b, h), ...makeLocalM34(b, h), ...makeLocalM35(b, h), ...makeLocalM36(b, h), ...makeLocalM37(b, h) };
 }

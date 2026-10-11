@@ -1,7 +1,9 @@
-// M05 routes (owner: G2). Paths, guards and nav placement for this module. Shared registry: src/routes/registry.ts
+// M05 routes (owner: G2; FS wave C · E3 adds FS21 adaptive future-skills assessment and FS22 performance tasks and integrity reports).
+// Paths, guards and nav placement for this module. Shared registry: src/routes/registry.ts. Param samples: src/modules/m05/smoke.json.
 import { lazy } from 'react';
 import type { RouteDef } from '../../routes/types';
 
+const OWN = { signedIn: true, grant: { res: 'skills_profile' as const, levels: ['Own' as const] } };
 export const routes: RouteDef[] = [
   { id: 'learn-practice', path: '/learn/practice', module: 'M05', zone: 'public', guard: {}, nav: { lens: 'public', section: 'learn', order: 31 }, parent: 'learn', spec: "M05 practice tier", component: lazy(() => import('./LearnPracticePage')) },
   { id: 'learn-practice-quiz', path: '/learn/practice/:form', module: 'M05', zone: 'public', guard: {}, parent: 'learn-practice', spec: "M05 practice tier", component: lazy(() => import('./LearnPracticeQuizPage')) },
@@ -9,4 +11,12 @@ export const routes: RouteDef[] = [
   { id: 'training-jpm', path: '/training/jpm', module: 'M05', zone: 'staff', guard: { signedIn: true, grant: { res: 'signoff', levels: ['A'] } }, nav: { lens: 'my', section: 'training', order: 46 }, parent: 'training', spec: "M05 JPM evaluator", component: lazy(() => import('./TrainingJpmPage')) },
   { id: 'training-items', path: '/training/items', module: 'M05', zone: 'staff', guard: { signedIn: true, grant: { res: 'secure_items', levels: ['W'] } }, nav: { lens: 'my', section: 'training', order: 47 }, parent: 'training', spec: "M05 item bank", component: lazy(() => import('./TrainingItemsPage')) },
   { id: 'training-assessments', path: '/training/assessments', module: 'M05', zone: 'staff', guard: { signedIn: true, grant: { res: 'secure_items', levels: ['W'] } }, nav: { lens: 'my', section: 'training', order: 48 }, parent: 'training', spec: "M05 proctor console", component: lazy(() => import('./TrainingAssessmentsPage')) },
+  // FS wave C · E3: FS21 Adaptive future-skills assessment, FS22 Performance tasks and integrity reports
+  { id: 'my-adaptive', path: '/my/assessments/adaptive', module: 'M05', zone: 'staff', guard: OWN, nav: { lens: 'my', section: 'skills', order: 18.6 }, parent: 'my', spec: 'FS21 /my/assessments/adaptive · Adaptive future-skills assessments (criterion or developmental, benchmark lines)', component: lazy(() => import('./AdaptivePage')) },
+  { id: 'my-adaptive-take', path: '/my/assessments/adaptive/:bank', module: 'M05', zone: 'staff', guard: OWN, parent: 'my-adaptive', spec: 'FS21 /my/assessments/adaptive/:bank · Take an adaptive assessment; result with reasons and evidence', component: lazy(() => import('./AdaptiveTakePage')) },
+  { id: 'my-perf-tasks', path: '/my/assessments/tasks', module: 'M05', zone: 'staff', guard: OWN, nav: { lens: 'my', section: 'skills', order: 18.7 }, parent: 'my', spec: 'FS22 /my/assessments/tasks · Scenario performance tasks on SIMULATED plant data', component: lazy(() => import('./PerfTasksPage')) },
+  { id: 'my-perf-task', path: '/my/assessments/tasks/:task', module: 'M05', zone: 'staff', guard: OWN, parent: 'my-perf-tasks', spec: 'FS22 /my/assessments/tasks/:task · Rubric first, then the scenario, answer and result', component: lazy(() => import('./PerfTaskPage')) },
+  { id: 'training-adaptive', path: '/training/adaptive', module: 'M05', zone: 'staff', guard: { signedIn: true, grant: { res: 'secure_items', levels: ['W', 'A'] } }, nav: { lens: 'my', section: 'training', order: 47.5 }, parent: 'training', spec: 'FS21 /training/adaptive · Adaptive banks: results, calibration, exposure, item editor (training manager writes)', component: lazy(() => import('./TrainingAdaptivePage')) },
+  { id: 'training-perf-tasks', path: '/training/perf-tasks', module: 'M05', zone: 'staff', guard: { signedIn: true, grant: { res: 'signoff', levels: ['A'] } }, nav: { lens: 'my', section: 'training', order: 47.6 }, parent: 'training', spec: 'FS22 /training/perf-tasks · Assessor queue: score performance tasks against the rubric', component: lazy(() => import('./TrainingPerfTasksPage')) },
+  { id: 'training-integrity', path: '/training/integrity', module: 'M05', zone: 'staff', guard: { signedIn: true, anyRole: ['instructor', 'training_manager', 'auditor'] }, nav: { lens: 'my', section: 'training', order: 47.7 }, parent: 'training', spec: 'FS22 /training/integrity · Integrity reports on attempts that gate a credential (assessors decide, auditors read)', component: lazy(() => import('./IntegrityPage')) },
 ];

@@ -1759,6 +1759,166 @@ export interface CrewDebriefMembersRow {
   held_on: string;
   evidence_ids: string[];
 }
+export interface AdaptiveBanksRow {
+  id: string;
+  code: string;
+  name_en: string;
+  name_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  fs_area: string;
+  skill_ids: string[];
+  safety_related: boolean;
+  mode: 'criterion' | 'normative';
+  cut_level: number;
+  max_items: number;
+  min_items: number;
+  stable_window: number;
+  evidence_cap: number;
+  retake_days: number;
+  gates: string[];
+  benchmark_ids: string[];
+  sources: any;
+  status: 'active' | 'retired';
+  version: number;
+  sort: number;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface AdaptiveItemsRow {
+  id: string;
+  bank_id: string;
+  skill_id: string;
+  facet: string;
+  level: number;
+  difficulty: number;
+  stem_en: string;
+  stem_ar: string;
+  options_en: string[];
+  options_ar: string[];
+  correct: number;
+  explain_en: string;
+  explain_ar: string;
+  p_value?: number | null;
+  calib_n: number;
+  status: 'active' | 'retired';
+  version: number;
+  sort: number;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface AdaptiveAttemptsRow {
+  id: string;
+  bank_id: string;
+  bank_version: number;
+  person_id: string;
+  attempt_no: number;
+  form: number;
+  mode: 'criterion' | 'normative';
+  status: 'in_progress' | 'completed';
+  started_at: string;
+  completed_at?: string | null;
+  responses: any;
+  current_item_id?: string | null;
+  item_count: number;
+  stop?: 'stable' | 'max' | 'exhausted' | null;
+  estimate?: number | null;
+  meets?: boolean | null;
+  percentile?: number | null;
+  norm_n?: number | null;
+  reasons: any;
+  evidence: any;
+  gating: boolean;
+  integrity_id?: string | null;
+  counts: boolean;
+}
+export interface PerformanceTasksRow {
+  id: string;
+  code: string;
+  title_en: string;
+  title_ar: string;
+  brief_en: string;
+  brief_ar: string;
+  role_en: string;
+  role_ar: string;
+  fs_area: string;
+  skill_ids: string[];
+  evidence_level: number;
+  minutes: number;
+  min_minutes: number;
+  data: any;
+  decisions: any;
+  checks: any;
+  rubric: any;
+  rubric_version: number;
+  pass_pct: number;
+  gates: string[];
+  simulated: boolean;
+  benchmark_ids: string[];
+  sources: any;
+  status: 'active' | 'retired';
+  sort: number;
+}
+export interface PerfTaskKeysRow {
+  id: string;
+  task_id: string;
+  series: string;
+  from_idx: number;
+  to_idx: number;
+  decision_points: any;
+  notes_en: string;
+  notes_ar: string;
+}
+export interface TaskAttemptsRow {
+  id: string;
+  task_id: string;
+  person_id: string;
+  attempt_no: number;
+  rubric_version: number;
+  status: 'in_progress' | 'submitted' | 'scored';
+  started_at: string;
+  submitted_at?: string | null;
+  answer: any;
+  resubmissions: number;
+  auto_scores: any;
+  scores: any;
+  total?: number | null;
+  max?: number | null;
+  passed?: boolean | null;
+  critical_failed: boolean;
+  scored_by?: string | null;
+  scored_at?: string | null;
+  comment?: string | null;
+  gating: boolean;
+  integrity_id?: string | null;
+  evidence: any;
+  counts: boolean;
+}
+export interface IntegrityReportsRow {
+  id: string;
+  kind: 'adaptive' | 'task';
+  attempt_id: string;
+  person_id: string;
+  ref_id: string;
+  gates: string[];
+  created_at: string;
+  time_on_task_s: number;
+  items: number;
+  fast_items: number;
+  median_item_s?: number | null;
+  retakes: number;
+  resubmissions: number;
+  repeat_items: number;
+  exposure_max?: number | null;
+  exposure_mean?: number | null;
+  exposure_n: number;
+  flags: string[];
+  status: 'clear' | 'review';
+  decision?: 'accepted' | 'voided' | null;
+  reviewed_by?: string | null;
+  reviewed_at?: string | null;
+  review_note?: string | null;
+}
 export interface JourneyQuestionsRow {
   id: string;
   sort: number;
@@ -3813,6 +3973,13 @@ export interface Tables {
   sim_cycle_items: SimCycleItemsRow;
   crew_debriefs: CrewDebriefsRow;
   crew_debrief_members: CrewDebriefMembersRow;
+  adaptive_banks: AdaptiveBanksRow;
+  adaptive_items: AdaptiveItemsRow;
+  adaptive_attempts: AdaptiveAttemptsRow;
+  performance_tasks: PerformanceTasksRow;
+  perf_task_keys: PerfTaskKeysRow;
+  task_attempts: TaskAttemptsRow;
+  integrity_reports: IntegrityReportsRow;
   journey_questions: JourneyQuestionsRow;
   journey_facts: JourneyFactsRow;
   student_journeys: StudentJourneysRow;

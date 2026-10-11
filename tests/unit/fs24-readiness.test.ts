@@ -29,13 +29,17 @@ describe('FS13 acceptance', () => {
     // every staff member (the PGlite validator repeats this for all seeded people against the SQL function)
     const fresh = T.people.filter((p) => p.kind === 'staff' && !hasIntro(rOf(p.id)));
     expect(fresh.length).toBeGreaterThan(60);
+    let saturated = 0;
     for (const p of fresh) {
       const before = rOf(p.id);
       const after = rOf(p.id, { courses: ['c-adv-intro'] });
       expect(previewEvidence(before, { courses: ['c-adv-intro'] })).toEqual(after); // the preview is exactly what recording it gives
       const d = deltaOf(before, after);
-      for (const f of d.families) expect(f.delta, `${p.id} ${f.tech_id}`).toBeGreaterThan(0);
+      // FS21 (fsCe3): a family whose c-adv-intro items are already fully evidenced (level 3 from an adaptive assessment) has no headroom
+      const full = (tech: string) => { const its = before.families.find((f) => f.tech_id === tech)!.items.filter((i) => i.learn_opts.some((o) => o.course_id === 'c-adv-intro')); return its.length > 0 && its.every((i) => i.bp >= 10000); };
+      for (const f of d.families) if (full(f.tech_id)) { saturated++; expect(f.delta).toBe(0); } else expect(f.delta, `${p.id} ${f.tech_id}`).toBeGreaterThan(0);
     }
+    expect(saturated).toBeLessThanOrEqual(10);
     // a person with no ADVANCE evidence at all: each covered skill moves from 0 to 1/3 credit (3333 basis points)
     const zero = T.people.find((p) => rOf(p.id).families.every((f) => f.index === 0))!;
     const d0 = deltaOf(rOf(zero.id), rOf(zero.id, { courses: ['c-adv-intro'] }));

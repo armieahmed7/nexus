@@ -167,7 +167,8 @@ describe('F07 ranking behaviour', () => {
     expect(w.comp.get('ld-01')).toBeLessThan(1);
     expect(w.kind.course).toBeLessThan(1);
     const { res } = feedFor('p-k-ro', (t) => { t.coach_feedback = fbDown.map((f, i) => ({ id: `x${i}`, person_id: 'p-k-ro', at: `${NOW}T00:00:00Z`, ...f })); });
-    const down = [...res.pool.values()].filter((c) => c.competencyIds.includes('ld-01') && c.kind === 'course' && c.id !== 'course:c-crucial');
+    // FS21 (fsCe3): k-ro's adaptive-assessment evidence now covers ld-02, so ESTADAD is no longer suggested; every other ld-01 suggestion (any kind) is lowered
+    const down = [...res.pool.values()].filter((c) => c.competencyIds.includes('ld-01') && c.id !== 'course:c-crucial');
     expect(down.length).toBeGreaterThan(0);
     expect(down.every((c) => c.reasons.some((r) => r.code === 'feedback_down'))).toBe(true);
     const up = feedbackWeights([{ item_kind: 'mentor', item_id: 'mt-1', signal: 'saved', competency_ids: ['pf-03'] }], NOW);

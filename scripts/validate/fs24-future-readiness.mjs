@@ -49,6 +49,9 @@ export default async function fs24Checks({ db, as, one, count, ok }) {
   try {
     const learnt = (r) => r.families.some((fm) => fm.items.some((i) => i.learn_opts.some((o) => o.course_id === 'c-adv-intro') && i.l3 >= 1));
     const fresh = T.people.filter((p) => !learnt(before.get(p.id)));
+    // FS21 (fsCe3): a family whose c-adv-intro items are already fully evidenced (e.g. level 3 from an adaptive assessment) has no headroom left
+    const full = (r) => r.families.some((fm) => { const its = fm.items.filter((i) => i.learn_opts.some((o) => o.course_id === 'c-adv-intro')); return its.length > 0 && its.every((i) => i.bp >= 10000); });
+    const sat = fresh.filter((p) => full(before.get(p.id)));
     for (const p of T.people) await f.query(`insert into kafaa_training_records (id, person_id, course_id, completed_on, hours, result) values ($1, $2, 'c-adv-intro', '2026-10-09', 3, 'passed')`, [`tr-fs24-${p.id}`, p.id]);
     let bad = 0, rise = 0, firstBad = '';
     for (const p of T.people) {
@@ -56,9 +59,9 @@ export default async function fs24Checks({ db, as, one, count, ok }) {
       const prev = previewEvidence(before.get(p.id), { courses: ['c-adv-intro'] });
       if (canon(after) !== canon(prev)) { bad++; firstBad ||= p.id; }
     }
-    for (const p of fresh) if (deltaOf(before.get(p.id), await sqlR(p.id)).families.every((x) => x.delta > 0)) rise++;
+    for (const p of fresh) if (!sat.includes(p) && deltaOf(before.get(p.id), await sqlR(p.id)).families.every((x) => x.delta > 0)) rise++;
     ok(bad === 0, `completing c-adv-intro gives exactly the previewEvidence result for all ${T.people.length} people${bad ? ` (${bad} differ, first ${firstBad})` : ''}`);
-    ok(fresh.length > 300 && rise === fresh.length, `it raises the index of every family for all ${fresh.length} people without that learning yet (${T.people.length - fresh.length} already hold it through the orientation track)`);
+    ok(fresh.length > 300 && sat.length <= 10 && rise === fresh.length - sat.length, `it raises the index of every family for all ${fresh.length - sat.length} people without that learning yet (${T.people.length - fresh.length} already hold it through the orientation track; ${sat.length} already evidenced in full, e.g. by an FS21 adaptive assessment)`);
   } finally { await f.exec('rollback'); }
 
   // an index of 100 through evidence alone

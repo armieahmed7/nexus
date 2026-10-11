@@ -2120,6 +2120,187 @@ create table if not exists kafaa_crew_debrief_members (
 );
 comment on table kafaa_crew_debrief_members is '[M04] Crew member on a debrief: position, present or absent, and the F01 evidence written for them (F28)';
 
+-- M05 · Adaptive future-skills item bank: the skills it evidences, criterion or developmental mode, the standard, stop rule and the credentials it gates (FS21)
+create table if not exists kafaa_adaptive_banks (
+  id text primary key,
+  code text not null unique,
+  name_en text not null,
+  name_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  fs_area text not null,
+  skill_ids text[] not null default '{}'::text[],
+  safety_related boolean not null default false,
+  mode text not null check (mode in ('criterion', 'normative')),
+  cut_level integer not null default 2,
+  max_items integer not null default 20,
+  min_items integer not null default 8,
+  stable_window integer not null default 4,
+  evidence_cap integer not null default 3,
+  retake_days integer not null default 14,
+  gates text[] not null default '{}'::text[],
+  benchmark_ids text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb,
+  status text not null default 'active' check (status in ('active', 'retired')),
+  version integer not null default 1,
+  sort integer not null default 0,
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_adaptive_banks is '[M05] Adaptive future-skills item bank: the skills it evidences, criterion or developmental mode, the standard, stop rule and the credentials it gates (FS21)';
+
+-- M05 · Adaptive item (EN/AR, calibrated difficulty 1.00-4.99 whose whole part is the level, facet, skill, answer key): training staff only (FS21)
+create table if not exists kafaa_adaptive_items (
+  id text primary key,
+  bank_id text not null,
+  skill_id text not null,
+  facet text not null,
+  level integer not null,
+  difficulty numeric not null,
+  stem_en text not null,
+  stem_ar text not null,
+  options_en text[] not null default '{}'::text[],
+  options_ar text[] not null default '{}'::text[],
+  correct integer not null,
+  explain_en text not null default '',
+  explain_ar text not null default '',
+  p_value numeric,
+  calib_n integer not null default 0,
+  status text not null default 'active' check (status in ('active', 'retired')),
+  version integer not null default 1,
+  sort integer not null default 0,
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_adaptive_items is '[M05] Adaptive item (EN/AR, calibrated difficulty 1.00-4.99 whose whole part is the level, facet, skill, answer key): training staff only (FS21)';
+
+-- M05 · One adaptive attempt: answers in order with the served level and time, estimate, standard met or percentile, evidence, integrity link (FS21)
+create table if not exists kafaa_adaptive_attempts (
+  id text primary key,
+  bank_id text not null,
+  bank_version integer not null default 1,
+  person_id text not null,
+  attempt_no integer not null,
+  form integer not null default 0,
+  mode text not null check (mode in ('criterion', 'normative')),
+  status text not null default 'in_progress' check (status in ('in_progress', 'completed')),
+  started_at timestamptz not null default now(),
+  completed_at timestamptz,
+  responses jsonb not null default '[]'::jsonb,
+  current_item_id text,
+  item_count integer not null default 0,
+  stop text check (stop in ('stable', 'max', 'exhausted')),
+  estimate integer,
+  meets boolean,
+  percentile integer,
+  norm_n integer,
+  reasons jsonb not null default '[]'::jsonb,
+  evidence jsonb not null default '[]'::jsonb,
+  gating boolean not null default false,
+  integrity_id text,
+  counts boolean not null default true
+);
+comment on table kafaa_adaptive_attempts is '[M05] One adaptive attempt: answers in order with the served level and time, estimate, standard met or percentile, evidence, integrity link (FS21)';
+
+-- M05 · Scenario performance task on SIMULATED plant data: brief, trend set, decision options and the published rubric (FS22)
+create table if not exists kafaa_performance_tasks (
+  id text primary key,
+  code text not null unique,
+  title_en text not null,
+  title_ar text not null,
+  brief_en text not null,
+  brief_ar text not null,
+  role_en text not null default '',
+  role_ar text not null default '',
+  fs_area text not null,
+  skill_ids text[] not null default '{}'::text[],
+  evidence_level integer not null default 2,
+  minutes integer not null default 20,
+  min_minutes integer not null default 5,
+  data jsonb not null default '{}'::jsonb,
+  decisions jsonb not null default '[]'::jsonb,
+  checks jsonb not null default '[]'::jsonb,
+  rubric jsonb not null default '[]'::jsonb,
+  rubric_version integer not null default 1,
+  pass_pct integer not null default 65,
+  gates text[] not null default '{}'::text[],
+  simulated boolean not null default true,
+  benchmark_ids text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb,
+  status text not null default 'active' check (status in ('active', 'retired')),
+  sort integer not null default 0
+);
+comment on table kafaa_performance_tasks is '[M05] Scenario performance task on SIMULATED plant data: brief, trend set, decision options and the published rubric (FS22)';
+
+-- M05 · Answer key of a performance task (anomaly window, decision points, assessor notes): training staff only (FS22)
+create table if not exists kafaa_perf_task_keys (
+  id text primary key,
+  task_id text not null unique,
+  series text not null,
+  from_idx integer not null,
+  to_idx integer not null,
+  decision_points jsonb not null default '[]'::jsonb,
+  notes_en text not null default '',
+  notes_ar text not null default ''
+);
+comment on table kafaa_perf_task_keys is '[M05] Answer key of a performance task (anomaly window, decision points, assessor notes): training staff only (FS22)';
+
+-- M05 · A person's performance-task attempt: answer, resubmissions, auto and assessor rubric scores, result, evidence, integrity link (FS22)
+create table if not exists kafaa_task_attempts (
+  id text primary key,
+  task_id text not null,
+  person_id text not null,
+  attempt_no integer not null,
+  rubric_version integer not null,
+  status text not null default 'in_progress' check (status in ('in_progress', 'submitted', 'scored')),
+  started_at timestamptz not null default now(),
+  submitted_at timestamptz,
+  answer jsonb not null default '{}'::jsonb,
+  resubmissions integer not null default 0,
+  auto_scores jsonb not null default '{}'::jsonb,
+  scores jsonb not null default '{}'::jsonb,
+  total integer,
+  max integer,
+  passed boolean,
+  critical_failed boolean not null default false,
+  scored_by text,
+  scored_at timestamptz,
+  comment text,
+  gating boolean not null default false,
+  integrity_id text,
+  evidence jsonb not null default '[]'::jsonb,
+  counts boolean not null default true
+);
+comment on table kafaa_task_attempts is '[M05] A person''s performance-task attempt: answer, resubmissions, auto and assessor rubric scores, result, evidence, integrity link (FS22)';
+
+-- M05 · Integrity report on an attempt that gates a credential: time on task, fast answers, retakes, resubmissions, item exposure, flags, review (FS22)
+create table if not exists kafaa_integrity_reports (
+  id text primary key,
+  kind text not null check (kind in ('adaptive', 'task')),
+  attempt_id text not null unique,
+  person_id text not null,
+  ref_id text not null,
+  gates text[] not null default '{}'::text[],
+  created_at timestamptz not null default now(),
+  time_on_task_s integer not null,
+  items integer not null default 0,
+  fast_items integer not null default 0,
+  median_item_s integer,
+  retakes integer not null default 0,
+  resubmissions integer not null default 0,
+  repeat_items integer not null default 0,
+  exposure_max numeric,
+  exposure_mean numeric,
+  exposure_n integer not null default 0,
+  flags text[] not null default '{}'::text[],
+  status text not null check (status in ('clear', 'review')),
+  decision text check (decision in ('accepted', 'voided')),
+  reviewed_by text,
+  reviewed_at timestamptz,
+  review_note text
+);
+comment on table kafaa_integrity_reports is '[M05] Integrity report on an attempt that gates a credential: time on task, fast answers, retakes, resubmissions, item exposure, flags, review (FS22)';
+
 -- M06 · Student journey interest explorer: 10 questions mapping answers to job families (public, non-scoring) (F34)
 create table if not exists kafaa_journey_questions (
   id text primary key,
@@ -4590,6 +4771,16 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_cr
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_crew_debrief_members_debrief_id_fk') then alter table kafaa_crew_debrief_members add constraint kafaa_crew_debrief_members_debrief_id_fk foreign key (debrief_id) references kafaa_crew_debriefs(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_crew_debrief_members_person_id_fk') then alter table kafaa_crew_debrief_members add constraint kafaa_crew_debrief_members_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_crew_debrief_members_scenario_id_fk') then alter table kafaa_crew_debrief_members add constraint kafaa_crew_debrief_members_scenario_id_fk foreign key (scenario_id) references kafaa_sim_scenarios(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_adaptive_items_bank_id_fk') then alter table kafaa_adaptive_items add constraint kafaa_adaptive_items_bank_id_fk foreign key (bank_id) references kafaa_adaptive_banks(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_adaptive_items_skill_id_fk') then alter table kafaa_adaptive_items add constraint kafaa_adaptive_items_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_adaptive_attempts_bank_id_fk') then alter table kafaa_adaptive_attempts add constraint kafaa_adaptive_attempts_bank_id_fk foreign key (bank_id) references kafaa_adaptive_banks(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_adaptive_attempts_person_id_fk') then alter table kafaa_adaptive_attempts add constraint kafaa_adaptive_attempts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_perf_task_keys_task_id_fk') then alter table kafaa_perf_task_keys add constraint kafaa_perf_task_keys_task_id_fk foreign key (task_id) references kafaa_performance_tasks(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_task_attempts_task_id_fk') then alter table kafaa_task_attempts add constraint kafaa_task_attempts_task_id_fk foreign key (task_id) references kafaa_performance_tasks(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_task_attempts_person_id_fk') then alter table kafaa_task_attempts add constraint kafaa_task_attempts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_task_attempts_scored_by_fk') then alter table kafaa_task_attempts add constraint kafaa_task_attempts_scored_by_fk foreign key (scored_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_integrity_reports_person_id_fk') then alter table kafaa_integrity_reports add constraint kafaa_integrity_reports_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_integrity_reports_reviewed_by_fk') then alter table kafaa_integrity_reports add constraint kafaa_integrity_reports_reviewed_by_fk foreign key (reviewed_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_journey_facts_programme_id_fk') then alter table kafaa_journey_facts add constraint kafaa_journey_facts_programme_id_fk foreign key (programme_id) references kafaa_talent_programmes(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_journey_facts_role_id_fk') then alter table kafaa_journey_facts add constraint kafaa_journey_facts_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_journey_facts_source_id_fk') then alter table kafaa_journey_facts add constraint kafaa_journey_facts_source_id_fk foreign key (source_id) references kafaa_sources(id) deferrable initially deferred; end if; end $$;
@@ -5056,6 +5247,24 @@ create index if not exists kafaa_crew_debriefs_instructor_person_id_idx on kafaa
 create index if not exists kafaa_crew_debrief_members_debrief_id_idx on kafaa_crew_debrief_members (debrief_id);
 create index if not exists kafaa_crew_debrief_members_person_id_idx on kafaa_crew_debrief_members (person_id);
 create index if not exists kafaa_crew_debrief_members_scenario_id_idx on kafaa_crew_debrief_members (scenario_id);
+create index if not exists kafaa_adaptive_banks_fs_area_idx on kafaa_adaptive_banks (fs_area);
+create index if not exists kafaa_adaptive_banks_status_idx on kafaa_adaptive_banks (status);
+create index if not exists kafaa_adaptive_items_bank_id_idx on kafaa_adaptive_items (bank_id);
+create index if not exists kafaa_adaptive_items_skill_id_idx on kafaa_adaptive_items (skill_id);
+create index if not exists kafaa_adaptive_items_status_idx on kafaa_adaptive_items (status);
+create index if not exists kafaa_adaptive_attempts_bank_id_idx on kafaa_adaptive_attempts (bank_id);
+create index if not exists kafaa_adaptive_attempts_person_id_idx on kafaa_adaptive_attempts (person_id);
+create index if not exists kafaa_adaptive_attempts_status_idx on kafaa_adaptive_attempts (status);
+create index if not exists kafaa_performance_tasks_fs_area_idx on kafaa_performance_tasks (fs_area);
+create index if not exists kafaa_performance_tasks_status_idx on kafaa_performance_tasks (status);
+create index if not exists kafaa_task_attempts_task_id_idx on kafaa_task_attempts (task_id);
+create index if not exists kafaa_task_attempts_person_id_idx on kafaa_task_attempts (person_id);
+create index if not exists kafaa_task_attempts_status_idx on kafaa_task_attempts (status);
+create index if not exists kafaa_task_attempts_scored_by_idx on kafaa_task_attempts (scored_by);
+create index if not exists kafaa_integrity_reports_kind_idx on kafaa_integrity_reports (kind);
+create index if not exists kafaa_integrity_reports_person_id_idx on kafaa_integrity_reports (person_id);
+create index if not exists kafaa_integrity_reports_status_idx on kafaa_integrity_reports (status);
+create index if not exists kafaa_integrity_reports_reviewed_by_idx on kafaa_integrity_reports (reviewed_by);
 create index if not exists kafaa_journey_facts_step_idx on kafaa_journey_facts (step);
 create index if not exists kafaa_journey_facts_programme_id_idx on kafaa_journey_facts (programme_id);
 create index if not exists kafaa_journey_facts_role_id_idx on kafaa_journey_facts (role_id);
@@ -5386,4 +5595,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 244) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 251) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
