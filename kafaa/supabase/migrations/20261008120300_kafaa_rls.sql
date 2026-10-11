@@ -2531,6 +2531,45 @@ create policy kafaa_read on kafaa_transformation_archetypes for select to anon, 
 grant select on kafaa_transformation_archetypes to anon, authenticated;
 -- writes: reference data, no client writes
 
+-- smr_deltas
+alter table kafaa_smr_deltas enable row level security;
+drop policy if exists kafaa_read on kafaa_smr_deltas;
+create policy kafaa_read on kafaa_smr_deltas for select to anon, authenticated using (kafaa_rule_read('skills_taxonomy', null::text, null::text, listed)
+    or kafaa_rule_read('audit_log', null::text, null::text, true)
+    or kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_smr_deltas to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- plant_visits
+alter table kafaa_plant_visits enable row level security;
+drop policy if exists kafaa_read on kafaa_plant_visits;
+create policy kafaa_read on kafaa_plant_visits for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('own_profile', host_person_id, null::text, true));
+grant select on kafaa_plant_visits to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- twin_scenarios
+alter table kafaa_twin_scenarios enable row level security;
+drop policy if exists kafaa_read on kafaa_twin_scenarios;
+create policy kafaa_read on kafaa_twin_scenarios for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, listed)
+    or kafaa_rule_read('secure_items', null::text, null::text, true));
+grant select on kafaa_twin_scenarios to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- twin_keys
+alter table kafaa_twin_keys enable row level security;
+drop policy if exists kafaa_read on kafaa_twin_keys;
+create policy kafaa_read on kafaa_twin_keys for select to anon, authenticated using (kafaa_rule_read('secure_items', null::text, null::text, true));
+grant select on kafaa_twin_keys to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- twin_attempts
+alter table kafaa_twin_attempts enable row level security;
+drop policy if exists kafaa_read on kafaa_twin_attempts;
+create policy kafaa_read on kafaa_twin_attempts for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_twin_attempts to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- core_skills
 alter table kafaa_core_skills enable row level security;
 drop policy if exists kafaa_read on kafaa_core_skills;

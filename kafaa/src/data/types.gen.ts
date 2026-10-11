@@ -4400,6 +4400,113 @@ export interface TransformationArchetypesRow {
   as_of: string;
   sort: number;
 }
+export interface SmrDeltasRow {
+  id: string;
+  role_id: string;
+  tech_id: string;
+  rank: number;
+  path_only: boolean;
+  dims: any;
+  changes_en: string;
+  changes_ar: string;
+  stays_en: string;
+  stays_ar: string;
+  skills: any;
+  training: any;
+  concept_role_ids: string[];
+  sources: any;
+  benchmark_ids: string[];
+  status: 'draft' | 'published' | 'retired';
+  listed: boolean;
+  version: number;
+  as_of: string;
+  sort: number;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface PlantVisitsRow {
+  id: string;
+  person_id: string;
+  kind: 'reference_plant' | 'simulator_observation' | 'partner_facility';
+  host_person_id: string;
+  visit_on: string;
+  hours: number;
+  note: string;
+  status: 'logged' | 'confirmed' | 'declined' | 'withdrawn';
+  decided_by?: string | null;
+  decided_at?: string | null;
+  decline_reason?: string | null;
+  level: number;
+  evidence: any;
+  created_at: string;
+}
+export interface TwinScenariosRow {
+  id: string;
+  code: string;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  scenario_en: string;
+  scenario_ar: string;
+  system_en: string;
+  system_ar: string;
+  difficulty: number;
+  level: number;
+  skill_ids: string[];
+  series: any;
+  components: any;
+  modes: any;
+  checks: any;
+  actions: any;
+  rationales: any;
+  max_checks: number;
+  est_minutes: number;
+  synthetic: boolean;
+  sources: any;
+  status: 'draft' | 'published' | 'retired';
+  listed: boolean;
+  version: number;
+  sort: number;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface TwinKeysRow {
+  id: string;
+  scenario_id: string;
+  component_id: string;
+  mode_id: string;
+  useful_checks: string[];
+  unsafe_checks: string[];
+  conservative_actions: string[];
+  best_action: string;
+  unsafe_actions: string[];
+  sound_rationales: string[];
+  explain: any;
+  pass_pct: number;
+}
+export interface TwinAttemptsRow {
+  id: string;
+  person_id: string;
+  scenario_id: string;
+  scenario_version: number;
+  attempt_no: number;
+  checks: string[];
+  component_id: string;
+  mode_id: string;
+  action_id: string;
+  rationale_ids: string[];
+  points: number;
+  max_points: number;
+  pct: number;
+  critical_ok: boolean;
+  passed: boolean;
+  level: number;
+  feedback: any;
+  reasons: any;
+  evidence: any;
+  submitted_at: string;
+}
 export interface CoreSkillsRow {
   id: string;
   code: string;
@@ -4904,6 +5011,11 @@ export interface Tables {
   transformation_drafts: TransformationDraftsRow;
   transformation_milestones: TransformationMilestonesRow;
   transformation_archetypes: TransformationArchetypesRow;
+  smr_deltas: SmrDeltasRow;
+  plant_visits: PlantVisitsRow;
+  twin_scenarios: TwinScenariosRow;
+  twin_keys: TwinKeysRow;
+  twin_attempts: TwinAttemptsRow;
   core_skills: CoreSkillsRow;
   core_skill_targets: CoreSkillTargetsRow;
   core_skill_candidates: CoreSkillCandidatesRow;
