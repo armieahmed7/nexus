@@ -142,16 +142,17 @@ END) AND (length(id) <= 64) AND ((length(message) >= 1) AND (length(message) <= 
 
 ## 4. Grants after the apply
 
-On a build from main (PGlite, 344 kafaa_* tables incl. waves E-G) the privileges after all five migrations are:
+On a build from main (PGlite, 360 kafaa_* tables incl. waves E-H; regenerated after merging wave H, PR #4) the privileges after all five migrations are:
 
 | role | SELECT | INSERT | UPDATE (table) | DELETE | TRUNCATE / REFERENCES / TRIGGER / MAINTAIN |
 |---|---|---|---|---|---|
-| anon | 344 | 1 (`kafaa_contact_requests`) | 0 | 0 | 0 (on every kafaa_* table) |
-| authenticated | 344 | 68 (the tables with a kafaa_insert policy, incl. contact_requests) | 67 (the tables with a kafaa_update policy, minus contact_requests) | 0 | 0 (on every kafaa_* table) |
+| anon | 360 | 1 (`kafaa_contact_requests`) | 0 | 0 | 0 (on every kafaa_* table) |
+| authenticated | 360 | 68 (the tables with a kafaa_insert policy, incl. contact_requests) | 67 (the tables with a kafaa_update policy, minus contact_requests) | 0 | 0 (on every kafaa_* table) |
 
-plus column UPDATE on `kafaa_contact_requests.status` for authenticated. Live must give the same numbers if it holds exactly these 344 kafaa_*
-tables (more if wave H/I tables exist: then compare against the policy rule, query 4b). Live on 2026-10-12 before the apply: anon INSERT 100,
-UPDATE 100, DELETE 200 on kafaa_* tables (repo intent: 1 / 0 / 0); TRUNCATE (and REFERENCES, TRIGGER, MAINTAIN) on 272 of 344 kafaa_* tables for each role. NEXUS tables keep their current grants
+plus column UPDATE on `kafaa_contact_requests.status` for authenticated. Live must give the same numbers if it holds exactly these 360 kafaa_*
+tables (more if wave I tables exist: then compare against the policy rule, query 4b). Live on 2026-10-12 before the apply (wave H live, 360
+kafaa_* tables): anon INSERT 100, UPDATE 100, DELETE 200 on kafaa_* tables (repo intent: 1 / 0 / 0); authenticated INSERT 102, UPDATE 102,
+DELETE 200; TRUNCATE (and REFERENCES, TRIGGER, MAINTAIN) on 272 of 360 kafaa_* tables for each role (wave H's 16 tables already grant SELECT only). NEXUS tables keep their current grants
 (TRUNCATE etc. on 62 NEXUS tables for anon, 66 for authenticated): out of scope here.
 
 ```sql
@@ -197,3 +198,9 @@ begin; delete from kafaa_xapi_statements where id = (select id from kafaa_xapi_s
 ```
 
 Local proof: `kafaa/scripts/validate/audit-fixes.mjs` (run by `npm run migrations:validate`) and `kafaa/tests/unit/audit-fixes.test.ts`.
+
+## 6. Data back-fill (separate bundle)
+
+`backfill/` loads the 208 seeded pool applications (`app-p001`..`app-p208`), their 468 events and 208 consents that live lacks (audit finding
+2). Insert-only, apply after parts 01-05 (part 01 drops the disabled `kafaa_applications_audit` trigger; the back-fill does not depend on it).
+See `backfill/EXPECTED.md`.
