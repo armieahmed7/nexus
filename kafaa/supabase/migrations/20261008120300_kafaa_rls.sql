@@ -1501,6 +1501,13 @@ create policy kafaa_read on kafaa_skill_outlooks for select to anon, authenticat
 grant select on kafaa_skill_outlooks to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- benchmark_values
+alter table kafaa_benchmark_values enable row level security;
+drop policy if exists kafaa_read on kafaa_benchmark_values;
+create policy kafaa_read on kafaa_benchmark_values for select to anon, authenticated using (kafaa_has_grant('workforce_analytics', array['Agg','R','W','A']));
+grant select on kafaa_benchmark_values to anon, authenticated;
+-- writes: reference data, no client writes
+
 -- contract_role_targets
 alter table kafaa_contract_role_targets enable row level security;
 drop policy if exists kafaa_read on kafaa_contract_role_targets;
@@ -1558,6 +1565,28 @@ alter table kafaa_engine_changes enable row level security;
 drop policy if exists kafaa_read on kafaa_engine_changes;
 create policy kafaa_read on kafaa_engine_changes for select to anon, authenticated using (kafaa_rule_read('integrations', null::text, null::text, true));
 grant select on kafaa_engine_changes to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- skill_change_requests
+alter table kafaa_skill_change_requests enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_change_requests;
+create policy kafaa_read on kafaa_skill_change_requests for select to anon, authenticated using (kafaa_rule_read('own_profile', proposed_by, null::text, true));
+grant select on kafaa_skill_change_requests to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- skill_changes
+alter table kafaa_skill_changes enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_changes;
+create policy kafaa_read on kafaa_skill_changes for select to anon, authenticated using (kafaa_rule_read('skills_taxonomy', null::text, null::text, true));
+grant select on kafaa_skill_changes to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- surface_fairness
+alter table kafaa_surface_fairness enable row level security;
+drop policy if exists kafaa_read on kafaa_surface_fairness;
+create policy kafaa_read on kafaa_surface_fairness for select to anon, authenticated using (kafaa_rule_read('integrations', null::text, null::text, true)
+    or kafaa_has_grant('skills_profile', array['Agg','R','W','A']));
+grant select on kafaa_surface_fairness to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
 -- digest_runs
@@ -2381,6 +2410,20 @@ create policy kafaa_read on kafaa_session_proposals for select to anon, authenti
 grant select on kafaa_session_proposals to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- skill_change_measures
+alter table kafaa_skill_change_measures enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_change_measures;
+create policy kafaa_read on kafaa_skill_change_measures for select to anon, authenticated using (kafaa_has_grant('learning_analytics', array['Agg','R','W','A']));
+grant select on kafaa_skill_change_measures to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- gap_backlog
+alter table kafaa_gap_backlog enable row level security;
+drop policy if exists kafaa_read on kafaa_gap_backlog;
+create policy kafaa_read on kafaa_gap_backlog for select to anon, authenticated using (kafaa_has_grant('learning_analytics', array['Agg','R','W','A']));
+grant select on kafaa_gap_backlog to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- jta_analyses
 alter table kafaa_jta_analyses enable row level security;
 drop policy if exists kafaa_read on kafaa_jta_analyses;
@@ -2735,6 +2778,35 @@ create policy kafaa_read on kafaa_sjt_attempts for select to anon, authenticated
 grant select on kafaa_sjt_attempts to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- aps_scenarios
+alter table kafaa_aps_scenarios enable row level security;
+drop policy if exists kafaa_read on kafaa_aps_scenarios;
+create policy kafaa_read on kafaa_aps_scenarios for select to anon, authenticated using (kafaa_rule_read('secure_items', null::text, null::text, true));
+grant select on kafaa_aps_scenarios to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- aps_attempts
+alter table kafaa_aps_attempts enable row level security;
+drop policy if exists kafaa_read on kafaa_aps_attempts;
+create policy kafaa_read on kafaa_aps_attempts for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_aps_attempts to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- roleplay_scenarios
+alter table kafaa_roleplay_scenarios enable row level security;
+drop policy if exists kafaa_read on kafaa_roleplay_scenarios;
+create policy kafaa_read on kafaa_roleplay_scenarios for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, listed)
+    or kafaa_rule_read('secure_items', null::text, null::text, true));
+grant select on kafaa_roleplay_scenarios to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- roleplay_sessions
+alter table kafaa_roleplay_sessions enable row level security;
+drop policy if exists kafaa_read on kafaa_roleplay_sessions;
+create policy kafaa_read on kafaa_roleplay_sessions for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_roleplay_sessions to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- rpl_requests
 alter table kafaa_rpl_requests enable row level security;
 drop policy if exists kafaa_read on kafaa_rpl_requests;
@@ -2773,5 +2845,26 @@ drop policy if exists kafaa_read on kafaa_credit_ledger;
 create policy kafaa_read on kafaa_credit_ledger for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
     or kafaa_rule_read('audit_log', null::text, null::text, true));
 grant select on kafaa_credit_ledger to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- critical_skills
+alter table kafaa_critical_skills enable row level security;
+drop policy if exists kafaa_read on kafaa_critical_skills;
+create policy kafaa_read on kafaa_critical_skills for select to anon, authenticated using (kafaa_has_grant('workforce_strategy', array['Agg','R','W','A']));
+grant select on kafaa_critical_skills to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- critical_skill_reviews
+alter table kafaa_critical_skill_reviews enable row level security;
+drop policy if exists kafaa_read on kafaa_critical_skill_reviews;
+create policy kafaa_read on kafaa_critical_skill_reviews for select to anon, authenticated using (kafaa_has_grant('workforce_strategy', array['Agg','R','W','A']));
+grant select on kafaa_critical_skill_reviews to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- skill_forecasts
+alter table kafaa_skill_forecasts enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_forecasts;
+create policy kafaa_read on kafaa_skill_forecasts for select to anon, authenticated using (kafaa_has_grant('workforce_strategy', array['Agg','R','W','A']));
+grant select on kafaa_skill_forecasts to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 

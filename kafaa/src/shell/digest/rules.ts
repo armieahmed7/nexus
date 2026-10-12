@@ -7,7 +7,8 @@
  *   expiry       my current qualifications (non-restricted standards) and mirrored licences expiring within 90 days     urgency 1
  *   approval     things I owe someone: skill ratings asked of me, mentoring requests and agreement proposals addressed to me,
  *                opportunity releases waiting for me, my own career-conversation record to acknowledge, OJT entries and
- *                evaluation requests (W5), reference-plant visits naming me as host (FS39, wave E integration)              urgency 2
+ *                evaluation requests (W5), reference-plant visits naming me as host (FS39, wave E integration), role-play
+ *                feedback sent to me by name for review (FS59, wave F integration)                                          urgency 2
  *   coach        the top Learning Coach action (F07 engine card passed as a hint by the page), else my soonest mandatory
  *                training due within 60 days (the coach's "must keep" rule)                                                urgency 3
  *   opportunity  open opportunities posted in the last 21 days that match me at 70% or more (F08 match formula, below)      urgency 3
@@ -118,6 +119,8 @@ export interface DigestData {
   ojt_eval_requests?: Row[];
   /** FS wave E integration (FS39): reference-plant visits and simulator observations that name me as host (optional). */
   plant_visits?: Row[];
+  /** FS wave F integration (FS59): role-play sessions sent to a named reviewer (optional). */
+  roleplay_sessions?: Row[];
 }
 
 // ───────────── dates (ISO yyyy-mm-dd, UTC)
@@ -335,6 +338,14 @@ export function gatherDigest(d: DigestData, me: string, today: string, hints: Di
     const [en, ar] = nameOf(d.people, v.person_id);
     out.push(item({ id: `approval:plant_visits:${v.id}`, kind: 'approval', ref_table: 'plant_visits', ref_id: v.id, title_en: `Plant visit to confirm: ${en}`, title_ar: `زيارة محطة بانتظار تأكيدك: ${ar}`, meta_en: en, meta_ar: ar,
       link: '/my/plant-log?tab=host', why: [{ code: 'approval_plant_visit', vars: { date: on } }] }));
+  }
+  // approvals (FS wave F integration, FS59): role-play feedback a colleague sent to me by name for review, requested by today and still open
+  for (const r of d.roleplay_sessions ?? []) {
+    const at = String(r.requested_at ?? '').slice(0, 10);
+    if (r.reviewer_id !== me || r.review_status !== 'requested' || r.person_id === me || !at || at > today) continue;
+    const [en, ar] = nameOf(d.people, r.person_id);
+    out.push(item({ id: `approval:roleplay_sessions:${r.id}`, kind: 'approval', ref_table: 'roleplay_sessions', ref_id: r.id, title_en: `Role-play feedback to review: ${en}`, title_ar: `ملاحظات لعب الأدوار بانتظار مراجعتك: ${ar}`, meta_en: en, meta_ar: ar,
+      link: '/training/role-play?tab=reviews', why: [{ code: 'approval_roleplay', vars: { date: at } }] }));
   }
   // coach: the F07 top card (hint), else my soonest mandatory training due within 60 days
   const coachOff = optedOut(d, me, 'coach');

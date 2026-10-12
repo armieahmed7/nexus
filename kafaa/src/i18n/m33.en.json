@@ -26,6 +26,34 @@
     "training-sjt-items": {
       "title": "Situational judgement item bank",
       "purpose": "The practice scenarios, expert ratings and rationales in English and Arabic; the training manager maintains them."
+    },
+    "my-problem-solving": {
+      "title": "Adaptive problem-solving practice",
+      "purpose": "Work through plant scenarios where the information changes mid-task, see the expert's reasoning at every stage and track yourself on a defined practice scale. For development only."
+    },
+    "training-aps-scenarios": {
+      "title": "Problem-solving scenario bank",
+      "purpose": "The staged scenarios behind adaptive problem-solving practice, each with at least one mid-task change, in English and Arabic."
+    },
+    "learn-role-play": {
+      "title": "Role-play practice library",
+      "purpose": "ENEC-authored conversations to practise, from pre-job briefs to coaching a peer on AI output, each with its published rubric in English and Arabic."
+    },
+    "my-role-play": {
+      "title": "My role-play practice",
+      "purpose": "Practise conversations, keep your feedback history privately and ask a reviewer to validate a session as evidence."
+    },
+    "my-role-play-scenario": {
+      "title": "Role-play session",
+      "purpose": "Answer the counterpart turn by turn and see which rubric criteria each answer meets. What you type is never stored."
+    },
+    "training-role-play": {
+      "title": "Role-play reviews and library",
+      "purpose": "Validate the role-play sessions sent to you as evidence, or decline with a reason; maintain the role-play library."
+    },
+    "workforce-core-practice": {
+      "title": "Practice participation",
+      "purpose": "Problem-solving and role-play practice in aggregate only, suppressed under 10 people."
     }
   },
   "level": {
@@ -470,5 +498,449 @@
     },
     "retireTitle": "Retire {id}?",
     "retireBody": "It stops appearing in new practice sets. Past results keep it. Each core skill must keep two active scenarios."
+  },
+  "edit": {
+    "help": "Every text in English and Arabic. The same rules the server applies are checked as you type; the save is checked again and audited.",
+    "json": "The scenario must be valid JSON (one object).",
+    "save": "Save scenario"
+  },
+  "aps": {
+    "intro": "Plant scenarios that change while you work: you set a plan, then a schedule slips, readings disagree or a part is late. At each stage you judge which facts matter and choose what to do, then see the expert's rating and reasoning. For development only.",
+    "none": "No problem-solving practice is available for your profile.",
+    "how": {
+      "eyebrow": "How it works",
+      "title": "Plan, notice, adapt",
+      "s1": "Read the situation and set your first plan.",
+      "s2": "New information arrives only after you commit: decide whether it changes your plan.",
+      "s3": "Where facts are listed, tick the ones that matter for your decision.",
+      "s4": "After each answer you see every option's rating, why, and the expert's debrief."
+    },
+    "next": "Suggested next",
+    "start": "Start",
+    "resume": "Resume",
+    "again": "Practise again",
+    "error": "Could not continue",
+    "doneTitle": "Scenario complete",
+    "doneBody": "Your result is below. It stays private to you and is never used for a qualification.",
+    "cat": {
+      "title": "Scenarios",
+      "intro": "Each scenario has at least one mid-task change. Pick any; the suggestion is the one you have practised least."
+    },
+    "changes": "{n} mid-task changes",
+    "minutes": "{n} min",
+    "diff": {
+      "1": "Foundation",
+      "2": "Intermediate",
+      "3": "Advanced"
+    },
+    "mineSummary": "Practised {n} times · best {best}",
+    "notYet": "Not practised yet",
+    "stagePlan": "Plan",
+    "stageChange": "Change {n}",
+    "progress": "Progress",
+    "context": "The situation",
+    "situationTitle": "The situation",
+    "changeTitle": "Something has changed",
+    "cuesTitle": "Which facts matter now?",
+    "cuesEyebrow": "Tick every fact that should shape your decision",
+    "noKey": "The expert's key appears after you answer.",
+    "submit": "Commit to this choice",
+    "verdict": {
+      "0": "That choice would make things worse",
+      "1": "A weak choice here",
+      "2": "An acceptable choice",
+      "3": "The expert's best choice",
+      "held": "You kept the old plan although the change called for a new one",
+      "overreact": "You changed course although the best move was to keep the plan"
+    },
+    "fb": {
+      "eyebrow": "Expert key",
+      "cues": "Facts judged correctly: {ok} of {n}",
+      "matters": "matters",
+      "noise": "does not change the decision",
+      "debrief": "Expert debrief",
+      "next": "Next stage",
+      "result": "See my result"
+    },
+    "band": {
+      "emerging": "Emerging",
+      "developing": "Developing",
+      "adaptive": "Adaptive",
+      "strategic": "Strategic"
+    },
+    "bandSub": {
+      "emerging": "Plans often miss the facts that matter, and changes are not yet picked up.",
+      "developing": "Sound first plans; changes are noticed but not always acted on well.",
+      "adaptive": "Notices what matters and revises the plan when the facts call for it.",
+      "strategic": "Consistently sets strong plans, separates signal from noise and adapts without overreacting."
+    },
+    "dim": {
+      "plan": "Setting the first plan",
+      "monitor": "Noticing what matters",
+      "adapt": "Revising the plan when things change"
+    },
+    "theme": {
+      "outage_schedule": "Outage schedule slip",
+      "conflicting_data": "Data that disagree",
+      "supply_delay": "Supply delay",
+      "staffing_change": "Staffing change",
+      "weather_logistics": "Weather and logistics",
+      "procedure_revision": "Procedure revised mid-job",
+      "digital_tool_outage": "Digital tool outage",
+      "priority_conflict": "Competing priorities"
+    },
+    "scale": {
+      "eyebrow": "How results are scored",
+      "title": "The practice scale",
+      "note": "Kafa'a's own scale, 0 to 100: the share of the most points you could reach across every stage. Each choice earns its expert rating (0-3) twice over; each fact judged correctly earns one point. Four bands with fixed cut points. It measures practice on these scenarios only.",
+      "piaacLine": "PIAAC adaptive problem solving (OECD scale 0-500)",
+      "piaacNote": "Shown as context only: PIAAC is a different test on a different scale. Your practice score is never converted to it."
+    },
+    "noResult": "No result yet",
+    "noResultBody": "Complete a scenario to see your score on the practice scale with the ENEC comparison.",
+    "res": {
+      "title": "My latest result ({period})",
+      "intro": "Your score with the scale definition, the ENEC average and the PIAAC line as context.",
+      "line": "My score on the practice scale",
+      "enec": "ENEC average ({n} people)",
+      "enecShort": "ENEC average",
+      "enecSuppressed": "The ENEC average shows once 10 or more people have practised.",
+      "dims": "By dimension",
+      "dimsEyebrow": "Where the points came from",
+      "dimsNote": "Plan counts the first stage, adapt the change stages and notice the facts you judged."
+    },
+    "trend": {
+      "title": "My trend",
+      "eyebrow": "Last four quarters",
+      "mine": "My score",
+      "one": "Practise in more than one quarter to see a trend.",
+      "runs": "Completed runs",
+      "first": "First score",
+      "latest": "Latest score"
+    },
+    "hist": {
+      "title": "My runs",
+      "when": "Date",
+      "scenario": "Scenario",
+      "score": "Score",
+      "band": "Band",
+      "never": "Never a qualification gate, never skill evidence"
+    },
+    "private": {
+      "title": "Private to you",
+      "body": "Your runs are visible to you only. HR sees practice participation in aggregate, suppressed under 10 people; managers see nothing."
+    },
+    "gate": {
+      "title": "Never a gate",
+      "body": "Practice results never decide a qualification, an authorisation or a talent review, and they are not skill evidence."
+    },
+    "reason": {
+      "score": "Score {score} on the practice scale: {band}.",
+      "strong": "Strongest: {dim} ({pct}%).",
+      "develop": "To develop: {dim} ({pct}%).",
+      "changes": "You handled {ok} of {n} mid-task changes well.",
+      "held": "At least once you kept the old plan when the change called for a new one.",
+      "overreact": "At least once you changed course when keeping the plan was best.",
+      "private": "Private practice: never a qualification gate or skill evidence.",
+      "next": "{theme}: you have practised this scenario {n} times, the least of the bank.",
+      "nextChanges": "It carries {changes} mid-task changes."
+    },
+    "problem": {
+      "code": "Use a code like APS-OS-001.",
+      "theme": "Choose a known theme.",
+      "text": "Title, summary and context are needed in English and Arabic.",
+      "core_skill": "Link one to three core skills.",
+      "skills": "Link one to four catalogue skills.",
+      "difficulty": "Difficulty is 1 to 3.",
+      "minutes": "Estimated time is 5 to 30 minutes.",
+      "stages": "A scenario has two to four stages.",
+      "first_stage": "The first stage sets the plan (stage ids a-z, 0-9, -).",
+      "no_change": "Every later stage is a mid-task change, and there is at least one.",
+      "stage_text": "Every stage needs its situation, question and debrief in English and Arabic.",
+      "options": "Three or four options, each with a why in both languages.",
+      "key": "Rate every option 0-3 with exactly one best (3).",
+      "keep": "Only a change stage may mark one option as keeping the plan.",
+      "cues": "Facts to judge: none, or three to five with at least one that matters and one that does not.",
+      "restricted": "Scenarios never touch plant security.",
+      "status": "Status is draft, published or retired."
+    },
+    "bank": {
+      "intro": "The staged scenarios behind adaptive problem-solving practice: every option's rating and why, which facts matter and the expert debrief, in English and Arabic. Every scenario carries at least one mid-task change.",
+      "coverage": "Published scenarios per theme",
+      "coverageEyebrow": "{n} published",
+      "allChange": "{n} of {total} scenarios carry a mid-task change (the database refuses one without).",
+      "rules": {
+        "title": "Rules every scenario meets",
+        "r1": "Two to four stages: the plan, then at least one mid-task change revealed only after the previous answer.",
+        "r2": "Three or four options per stage, rated 0-3 with exactly one best, each with a why in both languages.",
+        "r3": "Optional facts to judge (three to five), at least one that matters and one that does not.",
+        "r4": "A change stage may make keeping the plan the best move, so overreacting is scored too.",
+        "r5": "No plant-security, safeguards or cyber detail; every save is audited."
+      },
+      "add": "Add scenario",
+      "list": "Scenarios ({n})",
+      "caption": "Problem-solving scenarios",
+      "none": "No scenarios match.",
+      "theme": "Theme",
+      "stages": "Stages",
+      "changes": "Changes",
+      "keep": "keeps the plan",
+      "security": "Scenarios use realistic but generic plant situations. They never describe security arrangements, safeguards or cyber configuration.",
+      "publishedBody": "Staff can practise this scenario once it is published. The server re-checks every rule first.",
+      "retiredBody": "Staff can no longer start this scenario. Past runs keep their scores; at least three scenarios stay published."
+    }
+  },
+  "rp": {
+    "kind": {
+      "pre_job_brief": "Pre-job brief",
+      "shift_turnover": "Shift turnover",
+      "raise_concern": "Raising a concern to a senior",
+      "regulator_interview": "Regulator-style interview practice",
+      "knowledge_transfer": "Knowledge transfer",
+      "ai_peer_coaching": "Coaching a peer on AI output"
+    },
+    "review": {
+      "requested": "Review requested",
+      "validated": "Validated",
+      "declined": "Declined",
+      "withdrawn": "Withdrawn"
+    },
+    "reviewLine": {
+      "requested": "Sent to {name} for review.",
+      "validated": "Validated by {name} on {date}.",
+      "declined": "Declined by {name} on {date}.",
+      "withdrawn": "You withdrew the request to {name}."
+    },
+    "role": {
+      "instructor": "Instructor",
+      "training_manager": "Training manager",
+      "hr_director": "HR authority"
+    },
+    "status": {
+      "draft": "Draft",
+      "published": "Published",
+      "retired": "Retired"
+    },
+    "check": {
+      "cues": "Looks for at least {n} of:",
+      "cuesMin": "Looks for at least {n} of:",
+      "length": "Between {min} and {max} words.",
+      "question": "Asks at least one question.",
+      "digit": "Gives at least one number (a time, value or count)."
+    },
+    "checkBtn": "Check my answer",
+    "met": "met",
+    "notMet": "not met",
+    "practise": "Practise",
+    "start": "Start",
+    "resume": "Resume",
+    "again": "Practise again",
+    "ready": "At the mark",
+    "notReady": "Below the mark",
+    "inProgress": "In progress",
+    "counterpart": "Counterpart",
+    "yourRole": "Your role",
+    "turnsTitle": "The turns",
+    "turnN": "Turn {n}",
+    "turnsN": "{n} turns",
+    "words": "{n} words",
+    "levelPass": "Evidence level {level} · mark {pct}%",
+    "rubricTitle": "The published rubric",
+    "rubricIn": "Rubric in {lang}",
+    "checksTitle": "What the check looks for",
+    "sources": "Built on {n} sources (see the research packs).",
+    "answerLabel": "My answer",
+    "notStored": "only the ticks are kept",
+    "notStoredLong": "Only which criteria each answer met and its word count are kept. What you typed was never stored.",
+    "showHint": "Show a hint",
+    "hideHint": "Hide the hint",
+    "askReview": "Ask for review",
+    "withdraw": "Withdraw request",
+    "withdrawTitle": "Withdraw the review request?",
+    "withdrawBody": "{name} will no longer see this session. You can ask again later.",
+    "speak": {
+      "title": "Is this a real concern?",
+      "body": "Role-play is practice. A real concern about safety, conduct or wrongdoing belongs in the speak-up channels, which protect you.",
+      "routed": "What you wrote reads like a real concern, so it was not sent or stored as practice. Please use the speak-up channels.",
+      "link": "Go to speak-up"
+    },
+    "col": {
+      "kind": "Kind",
+      "pct": "Criteria met",
+      "ready": "Mark",
+      "review": "Review",
+      "actions": "Actions",
+      "code": "Code",
+      "title": "Title",
+      "rubric": "Criteria"
+    },
+    "lib": {
+      "intro": "Conversations nuclear professionals have to get right, written by ENEC. Each shows its published rubric, in English and Arabic, so you know exactly what the check looks for before you practise.",
+      "how": {
+        "eyebrow": "How it works",
+        "title": "Practise the conversation, see the rubric",
+        "s1": "Read the setting, who you are talking to and your role.",
+        "s2": "Answer each turn in your own words, in English or Arabic.",
+        "s3": "The published rubric ticks each criterion; the example answer shows one good way.",
+        "s4": "Your feedback is private. At the mark, you may ask a named reviewer to validate it as evidence."
+      },
+      "kinds": "Conversation kinds",
+      "kindsTitle": "{n} kinds",
+      "list": "Scenarios ({n})",
+      "listIntro": "Every published scenario with its rubric.",
+      "none": "No scenarios published yet.",
+      "rubric": "Rubric ({n} criteria)",
+      "private": {
+        "title": "Your practice stays private",
+        "body": "Sessions and feedback are visible to you only. A reviewer sees a session only when you send it to them by name."
+      }
+    },
+    "mine": {
+      "intro": "Your role-play practice. Feedback is saved privately; nobody else sees it unless you ask a reviewer to validate a session.",
+      "sessions": "Sessions",
+      "completed": "Completed",
+      "ready": "At the mark",
+      "validated": "Validated as evidence",
+      "enec": "ENEC criteria rate {pct}%",
+      "enecSuppressed": "ENEC rate shows from 10 people",
+      "tabPractise": "Practise",
+      "tabHistory": "Feedback history",
+      "lastPct": "Last {pct}% · mark {mark}%",
+      "noHistory": "No sessions yet.",
+      "privateTitle": "Visible to you only",
+      "privateBody": "Line managers, HR, instructors, auditors and administrators cannot read your role-play history. A reviewer you name sees only the session you send, with its ticks and your context, never your words."
+    },
+    "ask": {
+      "title": "Ask a reviewer to validate this session",
+      "body": "Once validated, this session becomes rating evidence (basis validated) on the scenario's skills. The reviewer sees the ticks, the rubric and your context, never your answers.",
+      "reviewer": "Reviewer",
+      "choose": "Choose a reviewer",
+      "noReviewers": "No reviewer is available right now.",
+      "context": "Practice context for the reviewer",
+      "contextHint": "5 to 400 characters, for example where you will use this conversation. No contact details.",
+      "send": "Send request"
+    },
+    "session": {
+      "intro": "Answer the counterpart turn by turn. Each answer is checked against the published rubric; only the ticks are kept.",
+      "back": "My role-play",
+      "missing": "This scenario is not available.",
+      "ready": "Before you start",
+      "b1": "Answer as you would at work, in English or Arabic.",
+      "b2": "After each answer you see which criteria it met and an example answer.",
+      "b3": "Nothing you type is stored; real concerns go to the speak-up channels.",
+      "last": "Last session {pct}% on {date}",
+      "privateTitle": "Private practice",
+      "privateBody": "Only you see this session and its feedback.",
+      "doneTitle": "Session complete",
+      "doneBody": "Your feedback is saved privately in your history."
+    },
+    "fb": {
+      "title": "{passed} of {total} criteria met",
+      "eyebrow": "{n} words checked",
+      "example": "An example answer",
+      "next": "Next turn",
+      "result": "See my result"
+    },
+    "res": {
+      "eyebrow": "My result",
+      "line": "Criteria met",
+      "mark": "Scenario mark",
+      "askReview": "Ask a reviewer to validate",
+      "notYet": "Reach {pct}% to ask for validation.",
+      "history": "Feedback history"
+    },
+    "tr": {
+      "intro": "Sessions sent to you for validation, with the ticks, the rubric and the person's context (never their answers), and the role-play library.",
+      "tabReviews": "Reviews",
+      "tabLibrary": "Library",
+      "noQueue": "Reviews are for instructors, the training manager and the HR authority.",
+      "ruleTitle": "How validation works",
+      "ruleBody": "You see only sessions sent to you by name. Validating writes rating evidence (basis validated) on the scenario's skills and recomputes them; declining needs a reason. You can never decide your own session.",
+      "requested": "Requested {date}",
+      "ofMark": "{passed} of {total} criteria · mark {mark}%",
+      "context": "Context",
+      "skills": "Evidence on: {list} (level {level})",
+      "validate": "Validate",
+      "decline": "Decline",
+      "empty": "Nothing waiting for you",
+      "emptyBody": "Sessions people send you by name appear here.",
+      "decided": "Decided by me",
+      "decidedOn": "Decided",
+      "person": "Person",
+      "validateTitle": "Validate this role-play session?",
+      "validateBody": "This writes validated rating evidence for {person} at level {level} on: {list}. It is practice feedback, not a qualification. The person is notified.",
+      "declineTitle": "Decline this session?",
+      "declineBody": "No evidence is written. The person sees your reason.",
+      "actingAs": "Reviewer (recognition A)",
+      "reason": "Reason for the person",
+      "libWrite": "You maintain the library: add, edit, publish or retire scenarios. Every save is checked and audited.",
+      "libRead": "Read-only: the training manager maintains the library.",
+      "add": "Add scenario",
+      "addTitle": "New role-play scenario",
+      "editTitle": "Edit {code}",
+      "publish": "Publish",
+      "publishedTitle": "Publish {code}?",
+      "publishedBody": "Staff can practise this scenario and read its rubric once published. The server re-checks every rule first.",
+      "retiredTitle": "Retire {code}?",
+      "retiredBody": "Staff can no longer start this scenario. Saved feedback stays in each person's history; at least three scenarios stay published.",
+      "security": "Scenarios and answers never touch plant security, safeguards or cyber details; such wording is refused."
+    },
+    "reason": {
+      "score": "{passed} of {total} criteria met ({pct}%).",
+      "strong": "Strongest: {criterion} ({pct}%).",
+      "develop": "To develop: {criterion} ({pct}%).",
+      "ready": "At or above the scenario's mark of {mark}%: you can ask a reviewer to validate it.",
+      "notReady": "Below the scenario's mark of {mark}%: practise again before asking for validation.",
+      "private": "Saved privately: visible to you only."
+    },
+    "problem": {
+      "code": "Use a code like RP-PB-01.",
+      "kind": "Choose a known kind.",
+      "text": "Title, summary, setting, counterpart and your role are needed in English and Arabic.",
+      "core_skill": "Link one to three core skills.",
+      "skills": "Link one to four catalogue skills that can carry evidence.",
+      "level": "Evidence level is 1 or 2.",
+      "pass_pct": "The mark is between 50 and 90%.",
+      "minutes": "Estimated time is 5 to 40 minutes.",
+      "rubric": "Three to eight criteria with distinct ids.",
+      "criterion": "Every criterion needs a label, what it looks for and a tip in English and Arabic.",
+      "check": "Every criterion needs a valid check (cue words, length, a question or a number).",
+      "turns": "Three to five turns with distinct ids.",
+      "turn": "Every turn needs the counterpart's line, a hint and an example answer in English and Arabic.",
+      "turn_criteria": "Every turn checks one to five known criteria.",
+      "unused": "Every criterion is checked by at least one turn.",
+      "restricted": "Scenarios never touch plant security.",
+      "status": "Status is draft, published or retired."
+    },
+    "evidenceLabel": "Validated role-play feedback",
+    "evidenceSystem": "Human Skills Studio (reviewer-validated)"
+  },
+  "wp": {
+    "intro": "Problem-solving and role-play practice in aggregate. Any figure naming fewer than 10 people is suppressed and no person is listed.",
+    "none": "No practice figures are available for your access.",
+    "people": "People",
+    "runs": "Runs",
+    "avg": "ENEC average",
+    "avgSub": "practice scale 0-100",
+    "strategic": "People in the strategic band",
+    "period": "Quarter",
+    "bands": "Band spread",
+    "bandsEyebrow": "Latest result per person",
+    "dimsEyebrow": "Pooled across latest results",
+    "byTheme": "Average by theme",
+    "trend": "Average by quarter",
+    "aps": {
+      "title": "Adaptive problem-solving practice",
+      "intro": "Latest completed run per person in the last four quarters."
+    },
+    "rp": {
+      "title": "Role-play practice",
+      "intro": "Completed sessions in the last four quarters; the rate pools every criterion checked.",
+      "rate": "Criteria met (pooled)",
+      "byKind": "By conversation kind"
+    },
+    "privacyTitle": "Aggregate only",
+    "privacyBody": "Nobody's runs, sessions or feedback are shown here. Cells under 10 people show as suppressed.",
+    "gateBody": "These figures inform training design. They never gate a qualification and are never used in talent review."
   }
 }

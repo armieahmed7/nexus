@@ -3,13 +3,14 @@
 import type { Result } from '../../../data/types';
 import type { HandoverAggregate, Scenario } from '../handover';
 import type { M07OutlookRpc } from './outlook.rpc'; // W5E4 (F35)
+import type { M07AutomationRpc } from './automation.rpc'; // FS52 (wave F · E2)
 
 export interface HandoverResult extends HandoverAggregate {
   /** As-of periods that have a cover plan (newest last). */
   periods: string[];
 }
 
-export interface M07Rpc extends M07OutlookRpc {
+export interface M07Rpc extends M07OutlookRpc, M07AutomationRpc {
   /**
    * F22: the suppressed Handover 2030 board for one as-of period ('2026-Q3'; empty = the latest plan) and an optional SIMULATED what-if
    * (OSSA end year 2028-2032, pipeline slip 0-24 months). Counts only; cells under 10 are null. HR, managers and auditors

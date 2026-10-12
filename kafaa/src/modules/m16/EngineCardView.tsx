@@ -27,6 +27,7 @@ export function EngineCardView({ card, setting, optouts, compact, extra }: { car
           <div className="mb-1 flex flex-wrap items-center gap-1.5">
             <span className="chip border-line bg-sunken font-mono text-[11px]" dir="ltr">{card.feature}</span>
             <span className="chip border-line bg-sunken text-[11px]">{t(`common.engines.surface.${card.engine_surface}`)}</span>
+            {card.kernel_surface && card.kernel_surface !== card.engine_surface && <span className="chip border-sim-line bg-sim-bg text-[11px] text-sim" data-testid="m16-card-kernel">{t(`m16.reg.kernel.${card.kernel_surface}`)}</span>}
             <StatusPill tone="neutral">{t('m16.ai.card.version', { n: f.num(card.version) })}</StatusPill>
           </div>
           <h3 className="text-[16px] font-semibold leading-snug">{pick(card, 'title')}</h3>
@@ -98,6 +99,11 @@ export function EngineCardView({ card, setting, optouts, compact, extra }: { car
         <L to={card.route} className="ms-auto inline-flex items-center gap-1">{t('m16.ai.card.open')}<Icon name="chevron" size={12} className="rtl:-scale-x-100" /></L>
       </div>
 
+      {(card.fairness_metric || card.fairness_none) && (
+        <p className="flex items-start gap-1.5 text-[12.5px] text-ink-2" data-testid="m16-card-fairness"><Icon name="users" size={13} className="mt-0.5 shrink-0" />
+          <span><span className="font-semibold">{t('m16.reg.col.fairness')}: </span>{card.fairness_metric ? t('m16.reg.metricBasis', { metric: t(`m16.reg.metric.${card.fairness_metric}`) }) : t(`m16.reg.none.${card.fairness_none}`)}</span></p>
+      )}
+      {(card.kernel_surface === 'transform' || card.kernel_surface === 'assess' || card.kernel_surface === 'rules') && <p className="text-[12px] text-ink-3" data-testid="m16-card-defaults">{t(`m16.reg.kernelNote.${card.kernel_surface}`)}</p>}
       {!compact && (
         <details className="text-[12.5px]">
           <summary className="cursor-pointer font-semibold text-ink-2">{t('m16.ai.card.functions', { n: f.num(card.scoring_functions.length) })}</summary>

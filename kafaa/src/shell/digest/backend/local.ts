@@ -17,6 +17,7 @@ const TABLES: (keyof DigestData)[] = [
   'opportunity_applications', 'career_conversations', 'refresh_state', 'refresh_prefs', 'enrolments', 'courses', 'person_skills', 'skills', 'role_competencies', 'career_paths',
   'career_targets', 'engine_settings', 'reco_optouts', 'ojt_logs', 'ojt_eval_requests', // W5 integration (F38)
   'plant_visits', // FS wave E integration (FS39 host confirmations)
+  'roleplay_sessions', // FS wave F integration (FS59 role-play reviews owed)
 ];
 /** Everything the digest reads, straight from the in-memory tables (no RLS: the RPC is the gate and reads only the caller's items). */
 export function localDigestData(b: LocalBackend): DigestData {

@@ -46,8 +46,9 @@ describe('FS41/FS42/FS43 pages', () => {
     expect(within(screen.getByTestId('m32-comp-learning')).getAllByRole('listitem').length).toBeGreaterThanOrEqual(1);
     await waitFor(() => expect(screen.getByTestId('benchmark-chip-GREENCOMP')).toBeTruthy(), W);
   }, 60000);
-  it('my progress: level per area and overall against my family target, reasons, grow next and a goal (k-ro, level 0)', async () => {
-    await renderPage(<MyCleanEnergyPage />, { persona: 'k-ro', path: '/my/clean-energy' });
+  it('my progress: level per area and overall against my family target, reasons, grow next and a goal (nse, level 0)', async () => {
+    // FS wave F QA: k-ro now holds validated role-play evidence on two transversal skills (FS59); nse has no counted evidence
+    await renderPage(<MyCleanEnergyPage />, { persona: 'nse', path: '/my/clean-energy' });
     const sum = await screen.findByTestId('m32-my-summary', {}, W);
     expect(sum.getAttribute('data-level')).toBe('0');
     expect(screen.getAllByTestId('m32-my-area').length).toBe(4);

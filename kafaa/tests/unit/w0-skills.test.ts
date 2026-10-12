@@ -44,7 +44,7 @@ describe('F01 seeded skill state', () => {
     expect(T.adv_skills.every((a) => mapped.has(a.id))).toBe(true);
   });
   it('the seed states equal a fresh derivation (builder and domain functions agree)', () => {
-    const recorded = T.skill_evidence.filter((e) => ['rating', 'ojt', 'credential'].includes(e.kind) || ['fitness_attempts', 'adaptive_attempts', 'task_attempts', 'ai_drill_attempts', 'plant_visits', 'twin_attempts', 'lectures', 'knowledge_assets'].includes(String(e.ref_table)) /* FS10, FS21/FS22, FS44 */);
+    const recorded = T.skill_evidence.filter((e) => ['rating', 'ojt', 'credential'].includes(e.kind) || ['fitness_attempts', 'adaptive_attempts', 'task_attempts', 'ai_drill_attempts', 'plant_visits', 'twin_attempts', 'lectures', 'knowledge_assets', 'roleplay_sessions'].includes(String(e.ref_table)) /* FS10, FS21/FS22, FS44 */);
     const fresh = deriveStates([...gatherEvidence(src(), { person: null, now: NOW }), ...recorded] as Evidence[], NOW, decayModelFrom(T.engine_settings, T.skills)); // FS03: per-class half-lives
     expect(statesDigestText(fresh)).toBe(statesDigestText(T.person_skills));
   });

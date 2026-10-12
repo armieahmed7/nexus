@@ -28,6 +28,30 @@
     "admin-ai-transparency": {
       "title": "AI transparency and fairness",
       "purpose": "How each recommendation works, what it never uses, weekly fairness checks and the log of every engine change."
+    },
+    "skills-changes": {
+      "title": "Skills catalogue change log",
+      "purpose": "Every change the skills council published: added, renamed, split, retired and re-levelled skills, with before and after."
+    },
+    "skills-change-propose": {
+      "title": "Propose a skill change",
+      "purpose": "Propose adding, renaming, splitting, retiring or re-levelling a skill, checked live against the inclusion rule."
+    },
+    "admin-skills-council": {
+      "title": "Skills council",
+      "purpose": "The council queue: two different members decide every skill change, each vote ledgered."
+    },
+    "admin-skills-health": {
+      "title": "Skills catalogue health",
+      "purpose": "Staleness of skill definitions and the orphan-rate audit, with drill-down lists."
+    },
+    "skills-datasheet": {
+      "title": "Skills ontology datasheet",
+      "purpose": "Size, sources, update cadence, languages, how inference works and how bias is handled, generated from the catalogue."
+    },
+    "admin-model-risk": {
+      "title": "Model-risk template",
+      "purpose": "The review template a ranked surface must complete before any server-side model may serve it."
     }
   },
   "hub": {
@@ -784,5 +808,615 @@
       "sent": "Correction request sent",
       "sla": "Answered within 30 days through the data rights process, like every other request."
     }
+  },
+  "gov": {
+    "kind": {
+      "add": "Add",
+      "rename": "Rename",
+      "split": "Split",
+      "retire": "Retire",
+      "relevel": "Re-level"
+    },
+    "kindHelp": {
+      "add": "a new skill that is developed and assessed on its own",
+      "rename": "a clearer name; the old one stays as an alternative label",
+      "split": "one skill becomes two to four; the original is kept as obsolete",
+      "retire": "mark obsolete with a replacement; never removed",
+      "relevel": "change the key level or its level essence"
+    },
+    "status": {
+      "submitted": "Submitted",
+      "first_approved": "One approval",
+      "first_rejected": "One rejection",
+      "published": "Published",
+      "rejected": "Rejected"
+    },
+    "inc": {
+      "skill": "Skill exists and is live",
+      "names": "Names in English and Arabic",
+      "distinct_name": "Distinct name",
+      "development": "Distinct development",
+      "assessment": "Distinct assessment",
+      "source": "Public source",
+      "replacement": "Valid replacement",
+      "level": "Level and placement"
+    },
+    "incHelp": {
+      "skill": "A change targets a live skill; an addition targets none.",
+      "names": "Both names are given (up to 120 characters); a split names every part.",
+      "distinct_name": "No other live skill uses the name or an alternative label, and the parts differ from each other.",
+      "development": "Say how the skill is developed, separately from other skills (20 characters or more).",
+      "assessment": "Say how the skill is assessed, separately from other skills (20 characters or more).",
+      "source": "A new skill cites a public https source.",
+      "replacement": "A replacement, if named, is another live skill.",
+      "level": "A new skill has a key level from one to four, a competency and an area; a re-level changes the level or its essence."
+    },
+    "decision": {
+      "approve": "approved",
+      "reject": "rejected"
+    },
+    "role": {
+      "employee": "Employee",
+      "licensed_operator": "Licensed operator",
+      "manager": "Line manager",
+      "instructor": "Instructor",
+      "training_manager": "Training manager",
+      "licensing_coord": "Licensing coordinator",
+      "hr_analyst": "HR analyst",
+      "hr_director": "HR director",
+      "editor": "Editor",
+      "ecp_officer": "ECP officer",
+      "admin": "Platform admin",
+      "auditor": "Auditor",
+      "unknown": "A council member"
+    },
+    "dash": {
+      "catalogue": "Skills catalogue",
+      "skills_outlook": "Skills outlook",
+      "skill_forecasts": "Skill forecasts",
+      "skills_health": "Catalogue health",
+      "datasheet": "Datasheet"
+    },
+    "field": {
+      "name_en": "Name (English)",
+      "name_ar": "Name (Arabic)",
+      "key_level": "Key level",
+      "lifecycle": "Lifecycle",
+      "version": "Version",
+      "obsolete_on": "Obsolete on",
+      "replaced_by": "Replaced by"
+    },
+    "votes": {
+      "none": "No vote yet."
+    },
+    "steps": {
+      "label": "Council progress",
+      "submitted": "Submitted",
+      "first": "First vote",
+      "decided": "Decided"
+    },
+    "msg": {
+      "not_signed_in": "Sign in to propose or decide a skill change.",
+      "forbidden_propose": "Only staff may propose a change to the skills catalogue.",
+      "forbidden_decide": "Only skills council members (training manager, HR director, platform admin) decide skill changes.",
+      "kind": "Choose add, rename, split, retire or re-level.",
+      "rationale": "Give a rationale of 10 to 1,000 characters: the council reads it before deciding.",
+      "not_found": "That skill or request does not exist.",
+      "duplicate": "An open request already covers this skill: comment on it instead of opening a second one.",
+      "inclusion": "The proposal does not meet the inclusion rule yet: see the checks.",
+      "decision": "Choose approve or reject.",
+      "closed": "This request is already decided.",
+      "own_request": "Maker-checker: you proposed this change, so two other council members decide it.",
+      "second_approver": "Maker-checker: you already voted on this request; a different council member gives the second decision.",
+      "note": "Give the reason for a rejection (10 to 500 characters): it is shown to the proposer.",
+      "stale": "The catalogue changed since this request was made: it no longer applies as written.",
+      "forbidden_queue": "Only skills council members and auditors see the council queue."
+    },
+    "log": {
+      "intro": "The public log of the skills catalogue. A skills council of operations, engineering, training and HR representatives decides every change; two different members approve it, and retired skills stay readable as obsolete.",
+      "tile": {
+        "year": "Changes in 12 months",
+        "yearSub": "published by the council",
+        "added": "Skills added",
+        "retired": "Retired or split",
+        "retiredSub": "kept as obsolete, never removed",
+        "methodology": "Methodology changes",
+        "last": "Last change"
+      },
+      "howTitle": "How the catalogue stays current",
+      "how": {
+        "inclusion": "Inclusion rule: a skill is in the catalogue only when it is developed and assessed distinctly from every other skill, with distinct names and a public source.",
+        "council": "Maker-checker: two different council members decide each change, neither of them the proposer, and every vote is written to the evidence ledger.",
+        "obsolete": "Obsolete, never removed: a retired skill keeps its page, history and evidence, and points to its replacement.",
+        "methodology": "A change that moves counts or levels carries a methodology banner on the dashboards it affects for the next ninety days."
+      },
+      "srcUpkeep": "Jobs and Skills Australia · Australian Skills Classification (retired for timeliness)",
+      "toDatasheet": "Read the skills ontology datasheet",
+      "perMonth": "Published changes per month",
+      "filterKind": "Kind of change",
+      "allKinds": "All kinds",
+      "search": "Search",
+      "searchPh": "Skill code or name",
+      "propose": "Propose a change",
+      "proposeHint": "Staff can propose a change after signing in.",
+      "none": "No change matches these filters.",
+      "nChanges": "{n} changes",
+      "methodology": "Methodology change",
+      "obsolete": "Obsolete",
+      "decided": "Published {date} · approved by {roles}",
+      "and": " and ",
+      "proposedBy": "proposed by a {role}",
+      "openSkill": "Open skill",
+      "details": "Details",
+      "hide": "Hide",
+      "field": "Field",
+      "before": "Before",
+      "after": "After",
+      "newSkills": "New skills",
+      "dashboards": "Dashboards affected"
+    },
+    "prop": {
+      "intro": "Propose a change to the skills catalogue. The inclusion rule is checked as you type; the skills council then decides, with two members who are not you.",
+      "formTitle": "Your proposal",
+      "kind": "What should change?",
+      "skill": "Skill",
+      "current": "Key level {level} · version {version}",
+      "nameEn": "Name in English",
+      "nameAr": "Name in Arabic",
+      "descEn": "Definition in English",
+      "descAr": "Definition in Arabic",
+      "area": "Area",
+      "competency": "Competency",
+      "keyLevel": "Key level",
+      "level": "Level {n}",
+      "sourceLabel": "Source title",
+      "sourceUrl": "Source link (https)",
+      "parts": "The new skills",
+      "partEn": "Part {n} · English name",
+      "partAr": "Part {n} · Arabic name",
+      "addPart": "Add a part",
+      "removePart": "Remove the last part",
+      "replacedBy": "Replaced by (optional)",
+      "noReplacement": "No replacement",
+      "newLevel": "New key level",
+      "essenceEn": "Level essence in English (optional)",
+      "essenceAr": "Level essence in Arabic (optional)",
+      "essenceHint": "Left empty, the generic essence of the new level is used.",
+      "development": "How is it developed?",
+      "developmentHint": "The course, practice or route that builds this skill and not another ({n} characters or more).",
+      "assessment": "How is it assessed?",
+      "assessmentHint": "The assessment that shows this skill and not another ({n} characters or more).",
+      "rationale": "Why this change?",
+      "rationaleHint": "The council reads this before deciding.",
+      "ready": "Ready: the inclusion rule is met.",
+      "submit": "Send to the council",
+      "checkTitle": "Inclusion rule",
+      "checkBody": "Checked live with the same rule the council and both backends use.",
+      "previewTitle": "The request",
+      "effect": {
+        "add": "If published: a new skill at version 1, with a review date one review cycle away. It starts as an orphan until a course, assessment or role uses it.",
+        "rename": "If published: the new name, the old name kept as an alternative label, the version raised by one and the review clock restarted.",
+        "split": "If published: the new skills are added and the original is marked obsolete, replaced by the first part. Nothing is removed.",
+        "retire": "If published: the skill is marked obsolete with today's date and its replacement. It stays readable with its history; nothing is removed.",
+        "relevel": "If published: the new key level and essence, the version raised by one and the review clock restarted. Dashboards show a methodology banner."
+      },
+      "councilTitle": "Who decides",
+      "councilBody": "Two different skills council members (training manager, HR director or platform admin), neither of them you. Each vote is ledgered; a disagreement sends the request back.",
+      "confirmTitle": "Send this proposal to the skills council?",
+      "confirmBody": "\"{title}\" goes to the council queue. You can follow it below; the council decides with two members.",
+      "actingAs": "Staff member proposing a change",
+      "sent": "Change request sent to the skills council",
+      "mineTitle": "My requests",
+      "mineNone": "You have not proposed a change yet.",
+      "mineNoneBody": "Proposals you send appear here with the council's votes.",
+      "waiting": "Waiting for the first council vote.",
+      "seeLog": "See it in the change log"
+    },
+    "cn": {
+      "intro": "The skills council decides every change to the skills catalogue. Two different members, neither of them the proposer, each record a vote; agreement closes the request and a published change is applied and logged publicly.",
+      "noAccess": "The council queue is open to skills council members and auditors.",
+      "tile": {
+        "open": "Open requests",
+        "second": "Waiting for a second vote",
+        "secondSub": "one member has voted",
+        "published": "Published",
+        "days": "in the last 90 days",
+        "rejected": "Rejected"
+      },
+      "readOnlyTitle": "Read only",
+      "readOnly": "You can read the queue and every vote. Only council members (training manager, HR director, platform admin) vote.",
+      "tab": {
+        "open": "Open",
+        "decided": "Decided"
+      },
+      "rulesTitle": "Council rules",
+      "rules": {
+        "two": "Two different members decide each change: the first vote approves or rejects, a second member who agrees closes it.",
+        "proposer": "The proposer never votes on their own request, and nobody votes twice.",
+        "ledger": "Every vote is confirmed, audited and written to the NEXUS evidence ledger.",
+        "obsolete": "Retired and split skills are marked obsolete with a replacement; nothing is removed from the catalogue.",
+        "banner": "A change that moves counts or levels shows a methodology banner on the affected dashboards for ninety days."
+      },
+      "toLog": "Public change log",
+      "toHealth": "Catalogue health",
+      "none": "Nothing here.",
+      "proposed": "Proposed by a {role} on {date}",
+      "rationale": "Rationale",
+      "development": "Development",
+      "assessment": "Assessment",
+      "planTitle": "If published",
+      "planNew": "New skills: {ids}",
+      "planObsolete": "The current skill is marked obsolete and keeps its history.",
+      "planBanner": "Affected dashboards show a methodology banner.",
+      "inclusionNow": "Inclusion rule today",
+      "inclusionThen": "Inclusion rule when proposed",
+      "votes": "Votes",
+      "firstHint": "First vote: approve or reject.",
+      "secondHint": "A member has {decision}; your vote decides if you agree.",
+      "approve": "Approve",
+      "reject": "Reject",
+      "confirm": {
+        "approve": "Approve \"{title}\"?",
+        "reject": "Reject \"{title}\"?"
+      },
+      "consequence": {
+        "first": "This is the first council vote. A different member must agree before anything changes in the catalogue.",
+        "final": "This is the second, agreeing vote: it closes the request. An approval applies the change to the catalogue and publishes it in the change log.",
+        "differ": "Your vote differs from the first one: the request goes back to the queue for a fresh first vote."
+      },
+      "actingAs": "Skills council member",
+      "noteRequired": "Reason for the rejection (shown to the proposer)",
+      "noteOptional": "Note (optional)",
+      "done": {
+        "first": "First vote recorded",
+        "differ": "Votes differ: the request is back in the queue",
+        "published": "Change published to the catalogue",
+        "rejected": "Request rejected"
+      }
+    },
+    "hl": {
+      "intro": "How current the catalogue is: definitions past their review date, and live skills that nothing teaches, assesses or uses. Every number opens its list of skills.",
+      "yes": "yes",
+      "no": "no",
+      "tile": {
+        "live": "Live skills",
+        "liveSub": "{n} obsolete, kept readable",
+        "overdue": "Past review date",
+        "rate": "{pct} of live skills",
+        "dueSoon": "Review due in 90 days",
+        "orphans": "Orphan rate",
+        "orphansSub": "{n} skills nothing uses",
+        "untaught": "Not taught",
+        "noRole": "No role uses it"
+      },
+      "coverTitle": "Coverage of live skills",
+      "cover": {
+        "taughtRole": "Taught and used by a role",
+        "taughtOnly": "Taught, no role",
+        "roleOnly": "Used by a role, not taught",
+        "orphan": "Orphan"
+      },
+      "coverNote": "{n} of {total} live skills are taught by a course, pathway or external resource, or assessed.",
+      "ownerTitle": "Reviews due by owner",
+      "ownerNone": "No review is due.",
+      "taughtTitle": "What counts as taught or used",
+      "taught": {
+        "course": "A catalogue course (supplier-academy courses excluded) that teaches the skill: it names the skill in its evidence keys, holds the competency of a core skill, or has an active course link. Security skills are never taught here.",
+        "pathway": "A published pathway for the skill whose learning step is filled.",
+        "external": "A published external resource from the curated catalogue that names the skill.",
+        "assessment": "A current qualification standard, an adaptive bank or item, a performance task, a twin or AI drill, or a fitness-check area that assesses the skill.",
+        "role": "A published role profile that requires the skill (career-path-only roles excluded)."
+      },
+      "taughtShared": "Courses, pathways and external resources follow the exact rule of the curriculum coverage scorer, so both pages agree on what the catalogue teaches.",
+      "drillTitle": "Skills",
+      "drillNone": "No skill in this list.",
+      "filter": {
+        "all": "All live",
+        "overdue": "Past review",
+        "due_soon": "Due soon",
+        "orphan": "Orphans",
+        "untaught": "Not taught",
+        "no_course": "No course",
+        "no_assessment": "No assessment",
+        "no_role": "No role"
+      },
+      "col": {
+        "skill": "Skill",
+        "owner": "Owner",
+        "review": "Review date",
+        "course": "Course",
+        "pathway": "Pathway",
+        "assessment": "Assessment",
+        "role": "Role",
+        "external": "External resource"
+      },
+      "review": {
+        "none": "No review date",
+        "ok": "Current",
+        "due_soon": "Due soon",
+        "overdue": "Overdue"
+      },
+      "days": "{n} days",
+      "propose": "Propose a change",
+      "whyTitle": "Why this matters",
+      "whyBody": "Skills catalogues go stale when no one owns their upkeep. Each skill has an owner and a review cycle by how fast it changes; an orphaned skill is a candidate to retire or to connect to a course, assessment or role."
+    }
+  },
+  "mb": {
+    "title": "The skills catalogue changed on {date} ({n} methodology changes in the window)",
+    "body": "Counts and levels on this page may move compared with earlier periods. Kinds of change in the last {days} days: {kinds}.",
+    "sep": ", ",
+    "latest": "Latest",
+    "link": "See the change log"
+  },
+  "ds": {
+    "intro": "A datasheet for the skills ontology: what is in it, where it comes from, how often it changes, which languages it covers, how skill inference works and how bias is handled. Every figure is computed from the catalogue when the page opens.",
+    "generated": "Generated {date} from the live catalogue · last published change {last}",
+    "download": "Download as JSON",
+    "tile": {
+      "skills": "Skills",
+      "skillsSub": "{live} live · {obsolete} obsolete",
+      "sources": "With a public source",
+      "sourcesSub": "{n} source domains",
+      "changes": "Changes in a year",
+      "changesSub": "published by the skills council",
+      "bilingual": "Fully bilingual",
+      "bilingualSub": "names and definitions in English and Arabic",
+      "surfaces": "Ranked surfaces",
+      "surfacesSub": "{n} model slots enabled"
+    },
+    "size": {
+      "title": "Size and scope",
+      "body": "{skills} skills, {live} of them live, each with one of {owners} owners responsible for its upkeep.",
+      "lifecycle": "By lifecycle",
+      "area": "By area",
+      "future": "Future-skills areas",
+      "types": "Types: {common} common, {specialised} specialised, {licence} licence-like; {transversal} transversal."
+    },
+    "sources": {
+      "title": "Sources",
+      "body": "{with} of {total} skills cite a public https source; {refs} references across {domains} domains, and {bm} benchmark links.",
+      "skills": "{n} skills"
+    },
+    "cadence": {
+      "title": "Update cadence",
+      "body": "Each skill is reviewed on a cycle set by how fast it changes: every {fast} months for fast-changing skills, {standard} for standard and {slow} for slow-changing ones.",
+      "overdue": "Past review date",
+      "dueSoon": "Due within ninety days",
+      "median": "Median time to next review",
+      "months": "{n} months",
+      "methodology": "Methodology changes in a year",
+      "kinds": "Published in a year by kind: {list}.",
+      "toLog": "Open the change log"
+    },
+    "lang": {
+      "title": "Languages",
+      "body": "English and Arabic are both first-class: every field below is counted separately in each language.",
+      "field": "Field",
+      "en": "English",
+      "ar": "Arabic",
+      "names": "Names",
+      "descriptions": "Definitions",
+      "essence": "Level essence",
+      "alt": "Alternative labels"
+    },
+    "inf": {
+      "title": "How inference works",
+      "body": "A skill level is inferred only from evidence: {kinds} evidence kinds on {bases} bases, each decaying with a half-life of {fast}, {standard} or {slow} months by how fast the skill changes.",
+      "surfaces": "{n} places rank options for people ({first} from the first transparency wave and {added} added since), each with a published engine card.",
+      "deterministic": "{n} of them run a deterministic, explainable engine; {model} server-side model slots are enabled.",
+      "claims": "A self-assessment or manager rating never raises a verified level on its own; verified evidence always wins."
+    },
+    "bias": {
+      "title": "How bias is handled",
+      "body": "{protected} protected attributes are never an input to any engine. Fairness is measured by group with a minimum group of {min} and the four-fifths rule ({pct} percent).",
+      "metrics": "{n} fairness outcomes are measured each week.",
+      "without": "{n} ranked surfaces have no outcome to compare (content ranking, anonymous use or no recorded outcome); their engine cards say why.",
+      "suppress": "Any group under {min} people suppresses the whole comparison, so no small group can be singled out."
+    },
+    "limits": {
+      "title": "Limits of this datasheet",
+      "synthetic": "The people, evidence and outcomes behind these figures are synthetic demonstration data.",
+      "mirror": "Licensing and qualification facts mirror NEXUS; this catalogue does not decide any licence.",
+      "claims": "The datasheet describes the platform; it is not a certification or a regulatory statement.",
+      "security": "Security-sensitive skills are described at a general level only.",
+      "srcDatasheet": "Cornerstone · Skills Graph overview",
+      "srcTechwolf": "TechWolf · Workday customer story"
+    }
+  },
+  "mr": {
+    "intro": "The review a ranked surface must pass before any server-side model may serve it. Today every surface runs its deterministic engine and the model gateway is off; the template is ready for the day one is proposed.",
+    "none": "No engine card yet.",
+    "pick": "Engine card",
+    "card": "Surface",
+    "open": "Open the surface",
+    "statusTitle": "Model gateway",
+    "gatewayOff": "Off: deterministic engines only",
+    "gatewaySet": "Configured: review required before use",
+    "gates": "{done} of {total} gate items already answered by the engine card",
+    "download": "Download as Markdown",
+    "gate": "Gate",
+    "todo": "To complete",
+    "mdTitle": "Model-risk review: {card}",
+    "mdStatus": "Model gateway",
+    "fill": {
+      "metric": "Weekly outcome \"{metric}\" by gender and nationality",
+      "optOutYes": "Yes: the person can switch the ranking off",
+      "optOutNo": "No opt-out"
+    },
+    "section": {
+      "use": "Intended use",
+      "data": "Data",
+      "model": "Model",
+      "validation": "Validation",
+      "fairness": "Fairness",
+      "oversight": "Human oversight",
+      "monitoring": "Monitoring"
+    },
+    "sectionHelp": {
+      "use": "What the surface is for, what it supports and who owns it.",
+      "data": "What goes in, what never goes in, where it comes from and how long it is kept.",
+      "model": "Which model, which version, where it runs, and the deterministic baseline it must beat.",
+      "validation": "How it is tested, in English and Arabic, before it serves anyone.",
+      "fairness": "The outcome compared by group and the suppression rule.",
+      "oversight": "Who reviews, how the person sees why, how to opt out, and what happens if the model fails.",
+      "monitoring": "How drift and incidents are caught, and when the model is reviewed or withdrawn."
+    },
+    "field": {
+      "purpose": "Purpose",
+      "decision": "Decision supported",
+      "out_of_scope": "Out of scope",
+      "owner": "Accountable owner",
+      "inputs": "Inputs used",
+      "excluded": "Inputs never used",
+      "provenance": "Data provenance",
+      "retention": "Retention",
+      "provider": "Model provider",
+      "version": "Model version",
+      "hosting": "Hosting and data residency",
+      "baseline": "Deterministic baseline",
+      "evalset": "Evaluation set",
+      "accuracy": "Accuracy against the baseline",
+      "arabic": "Arabic quality check",
+      "refusals": "Refusal and out-of-scope behaviour",
+      "metric": "Fairness outcome",
+      "suppression": "Small-group suppression",
+      "protected": "Protected attributes excluded",
+      "human": "Human oversight",
+      "explanation": "Explanation shown to the person",
+      "optout": "Opt-out",
+      "fallback": "Fallback to the deterministic engine",
+      "drift": "Drift monitoring",
+      "incidents": "Incident route",
+      "review_cycle": "Review cycle",
+      "retire": "Withdrawal criteria"
+    },
+    "prompt": {
+      "purpose": "State what the surface is for.",
+      "decision": "State the decision it supports.",
+      "out_of_scope": "List what it must not be used for.",
+      "owner": "Name the accountable role.",
+      "inputs": "List every input.",
+      "excluded": "List the inputs that are never used.",
+      "provenance": "Say where each input comes from.",
+      "retention": "Say how long prompts and outputs are kept.",
+      "provider": "Name the provider.",
+      "version": "Pin the exact model version.",
+      "hosting": "Say where it runs and where data stays.",
+      "baseline": "Name the deterministic functions it replaces.",
+      "evalset": "Describe the evaluation set and who built it.",
+      "accuracy": "Report results against the deterministic baseline.",
+      "arabic": "Report the Arabic quality check.",
+      "refusals": "Describe how it refuses out-of-scope requests.",
+      "metric": "Name the outcome compared by group.",
+      "suppression": "Confirm groups under the minimum are suppressed.",
+      "protected": "List the protected attributes excluded.",
+      "human": "Say who reviews the output and when.",
+      "explanation": "Describe the explanation the person sees.",
+      "optout": "Say how a person opts out.",
+      "fallback": "Describe the fallback to the deterministic engine.",
+      "drift": "Describe how drift is detected.",
+      "incidents": "Name the incident route and owner.",
+      "review_cycle": "Set the review cycle.",
+      "retire": "Say when the model is withdrawn."
+    },
+    "footTitle": "How the template is used",
+    "footBody": "The engine card answers what it already states; the reviewer completes the rest. No model may serve a surface until every gate item is answered and approved; until then the deterministic engine keeps serving it.",
+    "srcTechwolf": "TechWolf · Workday customer story",
+    "srcAiLit": "European Commission · AI literacy practices repository",
+    "back": "Back to AI transparency"
+  },
+  "reg": {
+    "tab": "Ranked surfaces",
+    "toModelRisk": "Model-risk template",
+    "toDatasheet": "Skills ontology datasheet",
+    "tile": {
+      "surfaces": "Ranked surfaces",
+      "surfacesSub": "{n} added by the second transparency wave",
+      "missing": "Without an engine card",
+      "missingSub": "kept at zero by an automated check",
+      "defaults": "Default-only surfaces",
+      "defaultsSub": "transform and assess have no switch",
+      "fairness": "With a fairness outcome",
+      "fairnessSub": "{n} weekly outcomes added"
+    },
+    "howTitle": "Every ranking has a card",
+    "howBody": "Any place that ranks courses, people, roles or options for a person is listed here with its engine card: what it uses, what it never uses, the functions that score it, and the outcome checked for fairness. An automated check fails the build if a new ranking appears without a card.",
+    "defaultsNote": "Transform and assess surfaces have no admin switch: they always run their deterministic default, so they are carded but cannot be turned off.",
+    "col": {
+      "card": "Engine card",
+      "module": "Module",
+      "kernel": "Kernel surface",
+      "ranks": "Ranks",
+      "fairness": "Fairness",
+      "functions": "Functions",
+      "status": "Card"
+    },
+    "kernel": {
+      "skills": "Skills",
+      "recommend": "Recommend",
+      "match": "Match",
+      "search": "Search",
+      "transform": "Transform (default only)",
+      "assess": "Assess (default only)",
+      "rules": "Rules"
+    },
+    "kernelNote": {
+      "transform": "Transform runs its deterministic default only; it has no admin switch.",
+      "assess": "Assess runs its deterministic default only; it has no admin switch.",
+      "rules": "A fixed rule set: the same inputs always give the same order."
+    },
+    "stored": "switch: {s}",
+    "ranks": {
+      "content": "Content",
+      "people": "People",
+      "options": "Options for a person"
+    },
+    "metricBasis": "{metric}, by gender and nationality",
+    "metric": {
+      "navigator_ready": "Suggested as ready",
+      "opportunity_selected": "Selected for an opportunity",
+      "mentoring_matched": "Matched with a mentor",
+      "hipo_pool": "In the high-potential pool",
+      "digest_suggested": "Suggested in the weekly digest",
+      "career_mode_used": "Used Dalil career mode",
+      "pathway_enrolled": "Enrolled in a suggested pathway",
+      "external_completed": "Completed an external course",
+      "fitness_completed": "Completed a fitness drill",
+      "gig_selected": "Selected for a future gig",
+      "twin_passed": "Passed a twin drill",
+      "adaptive_completed": "Completed an adaptive lesson",
+      "instructor_nominated": "Nominated as an instructor"
+    },
+    "metricHelp": {
+      "digest_suggested": "Share of staff for whom the weekly digest suggested at least one item.",
+      "career_mode_used": "Share of staff who used Dalil in career mode.",
+      "pathway_enrolled": "Share of staff enrolled in a pathway the engine suggested.",
+      "external_completed": "Share of staff who completed a ranked external course.",
+      "fitness_completed": "Share of staff who completed a suggested fitness drill.",
+      "gig_selected": "Share of staff selected for a future-skills gig.",
+      "twin_passed": "Share of staff who passed a suggested digital-twin drill.",
+      "adaptive_completed": "Share of staff who completed an adaptive lesson.",
+      "instructor_nominated": "Share of eligible staff nominated as instructors."
+    },
+    "none": {
+      "f24": "Measured in the first-wave fairness tab",
+      "content": "Ranks content, not people: no group outcome",
+      "anonymous": "Used anonymously: no group data is kept",
+      "no_outcome": "No recorded outcome to compare yet",
+      "non_staff": "Serves applicants or students, not staff"
+    },
+    "carded": "Carded",
+    "missing": "No card"
+  },
+  "sf": {
+    "tab": "Surface fairness",
+    "run": "Run this week",
+    "howTitle": "Fairness of the newer ranked surfaces",
+    "howBody": "Each week the outcome of every newer ranked surface is compared by gender and nationality. A group under ten people suppresses the whole comparison; a group whose rate is under {pct} percent of the best group is flagged for review.",
+    "resultsTitle": "Week {period}",
+    "confirmTitle": "Run the surface fairness snapshot for {period}?",
+    "confirmBody": "Recomputes this week's comparisons from current outcomes and replaces this week's rows. Audited and written to the ledger.",
+    "saved": "Surface fairness snapshot saved"
   }
 }

@@ -17,5 +17,11 @@ export function makeSupabaseM25(x: SupabaseExtCtx): M25Rpc {
     proposeSessions: (period, courseId, note = '') => x.call('kafaa_propose_sessions', { p_period: period, p_course: courseId, p_note: note ?? '' }, ['session_proposals']),
     withdrawProposal: (id) => x.call('kafaa_withdraw_proposal', { p_id: id }, ['session_proposals']),
     linkProposal: (id, sessionId) => x.call('kafaa_link_proposal', { p_id: id, p_session: sessionId }, ['session_proposals']),
+    // FS56 / FS57 (FS wave F · E4): 20261010264001_kafaa_fs64_skill_change_coverage.sql
+    skillChangeReport: () => x.call('kafaa_skill_change_report', {}, ['audit_events']),
+    computeSkillChange: () => x.call('kafaa_compute_skill_change', {}, ['skill_change_measures']),
+    curriculumCoverage: () => x.call('kafaa_curriculum_coverage', {}, ['audit_events']),
+    syncGapBacklog: () => x.call('kafaa_sync_gap_backlog', {}, ['gap_backlog']),
+    decideGap: (input) => x.call('kafaa_decide_gap', { p: input ?? {} }, ['gap_backlog']),
   };
 }

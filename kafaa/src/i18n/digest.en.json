@@ -13,6 +13,7 @@
     "approval_ojt_ack": "Logged on {date}: practice, not a qualification sign-off. You are named as their preceptor",
     "approval_ojt_eval": "Requested on {date}: a ready task handed to you as evaluator; you sign it off through the qualification card",
     "approval_plant_visit": "Logged on {date}: a reference-plant visit or simulator observation that names you as host; confirm it or decline it with a reason",
+    "approval_roleplay": "Requested on {date}: a colleague sent you a role-play practice session by name; review the ticks against the rubric and validate it or decline it with a reason",
     "coach_top": "The top action in your Learning Coach this period",
     "coach_due": "Mandatory training due in {days} days ({date})",
     "opp_match": "{pct}% match with your skills (opportunity match engine)",

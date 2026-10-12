@@ -75,10 +75,10 @@ const content = (): Content => ({ courses: T.courses as never, externals: T.exte
 const cw = () => ({ courses: T.courses, course_skill_links: T.course_skill_links, adaptive_banks: T.adaptive_banks, performance_tasks: T.performance_tasks, opportunities: T.opportunities, skills: T.skills, twin_scenarios: T.twin_scenarios });
 
 describe('FS wave E · route registry', () => {
-  it('315 routes, and the 27 wave-E routes are registered', async () => {
+  it('315 routes after wave E (338 after wave F), and the 27 wave-E routes are registered', async () => {
     const { loadRoutes } = await import('../smoke/routes');
     const R = loadRoutes();
-    expect(R.length).toBe(315);
+    expect(R.length).toBe(338); // FS wave F QA: + 23 (FS50/FS51 M35 7, FS54/FS55 M16 6, FS56/FS57 M25 3, FS58/FS59 M33 7; FS52/FS53 M07 none).
     const paths = new Set(R.map((r) => r.path));
     expect(WAVE_E.length).toBe(27);
     for (const [p] of WAVE_E) expect(paths.has(p), p).toBe(true);

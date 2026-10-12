@@ -2231,6 +2231,29 @@ export interface SkillOutlooksRow {
   withdrawn_reason?: string | null;
   simulated: boolean;
 }
+export interface BenchmarkValuesRow {
+  id: string;
+  benchmark_id: string;
+  figure_key: string;
+  metric: string;
+  label_en: string;
+  label_ar: string;
+  value: number;
+  unit: 'pct' | 'count' | 'score';
+  scale_max?: number | null;
+  as_of: string;
+  source_url: string;
+  verification: 'primary' | 'secondary' | 'unverified';
+  shown: boolean;
+  held_reason_en: string;
+  held_reason_ar: string;
+  pack_ref: string;
+  compare_to?: 'ai_task_share' | 'demand_growth_2030' | 'digital_holders' | null;
+  dashboards: string[];
+  note_en: string;
+  note_ar: string;
+  sort: number;
+}
 export interface ContractRoleTargetsRow {
   id: string;
   org_id: string;
@@ -2313,6 +2336,10 @@ export interface EngineCardsRow {
   last_change_id?: string | null;
   sources: any;
   sort: number;
+  kernel_surface?: 'skills' | 'recommend' | 'match' | 'search' | 'transform' | 'assess' | 'rules' | null;
+  ranks?: 'content' | 'people' | 'options' | null;
+  fairness_metric?: string | null;
+  fairness_none?: 'f24' | 'content' | 'anonymous' | 'no_outcome' | 'non_staff' | null;
 }
 export interface RecoOptoutsRow {
   id: string;
@@ -2355,6 +2382,72 @@ export interface EngineChangesRow {
   changed_at: string;
   audit_seq?: number | null;
   ledger_seq?: number | null;
+}
+export interface SkillChangeRequestsRow {
+  id: string;
+  kind: 'add' | 'rename' | 'split' | 'retire' | 'relevel';
+  skill_id?: string | null;
+  title_en: string;
+  title_ar: string;
+  proposal: any;
+  rationale: string;
+  development: string;
+  assessment: string;
+  inclusion: any;
+  status: 'submitted' | 'first_approved' | 'first_rejected' | 'published' | 'rejected';
+  proposed_by: string;
+  proposed_role?: string | null;
+  proposed_at: string;
+  votes: any;
+  first_by?: string | null;
+  first_decision?: 'approve' | 'reject' | null;
+  second_by?: string | null;
+  decided_at?: string | null;
+  change_id?: string | null;
+  updated_at: string;
+}
+export interface SkillChangesRow {
+  id: string;
+  request_id?: string | null;
+  kind: 'add' | 'rename' | 'split' | 'retire' | 'relevel';
+  skill_id: string;
+  skill_code: string;
+  skill_name_en: string;
+  skill_name_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  before: any;
+  after: any;
+  version_before?: number | null;
+  version_after?: number | null;
+  new_skill_ids: string[];
+  replaced_by?: string | null;
+  effective_on: string;
+  methodology: boolean;
+  dashboards: string[];
+  decided_roles: string[];
+  proposed_role?: string | null;
+  published_at: string;
+  ledger_seq?: number | null;
+  sources: any;
+}
+export interface SurfaceFairnessRow {
+  id: string;
+  period: string;
+  as_of: string;
+  card: string;
+  metric: string;
+  dimension: 'gender' | 'nationality';
+  group_key: 'f' | 'm' | 'uae' | 'other';
+  n?: number | null;
+  positives?: number | null;
+  rate?: number | null;
+  ratio?: number | null;
+  suppressed: boolean;
+  flagged: boolean;
+  source: string;
+  run_by?: string | null;
+  created_at: string;
 }
 export interface DigestRunsRow {
   id: string;
@@ -4127,6 +4220,50 @@ export interface SessionProposalsRow {
   decided_by?: string | null;
   decided_at?: string | null;
 }
+export interface SkillChangeMeasuresRow {
+  id: string;
+  kind: 'course' | 'pathway';
+  item_id: string;
+  as_of: string;
+  window_days: number;
+  completers?: number | null;
+  measured?: number | null;
+  suppressed: boolean;
+  before_x100?: number | null;
+  after_x100?: number | null;
+  change_x100?: number | null;
+  moved_pct?: number | null;
+  comparison_people?: number | null;
+  comparison_change_x100?: number | null;
+  net_x100?: number | null;
+  method?: 'matched' | 'before_after' | null;
+  verdict: 'moves' | 'some' | 'flat' | 'window_open' | 'suppressed';
+  next_on?: string | null;
+  skills: any;
+  reasons: any;
+  computed_at: string;
+  computed_by?: string | null;
+}
+export interface GapBacklogRow {
+  id: string;
+  skill_id: string;
+  level: number;
+  owner_role: string;
+  owner_person_id?: string | null;
+  due_on?: string | null;
+  route?: 'build' | 'partner' | 'buy' | null;
+  rationale: string;
+  rationale_ar?: string | null;
+  plan?: any | null;
+  predicted: any;
+  status: 'open' | 'decided';
+  first_seen: string;
+  created_by: string;
+  decided_by?: string | null;
+  decided_at?: string | null;
+  history: any;
+  updated_at: string;
+}
 export interface JtaAnalysesRow {
   id: string;
   role_id: string;
@@ -4933,6 +5070,101 @@ export interface SjtAttemptsRow {
   started_at: string;
   completed_at?: string | null;
 }
+export interface ApsScenariosRow {
+  id: string;
+  code: string;
+  theme: 'outage_schedule' | 'conflicting_data' | 'supply_delay' | 'staffing_change' | 'weather_logistics' | 'procedure_revision' | 'digital_tool_outage' | 'priority_conflict';
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  context_en: string;
+  context_ar: string;
+  core_skill_ids: string[];
+  skill_ids: string[];
+  difficulty: number;
+  est_minutes: number;
+  stages: any;
+  sources: any;
+  status: 'draft' | 'published' | 'retired';
+  version: number;
+  sort: number;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface ApsAttemptsRow {
+  id: string;
+  person_id: string;
+  scenario_id: string;
+  scenario_version: number;
+  attempt_no: number;
+  period: string;
+  status: 'in_progress' | 'completed' | 'abandoned';
+  stage_ids: string[];
+  responses: any;
+  points?: number | null;
+  max_points?: number | null;
+  score?: number | null;
+  band?: 'emerging' | 'developing' | 'adaptive' | 'strategic' | null;
+  dims: any;
+  reasons: any;
+  started_at: string;
+  completed_at?: string | null;
+}
+export interface RoleplayScenariosRow {
+  id: string;
+  code: string;
+  kind: 'pre_job_brief' | 'shift_turnover' | 'raise_concern' | 'regulator_interview' | 'knowledge_transfer' | 'ai_peer_coaching';
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  setting_en: string;
+  setting_ar: string;
+  counterpart_en: string;
+  counterpart_ar: string;
+  role_en: string;
+  role_ar: string;
+  core_skill_ids: string[];
+  skill_ids: string[];
+  level: number;
+  pass_pct: number;
+  est_minutes: number;
+  turns: any;
+  rubric: any;
+  sources: any;
+  status: 'draft' | 'published' | 'retired';
+  listed: boolean;
+  version: number;
+  sort: number;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface RoleplaySessionsRow {
+  id: string;
+  person_id: string;
+  scenario_id: string;
+  scenario_version: number;
+  period: string;
+  status: 'in_progress' | 'completed';
+  turns: any;
+  passed?: number | null;
+  total?: number | null;
+  pct?: number | null;
+  ready: boolean;
+  reasons: any;
+  started_at: string;
+  completed_at?: string | null;
+  review_status: 'none' | 'requested' | 'validated' | 'declined' | 'withdrawn';
+  reviewer_id?: string | null;
+  review_context?: string | null;
+  requested_at?: string | null;
+  reviewed_by?: string | null;
+  reviewed_at?: string | null;
+  review_note?: string | null;
+  level: number;
+  evidence_ids: string[];
+}
 export interface RplRequestsRow {
   id: string;
   person_id: string;
@@ -5067,6 +5299,63 @@ export interface CreditLedgerRow {
   stack_ids: string[];
   status: 'counted' | 'reversed';
   updated_at: string;
+}
+export interface CriticalSkillsRow {
+  id: string;
+  skill_id: string;
+  owner_function: string;
+  owner_person_id: string;
+  target_level: number;
+  targets: any;
+  kpis: any;
+  decision: 'build' | 'buy' | 'borrow' | 'bot';
+  rationale_en: string;
+  rationale_ar: string;
+  decision_history: any;
+  gap_plan_ids: string[];
+  status: 'draft' | 'active' | 'retired';
+  adopted_on?: string | null;
+  version: number;
+  sort: number;
+  benchmark_ids: string[];
+  created_by: string;
+  created_at: string;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface CriticalSkillReviewsRow {
+  id: string;
+  critical_skill_id: string;
+  quarter: string;
+  rating: 'met' | 'on_track' | 'at_risk' | 'off_track';
+  progress: any;
+  note_en: string;
+  note_ar: string;
+  decision_before: string;
+  decision_after: string;
+  reviewed_by: string;
+  reviewed_at: string;
+}
+export interface SkillForecastsRow {
+  id: string;
+  cycle: number;
+  version: number;
+  name: string;
+  scenario: 'baseline' | 'advance' | 'accelerated';
+  params: any;
+  results: any;
+  basis: any;
+  method: string;
+  status: 'draft' | 'released' | 'superseded';
+  summary_en: string;
+  summary_ar: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  released_by?: string | null;
+  released_at?: string | null;
+  superseded_by?: string | null;
+  simulated: boolean;
 }
 
 export interface Tables {
@@ -5219,6 +5508,7 @@ export interface Tables {
   external_cover: ExternalCoverRow;
   handover_cohorts: HandoverCohortsRow;
   skill_outlooks: SkillOutlooksRow;
+  benchmark_values: BenchmarkValuesRow;
   contract_role_targets: ContractRoleTargetsRow;
   task_skill_links: TaskSkillLinksRow;
   contractor_engagements: ContractorEngagementsRow;
@@ -5227,6 +5517,9 @@ export interface Tables {
   reco_optouts: RecoOptoutsRow;
   fairness_snapshots: FairnessSnapshotsRow;
   engine_changes: EngineChangesRow;
+  skill_change_requests: SkillChangeRequestsRow;
+  skill_changes: SkillChangesRow;
+  surface_fairness: SurfaceFairnessRow;
   digest_runs: DigestRunsRow;
   digest_prefs: DigestPrefsRow;
   skill_claims: SkillClaimsRow;
@@ -5331,6 +5624,8 @@ export interface Tables {
   needs_links: NeedsLinksRow;
   demand_snapshots: DemandSnapshotsRow;
   session_proposals: SessionProposalsRow;
+  skill_change_measures: SkillChangeMeasuresRow;
+  gap_backlog: GapBacklogRow;
   jta_analyses: JtaAnalysesRow;
   jta_tasks: JtaTasksRow;
   dif_ratings: DifRatingsRow;
@@ -5380,11 +5675,18 @@ export interface Tables {
   core_skill_candidates: CoreSkillCandidatesRow;
   sjt_items: SjtItemsRow;
   sjt_attempts: SjtAttemptsRow;
+  aps_scenarios: ApsScenariosRow;
+  aps_attempts: ApsAttemptsRow;
+  roleplay_scenarios: RoleplayScenariosRow;
+  roleplay_sessions: RoleplaySessionsRow;
   rpl_requests: RplRequestsRow;
   rpl_evidence: RplEvidenceRow;
   credit_tags: CreditTagsRow;
   credit_stacks: CreditStacksRow;
   credit_ledger: CreditLedgerRow;
+  critical_skills: CriticalSkillsRow;
+  critical_skill_reviews: CriticalSkillReviewsRow;
+  skill_forecasts: SkillForecastsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];

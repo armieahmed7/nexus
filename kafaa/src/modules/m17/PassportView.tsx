@@ -85,6 +85,7 @@ export function useEvidenceLabel(d: PassportData) {
     if (e.kind === 'assessment' && e.ref_table === 'twin_attempts') return { title: t('m31.tw.evidenceLabel'), system: 'Kafa\'a', ref: e.ref_id }; // FS40: digital-twin drill (wave E integration)
     if (e.kind === 'ojt' && e.ref_table === 'plant_visits') return { title: t('m31.pv.evidenceLabel'), system: 'Kafa\'a', ref: e.ref_id }; // FS39: host-confirmed plant visit (wave E integration)
     if (e.kind === 'rating' && (e.ref_table === 'lectures' || e.ref_table === 'knowledge_assets')) return { title: t('m24.ctb.evidenceLabel'), system: t('m24.ctb.evidenceSystem'), ref: e.ref_id }; // FS44: validated expert contribution (wave E integration)
+    if (e.kind === 'rating' && e.ref_table === 'roleplay_sessions') return { title: t('m33.rp.evidenceLabel'), system: t('m33.rp.evidenceSystem'), ref: e.ref_id }; // FS59: reviewer-validated role-play feedback (wave F integration)
     if (e.kind === 'assessment') {
       const a = d.attempts.find((x) => x.id === e.ref_id);
       const c = course(d.forms.find((f) => f.id === a?.form_id)?.course_id);

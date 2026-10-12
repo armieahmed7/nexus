@@ -1,0 +1,1 @@
+FS wave F QA route sweep (tests/e2e/sweep.spec.ts), E2E_BACKEND=local E2E_MODULES=M35,M07,M16,M25,M33,M17,M14,M28, vite preview, one Chromium: 79 routes x 17 sessions = 1,343 checks; ok 592, forbidden (expected) 683, sign-in (expected) 68; 0 mismatches, 0 console or text issues; 18/18 tests, 22.6 min.

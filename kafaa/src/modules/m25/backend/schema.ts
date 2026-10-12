@@ -95,4 +95,29 @@ export const TABLES_M25: Record<string, TableDef> = {
     read: [{ res: 'training' }],
     write: { mode: 'rpc', res: LA },
   },
+
+  // ───────────── FS56 Skill-change effectiveness (FS wave F · E4). Aggregates only, already suppressed when stored (no cell under 10).
+  skill_change_measures: {
+    module: 'M25', label: 'Skill change per course or pathway: F01 level before and 90 days after, with a matched comparison where available (FS56)',
+    cols: {
+      id: 'text pk', kind: 'text enum:course|pathway idx', item_id: 'text idx', as_of: 'date', window_days: 'int =90',
+      completers: 'int?', measured: 'int?', suppressed: 'bool =false', before_x100: 'int?', after_x100: 'int?', change_x100: 'int?', moved_pct: 'int?',
+      comparison_people: 'int?', comparison_change_x100: 'int?', net_x100: 'int?', method: 'text? enum:matched|before_after',
+      verdict: 'text enum:moves|some|flat|window_open|suppressed idx', next_on: 'date?', skills: 'json =[]', reasons: 'json =[]',
+      computed_at: 'ts =now', computed_by: 'text?',
+    },
+    read: AGG,
+    write: { mode: 'rpc', res: LA },
+  },
+  // ───────────── FS57 Curriculum coverage: the decision layer over the FS17 gap backlog (M19 pathway_gaps) and uncovered role skills.
+  gap_backlog: {
+    module: 'M25', label: 'Gap-filling backlog: one row per skill and level the catalogue should reach, with owner, date and build / partner / buy (FS57)',
+    cols: {
+      id: 'text pk', skill_id: 'text ref:skills idx', level: 'int', owner_role: 'text', owner_person_id: 'text? ref:people', due_on: 'date?',
+      route: 'text? enum:build|partner|buy', rationale: 'text =\'\'', rationale_ar: 'text?', plan: 'json?', predicted: 'json =[]',
+      status: 'text enum:open|decided =\'open\' idx', first_seen: 'date', created_by: 'text', decided_by: 'text?', decided_at: 'ts?', history: 'json =[]', updated_at: 'ts =now',
+    },
+    read: AGG,
+    write: { mode: 'rpc', res: LA },
+  },
 };

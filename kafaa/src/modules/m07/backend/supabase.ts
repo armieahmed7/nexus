@@ -13,5 +13,7 @@ export function makeSupabaseM07(x: SupabaseExtCtx): M07Rpc {
     releaseOutlook: (id, summaryEn, summaryAr) => x.call('kafaa_release_outlook', { p_id: id, p_summary_en: summaryEn, p_summary_ar: summaryAr }, ['skill_outlooks']),
     withdrawOutlook: (id, reason) => x.call('kafaa_withdraw_outlook', { p_id: id, p_reason: reason }, ['skill_outlooks']),
     releasedOutlooks: () => x.call('kafaa_released_outlooks', {}, []),
+    // FS52 (wave F · E2) automation exposure beside the outlook
+    outlookAutomation: (params) => x.call('kafaa_outlook_automation', { p_params: params ?? {} }, []),
   };
 }

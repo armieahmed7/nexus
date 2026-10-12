@@ -22,6 +22,18 @@
     "training-needs": {
       "title": "Training needs forecast",
       "purpose": "Demand per course and quarter from expiries, curricula, roadmaps, recommendations, future interest and knowledge-loss actions, against session capacity."
+    },
+    "training-skill-change": {
+      "title": "Which learning moves skills",
+      "purpose": "For every course and pathway: participants' skill level before and 90 days after, against a matched comparison group, with small groups suppressed."
+    },
+    "training-coverage": {
+      "title": "Curriculum coverage",
+      "purpose": "A 0-100 score per role, now and in 2030: which role requirements the catalogue can teach, which it cannot, and what a planned course would change."
+    },
+    "training-coverage-backlog": {
+      "title": "Gap-filling backlog",
+      "purpose": "Every skill the catalogue cannot teach yet, with an owner, a date and a build, partner or buy decision."
     }
   },
   "common": {
@@ -430,6 +442,304 @@
     "src_coach": "{n} people accepted it from the Learning Coach",
     "src_coach_small": "Fewer than {min} from accepted recommendations (suppressed)",
     "src_future": "{n} people showed future interest that leads here",
-    "src_future_small": "Fewer than {min} from future interest (suppressed)"
+    "src_future_small": "Fewer than {min} from future interest (suppressed)",
+    "sc_suppressed": "Fewer than {min} people completed this, so the result is suppressed",
+    "sc_window": "Fewer than {min} participants have passed their {days} days yet",
+    "sc_change": "Average level went from {before} to {after} within {days} days of completion",
+    "sc_moved": "{pct}% of participant-skill pairs moved up at least one level",
+    "sc_matched": "Comparable colleagues ({people}) changed by {comp} over the same period, so the net change is {net}",
+    "sc_no_comparison": "Fewer than {min} comparable colleagues: before and after only, read with care",
+    "sc_verdict_moves": "Net change of at least a quarter of a level: this learning moves skills",
+    "sc_verdict_some": "Net change between a tenth and a quarter of a level",
+    "sc_verdict_flat": "Net change under a tenth of a level",
+    "gb_covered": "No role requirement or pathway step needs this any more",
+    "gb_roles": "Needed at level {level} by role profiles ({n}); the catalogue teaches it to level {taught}",
+    "gb_gaps": "Open pathway steps with no content ({n}), from the FS17 gap backlog"
+  },
+  "sc": {
+    "intro": "Kirkpatrick tells us whether people liked a course and passed its test. This view asks the harder question: did their skill level actually rise afterwards, and by more than colleagues who did not take it?",
+    "labels": "Synthetic demo data. Groups under {n} are suppressed; every result uses a {days}-day window.",
+    "toEff": "Kirkpatrick scorecard",
+    "toCov": "Curriculum coverage",
+    "compute": "Recompute as of today",
+    "computeConsequence": "Rebuilds the whole table from the skill evidence on record today. Results are aggregates; nothing about any one person is stored or shown.",
+    "methodTitle": "How the change is measured",
+    "methodHint": "Levels come from the dated skill evidence, so the same rule works for every course and pathway.",
+    "m": {
+      "before": "Before",
+      "beforeBody": "Highest counted level on record the day before the learning started.",
+      "learning": "Learning",
+      "learningBody": "A course, or a pathway from start to completion. Its own completion record never counts.",
+      "window": "90 days",
+      "windowBody": "Assessments, observations, on-the-job work, credentials and check-ins that follow.",
+      "after": "After",
+      "afterBody": "Highest counted level 90 days after completion. Self-ratings never count.",
+      "compare": "Comparison",
+      "compareBody": "Colleagues of the same kind who started at the same level on the same skill and did not take it, over the same 90 days."
+    },
+    "tile": {
+      "measured": "Learning measured",
+      "measuredSub": "Courses and pathways with 10 or more participants whose 90 days have passed",
+      "moves": "Moves skills",
+      "movesSub": "Net gain of at least a quarter of a level",
+      "matched": "With a matched comparison",
+      "matchedSub": "At least 10 comparable colleagues",
+      "waiting": "Window open · suppressed",
+      "waitingSub": "Still inside the 90 days · fewer than 10 completers"
+    },
+    "kind": "Learning type",
+    "kinds": {
+      "all": "All",
+      "course": "Course",
+      "pathway": "Pathway"
+    },
+    "verdictFilter": "Result",
+    "allVerdicts": "All results",
+    "asOf": "Measured as of {date} · {days}-day window",
+    "never": "Not measured yet",
+    "tableTitle": "Which learning moves skills",
+    "tableHint": "Sorted by net change. Select a row for the skills behind it.",
+    "none": "No learning matches these filters",
+    "col": {
+      "item": "Course or pathway",
+      "completers": "Completers",
+      "shift": "Level before → after",
+      "moved": "Moved up",
+      "comparison": "Comparison group",
+      "net": "Net change",
+      "method": "Method and window",
+      "l3": "On the job (L3)",
+      "verdict": "Result"
+    },
+    "noGroup": "No matched group",
+    "windowDays": "{n}-day window",
+    "l3None": "No L3 for this course",
+    "shiftAria": "Average level from {before} to {after}",
+    "compTick": "Where the comparison group ended",
+    "verdict": {
+      "moves": "Moves skills",
+      "some": "Some movement",
+      "flat": "Little or no movement",
+      "window_open": "Window still open",
+      "suppressed": "Suppressed"
+    },
+    "method": {
+      "matched": "Matched comparison",
+      "before_after": "Before and after only"
+    },
+    "methodText": {
+      "matched": "Each participant is compared with colleagues of the same kind who held the same level on the same skill when they started and did not take this learning, over the same {days} days. The net change is the participants' change minus theirs.",
+      "before_after": "Fewer than 10 comparable colleagues were available, so this result shows the participants' own change over {days} days with no comparison. Read it with care: other learning in the same period can move levels too."
+    },
+    "windowText": "Fewer than 10 participants have completed their {days} days so far. The tenth window closes on {date}.",
+    "windowTextNoDate": "Fewer than 10 participants have completed their {days} days so far.",
+    "suppressedText": "Fewer than {n} people completed this, so nothing is shown to protect individuals.",
+    "measured": "Measured participants",
+    "compPeople": "{n} colleagues · {change}",
+    "perSkill": "Skill by skill",
+    "skill": "Skill",
+    "teaches": "Taught to",
+    "before": "Before",
+    "after": "After",
+    "levelN": "Level {n}",
+    "openCourse": "Open the course",
+    "openL3": "Kirkpatrick results",
+    "openPathway": "Open the pathway",
+    "chartEffect": "Net change in level by course or pathway",
+    "chartEffectNote": "Net of the comparison group where there is one; the line marks a quarter of a level. Items with fewer than 10 measured participants are left out.",
+    "readingTitle": "Reading this table",
+    "reading": {
+      "own": "A course cannot prove itself: its own completion record never counts as evidence of the change.",
+      "matched": "When everyone's level rises (for example after an organisation-wide fitness check), the comparison group shows it and the net change stays small.",
+      "history": "Levels are rebuilt from dated evidence, including evidence later superseded, so the 'before' is what was on record at the time.",
+      "window": "A participant counts once their 90 days have passed; results update when the training manager recomputes.",
+      "l3": "The L3 column shows whether supervisors saw the course applied on the job (F25)."
+    },
+    "caveatTitle": "Association, not proof",
+    "caveat": "This is a measured association within a 90-day window on synthetic demo data, not proof that a course caused the change. It supports curriculum decisions; it is not an evaluation of any person and gates nothing.",
+    "card": {
+      "title": "Did it move skills? (FS56)",
+      "link": "Which learning moves skills",
+      "none": "Not measured: no completions of this course teach a catalogue skill yet.",
+      "line": "Net change {net} · {moved}% moved up"
+    }
+  },
+  "cov": {
+    "intro": "Can our catalogue teach what each role needs, now and in 2030? Each role profile gets a 0-100 score from the courses, pathways and external resources that teach its required skills, with the list of skills nothing teaches.",
+    "toBacklog": "Gap-filling backlog",
+    "toSkillChange": "Which learning moves skills",
+    "toPathways": "Pathway gaps (FS17)",
+    "tile": {
+      "mean": "Mean coverage, {h}",
+      "meanSub": "Across {n} scored role profiles",
+      "full": "Fully covered",
+      "fullSub": "Role profiles at 100",
+      "uncovered": "Skills nothing teaches",
+      "uncoveredSub": "Distinct skills below their teachable level",
+      "backlog": "Backlog open · planned",
+      "backlogSub": "Decisions owed and decisions taken"
+    },
+    "rolesTitle": "Coverage by role",
+    "rolesHint": "Lowest first. Select a role for its requirements and what teaches each one.",
+    "h": {
+      "now": "Now",
+      "2030": "2030"
+    },
+    "col": {
+      "role": "Role",
+      "score": "Coverage",
+      "reqs": "Covered requirements",
+      "uncovered": "Not taught yet"
+    },
+    "concept": "Concept role (planning assumption)",
+    "pathOnly": "Path only",
+    "pathOnlyText": "Security, safeguards and cyber roles are shown at career-path level only and are not scored.",
+    "allCovered": "Everything taught",
+    "unscored": "Not scored",
+    "none": "No role profiles for this horizon",
+    "heatTitle": "Now and 2030 side by side",
+    "drawerHint": "{covered} of {n} requirements can be taught to their target level",
+    "core": "Core",
+    "important": "Important",
+    "reqLine": "Needs level {need} · catalogue target {target} · taught to {taught}",
+    "kind": {
+      "course": "Course",
+      "pathway": "Pathway",
+      "external": "External",
+      "planned": "Planned"
+    },
+    "nothingTeaches": "Nothing in the catalogue teaches this yet",
+    "inBacklog": "In the backlog",
+    "ruleTitle": "The coverage rule",
+    "rule": {
+      "taught": "Taught by: a staff or public course (its competencies, evidence keys and FS19 skill links), a published pathway whose learn step has content, or a published external resource.",
+      "ceiling": "The catalogue teaches up to level {n}; levels 3 and 4 are built on the job, so each requirement's target is the lower of its level and {n}.",
+      "score": "Score = weighted share of requirements taught to their target (core skills count twice); a half-taught level counts half.",
+      "security": "Security, safeguards and cyber content is never scored or listed: those roles are path-only."
+    },
+    "asOf": "Computed live on {date} from the catalogue and the published role profiles.",
+    "wi": {
+      "title": "What if we planned a course?",
+      "intro": "Pick a skill the catalogue cannot teach yet and the level a new course would teach. The score moves below are exactly what the coverage rule predicts. Nothing is saved.",
+      "skill": "Skill to teach",
+      "level": "Level",
+      "option": "{skill} · level {level} · {n} role profiles",
+      "titleLabel": "Working title (optional)",
+      "titlePlaceholder": "For example: Plant data in daily work",
+      "defaultTitle": "New course: {skill}",
+      "predicted": "Predicted gain",
+      "totalHint": "points in total across {n} role profiles",
+      "none": "No role score would change.",
+      "unsaved": "What-if only: not saved",
+      "save": "Save as a plan in the backlog",
+      "nothing": "Every role requirement is taught to its target level."
+    }
+  },
+  "gb": {
+    "intro": "The catalogue's to-do list. Every skill a role needs that nothing teaches, and every open pathway step from FS17, gets an owner, a date and a decision to build, partner or buy.",
+    "toCoverage": "Coverage",
+    "sync": "Add new gaps",
+    "syncConsequence": "Adds a row, owned by the skill's owner function, for every uncovered skill and open pathway gap that is not in the backlog yet. Existing rows and decisions are kept.",
+    "tile": {
+      "open": "Open",
+      "openSub": "Needed now, no decision yet",
+      "planned": "Planned",
+      "plannedSub": "Decision taken, gap still open",
+      "covered": "Covered",
+      "coveredSub": "Nothing needs it any more",
+      "owned": "With an owner",
+      "ownedSub": "Every row always has an owning function"
+    },
+    "stateFilter": "State",
+    "allStates": "All",
+    "state": {
+      "open": "Open",
+      "planned": "Planned",
+      "covered": "Covered"
+    },
+    "sourceFilter": "Why it is here",
+    "source": {
+      "all": "All sources",
+      "roles": "Role requirements",
+      "gaps": "Pathway steps (FS17)"
+    },
+    "ownerFilter": "Owner",
+    "allOwners": "All owners",
+    "tableTitle": "Backlog",
+    "tableHint": "Select a row for its history, rationale and predicted effect.",
+    "none": "Nothing in this view",
+    "col": {
+      "skill": "Skill and level",
+      "source": "Needed by",
+      "owner": "Owner",
+      "due": "Due",
+      "route": "Decision",
+      "predicted": "Predicted coverage",
+      "state": "State"
+    },
+    "levelLine": "Level {level} needed · taught to {taught} today",
+    "srcRoles": "Role profiles: {n}",
+    "srcGaps": "Pathway steps: {n}",
+    "predictedLine": "+{pts} points · profiles: {n}",
+    "undecided": "Not decided",
+    "route": {
+      "build": "Build",
+      "partner": "Partner",
+      "buy": "Buy"
+    },
+    "routeHint": {
+      "build": "Our instructors design and run it",
+      "partner": "Co-deliver with a partner or university",
+      "buy": "License an external course or seats"
+    },
+    "decide": "Decide",
+    "revise": "Revise",
+    "routesTitle": "Decisions by route",
+    "howTitle": "How the backlog works",
+    "how": {
+      "feed": "FS17 pathway gaps are the feed: this backlog adds the owner and the decision and never duplicates them.",
+      "owner": "A new row is owned by the skill's owner function from the skills catalogue until the training manager names another.",
+      "never": "Rows are never removed: when nothing needs a skill any more it reads 'covered', with its history kept.",
+      "predict": "A decision stores the score moves the coverage rule predicts; when the course exists the scores move by exactly that amount."
+    },
+    "firstSeen": "In the backlog since {date}",
+    "planLine": "Plan: {title} · level {level} · {hours} hours",
+    "predictedAt": "Predicted when decided",
+    "noPredicted": "No role score changes with this plan (pathway steps only).",
+    "uncoveredRoles": "Role profiles that need it",
+    "openGaps": "Open pathway steps: {n}",
+    "toFs17": "See them in the pathway editor",
+    "history": "History",
+    "historyLine": "{date}: {route}, due {due}"
+  },
+  "dec": {
+    "title": "{skill} · level {level}",
+    "intro": "Record who owns this gap, by when, and how it will be filled. The predicted effect below is computed from the coverage rule as you type.",
+    "route": "How will we fill it?",
+    "owner": "Owning function",
+    "lead": "Named lead (optional)",
+    "noLead": "No named lead",
+    "due": "Due date",
+    "rationale": "Rationale",
+    "rationaleHint": "10 to 500 characters. Shown to everyone who reads the backlog.",
+    "withPlan": "Add a planned course or resource",
+    "planTitle": "Planned course or resource",
+    "planLevel": "Level",
+    "planHours": "Hours",
+    "predicted": "Predicted effect on coverage",
+    "predictedNote": "In-memory prediction from the coverage rule. It becomes real only when the course exists in the catalogue.",
+    "save": "Record the decision",
+    "readOnly": "Only the training manager records decisions.",
+    "confirmTitle": "Record this backlog decision?",
+    "confirmBody": "The decision, its owner, date and the predicted moves on {n} role profiles are saved to the backlog and recorded in the NEXUS evidence ledger. The plan is not a course until it is built.",
+    "problem": {
+      "not_found": "This backlog item no longer exists.",
+      "route": "Choose build, partner or buy.",
+      "owner": "Choose an owning function.",
+      "person": "The named lead must be an active member of staff.",
+      "due": "Pick a due date between today and 31 Dec 2030.",
+      "rationale": "Explain the decision in 10 to 500 characters.",
+      "plan": "A plan needs a title of 3 to 120 characters, a level from 1 to 3 and 1 to 200 hours."
+    }
   }
 }

@@ -47,6 +47,7 @@ export default function EffectivenessPage() {
       actions={
         <div className="flex flex-wrap gap-2">
           <L to="/training/observations" className="btn-outline btn-sm" data-testid="m25-to-l3"><Icon name="check" />{t('m25.eff.toL3')}</L>
+          <L to="/training/skill-change" className="btn-outline btn-sm" data-testid="m25-to-skill-change"><Icon name="chart" />{t('m25.sc.card.link')}</L>
           <button type="button" className="btn-outline btn-sm" onClick={() => setPack(true)} disabled={!q.data} data-testid="m25-pack-open"><Icon name="download" />{t('m25.pack.open')}</button>
           {isTm && <button type="button" className="btn-primary btn-sm" onClick={() => setConfirm(true)} data-testid="m25-schedule-l3"><Icon name="calendar" />{t('m25.eff.scheduleL3')}</button>}
         </div>
