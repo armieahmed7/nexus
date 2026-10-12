@@ -38,7 +38,7 @@ describe('F35 page', { timeout: 90000 }, () => {
   it('the tornado ranks the assumptions and the family trend explains its gap with reasons', async () => {
     await renderPage(<SkillsOutlookPage />, { persona: 'k-hr-analyst', path: '/workforce/skills-outlook' });
     const tor = await screen.findByTestId('m07-so-tornado', {}, T);
-    expect(within(tor).getAllByTestId(/m07-so-tornado-/).length).toBe(7);
+    expect(within(tor).getAllByTestId(/m07-so-tornado-/).length).toBe(8); // FS52 (wave F · E2): the seven F35 assumptions plus AI and automation adoption
     fireEvent.change(screen.getByTestId('m07-so-family'), { target: { value: 'operations' } });
     fireEvent.click(screen.getByTestId('m07-so-why'));
     expect((await screen.findByTestId('m07-so-why-panel')).textContent).toMatch(/Measured on \d+ staff/);

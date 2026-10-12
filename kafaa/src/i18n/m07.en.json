@@ -117,7 +117,9 @@
     "outlook_supply": "Skills supply (outlook)",
     "outlook_demand": "Skills demand (outlook)",
     "outlook_gap": "Skills gap by family (outlook)",
-    "outlook_tornado": "What changes the gap most (outlook)"
+    "outlook_tornado": "What changes the gap most (outlook)",
+    "outlook_automation": "AI and automation exposure (outlook)",
+    "market_reference": "Market statistic beside a measured number"
   },
   "def": {
     "emiratization": "UAE nationals as a share of all employees of ENEC, ENEC Operations and ENEC Commercial at year end.",
@@ -154,7 +156,9 @@
     "outlook_supply": "People holding a skill family at Practitioner level or above (F01 skill states of active staff), scaled from the measured staff sample to the organisation headcount, then projected: minus general attrition and known retirements and contract ends (F20 KLRA, weighted by risk band), plus trainees ready from the pipeline (F22 cohorts, DNT intake) and reskilled staff. SIMULATED, people-equivalents.",
     "outlook_demand": "People whose role profile needs the skill family (M01 role competencies), scaled to the organisation, plus positions returning from KHNP OSSA and contractor cover as the handover plan steps down, times the chosen staffing scenario's growth and the ADVANCE adoption uplift (M11 adjustDemand). SIMULATED, people-equivalents.",
     "outlook_gap": "Demand minus supply for a skill family and year: positive is a shortfall, negative a surplus. Families with fewer than 10 measured holders or role holders are suppressed and never added into a total. SIMULATED: a planning aid, not a forecast.",
-    "outlook_tornado": "Cumulative shortfall (people-years summed over the shown families from the base year to the horizon) with each assumption moved to the low and the high end of a fixed range while the others stay where they are. The longest bar changes the gap most. SIMULATED."
+    "outlook_tornado": "Cumulative shortfall (people-years summed over the shown families from the base year to the horizon) with each assumption moved to the low and the high end of a fixed range while the others stay where they are. The longest bar changes the gap most. SIMULATED.",
+    "outlook_automation": "Share of a skill family's demand that AI and automation could take at full adoption, from the FS06 task layer: partly automatable tasks count 50% of their effort, augmented tasks 20%, human-core tasks 0, each phased in over three years from its change horizon. The adoption assumption (0 to 100%) scales it; at 0 the outlook is unchanged. Task counts, not people. SIMULATED.",
+    "market_reference": "A sourced external figure (a copy of an FS01 benchmark figure with its source and as-of date) drawn as a dashed line beside a number measured at ENEC (SIMULATED, solid bar). The two are compared only by position (above, below, level) and never added, averaged or netted. Figures the research packs flag as secondary or unverified are held back."
   },
   "reconcile": {
     "title": "Why do public figures differ?",
@@ -559,7 +563,13 @@
     "so_advance_widens": "ADVANCE adoption: {band} effect, widens the gap",
     "so_intake_narrows": "Pipeline intakes: {band} effect, narrows the gap",
     "so_reskill_narrows": "Reskilling conversions: {band} effect, narrows the gap",
-    "so_basis": "Measured on {n} staff holding the family today, scaled to the organisation"
+    "so_basis": "Measured on {n} staff holding the family today, scaled to the organisation",
+    "so_automation_narrows": "AI and automation at {pct}% adoption: {band} effect, narrows the gap",
+    "so_auto_none": "No rated task needs this family yet: automation does not change its demand",
+    "so_auto_tasks": "{n} rated tasks need this family: {a} partly automatable, {g} augmented, {h} human core (FS06)",
+    "so_auto_share": "At full adoption automation would take {pct}% of demand by {year} ({pct30}% in 2030), phased in from each task's change horizon",
+    "so_auto_cut": "At {adoption}% adoption: {n} people-equivalents less demand in {year}",
+    "so_auto_cut_hi": "At {adoption}% adoption (top of the tornado range): {n} people-equivalents less demand in {year}"
   },
   "so": {
     "intro": "Skills supply and demand by skill family over the next 5 to 10 years, combining attrition, the KHNP handover, ADVANCE adoption, pipeline intakes and the reskilling effect of training. Move the assumptions and see what changes the gap most.",
@@ -586,7 +596,8 @@
       "reskill_rate": "Reskilling conversion",
       "adv_factor": "ADVANCE adoption",
       "adv_start": "ADVANCE adoption starts",
-      "ossa_end": "KHNP OSSA support ends"
+      "ossa_end": "KHNP OSSA support ends",
+      "automation_adoption": "AI and automation adoption"
     },
     "hint": {
       "attrition_pct": "Share of holders leaving each year for any reason",
@@ -596,7 +607,8 @@
       "reskill_rate": "Share of awareness-level staff reaching Practitioner each year",
       "adv_factor": "Scales the M11 future-skills index (0.5 to 1.5)",
       "adv_start": "Demand uplift ramps up over five years from this year",
-      "ossa_end": "KHNP cover steps down to zero after this year"
+      "ossa_end": "KHNP cover steps down to zero after this year",
+      "automation_adoption": "Share of AI-exposed task effort (FS06 task layer) taken out of demand; 0 keeps today's outlook"
     },
     "pctYear": "{n}% a year",
     "perYear": "{n} a year",
@@ -644,7 +656,8 @@
       "growth": "Scenario growth",
       "advance": "ADVANCE",
       "intake": "Pipeline",
-      "reskill": "Reskilling"
+      "reskill": "Reskilling",
+      "automation": "AI and automation"
     },
     "band": {
       "high": "major",
@@ -758,6 +771,14 @@
       "tornado": {
         "t": "Tornado.",
         "b": "Each assumption is moved across a fixed plausible range with the others held; the bar shows how much the cumulative shortfall moves. Resetting the assumptions reproduces the baseline exactly."
+      },
+      "automation": {
+        "t": "AI and automation (FS52).",
+        "b": "Each family's automation share comes from the FS06 task layer: tasks that need the family's skills and that AI can partly automate count half of their effort, tasks AI can augment a fifth, human-core tasks nothing; each task phases in over three years from its change horizon. Demand is multiplied by one minus adoption times that share. At adoption 0 the outlook is exactly the F35 one."
+      },
+      "market": {
+        "t": "Market statistics (FS53).",
+        "b": "External figures are copies of sourced FS01 benchmark figures, drawn as dashed lines labelled \"Market statistic\" with their source and date. Numbers measured at ENEC are solid bars labelled SIMULATED. The two are only placed side by side, never added together; figures the research packs flag as secondary are held back."
       }
     },
     "links": {
@@ -766,8 +787,98 @@
       "klra": "Knowledge loss risk (F20)",
       "future": "Future skills (M11)",
       "skills": "Team capability (F01/F11)",
-      "definitions": "Definitions"
+      "definitions": "Definitions",
+      "taskFuture": "Task exposure (FS06)"
     },
     "notOpen": "not open to your role"
+  },
+  "au": {
+    "tornadoTag": "AI and automation · FS52",
+    "presets": "Adoption presets",
+    "preset": {
+      "0": "None (today)",
+      "25": "AI assist 25%",
+      "50": "Broad adoption 50%"
+    },
+    "title": "AI and automation exposure by skill family",
+    "eyebrow": "FS06 task layer · share of demand to {year}",
+    "tile": {
+      "rated": "Tasks rated for AI exposure",
+      "ratedSub": "Active, non-restricted tasks of the job and task analysis",
+      "exposed": "Tasks AI can augment or partly automate",
+      "exposedSub": "{a} partly automatable · {g} augmented",
+      "cut": "Demand taken out by {year}",
+      "cutSub": "People-equivalents at {adoption} adoption; at {hi}: {n}"
+    },
+    "col": {
+      "tasks": "Rated tasks by exposure",
+      "share": "Automation share of demand by {year}",
+      "cut": "Demand taken out (chosen adoption / 60%)"
+    },
+    "tasksLine": "{n} tasks: {a} partly automatable, {g} augmented, {h} human core",
+    "shareLine": "{pct} at full adoption ({pct30} in 2030) · {n} less at {adoption}",
+    "cls": {
+      "automate_partly": "Partly automatable",
+      "augment": "Augmented by AI",
+      "human_core": "Human core"
+    },
+    "weight": "counts {n} of the effort",
+    "note": "Families are ranked by their automation share. A planning assumption, not a forecast: safety-critical tasks keep a qualified person accountable, and no decision about jobs is implied. Families with fewer than 10 measured people stay suppressed.",
+    "taskLink": "Open the task exposure view",
+    "openOutlook": "See AI and automation in the skills outlook",
+    "trendNote": "AI and automation take {n} people-equivalents out of this family's demand by {year} at {adoption} adoption (SIMULATED).",
+    "savedCol": "AI adoption",
+    "releasedChip": "AI and automation adoption {adoption} (SIMULATED)"
+  },
+  "mk": {
+    "title": "Market statistics beside numbers measured at ENEC",
+    "eyebrow": {
+      "skills_outlook": "Is ENEC ahead of or behind the market? Context, never a sum",
+      "overview": "From the latest released skills outlook"
+    },
+    "marketLabel": "Market statistic",
+    "measuredLabel": "Measured at ENEC (SIMULATED)",
+    "measuredHint": "solid bar",
+    "marketHint": "dashed line, with source and date",
+    "solid": "solid bar",
+    "dashed": "dashed line",
+    "measure": {
+      "ai_task_share": {
+        "title": "Tasks that AI can aid",
+        "what": "Rated job-analysis tasks that AI can augment or partly automate (FS06)"
+      },
+      "demand_growth_2030": {
+        "title": "Skills demand growth to 2030",
+        "what": "Outlook demand for the shown skill families, 2026 to 2030"
+      },
+      "digital_holders": {
+        "title": "Digital skills",
+        "what": "Staff in the measured sample at Practitioner level or above in the digital family"
+      }
+    },
+    "position": {
+      "above": "ENEC above the market figure",
+      "below": "ENEC below the market figure",
+      "level": "ENEC level with the market figure",
+      "not_comparable": "Not comparable",
+      "suppressed": "ENEC figure suppressed"
+    },
+    "asOf": "as of {date}",
+    "heldTitle": "Held back until verified ({n})",
+    "heldBody": "The research packs flag these figures as secondary or unverified, so their values are not shown here. They return once someone reads the primary source.",
+    "tier": {
+      "primary": "primary source",
+      "secondary": "secondary",
+      "unverified": "unverified"
+    },
+    "none": "No market statistics for this dashboard yet",
+    "rule": "Market statistics come from other populations and methods: read them as context. Kafa'a never adds, averages or nets a market figure with a number measured at ENEC.",
+    "ruleReleased": "ENEC numbers come from the latest released skills outlook (SIMULATED). Market statistics are context only and are never added to them.",
+    "basisReleased": "released outlook \"{name}\", {date}",
+    "noReleased": "no released outlook yet",
+    "basisSample": "{n} staff measured",
+    "basisHrOnly": "shown to HR and auditors in the skills outlook",
+    "basisTasks": "{n} rated tasks",
+    "basisOutlook": "{n} shown skill families"
   }
 }

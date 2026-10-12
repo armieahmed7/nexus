@@ -2231,6 +2231,29 @@ export interface SkillOutlooksRow {
   withdrawn_reason?: string | null;
   simulated: boolean;
 }
+export interface BenchmarkValuesRow {
+  id: string;
+  benchmark_id: string;
+  figure_key: string;
+  metric: string;
+  label_en: string;
+  label_ar: string;
+  value: number;
+  unit: 'pct' | 'count' | 'score';
+  scale_max?: number | null;
+  as_of: string;
+  source_url: string;
+  verification: 'primary' | 'secondary' | 'unverified';
+  shown: boolean;
+  held_reason_en: string;
+  held_reason_ar: string;
+  pack_ref: string;
+  compare_to?: 'ai_task_share' | 'demand_growth_2030' | 'digital_holders' | null;
+  dashboards: string[];
+  note_en: string;
+  note_ar: string;
+  sort: number;
+}
 export interface ContractRoleTargetsRow {
   id: string;
   org_id: string;
@@ -5219,6 +5242,7 @@ export interface Tables {
   external_cover: ExternalCoverRow;
   handover_cohorts: HandoverCohortsRow;
   skill_outlooks: SkillOutlooksRow;
+  benchmark_values: BenchmarkValuesRow;
   contract_role_targets: ContractRoleTargetsRow;
   task_skill_links: TaskSkillLinksRow;
   contractor_engagements: ContractorEngagementsRow;

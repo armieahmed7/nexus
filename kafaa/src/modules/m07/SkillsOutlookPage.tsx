@@ -3,6 +3,8 @@
 // F20 KLRA departures plus F22 pipeline intakes and reskilling. Gap chart by skill family, sensitivity sliders, a "what changes the
 // gap most" tornado and saved outlooks (HR saves, the HR director releases to line managers). Everything is computed on the server
 // (rpc.computeOutlook): aggregate only, skill families under 10 measured people suppressed, no person-level row reaches the page.
+// FS52 (wave F · E2): an AI and automation adoption assumption (FS06 task exposure per family, in the tornado with its range) and the
+// automation card (rpc.outlookAutomation). FS53: market statistics beside numbers measured at ENEC, never summed (MarketPanel).
 import { useEffect, useMemo, useState } from 'react';
 import { useAction, useRepo, useQuery } from '../../data';
 import type { Table } from '../../data/types';
@@ -11,22 +13,26 @@ import { MIN_GROUP_SIZE } from '../../auth/policy';
 import { publicTextIsClean } from '../../domain/future';
 import { Page, Section, Grid, Card, Async, EmptyState, Callout, DataTable, StatusPill, ConfirmDialog, Modal, Drawer, SimChip, LineChart, BarChart, WhyThis, TextField, TextArea, Icon, type Column } from '../../ui';
 import { L, useFormat, useLang, useT } from '../../i18n';
-import { BASELINE, LIMITS, OVERRIDE_MAX, familyReasons, isBaseline, type FamilyOutlook, type NumParam, type OutlookParams, type OutlookResult } from './outlook';
+import { AUTO_PARAM, BASELINE, LIMITS, OVERRIDE_MAX, adoptionOf, familyReasons, isBaseline, withAutoBar, type AutoParam, type FamilyOutlook, type NumParam, type OutlookParams, type OutlookResult } from './outlook';
+import { AutoSlider, AutomationCard } from './automationUi'; // FS52
+import { MarketPanel, ReleasedMarketPanel } from './marketUi'; // FS53
+import { measuresFrom } from './market'; // FS53
 import type { ReleasedOutlook } from './backend/outlook.rpc';
 import { DefLink, ExportButton, MetricTile, useWatermarkedExport } from './shared';
 import { LinkOrNote, useOpenable } from './handoverUi';
 import { GapBars, ParamSlider, Tornado, useFamilyLabel } from './outlookUi';
 
 /** Tables whose changes refresh the outlook. */
-const WATCH = ['person_skills', 'scenarios', 'klra_assessments', 'klra_positions', 'handover_cohorts', 'external_cover', 'future_skills'] as unknown as Table[];
+const WATCH = ['person_skills', 'scenarios', 'klra_assessments', 'klra_positions', 'handover_cohorts', 'external_cover', 'future_skills', 'jta_tasks', 'jta_task_skills'] as unknown as Table[];
 const SLIDERS: NumParam[] = ['attrition_pct', 'klra_weight', 'pipeline_factor', 'annual_intake', 'reskill_rate', 'adv_factor', 'adv_start', 'ossa_end'];
 const YEARS = (lo: number, hi: number) => Array.from({ length: hi - lo + 1 }, (_, i) => lo + i);
 
 function useParamFormat() {
   const t = useT();
   const f = useFormat();
-  return (k: NumParam, v: number): string => {
+  return (k: NumParam | AutoParam, v: number): string => {
     switch (k) {
+      case 'automation_adoption': return f.pct(v, 0);
       case 'attrition_pct': return `${f.num(v, { maximumFractionDigits: 1 })}%`;
       case 'reskill_rate': return t('m07.so.pctYear', { n: f.num(v) });
       case 'annual_intake': return t('m07.so.perYear', { n: f.num(v) });
@@ -51,7 +57,10 @@ export default function SkillsOutlookPage() {
       </div>
       <Callout tone="sim" title={t('m07.so.simTitle')}>{t('m07.so.simBody')}</Callout>
       {canCompute ? <Workbench loadReq={loadReq} /> : (
-        <Callout tone="info" title={t('m07.so.managerTitle')}>{t('m07.so.managerBody')}</Callout>
+        <>
+          <Callout tone="info" title={t('m07.so.managerTitle')}>{t('m07.so.managerBody')}</Callout>
+          <ReleasedMarketPanel dashboard="skills_outlook" />
+        </>
       )}
       <Released canLoad={canCompute} onLoad={(o) => setLoadReq({ params: o.results.params, id: null, name: o.name, n: Date.now() })} />
       <Method />
@@ -102,6 +111,13 @@ function Workbench({ loadReq }: { loadReq: { params: OutlookParams; id: string |
   const a = q.data;
   const updating = q.loading || key !== JSON.stringify(params);
   const set = (k: NumParam, v: number) => setParams((p) => ({ ...p, [k]: v }));
+  // FS52: 0 removes the key, so the parameters stay exactly the F35 ones
+  const setAdoption = (v: number) => setParams((p) => { const n = { ...p }; if (v > 0) n.automation_adoption = v; else delete n.automation_adoption; return n; });
+  const autoQ = useQuery(WATCH, async () => {
+    const r = await repo.rpc.outlookAutomation(debounced);
+    if (!r.ok || !r.data) throw new Error(r.message);
+    return r.data;
+  }, [key]);
   const baseline = isBaseline(params);
   const visible = (a?.families ?? []).filter((x) => !x.suppressed);
   const famKey = picked && visible.some((x) => x.key === picked) ? picked : [...visible].sort((x, y) => (y.horizon_gap ?? 0) - (x.horizon_gap ?? 0))[0]?.key ?? null;
@@ -133,6 +149,7 @@ function Workbench({ loadReq }: { loadReq: { params: OutlookParams; id: string |
               </select>
             </label>
             {SLIDERS.map((k) => <ParamSlider key={k} k={k} value={params[k]} onChange={(v) => set(k, v)} format={(v) => fmt(k, v)} />)}
+            <AutoSlider value={adoptionOf(params)} onChange={setAdoption} />
             <div className="flex flex-wrap gap-2">
               <button type="button" className="btn-outline btn-sm" onClick={() => setOverrides(true)} data-testid="m07-so-overrides">
                 {t('m07.so.overrides')}{Object.keys(params.reskill_overrides).length ? ` (${f.num(Object.keys(params.reskill_overrides).length)})` : ''}
@@ -183,14 +200,25 @@ function Workbench({ loadReq }: { loadReq: { params: OutlookParams; id: string |
                           <WhyThis reasons={familyReasons(fam, r.params)} label={t('m07.so.whyGap')} testId="m07-so-why" />
                         </div>
                         <DriverChips f={fam} />
+                        {r.automation && (() => { const af = r.automation.families.find((x) => x.key === fam.key); return af && !af.suppressed ? (
+                          <p className="mt-2 text-[12px] text-ink-2" data-testid="m07-so-trend-auto">{t('m07.au.trendNote', { n: f.num(af.cut_now ?? 0), year: r.horizon, adoption: f.pct(r.automation.adoption, 0) })}</p>
+                        ) : null; })()}
                       </div>
                     ) : <EmptyState title={t('m07.so.allSuppressed')} />}
                   </Card>
                 </Grid>
                 <Grid cols={2}>
                   <Card title={t('m07.so.tornadoTitle')} eyebrow={t('m07.so.tornadoEyebrow', { from: r.base_year, to: r.horizon })} actions={<span className="flex items-center gap-2"><DefLink metric="outlook_tornado" /><SimChip /></span>}>
-                    <Tornado bars={r.tornado} current={r.totals.cumulative} format={fmt} />
-                    <p className="mt-2 text-[12px] text-ink-3">{t('m07.so.tornadoNote', { top: t(`m07.so.param.${r.tornado[0]?.param ?? 'attrition_pct'}`) })}</p>
+                    {(() => {
+                      // FS52: the automation bar is in the result when adoption > 0; at adoption 0 it comes from the automation profile
+                      const bars = r.tornado.some((b) => b.param === AUTO_PARAM) || !autoQ.data ? r.tornado : withAutoBar(r.tornado, autoQ.data.bar);
+                      return (
+                        <>
+                          <Tornado bars={bars} current={r.totals.cumulative} format={fmt} />
+                          <p className="mt-2 text-[12px] text-ink-3">{t('m07.so.tornadoNote', { top: t(`m07.so.param.${bars[0]?.param ?? 'attrition_pct'}`) })}</p>
+                        </>
+                      );
+                    })()}
                   </Card>
                   <Card title={t('m07.so.byYearTitle')} actions={<span className="flex items-center gap-2"><DefLink metric="outlook_gap" /><SimChip /></span>}>
                     <div data-testid="m07-so-byyear">
@@ -199,6 +227,14 @@ function Workbench({ loadReq }: { loadReq: { params: OutlookParams; id: string |
                     <p className="mt-2 text-[12px] text-ink-3">{t('m07.so.byYearNote')}</p>
                   </Card>
                 </Grid>
+                <div id="so-automation" className="scroll-mt-24 space-y-4">
+                  <AutomationCard profile={autoQ.data} loading={autoQ.loading} />
+                  <MarketPanel dashboard="skills_outlook" measures={measuresFrom(r, autoQ.data)} basis={{
+                    demand_growth_2030: t('m07.mk.basisOutlook', { n: f.num(r.totals.visible) }),
+                    digital_holders: t('m07.mk.basisSample', { n: f.num(measuresFrom(r, autoQ.data).digital_holders.basis ?? 0) }),
+                    ai_task_share: t('m07.mk.basisTasks', { n: f.num(autoQ.data?.rated ?? 0) }),
+                  }} />
+                </div>
                 <Section title={t('m07.so.tableTitle')} description={t('m07.so.tableDesc')} actions={<ExportButton onClick={() => exportOutlook(r)} />}>
                   <div data-testid="m07-so-table">
                     <DataTable rows={r.families} rowKey={(x) => x.key} searchable={false} pageSize={20} caption={t('m07.so.tableTitle')} columns={tableCols(r)} />
@@ -226,6 +262,7 @@ function Workbench({ loadReq }: { loadReq: { params: OutlookParams; id: string |
                 { key: 'name', header: t('m07.so.name'), value: (r) => r.name, render: (r) => <span className="font-semibold">{r.name}</span> },
                 { key: 'status', header: t('m07.so.status'), value: (r) => r.status, render: (r) => <StatusPill tone={r.status === 'released' ? 'ok' : r.status === 'withdrawn' ? 'neutral' : 'sim'}>{t(`m07.so.st.${r.status}`)}</StatusPill> },
                 { key: 'short', header: t('m07.so.shortCol'), value: (r) => r.results?.totals?.families_short ?? 0, align: 'end', render: (r) => <span className="num">{f.num(r.results?.totals?.families_short)} / {f.num(r.results?.totals?.visible)}</span> },
+                { key: 'auto', header: t('m07.au.savedCol'), value: (r) => Number(r.params?.automation_adoption ?? 0), align: 'end', render: (r) => <span className="num">{r.params?.automation_adoption ? f.pct(Number(r.params.automation_adoption), 0) : '—'}</span> },
                 { key: 'created', header: t('m07.so.created'), value: (r) => r.created_at, render: (r) => f.date(r.created_at) },
                 { key: 'released', header: t('m07.so.releasedOn'), value: (r) => r.released_at ?? '', render: (r) => (r.released_at ? f.date(r.released_at) : '—') },
                 { key: 'sim', header: '', csv: false, render: () => <SimChip /> },
@@ -392,6 +429,7 @@ function Released({ canLoad, onLoad }: { canLoad: boolean; onLoad: (o: ReleasedO
                         <div><dt className="caps">{t('m07.so.tile.first')}</dt><dd className="num text-[20px] font-semibold">{r.totals.first_gap_year == null ? t('m07.so.none') : f.num(r.totals.first_gap_year, { useGrouping: false })}</dd></div>
                       </dl>
                       <p className="text-[12px] text-ink-3">{r.scenario ? r.scenario.name : t('m07.so.currentFleet')} · {t('m07.so.horizonTo', { year: r.horizon })}</p>
+                      {r.automation && <p className="text-[12px]"><span className="chip border-line bg-sunken text-ink-2" data-testid={`m07-so-released-auto-${o.id}`}>{t('m07.au.releasedChip', { adoption: f.pct(r.automation.adoption, 0) })}</span></p>}
                       {canLoad && <button className="btn-outline btn-sm" onClick={() => onLoad(o)} data-testid={`m07-so-open-${o.id}`}>{t('m07.so.openInWorkbench')}</button>}
                     </div>
                     <GapBars families={r.families} year={r.horizon} label={label} />
@@ -412,8 +450,9 @@ function Method() {
   const notYet = t('m07.so.notOpen');
   const links: [string, string][] = [
     ['/workforce/scenarios', 'scenarios'], ['/workforce/handover', 'handover'], ['/knowledge/klra', 'klra'], ['/workforce/future', 'future'], ['/team/skills', 'skills'], ['/workforce/definitions', 'definitions'],
+    ['/training/sat/future', 'taskFuture'], // FS52
   ];
-  const items = useMemo(() => ['demand', 'handover', 'advance', 'supply', 'klra', 'pipeline', 'reskill', 'scale', 'suppression', 'tornado'], []);
+  const items = useMemo(() => ['demand', 'handover', 'advance', 'supply', 'klra', 'pipeline', 'reskill', 'scale', 'suppression', 'tornado', 'automation', 'market'], []);
   return (
     <section id="so-method" className="scroll-mt-24">
       <Card title={t('m07.so.howTitle')} actions={<SimChip />}>
