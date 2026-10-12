@@ -15,6 +15,8 @@ for (const m of baseFiles) await db.exec(execSync(`git show ${cfg.base_ref}:kafa
 await db.exec(execSync(`git show ${cfg.base_ref}:kafaa/supabase/seed.sql`, { maxBuffer: 1 << 30 }).toString());
 console.log('base state loaded (migrations before the wave + base seed)');
 const parts = readdirSync(cfg.out).filter((f) => f.endsWith('.sql')).sort();
+// optional: make the base look like live where live is known to differ from the local seed (wave G: the mentoring card at version 13)
+for (const s of cfg.dry_run_live_state ?? []) { await db.exec(`select set_config('kafaa.seeding', 'on', false); ${s.sql}`); console.log(`live-state simulation: ${s.label}`); }
 for (let pass = 1; pass <= 2; pass++) {
   for (const f of parts) { try { await db.exec(read(`${cfg.out}/${f}`)); } catch (e) { console.error(`✗ ${f} (pass ${pass}): ${e.message}`); process.exit(1); } }
   console.log(`pass ${pass}: ${parts.length} parts applied`);
@@ -42,6 +44,9 @@ for (const m of md.matchAll(/^\| `([^`]+)` \| `([^`]+)` \| (\d+) \| `([0-9a-f]{8
   dn++; if (String(r.n) !== cnt || r.d !== dig) { dbad++; console.log(`✗ ${label}: ${r.n}:${r.d} != ${cnt}:${dig}`); }
 }
 console.log(`digests: ${dn - dbad}/${dn} equal`);
+let sbad = 0;
+for (const s of cfg.dry_run_live_state ?? []) { const r = (await db.query(s.check)).rows[0]; const okk = Object.values(r ?? {})[0] === true; if (!okk) sbad++; console.log(`${okk ? '✓' : '✗'} after the parts (twice): ${s.expect}`); }
+if (sbad) process.exit(1);
 if (process.env.DEBUG_TABLE) {
   const T = JSON.parse(read('src/seed/seed.json')).tables[process.env.DEBUG_TABLE];
   const rows = (await db.query(`select to_jsonb(t) j from public.kafaa_${process.env.DEBUG_TABLE} t where ${process.env.DEBUG_WHERE ?? 'true'} order by id`)).rows.map((r) => r.j);

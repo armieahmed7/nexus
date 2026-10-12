@@ -21,7 +21,7 @@ function OrgView({ o, partner }: { o: FrOrg; partner: boolean }) {
         <div className="flex flex-wrap items-center gap-4">
           {o.suppressed ? <span className="chip border-sim-line bg-sim-bg text-sim" data-testid="m09-fr-suppressed">{t('common.suppressed')}</span>
             : <ProgressRing value={o.future_pct ?? 0} size={76} tone={(o.future_pct ?? 0) >= 60 ? 'ok' : 'accent'} label={t('m09.fr.ringLabel')} />}
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0 flex-1 basis-48">
             <h2 className="text-[17px] font-semibold">{bi(o.name)}</h2>
             <p className="mt-0.5 text-[13px] text-ink-2">
               {o.suppressed ? t('m09.fr.suppressedBody') : t('m09.fr.orgLine', { n: f.num(o.n), pct: f.pct(o.future_pct, 0), roles: f.num(o.roles.length) })}

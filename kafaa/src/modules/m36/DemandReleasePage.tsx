@@ -63,7 +63,7 @@ function Release({ released, demand, skillArea }: { released: Row[]; demand: Row
       <Card title={t('m36.rel.choose')}>
         <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t('m36.rel.choose')}>
           {released.map((x) => (
-            <button key={x.id} type="button" role="radio" aria-checked={fid === x.id} className={`btn-sm ${fid === x.id ? 'btn-primary' : 'btn-outline'}`} onClick={() => setFid(x.id)} data-testid={`m36-rel-pick-${x.id}`}>
+            <button key={x.id} type="button" role="radio" aria-checked={fid === x.id} className={`btn-sm h-auto min-h-8 max-w-full whitespace-normal py-1 text-start ${fid === x.id ? 'btn-primary' : 'btn-outline'}`} onClick={() => setFid(x.id)} data-testid={`m36-rel-pick-${x.id}`}>
               {x.name}{x.id === curForecast ? ` · ${t('m36.rel.current')}` : ''}
             </button>
           ))}

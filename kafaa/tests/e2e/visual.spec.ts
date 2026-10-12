@@ -844,3 +844,81 @@ for (const s of SET_FSF) {
     await page.screenshot({ path: join(SHOTS_FSF, `${s.name}.png`), fullPage: false });
   });
 }
+
+// FS wave G (FS60-FS69): every new page (and the pages the wave-G wiring touched) in Arabic RTL and at 390 px, plus the feature set
+// saved to KAFAA_SHOTS_FSG. LOCAL backend (openFse): the wave-G QA session had no live access; rerun in supabase mode after the live apply.
+const FSG_PAGES: Shot[] = [
+  { name: 'fsg-disclosure', path: '/workforce/disclosure', persona: 'chco' },
+  { name: 'fsg-disclosure-metrics', path: '/workforce/disclosure/metrics', persona: 'k-auditor' },
+  { name: 'fsg-disclosure-pack', path: '/workforce/disclosure/2026-Q2/pack', persona: 'chco' },
+  { name: 'fsg-pilots', path: '/workforce/pilots', persona: 'training-mgr' },
+  { name: 'fsg-pilot', path: '/workforce/pilots/sp-vr-outage-brief', persona: 'chco' },
+  { name: 'fsg-skills-pilots', path: '/skills/pilots', persona: 'k-ro' },
+  { name: 'fsg-national-alignment', path: '/national/alignment', persona: 'chco' },
+  { name: 'fsg-national-tag', path: '/national/alignment/nt-ai-2031', persona: 'k-hr-analyst' },
+  { name: 'fsg-national-report', path: '/national/report', persona: 'chco' },
+  { name: 'fsg-national-occupations', path: '/national/occupations', persona: 'k-hr-analyst' },
+  { name: 'fsg-admin-national-tags', path: '/admin/national-tags', persona: 'k-admin' },
+  { name: 'fsg-regional-plan', path: '/ecosystem/regional-plan', persona: 'alnoor-gm' },
+  { name: 'fsg-commitments', path: '/ecosystem/regional-plan/commitments', persona: 'chco' },
+  { name: 'fsg-commitment', path: '/ecosystem/regional-plan/commitments/pc-org-alnoor-1', persona: 'alnoor-gm' },
+  { name: 'fsg-demand-release', path: '/ecosystem/regional-plan/release', persona: 'chco' },
+  { name: 'fsg-pledges', path: '/ecosystem/pledges', persona: 'nse' },
+  { name: 'fsg-pledges-register', path: '/ecosystem/pledges/register', persona: 'alnoor-gm' },
+  { name: 'fsg-university-programmes', path: '/partner/university/programmes', persona: 'k-university' },
+  { name: 'fsg-training-university-programmes', path: '/training/university-programmes', persona: 'training-mgr' },
+  { name: 'fsg-university-programme', path: '/universities/programmes/ua-ku-bsc-nuc', persona: 'k-admin' },
+  { name: 'fsg-graduate-hires', path: '/workforce/graduate-hires', persona: 'chco' },
+  { name: 'fsg-fellowships', path: '/universities/fellowships', persona: 'chco' },
+  { name: 'fsg-fellowship', path: '/universities/fellowships/fw-2024-ap-122', persona: 'training-mgr' },
+  { name: 'fsg-workforce-fellowships', path: '/workforce/fellowships', persona: 'chco' },
+  { name: 'fsg-future-readiness', path: '/partner/workforce/future-readiness', persona: 'alnoor-gm' },
+  { name: 'fsg-admin-future-readiness', path: '/admin/suppliers/future-readiness', persona: 'k-admin' },
+  { name: 'fsg-prearrival', path: '/partner/workforce/prearrival', persona: 'k-contractor' },
+  { name: 'fsg-prearrival-queue', path: '/training/equivalency/prearrival', persona: 'training-mgr' },
+  { name: 'fsg-prearrival-share', path: '/training/equivalency/prearrival/pa-calnoor01-mech', persona: 'k-instructor' },
+  { name: 'fsg-partner-home', path: '/partner', persona: 'alnoor-gm' },
+  { name: 'fsg-partner-university', path: '/partner/university', persona: 'k-university' },
+  { name: 'fsg-verify-prearrival', path: '/verify/record/c1fd00083b70c13b91237a7a9c5b16a9' },
+];
+for (const s of FSG_PAGES) {
+  test(`rtl ${s.name}`, async ({ page }) => {
+    const w = watchErrors(page);
+    await openFse(page, { ...s, ar: true });
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
+    expect(await overflowX(page), 'no horizontal scroll').toBeLessThanOrEqual(1);
+    expect(await textIssues(page)).toEqual([]);
+    await page.screenshot({ path: join(OUT, 'rtl', `${s.name}.png`), fullPage: true });
+    expect(w.take()).toEqual([]);
+  });
+  test(`mobile ${s.name}`, async ({ page }) => {
+    const w = watchErrors(page);
+    await openFse(page, { ...s, mobile: true });
+    expect(await overflowX(page), `${s.name}: page scrolls sideways at 390 px`).toBeLessThanOrEqual(1);
+    expect(await textIssues(page)).toEqual([]);
+    await page.screenshot({ path: join(OUT, 'mobile', `${s.name}.png`), fullPage: true });
+    expect(w.take()).toEqual([]);
+  });
+}
+const SHOTS_FSG = process.env.KAFAA_SHOTS_FSG || 'test-results/shots_fsG';
+mkdirSync(SHOTS_FSG, { recursive: true });
+const SET_FSG: Shot[] = [
+  { name: '01-iso30414-disclosure-en', path: '/workforce/disclosure', persona: 'chco' },
+  { name: '02-skills-pilots-registry-en', path: '/workforce/pilots', persona: 'training-mgr' },
+  { name: '03-national-alignment-en', path: '/national/alignment', persona: 'chco' },
+  { name: '04-mohre-occupations-en', path: '/national/occupations', persona: 'k-hr-analyst' },
+  { name: '05-regional-plan-en', path: '/ecosystem/regional-plan', persona: 'alnoor-gm' },
+  { name: '06-pledges-ledger-en', path: '/ecosystem/pledges', persona: 'nse' },
+  { name: '07-programme-alignment-en', path: '/universities/programmes/ua-ku-bsc-nuc', persona: 'k-admin' },
+  { name: '08-supplier-future-readiness-en', path: '/partner/workforce/future-readiness', persona: 'alnoor-gm' },
+  { name: '09-fellowships-ar', path: '/universities/fellowships', persona: 'chco', ar: true },
+  { name: '10-prearrival-check-mobile', path: '/training/equivalency/prearrival/pa-calnoor01-mech', persona: 'k-instructor', mobile: true },
+];
+for (const s of SET_FSG) {
+  test(`shot fsg ${s.name}`, async ({ page }) => {
+    if (!s.mobile) await page.setViewportSize({ width: 1440, height: 900 });
+    await openFse(page, s);
+    await page.screenshot({ path: join(SHOTS_FSG, `${s.name}.png`), fullPage: false });
+  });
+}

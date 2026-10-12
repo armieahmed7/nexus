@@ -12,6 +12,7 @@
 //     text), changes nothing on a second run or on the local v2 card.
 //  9. RLS perf form on the 15 new wave-G tables; additivity and grants of the QA migration; md5s for the live comparison.
 import { readFileSync, readdirSync } from 'node:fs';
+import { PGlite } from '@electric-sql/pglite';
 import { referenceOf } from '../../src/modules/m35/pilots.ts';
 import { effectiveLinks } from '../../src/modules/m37/national.ts';
 import { applyFs48CardStep } from '../seed/ext/fsqa7-integration.mjs';
@@ -41,16 +42,22 @@ export default async function fsqa7Checks({ db, as, one, ok, uid }) {
   }
 
   // 1. FS60 inputs reproduce from the formula on the final seed
-  const hd = await rows('hc_disclosures');
+  // On a fresh database (the shared one carries rows earlier validators wrote): every migration + the generated seed, as the live apply leaves it.
+  const fresh = new PGlite();
+  await fresh.exec(readFileSync('supabase/tests/nexus_stubs.sql', 'utf8'));
+  for (const f of readdirSync('supabase/migrations').filter((x) => x.endsWith('.sql')).sort()) await fresh.exec(readFileSync(`supabase/migrations/${f}`, 'utf8'));
+  await fresh.exec(readFileSync('supabase/seed.sql', 'utf8'));
+  const hd = (await fresh.query('select to_jsonb(x) j from kafaa_hc_disclosures x order by id')).rows.map((r) => r.j);
   const hcDiff = [];
-  for (const d of hd) if (canon((await q1('select kafaa_hcd_compute($1) r', [d.period])).r) !== canon(d.metric_values)) hcDiff.push(d.period);
+  for (const d of hd) if (canon((await fresh.query('select kafaa_hcd_compute($1) r', [d.period])).rows[0].r) !== canon(d.metric_values)) hcDiff.push(d.period);
+  await fresh.close();
   const metrics = await rows('hc_metrics');
   const srcTables = [...new Set(metrics.flatMap((m) => m.source_tables ?? []))];
   const missingSrc = [];
   for (const t of srcTables) if (!(await q1('select to_regclass($1) r', [`public.kafaa_${t}`])).r) missingSrc.push(t);
   const need = ['critical_skills', 'ai_rungs', 'training_records', 'xapi_statements', 'credit_ledger']; // FS50, FS09/FS36, training records, xAPI hours, FS30 credits
   ok(hd.length === 2 && hcDiff.length === 0 && missingSrc.length === 0 && need.every((t) => srcTables.includes(t)),
-    `FS60 inputs: kafaa_hcd_compute reproduces both stored quarters on the final seed (after every wave-G builder); the ${metrics.length} metrics read ${srcTables.length} existing tables incl. ${need.join(', ')}${hcDiff.length ? ` (differ: ${hcDiff})` : ''}${missingSrc.length ? ` (missing: ${missingSrc})` : ''}`);
+    `FS60 inputs: on a fresh database (all migrations + the final seed) kafaa_hcd_compute reproduces both stored quarters; the ${metrics.length} metrics read ${srcTables.length} existing tables incl. ${need.join(', ')}${hcDiff.length ? ` (differ: ${hcDiff})` : ''}${missingSrc.length ? ` (missing: ${missingSrc})` : ''}`);
 
   // 2. FS61 reference from kafaa_benchmarks, never typed
   const bench = await rows('benchmarks');
