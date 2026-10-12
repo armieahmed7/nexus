@@ -1,5 +1,5 @@
 // [Audit 2026-10-12] PGlite checks for the five audit-fix migrations (20261012151001 .. 20261012155001).
-//  a. grants: no API role holds TRUNCATE / REFERENCES / TRIGGER on any public table; on kafaa_* tables anon writes only the contact form,
+//  a. grants (kafaa_* tables only; NEXUS untouched): no API role holds TRUNCATE / REFERENCES / TRIGGER; anon writes only the contact form,
 //     nobody deletes, authenticated inserts/updates exactly where a policy admits it; staff update only the status of a contact request.
 //  b. the ten RPC-only tables carry no kafaa_insert / kafaa_update policy and no <table>_audit trigger.
 //  c. the 22 W3E2 foreign keys and 3 FK indexes exist; xAPI statements reject DELETE (one append-only trigger covers it on a fresh build).
@@ -18,8 +18,10 @@ export default async function auditFixChecks({ db, as, one, ok }) {
 
   // a. grants
   const extra = await q(`select c.relname t, r.rolname role from pg_class c join pg_namespace n on n.oid = c.relnamespace cross join (values ('anon'), ('authenticated')) r(rolname)
-    where n.nspname = 'public' and c.relkind in ('r', 'p') and (has_table_privilege(r.rolname, c.oid, 'TRUNCATE') or has_table_privilege(r.rolname, c.oid, 'REFERENCES') or has_table_privilege(r.rolname, c.oid, 'TRIGGER'))`);
-  ok(extra.length === 0, `no API role holds TRUNCATE, REFERENCES or TRIGGER on a public table (${extra.length})`);
+    where n.nspname = 'public' and c.relkind in ('r', 'p') and c.relname like 'kafaa\\_%' and (has_table_privilege(r.rolname, c.oid, 'TRUNCATE') or has_table_privilege(r.rolname, c.oid, 'REFERENCES') or has_table_privilege(r.rolname, c.oid, 'TRIGGER'))`);
+  ok(extra.length === 0, `no API role holds TRUNCATE, REFERENCES or TRIGGER on a kafaa_* table (${extra.length})`);
+  const mig = readFileSync('supabase/migrations/20261012152001_kafaa_audit_grants.sql', 'utf8').replace(/--.*$/gm, '');
+  ok(!/alter default privileges/i.test(mig) && !/in schema public/i.test(mig) && /c\.relname like 'kafaa\\_%'/.test(mig), 'the grants fix touches kafaa_* tables only (no schema-wide revoke, no default privileges: NEXUS objects unchanged)');
   const anonW = await q(`select c.relname t, p.priv from pg_class c join pg_namespace n on n.oid = c.relnamespace cross join (values ('INSERT'), ('UPDATE'), ('DELETE')) p(priv)
     where n.nspname = 'public' and c.relkind in ('r', 'p') and c.relname like 'kafaa\\_%' and has_table_privilege('anon', c.oid, p.priv)`);
   ok(anonW.length === 1 && anonW[0].t === 'kafaa_contact_requests' && anonW[0].priv === 'INSERT', `anon writes only the contact form (${anonW.map((r) => `${r.t}:${r.priv}`).join(', ')})`);
@@ -47,8 +49,8 @@ export default async function auditFixChecks({ db, as, one, ok }) {
   ok(idx.length === 3, 'the three FK-covering indexes exist');
   const xt = await q(`select tgname from pg_trigger where tgrelid = 'kafaa_xapi_statements'::regclass and not tgisinternal and tgfoid = 'kafaa_append_only()'::regprocedure and (tgtype & 8) <> 0`);
   ok(xt.length === 1 && xt[0].tgname === 'kafaa_xapi_statements_append_only', 'xAPI statements: one append-only trigger covers DELETE on a fresh build (the additive one is not created)');
-  const mig = readFileSync('supabase/migrations/20261012153001_kafaa_audit_integrity.sql', 'utf8');
-  ok((mig.match(/deferrable initially deferred/g) ?? []).length === 22, 'the 22 keys are deferrable, as in schema.sql');
+  const migC = readFileSync('supabase/migrations/20261012153001_kafaa_audit_integrity.sql', 'utf8');
+  ok((migC.match(/deferrable initially deferred/g) ?? []).length === 22, 'the 22 keys are deferrable, as in schema.sql');
 
   await db.exec('begin');
   try {

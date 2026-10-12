@@ -7,9 +7,9 @@ two-line header; all are under 10 KB. Apply **in ORDER.txt order** with the Supa
 prefix and `.sql`), run the checks below, and merge `audit-fixes` only after they pass: the front-end commit relies on part 05 for the
 rate-limit message and on part 04 for the admin inbox's status update on a fresh build.
 
-Every part is idempotent (a second run changes nothing) and touches `kafaa_*` objects only, except part 02 step 1, which revokes TRUNCATE,
-REFERENCES, TRIGGER and MAINTAIN from `anon` and `authenticated` on **every** public table (NEXUS tables included) and in `postgres`'s default
-privileges. No row is inserted, updated or deleted by any part.
+Every part is idempotent (a second run changes nothing) and touches `kafaa_*` objects only. No ENEC NEXUS object (table, grant, policy,
+function) and no default privileges are changed: NEXUS shares the public schema, and the handover rules out changing its objects. No row is
+inserted, updated or deleted by any part.
 
 ## 0. Before you start (all read-only)
 
@@ -21,6 +21,7 @@ privileges. No row is inserted, updated or deleted by any part.
 5. `kafaa_contact_requests` policy `kafaa_insert` still has `with_check = 'true'`.
 6. If waves H or I were applied live after this bundle was built, apply this bundle anyway: part 02 derives its revokes at apply time, so new
    kafaa_* tables are handled; re-running part 02 later (after any future wave) is safe and brings new tables to the same rule.
+7. Record the NEXUS count of query 4d below before applying; it must not change.
 
 ```sql
 -- 3. orphan check (expect no rows)
@@ -80,7 +81,7 @@ select with_check from pg_policies where tablename = 'kafaa_contact_requests' an
 | # | apply_migration name | from | what it does |
 |---|---|---|---|
 | 1 | `kafaa_audit_rpc_only_tables_p1` | `20261012151001_kafaa_audit_rpc_only_tables.sql` | drops (if exists) policy `kafaa_insert`, policy `kafaa_update` and trigger `kafaa_<t>_audit` on the ten RPC-only tables: advisor_sessions, advisor_turns, appeals, applications, equivalency_requests, icv_plans, item_versions, items, partner_onboarding, research_proposals (main's rls.sql no longer creates them; `kafaa_read` and `kafaa_cp_on_equivalency_requests` are kept) |
-| 2 | `kafaa_audit_grants_p1` | `20261012152001_kafaa_audit_grants.sql` | revokes TRUNCATE, REFERENCES, TRIGGER, MAINTAIN on all public tables from anon/authenticated and in postgres's default privileges for tables; on kafaa_* tables revokes DELETE (both roles), anon INSERT/UPDATE (except INSERT on kafaa_contact_requests), and authenticated INSERT/UPDATE wherever no INSERT/UPDATE policy admits authenticated. Must follow part 1 |
+| 2 | `kafaa_audit_grants_p1` | `20261012152001_kafaa_audit_grants.sql` | on kafaa_* tables only: revokes TRUNCATE, REFERENCES, TRIGGER, MAINTAIN from anon/authenticated, DELETE (both roles), anon INSERT/UPDATE (except INSERT on kafaa_contact_requests), and authenticated INSERT/UPDATE wherever no INSERT/UPDATE policy admits authenticated. Must follow part 1 |
 | 3 | `kafaa_audit_integrity_p1` | `20261012153001_kafaa_audit_integrity.sql` | adds the 22 W3E2 foreign keys (`kafaa_<table>_<column>_fk`, deferrable initially deferred, guarded by name), indexes `kafaa_career_targets_role_id_idx`, `kafaa_roadmaps_target_role_id_idx`, `kafaa_health_snapshots_role_id_idx` (if not exists), and trigger `kafaa_xapi_statements_no_delete` (BEFORE DELETE, `kafaa_append_only()`) when no BEFORE DELETE append-only trigger exists |
 | 4 | `kafaa_audit_contact_requests_p1` | `20261012154001_kafaa_audit_contact_requests.sql` | `alter policy kafaa_insert on kafaa_contact_requests` with the bounded check below; revokes table-level UPDATE from anon/authenticated and grants `update (status)` to authenticated |
 | 5 | `kafaa_audit_verify_certificate_p1` | `20261012155001_kafaa_audit_verify_certificate.sql` | `create or replace function kafaa_verify_certificate(text)` as plpgsql volatile with the kafaa_verify_badge rate-limit block (20 checks per number / 600 in total per minute, counted from `certificate.verify` audit rows); revokes PUBLIC execute, grants anon and authenticated |
@@ -145,12 +146,13 @@ On a build from main (PGlite, 344 kafaa_* tables incl. waves E-G) the privileges
 
 | role | SELECT | INSERT | UPDATE (table) | DELETE | TRUNCATE / REFERENCES / TRIGGER / MAINTAIN |
 |---|---|---|---|---|---|
-| anon | 344 | 1 (`kafaa_contact_requests`) | 0 | 0 | 0 (on every public table) |
-| authenticated | 344 | 68 (the tables with a kafaa_insert policy, incl. contact_requests) | 67 (the tables with a kafaa_update policy, minus contact_requests) | 0 | 0 (on every public table) |
+| anon | 344 | 1 (`kafaa_contact_requests`) | 0 | 0 | 0 (on every kafaa_* table) |
+| authenticated | 344 | 68 (the tables with a kafaa_insert policy, incl. contact_requests) | 67 (the tables with a kafaa_update policy, minus contact_requests) | 0 | 0 (on every kafaa_* table) |
 
 plus column UPDATE on `kafaa_contact_requests.status` for authenticated. Live must give the same numbers if it holds exactly these 344 kafaa_*
 tables (more if wave H/I tables exist: then compare against the policy rule, query 4b). Live on 2026-10-12 before the apply: anon INSERT 100,
-UPDATE 100, DELETE 200 on kafaa_* tables (repo intent: 1 / 0 / 0); TRUNCATE on 334 public tables for anon and 338 for authenticated.
+UPDATE 100, DELETE 200 on kafaa_* tables (repo intent: 1 / 0 / 0); TRUNCATE (and REFERENCES, TRIGGER, MAINTAIN) on 272 of 344 kafaa_* tables for each role. NEXUS tables keep their current grants
+(TRUNCATE etc. on 62 NEXUS tables for anon, 66 for authenticated): out of scope here.
 
 ```sql
 -- 4a. counts per role and privilege on kafaa_* tables
@@ -162,19 +164,23 @@ select c.relname, x.cmd from pg_class c join pg_namespace n on n.oid = c.relname
  where n.nspname = 'public' and c.relkind in ('r', 'p') and c.relname like 'kafaa\_%' and c.relname <> 'kafaa_contact_requests'
    and has_table_privilege('authenticated', c.oid, x.cmd) <> exists (select 1 from pg_policies p where p.schemaname = 'public' and p.tablename = c.relname
          and p.cmd in (x.cmd, 'ALL') and p.roles && array['authenticated', 'public']::name[]);
--- 4c. no API role holds TRUNCATE/REFERENCES/TRIGGER/MAINTAIN on any public table: expect 0
+-- 4c. no API role holds TRUNCATE/REFERENCES/TRIGGER/MAINTAIN on any kafaa_* table: expect 0
 select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace cross join (values ('anon'), ('authenticated')) r(rolname)
- where n.nspname = 'public' and c.relkind in ('r', 'p') and (has_table_privilege(r.rolname, c.oid, 'TRUNCATE') or has_table_privilege(r.rolname, c.oid, 'REFERENCES')
+ where n.nspname = 'public' and c.relkind in ('r', 'p') and c.relname like 'kafaa\_%' and (has_table_privilege(r.rolname, c.oid, 'TRUNCATE') or has_table_privilege(r.rolname, c.oid, 'REFERENCES')
        or has_table_privilege(r.rolname, c.oid, 'TRIGGER') or has_table_privilege(r.rolname, c.oid, 'MAINTAIN'));
--- 4d. default privileges of postgres for new tables: anon and authenticated show arwd (no D, x, t, m)
+-- 4d. NEXUS unchanged: the same count before and after the apply (2026-10-12: 128 = 62 anon + 66 authenticated)
+select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace cross join (values ('anon'), ('authenticated')) r(rolname)
+ where n.nspname = 'public' and c.relkind in ('r', 'p') and c.relname not like 'kafaa\_%' and has_table_privilege(r.rolname, c.oid, 'TRUNCATE');
+-- 4d'. default privileges unchanged: postgres's entry for tables still shows anon=arwdDxtm and authenticated=arwdDxtm
 select defaclacl from pg_default_acl d join pg_namespace n on n.oid = d.defaclnamespace where n.nspname = 'public' and d.defaclrole = 'postgres'::regrole and d.defaclobjtype = 'r';
 -- 4e. contact requests: expect f, t, f
 select has_table_privilege('authenticated', 'kafaa_contact_requests', 'UPDATE'), has_column_privilege('authenticated', 'kafaa_contact_requests', 'status', 'UPDATE'),
        has_column_privilege('authenticated', 'kafaa_contact_requests', 'message', 'UPDATE');
 ```
 
-Not changed: service_role and the owner keep every privilege; SELECT grants; NEXUS tables' INSERT/UPDATE/DELETE grants; function EXECUTE grants
-(except PUBLIC on kafaa_verify_certificate); default privileges of `supabase_admin` (postgres cannot alter them; no public table is owned by it).
+Not changed: service_role and the owner keep every privilege; SELECT grants; every grant on NEXUS tables; function EXECUTE grants (except PUBLIC
+on kafaa_verify_certificate); all default privileges. A future kafaa_* table created on live still inherits Supabase's defaults until part 02
+is re-run (it derives its revokes at apply time); in the repo, the migration validator check that write grants match the policies covers it.
 
 ## 5. Behaviour checks after the apply (optional, read-only through rollback)
 

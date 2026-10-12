@@ -1,16 +1,18 @@
--- [Audit 2026-10-12 · fix a] Table privileges of the API roles (anon, authenticated): defence in depth.
+-- [Audit 2026-10-12 · fix a] Table privileges of the API roles (anon, authenticated) on Kafa'a tables: defence in depth.
 -- Live inherited Supabase's default privileges (`grant all on tables to anon, authenticated`), so the API roles hold TRUNCATE, REFERENCES,
--- TRIGGER and MAINTAIN on most public tables, and INSERT / UPDATE / DELETE on Kafa'a tables the repo grants SELECT only. RLS keeps the extra
--- INSERT/UPDATE/DELETE inert (no policy admits them) but does not govern TRUNCATE, and nothing in either app needs any of these.
+-- TRIGGER and MAINTAIN on most kafaa_* tables, and INSERT / UPDATE / DELETE on Kafa'a tables the repo grants SELECT only. RLS keeps the extra
+-- INSERT/UPDATE/DELETE inert (no policy admits them) but does not govern TRUNCATE, and nothing in the app needs any of these.
 -- service_role and the table owner keep everything; SECURITY DEFINER RPCs (which run as the owner) are not affected.
---   1. every public table (Kafa'a and NEXUS): revoke TRUNCATE, REFERENCES, TRIGGER (and MAINTAIN on PostgreSQL 17+) from anon and authenticated,
---      and stop tables created later by postgres from inheriting them (default privileges). PostgREST has no verb that uses them.
---   2. kafaa_* tables, derived from the repo's grants (a PGlite build of every migration, which has no Supabase defaults):
+-- Scope: kafaa_* tables only. ENEC NEXUS objects share the public schema and are not changed (handover rule): no NEXUS table grant and no
+-- default privileges are touched, so NEXUS tables, including ones it creates later, keep whatever NEXUS gives them. New kafaa_* tables are
+-- covered by the repo's migration validator (write grants must match the policies) and by re-running this file, which derives its revokes
+-- at apply time.
+--   1. revoke TRUNCATE, REFERENCES, TRIGGER (and MAINTAIN on PostgreSQL 17+) from anon and authenticated. PostgREST has no verb that uses them.
+--   2. derived from the repo's grants (a PGlite build of every migration, which has no Supabase defaults):
 --      - DELETE: the repo never grants it on a Kafa'a table and there is no DELETE policy -> revoked everywhere.
 --      - anon: SELECT only, plus INSERT on kafaa_contact_requests (the public contact form) -> other INSERT/UPDATE revoked.
 --      - authenticated: INSERT / UPDATE exactly where an INSERT / UPDATE policy admits it (the repo's 67 + 1 tables); revoked elsewhere.
---        This is the repo's own rule (rls.sql grants select, insert, update with each kafaa_insert/kafaa_update pair) and it is derived at
---        apply time, so tables added later by a wave are handled the same way when this file is re-run.
+--        This is the repo's own rule (rls.sql grants select, insert, update with each kafaa_insert/kafaa_update pair).
 --      Proof that a fresh build is unchanged by this file: PGlite privileges before and after it are identical (see the live-apply bundle
 --      docs/kafaa/ref/live_apply/audit_fixes/EXPECTED.md).
 -- Runs after 20261012151001_kafaa_audit_rpc_only_tables.sql (which removes the stale write policies of the ten RPC-only tables).
@@ -22,15 +24,11 @@ declare
   r record;
   has_pol boolean;
 begin
-  -- 1. all public tables
-  execute format('revoke truncate, references, trigger%s on all tables in schema public from anon, authenticated', v_extra);
-  if exists (select 1 from pg_roles where rolname = 'postgres') then
-    execute format('alter default privileges for role postgres in schema public revoke truncate, references, trigger%s on tables from anon, authenticated', v_extra);
-  end if;
-
-  -- 2. kafaa_* tables
   for r in select c.relname from pg_class c join pg_namespace n on n.oid = c.relnamespace
             where n.nspname = 'public' and c.relkind in ('r', 'p') and c.relname like 'kafaa\_%' order by 1 loop
+    -- 1. privileges no API role needs
+    execute format('revoke truncate, references, trigger%s on public.%I from anon, authenticated', v_extra, r.relname);
+    -- 2. writes
     execute format('revoke delete on public.%I from anon, authenticated', r.relname);
     if r.relname = 'kafaa_contact_requests' then
       execute format('revoke update on public.%I from anon', r.relname);
