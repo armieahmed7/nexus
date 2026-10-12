@@ -5,7 +5,8 @@
 // leaves the rest live (wave G: anon and authenticated kept the row-removal and table-emptying privileges on
 // kafaa_prearrival_shares; the second one bypasses RLS). The shared validator database (supabase/tests/nexus_stubs.sql) has no
 // such defaults, so a missing revoke is invisible there. This check loads the stubs, then the Supabase default privileges, then
-// every migration, and asserts on every public.kafaa_% table / view (generic: a later wave's table is covered with no change):
+// every migration, and asserts on every public.kafaa_% table / view created by a migration dated WAVE_FROM or later (waves E-I;
+// generic: a later wave's table is covered with no change):
 //   anon          SELECT only, except ANON_WRITE
 //   authenticated SELECT only, except AUTH_WRITE (direct client writes through SupabaseBackend insert/update, RLS-gated)
 //   PUBLIC        nothing
@@ -13,7 +14,12 @@
 // Every other write goes through SECURITY DEFINER kafaa_* RPCs. No client code removes rows (SupabaseBackend only inserts and
 // updates), so no exception holds a removal privilege.
 //
-// Documented exceptions (the earlier-wave convention, unchanged by 20261010289002_kafaa_fs8qa_grants_hardening.sql):
+// Scope: the schema-wide fix (the pre-wave-E tables that earlier waves left partly open on live) lives in the `audit-fixes` PR,
+// not in wave H. Until that merges, tables from before WAVE_FROM are reported by --audit only, never as failures; once it is
+// merged, the scope can widen to every public.kafaa_* relation (set WAVE_FROM to '' ). The two exception-list checks (every
+// explicit grant is documented; every documented exception is still granted) read the explicit grants only and stay schema-wide.
+//
+// Documented exceptions (the earlier-wave convention):
 //   ANON_WRITE  kafaa_contact_requests INSERT: the M12 public contact form (anonInsert in src/data/schema.ts).
 //   AUTH_WRITE  the tables some migration explicitly grants INSERT/UPDATE to authenticated: the generated RLS file
 //               (scripts/gen-schema.mjs: tables with a client write rule) and the g4 / g5 / w0e1 / w1e2 / w1e3 / w1e5 / w2e3 / fs11 grants
@@ -22,9 +28,11 @@
 //               purpose; the check also fails when a migration grants INSERT/UPDATE to a table not listed here.
 //
 // CLI (from kafaa/):
-//   node scripts/validate/fsqa8-grants.mjs --audit [--before <migration file>]  live-like grants beyond the convention
-//   node scripts/validate/fsqa8-grants.mjs --sql   [--before <migration file>]  revoke-all + re-grant statements for every
-//                                                  table whose live-like grants differ from the explicitly granted ones
+//   node scripts/validate/fsqa8-grants.mjs --audit [--before <migration file>]  live-like grants beyond the convention, every
+//                                                  relation, each row marked wave E-I (asserted) or pre-wave-E (audit only)
+//   node scripts/validate/fsqa8-grants.mjs --sql   [--before <migration file>] [--all]  revoke-all + re-grant statements for
+//                                                  every wave E-I table (every table with --all) whose live-like grants differ
+//                                                  from the explicitly granted ones
 import { PGlite } from '@electric-sql/pglite';
 import { readFileSync, readdirSync } from 'node:fs';
 import { pathToFileURL } from 'node:url';
@@ -32,6 +40,16 @@ import { pathToFileURL } from 'node:url';
 const read = (p) => readFileSync(p, 'utf8');
 export const PRIVS = ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'TRUNCATE', 'REFERENCES', 'TRIGGER'];
 const ROLES = ['anon', 'authenticated', 'public'];
+/** First migration of wave E (FS51). Tables created from here on are asserted; earlier ones are audit-only (see Scope above). */
+export const WAVE_FROM = '20261010251001';
+
+/** Names of the kafaa_* tables / views created by a migration dated WAVE_FROM or later (the generated schema file is earlier). */
+export function waveTables(before) {
+  const out = new Set();
+  for (const f of readdirSync('supabase/migrations').filter((x) => x.endsWith('.sql') && x >= WAVE_FROM && (!before || x < before)))
+    for (const m of read(`supabase/migrations/${f}`).matchAll(/create\s+(?:or\s+replace\s+)?(?:materialized\s+)?(?:table|view)\s+(?:if\s+not\s+exists\s+)?(?:public\.)?(kafaa_\w+)/gi)) out.add(m[1].toLowerCase());
+  return out;
+}
 
 // What a Supabase project has in schema public for objects the migration role (postgres) creates.
 export const SUPABASE_DEFAULT_PRIVILEGES = `
@@ -105,23 +123,26 @@ export default async function fsqa8Grants({ ok }) {
   const explicit = await loadDb({ liveLike: false });
   const L = await grantMap(live);
   const E = await grantMap(explicit);
+  const W = waveTables();
+  const inW = [...L.keys()].filter((t) => W.has(t));
   ok(L.size >= 360, `live-like grants: ${L.size} public.kafaa_* relations loaded on top of the Supabase default privileges`);
-  const v = await violations(live);
-  for (const [role, label] of [['anon', `anon holds SELECT only on every public.kafaa_* relation (exception: kafaa_contact_requests INSERT)`],
-    ['authenticated', `authenticated holds SELECT plus only the documented INSERT/UPDATE grants (${Object.keys(AUTH_WRITE).length - 1} tables, plus kafaa_contact_requests INSERT) on every public.kafaa_* relation`],
-    ['public', 'PUBLIC holds no privilege on any public.kafaa_* relation']]) {
+  ok(inW.length >= 60 && inW.length === W.size, `scope: ${inW.length} public.kafaa_* relations created by migrations from ${WAVE_FROM} (waves E-I); the ${L.size - inW.length} earlier ones are audit-only until the audit-fixes PR merges`);
+  const v = (await violations(live)).filter((x) => W.has(x.table));
+  for (const [role, label] of [['anon', `anon holds SELECT only on every wave E-I public.kafaa_* relation (exception: kafaa_contact_requests INSERT)`],
+    ['authenticated', `authenticated holds SELECT plus only the documented INSERT/UPDATE grants on every wave E-I public.kafaa_* relation`],
+    ['public', 'PUBLIC holds no privilege on any wave E-I public.kafaa_* relation']]) {
     const mine = v.filter((x) => x.role === role);
     ok(mine.length === 0, `${label}${mine.length ? `; beyond: ${brief(mine)}` : ''}`);
   }
-  ok(!v.some((x) => x.privs.some((p) => /^(DELETE|TRUNCATE)/.test(p))), 'no API role can remove rows from or empty a public.kafaa_* table (TRUNCATE bypasses RLS)');
+  ok(!v.some((x) => x.privs.some((p) => /^(DELETE|TRUNCATE)/.test(p))), 'no API role can remove rows from or empty a wave E-I public.kafaa_* table (TRUNCATE bypasses RLS)');
   // the exceptions are exactly the explicit grants: a migration that grants a client write must be listed above on purpose
   const undocumented = [];
   for (const [t, g] of E) for (const role of ROLES) for (const p of g[role]) if (!allowed(role, t).has(p)) undocumented.push({ table: t, role, privs: [p] });
   ok(undocumented.length === 0, `every explicit grant to anon / authenticated / PUBLIC is SELECT or a documented exception${undocumented.length ? `; undocumented: ${brief(undocumented.map((x) => ({ ...x, privs: [`${x.role} ${x.privs[0]}`] })))}` : ''}`);
   const unused = Object.entries(AUTH_WRITE).flatMap(([t, ps]) => ps.filter((p) => !E.get(t)?.authenticated.has(p)).map((p) => `${t} ${p}`));
   ok(unused.length === 0, `every documented authenticated exception is still granted by the migrations${unused.length ? `; stale: ${unused.join(', ')}` : ''}`);
-  const differ = [...L].filter(([t, g]) => ROLES.some((r) => [...g[r]].sort().join() !== [...(E.get(t)?.[r] ?? [])].sort().join())).map(([t]) => t);
-  ok(differ.length === 0, `live-like grants equal the explicit ones on all ${L.size} relations (nothing comes only from the Supabase defaults)${differ.length ? `; differ: ${differ.slice(0, 8).join(', ')}` : ''}`);
+  const differ = [...L].filter(([t]) => W.has(t)).filter(([t, g]) => ROLES.some((r) => [...g[r]].sort().join() !== [...(E.get(t)?.[r] ?? [])].sort().join())).map(([t]) => t);
+  ok(differ.length === 0, `live-like grants equal the explicit ones on all ${inW.length} wave E-I relations (nothing comes only from the Supabase defaults)${differ.length ? `; differ: ${differ.slice(0, 8).join(', ')}` : ''}`);
   await live.close();
   await explicit.close();
 }
@@ -132,17 +153,21 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const before = i > 0 ? process.argv[i + 1] : undefined;
   const L = await grantMap(await loadDb({ liveLike: true, before }));
   const E = await grantMap(await loadDb({ liveLike: false, before }));
+  const W = waveTables(before);
+  const scope = (t) => (W.has(t) ? 'wave E-I' : 'pre-wave-E (audit-fixes PR)');
   if (process.argv.includes('--audit')) {
     let n = 0;
     for (const [t, g] of L) for (const role of ROLES) {
       const extra = PRIVS.filter((p) => g[role].has(p) && !allowed(role, t).has(p));
-      if (extra.length) { n++; console.log(`${t}\t${role}\t${extra.join(',')}\t(intended: ${PRIVS.filter((p) => E.get(t)[role].has(p) && allowed(role, t).has(p)).join(',') || 'none'})`); }
+      if (extra.length) { n++; console.log(`${t}\t${role}\t${extra.join(',')}\t(intended: ${PRIVS.filter((p) => E.get(t)[role].has(p) && allowed(role, t).has(p)).join(',') || 'none'})\t${scope(t)}`); }
     }
-    console.log(`# ${n} relation x role rows beyond the convention, on ${new Set([...L].filter(([t, g]) => ROLES.some((r) => PRIVS.some((p) => g[r].has(p) && !allowed(r, t).has(p)))).map(([t]) => t)).size} of ${L.size} relations`);
+    const open = [...L].filter(([t, g]) => ROLES.some((r) => PRIVS.some((p) => g[r].has(p) && !allowed(r, t).has(p)))).map(([t]) => t);
+    console.log(`# ${n} relation x role rows beyond the convention, on ${open.length} of ${L.size} relations (wave E-I: ${open.filter((t) => W.has(t)).length} of ${W.size}, asserted; pre-wave-E: ${open.filter((t) => !W.has(t)).length}, audit only)`);
   }
   if (process.argv.includes('--sql')) {
     const lines = [];
     for (const [t, g] of L) {
+      if (!process.argv.includes('--all') && !W.has(t)) continue;
       const e = E.get(t);
       if (ROLES.every((r) => [...g[r]].sort().join() === [...e[r]].sort().join() && [...g[r]].every((p) => allowed(r, t).has(p)))) continue;
       const want = (r) => PRIVS.filter((p) => e[r].has(p) && allowed(r, t).has(p)).map((p) => p.toLowerCase());

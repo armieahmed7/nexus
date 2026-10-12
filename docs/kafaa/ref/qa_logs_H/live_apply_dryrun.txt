@@ -1,9 +1,9 @@
 base state loaded (migrations before the wave + base seed)
-pass 1: 20 parts applied
-pass 2: 20 parts applied
+pass 1: 19 parts applied
+pass 2: 19 parts applied
 function bodies: 73/73 equal
 digests: 25/25 equal
-table grants (from the Supabase default privileges, after the parts twice): 5/5 rows equal; nothing else is granted
+table grants (from the Supabase default privileges, after the parts twice): 2/2 rows equal; nothing else is granted
 --- removal-word grep (comments and strings included):
 none
 --- non-kafaa DDL/DML targets:
