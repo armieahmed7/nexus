@@ -5135,6 +5135,38 @@ export interface TransformationArchetypesRow {
   as_of: string;
   sort: number;
 }
+export interface TransitionPlansRow {
+  id: string;
+  person_id: string;
+  current_role_id?: string | null;
+  protected_role_id: string;
+  protected_until: string;
+  target_role_id: string;
+  horizon: '2030' | '2035';
+  trigger: 'task_automation' | 'role_redesign' | 'new_technology' | 'career_move';
+  start_on: string;
+  end_on: string;
+  reviews: any;
+  next_review_on?: string | null;
+  retraining: any;
+  practice: any;
+  note_en: string;
+  note_ar: string;
+  status: 'draft' | 'active' | 'completed' | 'withdrawn';
+  simulated: boolean;
+  acknowledged_at?: string | null;
+  revision: number;
+  history: any;
+  created_by?: string | null;
+  created_at: string;
+  updated_by?: string | null;
+  updated_at: string;
+  activated_by?: string | null;
+  activated_at?: string | null;
+  closed_by?: string | null;
+  closed_at?: string | null;
+  close_note?: string | null;
+}
 export interface SmrDeltasRow {
   id: string;
   role_id: string;
@@ -6269,6 +6301,7 @@ export interface Tables {
   transformation_drafts: TransformationDraftsRow;
   transformation_milestones: TransformationMilestonesRow;
   transformation_archetypes: TransformationArchetypesRow;
+  transition_plans: TransitionPlansRow;
   smr_deltas: SmrDeltasRow;
   plant_visits: PlantVisitsRow;
   twin_scenarios: TwinScenariosRow;

@@ -8,6 +8,7 @@
 import { useState } from 'react';
 import { Page, Card, Async, EmptyState, Callout, StatTile, Donut, BarChart, Tabs, DataTable, StatusPill, type Column } from '../../ui';
 import { useQuery, useRepo } from '../../data';
+import { useSession } from '../../auth/session';
 import { useFormat, usePick, useT, L } from '../../i18n';
 import { ARCHETYPES, BANDS, DRIVERS, MIN_GROUP, type ExposureCell, type ReadyCell } from './transform';
 import { BenchTies, DriverChip, FS11, FS12, HorizonToggle, useRefData, type RefData } from './ui';
@@ -23,9 +24,14 @@ export default function WorkforceTransformationPage() {
     const [ov, ex, edit] = await Promise.all([repo.rpc.transformationOverview(h), repo.rpc.exposureAggregate(), repo.rpc.roleTransformation(null, '2030')]);
     return { ov, ex, canEdit: !!edit?.can_edit };
   }, [h]);
+  const s = useSession();
   return (
     <Page title={t('m30.routes.workforce-transformation.title')} intro={t('m30.wf.intro')} wide
-      eyebrow={<span className="inline-flex flex-wrap items-center gap-2"><BenchTies feature={FS11} /><BenchTies feature={FS12} /></span>}>
+      eyebrow={<span className="inline-flex flex-wrap items-center gap-2"><BenchTies feature={FS11} /><BenchTies feature={FS12} /></span>}
+      actions={<span className="flex flex-wrap gap-2">{/* FS81 (wave I · E3): role-level ladder-rung alerts for every reader here; transition plans for HR (transformation A) */}
+        <L to="/workforce/rung-alerts" className="btn-outline no-underline" data-testid="m30-to-rung-alerts">{t('m30.tp.links.rung')}</L>
+        {s.can('transformation', ['A']) && <L to="/workforce/transition-plans" className="btn-outline no-underline" data-testid="m30-to-transition-plans">{t('m30.tp.links.plans')}</L>}
+      </span>}>
       <Async state={ref}>{(d) => (
         <Async state={agg}>{(a) => (
           <Tabs tabs={[

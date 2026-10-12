@@ -2823,6 +2823,13 @@ create policy kafaa_read on kafaa_transformation_archetypes for select to anon, 
 grant select on kafaa_transformation_archetypes to anon, authenticated;
 -- writes: reference data, no client writes
 
+-- transition_plans
+alter table kafaa_transition_plans enable row level security;
+drop policy if exists kafaa_read on kafaa_transition_plans;
+create policy kafaa_read on kafaa_transition_plans for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_transition_plans to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- smr_deltas
 alter table kafaa_smr_deltas enable row level security;
 drop policy if exists kafaa_read on kafaa_smr_deltas;

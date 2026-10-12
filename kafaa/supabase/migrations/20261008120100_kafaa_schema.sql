@@ -6087,6 +6087,41 @@ create table if not exists kafaa_transformation_archetypes (
 );
 comment on table kafaa_transformation_archetypes is '[M30] Role archetypes (SkillsFuture Singapore 2025): what each means for learning (FS11)';
 
+-- M30 · Transition plan (SIMULATED HR): protected role, retraining, target role, ladder-rung practice and review dates; person and HR only (FS81)
+create table if not exists kafaa_transition_plans (
+  id text primary key,
+  person_id text not null,
+  current_role_id text,
+  protected_role_id text not null,
+  protected_until date not null,
+  target_role_id text not null,
+  horizon text not null default '2030' check (horizon in ('2030', '2035')),
+  trigger text not null check (trigger in ('task_automation', 'role_redesign', 'new_technology', 'career_move')),
+  start_on date not null,
+  end_on date not null,
+  reviews jsonb not null default '[]'::jsonb,
+  next_review_on date,
+  retraining jsonb not null default '[]'::jsonb,
+  practice jsonb not null default '[]'::jsonb,
+  note_en text not null default '',
+  note_ar text not null default '',
+  status text not null default 'draft' check (status in ('draft', 'active', 'completed', 'withdrawn')),
+  simulated boolean not null default true,
+  acknowledged_at timestamptz,
+  revision integer not null default 1,
+  history jsonb not null default '[]'::jsonb,
+  created_by text,
+  created_at timestamptz not null default now(),
+  updated_by text,
+  updated_at timestamptz not null default now(),
+  activated_by text,
+  activated_at timestamptz,
+  closed_by text,
+  closed_at timestamptz,
+  close_note text
+);
+comment on table kafaa_transition_plans is '[M30] Transition plan (SIMULATED HR): protected role, retraining, target role, ladder-rung practice and review dates; person and HR only (FS81)';
+
 -- M31 · SMR delta for one current Barakah role on one ADVANCE technology family: what changes (by dimension), what stays, skills, delta training and sources; planning assumption, no deployment decision implied (FS38)
 create table if not exists kafaa_smr_deltas (
   id text primary key,
@@ -7528,6 +7563,10 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ai
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_transformations_role_id_fk') then alter table kafaa_role_transformations add constraint kafaa_role_transformations_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_transformations_family_id_fk') then alter table kafaa_role_transformations add constraint kafaa_role_transformations_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_transformation_drafts_role_id_fk') then alter table kafaa_transformation_drafts add constraint kafaa_transformation_drafts_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_transition_plans_person_id_fk') then alter table kafaa_transition_plans add constraint kafaa_transition_plans_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_transition_plans_current_role_id_fk') then alter table kafaa_transition_plans add constraint kafaa_transition_plans_current_role_id_fk foreign key (current_role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_transition_plans_protected_role_id_fk') then alter table kafaa_transition_plans add constraint kafaa_transition_plans_protected_role_id_fk foreign key (protected_role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_transition_plans_target_role_id_fk') then alter table kafaa_transition_plans add constraint kafaa_transition_plans_target_role_id_fk foreign key (target_role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_smr_deltas_role_id_fk') then alter table kafaa_smr_deltas add constraint kafaa_smr_deltas_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_smr_deltas_tech_id_fk') then alter table kafaa_smr_deltas add constraint kafaa_smr_deltas_tech_id_fk foreign key (tech_id) references kafaa_adv_technologies(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_plant_visits_person_id_fk') then alter table kafaa_plant_visits add constraint kafaa_plant_visits_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -8298,6 +8337,12 @@ create index if not exists kafaa_ai_drill_attempts_person_id_idx on kafaa_ai_dri
 create index if not exists kafaa_ai_drill_attempts_drill_id_idx on kafaa_ai_drill_attempts (drill_id);
 create index if not exists kafaa_role_transformations_family_id_idx on kafaa_role_transformations (family_id);
 create index if not exists kafaa_role_transformations_status_idx on kafaa_role_transformations (status);
+create index if not exists kafaa_transition_plans_person_id_idx on kafaa_transition_plans (person_id);
+create index if not exists kafaa_transition_plans_current_role_id_idx on kafaa_transition_plans (current_role_id);
+create index if not exists kafaa_transition_plans_protected_role_id_idx on kafaa_transition_plans (protected_role_id);
+create index if not exists kafaa_transition_plans_target_role_id_idx on kafaa_transition_plans (target_role_id);
+create index if not exists kafaa_transition_plans_next_review_on_idx on kafaa_transition_plans (next_review_on);
+create index if not exists kafaa_transition_plans_status_idx on kafaa_transition_plans (status);
 create index if not exists kafaa_smr_deltas_role_id_idx on kafaa_smr_deltas (role_id);
 create index if not exists kafaa_smr_deltas_tech_id_idx on kafaa_smr_deltas (tech_id);
 create index if not exists kafaa_smr_deltas_status_idx on kafaa_smr_deltas (status);
@@ -8393,4 +8438,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 358) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 359) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
