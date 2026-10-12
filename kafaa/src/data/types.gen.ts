@@ -5821,6 +5821,33 @@ export interface RoleOccupationsRow {
   updated_by: string;
   updated_at: string;
 }
+export interface PipelineMirrorRow {
+  id: string;
+  role_id: string;
+  nationality_flag: 'uae' | 'other';
+  hired_on: string;
+  left_on?: string | null;
+  authorised_on?: string | null;
+  source: string;
+  simulated: boolean;
+  open_read: boolean;
+}
+export interface WalletTargetsRow {
+  id: string;
+  metric: 'core_five_complete';
+  pct: number;
+  due_on: string;
+  note_en: string;
+  note_ar: string;
+  set_by: string;
+  set_by_role: string;
+  set_at: string;
+  status: 'active' | 'superseded';
+  version: number;
+  history: any;
+  benchmark_ids: string[];
+  sources: any;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -6174,6 +6201,8 @@ export interface Tables {
   national_tags: NationalTagsRow;
   tag_links: TagLinksRow;
   role_occupations: RoleOccupationsRow;
+  pipeline_mirror: PipelineMirrorRow;
+  wallet_targets: WalletTargetsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];

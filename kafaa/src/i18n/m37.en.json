@@ -22,6 +22,18 @@
     "national-occupations": {
       "title": "MoHRE occupation mapping",
       "purpose": "Every current role with an occupation label, a code only when verified, and an indicative national skill level."
+    },
+    "national-emirati-pipeline": {
+      "title": "Emirati pipeline by competency",
+      "purpose": "Emirati-ready successors, progression into authorised roles and retention for critical and future roles, by competency area; aggregate only."
+    },
+    "my-future-wallet": {
+      "title": "My Future Skills Wallet",
+      "purpose": "The core five future skills, computed from your evidence, linked to your development plan."
+    },
+    "national-future-wallet": {
+      "title": "Future Skills Wallet counter",
+      "purpose": "Staff holding the complete core-five wallet, against the dated target leadership set."
     }
   },
   "strategy": {
@@ -77,7 +89,8 @@
     "leadership_programmes": "Leadership programme",
     "critical_skills": "Critical skills register",
     "ai_org_targets": "AI fluency organisation target",
-    "cec_role_targets": "CleanEnergyComp family target"
+    "cec_role_targets": "CleanEnergyComp family target",
+    "wallet_targets": "Future Skills Wallet target"
   },
   "basis": {
     "curated": "Curated link",
@@ -102,7 +115,8 @@
     "participants": "selected or completed",
     "at_target": "staff at level {target} or above",
     "org_share": "at Practitioner or above · target {target}% by {due}",
-    "family_share": "of the family at level {target} or above"
+    "family_share": "of the family at level {target} or above",
+    "wallet_share": "with the complete wallet · target {target}% by {due}"
   },
   "reason": {
     "curated": "Linked by the HR director or an admin to {tag}, with the note shown",
@@ -364,5 +378,254 @@
     "year": "Year",
     "total": "People",
     "trendNote": "SIMULATED: synthetic staff counted at their current role's level from their hire date; role moves and leavers are not modelled, so the trend shows the hiring mix. {roles} roles mapped; cells under {min} suppressed."
+  },
+  "ep": {
+    "intro": "Emiratisation by competency, not a tally of staff: do the critical and future roles have Emirati-ready successors, and do people stay and progress into authorised roles?",
+    "toSuccession": "Succession slates",
+    "aggTitle": "Aggregate only",
+    "aggBody": "Every figure is a count over a group. Any group under {min} people shows <10. Nationality is used for this report only and never enters any score or ranking.",
+    "scopeLabel": "Roles in the report",
+    "scope": {
+      "all": "Critical and future roles",
+      "critical": "Critical roles",
+      "future": "Future roles"
+    },
+    "none": "No pipeline is available for your role.",
+    "total": "All competency areas",
+    "tile": {
+      "successors": "Emirati successors",
+      "successorsSub": "{pct} of internal successors on the slates",
+      "successorsSubSup": "share suppressed: group under 10",
+      "ready": "Ready by {date}",
+      "readySub": "{n} of {of} roles have an Emirati-ready successor",
+      "readySubSup": "role coverage suppressed ({n} roles in scope)",
+      "authorised": "Emirati authorisations, last 36 months",
+      "authorisedSub": "{pct} of all authorisations (mirror status)",
+      "authorisedSubSup": "share suppressed: group under 10",
+      "retention": "Emirati retention at 36 months",
+      "retentionSub": "all hires: {pct}",
+      "retentionSubSup": "all hires: suppressed"
+    },
+    "readyTitle": "Emirati-ready successors by date",
+    "readyIntro": "Cumulative: successors expected ready on or before each date, from the readiness band and months on the succession slate.",
+    "band": {
+      "ready_now": "Ready now",
+      "1_2y": "1 to 2 years",
+      "3_5y": "3 to 5 years"
+    },
+    "readyNote": "A person on two slates counts once, at their best band and earliest date. External emergency cover is not a successor.",
+    "retentionTitle": "Retention at 12, 24 and 36 months",
+    "mirror": "SIMULATED HR mirror",
+    "retentionIntro": "Of the people hired into these roles at least that long ago, the share still employed at that point.",
+    "emirati": "Emirati hires",
+    "allStaff": "All hires",
+    "months": "{n} months",
+    "retentionNote": "A rate is shown only when its cohort and the people retained are both 10 or more.",
+    "areasTitle": "By competency area",
+    "areasIntro": "Each competency area is the job family of the critical and future roles in it.",
+    "col": {
+      "area": "Competency area",
+      "roles": "Roles",
+      "successors": "Emirati successors",
+      "ready": "Ready by {date}",
+      "authorised": "Authorised, 36 months",
+      "retention": "Retained {n} m",
+      "why": "Why this reads so"
+    },
+    "areasNote": "<10 means the group has fewer than {min} people; the value is withheld, never estimated.",
+    "progressionTitle": "Progression into authorised roles",
+    "progressionIntro": "Emirati staff authorised in a regulated critical or future role, by year.",
+    "mirrorStatusTitle": "Mirror status, not an authority",
+    "mirrorStatusBody": "Authorisation dates mirror the licensee's own records. Kafa'a does not issue, hold or confirm any licence or authorisation.",
+    "rolesTitle": "Roles in this report",
+    "rolesIntro": "Critical roles, and roles whose current published outlook is growing. Concept roles and security roles are not included.",
+    "critical": "Critical",
+    "future": "Growing outlook",
+    "authorisedRole": "Authorised role",
+    "noSlate": "No succession slate yet",
+    "methodTitle": "How each figure is counted",
+    "method": {
+      "roles": "Roles: current roles that are critical (the role record or a critical succession slate) or whose current outlook label is growing.",
+      "successors": "Successors: internal, proposed or confirmed successors on each role's latest slate who are active staff; HR's readiness first, otherwise the computed one.",
+      "readyBy": "Ready-by date: today for ready now; otherwise the proposal date plus the months on the slate (24 or 60 when none is given).",
+      "authorised": "Authorised: an authorisation date in the HR mirror within the last 36 months; mirror status only.",
+      "retention": "Retention at N months: hired at least N months ago and not left before N months.",
+      "suppression": "Any count under {min} is withheld; a share needs both its count and its base at {min} or more.",
+      "protected": "Nationality is read only to build this aggregate. No engine reads it and no person is scored with it."
+    },
+    "asOf": "As of {date} · method {method}",
+    "ofSuccessors": "{pct} of successors",
+    "vsAll": "all: {pct}",
+    "reason": {
+      "roles": "{n} critical or future roles in this area, {slates} with a succession slate",
+      "suppressed": "Emirati successors are fewer than {min}, so the counts are withheld",
+      "successors": "{n} Emirati successors on the latest slates",
+      "retention": "{pct}% of Emirati hires were still employed after 36 months",
+      "mirror": "Retention and authorisations come from the SIMULATED HR mirror"
+    }
+  },
+  "fw": {
+    "intro": "Five future skills every member of staff can hold. Each one counts only when your records show the evidence; a self-rating never counts.",
+    "toPlan": "My development plan",
+    "none": "The wallet is for staff with a skills profile.",
+    "ringLabel": "{n}/{of}",
+    "complete": "Your wallet is complete",
+    "progress": "{n} of {of} wallet items held",
+    "evidenceOnly": "Computed from evidence only: verified, evidenced or validated records and in-date credentials.",
+    "targetLine": "Organisation target: {pct} of staff with the complete wallet by {date}.",
+    "addPlan": "Add {n} open items to my plan",
+    "allInPlan": "Open items are already in my plan",
+    "planIs": "Development plan: {status}",
+    "planStatus": {
+      "draft": "draft",
+      "submitted": "submitted",
+      "approved": "approved",
+      "active": "active"
+    },
+    "noPlanYet": "No open development plan yet: adding items starts a draft.",
+    "itemsTitle": "The core five",
+    "itemsIntro": "Each item shows its rule, your evidence and where to earn it.",
+    "confirmTitle": "Add the open items to your development plan?",
+    "confirmBody": "{n} activities are added to your open development plan, due {date}. Nothing already in the plan is added twice.",
+    "detail": {
+      "ai_rung2": "Your AI fluency rung today: {level}.",
+      "cyberUntil": "Cyber hygiene micro-credential valid until {date}.",
+      "cyberNone": "No in-date cyber hygiene micro-credential.",
+      "plantLevel": "{skill}: level {level} with evidence.",
+      "plantNone": "{skill}: no evidenced level yet.",
+      "coreLevel": "Strongest core skill: {skill}, level {level}.",
+      "coreNone": "No core skill with evidence yet.",
+      "cec_l1": "Your CleanEnergyComp level today: {level}."
+    },
+    "itemN": "Item {n}",
+    "item": {
+      "ai_rung2": {
+        "title": "AI fluency rung 2",
+        "rule": "Practitioner or above on the AI fluency ladder, from evidence in every dimension.",
+        "next": "Go to my AI fluency",
+        "short": "AI rung 2"
+      },
+      "cyber_hygiene": {
+        "title": "Cyber hygiene",
+        "rule": "The cyber hygiene micro-credential, awarded and in date. Awareness only.",
+        "next": "See the credential",
+        "short": "Cyber hygiene"
+      },
+      "plant_data": {
+        "title": "Plant-data basics",
+        "rule": "Digital tools and data literacy at level 1 or above, with evidence.",
+        "next": "See the skill",
+        "short": "Plant data"
+      },
+      "core_skill": {
+        "title": "One critical core skill",
+        "rule": "Any one of the nuclear critical core skills at level 2 or above, with evidence.",
+        "next": "Go to my core skills",
+        "short": "Core skill"
+      },
+      "cec_l1": {
+        "title": "CleanEnergyComp level 1",
+        "rule": "Level 1 or above in every CleanEnergyComp area, from evidence.",
+        "next": "Go to my clean energy profile",
+        "short": "CleanEnergyComp"
+      }
+    },
+    "met": "Held",
+    "open": "Open",
+    "inPlan": "In my plan: {status}",
+    "actStatus": {
+      "planned": "planned",
+      "in_progress": "in progress",
+      "done": "done"
+    },
+    "targetTitle": "The organisation target",
+    "targetIntro": "A dated target set by leadership, shown as a parameter beside the measured counter.",
+    "targetBy": "of staff with the complete wallet by {date}",
+    "parameter": "Leadership parameter",
+    "setBy": "Set by {who} on {date} (version {version}).",
+    "notClaimTitle": "A decision, not a claim",
+    "notClaimBody": "The target is a demo leadership decision. It states no external commitment and no national figure.",
+    "reason": {
+      "ai_rung2": {
+        "met": "Your evidence puts you at rung {level}: Practitioner or above",
+        "open": "Your evidence puts you at rung {level}; rung 2 needs evidence in every dimension"
+      },
+      "cyber_hygiene": {
+        "met": "An awarded, in-date cyber hygiene micro-credential",
+        "open": "No awarded, in-date cyber hygiene micro-credential"
+      },
+      "plant_data": {
+        "met": "Data literacy at level {level} from counted evidence",
+        "open": "No counted evidence of data literacy at level 1 yet"
+      },
+      "core_skill": {
+        "met": "A critical core skill at level {level} from counted evidence",
+        "open": "Your strongest core skill with evidence is at level {level}; level 2 is needed"
+      },
+      "cec_l1": {
+        "met": "CleanEnergyComp level {level} in every area",
+        "open": "CleanEnergyComp level {level}: every area needs level 1"
+      },
+      "evidenceOnly": "Only verified, evidenced or validated records count; self-ratings never do"
+    }
+  },
+  "fwc": {
+    "intro": "How many staff hold the complete core-five wallet, against the dated target leadership set. Computed from evidence each time; nothing is typed.",
+    "toMine": "My wallet",
+    "toTag": "National tag: Jahiz",
+    "none": "The counter is for HR and platform admins.",
+    "tile": {
+      "complete": "Complete wallets",
+      "completeSub": "of {n} active staff",
+      "share": "Share of staff",
+      "shareSub": "holding all five items",
+      "target": "Target",
+      "targetSub": "by {date}",
+      "gap": "Gap to target",
+      "gapSub": "percentage points still to go"
+    },
+    "noTarget": "No target set",
+    "points": "{n} points",
+    "counterTitle": "The counter",
+    "counterIntro": "Active staff with all five items, against the leadership target.",
+    "counterLine": "Staff with the complete wallet",
+    "targetMark": "Target by {date}",
+    "supTitle": "The count is under 10",
+    "supBody": "Fewer than {min} people hold the complete wallet today, so the count and share are withheld. The items below show where the gap is.",
+    "definition": "Definition",
+    "definitionNote": "From evidence only: self-ratings never count. Every count under 10 is suppressed.",
+    "itemsTitle": "Staff holding each item",
+    "itemsIntro": "Share of active staff holding each of the five items; the line marks the target value.",
+    "distTitle": "Items held per person",
+    "distIntro": "How many of the five items people hold.",
+    "itemsHeld": "{n} of 5",
+    "famTitle": "By job family",
+    "famIntro": "Share of each family holding each item; families under {min} people, and security, safeguards and cyber, are not broken out.",
+    "famNone": "No family is large enough to show.",
+    "whoSets": "Only the HR director sets the target.",
+    "historyNone": "No earlier setting.",
+    "historyTitle": "Earlier settings",
+    "col": {
+      "version": "Version",
+      "value": "Value",
+      "due": "Target date",
+      "setAt": "Set on"
+    },
+    "setTitle": "Set the target",
+    "setIntro": "A leadership decision: the value and date are saved with your name and the time, and the earlier setting is kept.",
+    "pct": "Share of staff (%)",
+    "due": "Target date",
+    "noteEn": "Note (English)",
+    "noteAr": "Note (Arabic)",
+    "save": "Save the target",
+    "problem": {
+      "pct": "Use a whole percentage from 1 to 100.",
+      "due": "Choose a date after today and no later than the end of 2035.",
+      "note": "Write a note of 10 to 300 characters in English and in Arabic.",
+      "clean": "The note may not state headcounts or site information."
+    },
+    "unchanged": "This is already the target.",
+    "confirmTitle": "Set the Future Skills Wallet target?",
+    "confirmBody": "The organisation target becomes {pct}% of staff by {date}. It is recorded with your name, audited and written to the NEXUS ledger."
   }
 }

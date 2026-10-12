@@ -71,7 +71,7 @@ export function MeasureCell({ m, testId }: { m: Measure | null; testId?: string 
   const f = useFormat();
   if (!m) return <span className="text-ink-3" data-testid={testId}>—</span>;
   const sup = <span className="text-ink-3" title={t('common.suppressed')} data-suppressed="true">{t('common.suppressedShort')}</span>;
-  const share = m.kind === 'org_share' || m.kind === 'family_share';
+  const share = m.kind === 'org_share' || m.kind === 'family_share' || m.kind === 'wallet_share'; // wallet_share: FS74 (fsHe2)
   return (
     <span className="inline-flex flex-col items-end gap-0.5 text-end" data-testid={testId} data-kind={m.kind} data-n={m.n ?? ''}>
       <span className="num font-semibold">{share ? (m.pct == null ? sup : f.pct(m.pct)) : m.n == null ? sup : f.num(m.n)}</span>
@@ -94,6 +94,7 @@ export function hrefFor(i: Pick<ReportItem, 'target_table' | 'target_id' | 'titl
     case 'critical_skills': return { to: `/workforce/critical-skills/${i.target_id}`, res: 'workforce_strategy', levels: ['Agg', 'R', 'W', 'A'] };
     case 'ai_org_targets': return { to: '/workforce/ai-fluency', res: 'ai_literacy', levels: ['Agg'] };
     case 'cec_role_targets': return { to: '/skills/clean-energy' };
+    case 'wallet_targets': return { to: '/national/future-wallet', res: 'national_alignment', levels: ['Agg', 'W', 'A'] }; // FS74 (fsHe2)
     default: return null;
   }
 }

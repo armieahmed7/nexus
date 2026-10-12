@@ -8,6 +8,8 @@ import { nowTs } from '../../../data/audit';
 import { todayIso } from '../../../domain/rules';
 import { linkProblem, nationalReport, sourceTier, tagProblem, targetView, worldFrom, type LinkInput, type TagInput, type TagRow } from '../national';
 import { codeProblem, occupationProblem, occupationTrend, type CodeInput, type OccupationInput } from '../occupations';
+import { emiratiPipeline, pipelineAllowed, pipelineWorldFrom } from '../pipeline';
+import { inPlan, planEntries, planFor, targetProblem, targetViewOf, walletCounter, walletStatus, walletWorld, isoZ, WALLET_METRIC, WALLET_TARGET_ID, type TargetInput } from '../wallet';
 import type { M37Rpc } from './rpc';
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -75,8 +77,27 @@ export const CODE_PROBLEM_TEXT: Record<string, string> = {
   date: 'the date the source was read, not in the future',
 };
 
+/** FS73/FS74 refusal messages (identical in SQL). */
+export const FW_MSG = {
+  not_signed_in: 'Sign in to see your Future Skills Wallet',
+  forbidden_target: 'Only the HR director sets the Future Skills Wallet target',
+  invalid: 'Check the target: ',
+  unchanged: 'This is already the target: change the value or the date',
+  forbidden_plan: 'Only staff with a development plan can do this',
+  complete: 'Your wallet is complete: there is nothing to add',
+  no_plan: 'Start a development plan first (My plan)',
+} as const;
+export const FW_PROBLEM_TEXT: Record<string, string> = {
+  pct: 'a whole percentage from 1 to 100',
+  due: 'a target date after today and no later than 2035-12-31',
+  note: 'a note of 10 to 300 characters in English and in Arabic',
+  clean: 'the note may not state headcounts or site information',
+};
+
 const txt = (v: unknown) => (typeof v === 'string' ? v.trim() : '');
 const str = (v: unknown) => (typeof v === 'string' ? v : '');
+
+const tv = (targets: Row[], people: Row[]) => targetViewOf(targets, people);
 
 export function makeLocalM37(b: LocalBackend, h: LocalRpcHelpers): M37Rpc {
   const me = () => b.identity().personId;
@@ -245,6 +266,87 @@ export function makeLocalM37(b: LocalBackend, h: LocalRpcHelpers): M37Rpc {
       await b.whenReady();
       if (!me() || !ctx().has('national_alignment', ['Agg', 'W', 'A'])) return null;
       return occupationTrend(raw('people') as never, raw('role_occupations') as never, todayIso());
+    },
+
+    // ───────────── FS73 (wave H · E2)
+    async emiratiPipeline(scope) {
+      await b.whenReady();
+      if (!me() || !pipelineAllowed(ctx().roles)) return null;
+      return emiratiPipeline(pipelineWorldFrom(raw), scope ?? 'all', todayIso());
+    },
+
+    // ───────────── FS74 (wave H · E2)
+    async myFutureWallet() {
+      await b.whenReady();
+      const pid = me();
+      if (!pid || !ctx().has('skills_profile', ['Own'])) return null;
+      const today = todayIso();
+      const w = walletWorld(raw);
+      const person = get('people', pid);
+      const plan = planFor(raw('dev_plans'), pid);
+      return {
+        person_id: pid, family_id: person?.job_family_id ?? null, as_of: today, status: walletStatus(pid, w.inputsFor(pid), today),
+        plan: plan ? { id: plan.id, status: plan.status } : null, in_plan: inPlan(raw('plan_activities'), pid), target: tv(w.targets, w.people),
+      };
+    },
+
+    async futureWalletCounter() {
+      await b.whenReady();
+      if (!me() || !ctx().has('national_alignment', ['Agg', 'W', 'A'])) return null;
+      return walletCounter(walletWorld(raw), todayIso());
+    },
+
+    async setWalletTarget(input: TargetInput) {
+      await b.whenReady();
+      type R = { id: string; version: number };
+      const id = WALLET_TARGET_ID;
+      const refuse = (c: string, msg: string, r: string | null = null) => h.refuse<R>('national.wallet_target.set', 'wallet_targets', id, c, msg, r);
+      const pid = me();
+      if (!pid) return refuse('not_signed_in', FW_MSG.not_signed_in);
+      if (!ctx().has('workforce_strategy', ['A'])) return refuse('forbidden', FW_MSG.forbidden_target);
+      const role = ctx().actingRole('workforce_strategy', ['A']);
+      const today = todayIso();
+      const problem = targetProblem(input, today);
+      if (problem) return refuse('invalid', FW_MSG.invalid + FW_PROBLEM_TEXT[problem], role);
+      const cur = get('wallet_targets', id);
+      if (cur && Number(cur.pct) === input.pct && String(cur.due_on).slice(0, 10) === input.due_on) return refuse('unchanged', FW_MSG.unchanged, role);
+      const version = cur ? Number(cur.version) + 1 : 1;
+      const at = nowTs();
+      const patch = { pct: input.pct, due_on: input.due_on, note_en: txt(input.note_en), note_ar: txt(input.note_ar), set_by: pid, set_by_role: role ?? 'hr_director', set_at: at, status: 'active', version };
+      if (cur) {
+        const prev = { version: Number(cur.version), pct: Number(cur.pct), due_on: String(cur.due_on).slice(0, 10), set_by: cur.set_by, set_by_role: cur.set_by_role, set_at: isoZ(cur.set_at), note_en: cur.note_en, note_ar: cur.note_ar };
+        upd('wallet_targets', id, { ...patch, history: [...((cur.history ?? []) as Row[]), prev] });
+      } else ins('wallet_targets', { id, metric: WALLET_METRIC, ...patch, history: [], benchmark_ids: [], sources: [] });
+      return h.done<R>('national.wallet_target.set', 'wallet_targets', id, `v${version} ${input.pct}% by ${input.due_on}`, role, 'kafaa.national.wallet_target',
+        `Future Skills Wallet target set: ${input.pct}% of staff by ${input.due_on} (v${version})`, 'Target saved', { id, version }, ['wallet_targets']);
+    },
+
+    async addWalletToPlan() {
+      await b.whenReady();
+      type R = { plan_id: string; plan_created: boolean; created: number; existing: number };
+      const pid = me();
+      const refuse = (c: string, msg: string, r: string | null = null) => h.refuse<R>('national.wallet.to_plan', 'plan_activities', pid ?? null, c, msg, r);
+      if (!pid) return refuse('not_signed_in', FW_MSG.not_signed_in);
+      const role = ctx().actingRole('dev_plans', ['Own', 'Scope']);
+      if (!role || !ctx().has('skills_profile', ['Own'])) return refuse('forbidden', FW_MSG.forbidden_plan);
+      const today = todayIso();
+      const w = walletWorld(raw);
+      const status = walletStatus(pid, w.inputsFor(pid), today);
+      if (status.complete) return refuse('complete', FW_MSG.complete, role);
+      let plan = planFor(raw('dev_plans'), pid);
+      let created = false;
+      if (!plan) {
+        const person = get('people', pid);
+        if (!person?.job_role_id || get('dev_plans', `dp-fs74-${pid}`)) return refuse('no_plan', FW_MSG.no_plan, role);
+        plan = { id: `dp-fs74-${pid}`, person_id: pid, target_role_id: person.job_role_id, status: 'draft', created_at: nowTs(), note: 'Created from the Future Skills Wallet' };
+        ins('dev_plans', plan);
+        created = true;
+      }
+      const target = targetViewOf(w.targets, w.people);
+      const { add, existing } = planEntries(status, pid, plan.id, raw('plan_activities').filter((a) => a.person_id === pid), target?.due_on ?? null);
+      for (const a of add) ins('plan_activities', a);
+      return h.done<R>('national.wallet.to_plan', 'plan_activities', plan.id, `${add.length} added, ${existing.length} already in plan ${plan.id}`, role, null, '',
+        add.length ? 'Added to your development plan' : 'Already in your development plan', { plan_id: plan.id, plan_created: created, created: add.length, existing: existing.length }, ['dev_plans', 'plan_activities']);
     },
   };
 }
