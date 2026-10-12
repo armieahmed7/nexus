@@ -64,6 +64,26 @@
     "admin-contract-roles": {
       "title": "Contracted role profiles",
       "purpose": "The ENEC role profiles each supplier is contracted to staff, with headcount bands."
+    },
+    "partner-future-readiness": {
+      "title": "Future-skills readiness",
+      "purpose": "Your contractors against the 2030 versions of the ENEC role profiles you are contracted for, with course suggestions."
+    },
+    "admin-supplier-future-readiness": {
+      "title": "Supplier future-skills readiness",
+      "purpose": "Contractor coverage of the 2030 role profiles per supplier organisation; organisations under 10 contractors suppressed."
+    },
+    "partner-prearrival": {
+      "title": "Pre-arrival share",
+      "purpose": "Share a chosen part of a contractor passport with ENEC evaluators before mobilisation."
+    },
+    "training-equivalency-prearrival": {
+      "title": "Pre-arrival checks",
+      "purpose": "Contractors' pre-arrival shares: run the pre-check from the shared items before they arrive."
+    },
+    "training-equivalency-prearrival-share": {
+      "title": "Pre-arrival share",
+      "purpose": "The shared items only, the link expiry and the pre-check from those items."
     }
   },
   "status": {
@@ -479,6 +499,18 @@
       "icv": {
         "title": "ICV",
         "body": "Certificate and improvement plan."
+      },
+      "regional": {
+        "title": "Regional skills plan",
+        "body": "ENEC's released skill demand for Al Dhafra and your commitments."
+      },
+      "pledges": {
+        "title": "Skills pledges",
+        "body": "The pledges ledger: pledged, started and completed, kept apart."
+      },
+      "pledgesRegister": {
+        "title": "Skills pledges",
+        "body": "Register a pledge for your organisation and record its progress."
       }
     },
     "isolation": "Partner data is separated by organisation in the database. You cannot see another partner's records.",
@@ -496,6 +528,14 @@
       "public": {
         "title": "Universities page",
         "body": "What the public sees about academic partners."
+      },
+      "regional": {
+        "title": "Regional skills plan",
+        "body": "ENEC's released skill demand and your seat commitments per term."
+      },
+      "pledges": {
+        "title": "Skills pledges",
+        "body": "Register a numeric pledge and record started and completed separately."
       }
     },
     "intlTitle": "International partner",
@@ -912,7 +952,13 @@
     "enec_course": "ENEC course {code}: ask your ENEC sponsor about a place.",
     "closes_gap": "Evidences {skill}.",
     "matrix_readiness": "Readiness for this role profile: {pct}% (F02 readiness over the passport).",
-    "matrix_gap": "{comp}: level {have}, the profile needs {need}."
+    "matrix_gap": "{comp}: level {have}, the profile needs {need}.",
+    "fr_req_met": "Every one of the {n} contractors holds {skill} at level {need} or above, backed by records.",
+    "fr_req_bridge": "{met} of {n} contractors hold {skill} at level {need}; {bridge} more have a foundation (one level short, or a recorded level 2+ in a related skill).",
+    "fr_req_new": "{met} of {n} contractors hold {skill} at level {need}; for the rest it is new.",
+    "fr_req_suppressed": "{skill} at level {need} is a 2030 need of this role. Counts are suppressed: fewer than 10 contractors.",
+    "fr_no_future": "The 2030 profile of {role} adds no future-skill need beyond today's profile.",
+    "fr_no_profile": "{role} has no published 2030 profile yet: only today’s profile can be compared."
   },
   "cp": {
     "introAdmin": "Your contractors' skills passports, built from supplier academy certificates, ENEC equivalency decisions and ENEC engagement sign-offs, set against the ENEC role profiles your organisation is contracted for. Only your organisation's people are shown.",
@@ -1124,5 +1170,191 @@
       "confirmBody": "{org} is contracted for {role} with a headcount band of {band}. The supplier's partner admin sees it at once. Recorded in the evidence ledger.",
       "readOnly": "Read-only: only an ENEC partner administrator can change contracted role profiles."
     }
+  },
+  "fr": {
+    "intro": "How ready are contractors for the skills the 2030 versions of ENEC role profiles add? Computed from the contractor passport (records only, never self-ratings) against each contracted role. Kafa'a prepares; ENEC decides.",
+    "backSuppliers": "Back to supplier review",
+    "emptyTitle": "No supplier readiness to show",
+    "emptyBody": "Your organisation is not a supplier with contractors or contracted ENEC role profiles yet.",
+    "tOrgs": "Supplier organisations",
+    "tOrgsSub": "{n} suppressed (fewer than 10 contractors)",
+    "tRoles": "Contracted role profiles",
+    "tContractors": "Contractors in shown organisations",
+    "tContractorsSub": "People of kind contractor on the passport",
+    "tMin": "Minimum group",
+    "tMinSub": "Smaller organisations show no counts",
+    "ringLabel": "ready for 2030",
+    "suppressedBody": "Fewer than 10 contractors: counts are suppressed. The 2030 needs and course suggestions are still shown.",
+    "orgLine": "{n} contractors · {pct} of future-skill needs met · {roles} contracted role profiles",
+    "toMatrix": "Team matrix (today)",
+    "band": "Headcount {band}",
+    "profileVersion": "2030 profile v{v}",
+    "today": "Today's profile",
+    "todayVal": "{pct} met across {n} requirements",
+    "future": "Added by 2030",
+    "futureVal": "{pct} met, {bridge} with a foundation, across {n} future needs",
+    "toProfile": "Open the role profile (now, 2030, 2035)",
+    "noFuture": "No future-skill need beyond today.",
+    "newIn2030": "New in 2030 at level {level}",
+    "raisedIn2030": "Raised from level {from} to {level} by 2030",
+    "group": {
+      "digital": "Digital",
+      "ai_literacy": "AI literacy",
+      "cyber_hygiene": "Cyber hygiene",
+      "other_future": "Other future skills"
+    },
+    "groupNone": "Not asked by the 2030 profiles of the contracted roles",
+    "groupMet": "{pct} met",
+    "groupBridge": "{pct} with a foundation",
+    "groupReqs": "{n} future needs",
+    "importance": {
+      "core": "Core",
+      "important": "Important",
+      "useful": "Useful"
+    },
+    "driver": {
+      "digital_ic": "Driver: digital I&C",
+      "ai_assistance": "Driver: AI assistance",
+      "digital_twin": "Driver: digital twins",
+      "smr_design": "Driver: SMR design",
+      "robotics": "Driver: robotics and remote inspection"
+    },
+    "legendMet": "Met {n}",
+    "legendBridge": "Foundation {n}",
+    "legendNew": "New {n}",
+    "splitAria": "{met} met, {bridge} with a foundation, {fresh} new",
+    "suggestTitle": "Course suggestions",
+    "suggestDesc": "Ranked by the contractor passport engine (F33): supplier academy first, then ENEC courses, each with the gaps it closes.",
+    "noSuggest": "No course in the catalogue evidences these needs yet.",
+    "hours": "{h} h",
+    "gapsTitle": "Supplier academy gap",
+    "gapsBody": "No supplier academy course evidences these 2030 needs yet: {skills}. ENEC courses above are the nearest options.",
+    "methodTitle": "How this is computed",
+    "m1": "Population: people of kind contractor on the organisation's passport. Company representatives are not counted.",
+    "m2": "A future need is a 2030 profile requirement that today's profile does not ask for, or asks at a lower level (FS05 role profiles).",
+    "m3": "Met: held at the 2030 level, backed by records (self-claimed levels never count). Foundation: one level short, or a recorded level 2+ in the same competency or an adjacent skill. New: neither.",
+    "m4": "Organisations with fewer than 10 contractors show no counts at all. Security, cyber and safeguards content stays out.",
+    "m5": "Guidance for supplier development only: it is not an equivalency decision, a qualification or a FANR status.",
+    "cpLink": "Future-skills readiness",
+    "admLink": "Future-skills readiness"
+  },
+  "pa": {
+    "introSelf": "Choose which parts of your passport an ENEC evaluator may see before you mobilise. The link expires on the day you set and you can revoke it at any time.",
+    "introAdmin": "Pre-arrival shares of your organisation's contractors. Only the contractor and ENEC evaluators see the shared items.",
+    "introEval": "Contractors share a chosen part of their passport before mobilisation. Open a share to run the pre-check from the shared items only.",
+    "guidanceTitle": "Guidance only",
+    "guidanceBody": "The pre-arrival check uses only the items the contractor shared. It writes no skill evidence and no qualification or equivalency status: an ENEC evaluator decides on arrival.",
+    "new": "New pre-arrival share",
+    "newTitle": "New pre-arrival share",
+    "create": "Create share link",
+    "behalf": "Record a share on behalf",
+    "behalfTitle": "Record a contractor's pre-arrival share",
+    "behalfNoteTitle": "The contractor's consent",
+    "behalfNote": "Contractors cannot sign in to Kafa'a on the live platform. Record exactly the items the contractor chose on their signed consent form, with its reference. The contractor is notified and can ask to revoke at any time.",
+    "fContractor": "Contractor",
+    "fStandard": "Qualification standard to check before arrival",
+    "fItems": "Items to share",
+    "fItemsHint": "Only what you tick is shared. Security and medical details are never shareable.",
+    "noItems": "No shareable items on this passport yet.",
+    "fLabel": "Label",
+    "fLabelHint": "3 to 80 characters, for example the outage or work package",
+    "fMobilise": "Mobilisation date",
+    "fExpires": "Link expires on",
+    "fExpiresHint": "1 to 90 days from today, and not before mobilisation",
+    "fConsentRef": "Consent form reference",
+    "fConsentRefHint": "Reference of the contractor's signed consent (3 to 80 characters)",
+    "previewTitle": "What the evaluator will see",
+    "previewEmpty": "Nothing chosen yet.",
+    "previewNote": "The evaluator sees these items with the holder initials only, until the link expires or is revoked.",
+    "consents": "Your consent",
+    "consentsBehalf": "Consent recorded on the form",
+    "cItems": "I chose these items myself.",
+    "cPreview": "I reviewed what the evaluator will see.",
+    "cShare": "I agree to share them until {date}.",
+    "cItemsBehalf": "The contractor chose exactly these items on the form.",
+    "cPreviewBehalf": "The contractor reviewed what the evaluator will see.",
+    "cShareBehalf": "The contractor agreed to share them until {date}.",
+    "confirmTitle": "Create the pre-arrival share?",
+    "confirmBody": "{n} items become visible to ENEC evaluators until {date}. You can revoke the link at any time.",
+    "behalfConfirmTitle": "Record this share on the contractor's behalf?",
+    "behalfConfirmBody": "{n} items, consent form {ref}, visible to ENEC evaluators until {date}. This is recorded in the audit trail and the ledger.",
+    "createdTitle": "Share link created",
+    "createdBody": "Your pre-arrival share is ready for ENEC evaluators.",
+    "verifyLink": "Open the public check",
+    "tActive": "Active links",
+    "tChecked": "Checked by an evaluator",
+    "tClosed": "Expired or revoked",
+    "tWaiting": "Waiting for a check",
+    "tSoon": "Mobilising within 3 weeks",
+    "tSoonSub": "Active links only",
+    "emptyTitle": "No pre-arrival shares yet",
+    "emptySelf": "Create one before your next mobilisation.",
+    "emptyAdmin": "None of your contractors has shared a pre-arrival record yet.",
+    "emptyEval": "No contractor has shared a pre-arrival record yet.",
+    "status": {
+      "active": "Active",
+      "expired": "Expired",
+      "revoked": "Revoked"
+    },
+    "via": {
+      "self": "Shared by the contractor",
+      "on_behalf": "Recorded on behalf"
+    },
+    "rowLine": "{code} · {title} · mobilising {mob} · link until {exp} · {n} items",
+    "holder": "Holder {initials}",
+    "notChecked": "Not checked yet",
+    "summary": "{likely} of {total} tasks likely from {skills} shared skills ({pct})",
+    "checkedOn": "checked {date}",
+    "revoke": "Revoke",
+    "revokeTitle": "Revoke this share link?",
+    "revokeBody": "The evaluator will no longer see the shared items and the pre-check cannot run.",
+    "revokeForContractor": "Revoke at the contractor's request",
+    "revokeEvalBody": "Record the contractor's reason. The evaluator view and the public check stop showing the items at once.",
+    "revokeReason": "Contractor's reason",
+    "cWho": "Contractor",
+    "cStandard": "Standard",
+    "cMobilise": "Mobilisation",
+    "cExpires": "Link until",
+    "cStatus": "Status",
+    "cVia": "Created",
+    "cCheck": "Last check",
+    "open": "Open",
+    "backQueue": "Back to pre-arrival checks",
+    "notFoundTitle": "Share not found",
+    "notFoundBody": "It does not exist or you cannot open it.",
+    "kHolder": "Holder",
+    "kStandard": "Standard",
+    "kMobilise": "Mobilisation",
+    "kExpires": "Link expires",
+    "kConsent": "Consent",
+    "kLast": "Last check",
+    "consentBehalfVal": "Recorded on behalf by an ENEC evaluator, consent form {ref}",
+    "consentSelfVal": "Given by the contractor (three consent steps)",
+    "revokedWhy": "Reason: {why}",
+    "closed": {
+      "expired": "This link has expired",
+      "revoked": "The contractor revoked this link"
+    },
+    "closedBody": "Nothing personal is shown. Ask the contractor for a new share before mobilisation.",
+    "sharedTitle": "Shared items ({n})",
+    "sharedDesc": "Only these items were shared. The rest of the passport stays private in this check.",
+    "run": "Run pre-check from the shared items",
+    "auditorNote": "Auditors can read the share; only ENEC evaluators run the check.",
+    "fromShared": "From {n} shared skills",
+    "noWrites": "Writes no skill evidence, no skill state and no qualification or equivalency status.",
+    "notShared": "not shared",
+    "suggestTitle": "Training before arrival",
+    "kind": {
+      "mc": "Micro-credential",
+      "badge": "Badge",
+      "qual": "Qualification mirror",
+      "skill": "Skill"
+    },
+    "qual": {
+      "qualified": "Qualified",
+      "not_qualified": "Not qualified"
+    },
+    "eqLink": "Pre-arrival checks",
+    "cpLink": "Pre-arrival share"
   }
 }

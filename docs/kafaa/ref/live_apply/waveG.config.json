@@ -1,0 +1,85 @@
+{
+  "wave": "G",
+  "wave_digit": 7,
+  "branch": "fsG-integration-qa",
+  "generated_on": "2026-10-12",
+  "base_ref": "origin/fsF-integration-qa",
+  "demo_day": "2026-10-08",
+  "max_kb": 60,
+  "out": "../docs/kafaa/ref/live_apply/waveG",
+  "migrations": [
+    {
+      "file": "20261010271001_kafaa_fs71_disclosure_pilots.sql",
+      "part": "kafaa_fs71_disclosure_pilots"
+    },
+    {
+      "file": "20261010272001_kafaa_fs72_national_alignment.sql",
+      "part": "kafaa_fs72_national_alignment"
+    },
+    {
+      "file": "20261010273001_kafaa_fs73_regional_pledges.sql",
+      "part": "kafaa_fs73_regional_pledges"
+    },
+    {
+      "file": "20261010274001_kafaa_fs74_university_alignment.sql",
+      "part": "kafaa_fs74_university_alignment"
+    },
+    {
+      "file": "20261010275001_kafaa_fs75_supplier_readiness.sql",
+      "part": "kafaa_fs75_supplier_readiness"
+    },
+    {
+      "file": "20261010279001_kafaa_fs7qa_integration.sql",
+      "part": "kafaa_fs7qa_integration"
+    }
+  ],
+  "seed_first": [
+    "organisations",
+    "hc_metrics",
+    "national_tags",
+    "record_shares"
+  ],
+  "evidence_ref_tables": [],
+  "row_updates": [
+    {
+      "part": "kafaa_fs7qa_integration_p1",
+      "table": "kafaa_engine_cards",
+      "live_rows": "1 (the mentoring card, if live still holds version 13)",
+      "local_rows": "0 (local card is version 2)",
+      "effect": "FS48 wording on the F24 mentoring card as version 14: adds the rankCircles / rankOffers scoring functions, the wfn_participants input and the FS48 limitation sentence only where missing (after the wave-F FS55 reconciliation they are already there, so only version and last_changed_at change); a second run matches no row"
+    }
+  ],
+  "digests": [
+    {
+      "label": "kafaa_organisations (2 synthetic FS64 providers)",
+      "table": "organisations",
+      "where": "id in ('org-dhafra-tech', 'org-ruwais-vti')"
+    },
+    {
+      "label": "kafaa_record_shares (FS69 pre-arrival links)",
+      "table": "record_shares",
+      "where": "id like 'rs-pa-%'"
+    },
+    {
+      "label": "kafaa_notifications (FS69 pre-arrival notices)",
+      "table": "notifications",
+      "where": "id like 'nt-pa-%'"
+    },
+    {
+      "label": "kafaa_skill_evidence (unchanged by wave G: no programme evidence is seeded)",
+      "table": "skill_evidence",
+      "where": "ref_table = 'programme_alignments'"
+    }
+  ],
+  "pre_state": "**Pre-wave state: the state AFTER the wave-F bundle.** Wave G is stacked on wave F (`fsF-integration-qa`, itself stacked on wave E): apply `docs/kafaa/ref/live_apply/waveE/`, then `docs/kafaa/ref/live_apply/waveF/`, and check each against its `EXPECTED.md` before this bundle. Wave G needs wave-F objects live: `kafaa_skill_forecasts` (FS64 foreign key), `kafaa_critical_skills` and `kafaa_crs_*` (FS60 input), the FS57 `kafaa_cov_*` functions (FS66 coverage), the FS55 columns on `kafaa_engine_cards`, and F35's `kafaa_so_text_clean`. The only shared function wave G redefines is `kafaa_verify_record_share` (fs43 body; its md5 before wave G is in the table below). The PGlite dry run started from `origin/fsF-integration-qa`'s migrations and seed (the post-wave-F state), applied every part twice and found every md5 and digest below equal; with the mentoring engine card first set to live's version 13 and its pre-FS48 text (`dry_run_live_state` in `waveG.config.json`), the card ended at version 14 with the FS48 wording after both passes.",
+  "notes": "Notes on the parts. **Pre-wave state:** the state AFTER the wave-F bundle (see section 0). **New objects only:** the five feature migrations create 15 new `kafaa_*` tables (FS60/FS61 `hc_metrics`, `hc_disclosures`, `skill_pilots`; FS62/FS63 `national_tags`, `tag_links`, `role_occupations`; FS64/FS65 `regional_demand`, `provider_commitments`, `pledges`, `pledge_progress`; FS66/FS67 `programme_alignments`, `programme_graduates`, `fellowships`, `fellowship_milestones`; FS69 `prearrival_shares`) with RLS in the per-statement form, their RPCs and internal helpers; none of them redefines a shared function. **QA part:** `kafaa_fs7qa_integration_p1` replaces `kafaa_verify_record_share` (same signature and grants; adds the `purpose` key on an active link so the public verify page labels an FS69 pre-arrival share) and holds the one guarded row update listed in 1a (the FS48 mentoring card, carried over from wave E: the wave-E bundle part `kafaa_fs5qa_integration_p2` on the parked `fsE-integration` branch did the same, but PR #1 (`fsE-integration-qa`) never carried it; if that part was already applied live the card is at version 14 and this statement matches no row). **Seed rows** load with `kafaa.seeding` on: the two synthetic provider organisations before commitments and pledges, the FS60 metrics before the disclosures, strategy-level national tags before pillars and links, the FS32 record shares `rs-pa-*` before the pre-arrival shares, the four `nt-pa-*` notices with the rest. No evidence, no person-skill row and no digest is seeded, so there is no `kafaa_skills_apply` replay part. No new policy resource or grant: no `kafaa_policy_matrix` rows to insert. **Expected drift after live use:** an HR director demo release adds rows to `kafaa_regional_demand`; journeys add commitments, pledges, shares and audit rows.",
+  "after": "## 5. After the checks\n\n- Live tables touched by E2E journeys can hold extra rows (handover section 6): compare the listed ids and the new tables' seeded ids.\n- `kafaa_hc_disclosures` values reproduce live only if the live inputs (training records, xAPI statements, credit ledger, skill states, FS50 register) equal the local seed; otherwise the HR analyst's \"Recompute values\" refreshes the unapproved 2026-Q3 lines and the approve RPC refuses stale values.\n- The seeded FS69 links expire between 2026-11-28 and 2026-12-31; re-date them after that if the demo still needs active links.\n- Then merge the stacked branches to `main` in order (wave E, wave F, then `fsG-integration-qa` retargeted to `main`) with the go-ahead, and run the full route sweep in supabase mode (handover 3.11), including the partner isolation check for M36/M09 with `alnoor-gm` and `gulfhydro-qa`.",
+  "dry_run_live_state": [
+    {
+      "label": "mentoring engine card at the live version 13 with its pre-FS48 text (as live held it before the wave-F FS55 reconciliation)",
+      "sql": "update kafaa_engine_cards set version = 13, scoring_functions = array['src/modules/m04/match.ts#rankMentors']::text[], inputs_used = (select coalesce(jsonb_agg(x), '[]'::jsonb) from jsonb_array_elements(inputs_used) x where x ->> 'key' <> 'wfn_participants'), limitations_en = 'Only mentors who opted in and have capacity appear.', limitations_ar = 'يظهر فقط المرشدون الذين اختاروا المشاركة ولديهم طاقة استيعابية.' where id = 'mentoring';",
+      "check": "select (version = 14 and scoring_functions = array['src/modules/m04/match.ts#rankMentors','src/modules/m22/future.ts#rankCircles','src/modules/m22/future.ts#rankOffers']::text[] and inputs_used @> '[{\"key\":\"wfn_participants\"}]'::jsonb and position('(FS48)' in limitations_en) > 0 and position('(FS48)' in limitations_ar) > 0 and last_changed_at = '2026-10-11T00:00:00Z'::timestamptz) ok from kafaa_engine_cards where id = 'mentoring'",
+      "expect": "the mentoring card is at version 14 with the FS48 scoring functions, input and limitation sentence (the guarded update ran once)"
+    }
+  ]
+}

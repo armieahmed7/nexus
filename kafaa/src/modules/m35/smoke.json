@@ -1,4 +1,14 @@
 {
-  "workforce-critical-skill": { "id": "cs-sk-fs-ai-verify" },
-  "workforce-skill-forecast": { "skillId": "sk-fs-ai-verify" }
+  "workforce-critical-skill": {
+    "id": "cs-sk-fs-ai-verify"
+  },
+  "workforce-skill-forecast": {
+    "skillId": "sk-fs-ai-verify"
+  },
+  "workforce-disclosure-pack": {
+    "period": "2026-Q2"
+  },
+  "workforce-pilot": {
+    "id": "sp-vr-outage-brief"
+  }
 }

@@ -2,5 +2,452 @@
   "module": {
     "name": "Skills Ecosystem"
   },
-  "routes": {}
+  "routes": {
+    "ecosystem-regional-plan": {
+      "title": "Regional skills plan for Al Dhafra",
+      "purpose": "ENEC's forward skill demand, released to local providers as suppressed aggregates, and the providers' commitments."
+    },
+    "ecosystem-commitments": {
+      "title": "Provider commitments",
+      "purpose": "Planned cohorts and course changes per term, tracked against delivery."
+    },
+    "ecosystem-commitment": {
+      "title": "Commitment",
+      "purpose": "One provider commitment: terms, delivery, review and history."
+    },
+    "ecosystem-demand-release": {
+      "title": "Release regional demand",
+      "purpose": "Share a released skill forecast with providers as suppressed regional aggregates."
+    },
+    "ecosystem-pledges": {
+      "title": "Skills pledges ledger",
+      "purpose": "Numeric upskilling pledges: pledged, started and completed, always shown apart."
+    },
+    "ecosystem-pledges-register": {
+      "title": "Our pledges",
+      "purpose": "Register pledges and record progress for your organisation."
+    }
+  },
+  "demoNote": "Demo data: every figure is SIMULATED and every commitment or pledge is SAMPLE, not a statement by any named institution.",
+  "sample": "SAMPLE",
+  "band": "{lo} – {hi}",
+  "area": {
+    "plant_systems": "Plant systems",
+    "operations": "Operations",
+    "maintenance": "Maintenance",
+    "radiation_chemistry": "Radiation protection and chemistry",
+    "engineering": "Engineering",
+    "safety": "Nuclear safety",
+    "human_performance": "Human performance",
+    "emergency": "Emergency preparedness",
+    "quality": "Quality",
+    "leadership": "Leadership",
+    "digital": "Digital and data",
+    "project": "Projects",
+    "ai_data": "AI and data",
+    "digital_plant": "Digital plant",
+    "green_energy": "Energy transition and green skills",
+    "advanced_reactor": "Advanced reactors",
+    "cyber_hygiene": "Cyber hygiene",
+    "transversal": "Transversal core skills",
+    "security": "Security"
+  },
+  "kind": {
+    "cohort": "Cohort",
+    "course_change": "Course change",
+    "new_course": "New course",
+    "apprenticeship": "Apprenticeship"
+  },
+  "level": {
+    "1": "Level 1 · foundation",
+    "2": "Level 2 · working",
+    "3": "Level 3 · proficient",
+    "4": "Level 4 · expert"
+  },
+  "scenario": {
+    "baseline": "baseline",
+    "advance": "ADVANCE",
+    "accelerated": "accelerated"
+  },
+  "term": {
+    "S1": "Sep {y} – Jan {y2}",
+    "S2": "Feb – Jul {y2}"
+  },
+  "termState": {
+    "past": "Ended",
+    "current": "In progress",
+    "future": "Not started"
+  },
+  "status": {
+    "on_track": "On track",
+    "at_risk": "At risk",
+    "behind": "Behind",
+    "not_started": "Not started",
+    "delivered": "Delivered",
+    "withdrawn": "Withdrawn"
+  },
+  "termStatus": {
+    "planned": "Planned",
+    "awaiting_report": "Awaiting report",
+    "on_track": "On track",
+    "at_risk": "At risk",
+    "behind": "Behind",
+    "delivered": "Delivered",
+    "partly": "Partly delivered",
+    "missed": "Missed",
+    "not_reported": "Not reported"
+  },
+  "hr": {
+    "pending": "Awaiting ENEC review",
+    "acknowledged": "Acknowledged by ENEC",
+    "queried": "Queried by ENEC"
+  },
+  "plStatus": {
+    "met": "Met",
+    "in_progress": "In progress",
+    "not_started": "Not started",
+    "lapsed": "Lapsed",
+    "withdrawn": "Withdrawn"
+  },
+  "type": {
+    "enec": "ENEC entities",
+    "supplier": "Suppliers",
+    "university": "Universities and institutes",
+    "partner": "Other partners"
+  },
+  "entity": {
+    "enec": "ENEC (corporate)",
+    "enec-ops": "ENEC Operations",
+    "enec-com": "ENEC Commercial",
+    "enec-con": "ENEC Consulting"
+  },
+  "reasons": {
+    "withdrawn": "The provider withdrew this commitment; it stays visible",
+    "term_missed": "{term}: {pct}% of {seats} places filled (missed)",
+    "term_not_reported": "{term} has ended without a delivery report",
+    "term_behind": "{term}: only {pct}% of {seats} places filled so far",
+    "term_partly": "{term}: {pct}% of {seats} places filled (partly delivered)",
+    "term_at_risk": "{term}: {pct}% of {seats} places filled, below 90%",
+    "all_delivered": "All {n} terms ended and delivered at 90% or more",
+    "starts": "The first planned term is {term}",
+    "awaiting": "{term} is under way; the provider has not reported it yet",
+    "on_track": "Every started term ({n}) is filled to 90% or more",
+    "basis": "{n} released skills behind this area in {year}",
+    "suppressed": "Fewer than {n}: the value is suppressed",
+    "no_gap": "No working-level gap expected in {year}",
+    "gap_plan": "{n} people-equivalents short in {year} under the {scenario} planning scenario",
+    "band": "Across the three scenarios the gap ranges from {lo} to {hi}",
+    "withheld": "{n} more skills in this area are withheld (fewer than {min} holders)",
+    "pl_withdrawn": "The pledge was withdrawn",
+    "pl_met": "Completed has reached the pledged number (target {date})",
+    "pl_lapsed": "The target date {date} passed before the pledge was met",
+    "pl_not_started": "Nobody has started yet (target {date})",
+    "pl_in_progress": "People have started; completed is below the pledge (target {date})",
+    "pl_latest": "Latest progress snapshot: {date}",
+    "pl_no_progress": "No progress has been recorded yet"
+  },
+  "problem": {
+    "commit": {
+      "area": "Choose a skill area of the current regional release.",
+      "kind": "Choose cohort, course change, new course or apprenticeship.",
+      "title": "Write a title of 5 to 160 characters in English and in Arabic.",
+      "summary": "Write a summary of 10 to 600 characters in English and in Arabic.",
+      "skills": "Pick up to eight current catalogue skills (no security skills).",
+      "level": "Choose a target level from 1 to 4.",
+      "plan": "Plan one to eight terms from the current term to Feb – Jul 2031, each with 1 to 500 seats.",
+      "locked": "Terms that have started keep their planned seats."
+    },
+    "delivery": {
+      "term": "Choose a term of the plan.",
+      "future": "A term that has not started cannot be reported.",
+      "numbers": "Enrolled from 0 to 1,000; completed from 0 to the number enrolled."
+    },
+    "pledge": {
+      "area": "Choose a skill area.",
+      "people": "Enter a whole number of people from 1 to 5,000.",
+      "date": "Choose a target date at least 30 days ahead and no later than 31 Dec 2035.",
+      "title": "Write a title of 5 to 160 characters in English and in Arabic.",
+      "department": "Give the department in English and in Arabic (up to 120 characters), or leave both empty."
+    },
+    "progress": {
+      "date": "Choose a date between the pledge date and today.",
+      "numbers": "Use whole numbers; completed can never be above started.",
+      "order": "Choose a date later than the last snapshot.",
+      "decrease": "Started and completed never go down."
+    }
+  },
+  "rp": {
+    "intro": "ENEC shares its forward skill demand with local universities and training providers as released, suppressed aggregates, and providers answer with planned cohorts and course changes that are tracked against delivery each term.",
+    "myCommitments": "Our commitments",
+    "allCommitments": "Provider commitments",
+    "toRelease": "Release new demand",
+    "toPledges": "Pledges ledger",
+    "empty": "No regional demand has been released yet",
+    "emptyBody": "The HR director releases a skill forecast to providers from the release page.",
+    "release": "Current release {id}",
+    "releaseEyebrow": "Released aggregates (SIMULATED)",
+    "releaseBody": "Built from \"{name}\", shared on {date}. Bands cover the three planning scenarios; the planning scenario is {s}.",
+    "noDecision": "Planning ranges only: no deployment decision implied, and no individual is ever counted or named.",
+    "tile": {
+      "areas": "Areas released",
+      "areasSub": "skill areas with demand in {y}",
+      "gapAreas": "Areas with a gap",
+      "gapAreasSub": "working-level gap in 2030 under {s}",
+      "withheld": "Skills withheld",
+      "withheldSub": "fewer than {n} holders; {cells} cells suppressed",
+      "mine": "Our active commitments",
+      "mineSub": "{n} need attention",
+      "years": "Horizon years",
+      "yearsSub": "the plan looks ahead to these years"
+    },
+    "demand": "Forward demand by skill area",
+    "demandIntro": "Working-level holders needed (level 2 or above) and the gap to today's pipeline, in people-equivalents. Cells under {n} are suppressed.",
+    "col": {
+      "area": "Skill area",
+      "demand": "Demand band",
+      "gap": "Gap band",
+      "plan": "Gap ({s})",
+      "withheld": "Withheld skills"
+    },
+    "tableCaption": "Released regional demand for {y}",
+    "legend": "Bar: the gap band across the three scenarios; the mark is the planning-scenario gap. <10 = suppressed.",
+    "coverage": "Our coverage of the {y} gap",
+    "coverageIntro": "Seats your organisation has planned up to Feb – Jul 2031 against each area's planning-scenario gap. Completed counts what you have reported.",
+    "cov": {
+      "gap": "2030 gap",
+      "seats": "Planned seats",
+      "completed": "Completed so far",
+      "pct": "Seats against the gap",
+      "noGap": "No gap",
+      "na": "Suppressed"
+    },
+    "how": {
+      "title": "How the released numbers are built",
+      "body": "Only aggregates leave ENEC. Each row sums the released skills of one area from a released skill forecast; skills with fewer than {n} holders are withheld and only counted, and any cell from 1 to 9 is suppressed. Levels, supply, assumptions and people never leave ENEC."
+    },
+    "loop": {
+      "title": "The commitment loop",
+      "body": "Demand signal out, provision commitment back: providers plan cohorts or course changes per academic term, report enrolment and completion each term, and ENEC acknowledges or queries each commitment."
+    },
+    "past": "Earlier releases (superseded)"
+  },
+  "cm": {
+    "intro": "Your organisation's commitments against the regional demand, with the delivery status of each term.",
+    "introHr": "Every provider's commitments against the regional demand, their delivery status and how far planned seats cover each area's 2030 gap.",
+    "toPlan": "Regional plan",
+    "commit": "Commit provision",
+    "empty": "No commitments yet",
+    "emptyProvider": "Commit provision against the released demand to start.",
+    "emptyBody": "Providers have not committed provision yet.",
+    "tile": {
+      "active": "Active commitments",
+      "activeSub": "{n} withdrawn (still listed)",
+      "seats": "Planned seats",
+      "seatsSub": "all terms of active commitments",
+      "enrolled": "Enrolled (reported)",
+      "enrolledSub": "reported by providers each term",
+      "completed": "Completed (reported)",
+      "completedSub": "a separate count, never added to seats",
+      "onTrack": "On track or delivered",
+      "onTrackSub": "{n} not started yet",
+      "risk": "At risk or behind",
+      "riskSub": "{n} behind"
+    },
+    "list": "Commitments",
+    "listIntro": "Status is computed from the reported delivery of each term; open Why this? for the terms behind it.",
+    "filter": "Filter by status",
+    "all": "All",
+    "allOrgs": "All providers",
+    "col": {
+      "title": "Commitment",
+      "org": "Provider",
+      "seats": "Planned seats",
+      "enrolled": "Enrolled",
+      "completed": "Completed",
+      "status": "Delivery status",
+      "hr": "ENEC review"
+    },
+    "coverage": "Coverage of the {y} gap by all providers",
+    "coverageIntro": "Planned seats up to Feb – Jul 2031 in active commitments against each area's planning-scenario gap in the current release.",
+    "cov": {
+      "commitments": "Commitments"
+    },
+    "how": {
+      "title": "What a commitment records",
+      "body": "A commitment is written only through the commitment service, with an audit entry: planned seats per term, delivery reported per term, ENEC's acknowledgement or query. Terms that have started cannot be re-planned; a withdrawn commitment stays listed with its reason."
+    }
+  },
+  "cd": {
+    "intro": "Planned seats, reported enrolment and completion per academic term, and the delivery status computed from them.",
+    "back": "All commitments",
+    "notFound": "Commitment not found",
+    "notFoundBody": "It does not exist or belongs to another organisation.",
+    "area": "Skill area",
+    "kind": "Type",
+    "level": "Target level",
+    "release": "Responds to release",
+    "version": "Version",
+    "statusTitle": "Delivery status",
+    "enec": "ENEC review:",
+    "withdrawnReason": "Withdrawn: {reason}",
+    "terms": "Terms",
+    "termsIntro": "Each started term is compared with its planned seats: 90% or more filled is on track or delivered, 60% or more is at risk or partly delivered, below that is behind or missed.",
+    "term": "Term",
+    "filled": "Places filled",
+    "report": "Report delivery",
+    "reportIntro": "Report enrolment and completion for a term that has started. A new report for the same term replaces the earlier one.",
+    "reportSave": "Save delivery report",
+    "reportConfirm": "Save this delivery report?",
+    "reportConsequence": "ENEC sees the report for {term}; the delivery status is recomputed and the report is audited.",
+    "noStarted": "No term has started yet.",
+    "revise": "Revise future terms",
+    "withdraw": "Withdraw commitment",
+    "withdrawConfirm": "Withdraw this commitment?",
+    "withdrawConsequence": "The commitment stays listed as withdrawn with your reason; ENEC's ledger records the change.",
+    "withdrawReason": "Reason",
+    "reviewTitle": "ENEC review",
+    "reviewIntro": "Acknowledge the commitment, or query it with a note the provider will see.",
+    "ack": "Acknowledge",
+    "query": "Query",
+    "ackConfirm": "Acknowledge this commitment?",
+    "ackConsequence": "The provider sees that ENEC acknowledged the commitment.",
+    "queryConfirm": "Query this commitment?",
+    "queryConsequence": "The provider sees your note on the commitment.",
+    "queryNote": "Note to the provider",
+    "actingHr": "HR (ENEC)",
+    "history": "History",
+    "hist": {
+      "create": "Committed (version {v})",
+      "revise": "Revised (version {v})",
+      "withdraw": "Withdrawn (version {v})"
+    }
+  },
+  "form": {
+    "title": "Commit provision",
+    "reviseTitle": "Revise commitment",
+    "intro": "Answer the released demand with a cohort, a course change, a new course or an apprenticeship, planned per academic term. The check below is the same one the service applies.",
+    "area": "Skill area",
+    "gapHint": "2030 gap {n}",
+    "kind": "Type",
+    "level": "Target level",
+    "titleEn": "Title (English)",
+    "titleAr": "Title (Arabic)",
+    "summaryEn": "Summary (English)",
+    "summaryAr": "Summary (Arabic)",
+    "skills": "Skills this provision builds",
+    "noSkills": "No current catalogue skills in this area.",
+    "plan": "Seats per academic term",
+    "planHint": "Leave a term empty to skip it. Terms that have started are locked.",
+    "locked": "locked",
+    "seatsFor": "Seats in {term}",
+    "ready": "Ready: {n} terms, {seats} seats planned.",
+    "save": "Commit",
+    "saveRevision": "Save revision",
+    "confirm": "Record this commitment?",
+    "confirmRevise": "Save this revision?",
+    "consequence": "ENEC sees the commitment, its delivery is tracked each term, and the change is audited and written to the ENEC ledger.",
+    "actingAs": "Your organisation's administrator"
+  },
+  "rel": {
+    "intro": "Share a released skill forecast with local providers as regional aggregates. Preview exactly what leaves ENEC, compare it with the current release, then release it with a note.",
+    "none": "No released skill forecast to share",
+    "pendingTitle": "A newer released forecast is not shared yet",
+    "pendingBody": "\"{name}\" was released on {date} and has not been shared with providers.",
+    "choose": "Released skill forecast",
+    "current": "current release",
+    "forecastInfo": "Planning scenario {s}; released {date}; {n} skill areas to release.",
+    "preview": "Preview for {y}",
+    "previewIntro": "The rows providers will read, computed with the release rule; the change column compares the planning-scenario gap with the current release.",
+    "planGap": "Planning gap",
+    "change": "Change",
+    "newArea": "New area",
+    "shared": {
+      "title": "What providers receive",
+      "body": "Per skill area and year: demand and gap bands across three scenarios, the planning-scenario gap, the skills behind it and how many skills are withheld. Cells from 1 to 9 are suppressed."
+    },
+    "never": {
+      "title": "What never leaves ENEC",
+      "body": "Levels, today's supply, assumptions, withheld skill names, security skills and anything about individual people."
+    },
+    "note": "Release note",
+    "noteEn": "Note to providers (English)",
+    "noteAr": "Note to providers (Arabic)",
+    "notClean": "The note may not state headcounts or site information.",
+    "isCurrent": "This forecast is already the current release.",
+    "release": "Release to providers",
+    "readOnly": "Only the HR director releases regional demand; you can preview it here.",
+    "confirm": "Release this demand to providers?",
+    "consequence": "{n} aggregate rows become visible to every partner and university; the current release is superseded; the release is audited and written to the ENEC ledger.",
+    "actingAs": "HR director"
+  },
+  "pl": {
+    "intro": "ENEC departments, suppliers and universities register numeric upskilling pledges: people, skill area and target date. Pledged, started and completed are always shown apart, because a pledge is a commitment, not a completion.",
+    "toRegister": "Our pledges",
+    "toPlan": "Regional plan",
+    "pledged": "Pledged",
+    "started": "Started",
+    "completed": "Completed",
+    "pledgedSub": "people organisations committed to upskill",
+    "startedSub": "people who have started (latest snapshot)",
+    "completedSub": "people who have completed (latest snapshot)",
+    "counts": "{n} active pledges by {o} organisations, as of {date}.",
+    "ledger": "The ledger",
+    "ledgerIntro": "Aggregates only. A cell is suppressed when it holds fewer than {n} people or comes from fewer than {o} organisations.",
+    "by": {
+      "area": "Skill area",
+      "type": "Organisation type",
+      "year": "Target year"
+    },
+    "bars": "Pledged · started · completed",
+    "pledges": "Pledges",
+    "orgs": "Organisations",
+    "why": {
+      "title": "Three numbers, never one",
+      "body": "Pledges are promises. Started and completed are counted from dated progress snapshots that only go up. The ledger never adds the three together and never turns a pledge into an achievement."
+    },
+    "sup": {
+      "title": "Small counts are suppressed",
+      "body": "Any cell with 1 to 9 people, or from fewer than {o} organisations, shows <10 instead of a value, so no single organisation's numbers show through. Each organisation sees its own exact numbers on its pledges page."
+    }
+  },
+  "pr": {
+    "intro": "Your organisation's pledges with exact numbers. Each pledge names your organisation, a skill area and a target date; record progress as dated snapshots.",
+    "introHr": "Every organisation's pledges with exact numbers (HR view). HR registers and updates pledges for ENEC entities; partners and universities update their own.",
+    "toLedger": "Ledger",
+    "register": "Register a pledge",
+    "empty": "No pledges yet",
+    "emptyBody": "Register your organisation's first pledge.",
+    "tileOwn": "{n} active pledges of your organisation",
+    "tileAll": "{n} active pledges, all organisations",
+    "hrNoteTitle": "Exact numbers, restricted view",
+    "hrNote": "This view shows every organisation's exact numbers to HR and auditors only. Staff and partners see the suppressed ledger.",
+    "list": "Pledges",
+    "col": {
+      "pledge": "Pledge",
+      "org": "Organisation",
+      "area": "Skill area",
+      "target": "Target date",
+      "status": "Status"
+    },
+    "pledgedOn": "Pledged on",
+    "chart": "Started and completed over time",
+    "noProgress": "No progress recorded yet.",
+    "snaps": "Progress snapshots",
+    "asOf": "As of",
+    "record": "Record progress",
+    "recordSave": "Save snapshot",
+    "recordConfirm": "Save this progress snapshot?",
+    "recordConsequence": "The snapshot is dated, cannot go down later and is audited; the ledger updates.",
+    "formTitle": "Register a pledge",
+    "formOwn": "The pledge is registered for your organisation.",
+    "formHr": "HR registers pledges for ENEC entities.",
+    "people": "People to upskill",
+    "titleEn": "Title (English)",
+    "titleAr": "Title (Arabic)",
+    "deptEn": "Department (English, optional)",
+    "deptAr": "Department (Arabic, optional)",
+    "ready": "Ready: {n} people by {date}.",
+    "confirm": "Register this pledge?",
+    "consequence": "The pledge appears in the ledger (suppressed for others) and is audited and written to the ENEC ledger."
+  }
 }

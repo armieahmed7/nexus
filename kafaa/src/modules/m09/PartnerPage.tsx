@@ -117,6 +117,8 @@ function SupplierHome() {
                   ['academy', '/partner/academy', 'grad'],
                   ...(isAdmin ? [['workforce', '/partner/workforce', 'users']] : []),
                   ['icv', '/partner/icv', 'chart'],
+                  ['regional', '/ecosystem/regional-plan', 'globe'], // FS64 (wave G integration)
+                  [isAdmin ? 'pledgesRegister' : 'pledges', isAdmin ? '/ecosystem/pledges/register' : '/ecosystem/pledges', 'sparkle'], // FS65 (wave G integration)
                 ].map(([k, to, icon]) => (
                   <L key={k} to={to} className="card flex items-start gap-3 p-4 hover:border-accent" data-testid={`m09-home-link-${k}`}>
                     <Icon name={icon} size={20} className="text-accent" />
@@ -142,7 +144,7 @@ function UniversityHome() {
     <>
       <Callout tone="info" title={t('m09.home.uniTitle')}>{t('m09.home.uniBody')}</Callout>
       <Grid cols={3}>
-        {[['university', '/partner/university'], ['research', '/partner/research'], ['public', '/universities']].map(([k, to]) => (
+        {[['university', '/partner/university'], ['research', '/partner/research'], ['public', '/universities'], ['regional', '/ecosystem/regional-plan'], ['pledges', '/ecosystem/pledges/register']].map(([k, to]) => ( // FS64/FS65 entry points (wave G integration)
           <L key={k} to={to} className="card p-4 hover:border-accent">
             <div className="font-semibold">{t(`m09.home.uni.${k}.title`)}</div>
             <p className="text-[12.5px] text-ink-2">{t(`m09.home.uni.${k}.body`)}</p>

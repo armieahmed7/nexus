@@ -1515,7 +1515,8 @@
       "signed": "Signed credentials",
       "signedN": "{ok} of {n} signatures valid",
       "sigTitle": "Signatures",
-      "notice": "Signatures are checked in your browser against the published Kafa'a issuer keys."
+      "notice": "Signatures are checked in your browser against the published Kafa'a issuer keys.",
+      "prearrival": "Shared by a contractor for an ENEC pre-arrival check: the evaluator sees only these items, and the check writes no evidence and no qualification status."
     }
   },
   "sg": {

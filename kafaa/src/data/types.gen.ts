@@ -2293,6 +2293,114 @@ export interface ContractorEngagementsRow {
   source: 'mirror';
   created_at: string;
 }
+export interface PrearrivalSharesRow {
+  id: string;
+  share_id: string;
+  person_id: string;
+  org_id: string;
+  standard_id: string;
+  mobilise_on: string;
+  created_via: 'self' | 'on_behalf';
+  created_by: string;
+  consent_ref: string;
+  note: string;
+  checked_by?: string | null;
+  checked_at?: string | null;
+  check_summary?: any | null;
+  created_at: string;
+}
+export interface ProgrammeAlignmentsRow {
+  id: string;
+  university_org_id: string;
+  code: string;
+  title_en: string;
+  title_ar: string;
+  degree: 'bachelor' | 'master' | 'diploma' | 'doctorate' | 'certificate';
+  nqf_level?: number | null;
+  field_en: string;
+  field_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  target_role_ids: string[];
+  skills: any;
+  placement: boolean;
+  accreditation_ref: string;
+  status: 'draft' | 'submitted' | 'endorsed' | 'returned';
+  version: number;
+  submitted_by?: string | null;
+  submitted_at?: string | null;
+  decided_by?: string | null;
+  decided_at?: string | null;
+  decision_note?: string | null;
+  criteria: any;
+  covers_from?: string | null;
+  valid_to?: string | null;
+  coverage_snapshot?: any | null;
+  history: any;
+  sample: boolean;
+  created_by?: string | null;
+  updated_at: string;
+}
+export interface ProgrammeGraduatesRow {
+  id: string;
+  person_id: string;
+  programme_id: string;
+  university_org_id: string;
+  graduated_on: string;
+  hired_on: string;
+  status: 'evidence_written' | 'awaiting_endorsement' | 'not_covered';
+  evidence_ids: string[];
+  evidence_on?: string | null;
+  recorded_by: string;
+  recorded_at: string;
+  updated_at: string;
+}
+export interface FellowshipsRow {
+  id: string;
+  kind: 'nest_fellowship' | 'sponsored_study';
+  title_en: string;
+  title_ar: string;
+  fellow_person_id: string;
+  fellow_initials: string;
+  university_org_id?: string | null;
+  host_kind: 'research_challenge' | 'advance_study';
+  host_ref: string;
+  supervisor_person_id: string;
+  supervisor_name_en: string;
+  supervisor_name_ar: string;
+  starts_on: string;
+  ends_on: string;
+  placement_en: string;
+  placement_ar: string;
+  status: 'active' | 'completed' | 'withdrawn';
+  completed_on?: string | null;
+  withdrawn_on?: string | null;
+  withdraw_reason?: string | null;
+  sample: boolean;
+  created_by?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+export interface FellowshipMilestonesRow {
+  id: string;
+  fellowship_id: string;
+  fellow_person_id: string;
+  university_org_id?: string | null;
+  supervisor_person_id: string;
+  n: number;
+  kind: string;
+  owner: 'enec' | 'university';
+  required: boolean;
+  due_on: string;
+  status: 'planned' | 'submitted' | 'signed_off';
+  submitted_by?: string | null;
+  submitted_at?: string | null;
+  note: string;
+  signed_by?: string | null;
+  signed_at?: string | null;
+  return_note?: string | null;
+  updated_at: string;
+}
 export interface FutureSkillMapRow {
   id: string;
   key: string;
@@ -5357,6 +5465,246 @@ export interface SkillForecastsRow {
   superseded_by?: string | null;
   simulated: boolean;
 }
+export interface HcMetricsRow {
+  id: string;
+  key: string;
+  iso_area: string;
+  name_en: string;
+  name_ar: string;
+  definition_en: string;
+  definition_ar: string;
+  formula_en: string;
+  formula_ar: string;
+  source_en: string;
+  source_ar: string;
+  source_tables: string[];
+  owner_function: string;
+  owner_person_id: string;
+  owner_en: string;
+  owner_ar: string;
+  unit: 'pct' | 'hours' | 'credits' | 'pp';
+  basis: 'ytd' | 'quarter' | 'point';
+  better: 'up' | 'down';
+  benchmark_ids: string[];
+  status: 'active' | 'retired';
+  sort: number;
+  version: number;
+  simulated: boolean;
+}
+export interface HcDisclosuresRow {
+  id: string;
+  period: string;
+  period_start: string;
+  period_end: string;
+  status: 'draft' | 'published';
+  metric_values: any;
+  narratives: any;
+  approvals: any;
+  materiality_en: string;
+  materiality_ar: string;
+  method: string;
+  computed_on: string;
+  prepared_by: string;
+  created_at: string;
+  updated_by?: string | null;
+  updated_at: string;
+  published_by?: string | null;
+  published_at?: string | null;
+  version: number;
+  simulated: boolean;
+}
+export interface SkillPilotsRow {
+  id: string;
+  title_en: string;
+  title_ar: string;
+  hypothesis_en: string;
+  hypothesis_ar: string;
+  comparison_en: string;
+  comparison_ar: string;
+  pilot_n?: number | null;
+  comparison_n?: number | null;
+  owner_person_id: string;
+  evaluator_person_id: string;
+  metrics: any;
+  skill_ids: string[];
+  start_on: string;
+  end_on: string;
+  status: 'draft' | 'running' | 'evaluating' | 'closed';
+  result?: 'success' | 'mixed' | 'failed' | null;
+  recommendation?: 'adopted' | 'expanded' | 'further_funded' | 'not_adopted' | null;
+  adoption?: 'adopted' | 'expanded' | 'further_funded' | 'not_adopted' | null;
+  result_en: string;
+  result_ar: string;
+  lessons_en: string;
+  lessons_ar: string;
+  signoff_by?: string | null;
+  signoff_at?: string | null;
+  closed_by?: string | null;
+  closed_at?: string | null;
+  published: boolean;
+  benchmark_ids: string[];
+  created_by: string;
+  created_at: string;
+  updated_by?: string | null;
+  updated_at: string;
+  version: number;
+  sort: number;
+  simulated: boolean;
+}
+export interface RegionalDemandRow {
+  id: string;
+  release_id: string;
+  forecast_id: string;
+  forecast_name: string;
+  cycle: number;
+  region: string;
+  scenario: 'baseline' | 'advance' | 'accelerated';
+  area: string;
+  year: number;
+  demand_low?: number | null;
+  demand_high?: number | null;
+  gap_low?: number | null;
+  gap_high?: number | null;
+  gap_plan?: number | null;
+  skills_n: number;
+  withheld_n: number;
+  skill_ids: string[];
+  suppressed: boolean;
+  note_en: string;
+  note_ar: string;
+  status: 'current' | 'superseded';
+  released: boolean;
+  released_by: string;
+  released_at: string;
+  simulated: boolean;
+}
+export interface ProviderCommitmentsRow {
+  id: string;
+  org_id: string;
+  org_name_en: string;
+  org_name_ar: string;
+  org_kind: string;
+  release_id: string;
+  area: string;
+  kind: 'cohort' | 'course_change' | 'new_course' | 'apprenticeship';
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  skill_ids: string[];
+  level: number;
+  plan: any;
+  delivery: any;
+  status: 'active' | 'withdrawn';
+  withdrawn_reason?: string | null;
+  hr_status: 'pending' | 'acknowledged' | 'queried';
+  hr_note?: string | null;
+  hr_by?: string | null;
+  hr_at?: string | null;
+  version: number;
+  history: any;
+  created_by: string;
+  created_at: string;
+  updated_by?: string | null;
+  updated_at: string;
+  open_read: boolean;
+  sample: boolean;
+}
+export interface PledgesRow {
+  id: string;
+  org_id: string;
+  org_name_en: string;
+  org_name_ar: string;
+  org_kind: string;
+  area: string;
+  people: number;
+  target_date: string;
+  pledged_on: string;
+  title_en: string;
+  title_ar: string;
+  department_en?: string | null;
+  department_ar?: string | null;
+  status: 'active' | 'withdrawn';
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  open_read: boolean;
+  sample: boolean;
+}
+export interface PledgeProgressRow {
+  id: string;
+  pledge_id: string;
+  org_id: string;
+  as_of: string;
+  started: number;
+  completed: number;
+  note_en?: string | null;
+  note_ar?: string | null;
+  reported_by: string;
+  reported_at: string;
+  open_read: boolean;
+}
+export interface NationalTagsRow {
+  id: string;
+  strategy: 'nes_2031' | 'we_uae_2031' | 'ai_2031' | 'net_zero_2050' | 'jahiz' | 'centennial_2071';
+  parent_id?: string | null;
+  kind: 'strategy' | 'pillar' | 'goal' | 'group';
+  code: string;
+  name_en: string;
+  name_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  horizon_year?: number | null;
+  owner_en?: string | null;
+  owner_ar?: string | null;
+  sources: any;
+  source_scope: 'direct' | 'indirect';
+  source_note_en?: string | null;
+  source_note_ar?: string | null;
+  derive?: 'future_group' | 'cec_net_zero' | null;
+  future_group?: string | null;
+  status: 'active' | 'retired';
+  sort: number;
+  version: number;
+  benchmark_ids: string[];
+  created_by: string;
+  created_at: string;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface TagLinksRow {
+  id: string;
+  tag_id: string;
+  target_table: string;
+  target_id: string;
+  note_en: string;
+  note_ar: string;
+  active: boolean;
+  created_by: string;
+  created_at: string;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface RoleOccupationsRow {
+  id: string;
+  role_id: string;
+  label_en: string;
+  label_ar: string;
+  mohre_code?: string | null;
+  code_status: 'pending_review' | 'verified';
+  code_source?: any | null;
+  verified_by?: string | null;
+  verified_on?: string | null;
+  skill_level: number;
+  level_basis: 'education_rule' | 'reviewed';
+  education_basis?: string | null;
+  rationale_en?: string | null;
+  rationale_ar?: string | null;
+  history: any;
+  version: number;
+  updated_by: string;
+  updated_at: string;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -5512,6 +5860,11 @@ export interface Tables {
   contract_role_targets: ContractRoleTargetsRow;
   task_skill_links: TaskSkillLinksRow;
   contractor_engagements: ContractorEngagementsRow;
+  prearrival_shares: PrearrivalSharesRow;
+  programme_alignments: ProgrammeAlignmentsRow;
+  programme_graduates: ProgrammeGraduatesRow;
+  fellowships: FellowshipsRow;
+  fellowship_milestones: FellowshipMilestonesRow;
   future_skill_map: FutureSkillMapRow;
   engine_cards: EngineCardsRow;
   reco_optouts: RecoOptoutsRow;
@@ -5687,6 +6040,16 @@ export interface Tables {
   critical_skills: CriticalSkillsRow;
   critical_skill_reviews: CriticalSkillReviewsRow;
   skill_forecasts: SkillForecastsRow;
+  hc_metrics: HcMetricsRow;
+  hc_disclosures: HcDisclosuresRow;
+  skill_pilots: SkillPilotsRow;
+  regional_demand: RegionalDemandRow;
+  provider_commitments: ProviderCommitmentsRow;
+  pledges: PledgesRow;
+  pledge_progress: PledgeProgressRow;
+  national_tags: NationalTagsRow;
+  tag_links: TagLinksRow;
+  role_occupations: RoleOccupationsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];

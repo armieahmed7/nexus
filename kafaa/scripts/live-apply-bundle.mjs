@@ -61,6 +61,7 @@ function foreignTargets(s) {
 }
 
 const files = [];
+const rowUpdates = []; // top-level UPDATE statements of existing rows (each needs a person's approval at apply time)
 let n = 0;
 const expected = [];
 const pad = (k) => String(k).padStart(2, '0');
@@ -83,6 +84,7 @@ function writeParts(name, stmts, header, describe) {
     if (Buffer.byteLength(body) > MAX + 4096 && p.length > 1) throw new Error(`${file}: too large`);
     writeFileSync(`${OUT}/${file}`, body);
     files.push(file);
+    for (const st of p) { const x = st.replace(/--.*$/gm, '').trim(); if (/^update\s+/i.test(x)) rowUpdates.push({ part: `${name}_p${k + 1}`, table: x.match(/^update\s+(?:public\.)?(\w+)/i)[1], guard: (x.match(/\bwhere\b((?:(?!\bwhere\b)[\s\S])*?);?\s*$/i)?.[1] ?? '').replace(/\s+/g, ' ').trim() }); }
     expected.push({ file, name: `${name}_p${k + 1}`, kb: Math.round(Buffer.byteLength(body) / 102.4) / 10, what: describe(p) });
   });
 }
@@ -159,10 +161,10 @@ writeParts(`kafaa_fs${w}seed_rows`, seedStmts, `seed rows the wave adds (new tab
 });
 
 // 3. guarded refreshes
-const ev = T.skill_evidence.filter((e) => cfg.evidence_ref_tables.includes(e.ref_table));
+const ev = T.skill_evidence.filter((e) => (cfg.evidence_ref_tables ?? []).includes(e.ref_table));
 const psChanged = new Set([...(changed.person_skills ?? []), ...(add.get('person_skills') ?? [])].map((id) => T.person_skills.find((r) => r.id === id)?.person_id).filter(Boolean));
 const people = [...new Set([...ev.map((e) => e.person_id), ...psChanged])].sort();
-const replay = `-- kafaa_skills_apply for the ${people.length} people whose evidence the wave changed (recorded wave evidence: ${cfg.evidence_ref_tables.join(', ')}),
+const replay = `-- kafaa_skills_apply for the ${people.length} people whose evidence the wave changed (recorded wave evidence: ${(cfg.evidence_ref_tables ?? []).join(', ')}),
 -- on the demo day ${cfg.demo_day}, after the final shared redefinition and the seed rows are in. Recomputes derived states only;
 -- recorded evidence is kept. Compare the person_skills digest below afterwards.
 do $$ declare x text; begin
@@ -171,7 +173,7 @@ do $$ declare x text; begin
   end loop;
 end $$;
 `;
-writeParts(`kafaa_fs${w}qa_replay`, [replay], 'guarded refreshes after the seed rows', () => `kafaa_skills_apply for ${people.length} people`);
+if (people.length) writeParts(`kafaa_fs${w}qa_replay`, [replay], 'guarded refreshes after the seed rows', () => `kafaa_skills_apply for ${people.length} people`); // wave G: no part when the wave writes no evidence
 
 // 4. expected values from PGlite: all migrations + seed (twice not needed here), and the bodies live must hold before the wave
 const db = new PGlite();
@@ -192,7 +194,7 @@ const newTables = [...add.keys()].filter((t) => !(t in base)).sort();
 const dg = [];
 for (const t of newTables) dg.push({ label: `kafaa_${t}`, where: 'true', ...(await digest(t)) });
 for (const d of cfg.digests ?? []) dg.push({ label: d.label, where: d.where, ...(await digest(d.table, d.where)) });
-dg.push({ label: `kafaa_person_skills of the ${people.length} replayed people (without updated_at)`, where: `person_id in (${people.length} ids, see the replay part); digest over to_jsonb(t) - 'updated_at' (the replay stamps now())`, ...(await digest('person_skills', `person_id = any(array[${people.map((p) => `'${p}'`).join(',')}])`, ['updated_at'])) });
+if (people.length) dg.push({ label: `kafaa_person_skills of the ${people.length} replayed people (without updated_at)`, where: `person_id in (${people.length} ids, see the replay part); digest over to_jsonb(t) - 'updated_at' (the replay stamps now())`, ...(await digest('person_skills', `person_id = any(array[${people.map((p) => `'${p}'`).join(',')}])`, ['updated_at'])) });
 const anon = (await db.query(`select p.proname n from pg_proc p join pg_namespace s on s.oid = p.pronamespace where s.nspname = 'public' and p.proname = any($1) and has_function_privilege('anon', p.oid, 'execute')`, [[...waveFns]])).rows.map((r) => r.n);
 const auth = (await db.query(`select p.proname n from pg_proc p join pg_namespace s on s.oid = p.pronamespace where s.nspname = 'public' and p.proname = any($1) and has_function_privilege('authenticated', p.oid, 'execute') order by 1`, [[...waveFns]])).rows.map((r) => r.n);
 
@@ -207,6 +209,12 @@ for (const r of redefined) md += `| \`${r.n}(${r.a})\` | \`${preMap.get(`${r.n}(
 md += `\n\`\`\`sql\nselect p.proname, md5(p.prosrc) from pg_proc p join pg_namespace n on n.oid = p.pronamespace\n where n.nspname = 'public' and p.proname in (${redefined.map((r) => `'${r.n}'`).filter((v, i, a) => a.indexOf(v) === i).join(', ')}) order by 1;\n\`\`\`\n\n`;
 md += `## 1. Parts, in order\n\n| # | apply_migration name | KB | what it does |\n|---|---|---|---|\n`;
 expected.forEach((e, i) => { md += `| ${i + 1} | \`${e.name}\` | ${e.kb} | ${e.what.replace(/\|/g, '/')} |\n`; });
+if (cfg.row_updates || rowUpdates.length) {
+  const want = cfg.row_updates ?? rowUpdates.map(() => ({ live_rows: '?', local_rows: '?', effect: 'see the notes' })); // strict only when the config lists them
+  if (cfg.row_updates && (want.length !== rowUpdates.length || rowUpdates.some((u, i) => u.part !== want[i].part || u.table !== want[i].table))) throw new Error(`row updates in the parts (${JSON.stringify(rowUpdates)}) differ from config row_updates`);
+  md += `\n### 1a. Statements that update existing rows (each needs a person's approval at apply time)\n\nEvery top-level \`update\` in the parts (found by the generator; ${rowUpdates.length ? `${rowUpdates.length} statement${rowUpdates.length > 1 ? 's' : ''}` : 'none'}). Everything else inserts new rows (\`on conflict (id) do nothing\`) or creates or replaces \`kafaa_*\` objects.\n\n| part | table | guard (where) | rows on live | rows locally | effect |\n|---|---|---|---|---|---|\n`;
+  rowUpdates.forEach((u, i) => { md += `| \`${u.part}\` | \`${u.table}\` | \`${u.guard.replace(/\|/g, '/')}\` | ${want[i].live_rows} | ${want[i].local_rows} | ${want[i].effect.replace(/\|/g, '/')} |\n`; });
+}
 md += `\n${cfg.notes ?? ''}\n\n## 2. Function bodies after the apply (local PGlite, \`md5(prosrc)\`)\n\nEvery function the wave's migrations create or redefine (${fnRows.length}). Live must give the same values:\n\n\`\`\`sql\nselect p.proname, pg_get_function_identity_arguments(p.oid), md5(p.prosrc) from pg_proc p join pg_namespace n on n.oid = p.pronamespace\n where n.nspname = 'public' and p.proname = any(array[<names below>]) order by 1, 2;\n\`\`\`\n\n| function | md5 |\n|---|---|\n`;
 for (const r of fnRows) md += `| \`${r.n}(${r.a})\` | \`${r.m}\` |\n`;
 md += `\n## 3. Rows after the apply (count and digest)\n\nDigest = \`left(md5(string_agg(to_jsonb(t)::text, '|' order by t.id)), 8)\` over the rows that match the filter (handover 3.10):\n\n\`\`\`sql\nselect count(*), left(md5(string_agg(to_jsonb(t)::text, '|' order by t.id)), 8) from public.kafaa_x t where <filter>;\n\`\`\`\n\n| table | filter | rows | digest |\n|---|---|---|---|\n`;

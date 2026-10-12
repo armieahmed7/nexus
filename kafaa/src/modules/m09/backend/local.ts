@@ -19,6 +19,7 @@ import {
   CPMSG, CP_REF_TABLES, HEADCOUNT_BANDS, RESTRICTED_FAMILIES, contractorEvidence, contractorOrgOf, precheck, targetId, type CpWorld, type Precheck,
 } from '../contractor';
 import type { ContractorBadge, M09Rpc } from './rpc';
+import { makeLocalFs75 } from './local.fs75'; // FS68/FS69 (fsGe5)
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 /** Offline demo key of the in-browser backend (published in the issuer profile as key-offline; same as M17's). Not the server key. */
@@ -104,6 +105,7 @@ export function makeLocalM09(b: LocalBackend, h: LocalRpcHelpers): M09Rpc {
   };
 
   return {
+    ...makeLocalFs75(b, h), // FS68/FS69 (fsGe5)
     async equivalencyPrecheck(personId, standardId) {
       await b.whenReady();
       type R = Precheck;

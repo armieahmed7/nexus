@@ -284,4 +284,6 @@ export function shareProblem(x: ShareInput, available: RecordItem[], today: stri
 }
 /** Effective state of a share link today: revoked, expired (after its expiry day) or active. */
 export const shareView = (s: Pick<ShareRow, 'revoked_at' | 'expires_on'>, today: string): 'active' | 'expired' | 'revoked' => (s.revoked_at ? 'revoked' : String(s.expires_on).slice(0, 10) < today ? 'expired' : 'active');
-export interface VerifyResult { found: boolean; status: 'active' | 'expired' | 'revoked'; checked_on: string; expires_on?: string; holder_initials?: string; item_count?: number; clr?: Row; notice: string }
+export interface VerifyResult { found: boolean; status: 'active' | 'expired' | 'revoked'; checked_on: string; expires_on?: string; holder_initials?: string; item_count?: number; clr?: Row; notice: string; purpose?: string } // purpose (wave G integration, FS69 -> FS32): 'prearrival' for a contractor pre-arrival share, else 'record'
+/** Why a link was shared (active links only): FS69 pre-arrival shares carry consents.purpose = 'prearrival' (= SQL coalesce(consents ->> 'purpose', 'record')). */
+export const sharePurpose = (consents: unknown): string => { const p = (consents as { purpose?: unknown } | null)?.purpose; return typeof p === 'string' && p ? p : 'record'; };

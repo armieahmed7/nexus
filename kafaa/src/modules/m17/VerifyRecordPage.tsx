@@ -73,6 +73,7 @@ function Shown({ v }: { v: VerifyResult }) {
               [t('m17.lr.verify.validUntil'), v.expires_on ? f.date(v.expires_on) : '—'],
               [t('m17.lr.verify.signed'), t('m17.lr.verify.signedN', { ok: f.num(valid), n: f.num(checks.length) })],
             ]} />
+            {v.purpose === 'prearrival' && <p className="text-[12.5px] text-ink-2" data-testid="m17-lr-verify-purpose">{t('m17.lr.verify.prearrival')}</p>}
           </div>
         </div>
       </Card>
