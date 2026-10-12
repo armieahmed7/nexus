@@ -52,6 +52,7 @@ export default function NeedsPage() {
       wide
       actions={
         <div className="flex flex-wrap gap-2">
+          <L to="/training/coverage" className="btn-outline btn-sm" data-testid="m25-needs-to-coverage"><Icon name="filter" />{t('m25.routes.training-coverage.title')}</L>
           <button type="button" className="btn-outline btn-sm" onClick={exportCsv} disabled={!rep} data-testid="m25-needs-export"><Icon name="download" />{t('m25.needs.export')}</button>
           {q.data?.can_compute && <button type="button" className="btn-primary btn-sm" onClick={() => setCompute(true)} data-testid="m25-needs-compute"><Icon name="reset" />{t('m25.needs.compute')}</button>}
         </div>

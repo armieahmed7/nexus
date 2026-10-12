@@ -10,6 +10,7 @@ import { Async, BarChart, Callout, Card, ConfirmDialog, EmptyState, Grid, Icon, 
 import { L, useFormat, useLang, usePick, useT } from '../../i18n';
 import { L1_ITEMS, type CourseCard } from './eff';
 import { LevelDots, Sup, TrendChip, VerdictPill, useM25Labels, useM25Refs } from './ui';
+import { SkillChangeCard } from './fs56ui'; // FS56 (wave F · E4)
 
 export default function EffectivenessCoursePage() {
   const { courseId = '' } = useParams();
@@ -122,6 +123,8 @@ export default function EffectivenessCoursePage() {
                 )}
               </Card>
             </Grid>
+
+            <SkillChangeCard courseId={courseId} />
 
             <ConfirmDialog
               open={flag}
