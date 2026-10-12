@@ -16,7 +16,7 @@ instead of working around the foundation.
 3. **Security-sensitive content stays out.** Security, safeguards and cyber roles show the career path only, and status only as qualified or not qualified. No clearance details, medical details, exam content or plant security arrangements.
 4. **Speak-up (`/speak-up`, M08) sends no analytics or audit events.** The route guard has `noTelemetry: true`; do not add `logDenied`, toasts that write, or any repository write there. The smoke test checks the network.
 5. **Secrets.** Never commit the NEXUS demo password. It reaches the app only through `VITE_NEXUS_DEMO_PASSWORD` in an uncommitted `.env.local`. Never paste tokens into code, tests or prompts.
-6. **Kafa'a-only personas** (`k-*`, marked `*` in section 9) exist only in Kafa'a tables. Never create NEXUS auth users, profiles or rows in any non-`kafaa_` table for them.
+6. **Kafa'a-only personas** (`k-*`, marked `*` in section 9) exist only in Kafa'a tables. Never create NEXUS auth users, profiles or rows in any non-`kafaa_` table for them. On the live backend each one signs in through the Edge Function `kafaa-persona-signin` (`supabase/functions/`), which keeps one Supabase Auth user per persona on its own domain (`<persona>@personas.kafaa.demo`, persona in `app_metadata.kafaa_persona`, no password, no NEXUS profile); `kafaa_me()` resolves the NEXUS profile first, then that claim (`20261012161001_kafaa_persona_signin.sql`). Only that function creates those users.
 7. **Additive database changes only.** Only `kafaa_*` objects. Never alter or drop NEXUS objects. Module engineers never apply anything to the live project; the foundation does (section 7).
 8. **Small groups are suppressed.** Any aggregate cell under `MIN_GROUP_SIZE` (10) shows "suppressed", never a value. Use `suppress()` from `src/domain/rules.ts` and the SQL aggregate RPCs.
 9. **Git.** Stage only the files you changed (`git add <paths>`, never `git add .` or `-A`). Do not push. End every commit message with the two trailer lines the coordinator gives you.
@@ -129,9 +129,9 @@ await act(() => repo.rpc.signoffEvaluation({ record_id, task_id, result: 'pass' 
 - `npm run check:public` fails if a public payload carries a person name, email or photo URL.
 - Optional live check (foundation): `KAFAA_E2E_PASSWORD=… node scripts/e2e-supabase.mjs [--write]`.
 
-## 9. Personas (local backend: all 57; supabase backend: the 43 NEXUS role cards)
+## 9. Personas (local backend: all 57; supabase backend: all 57 once `kafaa-persona-signin` is deployed)
 
-`*` = Kafa'a-only persona (local backend only). Sign in at `/kafaa/sign-in`.
+`*` = Kafa'a-only persona (local backend, and the live backend through the `kafaa-persona-signin` Edge Function). Sign in at `/kafaa/sign-in`.
 
 | Platform role | Personas |
 |---|---|

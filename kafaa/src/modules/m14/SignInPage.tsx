@@ -1,7 +1,7 @@
 /**
  * Sign-in (foundation, M14). Demo role cards, no passwords. Opening a URL never signs anyone in (B-01): a persona
  * is chosen explicitly here. Local mode: any of the 57 personas. Supabase mode: the 43 NEXUS role cards via the
- * NEXUS session; Kafa'a-only personas need the local demo backend.
+ * NEXUS session, and the 14 Kafa'a-only personas via the kafaa-persona-signin Edge Function (src/auth/personaSession.ts).
  */
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -51,7 +51,7 @@ export default function SignInPage() {
     const r = await s.signIn(p.persona);
     setBusy(null);
     if (!r.ok) {
-      setError(r.message ?? t('m14.signIn.failed'));
+      setError(r.code ? t(`m14.signIn.errors.${r.code}`) : r.message ?? t('m14.signIn.failed'));
       return;
     }
     toast.push({ tone: 'ok', title: t('m14.signIn.signedInAs', { who: lang === 'ar' ? p.title_ar : p.title_en }) });
@@ -93,20 +93,19 @@ export default function SignInPage() {
           <p className="text-[13px] text-ink-2">{t(`m14.signIn.groupHelp.${g.id}`)}</p>
           <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {g.items.map((p) => {
-              const disabled = s.backend === 'supabase' && !p.nexus;
               const current = s.identity.personaId === p.persona;
               return (
                 <li key={p.persona}>
                   <button
-                    className={`card flex h-full w-full flex-col items-start gap-2 p-3 text-start transition hover:border-accent ${current ? 'border-accent ring-2 ring-accent/20' : ''} ${disabled ? 'opacity-60' : ''}`}
-                    onClick={() => (disabled ? setError(t('m14.signIn.localOnlyError')) : choose(p))}
+                    className={`card flex h-full w-full flex-col items-start gap-2 p-3 text-start transition hover:border-accent ${current ? 'border-accent ring-2 ring-accent/20' : ''}`}
+                    onClick={() => choose(p)}
                     disabled={busy !== null}
                     data-testid={`persona-${p.persona}`}
                     aria-describedby={`pd-${p.persona}`}
                   >
                     <div className="flex w-full items-start justify-between gap-2">
                       <span className="font-semibold">{lang === 'ar' ? p.title_ar : p.title_en}</span>
-                      {p.nexus ? <span className="chip border-accent/30 bg-accent-soft text-eyebrow">NEXUS</span> : <span className="chip border-sim-line bg-sim-bg text-sim">{t('m14.signIn.localOnly')}</span>}
+                      {p.nexus ? <span className="chip border-accent/30 bg-accent-soft text-eyebrow">NEXUS</span> : <span className="chip border-accent/30 bg-accent-soft text-eyebrow" data-testid={`persona-badge-${p.persona}`}>{t('m14.signIn.kafaaBadge')}</span>}
                     </div>
                     <div id={`pd-${p.persona}`} className="flex flex-wrap gap-1">
                       {p.roles.map((r: PlatformRole) => (

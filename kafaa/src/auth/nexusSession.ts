@@ -18,18 +18,37 @@ const K_SESSIONS = 'nexus.auth.v1.sessions';
 const K_ACTIVE = 'nexus.active';
 const K_CONSENT = 'nexus.auth.v1.consent';
 
-function readMap(): Record<string, NexusTokens> {
+/** Kafa'a-only personas (k-*) signed in through the kafaa-persona-signin Edge Function keep their tokens here, in the same shape. */
+export const K_KAFAA_SESSIONS = 'kafaa.auth.v1.sessions';
+
+function readMap(key = K_SESSIONS): Record<string, NexusTokens> {
   try {
-    return JSON.parse(localStorage.getItem(K_SESSIONS) || '{}') as Record<string, NexusTokens>;
+    return JSON.parse(localStorage.getItem(key) || '{}') as Record<string, NexusTokens>;
   } catch {
     return {};
   }
 }
-function writeEntry(persona: string, tokens: NexusTokens) {
+export function writeEntry(persona: string, tokens: NexusTokens, key = K_SESSIONS) {
   try {
-    const fresh = readMap(); // re-read immediately before writing
+    const fresh = readMap(key); // re-read immediately before writing
     fresh[persona] = tokens;
-    localStorage.setItem(K_SESSIONS, JSON.stringify(fresh));
+    localStorage.setItem(key, JSON.stringify(fresh));
+  } catch {
+    /* ignore */
+  }
+}
+/** The token map that holds this persona: the Kafa'a persona map when it has an entry, else the NEXUS map. */
+function mapKeyFor(persona: string): string {
+  return readMap(K_KAFAA_SESSIONS)[persona] ? K_KAFAA_SESSIONS : K_SESSIONS;
+}
+export function readTokens(persona: string, key = K_SESSIONS): NexusTokens | null {
+  return readMap(key)[persona] ?? null;
+}
+export function dropEntry(persona: string, key: string) {
+  try {
+    const map = readMap(key);
+    delete map[persona];
+    localStorage.setItem(key, JSON.stringify(map));
   } catch {
     /* ignore */
   }
@@ -46,7 +65,7 @@ export function activeNexusPersona(): string | null {
   }
 }
 
-async function tokenRequest(grant: 'refresh_token' | 'password', body: Record<string, string>): Promise<NexusTokens | null> {
+export async function tokenRequest(grant: 'refresh_token' | 'password', body: Record<string, string>): Promise<NexusTokens | null> {
   try {
     const r = await fetch(`${config.supabaseUrl}/auth/v1/token?grant_type=${grant}`, {
       method: 'POST',
@@ -67,16 +86,17 @@ export function accessTokenFor(persona: string): Promise<string | null> {
   const existing = inflight.get(persona);
   if (existing) return existing;
   const p = (async () => {
-    const t = readMap()[persona];
+    const key = mapKeyFor(persona);
+    const t = readMap(key)[persona];
     if (!t) return null;
     if (t.expires_at - 60 > Date.now() / 1000) return t.access_token;
     const next = await tokenRequest('refresh_token', { refresh_token: t.refresh_token });
     if (next) {
-      writeEntry(persona, { ...next, email: next.email || t.email });
+      writeEntry(persona, { ...next, email: next.email || t.email }, key);
       return next.access_token;
     }
     // The refresh token may have been rotated by another tab: re-read once before giving up.
-    const again = readMap()[persona];
+    const again = readMap(key)[persona];
     if (again && again.expires_at - 60 > Date.now() / 1000) return again.access_token;
     return null;
   })().finally(() => inflight.delete(persona));
