@@ -6909,6 +6909,147 @@ create table if not exists kafaa_pledge_progress (
 );
 comment on table kafaa_pledge_progress is '[M36] A dated progress snapshot of a pledge: people started and people completed, cumulative and never decreasing (FS65)';
 
+-- M36 · A bi-monthly mobility micro-grant round: window from the day after the previous deadline to its own deadline (10th of an even month), decisions 14 days later; budget and maximum award SIMULATED (FS82)
+create table if not exists kafaa_grant_rounds (
+  id text primary key,
+  opens_on date not null,
+  closes_on date not null unique,
+  decide_by date not null,
+  budget integer not null,
+  max_award integer not null,
+  currency text not null default 'AED',
+  note text,
+  simulated boolean not null default true,
+  created_by text not null,
+  created_at timestamptz not null default now(),
+  sample boolean not null default false
+);
+comment on table kafaa_grant_rounds is '[M36] A bi-monthly mobility micro-grant round: window from the day after the previous deadline to its own deadline (10th of an even month), decisions 14 days later; budget and maximum award SIMULATED (FS82)';
+
+-- M36 · A mobility micro-grant application: activity, purpose, dates, cost lines (SIMULATED AED), the skill it builds and the promised output; the HR decision; the output (report or presentation) and its review; own rows + HR (FS82)
+create table if not exists kafaa_grant_applications (
+  id text primary key,
+  round_id text not null,
+  person_id text not null,
+  initials text not null default '',
+  job_role_id text,
+  years integer,
+  basis text not null check (basis in ('early_career', 'placement')),
+  kind text not null check (kind in ('conference', 'short_course', 'site_visit', 'exchange')),
+  title text not null,
+  purpose text not null,
+  destination text not null,
+  starts_on date not null,
+  ends_on date not null,
+  costs jsonb not null default '[]'::jsonb,
+  amount integer not null,
+  skill_id text not null,
+  output_kind text not null check (output_kind in ('report', 'presentation')),
+  status text not null default 'submitted' check (status in ('submitted', 'approved', 'declined', 'withdrawn')),
+  awarded integer,
+  decided_by text,
+  decided_at timestamptz,
+  decision_note text,
+  output_status text not null default 'none' check (output_status in ('none', 'submitted', 'accepted', 'returned')),
+  output jsonb not null default '{}'::jsonb,
+  output_reviewed_by text,
+  output_reviewed_at timestamptz,
+  output_note text,
+  evidence jsonb not null default '[]'::jsonb,
+  profile_evidence boolean not null default false,
+  on_behalf boolean not null default false,
+  consent_ref text,
+  created_by text not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  sample boolean not null default false
+);
+comment on table kafaa_grant_applications is '[M36] A mobility micro-grant application: activity, purpose, dates, cost lines (SIMULATED AED), the skill it builds and the promised output; the HR decision; the output (report or presentation) and its review; own rows + HR (FS82)';
+
+-- M36 · A multi-employer trainee cohort (ENEC with synthetic partner organisations): partner sites and seats, shared modules hosted in turn, a project, cross-employer mentors (role cards), SIMULATED shared budget; builds on an FS20 academy (FS83)
+create table if not exists kafaa_consortium_cohorts (
+  id text primary key,
+  code text not null unique,
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  intake_year integer not null,
+  academy_id text not null,
+  nominations_close_on date not null,
+  starts_on date not null,
+  ends_on date not null,
+  partners jsonb not null default '[]'::jsonb,
+  modules jsonb not null default '[]'::jsonb,
+  project_en text not null,
+  project_ar text not null,
+  deliverable_en text not null,
+  deliverable_ar text not null,
+  mentors jsonb not null default '[]'::jsonb,
+  skills text[] not null default '{}'::text[],
+  budget jsonb not null default '[]'::jsonb,
+  currency text not null default 'AED',
+  sources jsonb not null default '[]'::jsonb,
+  simulated boolean not null default true,
+  synthetic boolean not null default true,
+  listed boolean not null default true,
+  sort integer not null default 0
+);
+comment on table kafaa_consortium_cohorts is '[M36] A multi-employer trainee cohort (ENEC with synthetic partner organisations): partner sites and seats, shared modules hosted in turn, a project, cross-employer mentors (role cards), SIMULATED shared budget; builds on an FS20 academy (FS83)';
+
+-- M36 · A consortium trainee: ENEC staff (person) or a partner trainee (pseudonymous code only), employer, discipline, nomination and HR decision, cross-employer mentor and project team; trainee + own employer + HR (FS83)
+create table if not exists kafaa_consortium_members (
+  id text primary key,
+  cohort_id text not null,
+  org_id text not null,
+  person_id text,
+  initials text,
+  trainee_code text not null,
+  discipline text not null check (discipline in ('mechanical', 'electrical', 'chemical', 'operations', 'instrumentation', 'environmental', 'digital')),
+  status text not null default 'nominated' check (status in ('nominated', 'accepted', 'declined', 'withdrawn', 'completed')),
+  nominated_by text not null,
+  nominated_at timestamptz not null default now(),
+  decided_by text,
+  decided_at timestamptz,
+  decision_note text,
+  mentor_id text,
+  team text,
+  open_read boolean not null default false,
+  sample boolean not null default false
+);
+comment on table kafaa_consortium_members is '[M36] A consortium trainee: ENEC staff (person) or a partner trainee (pseudonymous code only), employer, discipline, nomination and HR decision, cross-employer mentor and project team; trainee + own employer + HR (FS83)';
+
+-- M36 · A cross-site visit by a consortium trainee to another member organisation: logged, then confirmed or declined by the host only; confirmation writes evidence on the host site's focus skill (F01 for ENEC staff) (FS83)
+create table if not exists kafaa_consortium_visits (
+  id text primary key,
+  cohort_id text not null,
+  member_id text not null,
+  org_id text not null,
+  person_id text,
+  trainee_code text not null,
+  host_org_id text not null,
+  module_id text,
+  visit_on date not null,
+  hours numeric not null,
+  note text not null default '',
+  skill_id text not null,
+  status text not null default 'logged' check (status in ('logged', 'confirmed', 'declined', 'withdrawn')),
+  logged_by text not null,
+  logged_via text not null check (logged_via in ('self', 'employer', 'programme')),
+  confirmed_via text check (confirmed_via in ('host', 'enec_host', 'on_behalf')),
+  host_ref text,
+  decided_by text,
+  decided_at timestamptz,
+  decline_reason text,
+  level integer not null default 0,
+  evidence jsonb not null default '[]'::jsonb,
+  profile_evidence boolean not null default false,
+  created_at timestamptz not null default now(),
+  open_read boolean not null default false,
+  sample boolean not null default false
+);
+comment on table kafaa_consortium_visits is '[M36] A cross-site visit by a consortium trainee to another member organisation: logged, then confirmed or declined by the host only; confirmation writes evidence on the host site''s focus skill (F01 for ENEC staff) (FS83)';
+
 -- M37 · National-strategy tag (NES 2031, We the UAE 2031, National AI Strategy 2031, Net Zero 2050, Jahiz groups, UAE Centennial 2071) with its pillars, goals or groups: EN/AR name and summary, horizon, sources with tiers (the most official first), derivation rule; never a typed total (FS62)
 create table if not exists kafaa_national_tags (
   id text primary key,
@@ -7565,6 +7706,19 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_pr
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_pledges_org_id_fk') then alter table kafaa_pledges add constraint kafaa_pledges_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_pledge_progress_pledge_id_fk') then alter table kafaa_pledge_progress add constraint kafaa_pledge_progress_pledge_id_fk foreign key (pledge_id) references kafaa_pledges(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_pledge_progress_org_id_fk') then alter table kafaa_pledge_progress add constraint kafaa_pledge_progress_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_grant_applications_round_id_fk') then alter table kafaa_grant_applications add constraint kafaa_grant_applications_round_id_fk foreign key (round_id) references kafaa_grant_rounds(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_grant_applications_person_id_fk') then alter table kafaa_grant_applications add constraint kafaa_grant_applications_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_grant_applications_skill_id_fk') then alter table kafaa_grant_applications add constraint kafaa_grant_applications_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_consortium_cohorts_academy_id_fk') then alter table kafaa_consortium_cohorts add constraint kafaa_consortium_cohorts_academy_id_fk foreign key (academy_id) references kafaa_academies(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_consortium_members_cohort_id_fk') then alter table kafaa_consortium_members add constraint kafaa_consortium_members_cohort_id_fk foreign key (cohort_id) references kafaa_consortium_cohorts(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_consortium_members_org_id_fk') then alter table kafaa_consortium_members add constraint kafaa_consortium_members_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_consortium_members_person_id_fk') then alter table kafaa_consortium_members add constraint kafaa_consortium_members_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_consortium_visits_cohort_id_fk') then alter table kafaa_consortium_visits add constraint kafaa_consortium_visits_cohort_id_fk foreign key (cohort_id) references kafaa_consortium_cohorts(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_consortium_visits_member_id_fk') then alter table kafaa_consortium_visits add constraint kafaa_consortium_visits_member_id_fk foreign key (member_id) references kafaa_consortium_members(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_consortium_visits_org_id_fk') then alter table kafaa_consortium_visits add constraint kafaa_consortium_visits_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_consortium_visits_person_id_fk') then alter table kafaa_consortium_visits add constraint kafaa_consortium_visits_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_consortium_visits_host_org_id_fk') then alter table kafaa_consortium_visits add constraint kafaa_consortium_visits_host_org_id_fk foreign key (host_org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_consortium_visits_skill_id_fk') then alter table kafaa_consortium_visits add constraint kafaa_consortium_visits_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_national_tags_parent_id_fk') then alter table kafaa_national_tags add constraint kafaa_national_tags_parent_id_fk foreign key (parent_id) references kafaa_national_tags(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_tag_links_tag_id_fk') then alter table kafaa_tag_links add constraint kafaa_tag_links_tag_id_fk foreign key (tag_id) references kafaa_national_tags(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_occupations_role_id_fk') then alter table kafaa_role_occupations add constraint kafaa_role_occupations_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
@@ -8369,6 +8523,22 @@ create index if not exists kafaa_pledges_area_idx on kafaa_pledges (area);
 create index if not exists kafaa_pledges_status_idx on kafaa_pledges (status);
 create index if not exists kafaa_pledge_progress_pledge_id_idx on kafaa_pledge_progress (pledge_id);
 create index if not exists kafaa_pledge_progress_org_id_idx on kafaa_pledge_progress (org_id);
+create index if not exists kafaa_grant_applications_round_id_idx on kafaa_grant_applications (round_id);
+create index if not exists kafaa_grant_applications_person_id_idx on kafaa_grant_applications (person_id);
+create index if not exists kafaa_grant_applications_skill_id_idx on kafaa_grant_applications (skill_id);
+create index if not exists kafaa_grant_applications_status_idx on kafaa_grant_applications (status);
+create index if not exists kafaa_consortium_cohorts_academy_id_idx on kafaa_consortium_cohorts (academy_id);
+create index if not exists kafaa_consortium_members_cohort_id_idx on kafaa_consortium_members (cohort_id);
+create index if not exists kafaa_consortium_members_org_id_idx on kafaa_consortium_members (org_id);
+create index if not exists kafaa_consortium_members_person_id_idx on kafaa_consortium_members (person_id);
+create index if not exists kafaa_consortium_members_status_idx on kafaa_consortium_members (status);
+create index if not exists kafaa_consortium_visits_cohort_id_idx on kafaa_consortium_visits (cohort_id);
+create index if not exists kafaa_consortium_visits_member_id_idx on kafaa_consortium_visits (member_id);
+create index if not exists kafaa_consortium_visits_org_id_idx on kafaa_consortium_visits (org_id);
+create index if not exists kafaa_consortium_visits_person_id_idx on kafaa_consortium_visits (person_id);
+create index if not exists kafaa_consortium_visits_host_org_id_idx on kafaa_consortium_visits (host_org_id);
+create index if not exists kafaa_consortium_visits_skill_id_idx on kafaa_consortium_visits (skill_id);
+create index if not exists kafaa_consortium_visits_status_idx on kafaa_consortium_visits (status);
 create index if not exists kafaa_national_tags_strategy_idx on kafaa_national_tags (strategy);
 create index if not exists kafaa_national_tags_parent_id_idx on kafaa_national_tags (parent_id);
 create index if not exists kafaa_national_tags_status_idx on kafaa_national_tags (status);
@@ -8393,4 +8563,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 358) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 363) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

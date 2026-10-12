@@ -5858,6 +5858,132 @@ export interface PledgeProgressRow {
   reported_at: string;
   open_read: boolean;
 }
+export interface GrantRoundsRow {
+  id: string;
+  opens_on: string;
+  closes_on: string;
+  decide_by: string;
+  budget: number;
+  max_award: number;
+  currency: string;
+  note?: string | null;
+  simulated: boolean;
+  created_by: string;
+  created_at: string;
+  sample: boolean;
+}
+export interface GrantApplicationsRow {
+  id: string;
+  round_id: string;
+  person_id: string;
+  initials: string;
+  job_role_id?: string | null;
+  years?: number | null;
+  basis: 'early_career' | 'placement';
+  kind: 'conference' | 'short_course' | 'site_visit' | 'exchange';
+  title: string;
+  purpose: string;
+  destination: string;
+  starts_on: string;
+  ends_on: string;
+  costs: any;
+  amount: number;
+  skill_id: string;
+  output_kind: 'report' | 'presentation';
+  status: 'submitted' | 'approved' | 'declined' | 'withdrawn';
+  awarded?: number | null;
+  decided_by?: string | null;
+  decided_at?: string | null;
+  decision_note?: string | null;
+  output_status: 'none' | 'submitted' | 'accepted' | 'returned';
+  output: any;
+  output_reviewed_by?: string | null;
+  output_reviewed_at?: string | null;
+  output_note?: string | null;
+  evidence: any;
+  profile_evidence: boolean;
+  on_behalf: boolean;
+  consent_ref?: string | null;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  sample: boolean;
+}
+export interface ConsortiumCohortsRow {
+  id: string;
+  code: string;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  intake_year: number;
+  academy_id: string;
+  nominations_close_on: string;
+  starts_on: string;
+  ends_on: string;
+  partners: any;
+  modules: any;
+  project_en: string;
+  project_ar: string;
+  deliverable_en: string;
+  deliverable_ar: string;
+  mentors: any;
+  skills: string[];
+  budget: any;
+  currency: string;
+  sources: any;
+  simulated: boolean;
+  synthetic: boolean;
+  listed: boolean;
+  sort: number;
+}
+export interface ConsortiumMembersRow {
+  id: string;
+  cohort_id: string;
+  org_id: string;
+  person_id?: string | null;
+  initials?: string | null;
+  trainee_code: string;
+  discipline: 'mechanical' | 'electrical' | 'chemical' | 'operations' | 'instrumentation' | 'environmental' | 'digital';
+  status: 'nominated' | 'accepted' | 'declined' | 'withdrawn' | 'completed';
+  nominated_by: string;
+  nominated_at: string;
+  decided_by?: string | null;
+  decided_at?: string | null;
+  decision_note?: string | null;
+  mentor_id?: string | null;
+  team?: string | null;
+  open_read: boolean;
+  sample: boolean;
+}
+export interface ConsortiumVisitsRow {
+  id: string;
+  cohort_id: string;
+  member_id: string;
+  org_id: string;
+  person_id?: string | null;
+  trainee_code: string;
+  host_org_id: string;
+  module_id?: string | null;
+  visit_on: string;
+  hours: number;
+  note: string;
+  skill_id: string;
+  status: 'logged' | 'confirmed' | 'declined' | 'withdrawn';
+  logged_by: string;
+  logged_via: 'self' | 'employer' | 'programme';
+  confirmed_via?: 'host' | 'enec_host' | 'on_behalf' | null;
+  host_ref?: string | null;
+  decided_by?: string | null;
+  decided_at?: string | null;
+  decline_reason?: string | null;
+  level: number;
+  evidence: any;
+  profile_evidence: boolean;
+  created_at: string;
+  open_read: boolean;
+  sample: boolean;
+}
 export interface NationalTagsRow {
   id: string;
   strategy: 'nes_2031' | 'we_uae_2031' | 'ai_2031' | 'net_zero_2050' | 'jahiz' | 'centennial_2071';
@@ -6302,6 +6428,11 @@ export interface Tables {
   provider_commitments: ProviderCommitmentsRow;
   pledges: PledgesRow;
   pledge_progress: PledgeProgressRow;
+  grant_rounds: GrantRoundsRow;
+  grant_applications: GrantApplicationsRow;
+  consortium_cohorts: ConsortiumCohortsRow;
+  consortium_members: ConsortiumMembersRow;
+  consortium_visits: ConsortiumVisitsRow;
   national_tags: NationalTagsRow;
   tag_links: TagLinksRow;
   role_occupations: RoleOccupationsRow;

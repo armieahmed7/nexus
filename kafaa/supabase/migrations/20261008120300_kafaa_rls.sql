@@ -3070,6 +3070,47 @@ create policy kafaa_read on kafaa_pledge_progress for select to anon, authentica
 grant select on kafaa_pledge_progress to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- grant_rounds
+alter table kafaa_grant_rounds enable row level security;
+drop policy if exists kafaa_read on kafaa_grant_rounds;
+create policy kafaa_read on kafaa_grant_rounds for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, true));
+grant select on kafaa_grant_rounds to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- grant_applications
+alter table kafaa_grant_applications enable row level security;
+drop policy if exists kafaa_read on kafaa_grant_applications;
+create policy kafaa_read on kafaa_grant_applications for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('workforce_strategy', null::text, null::text, true));
+grant select on kafaa_grant_applications to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- consortium_cohorts
+alter table kafaa_consortium_cohorts enable row level security;
+drop policy if exists kafaa_read on kafaa_consortium_cohorts;
+create policy kafaa_read on kafaa_consortium_cohorts for select to anon, authenticated using (kafaa_rule_read('talent_content', null::text, null::text, listed)
+    or kafaa_rule_read('workforce_strategy', null::text, null::text, true));
+grant select on kafaa_consortium_cohorts to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- consortium_members
+alter table kafaa_consortium_members enable row level security;
+drop policy if exists kafaa_read on kafaa_consortium_members;
+create policy kafaa_read on kafaa_consortium_members for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('ecosystem', null::text, org_id, open_read)
+    or kafaa_rule_read('workforce_strategy', null::text, null::text, true));
+grant select on kafaa_consortium_members to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- consortium_visits
+alter table kafaa_consortium_visits enable row level security;
+drop policy if exists kafaa_read on kafaa_consortium_visits;
+create policy kafaa_read on kafaa_consortium_visits for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('ecosystem', null::text, org_id, open_read)
+    or kafaa_rule_read('workforce_strategy', null::text, null::text, true));
+grant select on kafaa_consortium_visits to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- national_tags
 alter table kafaa_national_tags enable row level security;
 drop policy if exists kafaa_read on kafaa_national_tags;
