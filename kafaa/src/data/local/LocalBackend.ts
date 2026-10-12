@@ -6,7 +6,7 @@
  * audit log plus a local mirror of NEXUS ledger appends.
  */
 import { SCHEMA, columnsOf } from '../schema';
-import type { Identity, Query, Repository, Result, RowOf, Table, NexusReads, Assignment } from '../types';
+import type { Identity, InsertOptions, Query, Repository, Result, RowOf, Table, NexusReads, Assignment } from '../types';
 import { AccessContext, type PersonLite } from '../access';
 import { applyQuery, newId } from './store';
 import { chainHash, GENESIS, nowTs, sha256Hex, ledgerCanonical, type AuditFields } from '../audit';
@@ -204,7 +204,7 @@ export class LocalBackend implements Repository {
     }
     return null;
   }
-  async insert<K extends Table>(table: K, input: Partial<RowOf<K>>): Promise<Result<RowOf<K>>> {
+  async insert<K extends Table>(table: K, input: Partial<RowOf<K>>, opts?: InsertOptions): Promise<Result<RowOf<K>>> {
     await this.ready;
     const def = SCHEMA[table];
     const row = this.withDefaults(table, { ...(input as Record<string, unknown>), id: (input as { id?: string }).id ?? newId(table.slice(0, 3)) });
@@ -225,6 +225,8 @@ export class LocalBackend implements Repository {
     this.byId[table].set(String(row.id), row);
     if (def.write.mode === 'direct') await this.audit(`insert:kafaa_${table}`, `kafaa_${table}`, String(row.id), 'ok', null);
     this.changed([table]);
+    // Same contract as SupabaseBackend: return=minimal gives back the row as sent (with its id), never server defaults.
+    if (opts?.returning === 'minimal') return { ok: true, code: 'ok', message: 'Saved', data: structuredClone({ ...(input as Record<string, unknown>), id: row.id }) as unknown as RowOf<K> };
     return { ok: true, code: 'ok', message: 'Saved', data: structuredClone(row) as unknown as RowOf<K> };
   }
   async update<K extends Table>(table: K, id: string, patch: Partial<RowOf<K>>): Promise<Result<RowOf<K>>> {

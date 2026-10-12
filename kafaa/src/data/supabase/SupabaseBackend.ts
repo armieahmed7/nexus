@@ -7,7 +7,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { config } from '../../config';
 import { sqlName } from '../schema';
-import type { Identity, Query, Repository, Result, RowOf, Rpc, Table, NexusReads, SignoffInput, AggregateRow, CertificateCheck } from '../types';
+import type { Identity, InsertOptions, Query, Repository, Result, RowOf, Rpc, Table, NexusReads, SignoffInput, AggregateRow, CertificateCheck } from '../types';
 import type { PlatformRole } from '../../auth/policy';
 import { accessTokenFor } from '../../auth/nexusSession';
 import { makeG2SupabaseRpc } from './rpc_g2';
@@ -97,8 +97,15 @@ export class SupabaseBackend implements Repository {
     const forbidden = error.code === '42501' || /row-level security|permission denied/i.test(error.message);
     return { ok: false, code: forbidden ? 'forbidden' : error.code === '23505' ? 'conflict' : 'invalid', message: forbidden ? 'Not permitted' : error.message };
   }
-  async insert<K extends Table>(table: K, row: Partial<RowOf<K>>): Promise<Result<RowOf<K>>> {
+  async insert<K extends Table>(table: K, row: Partial<RowOf<K>>, opts?: InsertOptions): Promise<Result<RowOf<K>>> {
     const withId = { id: (row as { id?: string }).id ?? `${table.slice(0, 3)}-${crypto.randomUUID().replace(/-/g, '').slice(0, 16)}`, ...row };
+    if (opts?.returning === 'minimal') {
+      // No RETURNING (return=minimal): the writer may be allowed to insert but not to read the row (anonymous contact form).
+      const { error } = await this.client.from(sqlName(table)).insert(withId as never);
+      const r = this.toResult(error, withId as RowOf<K>);
+      if (r.ok) this.emit([table]);
+      return r;
+    }
     const { data, error } = await this.client.from(sqlName(table)).insert(withId as never).select('*').maybeSingle();
     const r = this.toResult(error, (data as RowOf<K>) ?? (withId as RowOf<K>));
     if (r.ok) this.emit([table]);

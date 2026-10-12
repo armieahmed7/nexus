@@ -1,10 +1,11 @@
 /** Audit 2026-10-12: the local-demo mirrors of the SQL fixes (scripts/validate/audit-fixes.mjs checks the SQL side in PGlite).
  *  e. kafaa_contact_requests insert check -> contactRequestProblems + the direct-write guard; staff change only the status afterwards.
  *  f. kafaa_verify_certificate rate limit -> LocalRpc.verifyCertificate (20 checks of one number per minute, every check audited). */
-import { beforeEach, describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { LocalBackend } from '../../src/data/local/LocalBackend';
 import { CONTACT_ROUTES, contactRequestProblems } from '../../src/domain/contact';
+import { SupabaseBackend } from '../../src/data/supabase/SupabaseBackend';
 
 let b: LocalBackend;
 async function as(persona: string | null) {
@@ -46,6 +47,46 @@ describe('contact requests (fix e)', () => {
     const edit = await b.update('contact_requests', sent.data!.id, { message: 'changed' } as never);
     expect(edit.ok).toBe(false);
     expect(edit.message).toMatch(/Only the status/);
+  });
+});
+
+describe('public forms insert without reading the row back (anon has no SELECT on contact requests)', () => {
+  afterEach(() => vi.unstubAllGlobals());
+  const capture = async (opts?: { returning?: 'row' | 'minimal' }) => {
+    const calls: { url: string; method: string; prefer: string }[] = [];
+    vi.stubGlobal('fetch', vi.fn(async (url: string | URL | Request, init?: RequestInit) => {
+      const h = new Headers(init?.headers);
+      calls.push({ url: String(url), method: String(init?.method ?? 'GET'), prefer: h.get('Prefer') ?? '' });
+      return new Response(null, { status: 201 });
+    }));
+    const s = new SupabaseBackend(null);
+    const r = await s.insert('contact_requests', form() as never, opts);
+    return { r, call: calls.find((c) => c.url.includes('/rest/v1/kafaa_contact_requests'))! };
+  };
+  it('supabase: returning minimal sends no select and no return=representation, and returns the sent row with its client id', async () => {
+    const { r, call } = await capture({ returning: 'minimal' });
+    expect(call.method).toBe('POST');
+    expect(call.url).not.toMatch(/select=/);
+    expect(call.prefer).not.toMatch(/return=representation/);
+    expect(r.ok).toBe(true);
+    expect(r.data!.id).toMatch(/^con-[0-9a-f]{16}$/);
+    expect(r.data!.message).toBe('I would like to know more.');
+  });
+  it('supabase: the default insert still reads the row back (staff tables keep their behaviour)', async () => {
+    const { call } = await capture();
+    expect(call.url).toMatch(/select=/);
+    expect(call.prefer).toMatch(/return=representation/);
+  });
+  it('the contact and supplier forms ask for return=minimal', () => {
+    for (const f of ['src/modules/m12/ContactPage.tsx', 'src/modules/m09/SuppliersPage.tsx']) expect(readFileSync(f, 'utf8')).toMatch(/insert\('contact_requests', \{[^\n]*\}, \{ returning: 'minimal' \}\)/);
+  });
+  it('local: returning minimal gives back the row as sent with its id, never server defaults', async () => {
+    await as(null);
+    const r = await b.insert('contact_requests', form() as never, { returning: 'minimal' });
+    expect(r.ok).toBe(true);
+    expect(r.data!.id).toBeTruthy();
+    expect('created_at' in (r.data as object)).toBe(false);
+    expect(b.raw('contact_requests').find((x) => x.id === r.data!.id)?.created_at).toBeTruthy();
   });
 });
 

@@ -69,6 +69,8 @@ export default async function auditFixChecks({ db, as, one, ok }) {
     const keep = (days) => `(current_date + ${days})`;
     const okRow = ['con-audit-1', 'careers', CONTACT_ROUTES.careers, 'Test', 'careers@example.org', 'I would like to know more about the programmes.', 'routed', null];
     ok(!(await fails(null, ins.replace('$8::date', keep(180)), okRow.slice(0, 7))), 'contact form: the public form payload is accepted (status routed, topic mailbox, 180-day retention)');
+    ok(await fails(null, `insert into kafaa_contact_requests (id, topic, route_to, message) values ('con-audit-r', 'careers', $1, 'Read it back') returning id`, [CONTACT_ROUTES.careers]),
+      'contact form: a signed-out INSERT ... RETURNING fails (no SELECT for anon), so the forms insert with return=minimal');
     ok(!(await fails(null, `insert into kafaa_contact_requests (id, topic, route_to, name, email, message) values ('con-audit-2', 'suppliers', $1, 'Co', 'suppliers@example.org', 'Company: Co')`, [CONTACT_ROUTES.suppliers])), 'contact form: the supplier interest payload is accepted (default status)');
     const bad = [
       [['con-audit-3', 'careers', CONTACT_ROUTES.careers, null, null, 'hello there friend', 'closed', null], 'a closed status'],
