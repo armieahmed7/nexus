@@ -2891,6 +2891,38 @@ create policy kafaa_read on kafaa_skill_pilots for select to anon, authenticated
 grant select on kafaa_skill_pilots to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- regional_demand
+alter table kafaa_regional_demand enable row level security;
+drop policy if exists kafaa_read on kafaa_regional_demand;
+create policy kafaa_read on kafaa_regional_demand for select to anon, authenticated using (kafaa_rule_read('ecosystem', null::text, null::text, released)
+    or kafaa_has_grant('workforce_strategy', array['Agg','R','W','A']));
+grant select on kafaa_regional_demand to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- provider_commitments
+alter table kafaa_provider_commitments enable row level security;
+drop policy if exists kafaa_read on kafaa_provider_commitments;
+create policy kafaa_read on kafaa_provider_commitments for select to anon, authenticated using (kafaa_rule_read('ecosystem', null::text, org_id, open_read)
+    or kafaa_rule_read('workforce_strategy', null::text, null::text, true));
+grant select on kafaa_provider_commitments to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- pledges
+alter table kafaa_pledges enable row level security;
+drop policy if exists kafaa_read on kafaa_pledges;
+create policy kafaa_read on kafaa_pledges for select to anon, authenticated using (kafaa_rule_read('ecosystem', null::text, org_id, open_read)
+    or kafaa_rule_read('workforce_strategy', null::text, null::text, true));
+grant select on kafaa_pledges to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- pledge_progress
+alter table kafaa_pledge_progress enable row level security;
+drop policy if exists kafaa_read on kafaa_pledge_progress;
+create policy kafaa_read on kafaa_pledge_progress for select to anon, authenticated using (kafaa_rule_read('ecosystem', null::text, org_id, open_read)
+    or kafaa_rule_read('workforce_strategy', null::text, null::text, true));
+grant select on kafaa_pledge_progress to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- national_tags
 alter table kafaa_national_tags enable row level security;
 drop policy if exists kafaa_read on kafaa_national_tags;
