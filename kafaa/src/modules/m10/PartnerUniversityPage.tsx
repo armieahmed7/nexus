@@ -10,6 +10,7 @@ import { MIN_GROUP_SIZE } from '../../auth/policy';
 import { suppress } from '../../domain/rules';
 import { SourceList } from '../m06/shared';
 import { CurriculumAlignment } from './shared';
+import { FutureSkillsLinks } from './links'; // FS66/FS67 (fsGe4)
 
 export default function PartnerUniversityPage() {
   const t = useT();
@@ -21,6 +22,7 @@ export default function PartnerUniversityPage() {
   return (
     <Page title={t('m10.routes.partner-university.title')} eyebrow={me.data ? pick(me.data, 'name') : undefined} intro={t('m10.pu.intro')} wide>
       <Callout tone="info" title={t('m10.pu.consentTitle')}>{t('m10.pu.consentBody')}</Callout>
+      <FutureSkillsLinks partner />
       <Tabs
         tabs={[
           { id: 'overview', label: t('m10.pu.tabOverview'), content: <Overview /> },

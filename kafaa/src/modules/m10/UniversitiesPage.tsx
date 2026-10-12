@@ -6,6 +6,7 @@ import { Page, Section, Grid, Card, Async, EmptyState, StatusPill, Stepper, Call
 import { L, entityName, useFormat, usePick, useT } from '../../i18n';
 import { SourceList } from '../m06/shared';
 import { CurriculumAlignment } from './shared';
+import { FutureSkillsLinks } from './links'; // FS66/FS67 (fsGe4)
 
 const KU_MSC = 'https://www.ku.ac.ae/wp-content/uploads/2024/02/MSc-in-Nuclear-Engineering.pdf';
 const CNS10 = 'https://www.iaea.org/sites/default/files/cns-10th-review-meeing-uae-national-report_ae1.pdf';
@@ -31,6 +32,7 @@ export default function UniversitiesPage() {
 
   return (
     <Page title={t('m10.routes.universities.title')} eyebrow={t('m10.uni.eyebrow')} intro={t('m10.uni.intro')}>
+      <FutureSkillsLinks />
       <Section title={t('m10.uni.programmesTitle')}>
         <Grid cols={3}>
           {(['ku', 'entc', 'ep', 'nitss', 'iat', 'src'] as const).map((k) => (
