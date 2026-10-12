@@ -6016,6 +6016,63 @@ create table if not exists kafaa_ai_drill_attempts (
 );
 comment on table kafaa_ai_drill_attempts is '[M29] One person''s submitted sandbox drill: flags, protocol answers, score, pass, level and the capped evidence it wrote (FS37)';
 
+-- M29 · Automation or agent gallery entry (metadata only, never run by Kafa'a): purpose, data used, accountable owner, human check, how to use, the AI-system register row it runs on, governance decision and adoption counter (FS80)
+create table if not exists kafaa_automations (
+  id text primary key,
+  title_en text not null,
+  title_ar text not null,
+  kind text not null check (kind in ('workflow', 'agent', 'template', 'report')),
+  purpose_en text not null,
+  purpose_ar text not null,
+  data_used_en text not null,
+  data_used_ar text not null,
+  data_classes text[] not null default '{}'::text[],
+  system_id text not null,
+  builder_person_id text not null,
+  owner_person_id text not null,
+  builder_en text not null,
+  builder_ar text not null,
+  owner_en text not null,
+  owner_ar text not null,
+  family_id text,
+  oversight_en text not null,
+  oversight_ar text not null,
+  benefit_en text not null,
+  benefit_ar text not null,
+  how_en text not null,
+  how_ar text not null,
+  min_rung integer not null default 1,
+  status text not null default 'draft' check (status in ('draft', 'submitted', 'returned', 'approved', 'rejected', 'retired')),
+  listed boolean not null default false,
+  version integer not null default 1,
+  metadata_only boolean not null default true,
+  adoption_count integer not null default 0,
+  first_adopted_on date,
+  builder_level integer not null default 0,
+  submitted_at timestamptz,
+  decided_by text,
+  decided_at timestamptz,
+  decision_note text not null default '',
+  history jsonb not null default '[]'::jsonb,
+  open_read boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_automations is '[M29] Automation or agent gallery entry (metadata only, never run by Kafa''a): purpose, data used, accountable owner, human check, how to use, the AI-system register row it runs on, governance decision and adoption counter (FS80)';
+
+-- M29 · One person's recorded reuse of an approved gallery entry (one row per person and entry; the builder never adopts their own) (FS80)
+create table if not exists kafaa_automation_adoptions (
+  id text primary key,
+  automation_id text not null,
+  person_id text not null,
+  family_id text,
+  adopted_on date not null,
+  note text not null default '',
+  open_read boolean not null default false,
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_automation_adoptions is '[M29] One person''s recorded reuse of an approved gallery entry (one row per person and entry; the builder never adopts their own) (FS80)';
+
 -- M30 · Role transformation map per current role: archetype, technology drivers, staff and public summaries (FS11)
 create table if not exists kafaa_role_transformations (
   id text primary key,
@@ -7611,6 +7668,11 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ai
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ai_drill_keys_drill_id_fk') then alter table kafaa_ai_drill_keys add constraint kafaa_ai_drill_keys_drill_id_fk foreign key (drill_id) references kafaa_ai_drills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ai_drill_attempts_person_id_fk') then alter table kafaa_ai_drill_attempts add constraint kafaa_ai_drill_attempts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ai_drill_attempts_drill_id_fk') then alter table kafaa_ai_drill_attempts add constraint kafaa_ai_drill_attempts_drill_id_fk foreign key (drill_id) references kafaa_ai_drills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_automations_system_id_fk') then alter table kafaa_automations add constraint kafaa_automations_system_id_fk foreign key (system_id) references kafaa_ai_systems(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_automations_builder_person_id_fk') then alter table kafaa_automations add constraint kafaa_automations_builder_person_id_fk foreign key (builder_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_automations_owner_person_id_fk') then alter table kafaa_automations add constraint kafaa_automations_owner_person_id_fk foreign key (owner_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_automation_adoptions_automation_id_fk') then alter table kafaa_automation_adoptions add constraint kafaa_automation_adoptions_automation_id_fk foreign key (automation_id) references kafaa_automations(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_automation_adoptions_person_id_fk') then alter table kafaa_automation_adoptions add constraint kafaa_automation_adoptions_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_transformations_role_id_fk') then alter table kafaa_role_transformations add constraint kafaa_role_transformations_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_transformations_family_id_fk') then alter table kafaa_role_transformations add constraint kafaa_role_transformations_family_id_fk foreign key (family_id) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_transformation_drafts_role_id_fk') then alter table kafaa_transformation_drafts add constraint kafaa_transformation_drafts_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
@@ -8387,6 +8449,13 @@ create index if not exists kafaa_ai_drills_skill_id_idx on kafaa_ai_drills (skil
 create index if not exists kafaa_ai_drills_status_idx on kafaa_ai_drills (status);
 create index if not exists kafaa_ai_drill_attempts_person_id_idx on kafaa_ai_drill_attempts (person_id);
 create index if not exists kafaa_ai_drill_attempts_drill_id_idx on kafaa_ai_drill_attempts (drill_id);
+create index if not exists kafaa_automations_kind_idx on kafaa_automations (kind);
+create index if not exists kafaa_automations_system_id_idx on kafaa_automations (system_id);
+create index if not exists kafaa_automations_builder_person_id_idx on kafaa_automations (builder_person_id);
+create index if not exists kafaa_automations_owner_person_id_idx on kafaa_automations (owner_person_id);
+create index if not exists kafaa_automations_status_idx on kafaa_automations (status);
+create index if not exists kafaa_automation_adoptions_automation_id_idx on kafaa_automation_adoptions (automation_id);
+create index if not exists kafaa_automation_adoptions_person_id_idx on kafaa_automation_adoptions (person_id);
 create index if not exists kafaa_role_transformations_family_id_idx on kafaa_role_transformations (family_id);
 create index if not exists kafaa_role_transformations_status_idx on kafaa_role_transformations (status);
 create index if not exists kafaa_smr_deltas_role_id_idx on kafaa_smr_deltas (role_id);
@@ -8493,4 +8562,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 361) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 363) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

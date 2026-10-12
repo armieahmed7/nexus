@@ -7,6 +7,7 @@ import type { Band, FitnessStats, ItemInput } from '../fitness';
 import type { Reason } from '../../../domain/engines/types';
 import type { Coverage, SystemInput } from '../register';
 import type { Answer, DrillInput, DrillScore, DrillStats, Flag } from '../drills';
+import type { AutomationInput, GalleryStats } from '../automations';
 
 // ── FS09
 export interface AiFluencyView {
@@ -64,6 +65,21 @@ export interface DrillResult extends Omit<DrillScore, 'reasons'> {
   reasons: Reason[];
 }
 
+// ── FS80
+export interface AutomationSaved { id: string; version: number; status: string }
+export interface AutomationDecided { id: string; status: string; decision: string; listed: boolean }
+export interface AutomationAdopted {
+  id: string;
+  adoption_id: string;
+  adoption_count: number;
+  first_adoption: boolean;
+  /** Builder evidence level after this adoption (0 = none yet). */
+  builder_level: number;
+  /** True when this adoption wrote or raised the builder's evidence. */
+  evidence_written: boolean;
+}
+export interface AutomationStatsView extends GalleryStats { as_of: string }
+
 export interface M29Rpc {
   /** FS09: my AI fluency rung (Own): the 16 cells with evidence, the rung, reasons, the next rung's gaps and my family target. Null when signed out or without ai_literacy Own. */
   aiFluency(): Promise<AiFluencyView | null>;
@@ -92,4 +108,16 @@ export interface M29Rpc {
   drillStats(): Promise<DrillStats | null>;
   /** FS37: add, edit or retire a drill with its key (training manager: ai_literacy W and secure_items W/A). Versioned; synthetic only. */
   saveDrill(input: DrillInput): Promise<Result<{ id: string; version: number; status: string }>>;
+  /** FS80: save a draft or submit a gallery entry (metadata only: purpose, data, owner, human check, how to use, AI-system register row).
+   *  Any staff member who builds (ai_literacy Own or W; logged choice: the card's W is held by the training manager and admins only).
+   *  Only the builder's own draft or returned entry can change; code, scripts, links and credentials are refused. */
+  submitAutomation(input: AutomationInput): Promise<Result<AutomationSaved>>;
+  /** FS80: AI governance decides (ai_literacy A): approve, return or reject a submitted entry, or retire an approved one. Maker-checker:
+   *  never the builder or the accountable owner. Ledger on approve and retire. */
+  decideAutomation(input: { id: string; decision: string; note?: string | null }): Promise<Result<AutomationDecided>>;
+  /** FS80: record that I reuse an approved entry (ai_literacy Own; never my own build; once; my FS09 rung must reach the entry's minimum).
+   *  The first adoption (and the REUSE_AT-th) writes or raises the builder's recorded evidence. */
+  adoptAutomation(input: { id: string; note?: string | null }): Promise<Result<AutomationAdopted>>;
+  /** FS80: gallery statistics (ai_literacy Agg or A, audit_log R): entries by status, adoptions, adopters by family (people suppressed under 10). */
+  automationStats(): Promise<AutomationStatsView | null>;
 }

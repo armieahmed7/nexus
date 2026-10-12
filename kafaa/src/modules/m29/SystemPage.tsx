@@ -9,6 +9,7 @@ import { L, useFormat, usePick, useT } from '../../i18n';
 import { isCovered, isMember } from './register';
 import { CoverageBar, CoverageWhy, Gaps, GroupRequirement, GroupWho, LabelCheck, MeasureLink, SystemChips, useRegister, type RegisterData } from './fs36ui';
 import { RungPill, type Row } from './ui';
+import { SystemAutomations } from './fs80ui'; // FS80
 import type { AiFluencyView } from './backend/rpc';
 
 export default function SystemPage() {
@@ -98,6 +99,8 @@ function Body({ d, sys, me }: { d: RegisterData; sys: Row; me: AiFluencyView | n
           <DataTable rows={groups} columns={cols} rowKey={(g) => g.id} searchable={false} caption={t('m29.sys.groups.title')} csvName={`ai-register-${sys.id}.csv`} />
         </div>
       </Section>
+
+      <SystemAutomations systemId={sys.id} />{/* FS80: approved gallery entries on this system */}
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Card title={t('m29.sys.measures')} eyebrow={t('m29.sys.measuresEyebrow')}>

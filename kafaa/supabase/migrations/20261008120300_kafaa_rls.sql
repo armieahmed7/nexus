@@ -2794,6 +2794,23 @@ create policy kafaa_read on kafaa_ai_drill_attempts for select to anon, authenti
 grant select on kafaa_ai_drill_attempts to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- automations
+alter table kafaa_automations enable row level security;
+drop policy if exists kafaa_read on kafaa_automations;
+create policy kafaa_read on kafaa_automations for select to anon, authenticated using (kafaa_rule_read('ai_literacy', null::text, null::text, listed)
+    or kafaa_rule_read('ai_literacy', builder_person_id, null::text, open_read)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_automations to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- automation_adoptions
+alter table kafaa_automation_adoptions enable row level security;
+drop policy if exists kafaa_read on kafaa_automation_adoptions;
+create policy kafaa_read on kafaa_automation_adoptions for select to anon, authenticated using (kafaa_rule_read('ai_literacy', person_id, null::text, open_read)
+    or kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_automation_adoptions to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- role_transformations
 alter table kafaa_role_transformations enable row level security;
 drop policy if exists kafaa_read on kafaa_role_transformations;
