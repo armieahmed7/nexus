@@ -2,5 +2,367 @@
   "module": {
     "name": "National Alignment"
   },
-  "routes": {}
+  "routes": {
+    "national-alignment": {
+      "title": "National-strategy alignment",
+      "purpose": "Skills, programmes and targets tagged to the national strategies they serve, each tag citing its source."
+    },
+    "national-alignment-tag": {
+      "title": "National tag",
+      "purpose": "One national strategy, pillar, goal or group: its definition, sources and the items that serve it."
+    },
+    "national-report": {
+      "title": "National alignment report",
+      "purpose": "A report by strategy, tag and kind, computed from the data each time: no typed totals."
+    },
+    "admin-national-tags": {
+      "title": "National tags",
+      "purpose": "Maintain national tags, their sources and curated links."
+    },
+    "national-occupations": {
+      "title": "MoHRE occupation mapping",
+      "purpose": "Every current role with an occupation label, a code only when verified, and an indicative national skill level."
+    }
+  },
+  "strategy": {
+    "nes_2031": "National Employment Strategy 2031",
+    "we_uae_2031": "We the UAE 2031",
+    "ai_2031": "National AI Strategy 2031",
+    "net_zero_2050": "Net Zero 2050",
+    "jahiz": "Jahiz groups",
+    "centennial_2071": "UAE Centennial 2071"
+  },
+  "tagKind": {
+    "strategy": "Strategy",
+    "pillar": "Pillar",
+    "goal": "Goal",
+    "group": "Group"
+  },
+  "tagStatus": {
+    "active": "Active",
+    "retired": "Retired"
+  },
+  "tier": {
+    "official": "Official source",
+    "intergovernmental": "Intergovernmental source",
+    "secondary": "Secondary source"
+  },
+  "scope": {
+    "direct": "Direct: the source describes the strategy",
+    "indirect": "Indirect: the source mentions it in another context"
+  },
+  "src": {
+    "indirect": "Indirect source",
+    "recheck": "Re-check the source before external reporting",
+    "none": "No source"
+  },
+  "kind": {
+    "skill": "Skills",
+    "programme": "Programmes",
+    "target": "Targets",
+    "all": "All"
+  },
+  "count": {
+    "skills": "Skills",
+    "programmes": "Programmes",
+    "targets": "Targets"
+  },
+  "table": {
+    "skills": "Catalogue skill",
+    "cec_competences": "CleanEnergyComp competence",
+    "programmes": "Training programme",
+    "pathways": "Learning pathway",
+    "microcred_defs": "Micro-credential",
+    "talent_programmes": "Talent programme",
+    "leadership_programmes": "Leadership programme",
+    "critical_skills": "Critical skills register",
+    "ai_org_targets": "AI fluency organisation target",
+    "cec_role_targets": "CleanEnergyComp family target"
+  },
+  "basis": {
+    "curated": "Curated link",
+    "future_group": "From the Jahiz group",
+    "net_zero": "From CleanEnergyComp"
+  },
+  "itemStatus": {
+    "active": "Live",
+    "inactive": "No longer active",
+    "missing": "Row not found"
+  },
+  "derive": {
+    "future_group": "Skills are linked from their Jahiz group in the skills catalogue (FS02)",
+    "cec_net_zero": "CleanEnergyComp competences marked Net Zero are linked automatically (FS41)"
+  },
+  "measure": {
+    "holders": "staff with counted evidence",
+    "completers": "staff who completed a course",
+    "enrolled": "staff on the pathway",
+    "awarded": "staff holding it",
+    "applicants": "applicants",
+    "participants": "selected or completed",
+    "at_target": "staff at level {target} or above",
+    "org_share": "at Practitioner or above · target {target}% by {due}",
+    "family_share": "of the family at level {target} or above"
+  },
+  "reason": {
+    "curated": "Linked by the HR director or an admin to {tag}, with the note shown",
+    "futureGroup": "Derived from the data: the skill sits in the Jahiz group {group} in the skills catalogue",
+    "netZero": "Derived from the data: the CleanEnergyComp competence is marked Net Zero 2050",
+    "inactive": "The linked row is no longer active (retired, draft or obsolete); it stays visible",
+    "missing": "The linked row was not found"
+  },
+  "horizon": "Horizon {year}",
+  "none": "No national alignment data to show.",
+  "simulated": "SIMULATED",
+  "hub": {
+    "intro": "Every skill, programme and target can carry the national strategy it serves. Reports are filters over the live data: nothing on this page is typed or stored.",
+    "toReport": "Build a report",
+    "toOccupations": "Occupation mapping",
+    "toAdmin": "Maintain tags",
+    "tile": {
+      "strategies": "Strategies",
+      "strategiesSub": "{n} tags with pillars, goals and groups",
+      "skills": "Skills and competences",
+      "skillsSub": "{n} links derived from the data",
+      "programmes": "Programmes",
+      "programmesSub": "courses, pathways, credentials, talent and leadership",
+      "targets": "Targets",
+      "targetsSub": "register rows and organisation targets",
+      "flagged": "Tags to re-check",
+      "flaggedSub": "best source secondary or indirect"
+    },
+    "strategiesTitle": "The six national strategies",
+    "strategiesIntro": "Counts are computed from the links each time the page opens.",
+    "reach": "People reached",
+    "matrixTitle": "Coverage by strategy and kind",
+    "matrixIntro": "Distinct linked items per strategy, including its pillars, goals and groups.",
+    "jahizTitle": "Catalogue skills by Jahiz group",
+    "jahizIntro": "Read from the Jahiz group column of the skills catalogue (FS02), never re-entered.",
+    "jahizNote": "Nuclear safety and operational excellence is ENEC's own fifth group; it is not a national tag."
+  },
+  "na": {
+    "notGov": {
+      "title": "Kafa'a is not a government system",
+      "body": "Tags are ENEC's internal alignment for planning and reporting. They cite public sources but are not a government classification, a submission or an endorsement by any authority. A tag flagged for re-checking cites a secondary or indirect source."
+    }
+  },
+  "tag": {
+    "intro": "The definition, sources and the items that serve this tag, computed from the data.",
+    "back": "All strategies",
+    "notFound": "This tag was not found.",
+    "retired": "This tag is retired and no longer appears in reports.",
+    "definition": "Definition",
+    "kind": "Kind",
+    "code": "Code",
+    "horizon": "Horizon",
+    "owner": "Owner",
+    "parent": "Part of",
+    "derived": "Linked from data",
+    "sources": "Sources",
+    "children": "Pillars, goals and groups",
+    "reportTitle": "What serves this tag",
+    "reportIntro": "Live items with their status and the reason they are linked; measures for HR and admins, suppressed under 10.",
+    "reachSub": "distinct staff with counted evidence on a linked skill",
+    "reachHidden": "measures are for HR and admins",
+    "noItems": "Nothing is linked yet.",
+    "version": "Version {n}"
+  },
+  "col": {
+    "tag": "Tag",
+    "kind": "Kind",
+    "item": "Item",
+    "basis": "How linked",
+    "status": "Status",
+    "measure": "Measure",
+    "why": "Why",
+    "source": "Source",
+    "version": "Version"
+  },
+  "filter": {
+    "strategy": "Strategy",
+    "tag": "Tag",
+    "kind": "Kind"
+  },
+  "report": {
+    "intro": "Choose a strategy, a tag and a kind. The report filters the live data each time: change the data and the report follows.",
+    "computed": "{n} items, computed from the data just now",
+    "caption": "Linked items",
+    "scopeTitle": "Tags in scope",
+    "chartTitle": "Linked items per tag",
+    "itemsTitle": "Items",
+    "itemsIntro": "Every row explains why it is linked; inactive rows stay visible.",
+    "noMeasures": "Measures (people counts) are shown to HR and admins only.",
+    "tile": {
+      "tags": "Tags in scope"
+    }
+  },
+  "export": {
+    "csv": "Export CSV",
+    "json": "Export JSON",
+    "print": "Print view",
+    "header": "Kafa'a national alignment report: computed from the data at export time; not an official return; measures SIMULATED; counts under 10 suppressed"
+  },
+  "admin": {
+    "intro": "Maintain the national tags and their curated links. Checks run live; source tiers are computed from the link; every save is audited.",
+    "tabTags": "Tags",
+    "tabLinks": "Links",
+    "edit": "Edit",
+    "newTag": "New tag",
+    "newTitle": "New national tag",
+    "editTitle": "Edit {name}",
+    "save": "Save",
+    "codeHint": "Capital letters, digits and hyphens",
+    "nameEn": "Name (English)",
+    "nameAr": "Name (Arabic)",
+    "summaryEn": "Summary (English)",
+    "summaryAr": "Summary (Arabic)",
+    "ownerEn": "Owner (English)",
+    "ownerAr": "Owner (Arabic)",
+    "srcLabel": "Source label",
+    "srcUrl": "Link (https)",
+    "srcAsOf": "Read on",
+    "srcRemove": "Remove source",
+    "srcAdd": "Add a source",
+    "scope": "Source scope",
+    "noteEn": "Source note (English)",
+    "noteAr": "Source note (Arabic)",
+    "preview": "How the source standing will read",
+    "check": "Fix this before saving",
+    "checkOk": "Ready to save",
+    "checkOkBody": "The tag passes the same checks the server runs.",
+    "confirmNew": "Add this national tag?",
+    "confirmEdit": "Save the changes to this tag?",
+    "consequence": "The tag changes every report that filters by it. The save is audited; adding or retiring a tag is also recorded in the NEXUS ledger.",
+    "asAdmin": "Platform admin",
+    "asHr": "HR authority (CHCO office)",
+    "derivedTitle": "Some links come from the data",
+    "derived": {
+      "future_group": "Skills in this Jahiz group are linked from the skills catalogue. To change them, change the skill's Jahiz group there.",
+      "cec_net_zero": "CleanEnergyComp competences marked Net Zero are linked automatically. Other items can be linked here."
+    },
+    "unlink": "Unlink",
+    "addLink": "Link an item",
+    "table": "Item type",
+    "target": "Item",
+    "linkNoteEn": "Why it serves the tag (English)",
+    "linkNoteAr": "Why it serves the tag (Arabic)",
+    "link": "Link",
+    "confirmLink": "Link this item to the tag?",
+    "linkConsequence": "The item appears in every report for this tag. The change is audited.",
+    "confirmUnlink": "Unlink {item}?",
+    "unlinkConsequence": "The link is deactivated, not removed, and leaves the reports at once. The change is audited."
+  },
+  "problem": {
+    "tag": {
+      "strategy": "Choose one of the six national strategies (the strategy and kind of a saved tag do not change).",
+      "kind": "Choose strategy, pillar, goal or group.",
+      "parent": "A pillar, goal or group sits under the active strategy-level tag of the same strategy.",
+      "code": "Use a code of 2 to 24 capital letters, digits or hyphens.",
+      "name": "Give a name of 2 to 120 characters in English and in Arabic.",
+      "summary": "Give a summary of 20 to 600 characters in English and in Arabic.",
+      "clean": "Tag text may not state headcounts or site information.",
+      "typed_total": "Tag text may name years but no typed number: reports compute every total from the data.",
+      "sources": "Give one to five sources, each with a label, an https link and an as-of date that is not in the future.",
+      "horizon": "Use a horizon year from 2022 to 2100.",
+      "scope": "The source scope is direct or indirect.",
+      "status": "Choose active or retired."
+    },
+    "link": {
+      "tag": "Choose an active tag.",
+      "table": "Choose a skill, competence, programme, pathway, credential or target.",
+      "target": "Choose the item to link.",
+      "derived": "This link is derived from the data (Jahiz group or Net Zero competence): change the data, not the tag.",
+      "security": "Security skills stay at career-path level and are not tagged.",
+      "note": "Write a note of 10 to 300 characters in English and in Arabic.",
+      "clean": "Link notes may not state headcounts or site information.",
+      "typed_total": "Link notes may name years but no typed number."
+    },
+    "ro": {
+      "role": "Choose a current job role.",
+      "concept": "Concept roles get no occupation code or level.",
+      "label": "Give an occupation label of 3 to 120 characters in English and in Arabic.",
+      "clean": "Labels and rationales may not state numbers, headcounts or site information.",
+      "level": "Choose a skill level from 1 to 5.",
+      "basis": "Use the education-rule level, or choose \"reviewed\" with a rationale.",
+      "rationale": "A reviewed level needs a rationale of 10 to 400 characters in English and in Arabic."
+    },
+    "code": {
+      "code": "Use a code of 2 to 16 capital letters, digits, dots or hyphens, copied from the source.",
+      "source": "Give a source label and an https link.",
+      "host": "The source must be an official UAE government page (u.ae or a gov.ae domain).",
+      "date": "Give the date the source was read, not in the future."
+    }
+  },
+  "ro": {
+    "intro": "Each current role carries a national occupation label and an indicative skill level; a MoHRE code appears only when verified from an official source.",
+    "toAlignment": "National-strategy alignment",
+    "notMohre": {
+      "title": "Kafa'a is not a MoHRE system",
+      "body": "This is ENEC's internal mapping for reporting. Kafa'a does not issue, validate or submit occupational classifications or work permits. Codes are shown only when copied from an official MoHRE or UAE government source; every other role reads \"code pending review\". Skill levels are Kafa'a's indicative estimate until reviewed."
+    },
+    "pending": "Code pending review",
+    "levelN": "Level {n}",
+    "col": {
+      "role": "Role",
+      "label": "Occupation label (proposed)",
+      "code": "MoHRE code",
+      "level": "Skill level",
+      "education": "Entry education"
+    },
+    "basis": {
+      "education_rule": "Indicative: education rule",
+      "reviewed": "Reviewed by HR"
+    },
+    "basisLabel": "Level basis",
+    "edu": {
+      "high_school": "Secondary school",
+      "diploma": "Diploma",
+      "bachelor": "Bachelor's degree",
+      "master": "Master's degree",
+      "doctorate": "Doctorate"
+    },
+    "tile": {
+      "roles": "Roles mapped",
+      "rolesSub": "current roles; concept roles get no code",
+      "verified": "Codes verified",
+      "verifiedSub": "from an official source",
+      "pending": "Pending review",
+      "pendingSub": "no code shown",
+      "classification": "Occupational categories",
+      "classificationSub": "in the national classification, grouped into {levels} skill levels"
+    },
+    "tableTitle": "Roles and occupations",
+    "tableIntro": "Labels are proposed for review; codes stay pending until an admin records one from an official page.",
+    "levelsTitle": "Roles by indicative skill level",
+    "levelsIntro": "Counts of roles, not people.",
+    "ruleTitle": "How the indicative level is set",
+    "ruleBody": "Kafa'a's own rule, pending review, from the role's entry education: a degree gives level 1, a diploma level 2 and secondary school level 3 (1 is the highest qualification requirement). Levels 4 and 5 are not used by ENEC roles in this demo. HR can review a level with a rationale.",
+    "editTitle": "Edit the mapping of {role}",
+    "labelEn": "Occupation label (English)",
+    "labelAr": "Occupation label (Arabic)",
+    "ruleHint": "The education rule gives level {level} ({edu}).",
+    "rationaleEn": "Rationale (English)",
+    "rationaleAr": "Rationale (Arabic)",
+    "confirmSave": "Save this occupation mapping?",
+    "saveConsequence": "The label and level change the mapping table and the uplift trend. The save is audited.",
+    "verify": "Record a verified code",
+    "clear": "Return to pending",
+    "verifyTitle": "Verified MoHRE code for {role}",
+    "clearTitle": "Return the code of {role} to pending review",
+    "verifyRuleTitle": "Only codes copied from an official page",
+    "verifyRuleBody": "Copy the code exactly from an official MoHRE or UAE government page (u.ae or a gov.ae domain) and give the date you read it. Press articles never verify a code. The person who last edited this mapping cannot verify it.",
+    "makerChecker": "You last edited this mapping, so another admin must verify its code.",
+    "confirmVerify": "Record this code as verified?",
+    "verifyConsequence": "The code appears on the mapping with its source. The action is audited and recorded in the NEXUS ledger.",
+    "confirmClear": "Return this code to pending review?",
+    "clearConsequence": "The code is hidden and the role reads \"code pending review\". The action is audited and recorded in the NEXUS ledger.",
+    "clearReason": "Reason (10 to 300 characters)",
+    "trendTitle": "Skill-level uplift trend",
+    "trendIntro": "The synthetic workforce by indicative skill level at each year end. Every cell under 10 is suppressed.",
+    "trendUpper": "Share at levels 1 and 2",
+    "trendMean": "Mean level (lower is higher qualified)",
+    "year": "Year",
+    "total": "People",
+    "trendNote": "SIMULATED: synthetic staff counted at their current role's level from their hire date; role moves and leavers are not modelled, so the trend shows the hiring mix. {roles} roles mapped; cells under {min} suppressed."
+  }
 }

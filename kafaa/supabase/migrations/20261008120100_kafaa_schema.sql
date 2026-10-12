@@ -6425,6 +6425,76 @@ create table if not exists kafaa_skill_pilots (
 );
 comment on table kafaa_skill_pilots is '[M35] Skills pilot (workforce experiment): hypothesis, comparison group, named independent evaluator (role card), metrics, result including failures, evaluator sign-off, adoption decision; closed pilots are published and stay visible (FS61)';
 
+-- M37 · National-strategy tag (NES 2031, We the UAE 2031, National AI Strategy 2031, Net Zero 2050, Jahiz groups, UAE Centennial 2071) with its pillars, goals or groups: EN/AR name and summary, horizon, sources with tiers (the most official first), derivation rule; never a typed total (FS62)
+create table if not exists kafaa_national_tags (
+  id text primary key,
+  strategy text not null check (strategy in ('nes_2031', 'we_uae_2031', 'ai_2031', 'net_zero_2050', 'jahiz', 'centennial_2071')),
+  parent_id text,
+  kind text not null check (kind in ('strategy', 'pillar', 'goal', 'group')),
+  code text not null unique,
+  name_en text not null,
+  name_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  horizon_year integer,
+  owner_en text,
+  owner_ar text,
+  sources jsonb not null default '[]'::jsonb,
+  source_scope text not null default 'direct' check (source_scope in ('direct', 'indirect')),
+  source_note_en text,
+  source_note_ar text,
+  derive text check (derive in ('future_group', 'cec_net_zero')),
+  future_group text,
+  status text not null default 'active' check (status in ('active', 'retired')),
+  sort integer not null default 0,
+  version integer not null default 1,
+  benchmark_ids text[] not null default '{}'::text[],
+  created_by text not null,
+  created_at timestamptz not null default now(),
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_national_tags is '[M37] National-strategy tag (NES 2031, We the UAE 2031, National AI Strategy 2031, Net Zero 2050, Jahiz groups, UAE Centennial 2071) with its pillars, goals or groups: EN/AR name and summary, horizon, sources with tiers (the most official first), derivation rule; never a typed total (FS62)';
+
+-- M37 · Curated link from a national tag to a skill, competence, programme, pathway, credential or target row, with an EN/AR note; deactivated, never removed (FS62). Jahiz-group and Net Zero links derived from data are computed, not stored
+create table if not exists kafaa_tag_links (
+  id text primary key,
+  tag_id text not null,
+  target_table text not null,
+  target_id text not null,
+  note_en text not null,
+  note_ar text not null,
+  active boolean not null default true,
+  created_by text not null,
+  created_at timestamptz not null default now(),
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_tag_links is '[M37] Curated link from a national tag to a skill, competence, programme, pathway, credential or target row, with an EN/AR note; deactivated, never removed (FS62). Jahiz-group and Net Zero links derived from data are computed, not stored';
+
+-- M37 · Current job role mapped to a national occupation label and indicative skill level (1-5); the MoHRE code is stored only when verified from an official source (else "code pending review"); Kafa'a is not a MoHRE system (FS63)
+create table if not exists kafaa_role_occupations (
+  id text primary key,
+  role_id text not null unique,
+  label_en text not null,
+  label_ar text not null,
+  mohre_code text,
+  code_status text not null default 'pending_review' check (code_status in ('pending_review', 'verified')),
+  code_source jsonb,
+  verified_by text,
+  verified_on date,
+  skill_level integer not null,
+  level_basis text not null default 'education_rule' check (level_basis in ('education_rule', 'reviewed')),
+  education_basis text,
+  rationale_en text,
+  rationale_ar text,
+  history jsonb not null default '[]'::jsonb,
+  version integer not null default 1,
+  updated_by text not null,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_role_occupations is '[M37] Current job role mapped to a national occupation label and indicative skill level (1-5); the MoHRE code is stored only when verified from an official source (else "code pending review"); Kafa''a is not a MoHRE system (FS63)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -6948,6 +7018,9 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_cr
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_hc_metrics_owner_person_id_fk') then alter table kafaa_hc_metrics add constraint kafaa_hc_metrics_owner_person_id_fk foreign key (owner_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_pilots_owner_person_id_fk') then alter table kafaa_skill_pilots add constraint kafaa_skill_pilots_owner_person_id_fk foreign key (owner_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_pilots_evaluator_person_id_fk') then alter table kafaa_skill_pilots add constraint kafaa_skill_pilots_evaluator_person_id_fk foreign key (evaluator_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_national_tags_parent_id_fk') then alter table kafaa_national_tags add constraint kafaa_national_tags_parent_id_fk foreign key (parent_id) references kafaa_national_tags(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_tag_links_tag_id_fk') then alter table kafaa_tag_links add constraint kafaa_tag_links_tag_id_fk foreign key (tag_id) references kafaa_national_tags(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_occupations_role_id_fk') then alter table kafaa_role_occupations add constraint kafaa_role_occupations_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -7693,6 +7766,13 @@ create index if not exists kafaa_hc_disclosures_status_idx on kafaa_hc_disclosur
 create index if not exists kafaa_skill_pilots_owner_person_id_idx on kafaa_skill_pilots (owner_person_id);
 create index if not exists kafaa_skill_pilots_evaluator_person_id_idx on kafaa_skill_pilots (evaluator_person_id);
 create index if not exists kafaa_skill_pilots_status_idx on kafaa_skill_pilots (status);
+create index if not exists kafaa_national_tags_strategy_idx on kafaa_national_tags (strategy);
+create index if not exists kafaa_national_tags_parent_id_idx on kafaa_national_tags (parent_id);
+create index if not exists kafaa_national_tags_status_idx on kafaa_national_tags (status);
+create index if not exists kafaa_tag_links_tag_id_idx on kafaa_tag_links (tag_id);
+create index if not exists kafaa_tag_links_target_table_idx on kafaa_tag_links (target_table);
+create index if not exists kafaa_tag_links_target_id_idx on kafaa_tag_links (target_id);
+create index if not exists kafaa_role_occupations_code_status_idx on kafaa_role_occupations (code_status);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -7707,4 +7787,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 330) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 333) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

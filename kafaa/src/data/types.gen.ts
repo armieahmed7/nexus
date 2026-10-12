@@ -5443,6 +5443,67 @@ export interface SkillPilotsRow {
   sort: number;
   simulated: boolean;
 }
+export interface NationalTagsRow {
+  id: string;
+  strategy: 'nes_2031' | 'we_uae_2031' | 'ai_2031' | 'net_zero_2050' | 'jahiz' | 'centennial_2071';
+  parent_id?: string | null;
+  kind: 'strategy' | 'pillar' | 'goal' | 'group';
+  code: string;
+  name_en: string;
+  name_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  horizon_year?: number | null;
+  owner_en?: string | null;
+  owner_ar?: string | null;
+  sources: any;
+  source_scope: 'direct' | 'indirect';
+  source_note_en?: string | null;
+  source_note_ar?: string | null;
+  derive?: 'future_group' | 'cec_net_zero' | null;
+  future_group?: string | null;
+  status: 'active' | 'retired';
+  sort: number;
+  version: number;
+  benchmark_ids: string[];
+  created_by: string;
+  created_at: string;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface TagLinksRow {
+  id: string;
+  tag_id: string;
+  target_table: string;
+  target_id: string;
+  note_en: string;
+  note_ar: string;
+  active: boolean;
+  created_by: string;
+  created_at: string;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface RoleOccupationsRow {
+  id: string;
+  role_id: string;
+  label_en: string;
+  label_ar: string;
+  mohre_code?: string | null;
+  code_status: 'pending_review' | 'verified';
+  code_source?: any | null;
+  verified_by?: string | null;
+  verified_on?: string | null;
+  skill_level: number;
+  level_basis: 'education_rule' | 'reviewed';
+  education_basis?: string | null;
+  rationale_en?: string | null;
+  rationale_ar?: string | null;
+  history: any;
+  version: number;
+  updated_by: string;
+  updated_at: string;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -5776,6 +5837,9 @@ export interface Tables {
   hc_metrics: HcMetricsRow;
   hc_disclosures: HcDisclosuresRow;
   skill_pilots: SkillPilotsRow;
+  national_tags: NationalTagsRow;
+  tag_links: TagLinksRow;
+  role_occupations: RoleOccupationsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];

@@ -2891,3 +2891,24 @@ create policy kafaa_read on kafaa_skill_pilots for select to anon, authenticated
 grant select on kafaa_skill_pilots to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- national_tags
+alter table kafaa_national_tags enable row level security;
+drop policy if exists kafaa_read on kafaa_national_tags;
+create policy kafaa_read on kafaa_national_tags for select to anon, authenticated using (kafaa_rule_read('national_alignment', null::text, null::text, true));
+grant select on kafaa_national_tags to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- tag_links
+alter table kafaa_tag_links enable row level security;
+drop policy if exists kafaa_read on kafaa_tag_links;
+create policy kafaa_read on kafaa_tag_links for select to anon, authenticated using (kafaa_rule_read('national_alignment', null::text, null::text, true));
+grant select on kafaa_tag_links to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- role_occupations
+alter table kafaa_role_occupations enable row level security;
+drop policy if exists kafaa_read on kafaa_role_occupations;
+create policy kafaa_read on kafaa_role_occupations for select to anon, authenticated using (kafaa_rule_read('national_alignment', null::text, null::text, true));
+grant select on kafaa_role_occupations to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
