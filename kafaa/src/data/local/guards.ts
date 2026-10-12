@@ -10,7 +10,9 @@
 import type { AccessContext } from '../access';
 import { skillGuard } from '../../domain/taxonomy'; // FS02: obsolete, never delete (SQL: kafaa_fs_skill_guard)
 import { benchmarkProblems } from '../../domain/benchmarks'; // FS01: https sources, as-of date, listed = published (SQL checks)
-import { huCardProblems, lessonProblems } from '../../modules/m08/aiCulture'; // FS49 (wave E integration): import-free rule = SQL trigger kafaa_fs49_content_guard
+import { huCardProblems, lessonProblems } from '../../modules/m08/aiCulture';
+import { contactRequestProblems } from '../../domain/contact'; // audit 2026-10-12: SQL insert check of kafaa_contact_requests
+import { todayIso } from '../../domain/rules'; // FS49 (wave E integration): import-free rule = SQL trigger kafaa_fs49_content_guard
 
 type Row = Record<string, unknown>;
 const changed = (before: Row | null, next: Row, k: string) => (before ? JSON.stringify(before[k] ?? null) !== JSON.stringify(next[k] ?? null) : next[k] != null);
@@ -39,6 +41,14 @@ export function directWriteGuard(table: string, before: Row | null, next: Row, c
       if (['sme', 'sme_skill_ids', 'sme_nominated_by', 'sme_nominated_on'].some((k) => changed(before, next, k) && !(before == null && (next[k] == null || next[k] === false || (Array.isArray(next[k]) && !(next[k] as unknown[]).length)))))
         return 'Subject-matter expert nominations are recorded by the line manager';
       return null;
+    case 'contact_requests': { // audit 2026-10-12: new requests as the public forms send them; afterwards staff change the status only
+      if (!before) {
+        const p = contactRequestProblems(next, todayIso());
+        return p ? `Contact request not sent: ${p}` : null;
+      }
+      const other = Object.keys(next).find((k) => k !== 'status' && changed(before, next, k));
+      return other ? 'Only the status of a contact request changes after it is sent' : null;
+    }
     case 'courses':
       if (next.qualifying === true && !next.evaluation_form_id) return 'A qualifying course needs a linked evaluation form';
       return null;

@@ -6,7 +6,7 @@
  * audit log plus a local mirror of NEXUS ledger appends.
  */
 import { SCHEMA, columnsOf } from '../schema';
-import type { Identity, Query, Repository, Result, RowOf, Table, NexusReads, Assignment } from '../types';
+import type { Identity, InsertOptions, Query, Repository, Result, RowOf, Table, NexusReads, Assignment } from '../types';
 import { AccessContext, type PersonLite } from '../access';
 import { applyQuery, newId } from './store';
 import { chainHash, GENESIS, nowTs, sha256Hex, ledgerCanonical, type AuditFields } from '../audit';
@@ -15,6 +15,7 @@ import type { PlatformRole } from '../../auth/policy';
 import { LocalRpc } from './rpc';
 import { directWriteGuard } from './guards';
 import nexusSnapshot from '../../seed/nexus_snapshot.json';
+import { retryableOnce } from '../../shell/chunkReload';
 
 type Rows = Record<string, Record<string, unknown>[]>;
 /** v2 (W5 QA): only the tables changed since the seed are stored. The whole tenant (about 11.6 million characters after wave 5) no
@@ -30,15 +31,23 @@ interface SeedFile {
   tables: Rows;
 }
 
-let seedPromise: Promise<SeedFile> | null = null;
-export const loadSeed = () => (seedPromise ??= import('../../seed/seed.json').then((m) => (m.default ?? m) as unknown as SeedFile));
+/** The seed chunk, loaded once. A failed load (a stale chunk after a deploy, a dropped connection) is not cached, so the next call
+ *  tries again instead of failing for the rest of the page's life. */
+export const loadSeed = retryableOnce(() => import('../../seed/seed.json').then((m) => (m.default ?? m) as unknown as SeedFile));
 
 export class LocalBackend implements Repository {
   readonly backend = 'local' as const;
   private tables: Rows = {};
   private byId: Record<string, Map<string, Record<string, unknown>>> = {};
   private listeners = new Set<(t: Table[]) => void>();
-  private ready: Promise<void>;
+  private readyPromise: Promise<void> | null = null;
+  /** Resolves once the seed (and any persisted local changes) are loaded. A failed load is retried on the next call. */
+  private get ready(): Promise<void> {
+    return (this.readyPromise ??= this.init().catch((err: unknown) => {
+      this.readyPromise = null;
+      throw err;
+    }));
+  }
   private personaId: string | null = null;
   private nexusPersonas = new Set<string>();
   private saveTimer: ReturnType<typeof setTimeout> | null = null;
@@ -47,7 +56,7 @@ export class LocalBackend implements Repository {
   readonly nexus: NexusReads;
 
   constructor() {
-    this.ready = this.init();
+    void this.ready.catch(() => undefined); // start loading now; callers that await `ready` see (and retry) a failure
     this.rpc = new LocalRpc(this);
     this.nexus = this.makeNexusReads();
   }
@@ -195,7 +204,7 @@ export class LocalBackend implements Repository {
     }
     return null;
   }
-  async insert<K extends Table>(table: K, input: Partial<RowOf<K>>): Promise<Result<RowOf<K>>> {
+  async insert<K extends Table>(table: K, input: Partial<RowOf<K>>, opts?: InsertOptions): Promise<Result<RowOf<K>>> {
     await this.ready;
     const def = SCHEMA[table];
     const row = this.withDefaults(table, { ...(input as Record<string, unknown>), id: (input as { id?: string }).id ?? newId(table.slice(0, 3)) });
@@ -216,6 +225,8 @@ export class LocalBackend implements Repository {
     this.byId[table].set(String(row.id), row);
     if (def.write.mode === 'direct') await this.audit(`insert:kafaa_${table}`, `kafaa_${table}`, String(row.id), 'ok', null);
     this.changed([table]);
+    // Same contract as SupabaseBackend: return=minimal gives back the row as sent (with its id), never server defaults.
+    if (opts?.returning === 'minimal') return { ok: true, code: 'ok', message: 'Saved', data: structuredClone({ ...(input as Record<string, unknown>), id: row.id }) as unknown as RowOf<K> };
     return { ok: true, code: 'ok', message: 'Saved', data: structuredClone(row) as unknown as RowOf<K> };
   }
   async update<K extends Table>(table: K, id: string, patch: Partial<RowOf<K>>): Promise<Result<RowOf<K>>> {

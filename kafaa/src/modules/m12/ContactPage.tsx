@@ -30,7 +30,7 @@ export default function ContactPage() {
     const keep = new Date(`${todayIso()}T00:00:00Z`);
     keep.setUTCDate(keep.getUTCDate() + RETENTION_DAYS);
     const r = await run(
-      () => repo.insert('contact_requests', { topic: v.topic as never, route_to: CONTACT_ROUTES[v.topic], name: v.name.trim() || null, email: v.mail.trim() || null, message: v.message.trim(), status: 'routed', lang, consent_contact: needsConsent && consent, retention_until: keep.toISOString().slice(0, 10) }),
+      () => repo.insert('contact_requests', { topic: v.topic as never, route_to: CONTACT_ROUTES[v.topic], name: v.name.trim() || null, email: v.mail.trim() || null, message: v.message.trim(), status: 'routed', lang, consent_contact: needsConsent && consent, retention_until: keep.toISOString().slice(0, 10) }, { returning: 'minimal' }), // visitors may send but not read requests: no RETURNING
       { success: t('m12.contact.sent') },
     );
     if (r.ok && r.data) {
