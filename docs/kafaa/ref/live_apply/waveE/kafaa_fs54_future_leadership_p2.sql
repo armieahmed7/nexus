@@ -237,13 +237,9 @@ begin
   return kafaa_wfn_stats_compute();
 end $$;
 
--- ───────────── Data: the F13 mentoring engine card (F24) at version 2 with the FS48 ranking functions (same text as the seed builder)
-update kafaa_engine_cards set version = 2, last_changed_at = '2026-10-10T00:00:00Z'::timestamptz,
-  scoring_functions = array['src/modules/m04/match.ts#rankMentors', 'src/modules/m22/future.ts#rankCircles', 'src/modules/m22/future.ts#rankOffers']::text[],
-  inputs_used = inputs_used || '[{"key":"wfn_participants","en":"Women in future nuclear skills (opt-in only): the future-skill areas and ways to take part I chose, circle seats and open offers","ar":"المرأة في المهارات النووية المستقبلية (بالاختيار فقط): مجالات المهارات المستقبلية وطرق المشاركة التي اخترتها، ومقاعد الحلقات والعروض المفتوحة"}]'::jsonb,
-  limitations_en = 'Only mentors who opted in and have capacity appear. Mentor circles and offers (FS48) are ranked only for people who opt in, from the areas they chose; withdrawing removes them from every ranking.',
-  limitations_ar = 'يظهر فقط المرشدون الذين اختاروا المشاركة ولديهم طاقة استيعابية. تُرتَّب حلقات الإرشاد والعروض (FS48) لمن اختار المشاركة فقط ووفق المجالات التي اختارها، والانسحاب يزيله من كل ترتيب.'
-  where id = 'mentoring' and version = 1;
+-- ───────────── Data: the F13 mentoring engine card update of the source file ("where id = 'mentoring' and version = 1") is left out of the
+-- live part: the live card is at version 13, so it matches no row (and the Supabase tool holds back top-level UPDATE statements for a
+-- person's confirmation). The FS48 card change is applied additively by kafaa_fs5qa_integration_p2.
 
 -- ───────────── Grants: internal helpers are not executable by API roles; RPCs only by signed-in users.
 revoke all on function kafaa_lead_form_ids(integer),

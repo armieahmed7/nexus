@@ -56,8 +56,8 @@ describe('FS17/FS18 pages', () => {
   it('the external catalogue lists published items with source links and the criteria, and records a self-declared completion', async () => {
     await renderPage(<ExternalCataloguePage />, { persona: 'sro', path: '/learn/external' });
     const cards = await screen.findAllByTestId('m19-xr-card', {}, T);
-    expect(cards.length).toBe(8);
-    expect(screen.getAllByTestId('m19-xr-source').length).toBe(8);
+    expect(cards.length).toBe(13); // FS wave E QA: + 5 FS42/FS43 readings (xr-et-*, fs41-clean-energy.mjs)
+    expect(screen.getAllByTestId('m19-xr-source').length).toBe(13);
     expect(screen.getAllByTestId('m19-xr-criterion').length).toBe(4);
     await waitFor(() => expect(screen.getByTestId('benchmark-chip-NUC-NET').tagName).toBe('BUTTON'), T);
     fireEvent.click(screen.getAllByTestId('m19-xr-record')[0]);

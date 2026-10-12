@@ -15,6 +15,7 @@ Written 11 Oct 2026 (about 12:45 UTC) by the Claude session that built waves A t
 | Live site | https://enec-kafaa.netlify.app/kafaa/ (Netlify site `enec-kafaa`). Last confirmed deploy: FS wave C, deploy `6acb34f1a8d2f58a0a84915e`, 11 Oct about 07:15 UTC. |
 | Wave D (FS27 to FS37) | Built by 5 engineers, applied live, merged into `master` (merge commits `4d6d854` to `de29ab3`). The wave-D integration lead was still running QA (E2E, fixes) at handover, with uncommitted edits on `master`. Armie asked for wave D to be finished and deployed, then a stop. |
 | Waves E to I | Not started. This file is the plan. |
+| Wave E (FS38 to FS49), update 12 Oct 2026 | Built (`fsEe1`..`fsEe5`), integrated on `fsE-integration` (draft PR to `main`), gates green. Live SQL applied except the two approval-gated parts and the FS49 triggers; see "Wave E live status" in section 5. Not merged or deployed yet. |
 | Source | `/workspace/kafaa` in the old container, branch `master`, **no git remote**. You receive it as a tarball or bundle (section 2.1). |
 | Database | Supabase project `hlirqxoddysxtdezwcgv` (shared with ENEC NEXUS). All migrations up to wave D are applied live, in parts. |
 
@@ -421,6 +422,14 @@ Wave QA: `supabase/migrations/20261010259001_kafaa_fs5qa_integration.sql`, `scri
 - [ ] FS49: speak-up network smoke check green; every HU card in EN and AR links a drill or lesson.
 - [ ] `deploy_out` rebuilt and checked; ~10 screenshots in `shots_E/`; `QA_E.md` written; `DEPLOY_READY.md` updated; committed on master.
 - [ ] Deployed after Armie's explicit go-ahead; verified; `DEPLOY_DONE.md` appended; Armie told.
+
+#### Wave E live status (12 Oct 2026)
+
+- Repo: GitHub `armieahmed7/nexus`, app in `kafaa/`, branch `fsE-integration` (merges of `fsEe1`..`fsEe5` + QA migration `20261010259001_kafaa_fs5qa_integration.sql`), draft PR to `main`. Merging to `main` deploys Netlify `enec-kafaa`; it does not apply SQL.
+- Live bundle: `docs/kafaa/ref/live_apply/waveE/` (README there has the order, verification and live status). Applied on `hlirqxoddysxtdezwcgv`, all `success`: `kafaa_fs51_next_gen_p1`, `_p2`, `kafaa_fs52_energy_transition_p1`, `kafaa_fs53_lectures_localisation_p1`, `_p2`, `kafaa_fs54_future_leadership_p1`, `_p2`, `kafaa_fs55_ai_safety_culture_p1`, `_p2`, `kafaa_fs5qa_integration_p1`, `kafaa_fs5qa_seed_01`..`_21`, then `kafaa_skills_apply` for the 26 people with wave-E evidence.
+- Verified live: 23 wave-E tables count + digest equal to the branch build; new-id subsets of existing tables equal; function md5s equal for every wave-E function (3 older functions, `kafaa_dalil_turn`, `kafaa_log_denied`, `kafaa_signoff_evaluation`, differ from the repo from before wave E); RLS and policies on the 23 new tables equal; anon executes none of the 102 new functions; `kafaa_fs49_*` not executable by API roles.
+- **Waiting for a person's approval** (the Supabase tool cancels top-level UPDATEs): `kafaa_fs55_ai_safety_culture_p1b` (guarded backfill of hu-1..hu-8, trait-2, trait-5) and `kafaa_fs5qa_integration_p2` (additive FS48 update of the live `mentoring` engine card, version 13 -> 14). After both: run the trigger pre-check (README step 7), then `kafaa_fs55_ai_safety_culture_p3`. Until then the FS49 AI cues and the "In your area" tags are missing on hu-1..hu-8 and trait-2/trait-5, and the mentoring card does not list the FS48 ranking functions.
+- Still open for wave E: the cross-feature hand-offs listed in the CONTRACT changelog entry "FS wave E integration and QA" (PassportView labels, `/my/next-gen` links, MC-TWINS routes, F36 approvals, M07 `LocalisationOverduePanel`, local FS49 guard mirror, `gen-rls-perf`), the E2E route sweep, journeys and visual checks, `QA_E.md`, merge and deploy.
 
 #### Wave E feature cards
 

@@ -313,7 +313,8 @@ describe('F17 privacy (acceptance: no email or phone in any payload)', () => {
 
 describe('M22 routes and i18n', () => {
   it('every route has an English and Arabic title and purpose', () => {
-    expect(routes.length).toBe(10);
+    // FS wave E QA: + 5 M22 routes (FS46-FS48 future leadership, mentor circles and offers)
+    expect(routes.length).toBe(15);
     for (const r of routes) {
       expect(hasKey(`m22.routes.${r.id}.title`), r.id).toBe(true);
       expect(hasKey(`m22.routes.${r.id}.purpose`), r.id).toBe(true);

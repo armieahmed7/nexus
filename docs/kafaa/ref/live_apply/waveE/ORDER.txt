@@ -29,5 +29,7 @@ kafaa_fs5qa_seed_18.sql
 kafaa_fs5qa_seed_19.sql
 kafaa_fs5qa_seed_20.sql
 kafaa_fs5qa_seed_21.sql
+kafaa_fs55_ai_safety_culture_p1b.sql
+kafaa_fs5qa_integration_p2.sql
 CHECK_TRIGGER_ROWS
 kafaa_fs55_ai_safety_culture_p3.sql
