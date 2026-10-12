@@ -14,6 +14,7 @@ import {
   computeDemand, needsReport, periodsFrom, proposalDates, proposalSize, quarterBounds, quarterOfIso, sessionKindFor, type DemandInput,
 } from '../needs';
 import type { DemandReportResult, EffectivenessReport, L3Board, L3View, M25Rpc } from './rpc';
+import { makeLocalFs56 } from './local.fs56';
 
 /** User-facing refusal messages (identical in the SQL functions). */
 export const MSG = {
@@ -88,6 +89,7 @@ export function makeLocalM25(b: LocalBackend, h: LocalRpcHelpers): M25Rpc {
   };
 
   return {
+    ...makeLocalFs56(b, h), // FS56/FS57 (FS wave F · E4)
     // ───────────────────────────── F25
     async submitL1(input) {
       await b.whenReady();

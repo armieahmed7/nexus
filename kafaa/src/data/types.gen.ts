@@ -4127,6 +4127,50 @@ export interface SessionProposalsRow {
   decided_by?: string | null;
   decided_at?: string | null;
 }
+export interface SkillChangeMeasuresRow {
+  id: string;
+  kind: 'course' | 'pathway';
+  item_id: string;
+  as_of: string;
+  window_days: number;
+  completers?: number | null;
+  measured?: number | null;
+  suppressed: boolean;
+  before_x100?: number | null;
+  after_x100?: number | null;
+  change_x100?: number | null;
+  moved_pct?: number | null;
+  comparison_people?: number | null;
+  comparison_change_x100?: number | null;
+  net_x100?: number | null;
+  method?: 'matched' | 'before_after' | null;
+  verdict: 'moves' | 'some' | 'flat' | 'window_open' | 'suppressed';
+  next_on?: string | null;
+  skills: any;
+  reasons: any;
+  computed_at: string;
+  computed_by?: string | null;
+}
+export interface GapBacklogRow {
+  id: string;
+  skill_id: string;
+  level: number;
+  owner_role: string;
+  owner_person_id?: string | null;
+  due_on?: string | null;
+  route?: 'build' | 'partner' | 'buy' | null;
+  rationale: string;
+  rationale_ar?: string | null;
+  plan?: any | null;
+  predicted: any;
+  status: 'open' | 'decided';
+  first_seen: string;
+  created_by: string;
+  decided_by?: string | null;
+  decided_at?: string | null;
+  history: any;
+  updated_at: string;
+}
 export interface JtaAnalysesRow {
   id: string;
   role_id: string;
@@ -5331,6 +5375,8 @@ export interface Tables {
   needs_links: NeedsLinksRow;
   demand_snapshots: DemandSnapshotsRow;
   session_proposals: SessionProposalsRow;
+  skill_change_measures: SkillChangeMeasuresRow;
+  gap_backlog: GapBacklogRow;
   jta_analyses: JtaAnalysesRow;
   jta_tasks: JtaTasksRow;
   dif_ratings: DifRatingsRow;

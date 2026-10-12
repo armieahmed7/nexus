@@ -2381,6 +2381,20 @@ create policy kafaa_read on kafaa_session_proposals for select to anon, authenti
 grant select on kafaa_session_proposals to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- skill_change_measures
+alter table kafaa_skill_change_measures enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_change_measures;
+create policy kafaa_read on kafaa_skill_change_measures for select to anon, authenticated using (kafaa_has_grant('learning_analytics', array['Agg','R','W','A']));
+grant select on kafaa_skill_change_measures to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- gap_backlog
+alter table kafaa_gap_backlog enable row level security;
+drop policy if exists kafaa_read on kafaa_gap_backlog;
+create policy kafaa_read on kafaa_gap_backlog for select to anon, authenticated using (kafaa_has_grant('learning_analytics', array['Agg','R','W','A']));
+grant select on kafaa_gap_backlog to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- jta_analyses
 alter table kafaa_jta_analyses enable row level security;
 drop policy if exists kafaa_read on kafaa_jta_analyses;

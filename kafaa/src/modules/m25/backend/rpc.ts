@@ -4,6 +4,10 @@
 import type { Result } from '../../../data/types';
 import type { CourseCard, L1Item, L3Item, L3Rating } from '../eff';
 import type { NeedsReport } from '../needs';
+import type { SkillChangeReport, SkillChangeView } from '../skillChange';
+import type { BacklogView, CoverageReport, CoverageSkill, WhatIfMove } from '../coverage';
+
+export type { BacklogView, CoverageReport, CoverageSkill, SkillChangeReport, SkillChangeView };
 
 export type { CourseCard, NeedsReport };
 
@@ -18,7 +22,24 @@ export interface L3Board { mode: 'all' | 'mine'; rows: L3View[] }
 export interface L3Input { items: { key: string; rating: L3Rating }[]; note?: string }
 export interface DemandReportResult extends NeedsReport { periods: string[]; can_compute: boolean; instructors: number }
 
-export interface M25Rpc {
+// ───────────── FS56 Skill-change effectiveness + FS57 Curriculum coverage (FS wave F · E4). Local: backend/local.fs56.ts; SQL:
+// supabase/migrations/20261010264001_kafaa_fs64_skill_change_coverage.sql (+ backend/supabase.ts). Rules: ../skillChange.ts, ../coverage.ts.
+export interface GapDecisionInput { id: string; owner_role: string; owner_person_id?: string | null; due_on: string; route: 'build' | 'partner' | 'buy'; rationale: string; plan?: { title: string; level: number; hours: number } | null }
+
+export interface Fs56Rpc {
+  /** FS56: the stored skill-change table (learning_analytics Agg/R/A); every cell from fewer than 10 people is null. */
+  skillChangeReport(): Promise<Result<SkillChangeReport>>;
+  /** FS56: recompute the skill-change table as of today (training manager). */
+  computeSkillChange(): Promise<Result<{ rows: number; measured: number; as_of: string }>>;
+  /** FS57: coverage per role (now and 2030), what the catalogue teaches, and the backlog with its live state (learning_analytics Agg/R/A). */
+  curriculumCoverage(): Promise<Result<CoverageReport>>;
+  /** FS57: add a backlog row (default owner = the skill's owner function) for every uncovered skill and open FS17 gap (training manager). */
+  syncGapBacklog(): Promise<Result<{ created: number; total: number }>>;
+  /** FS57: record a backlog decision (owner, due date, build/partner/buy, rationale, optional plan with its predicted score moves) (training manager; ledger). */
+  decideGap(input: GapDecisionInput): Promise<Result<{ id: string; predicted: WhatIfMove[] }>>;
+}
+
+export interface M25Rpc extends Fs56Rpc {
   /** L1: the learner's own reaction form for one of their completions (once, within 90 days). Schedules the L3 observation of a qualifying course. */
   submitL1(input: L1Input): Promise<Result<{ id: string; l3_id: string | null }>>;
   /** L3: schedule observations 90 days after each completion of a qualifying course (training manager). */

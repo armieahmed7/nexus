@@ -4899,6 +4899,56 @@ create table if not exists kafaa_session_proposals (
 );
 comment on table kafaa_session_proposals is '[M25] Draft session proposal for the scheduler (never published; sessions are created through the M04 schedule) (F26)';
 
+-- M25 · Skill change per course or pathway: F01 level before and 90 days after, with a matched comparison where available (FS56)
+create table if not exists kafaa_skill_change_measures (
+  id text primary key,
+  kind text not null check (kind in ('course', 'pathway')),
+  item_id text not null,
+  as_of date not null,
+  window_days integer not null default 90,
+  completers integer,
+  measured integer,
+  suppressed boolean not null default false,
+  before_x100 integer,
+  after_x100 integer,
+  change_x100 integer,
+  moved_pct integer,
+  comparison_people integer,
+  comparison_change_x100 integer,
+  net_x100 integer,
+  method text check (method in ('matched', 'before_after')),
+  verdict text not null check (verdict in ('moves', 'some', 'flat', 'window_open', 'suppressed')),
+  next_on date,
+  skills jsonb not null default '[]'::jsonb,
+  reasons jsonb not null default '[]'::jsonb,
+  computed_at timestamptz not null default now(),
+  computed_by text
+);
+comment on table kafaa_skill_change_measures is '[M25] Skill change per course or pathway: F01 level before and 90 days after, with a matched comparison where available (FS56)';
+
+-- M25 · Gap-filling backlog: one row per skill and level the catalogue should reach, with owner, date and build / partner / buy (FS57)
+create table if not exists kafaa_gap_backlog (
+  id text primary key,
+  skill_id text not null,
+  level integer not null,
+  owner_role text not null,
+  owner_person_id text,
+  due_on date,
+  route text check (route in ('build', 'partner', 'buy')),
+  rationale text not null default '',
+  rationale_ar text,
+  plan jsonb,
+  predicted jsonb not null default '[]'::jsonb,
+  status text not null default 'open' check (status in ('open', 'decided')),
+  first_seen date not null,
+  created_by text not null,
+  decided_by text,
+  decided_at timestamptz,
+  history jsonb not null default '[]'::jsonb,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_gap_backlog is '[M25] Gap-filling backlog: one row per skill and level the catalogue should reach, with owner, date and build / partner / buy (FS57)';
+
 -- M26 · Job analysis of a role (SAT analysis phase): draft, DIF survey open, approved (F27)
 create table if not exists kafaa_jta_analyses (
   id text primary key,
@@ -6439,6 +6489,8 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ne
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_demand_snapshots_course_id_fk') then alter table kafaa_demand_snapshots add constraint kafaa_demand_snapshots_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_session_proposals_course_id_fk') then alter table kafaa_session_proposals add constraint kafaa_session_proposals_course_id_fk foreign key (course_id) references kafaa_courses(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_session_proposals_session_id_fk') then alter table kafaa_session_proposals add constraint kafaa_session_proposals_session_id_fk foreign key (session_id) references kafaa_sessions(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_gap_backlog_skill_id_fk') then alter table kafaa_gap_backlog add constraint kafaa_gap_backlog_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_gap_backlog_owner_person_id_fk') then alter table kafaa_gap_backlog add constraint kafaa_gap_backlog_owner_person_id_fk foreign key (owner_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_jta_analyses_role_id_fk') then alter table kafaa_jta_analyses add constraint kafaa_jta_analyses_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_jta_analyses_owner_id_fk') then alter table kafaa_jta_analyses add constraint kafaa_jta_analyses_owner_id_fk foreign key (owner_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_jta_tasks_role_id_fk') then alter table kafaa_jta_tasks add constraint kafaa_jta_tasks_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
@@ -7107,6 +7159,12 @@ create index if not exists kafaa_session_proposals_period_idx on kafaa_session_p
 create index if not exists kafaa_session_proposals_course_id_idx on kafaa_session_proposals (course_id);
 create index if not exists kafaa_session_proposals_status_idx on kafaa_session_proposals (status);
 create index if not exists kafaa_session_proposals_session_id_idx on kafaa_session_proposals (session_id);
+create index if not exists kafaa_skill_change_measures_kind_idx on kafaa_skill_change_measures (kind);
+create index if not exists kafaa_skill_change_measures_item_id_idx on kafaa_skill_change_measures (item_id);
+create index if not exists kafaa_skill_change_measures_verdict_idx on kafaa_skill_change_measures (verdict);
+create index if not exists kafaa_gap_backlog_skill_id_idx on kafaa_gap_backlog (skill_id);
+create index if not exists kafaa_gap_backlog_owner_person_id_idx on kafaa_gap_backlog (owner_person_id);
+create index if not exists kafaa_gap_backlog_status_idx on kafaa_gap_backlog (status);
 create index if not exists kafaa_jta_analyses_status_idx on kafaa_jta_analyses (status);
 create index if not exists kafaa_jta_analyses_owner_id_idx on kafaa_jta_analyses (owner_id);
 create index if not exists kafaa_jta_tasks_role_id_idx on kafaa_jta_tasks (role_id);
@@ -7225,4 +7283,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 314) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 316) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
