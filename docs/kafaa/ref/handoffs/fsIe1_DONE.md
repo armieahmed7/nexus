@@ -102,8 +102,8 @@ Migration `kafaa/supabase/migrations/20261010291001_kafaa_fs91_balance_external_
 |---|---|---|
 | kafaa_learning_balances | 106 | e2534cef |
 | kafaa_study_time_requests | 23 | e2bf3a58 |
-| kafaa_external_certs | 13 | 77fda4eb |
-| kafaa_skill_evidence where ref_table = 'external_certs' | 9 | 7e982fcd |
+| kafaa_external_certs | 13 | 35701bc0 |
+| kafaa_skill_evidence where ref_table = 'external_certs' | 9 | 9624b458 |
 
 **Seed:** `kafaa/scripts/seed/ext/fs78-learning-balance.mjs` (FINALIZE_LAST, after f01; synthetic people only).
 
@@ -112,12 +112,26 @@ Migration `kafaa/supabase/migrations/20261010291001_kafaa_fs91_balance_external_
 - **Certificates:** 13 in all: 6 verified, 1 revoked, 1 rejected, 1 withdrawn and 4 waiting. Links use `https://certificates.example.org/verify/<ref>`.
 - **Evidence:** 9 rows (8 active) for 7 people.
 - **Notices:** 16.
-- **Seed diff vs the base, table by table:** only my 3 tables changed, plus `notifications` +16, `skill_evidence` +9, and `person_skills` with 4 rows added and 4 changed. The 4 changed rows are the derived states of those 7 people. The builder fails if any other state changes.
+- **Seed diff vs the base, table by table:** only my 3 tables changed, plus `notifications` +16, `skill_evidence` +9, and `person_skills` with 3 rows added and 5 changed (the derived states of those people). The builder fails if any other state changes. The certificates map only to skills whose new states leave every other derived table as it was: the FS72 invariant (stored open suggestions = `inferSuggestions` on 2026-10-11) holds, which is why p-nse's ENEC-assessed certificate maps to plant data and data care (already held) rather than data engineering (a new holder there would move 44 people's stored suggestions).
 - **Loading:** rows load with `insert ... on conflict (id) do nothing`.
 
 ## Tests and gates (run from `kafaa/`, one vitest process at a time, TMPDIR=/dev/shm/fsIe1)
 
-@@GATES@@
+| gate | result |
+|---|---|
+| `npm run gen` | rc 0; the only diff is my seed builder change and the regenerated `seed.json` / `seed.sql` (37,461 rows across 359 tables before this change) |
+| `npm run check:i18n` | rc 0: 40 namespaces, en/ar in parity |
+| `npm run typecheck` | rc 0 |
+| `tests/unit/fs91-balance-external-certs.test.ts` | 13 / 13 passed |
+| `tests/unit/fs91-pages.test.tsx` | 11 / 11 passed |
+| `tests/unit/fs42-rpl-credits.test.ts` (directly affected, M34 route pin) | 11 / 11 passed |
+| `tests/unit/fs11-catalogue.test.ts` (directly affected, evidence token) | 13 / 13 passed |
+| `tests/unit/fsqa1-integration.test.tsx` (directly affected, evidence token) | 17 / 18: the only failure is the route-count pin 380 -> 385, which is left to the integration lead (hand-off 1) |
+| `npm run migrations:validate` | rc 0, "All migration checks passed" (2,457 checks, including my 27 FS78/FS79 checks and the FS72 stored-suggestion invariant) |
+| `npm run check:public` | rc 0: 77 public tables, no personal columns; 40 benchmarks and 120 skills cite https sources |
+| `npx vite build` | rc 0 (built in about 50 s; only the existing chunk-size warning) |
+
+Fix made during the gates: the first `migrations:validate` run failed one check from another feature, "FS72: every stored open suggestion equals the rule on 2026-10-11". p-nse's verified certificate had created a new data-engineering state, and that moved 44 people's stored suggestions. The certificate now maps to plant data and data care, which p-nse already held. After that change every gate above passed. The table digests above were taken after the fix; no function body changed.
 
 ## Decisions applied and logged (CONTRACT.md changelog entry "FS wave I · E1")
 
@@ -139,7 +153,7 @@ Migration `kafaa/supabase/migrations/20261010291001_kafaa_fs91_balance_external_
 
 1. **Route-count pins 380 -> 385** (+5 M34; ids above) in the pin files (`w4-integration`, `w5-integration`, `fs11-foundation`, `fsqa1..8-integration`, `tests/e2e/sweep.spec.ts`). Those tests fail until updated. `tests/unit/fs42-rpl-credits.test.ts` already leaves the 5 ids out of its M34 pin of 7.
 2. **Recorded-evidence invariant token:** `external_certs` was added after `skill_suggestions` in `tests/unit/fs11-catalogue.test.ts`, `tests/unit/fsqa1-integration.test.tsx`, `scripts/validate/fs11-foundation.mjs` and `scripts/validate/fsqa1-integration.mjs`. Take the union of tokens when merging wave I.
-3. **Live-apply bundle part:** apply the migration, then load the seed rows of the 3 tables, then `kafaa_skill_evidence` (9) and `kafaa_notifications` (16). The expected md5s and digests are above. Because `on conflict do nothing` will not update the 4 changed `person_skills` rows for p-buyer, p-k-instructor, p-k-ro, p-nse, p-sro, w-ro-01 and w-sro-01, run the existing F01 recompute (`kafaa_skills_apply`) for those 7 people after the evidence load, as the RPC itself does.
+3. **Live-apply bundle part:** apply the migration, then load the seed rows of the 3 tables, then `kafaa_skill_evidence` (9) and `kafaa_notifications` (16). The expected md5s and digests are above. Because `on conflict do nothing` will not update the 5 changed `person_skills` rows for p-buyer, p-k-instructor, p-k-ro, p-nse, p-sro, w-ro-01 and w-sro-01, run the existing F01 recompute (`kafaa_skills_apply`) for those 7 people after the evidence load, as the RPC itself does.
 4. **M17 wiring (not done, outside my folder):** show `trustTier()` / `<TrustTierBadge>` (exported from `src/modules/m34/extcerts.ts` / `fs91ui.tsx`) wherever M17 lists credentials.
 5. **M19 hook not written:** a verified certificate whose `resource_id` matches an `external_completions` row could mark that completion verified.
 6. **Expiry gap:** a verified certificate that later expires keeps its evidence. There is no expiry sweep; verify refuses `expired` certificates.
