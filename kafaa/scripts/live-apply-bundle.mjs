@@ -143,9 +143,21 @@ for (const t of order) {
   const ids = add.get(t);
   let head = null;
   const rows = [];
-  for (const line of b.split('\n').slice(1)) {
-    if (line.startsWith('insert into ')) head = line;
-    else if (line.startsWith('(')) { const id = line.match(/^\('((?:[^']|'')*)'/)?.[1]?.replace(/''/g, "'"); if (id != null && ids.has(id)) rows.push(line.replace(/,$/, '')); }
+  // Row literals are split on top-level parentheses outside quotes, so a text value that holds a line break stays in its row
+  // (wave H: an FS76 Dalil answer spans two lines; the earlier line-based split cut it).
+  for (const stmt of b.split(/\n(?=insert into )/).slice(1)) {
+    const nl = stmt.indexOf('\n');
+    head = stmt.slice(0, nl);
+    const body = stmt.slice(nl + 1);
+    let depth = 0, q = false, start = -1;
+    for (let i = 0; i < body.length; i++) {
+      const c = body[i];
+      if (q) { if (c === "'" && body[i + 1] === "'") i++; else if (c === "'") q = false; continue; }
+      if (c === "'") { q = true; continue; }
+      if (c === '(') { if (depth === 0) start = i; depth++; }
+      else if (c === ')') { depth--; if (depth === 0 && start >= 0) { const row = body.slice(start, i + 1); const id = row.match(/^\('((?:[^']|'')*)'/)?.[1]?.replace(/''/g, "'"); if (id != null && ids.has(id)) rows.push(row); start = -1; } }
+      else if (depth === 0 && body.startsWith('on conflict', i)) break;
+    }
   }
   if (rows.length !== ids.size) throw new Error(`${t}: found ${rows.length} of ${ids.size} rows in seed.sql`);
   seedRows[t] = rows.length;
