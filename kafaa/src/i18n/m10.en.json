@@ -381,7 +381,11 @@
     "fwTitle": "Fellowships and sponsored placements",
     "fwBody": "Fellows work inside real ENEC research challenges or ADVANCE studies; sponsored study comes with a placement. Completion rate is the headline.",
     "fwOpen": "Open fellowships",
-    "signIn": "Sign in to see fellowships and completion rates."
+    "signIn": "Sign in to see fellowships and completion rates.",
+    "rgTitle": "Regional skills plan and pledges",
+    "rgBody": "ENEC's released skill demand for Al Dhafra: commit seats per term, report delivery, and register numeric skills pledges.",
+    "rgOpen": "Open the regional plan",
+    "plOpen": "Register a pledge"
   },
   "reasons": {
     "ua_role": "{role} ({horizon}): {covered} of {n} requirements reach their teachable target, score {score}",

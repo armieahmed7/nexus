@@ -130,7 +130,7 @@ describe('FS66 acceptance', () => {
     expect(r.ok, r.message).toBe(true);
     expect(r.data!.coverage).toEqual(programmeCoverage(raw('programme_alignments').find((p) => p.id === r.data!.id)!, uaWorld(b)));
     // a level above the learnable ceiling is refused
-    expect(programmeProblem({ ...base, skills: [{ skill_id: 'sk-pf-01', level: 3, modules: ['x1'] }, ...base.skills!.slice(1)] } as never, w)).toBe('skills');
+    expect(programmeProblem({ ...base, skills: [{ skill_id: 'sk-pf-01', level: 3, modules: ['x1'] }, ...(base.skills as Row[]).slice(1)] } as never, w)).toBe('skills');
   });
 
   it('FS66 acceptance: a partner university sees only its own programmes', async () => {
@@ -164,7 +164,7 @@ describe('FS66 rules, RPCs and seed', () => {
     expect(programmeProblem({ ...base, degree: 'phd' } as never, w)).toBe('degree');
     expect(programmeProblem({ ...base, nqf_level: 11 } as never, w)).toBe('nqf');
     expect(programmeProblem({ ...base, target_role_ids: [] } as never, w)).toBe('roles');
-    expect(programmeProblem({ ...base, skills: base.skills!.slice(0, 2) } as never, w)).toBe('skills');
+    expect(programmeProblem({ ...base, skills: (base.skills as Row[]).slice(0, 2) } as never, w)).toBe('skills');
     expect(programmeProblem({ ...base, accreditation_ref: 'x'.repeat(121) } as never, w)).toBe('accreditation');
     expect(cleanSkills(base.skills).find((x) => x.skill_id === 'sk-co-01')!.modules).toEqual(['Procedures']);
     expect(cleanSkills(base.skills).map((x) => x.skill_id)).toEqual(['sk-co-01', 'sk-fs-ai-verify', 'sk-pf-01']);

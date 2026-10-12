@@ -499,6 +499,18 @@
       "icv": {
         "title": "ICV",
         "body": "Certificate and improvement plan."
+      },
+      "regional": {
+        "title": "Regional skills plan",
+        "body": "ENEC's released skill demand for Al Dhafra and your commitments."
+      },
+      "pledges": {
+        "title": "Skills pledges",
+        "body": "The pledges ledger: pledged, started and completed, kept apart."
+      },
+      "pledgesRegister": {
+        "title": "Skills pledges",
+        "body": "Register a pledge for your organisation and record its progress."
       }
     },
     "isolation": "Partner data is separated by organisation in the database. You cannot see another partner's records.",
@@ -516,6 +528,14 @@
       "public": {
         "title": "Universities page",
         "body": "What the public sees about academic partners."
+      },
+      "regional": {
+        "title": "Regional skills plan",
+        "body": "ENEC's released skill demand and your seat commitments per term."
+      },
+      "pledges": {
+        "title": "Skills pledges",
+        "body": "Register a numeric pledge and record started and completed separately."
       }
     },
     "intlTitle": "International partner",

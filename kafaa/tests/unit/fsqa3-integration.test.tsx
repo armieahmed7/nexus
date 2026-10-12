@@ -37,10 +37,10 @@ const WAVE_C = ['/learn/pathways', '/learn/pathways/:id', '/my/pathways', '/trai
   '/learn/core-skills', '/learn/core-skills/:id', '/my/core-skills', '/my/core-skills/practice', '/workforce/core-skills', '/training/sjt/items'];
 
 describe('FS wave C · route registry', () => {
-  it('259 routes after wave C (288 after wave D, 315 after wave E, 338 after wave F), and the 32 wave-C routes are registered', async () => {
+  it('259 routes after wave C (288 after wave D, 315 after wave E, 338 after wave F, 367 after wave G), and the 32 wave-C routes are registered', async () => {
     const { loadRoutes } = await import('../smoke/routes');
     const R = loadRoutes();
-    expect(R.length).toBe(338); // FS wave F QA: + 23 (FS50/FS51 M35 7, FS54/FS55 M16 6, FS56/FS57 M25 3, FS58/FS59 M33 7; FS52/FS53 M07 none). FS wave E QA: + 27 wave-E routes (tests/unit/fsqa5-integration.test.tsx). FS wave D QA: + 29 wave-D routes (tests/unit/fsqa4-integration.test.tsx)
+    expect(R.length).toBe(367); // FS wave G QA: + 29 (FS60/FS61 M35 6: workforce-disclosure, -metrics, -pack, workforce-pilots, workforce-pilot, skills-pilots; FS62/FS63 M37 5: national-alignment, -tag, national-report, national-occupations, admin-national-tags; FS64/FS65 M36 6: ecosystem-regional-plan, -commitments, -commitment, -demand-release, ecosystem-pledges, -register; FS66/FS67 M10 7: partner-university-programmes, training-university-programmes, university-programme, workforce-graduate-hires, universities-fellowships, university-fellowship, workforce-fellowships; FS68/FS69 M09 5: partner-future-readiness, admin-supplier-future-readiness, partner-prearrival, training-equivalency-prearrival, -share). FS wave F QA: + 23 (FS50/FS51 M35 7, FS54/FS55 M16 6, FS56/FS57 M25 3, FS58/FS59 M33 7; FS52/FS53 M07 none). FS wave E QA: + 27 wave-E routes (tests/unit/fsqa5-integration.test.tsx). FS wave D QA: + 29 wave-D routes (tests/unit/fsqa4-integration.test.tsx)
     const paths = new Set(R.map((r) => r.path));
     expect(WAVE_C.length).toBe(32);
     for (const p of WAVE_C) expect(paths.has(p), p).toBe(true);

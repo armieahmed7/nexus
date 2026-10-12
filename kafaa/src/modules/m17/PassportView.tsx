@@ -92,6 +92,7 @@ export function useEvidenceLabel(d: PassportData) {
       return { title: `${t('m17.evidence.kind.assessment')} ${c ? `${c.code} · ${pick(c, 'title')}` : ''}`, system: t('m17.evidence.sys.assess'), ref: e.ref_id };
     }
     if (e.kind === 'jpm') return { title: t('m17.evidence.kind.jpm'), system: t('m17.evidence.sys.jpm'), ref: e.ref_id };
+    if (e.kind === 'credential' && e.ref_table === 'programme_alignments') return { title: t('m10.ua.evidenceLabel'), system: t('m10.ua.evidenceSystem'), ref: e.ref_id }; // FS66: graduate of an endorsed university programme, validated at hire (wave G integration)
     if (e.kind === 'credential' && e.ref_table === 'microcred_awards') { // FS03: back-filled micro-credential evidence
       const a = (d.mcAwards ?? []).find((x) => x.id === e.ref_id);
       return { title: `${t('m17.evidence.kind.credential')} ${a?.def_code ?? ''}`, system: t('m17.evidence.sys.wallet'), ref: a?.public_slug ?? e.ref_id };

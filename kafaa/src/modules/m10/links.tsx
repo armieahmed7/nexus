@@ -13,6 +13,15 @@ export function FutureSkillsLinks({ partner }: { partner?: boolean }) {
         {partner ? <L to="/partner/university/programmes" className="mt-2 inline-block text-[13px]" data-testid="m10-link-programmes">{t('m10.links.uaPartner')}</L>
           : <span className="mt-2 inline-block text-[12.5px] text-ink-3">{t('m10.links.uaPublic')}</span>}
       </Card>
+      {partner && ( // FS64/FS65 entry points for universities (wave G integration)
+        <Card title={t('m10.links.rgTitle')} eyebrow={t('m10.links.eyebrow')}>
+          <p className="text-[13px] text-ink-2">{t('m10.links.rgBody')}</p>
+          <div className="mt-2 flex flex-wrap gap-3 text-[13px]">
+            <L to="/ecosystem/regional-plan" data-testid="m10-link-regional">{t('m10.links.rgOpen')}</L>
+            <L to="/ecosystem/pledges/register" data-testid="m10-link-pledges">{t('m10.links.plOpen')}</L>
+          </div>
+        </Card>
+      )}
       <Card title={t('m10.links.fwTitle')} eyebrow={t('m10.links.eyebrow')}>
         <p className="text-[13px] text-ink-2">{t('m10.links.fwBody')}</p>
         {signedIn ? <L to="/universities/fellowships" className="mt-2 inline-block text-[13px]" data-testid="m10-link-fellowships">{t('m10.links.fwOpen')}</L>

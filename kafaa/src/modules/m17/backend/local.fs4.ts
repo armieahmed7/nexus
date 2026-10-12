@@ -13,7 +13,7 @@ import { todayIso } from '../../../domain/rules';
 import { nowTs } from '../../../data/audit';
 import type { AwardRow, DefRow } from '../microcred';
 import { FC_MSG, strategicReport, targetCheck, unlockId, unlockProblem, unlocksFor, type UnlockRow, type UnlockWorld } from '../futureCreds';
-import { LR_MSG, SHARE_RULES, buildBundle, recordItems, shareProblem, shareView, type RecordWorld, type VerifyResult } from '../learnerRecord';
+import { LR_MSG, SHARE_RULES, buildBundle, recordItems, shareProblem, shareView, type RecordWorld, type VerifyResult, sharePurpose } from '../learnerRecord';
 import { GOAL_RULES, SG_MSG, goalId, goalProblem, planRow } from '../skillGoals';
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -185,7 +185,7 @@ export function makeLocalM17Fs4(b: LocalBackend, h: LocalRpcHelpers): Fs4Rpc {
       upd('record_shares', s.id, { views: (Number(s.views) || 0) + 1, last_viewed_at: nowTs() });
       const w = recordWorld(String(s.person_id), today);
       const clr = buildBundle(w, s.items ?? [], { id: s.id, issued_on: today, valid_until: String(s.expires_on).slice(0, 10) });
-      const data: VerifyResult = { found: true, status, checked_on: today, expires_on: String(s.expires_on).slice(0, 10), holder_initials: w.initials, item_count: (clr.kafaaItems ?? []).length, clr, notice: LR_MSG.found };
+      const data: VerifyResult = { found: true, status, checked_on: today, expires_on: String(s.expires_on).slice(0, 10), holder_initials: w.initials, item_count: (clr.kafaaItems ?? []).length, clr, notice: LR_MSG.found, purpose: sharePurpose((s as { consents?: unknown }).consents) }; // wave G integration: FS69 pre-arrival label
       return h.done<VerifyResult>(A, 'record_shares', s.id, status, null, null, '', LR_MSG.found, data, ['audit_events']);
     },
 
