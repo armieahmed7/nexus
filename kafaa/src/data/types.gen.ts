@@ -4668,6 +4668,122 @@ export interface SkillGoalsRow {
   created_at: string;
   updated_at: string;
 }
+export interface SkillSignalRunsRow {
+  id: string;
+  quarter: string;
+  method: string;
+  status: 'published';
+  counts: any;
+  published_by: string;
+  published_role?: string | null;
+  published_at: string;
+  summary_en: string;
+  summary_ar: string;
+}
+export interface SkillSignalsRow {
+  id: string;
+  run_id: string;
+  quarter: string;
+  skill_id: string;
+  category: 'now' | 'growing';
+  rank: number;
+  score: number;
+  moved_by: string[];
+  signals: any;
+  families: string[];
+  reasons: any;
+  published_at: string;
+}
+export interface ManagerPulseRow {
+  id: string;
+  year: number;
+  person_id: string;
+  family_id?: string | null;
+  team_size?: number | null;
+  share_pct: number;
+  submitted_at: string;
+  updated_at: string;
+}
+export interface TechnologiesRow {
+  id: string;
+  name_en: string;
+  name_ar: string;
+  description_en: string;
+  description_ar: string;
+  category: 'plant_data' | 'analytics' | 'automation' | 'digital_twin' | 'inspection' | 'work_management' | 'ai_tools' | 'simulation';
+  skill_ids: string[];
+  status: 'active' | 'retired';
+  version: number;
+  created_by?: string | null;
+  created_at: string;
+  updated_by?: string | null;
+  updated_at: string;
+  sort: number;
+}
+export interface TechnologyLinksRow {
+  id: string;
+  technology_id: string;
+  ref_table: 'opportunities' | 'role_profile_versions';
+  ref_id: string;
+  family_id?: string | null;
+  role_id?: string | null;
+  source_on: string;
+  active: boolean;
+  linked_by?: string | null;
+  linked_at: string;
+}
+export interface TechnologyBadgesRow {
+  id: string;
+  quarter: string;
+  technology_id: string;
+  scope: 'enec' | 'role';
+  role_id?: string | null;
+  rank?: number | null;
+  sources: number;
+  families: number;
+  recent: number;
+  via_profile: boolean;
+  family_opportunities: number;
+  criteria: string;
+  published_by: string;
+  published_at: string;
+}
+export interface SkillSuggestionsRow {
+  id: string;
+  person_id: string;
+  skill_id: string;
+  status: 'open' | 'confirmed' | 'rejected' | 'not_me' | 'expired';
+  level: number;
+  score: number;
+  sources: string[];
+  reasons: any;
+  first_on: string;
+  generated_on: string;
+  responded_on?: string | null;
+  suppressed_until?: string | null;
+  evidence_id?: string | null;
+  history: any;
+  version: number;
+  updated_at: string;
+}
+export interface SkillSuggestionFairnessRow {
+  id: string;
+  period: string;
+  as_of: string;
+  card: string;
+  metric: string;
+  dimension: 'gender' | 'nationality';
+  group_key: 'f' | 'm' | 'uae' | 'other';
+  n?: number | null;
+  positives?: number | null;
+  rate?: number | null;
+  ratio?: number | null;
+  suppressed: boolean;
+  flagged: boolean;
+  source: string;
+  run_by?: string | null;
+  created_at: string;
+}
 export interface AiRungsRow {
   id: string;
   rung: number;
@@ -5998,6 +6114,14 @@ export interface Tables {
   skill_frameworks: SkillFrameworksRow;
   skill_alignments: SkillAlignmentsRow;
   skill_goals: SkillGoalsRow;
+  skill_signal_runs: SkillSignalRunsRow;
+  skill_signals: SkillSignalsRow;
+  manager_pulse: ManagerPulseRow;
+  technologies: TechnologiesRow;
+  technology_links: TechnologyLinksRow;
+  technology_badges: TechnologyBadgesRow;
+  skill_suggestions: SkillSuggestionsRow;
+  skill_suggestion_fairness: SkillSuggestionFairnessRow;
   ai_rungs: AiRungsRow;
   ai_skill_tracks: AiSkillTracksRow;
   ai_role_targets: AiRoleTargetsRow;

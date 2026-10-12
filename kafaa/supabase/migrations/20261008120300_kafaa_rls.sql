@@ -2604,6 +2604,63 @@ create policy kafaa_read on kafaa_skill_goals for select to anon, authenticated 
 grant select on kafaa_skill_goals to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- skill_signal_runs
+alter table kafaa_skill_signal_runs enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_signal_runs;
+create policy kafaa_read on kafaa_skill_signal_runs for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, true));
+grant select on kafaa_skill_signal_runs to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- skill_signals
+alter table kafaa_skill_signals enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_signals;
+create policy kafaa_read on kafaa_skill_signals for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, true));
+grant select on kafaa_skill_signals to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- manager_pulse
+alter table kafaa_manager_pulse enable row level security;
+drop policy if exists kafaa_read on kafaa_manager_pulse;
+create policy kafaa_read on kafaa_manager_pulse for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_manager_pulse to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- technologies
+alter table kafaa_technologies enable row level security;
+drop policy if exists kafaa_read on kafaa_technologies;
+create policy kafaa_read on kafaa_technologies for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, true));
+grant select on kafaa_technologies to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- technology_links
+alter table kafaa_technology_links enable row level security;
+drop policy if exists kafaa_read on kafaa_technology_links;
+create policy kafaa_read on kafaa_technology_links for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, true));
+grant select on kafaa_technology_links to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- technology_badges
+alter table kafaa_technology_badges enable row level security;
+drop policy if exists kafaa_read on kafaa_technology_badges;
+create policy kafaa_read on kafaa_technology_badges for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, true));
+grant select on kafaa_technology_badges to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- skill_suggestions
+alter table kafaa_skill_suggestions enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_suggestions;
+create policy kafaa_read on kafaa_skill_suggestions for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_skill_suggestions to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- skill_suggestion_fairness
+alter table kafaa_skill_suggestion_fairness enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_suggestion_fairness;
+create policy kafaa_read on kafaa_skill_suggestion_fairness for select to anon, authenticated using (kafaa_rule_read('integrations', null::text, null::text, true)
+    or kafaa_has_grant('skills_profile', array['Agg','R','W','A']));
+grant select on kafaa_skill_suggestion_fairness to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- ai_rungs
 alter table kafaa_ai_rungs enable row level security;
 drop policy if exists kafaa_read on kafaa_ai_rungs;
