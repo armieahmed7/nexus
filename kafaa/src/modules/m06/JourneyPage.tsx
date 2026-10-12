@@ -14,6 +14,7 @@ import {
 } from './journey';
 import { FactList, familyRanked, routeReasons, useExploration, useJourneyRefs, type FactRow } from './journeyUi';
 import { NationalityBadge, criteriaOf } from './shared';
+import { StarterTeaser } from './starterTeaser';
 import type { TalentProgrammesRow } from '../../data/types';
 
 type Checklist = Record<string, string>;
@@ -102,7 +103,7 @@ export default function JourneyPage() {
           <div className="max-w-sm space-y-2 text-[12.5px]">
             <StatusPill tone={canSave ? 'info' : 'neutral'}>{canSave ? t('m06.journey.storeSignedIn') : t('m06.journey.storeNothing')}</StatusPill>
             <nav aria-label={t('m06.journey.jump')} className="flex flex-wrap gap-x-3 gap-y-1">
-              {['board', 'explore', 'ready', 'practice', 'parents', ...(canSave ? ['portfolio'] : [])].map((a) => (
+              {['board', 'explore', 'starter', 'ready', 'practice', 'parents', ...(canSave ? ['portfolio'] : [])].map((a) => (
                 <a key={a} href={`#${a}`} className="text-[12.5px]">{t(`m06.journey.nav.${a}`)}</a>
               ))}
             </nav>
@@ -180,6 +181,11 @@ export default function JourneyPage() {
             </div>
           )}
         </Async>
+      </Section>
+
+      {/* FS77 (fsHe5): future-skills starter teaser (static, nothing stored) */}
+      <Section id="starter" title={t('m06.starter.teaserTitle')} description={t('m06.starter.teaserHint')}>
+        <StarterTeaser />
       </Section>
 
       <Section id="ready" title={t('m06.journey.readyTitle')} description={t('m06.journey.readyHint')}>

@@ -1386,7 +1386,8 @@
       "gig_selected": "Selected for a future gig",
       "twin_passed": "Passed a twin drill",
       "adaptive_completed": "Completed an adaptive lesson",
-      "instructor_nominated": "Nominated as an instructor"
+      "instructor_nominated": "Nominated as an instructor",
+      "suggestion_offered": "Was offered a skill suggestion"
     },
     "metricHelp": {
       "digest_suggested": "Share of staff for whom the weekly digest suggested at least one item.",
@@ -1397,7 +1398,8 @@
       "gig_selected": "Share of staff selected for a future-skills gig.",
       "twin_passed": "Share of staff who passed a suggested digital-twin drill.",
       "adaptive_completed": "Share of staff who completed an adaptive lesson.",
-      "instructor_nominated": "Share of eligible staff nominated as instructors."
+      "instructor_nominated": "Share of eligible staff nominated as instructors.",
+      "suggestion_offered": "Share of active staff who were offered at least one \"Skills you may have\" suggestion."
     },
     "none": {
       "f24": "Measured in the first-wave fairness tab",

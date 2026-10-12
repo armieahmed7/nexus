@@ -20,7 +20,7 @@ const FUNCS = ['kafaa_ro_guard', 'kafaa_na_host', 'kafaa_na_tier', 'kafaa_na_typ
   'kafaa_ro_code_problem', 'kafaa_ro_trend_core', 'kafaa_national_report', 'kafaa_save_national_tag', 'kafaa_set_tag_link', 'kafaa_save_role_occupation', 'kafaa_verify_occupation_code',
   'kafaa_clear_occupation_code', 'kafaa_occupation_trend'];
 const RPCS = ['kafaa_clear_occupation_code', 'kafaa_national_report', 'kafaa_occupation_trend', 'kafaa_save_national_tag', 'kafaa_save_role_occupation', 'kafaa_set_tag_link', 'kafaa_verify_occupation_code'];
-const WORLD = ['national_tags', 'tag_links', 'skills', 'cec_competences', 'programmes', 'pathways', 'microcred_defs', 'talent_programmes', 'leadership_programmes', 'critical_skills',
+const WORLD = ['national_tags', 'tag_links', 'skills', 'cec_competences', 'programmes', 'pathways', 'microcred_defs', 'talent_programmes', 'leadership_programmes', 'critical_skills', 'wallet_targets', 'core_skills', // + FS74 (fsHe2): the wallet target row and its inputs
   'ai_org_targets', 'cec_role_targets', 'job_families', 'people', 'person_skills', 'courses', 'enrolments', 'training_records', 'pathway_enrolments', 'microcred_awards', 'applications',
   'leadership_nominations', 'ai_rungs', 'ai_skill_tracks'];
 

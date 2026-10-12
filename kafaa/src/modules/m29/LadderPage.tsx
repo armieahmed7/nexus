@@ -12,7 +12,8 @@ export default function LadderPage() {
   const t = useT();
   const q = useM29Ref();
   return (
-    <Page title={t('m29.routes.learn-ai-fluency.title')} intro={t('m29.lad.intro')} wide eyebrow={<BenchmarkChips feature="FS09" />}>
+    <Page title={t('m29.routes.learn-ai-fluency.title')} intro={t('m29.lad.intro')} wide eyebrow={<BenchmarkChips feature="FS09" />}
+      actions={<L to="/pathways/journey/starter" className="btn-outline btn-sm no-underline" data-testid="m29-lad-to-starter">{t('m29.lad.toStarter')}</L>}>{/* FS77 (wave-H integration) */}
       <Async state={q}>{(d) => <Ladder d={d} />}</Async>
     </Page>
   );

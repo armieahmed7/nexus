@@ -121,7 +121,7 @@ export function SourceLink({ href, children, date }: { href: string; children?: 
     <a href={href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[12.5px]">
       {children ?? t('common.source')}
       <Icon name="external" size={12} />
-      {date && <span className="text-ink-3">({date})</span>}
+      {date && <span className="whitespace-nowrap text-ink-3">(<bdi>{date}</bdi>)</span>}{/* FS wave H QA: an ISO date no longer breaks at its hyphens in narrow RTL columns */}
     </a>
   );
 }

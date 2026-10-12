@@ -143,9 +143,21 @@ for (const t of order) {
   const ids = add.get(t);
   let head = null;
   const rows = [];
-  for (const line of b.split('\n').slice(1)) {
-    if (line.startsWith('insert into ')) head = line;
-    else if (line.startsWith('(')) { const id = line.match(/^\('((?:[^']|'')*)'/)?.[1]?.replace(/''/g, "'"); if (id != null && ids.has(id)) rows.push(line.replace(/,$/, '')); }
+  // Row literals are split on top-level parentheses outside quotes, so a text value that holds a line break stays in its row
+  // (wave H: an FS76 Dalil answer spans two lines; the earlier line-based split cut it).
+  for (const stmt of b.split(/\n(?=insert into )/).slice(1)) {
+    const nl = stmt.indexOf('\n');
+    head = stmt.slice(0, nl);
+    const body = stmt.slice(nl + 1);
+    let depth = 0, q = false, start = -1;
+    for (let i = 0; i < body.length; i++) {
+      const c = body[i];
+      if (q) { if (c === "'" && body[i + 1] === "'") i++; else if (c === "'") q = false; continue; }
+      if (c === "'") { q = true; continue; }
+      if (c === '(') { if (depth === 0) start = i; depth++; }
+      else if (c === ')') { depth--; if (depth === 0 && start >= 0) { const row = body.slice(start, i + 1); const id = row.match(/^\('((?:[^']|'')*)'/)?.[1]?.replace(/''/g, "'"); if (id != null && ids.has(id)) rows.push(row); start = -1; } }
+      else if (depth === 0 && body.startsWith('on conflict', i)) break;
+    }
   }
   if (rows.length !== ids.size) throw new Error(`${t}: found ${rows.length} of ${ids.size} rows in seed.sql`);
   seedRows[t] = rows.length;
@@ -197,6 +209,22 @@ for (const d of cfg.digests ?? []) dg.push({ label: d.label, where: d.where, ...
 if (people.length) dg.push({ label: `kafaa_person_skills of the ${people.length} replayed people (without updated_at)`, where: `person_id in (${people.length} ids, see the replay part); digest over to_jsonb(t) - 'updated_at' (the replay stamps now())`, ...(await digest('person_skills', `person_id = any(array[${people.map((p) => `'${p}'`).join(',')}])`, ['updated_at'])) });
 const anon = (await db.query(`select p.proname n from pg_proc p join pg_namespace s on s.oid = p.pronamespace where s.nspname = 'public' and p.proname = any($1) and has_function_privilege('anon', p.oid, 'execute')`, [[...waveFns]])).rows.map((r) => r.n);
 const auth = (await db.query(`select p.proname n from pg_proc p join pg_namespace s on s.oid = p.pronamespace where s.nspname = 'public' and p.proname = any($1) and has_function_privilege('authenticated', p.oid, 'execute') order by 1`, [[...waveFns]])).rows.map((r) => r.n);
+// table grants after the bundle on the tables / views the wave's own migrations create (config table_grants: true, wave H on).
+// Scoped to the wave's new relations: the earlier tables' grants are fixed schema-wide by the separate audit-fixes PR, not by a
+// wave bundle. The PGlite database has no Supabase default privileges, so these are the explicit grants; the dry run
+// (verify-live-bundle.mjs) starts from the defaults and checks live ends up with the same.
+// aclexplode lists every privilege a role holds, whatever its name, so the query and the table never spell one out.
+const tgNames = [...new Set(cfg.migrations.flatMap((m) => [...read(`supabase/migrations/${m.file}`).matchAll(/create\s+(?:materialized\s+)?(?:table|view)\s+(?:if\s+not\s+exists\s+)?(?:public\.)?(kafaa_\w+)/gi)].map((x) => x[1].toLowerCase())))].sort();
+const TG_SQL = `select g, p, count(*)::int n, string_agg(t, ', ' order by t) tables from (
+  select c.relname t, case when a.grantee = 0 then 'PUBLIC' else a.grantee::regrole::text end g, string_agg(a.privilege_type, ', ' order by a.privilege_type) p
+    from pg_class c join pg_namespace s on s.oid = c.relnamespace cross join lateral aclexplode(c.relacl) a
+   where s.nspname = 'public' and c.relkind in ('r', 'p', 'v', 'm', 'f')
+     and c.relname = any(array[${tgNames.map((t) => `'${t}'`).join(', ')}])
+     and (a.grantee = 0 or a.grantee::regrole::text in ('anon', 'authenticated'))
+   group by 1, 2) x group by 1, 2 order by 1, 2;`;
+const tg = cfg.table_grants ? (await db.query(TG_SQL)).rows : null;
+const tgRels = cfg.table_grants ? Number((await db.query(`select count(*)::int n from pg_class c join pg_namespace s on s.oid = c.relnamespace where s.nspname = 'public' and c.relname = any($1)`, [tgNames])).rows[0].n) : 0;
+if (cfg.table_grants && tgRels !== tgNames.length) throw new Error(`table grants: ${tgRels} of ${tgNames.length} new relations found`);
 
 // 5. EXPECTED.md
 const preMap = new Map(preRows.map((r) => [`${r.n}(${r.a})`, r.m]));
@@ -220,7 +248,12 @@ for (const r of fnRows) md += `| \`${r.n}(${r.a})\` | \`${r.m}\` |\n`;
 md += `\n## 3. Rows after the apply (count and digest)\n\nDigest = \`left(md5(string_agg(to_jsonb(t)::text, '|' order by t.id)), 8)\` over the rows that match the filter (handover 3.10):\n\n\`\`\`sql\nselect count(*), left(md5(string_agg(to_jsonb(t)::text, '|' order by t.id)), 8) from public.kafaa_x t where <filter>;\n\`\`\`\n\n| table | filter | rows | digest |\n|---|---|---|---|\n`;
 for (const d of dg) md += `| \`${d.label}\` | \`${d.where.replace(/\|/g, '/')}\` | ${d.n} | \`${d.d}\` |\n`;
 md += `\nSeed rows inserted by the seed parts: ${Object.entries(seedRows).map(([t, k]) => `kafaa_${t} ${k}`).join(', ')}.\n\nExisting rows the wave changes (not inserted; reached by the migrations' guarded updates, column defaults or the replay): ${Object.entries(changed).map(([t, ids]) => `kafaa_${t} ${ids.length}`).join(', ') || 'none'}.\n\n`;
-md += `## 4. Grants\n\nanon must execute none of the wave's functions (local: ${anon.length ? anon.join(', ') : 'none'}). authenticated executes only the RPCs (${auth.length}): ${auth.map((a) => `\`${a}\``).join(', ')}.\n\n\`\`\`sql\nselect routine_name, grantee from information_schema.routine_privileges\n where routine_schema = 'public' and grantee in ('anon', 'authenticated') and routine_name = any(array[<names above>]) order by 1, 2;\n\`\`\`\n\n${cfg.after ?? ''}\n`;
+md += `## 4. Grants\n\nanon must execute none of the wave's functions (local: ${anon.length ? anon.join(', ') : 'none'}). authenticated executes only the RPCs (${auth.length}): ${auth.map((a) => `\`${a}\``).join(', ')}.\n\n\`\`\`sql\nselect routine_name, grantee from information_schema.routine_privileges\n where routine_schema = 'public' and grantee in ('anon', 'authenticated') and routine_name = any(array[<names above>]) order by 1, 2;\n\`\`\`\n\n${tg ? tableGrants() : ''}${cfg.after ?? ''}\n`;
+function tableGrants() {
+  let t = `### 4a. Table grants after the apply\n\n${cfg.table_grants_note ? `${cfg.table_grants_note}\n\n` : ''}Every privilege anon, authenticated and PUBLIC hold on the ${tgRels} \`public.kafaa_*\` relations this wave's migrations create (local PGlite after every migration; live must give the same rows, with the same table lists). Any other row, any other privilege in a list, or a PUBLIC row means a grant is still open: stop and compare. The earlier waves' tables are out of scope here: their grants are fixed schema-wide by the separate \`audit-fixes\` PR.\n\n\`\`\`sql\n${TG_SQL}\n\`\`\`\n\n| grantee | privileges | tables | which |\n|---|---|---|---|\n`;
+  for (const r of tg) t += `| ${r.g} | ${r.p} | ${r.n} | ${r.tables.split(', ').map((x) => `\`${x}\``).join(', ')} |\n`;
+  return `${t}\n`;
+}
 writeFileSync(`${OUT}/EXPECTED.md`, md);
 for (const f of [...files, 'EXPECTED.md']) if (BANNED.test(read(`${OUT}/${f}`).replace(/removal words?/g, ''))) throw new Error(`${f}: removal word`);
 console.log(`live-apply bundle: ${files.length} parts in ${OUT}; ${fnRows.length} functions; ${dg.length} digests; replay ${people.length} people; seed ${Object.values(seedRows).reduce((a, b) => a + b, 0)} rows in ${Object.keys(seedRows).length} tables; changed existing: ${JSON.stringify(Object.fromEntries(Object.entries(changed).map(([t, v]) => [t, v.length])))}`);

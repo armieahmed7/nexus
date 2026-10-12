@@ -4,7 +4,9 @@ import { useQuery, useRepo } from '../../data';
 import { useFormat, useT } from '../../i18n';
 import { Async, BarChart, Callout, Card, DataTable, StatTile, StatusPill } from '../../ui';
 import { usePeriodLabel } from './DigestPanel';
-import { DIGEST_MAX, EXPIRY_WINDOW_DAYS, MATCH_MIN, NEW_OPP_DAYS } from './rules';
+import { CAPS, DIGEST_MAX, EXPIRY_WINDOW_DAYS, MATCH_MIN, NEW_OPP_DAYS } from './rules';
+import { FS75_FROM } from './future';
+import { FutureNudgeRules } from './FutureNudges';
 
 export function DigestStats() {
   const t = useT();
@@ -15,7 +17,12 @@ export function DigestStats() {
   const sup = (n: number | null) => (n == null ? <StatusPill tone="neutral">{t('digest.admin.suppressed')}</StatusPill> : f.num(n));
   return (
     <div className="space-y-4">
-      <Callout tone="info" title={t('digest.admin.rulesTitle')}>{t('digest.admin.rules', { max: DIGEST_MAX, days: EXPIRY_WINDOW_DAYS, pct: Math.round(MATCH_MIN * 100), opp: NEW_OPP_DAYS })}</Callout>
+      <Callout tone="info" title={t('digest.admin.rulesTitle')}>{t('digest.admin.rules', { max: DIGEST_MAX, days: EXPIRY_WINDOW_DAYS, pct: Math.round(MATCH_MIN * 100), opp: NEW_OPP_DAYS })}
+        <span className="mt-1 block" data-testid="digest-admin-future">{t('digest.admin.futureRules', { date: f.date(FS75_FROM), cap: f.num(CAPS.future) })}</span></Callout>
+      <details className="rounded-btn border border-line p-2">
+        <summary className="cursor-pointer text-[13px] font-semibold">{t('digest.future.how')}</summary>
+        <div className="mt-2"><FutureNudgeRules /></div>
+      </details>
       <Async state={q}>
         {(s) => {
           const latest = s.periods.find((p) => !p.suppressed);

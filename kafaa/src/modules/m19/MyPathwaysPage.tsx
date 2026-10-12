@@ -13,7 +13,10 @@ export default function MyPathwaysPage() {
   const ref = usePwRef();
   return (
     <Page title={t('m19.routes.my-pathways.title')} intro={t('m19.pw.my.intro')} wide eyebrow={<BenchmarkChips feature="FS17" />}
-      actions={<L to="/learn/pathways" className="btn-outline btn-sm no-underline"><Icon name="grad" size={14} /> {t('m19.pw.my.browse')}</L>}>
+      actions={<span className="flex flex-wrap gap-2">
+        <L to="/learn/pathways" className="btn-outline btn-sm no-underline"><Icon name="grad" size={14} /> {t('m19.pw.my.browse')}</L>
+        <L to={`/ask?mode=future&q=${encodeURIComponent(t('m19.pw.my.askQ'))}`} className="btn-outline btn-sm no-underline" data-testid="m19-pw-ask-dalil">{t('m19.pw.my.askDalil')}</L>{/* FS76 (wave-H integration) */}
+      </span>}>
       <Async state={ref}>{(d) => <Mine d={d} />}</Async>
     </Page>
   );

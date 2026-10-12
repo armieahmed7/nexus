@@ -12,6 +12,7 @@ import {
   type JourneyAggregate, type JourneyQuestionRow,
 } from '../journey';
 import type { M06Rpc, SaveJourneyResult } from './rpc';
+import { makeLocalFs77 } from './local.fs77';
 
 export function familySortOf(b: LocalBackend): Record<string, number> {
   return Object.fromEntries(b.raw('job_families').map((f) => [f.id, Number(f.sort ?? 999)]));
@@ -20,6 +21,7 @@ export const questionsOf = (b: LocalBackend) => b.raw('journey_questions') as un
 
 export function makeLocalM06(b: LocalBackend, h: LocalRpcHelpers): M06Rpc {
   return {
+    ...makeLocalFs77(b, h), // FS77 (fsHe5): intake baselines and induction plans
     async saveStudentJourney(input) {
       await b.whenReady();
       type R = SaveJourneyResult;

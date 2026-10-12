@@ -82,7 +82,7 @@ describe('F34 journey pages', { timeout: 90000 }, () => {
     await waitFor(() => expect(screen.getByTestId('where').textContent).toBe('/pathways/dnt'), T);
   });
 
-  it('A2: an anonymous visitor answers all 10 questions, ticks the checklist and picks a route: no fetch, no RPC, no write, nothing in browser storage', async () => {
+  it('A2: an anonymous visitor answers all 10 questions, ticks the checklist, picks a route and answers the FS77 starter self-check: no fetch, no RPC, no write, nothing in browser storage', async () => {
     await renderApp('/pathways/journey');
     await screen.findByTestId('m06-journey-explorer', {}, T);
     const b = getLocalBackend();
@@ -97,6 +97,9 @@ describe('F34 journey pages', { timeout: 90000 }, () => {
     fireEvent.click(screen.getByTestId('m06-journey-choose-dnt'));
     fireEvent.click(await screen.findByTestId('m06-journey-prep-dnt-finish_g12', {}, T));
     fireEvent.click(screen.getByTestId('m06-journey-elig-dnt-0-yes'));
+    // FS77 (fsHe5): the future-skills starter on the journey: answering its self-check stores nothing either
+    fireEvent.click(await screen.findByTestId('m06-starter-opt-sl-ai-what-1', {}, T));
+    expect(screen.getByTestId('m06-starter-feedback-sl-ai-what')).toBeTruthy();
     expect(screen.queryByTestId('m06-journey-save')).toBeNull();
     expect(screen.getByTestId('m06-journey-signin')).toBeTruthy();
     expect(screen.getByText(/Nothing on this page is stored or sent/)).toBeTruthy();

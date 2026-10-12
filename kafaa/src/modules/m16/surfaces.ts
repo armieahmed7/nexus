@@ -36,7 +36,7 @@ export interface RankedSurface {
   /** Engine card id (kafaa_engine_cards.id). */
   card: string;
   /** Wave that added the card: F24 (the eight original cards), FS55, or FSQA6 (the wave-F integration: FS50, FS52 and FS58 surfaces). */
-  wave: 'F24' | 'FS55' | 'FSQA6';
+  wave: 'F24' | 'FS55' | 'FSQA6' | 'FS72'; // FS72 (fsHe1, wave H): one more wave value for the skill-suggestions card
   feature: string;
   module: string;
   route: string;
@@ -118,6 +118,9 @@ export const RANKED_SURFACES: RankedSurface[] = [
     ['src/modules/m07/outlook.ts#rankAutomation', 'src/modules/m07/outlook.ts#automationProfile'], [], { none: 'no_outcome' }),
   S('aps_next', 'FSQA6', 'FS58', 'M33', '/my/core-skills/problem-solving', 'recommend', 'rules', 'content',
     ['src/modules/m33/aps.ts#pickScenario', 'src/modules/m33/aps.ts#nextReasons'], [], { none: 'content' }),
+  // ── FS72 (fsHe1, wave H): "Skills you may have" (card seeded by scripts/seed/ext/fs70-skill-signals.mjs, inserted live by
+  //    supabase/migrations/20261010281001_kafaa_fs81_skill_signals.sql); its fairness outcome is stored in kafaa_skill_suggestion_fairness.
+  S('skill_suggestions', 'FS72', 'FS72', 'M28', '/my/skills/suggestions', 'skills', 'rules', 'content', ['src/modules/m28/suggestions.ts#inferSuggestions'], [], { metric: 'suggestion_offered' }),
 ];
 /** The wave-F ranked surfaces the integration lead carded (fsqa6). */
 export const FSQA6_CARDS = RANKED_SURFACES.filter((s) => s.wave === 'FSQA6').map((s) => s.card);

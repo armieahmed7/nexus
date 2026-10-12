@@ -68,7 +68,10 @@ function SkillView({ s, c }: { s: SkillsRow; c: Catalogue }) {
       eyebrow={<span><bdi dir="ltr">{s.code}</bdi> · {t(`m28.area.${s.area}`)}</span>}
       intro={pick(s, 'description')}
       wide
-      actions={<L to="/skills" className="btn-outline">{t('m28.skill.back')}</L>}
+      actions={<span className="flex flex-wrap gap-2">
+        <L to="/skills" className="btn-outline">{t('m28.skill.back')}</L>
+        {s.area !== 'security' && <L to={`/ask?mode=future&q=${encodeURIComponent(t('m28.skill.askQ', { name: pick(s, 'name') }))}`} className="btn-outline no-underline" data-testid="m28-skill-ask-dalil">{t('m28.skill.askDalil')}</L>}{/* FS76 (wave-H integration) */}
+      </span>}
     >
       <div className="flex flex-wrap items-center gap-1.5" data-testid="m28-skill-chips">
         <StatusPill tone={LIFE_TONE[s.lifecycle]}>{t(`fs.lifecycle.${s.lifecycle}`)}</StatusPill>

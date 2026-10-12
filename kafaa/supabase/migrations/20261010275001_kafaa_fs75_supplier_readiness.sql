@@ -49,8 +49,8 @@ end $$;
 -- The contractor (own_profile Own), their partner admin (equivalency OwnOrg/OrgW on the organisation), ENEC evaluators and auditors (equivalency R/W/A).
 alter policy kafaa_read on kafaa_prearrival_shares using (((SELECT kafaa_has_grant('own_profile'::text, ARRAY['R'::text, 'W'::text, 'A'::text]))) OR ((person_id = (SELECT kafaa_me())) AND (SELECT kafaa_has_grant('own_profile'::text, ARRAY['Own'::text, 'Scope'::text]))) OR ((SELECT kafaa_has_grant('own_profile'::text, ARRAY['Scope'::text])) AND kafaa_rule_read('own_profile'::text, person_id, NULL::text, false))
   OR ((SELECT kafaa_has_grant('equivalency'::text, ARRAY['R'::text, 'W'::text, 'A'::text]))) OR ((org_id = (SELECT kafaa_my_org())) AND (SELECT kafaa_has_grant('equivalency'::text, ARRAY['OwnOrg'::text, 'OrgW'::text]))));
+revoke all on kafaa_prearrival_shares from anon, authenticated; -- revoke all (not only insert, update): live default privileges grant ALL
 grant select on kafaa_prearrival_shares to anon, authenticated;
-revoke insert, update on kafaa_prearrival_shares from anon, authenticated;
 
 -- @@PART2@@ ───────────── FS68 rules (mirror of futureReadiness.ts)
 create or replace function kafaa_fr_pct(a integer, b integer) returns integer language sql immutable set search_path = public as $$

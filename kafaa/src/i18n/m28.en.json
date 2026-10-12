@@ -18,6 +18,34 @@
     "admin-skills-alignments": {
       "title": "Skills crosswalk editor",
       "purpose": "Add, edit, review and retire crosswalk rows. Framework owners edit; auditors read."
+    },
+    "skills-rising": {
+      "title": "ENEC Skills on the Rise",
+      "purpose": "The skills rising across ENEC this quarter: in demand now and growing, with the signals behind each one."
+    },
+    "skills-rising-method": {
+      "title": "How Skills on the Rise is counted",
+      "purpose": "The three signals, the thresholds and the suppression rule behind the quarterly list, the manager pulse and the technology badges."
+    },
+    "workforce-skill-signals": {
+      "title": "Skill signal workbench",
+      "purpose": "Compute and publish the quarterly list, read the manager pulse and the skill-suggestion counts as aggregates."
+    },
+    "my-manager-pulse": {
+      "title": "Manager pulse",
+      "purpose": "Once a year, tell HR how much of your team's core skill set you expect to change by 2030."
+    },
+    "skills-technologies": {
+      "title": "Technologies in demand",
+      "purpose": "Generic technologies that are hot across ENEC and the ones in demand for your role, with the counts behind each badge."
+    },
+    "admin-skills-technologies": {
+      "title": "Technology tags and badges",
+      "purpose": "Maintain the generic technology catalogue, tag opportunities and role profiles, and publish the quarterly badges."
+    },
+    "my-skills-suggestions": {
+      "title": "Skills you may have",
+      "purpose": "Skills inferred from your own work and learning. Confirm, reject or mark not me; nothing is added until you confirm."
     }
   },
   "asOf": "read {date}",
@@ -222,7 +250,9 @@
       "skill": "requires this skill",
       "course": "through a course that builds it"
     },
-    "descriptorsLink": "All descriptors and levels"
+    "descriptorsLink": "All descriptors and levels",
+    "askDalil": "Ask Dalil about this skill",
+    "askQ": "What is the ESCO equivalent of {name}?"
   },
   "fw": {
     "eyebrow": "Skills Intelligence · crosswalk",
@@ -340,5 +370,472 @@
     },
     "aiLadder": "See the AI fluency ladder",
     "aiMine": "My AI fluency"
+  },
+  "err": {
+    "rs": {
+      "not_signed_in": "Sign in to see ENEC Skills on the Rise.",
+      "forbidden": "Your role cannot do this step of the Skills on the Rise workflow.",
+      "invalid": "Choose a quarter from 2025 Q1 to the current quarter.",
+      "open_quarter": "A quarter is published only after it has ended.",
+      "published": "This quarter is already published. Past lists are kept as they were."
+    },
+    "mp": {
+      "not_signed_in": "Sign in to answer the manager pulse.",
+      "forbidden": "The manager pulse is answered by line managers.",
+      "closed": "The manager pulse is open from 15 September to 15 December.",
+      "invalid": "Give a whole percentage from 0 to 100, and a team size from 1 to 500 if you add one."
+    },
+    "ht": {
+      "not_signed_in": "Sign in to see technologies in demand.",
+      "forbidden": "Only framework owners (instructors, the training manager and admins) maintain technology tags and badges.",
+      "invalid": "Check the technology and the quarter: one value is not accepted.",
+      "not_found": "Technology not found.",
+      "source_not_found": "Link a technology to an existing opportunity or role-profile version.",
+      "open_quarter": "Badges are published only after the quarter has ended.",
+      "published": "Badges for this quarter are already published. Past quarters are kept as they were.",
+      "no_change": "Nothing to change."
+    },
+    "ssg": {
+      "not_signed_in": "Sign in to see skills you may have.",
+      "forbidden": "This step is not open to your role.",
+      "invalid": "Choose confirm, reject or not me.",
+      "not_found": "Suggestion not found.",
+      "closed": "This suggestion is already answered."
+    }
+  },
+  "rs": {
+    "intro": "Each quarter HR publishes the skills rising across ENEC from three signals: goals set and profiles updated, recent hires holding the skill, and demand in opportunities and role profiles. Nothing is counted for a group under ten.",
+    "toMethod": "How it is counted",
+    "toTech": "Technologies in demand",
+    "toWorkbench": "Signal workbench",
+    "noRuns": "No quarter has been published yet.",
+    "quarter": "Quarter",
+    "quarterLabel": "{y} Q{q}",
+    "myFamily": "Only my job family ({family})",
+    "published": "{q} list, published {date}.",
+    "tile": {
+      "now": "In demand now",
+      "nowSub": "demand from at least 10 sources",
+      "growing": "Growing",
+      "growingSub": "a people signal up 25% or more",
+      "shown": "Skills with a signal",
+      "shownSub": "of {n} skills considered",
+      "suppressed": "Suppressed",
+      "suppressedSub": "every signal under 10"
+    },
+    "nowTitle": "In demand now",
+    "nowIntro": "Skills asked for most this quarter by opportunities and role profiles.",
+    "growingTitle": "Growing",
+    "growingIntro": "Skills more people are working towards or bringing in than last quarter.",
+    "noneNow": "No skill is in demand at the published threshold this quarter.",
+    "noneGrowing": "No skill grew past the published threshold this quarter.",
+    "noneMine": "No listed skill touches your job family this quarter.",
+    "howTitle": "How this list is made",
+    "howBody": "Three signals, counted for the quarter and compared with the quarter before. A signal under 10 is shown as suppressed and never moves a skill.",
+    "keptTitle": "Past quarters are kept",
+    "keptBody": "A published list is never recomputed or edited. Pick an earlier quarter to see it exactly as it was published.",
+    "hotTitle": "Technologies hot across ENEC",
+    "hotIntro": "From the same quarter's published badges.",
+    "pulseTitle": "Your manager pulse",
+    "pulseBody": "As a line manager you can tell HR once a year how much of your team's core skill set you expect to change by 2030.",
+    "toPulse": "Answer the pulse",
+    "rank": "#{n}",
+    "movedBy": "Moved by: {list}",
+    "sep": ", ",
+    "families": "Job families behind the demand",
+    "more": "+{n} more",
+    "suppressed": "suppressed",
+    "suppressedHelp": "Fewer than {n}: not shown and not counted.",
+    "newSignal": "new",
+    "moved": "moved this skill",
+    "notMoved": "did not move it",
+    "notCounted": "not counted",
+    "cat": {
+      "now": "In demand now",
+      "growing": "Growing"
+    },
+    "sig": {
+      "goals_profiles": "Goals and profiles",
+      "recent_hires": "Recent hires",
+      "demand": "Demand"
+    },
+    "reason": {
+      "demand": "Asked for by {n} opportunities and role profiles across {families} job families this quarter.",
+      "goals_profiles_new": "{n} people set a goal or updated their profile for this skill; too few to count last quarter.",
+      "goals_profiles_up": "{n} people set a goal or updated their profile for this skill, up from {prev} ({pct}%).",
+      "recent_hires_new": "{n} people hired in the last year hold this skill; too few to count last quarter.",
+      "recent_hires_up": "{n} people hired in the last year hold this skill, up from {prev} ({pct}%).",
+      "also_growing": "It is also growing among people, not only in demand."
+    }
+  },
+  "sm": {
+    "intro": "The published method behind ENEC Skills on the Rise, the manager pulse and the technology badges. Every number on this page is read from the same rule the list is computed with.",
+    "toList": "See the list",
+    "signalsTitle": "The three signals",
+    "signalsIntro": "Each signal is counted for the quarter and for the quarter before.",
+    "goals_profiles": "Distinct staff who set a goal for the skill or recorded active evidence of it during the quarter.",
+    "recent_hires": "Distinct staff hired in the {days} days before the quarter ended who hold the skill.",
+    "demand": "Open opportunities and published role profiles (now, 2030 and 2035) that ask for the skill during the quarter.",
+    "suppress": "A signal under {n} is shown as suppressed, is never compared and never moves a skill.",
+    "now": "In demand now: demand is shown (10 or more).",
+    "growing": "Growing: goals and profiles or recent hires rose by {pct}% or more against the previous quarter, or appeared for the first time at 10 or more.",
+    "max": "At most {n} skills in each part of the list, ranked by their signals.",
+    "never": "Security-restricted and obsolete skills are never listed.",
+    "kept": "A published quarter is kept as it was; a correction is a note in the next quarter, never an overwrite.",
+    "publishTitle": "Publishing",
+    "p": {
+      "quarterly": "One list per ended quarter, from {first}.",
+      "who": "An HR analyst or the HR director publishes; the training manager, admins and auditors review.",
+      "version": "Method version {v}.",
+      "reasons": "Every listed skill carries its reasons: which signals moved it and the job families behind the demand."
+    },
+    "pulseTitle": "The manager pulse",
+    "pulseIntro": "One question, once a year, for line managers.",
+    "pulse": {
+      "who": "Line managers answer between 15 September and 15 December; answering again updates the answer.",
+      "agg": "HR sees the answers only as an aggregate: nothing under {n} answers, and bands and job families under {n} are suppressed.",
+      "bands": "Bands: {list}.",
+      "private": "No one sees an individual manager's answer."
+    },
+    "badgesTitle": "Technology badges",
+    "badgesIntro": "Two different badges, both published per quarter.",
+    "benchTitle": "Benchmarks",
+    "benchBody": "The chips at the top of the page show the external practice this feature was compared with. They describe practice elsewhere, not a requirement."
+  },
+  "mp": {
+    "intro": "One question once a year. Your answer helps HR plan learning for skills that will change; it is seen only as part of an aggregate.",
+    "toList": "Skills on the Rise",
+    "question": "What share of your team's core skills do you expect to change by 2030?",
+    "open": "Open",
+    "closed": "Closed",
+    "window": "Open {open} to {close}.",
+    "share": "Share expected to change (%)",
+    "shareHint": "A whole number from 0 to 100.",
+    "shareErr": "Give a whole number from 0 to 100.",
+    "team": "Team size (optional)",
+    "teamHint": "Direct reports, from 1 to 500.",
+    "teamErr": "Give a whole number from 1 to 500, or leave it empty.",
+    "teamNone": "not given",
+    "band": "Your answer is in the {lo}-{hi}% band.",
+    "submit": "Send my answer",
+    "update": "Update my answer",
+    "closedTitle": "The pulse is closed",
+    "closedBody": "It opens again on {open} and closes on {close}.",
+    "mineTitle": "My {y} answer",
+    "answered": "Answered",
+    "pastTitle": "Earlier years",
+    "pastRow": "{y}",
+    "privacyTitle": "Who sees this",
+    "privacyBody": "Only you see your answer. HR sees the pulse as an aggregate of at least {n} managers, never by name.",
+    "consequence": "You expect {pct}% of your team's core skills to change by 2030. This is your {y} answer; you can update it until the pulse closes.",
+    "saved": "Pulse answer saved"
+  },
+  "ht": {
+    "intro": "Generic technologies, never vendor brands. Hot across ENEC means many opportunities and role profiles in several job families ask for it; in demand for a role means your role's profile or your job family's opportunities ask for it.",
+    "toRising": "Skills on the Rise",
+    "toAdmin": "Manage tags and badges",
+    "noBadges": "No technology badges have been published yet.",
+    "published": "{q} badges, published {date} (criteria {v}).",
+    "tile": {
+      "hot": "Hot across ENEC",
+      "hotSub": "this quarter",
+      "roles": "Roles with badges",
+      "rolesSub": "in demand for the role",
+      "catalogue": "Technologies in the catalogue",
+      "catalogueSub": "active generic tags"
+    },
+    "hotTitle": "Hot across ENEC",
+    "hotIntro": "Ranked by the number of sources, then job families.",
+    "noHot": "No technology met the hot criteria this quarter.",
+    "roleTitle": "In demand for a role",
+    "roleIntro": "Starts on your role; pick another to compare.",
+    "role": "Role",
+    "rolePick": "Choose a role",
+    "myRoleTag": "(my role)",
+    "noRole": "Choose a role to see its badges.",
+    "noRoleBadges": "No technology is in demand for this role this quarter.",
+    "hot": "Hot across ENEC",
+    "inDemand": "In demand for the role",
+    "alsoHot": "also hot across ENEC",
+    "skills": "Related skills",
+    "counts": "{s} sources, {fam} job families, {rec} this quarter",
+    "criteriaTitle": "Badge criteria",
+    "criteriaIntro": "Published with each quarter's badges; the same rule computes them.",
+    "c": {
+      "window": "Counted over the last {n} quarters up to the end of the quarter.",
+      "sources": "At least {n} distinct opportunities or role-profile versions tagged with it.",
+      "families": "From at least {n} job families.",
+      "recent": "At least {n} of them in the quarter itself.",
+      "profile": "The role's published profile is tagged with it, or",
+      "family": "at least {n} opportunities in the role's job family are tagged with it.",
+      "kept": "Past quarters are kept as they were published."
+    },
+    "brandsTitle": "No brands",
+    "brandsBody": "Technology names are generic. The catalogue refuses vendor and product names, so a badge never endorses a supplier.",
+    "cat": {
+      "plant_data": "Plant data",
+      "analytics": "Analytics",
+      "automation": "Automation",
+      "digital_twin": "Digital twins",
+      "inspection": "Inspection",
+      "work_management": "Work management",
+      "ai_tools": "AI tools",
+      "simulation": "Simulation"
+    },
+    "reason": {
+      "sources": "{n} opportunities and role profiles tagged with it in the window.",
+      "families": "From {n} job families.",
+      "recent": "{n} of them this quarter.",
+      "profile": "Your role's published profile is tagged with it.",
+      "family": "{n} opportunities in the role's job family are tagged with it."
+    }
+  },
+  "hta": {
+    "intro": "Maintain the generic technology catalogue, tag opportunities and role-profile versions, and publish the quarterly badges. Brand names are refused.",
+    "public": "Public view",
+    "readOnlyTitle": "Read only",
+    "readOnlyBody": "You can see the catalogue and badges; framework owners make changes.",
+    "tab": {
+      "catalogue": "Catalogue",
+      "tags": "Tags",
+      "badges": "Badges"
+    },
+    "col": {
+      "name": "Technology",
+      "category": "Category",
+      "skills": "Skills",
+      "version": "Version",
+      "status": "Status"
+    },
+    "status": {
+      "active": "Active",
+      "retired": "Retired"
+    },
+    "tile": {
+      "active": "Active",
+      "retired": "Retired",
+      "deny": "Brand names refused",
+      "denySub": "on the deny list"
+    },
+    "new": "New technology",
+    "edit": "Edit",
+    "editTitle": "Edit {name}",
+    "save": "Save technology",
+    "saved": "Technology saved",
+    "f": {
+      "id": "Id",
+      "idHint": "tech- followed by lowercase letters, digits and hyphens.",
+      "nameEn": "Name (English)",
+      "nameAr": "Name (Arabic)",
+      "descEn": "Description (English)",
+      "descAr": "Description (Arabic)",
+      "category": "Category",
+      "categoryPick": "Choose a category",
+      "status": "Status",
+      "skills": "Related skills (up to {n})",
+      "noSkills": "No related skill yet.",
+      "removeSkill": "Remove skill",
+      "addSkill": "Add a skill",
+      "addSkillPick": "Choose a skill",
+      "add": "Add"
+    },
+    "problem": {
+      "id": "Use tech- followed by 3 to 40 lowercase letters, digits or hyphens.",
+      "name": "Give a generic name of 3 to 80 characters in English and in Arabic.",
+      "description": "Give a description of 20 to 400 characters in English and in Arabic.",
+      "brand": "Use generic words only: no vendor or product brand name.",
+      "category": "Choose a category.",
+      "skills": "Up to six catalogue skills, each once.",
+      "status": "Choose active or retired."
+    },
+    "brandFound": "Brand names found: {list}. Use a generic description instead.",
+    "consequenceNew": "The technology is added to the catalogue and can be tagged. Audited.",
+    "consequenceEdit": "The technology becomes version {v}. Published badges keep their quarter. Audited.",
+    "pickTech": "Technology",
+    "source": "Source",
+    "sourceItem": "Item",
+    "sourcePick": "Choose an item",
+    "tag": "Tag",
+    "tagged": "Tag added",
+    "untagged": "Tag removed",
+    "src": {
+      "opportunities": "Opportunity",
+      "role_profile_versions": "Role profile"
+    },
+    "horizon": {
+      "now": "now",
+      "2030": "2030",
+      "2035": "2035"
+    },
+    "rpvLabel": "{role} ({h}, version {v})",
+    "linkOn": "Tagged",
+    "linkOff": "Untagged",
+    "untag": "Untag",
+    "retag": "Tag again",
+    "noLinks": "This technology is not tagged on anything yet.",
+    "isPublished": "published",
+    "compute": "Compute badges",
+    "computed": "Badges computed for review",
+    "publish": "Publish badges",
+    "keptNote": "This quarter is published and kept as it was.",
+    "readyNote": "This quarter has ended: compute the badges, review them, then publish.",
+    "openNote": "This quarter has not ended: you can compute a preview, but not publish.",
+    "window": "Window {start} to {end}, criteria {v}.",
+    "roleCount": "{n} role badges across {r} roles.",
+    "near": "Close to hot",
+    "noNear": "None close to the criteria.",
+    "publishConsequence": "The {q} badges are published to all staff and kept as they are. A published quarter cannot be changed. Audited and recorded in the ledger.",
+    "publishedOk": "Badges published"
+  },
+  "sw": {
+    "intro": "Compute the quarterly list for review and publish it; read the manager pulse and the skill-suggestion counts as aggregates. Never a named person.",
+    "toList": "Published list",
+    "tab": {
+      "list": "Quarterly list",
+      "pulse": "Manager pulse",
+      "suggestions": "Skill suggestions"
+    },
+    "compute": "Compute",
+    "computed": "List computed for review",
+    "keptNote": "This quarter is published and kept as it was.",
+    "readyNote": "This quarter has ended: compute, review and publish.",
+    "openNote": "This quarter has not ended: you can compute a preview, but not publish.",
+    "window": "Counted {start} to {end}, compared with {prev}, method {v}.",
+    "emptyPreview": "No skill reaches the list for this quarter.",
+    "summaryEn": "Summary (English, optional)",
+    "summaryAr": "Summary (Arabic, optional)",
+    "summaryHint": "Up to 600 characters, shown with the list.",
+    "publish": "Publish the list",
+    "publishConsequence": "The {q} list is published to all staff and kept as it is. A published quarter cannot be changed. Audited and recorded in the ledger.",
+    "publishedOk": "List published",
+    "readOnlyTitle": "Review only",
+    "readOnlyBody": "HR analysts and the HR director publish; you can compute and review.",
+    "runsTitle": "Published quarters",
+    "method": "Method",
+    "publishedAt": "Published",
+    "year": "Year",
+    "pulseSuppressed": "Fewer than {n} answers",
+    "pulseSuppressedBody": "The pulse is shown only once at least ten managers have answered.",
+    "responses": "Answers",
+    "median": "Median",
+    "p25": "25th percentile",
+    "p75": "75th percentile",
+    "bandsTitle": "Answers by band",
+    "noFamily": "No job family",
+    "familyRow": "{n} answers, median {m}%",
+    "pulsePrivacy": "Aggregates only: nothing under {n} answers; bands and job families under {n} are suppressed.",
+    "people": "People with suggestions",
+    "confirmRate": "Confirmed of answered",
+    "statsNote": "Every count under {n} is suppressed. No person is shown.",
+    "fairTitle": "Fairness snapshots",
+    "fairIntro": "Weekly: the share of staff reached by suggestions by gender and nationality, suppressed under 10, flagged under four fifths of the highest group.",
+    "fairRun": "Run this week's snapshot",
+    "fairConsequence": "Stores this week's fairness snapshot of the suggestions surface. Audited and recorded in the ledger.",
+    "fairDone": "Fairness snapshot stored",
+    "fairEmpty": "No snapshot yet.",
+    "asOf": "As of",
+    "dimension": "Dimension",
+    "group": "Group",
+    "n": "Staff",
+    "rate": "Reached",
+    "ratio": "Ratio to highest",
+    "flag": "Check",
+    "flagged": "Below four fifths",
+    "within": "Within range",
+    "dim": {
+      "gender": "Gender",
+      "nationality": "Nationality"
+    },
+    "grp": {
+      "f": "Women",
+      "m": "Men",
+      "uae": "UAE nationals",
+      "other": "Other nationalities"
+    },
+    "toEngines": "Ranked surfaces and fairness register"
+  },
+  "ssg": {
+    "intro": "Skills you may have, inferred from your own gigs, contributions, learning and the skills you already hold. Nothing is added to your profile until you confirm.",
+    "toMine": "My skills",
+    "generated": "Suggestions as of {date}.",
+    "refresh": "Refresh suggestions",
+    "refreshed": "Suggestions refreshed",
+    "tile": {
+      "openSub": "at most {n} at a time",
+      "hidden": "Hidden for now",
+      "hiddenSub": "rejected or not me, {n} days"
+    },
+    "openTitle": "Suggested for you",
+    "openIntro": "Highest score first. Open Why this to see where each one comes from.",
+    "levelLine": "Suggested at level {level} (score {score}).",
+    "sources": "Sources",
+    "confirm": "Confirm",
+    "reject": "Reject",
+    "notMe": "Not me",
+    "noneOpen": "No open suggestion",
+    "noneOpenBody": "Refresh after new gigs, contributions or learning; answered suggestions stay below.",
+    "answeredTitle": "Answered",
+    "answeredIntro": "Rejected and not me suggestions stay hidden for {n} days, then may return if still backed.",
+    "answeredOn": "answered {date}",
+    "hiddenUntil": "hidden until {date}",
+    "seeEvidence": "See on the skill page",
+    "howTitle": "How suggestions are scored",
+    "howIntro": "A skill is suggested at {t} points or more, at level 2 from {l2} points; at most {n} at a time. Skills you already hold are never suggested.",
+    "col": {
+      "source": "Source",
+      "rule": "What counts",
+      "points": "Points"
+    },
+    "upTo": "up to {n}",
+    "never": "Security-restricted and obsolete skills are never suggested. No protected attribute (such as gender, age or nationality) is an input.",
+    "privacyTitle": "Private to you",
+    "privacyBody": "Only you see your suggestions. Your manager does not. A confirmed suggestion becomes claimed evidence on your profile, which you can edit like any other.",
+    "status": {
+      "open": "Open",
+      "confirmed": "Confirmed",
+      "rejected": "Rejected",
+      "not_me": "Not me",
+      "expired": "No longer backed"
+    },
+    "src": {
+      "gig": "Gig",
+      "contribution": "Contribution",
+      "xapi": "Learning activity",
+      "co_occurrence": "Usually goes together",
+      "adjacency": "Adjacent skill"
+    },
+    "rule": {
+      "gig": "A gig you completed listed the skill.",
+      "contribution": "A contribution you made is tagged with a skill related to it.",
+      "xapi": "Learning activity on the skill in the last {days} days: {n} refresher completions, or one other result.",
+      "co_occurrence": "Among staff holding a skill you hold ({holders} or more), at least {both} also hold this one, at {lift} times the usual rate or more.",
+      "adjacency": "Adjacent to a skill you hold; more at level 3 or above."
+    },
+    "reason": {
+      "gig": "You took part in the gig {gig}.",
+      "contribution": "Your contribution {title} is tagged with {skill}.",
+      "xapi": "{n} learning results on this skill in the last year.",
+      "co_occurrence": "{pct}% of staff who hold {skill} also hold this one ({lift} times the usual rate).",
+      "adjacency": "Adjacent to {skill}, which you hold at level {level}."
+    },
+    "ask": {
+      "confirm": {
+        "title": "Confirm {skill}",
+        "body": "Adds {skill} to your profile at level {level} as claimed evidence. You can edit or remove it on My skills."
+      },
+      "reject": {
+        "title": "Reject {skill}",
+        "body": "The suggestion is hidden for {n} days. Nothing changes on your profile."
+      },
+      "not_me": {
+        "title": "Not me: {skill}",
+        "body": "Tells us the suggestion does not fit you. It is hidden for {n} days and nothing changes on your profile."
+      }
+    },
+    "done": {
+      "confirm": "Skill confirmed and added as claimed evidence",
+      "reject": "Suggestion rejected",
+      "not_me": "Marked not me"
+    }
   }
 }

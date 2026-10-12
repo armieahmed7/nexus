@@ -84,7 +84,10 @@ export const FSQA6_CARD_DATE = `${QA_F_DAY}T00:00:00Z`;
 export function fsqa6Cards(T) {
   const base = T.engine_cards.find((c) => c.id === 'digest');
   if (!base) throw new Error('fsqa6: the FS55 cards are missing');
-  let sort = Math.max(...T.engine_cards.filter((c) => !(c.id in FSQA6_CARD_TEXT)).map((c) => c.sort));
+  // FS wave H QA: count only the cards of earlier waves (F24, FS55), so a later wave's card (FS72 skill_suggestions, sort 35, added by fs70's
+  // finalize, which runs before this file) does not move the wave-F cards' sort (32-34, already live after the wave-F bundle).
+  const waveOf = new Map(RANKED_SURFACES.map((s) => [s.card, s.wave]));
+  let sort = Math.max(...T.engine_cards.filter((c) => !(c.id in FSQA6_CARD_TEXT) && (!waveOf.has(c.id) || ['F24', 'FS55'].includes(waveOf.get(c.id)))).map((c) => c.sort));
   return RANKED_SURFACES.filter((s) => s.wave === 'FSQA6').map((s) => {
     const t = FSQA6_CARD_TEXT[s.card];
     if (!t) throw new Error(`fsqa6: no card text for ${s.card}`);

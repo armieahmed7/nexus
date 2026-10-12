@@ -32,6 +32,7 @@ import { attentionOf, boardInputFromTables, criticalBoard } from '../../src/modu
 import { automationProfile, baseFor, inputFromTables, normalizeParams, outlookFamilies, rankAutomation } from '../../src/modules/m07/outlook'; // FS wave F QA (fsqa6 cards)
 import { nextReasons, pickScenario } from '../../src/modules/m33/aps'; // FS wave F QA (fsqa6 cards)
 import { circleMembersView, coachFocus, flReadiness, flReasons, rankCircles, rankOffers, wfnArea } from '../../src/modules/m22/future'; // FS46-FS48 (fsEe4)
+import { inferSuggestions, ssgWorldFromTables } from '../../src/modules/m28/suggestions'; // FS72 (fsHe1)
 
 type Rows = Record<string, any>[];
 const S = seed as unknown as { tables: Record<string, Rows>; meta: { demo_today: string } };
@@ -108,6 +109,8 @@ const RUN: Record<string, () => unknown> = {
   'src/modules/m07/outlook.ts#rankAutomation': () => { const inp = inputFromTables((t: string) => T[t] ?? []); const p = normalizeParams({ automation_adoption: 50 }, outlookFamilies(inp))!; return rankAutomation(automationProfile(baseFor(inp, p, true), p).families.map((f) => trapRow(f as never, 'automation_families') as never)); },
   'src/modules/m33/aps.ts#pickScenario': () => T.people.filter((x) => x.kind === 'staff').slice(0, 20).map((x, i) => pickScenario(T.aps_scenarios as never, new Map(T.aps_attempts.filter((a) => a.person_id === x.id).map((a) => [a.scenario_id, 1])), i, i + 7) ?? 'none'),
   'src/modules/m33/aps.ts#nextReasons': () => T.aps_scenarios.map((sc) => nextReasons(sc as never, T.aps_attempts.filter((a) => a.person_id === ME && a.scenario_id === sc.id).length)),
+  // FS72 (fsHe1): "Skills you may have"; the world keeps the trapped people and skill states, so the rule touches the trapped rows
+  'src/modules/m28/suggestions.ts#inferSuggestions': () => { const w = ssgWorldFromTables((t) => T[t] ?? []); const ww = { ...w, people: T.people as never, states: T.person_skills as never }; return T.people.filter((x) => x.kind === 'staff').slice(0, 25).map((x) => inferSuggestions(ww, x.id, NOW)); },
 };
 const cardFns = [...new Set(S.tables.engine_cards.flatMap((c) => c.scoring_functions as string[]))];
 const tsFns = cardFns.filter((f) => !f.startsWith('sql:') && !FS55_FUNCTIONS.includes(f)); // FS55 (fsFe3): the FS55 cards' rankers have their runners in fs63-protected-inputs

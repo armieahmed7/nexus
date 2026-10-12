@@ -4,6 +4,8 @@
 import type { SupabaseExtCtx } from '../../../data/ext/types';
 import type { NationalReport } from '../national';
 import type { OccupationTrend } from '../occupations';
+import type { EmiratiPipeline } from '../pipeline';
+import type { MyWallet, WalletCounter } from '../wallet';
 import type { M37Rpc } from './rpc';
 
 export function makeSupabaseM37(x: SupabaseExtCtx): M37Rpc {
@@ -15,5 +17,11 @@ export function makeSupabaseM37(x: SupabaseExtCtx): M37Rpc {
     verifyOccupationCode: (input) => x.call('kafaa_verify_occupation_code', { p: input ?? {} }, ['role_occupations']),
     clearOccupationCode: (roleId, reason) => x.call('kafaa_clear_occupation_code', { p_role_id: roleId, p_reason: reason }, ['role_occupations']),
     occupationTrend: async () => (await x.rpc<OccupationTrend | null>('kafaa_occupation_trend')) ?? null,
+    // FS73/FS74 (wave H · E2): supabase/migrations/20261010282001_kafaa_fs82_emirati_wallet.sql
+    emiratiPipeline: async (scope) => (await x.rpc<EmiratiPipeline | null>('kafaa_emirati_pipeline', { p_scope: scope ?? 'all' })) ?? null,
+    myFutureWallet: async () => (await x.rpc<MyWallet | null>('kafaa_my_future_wallet')) ?? null,
+    futureWalletCounter: async () => (await x.rpc<WalletCounter | null>('kafaa_future_wallet_counter')) ?? null,
+    setWalletTarget: (input) => x.call('kafaa_set_wallet_target', { p: input ?? {} }, ['wallet_targets']),
+    addWalletToPlan: () => x.call('kafaa_add_wallet_to_plan', {}, ['dev_plans', 'plan_activities']),
   };
 }

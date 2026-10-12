@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useAction, useRepo } from '../../data';
 import { L, useFormat, useI18n, useT } from '../../i18n';
-import { Callout, CheckboxField, EmptyState, Icon, Page, ProgressBar, SimChip, Skeleton, SourceLink, StatusPill, WhyThis, type PillTone } from '../../ui';
+import { BenchmarkChips, Callout, CheckboxField, EmptyState, Icon, Page, ProgressBar, SimChip, Skeleton, SourceLink, StatusPill, WhyThis, type PillTone } from '../../ui';
 import { useFlags } from '../m16/flags';
 import { useDalil, type AskMode, type Turn } from './useDalil';
 import type { AnswerCard, DalilAnswer } from './dalil/types';
@@ -18,6 +18,7 @@ const STARTERS: Record<string, string[]> = {
   staff: ['st1', 'st2', 'st3', 's1'],
   partner: ['p1', 'p2', 'p3', 's1'],
   career: ['c1', 'c2', 'c3', 'c4'], // W5E5 (F37)
+  future: ['f1', 'f2', 'f3', 'f4'], // FS76
 };
 type Practice = { scenario: Scenario; role_id: string | null };
 
@@ -74,6 +75,7 @@ export default function AskPage() {
                 {d.modes.map((m) => (
                   <button key={m} role="radio" aria-checked={d.mode === m} className={d.mode === m ? 'btn-primary btn-sm' : 'btn-outline btn-sm'} onClick={() => { d.setMode(m); setPractice(null); }} data-testid={`m13-mode-${m}`}>
                     {m === 'career' && <Icon name="sparkle" size={13} />}
+                    {m === 'future' && <Icon name="chart" size={13} />}
                     {t(`m13.modes.${m}`)}
                   </button>
                 ))}
@@ -91,6 +93,13 @@ export default function AskPage() {
                 <SimChip label={t('m13.career.ui.indicative')} />
               </div>
             )}
+            {d.mode === 'future' && (
+              <div className="flex flex-wrap items-center gap-2 border-b border-line bg-accent-soft/40 px-3 py-2 text-[12.5px] text-ink-2" data-testid="m13-future-banner" data-personal={d.personalMode ? 'true' : 'false'}>
+                <Icon name="chart" size={14} className="shrink-0 text-accent" />
+                <span className="min-w-0 flex-1 basis-56">{t(d.personalMode ? 'm13.future.ui.banner' : d.signedIn ? 'm13.future.ui.bannerPublic' : 'm13.future.ui.bannerAnon')}</span>
+                <BenchmarkChips feature="FS76" />
+              </div>
+            )}
             {practice ? (
               <div className="flex-1 p-4">
                 <RolePlay scenario={practice.scenario} roleId={practice.role_id} ctx={d.career.data ?? null} onLog={d.logPractice} onClose={() => setPractice(null)} />
@@ -102,7 +111,7 @@ export default function AskPage() {
                   <p className="text-[14px] text-ink-2">{t(`m13.engine.hello.${d.mode}`)}</p>
                   <div className="flex flex-wrap gap-2">
                     {STARTERS[d.mode].map((k) => (
-                      <button key={k} className="rounded-full border border-line px-3 py-1.5 text-[13px] hover:border-accent hover:bg-accent-soft" onClick={() => submit(t(`m13.ask.starters.${k}`))} disabled={!d.corpus.data} data-testid="m13-starter">
+                      <button key={k} className="rounded-full border border-line px-3 py-1.5 text-[13px] hover:border-accent hover:bg-accent-soft" onClick={() => submit(t(`m13.ask.starters.${k}`))} disabled={!d.corpus.data || (d.mode === 'future' && !d.futurePub.data)} data-testid="m13-starter">
                         {t(`m13.ask.starters.${k}`)}
                       </button>
                     ))}
@@ -151,6 +160,7 @@ export default function AskPage() {
           </section>
           <aside className="space-y-3">
             {d.mode === 'career' && <CareerSide onPractice={(scenario) => setPractice({ scenario, role_id: null })} />}
+            {d.mode === 'future' && <FutureSide intents={d.futurePub.data?.intents ?? null} personal={d.personalMode} signedIn={d.signedIn} onAsk={submit} />}
             <div className="card p-4 text-[13px]">
               <div className="font-semibold">{t('m13.ask.howTitle')}</div>
               <ul className="mt-2 list-disc space-y-1 ps-5 text-ink-2">
@@ -164,7 +174,7 @@ export default function AskPage() {
               {t('m13.ask.concernBody')} <L to="/speak-up">{t('m13.ask.concernLink')}</L>
             </Callout>
             <div className="text-[12px] text-ink-3">
-              {d.corpus.data ? t('m13.ask.corpusInfo', { n: f.num(d.corpus.data.docs.filter((x) => x.modes.includes(d.mode === 'career' ? 'staff' : d.mode)).length), mode: t(`m13.modes.${d.mode}`) }) : t('m13.ask.loadingCorpus')}
+              {d.corpus.data ? t('m13.ask.corpusInfo', { n: f.num(d.corpus.data.docs.filter((x) => x.modes.includes(d.askMode)).length), mode: t(`m13.modes.${d.mode}`) }) : t('m13.ask.loadingCorpus')}
               {d.setting && <div className="mt-1">{t('m13.ask.retention', { n: f.num(d.setting.retention_days) })}</div>}
             </div>
           </aside>
@@ -314,7 +324,7 @@ function Handoff({ sessionId }: { sessionId: () => string | null }) {
 
 // ───────────── W5E5 (F37) career mode pieces
 const CARD_TONE: Record<string, PillTone> = { met: 'ok', ready_now: 'ok', current: 'accent', pending: 'sim', ready_in: 'info', stretch: 'sim', not_met: 'bad', path_only: 'neutral' };
-const CARD_ICON: Record<AnswerCard['kind'], string> = { role: 'briefcase', gap: 'chart', gate: 'shield', course: 'grad', opportunity: 'sparkle', milestone: 'calendar' };
+const CARD_ICON: Record<AnswerCard['kind'], string> = { role: 'briefcase', gap: 'chart', gate: 'shield', course: 'grad', opportunity: 'sparkle', milestone: 'calendar', skill: 'grad', rung: 'chart', framework: 'external', pathway: 'book' };
 function CareerCardView({ c }: { c: AnswerCard }) {
   const t = useT();
   const f = useFormat();
@@ -358,6 +368,46 @@ function CareerSide({ onPractice }: { onPractice: (s: Scenario) => void }) {
           <button className="btn-outline btn-sm" onClick={() => onPractice('career_conversation')} data-testid="m13-practice-conversation">{t('m13.career.ui.start.career_conversation')}</button>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ───────────── FS76 future-skills mode: the governed intent catalogue (public rows of kafaa_dalil_intents)
+type IntentRow = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+function FutureSide({ intents, personal, signedIn, onAsk }: { intents: IntentRow[] | null; personal: boolean; signedIn: boolean; onAsk: (q: string) => void }) {
+  const t = useT();
+  const { lang } = useI18n();
+  const rows = [...(intents ?? [])].sort((a, b) => Number(a.sort) - Number(b.sort));
+  return (
+    <div className="card space-y-3 p-4 text-[13px]" data-testid="m13-future-side">
+      <div>
+        <div className="font-semibold">{t('m13.future.ui.intentsTitle')}</div>
+        <p className="mt-1 text-[12px] text-ink-3">{t('m13.future.ui.intentsIntro')}</p>
+      </div>
+      {!intents ? <Skeleton lines={3} /> : (
+        <ul className="space-y-3" data-testid="m13-future-intents">
+          {rows.map((r) => {
+            const ex = ((lang === 'ar' ? r.examples_ar : r.examples_en) ?? []) as string[];
+            return (
+              <li key={r.id} className="border-t border-line pt-2 first:border-0 first:pt-0" data-testid="m13-future-intent" data-intent={r.id} data-enabled={r.enabled ? 'true' : 'false'}>
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="min-w-0 flex-1 font-semibold">{lang === 'ar' ? r.title_ar : r.title_en}</span>
+                  <StatusPill tone={r.enabled ? 'ok' : 'sim'}>{t(r.enabled ? 'm13.future.ui.on' : 'm13.future.ui.off')}</StatusPill>
+                </div>
+                <p className="mt-0.5 text-[12px] text-ink-2">{lang === 'ar' ? r.summary_ar : r.summary_en}</p>
+                <div className="mt-1 text-[11.5px] text-ink-3">{t(`m13.future.ui.${r.audience === 'personal' ? 'personal' : r.audience === 'public' ? 'public' : 'both'}`)}{!personal && !signedIn && r.audience !== 'public' ? ` · ${t('m13.future.ui.signInFor')}` : ''}</div>
+                {r.enabled && ex[0] && (
+                  <button className="mt-1.5 rounded-full border border-line px-2.5 py-1 text-start text-[12px] hover:border-accent" onClick={() => onAsk(ex[0])} data-testid="m13-future-try">
+                    {t('m13.future.ui.try')}: {ex[0]}
+                  </button>
+                )}
+                {Array.isArray(r.sources) && r.sources[0]?.url && <div className="mt-1 text-[11.5px]"><SourceLink href={r.sources[0].url} date={r.sources[0].as_of}>{r.sources[0].label}</SourceLink></div>}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      <p className="border-t border-line pt-2 text-[11.5px] text-ink-3">{t('m13.future.ui.evalNote')}</p>
     </div>
   );
 }

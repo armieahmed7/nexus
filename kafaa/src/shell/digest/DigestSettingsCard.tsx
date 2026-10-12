@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import { useAction, useRepo } from '../../data';
 import { useT } from '../../i18n';
-import { Card, CheckboxField, RadioGroup, SelectField, StatusPill } from '../../ui';
+import { BenchmarkChips, Card, CheckboxField, RadioGroup, SelectField, StatusPill } from '../../ui';
 import { DIGEST_KINDS, FREQUENCIES, MUTABLE_KINDS, type DigestFrequency, type DigestPrefs } from './rules';
 import { useDigest } from './useDigest';
+import { FutureNudgeRules } from './FutureNudges';
 
 const HOURS = Array.from({ length: 24 }, (_, h) => ({ value: String(h), label: `${String(h).padStart(2, '0')}:00` }));
 
@@ -44,6 +45,15 @@ export function DigestSettingsCard() {
               <CheckboxField key={k} label={t(`digest.kind.${k}`)} hint={k === 'expiry' ? t('digest.settings.expiryLocked') : t(`digest.kindHint.${k}`)} checked={k === 'expiry' || !p.muted_kinds.includes(k)} disabled={k === 'expiry' || !MUTABLE_KINDS.includes(k)} onChange={(v) => toggle(k, v)} />
             ))}
           </fieldset>
+          <details className="rounded-btn border border-line p-2" data-testid="digest-settings-future">
+            <summary className="cursor-pointer text-[13px] font-semibold">{t('digest.future.how')}</summary>
+            <div className="mt-2 space-y-2">
+              <p className="text-[12.5px] text-ink-2">{t('digest.future.intro')}</p>
+              <p className="text-[12px] text-ink-3">{t('digest.future.method')}</p>
+              <FutureNudgeRules />
+              <BenchmarkChips feature="FS75" />
+            </div>
+          </details>
           <div className="flex flex-wrap items-center gap-2">
             <button className="btn-primary btn-sm" onClick={save} data-testid="digest-settings-save">{t('digest.settings.save')}</button>
             <span className="text-[12px] text-ink-3">{t('digest.settings.note')}</span>

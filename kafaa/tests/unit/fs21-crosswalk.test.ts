@@ -16,6 +16,7 @@ import { routes } from '../../src/modules/m28/routes';
 import { TRAINING_PATHS } from '../../src/modules/m04/paths';
 import { lintRanked } from '../../src/domain/engines/rank';
 import { FEATURE_BENCHMARKS } from '../../src/domain/taxonomy';
+const FS70_72_PATHS = ['/skills/rising', '/skills/rising/method', '/workforce/skill-signals', '/my/manager-pulse', '/skills/technologies', '/admin/skills/technologies', '/my/skills/suggestions']; // FS72 (fsHe1)
 
 const T = (seed as unknown as { tables: Record<string, any[]> }).tables; // eslint-disable-line @typescript-eslint/no-explicit-any
 const listed = T.skills.filter(isListed);
@@ -261,7 +262,7 @@ describe('FS08 · International crosswalk', () => {
   it('schema, routes, benchmarks and i18n: three tables, four routes (public explorer, skill, frameworks; admin), FS07/FS08 benchmark ties', () => {
     expect(['skill_frameworks', 'skill_alignments', 'skill_goals'].every((t) => SCHEMA[t]?.module === 'M28')).toBe(true);
     expect(SCHEMA.skill_alignments.write).toEqual({ mode: 'rpc', res: 'frameworks' });
-    expect(routes.map((r) => r.path)).toEqual(['/skills', '/skills/frameworks', '/skills/:id', '/admin/skills/alignments']);
+    expect(routes.map((r) => r.path).filter((x) => !FS70_72_PATHS.includes(x))).toEqual(['/skills', '/skills/frameworks', '/skills/:id', '/admin/skills/alignments']); // FS72 (fsHe1): the seven FS70-FS72 routes are pinned in fs81-skill-signals.test.ts
     expect(routes.filter((r) => r.zone === 'public').every((r) => Object.keys(r.guard).length === 0)).toBe(true);
     expect(FEATURE_BENCHMARKS.FS07).toEqual(['SFIA9', 'ESCO', 'SSG-SF']);
     expect(FEATURE_BENCHMARKS.FS08).toContain('1EDTECH');

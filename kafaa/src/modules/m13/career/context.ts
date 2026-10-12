@@ -7,12 +7,15 @@ import type { Repository, Table } from '../../../data/types';
 import { SCHEMA } from '../../../data/schema';
 import type { CareerData } from '../../m18/career';
 import type { Weights } from '../../../domain/engines/types';
+import type { FutureCtx } from './future';
 
 type Row = Record<string, any>;
 export interface CareerTables {
   people: Row[]; job_roles: Row[]; career_paths: Row[]; role_competencies: Row[]; competencies: Row[]; skills: Row[]; person_skills: Row[]; skill_evidence: Row[];
   licences: Row[]; qual_records: Row[]; qual_standards: Row[]; programmes: Row[]; courses: Row[]; training_records: Row[]; enrolments: Row[]; sources: Row[];
   career_targets: Row[]; opportunities: Row[]; opportunity_applications: Row[]; engine_settings: Row[]; reco_optouts: Row[];
+  /** FS76 (QA_B fix): published FS05 role profiles, so a concept role reads FS15 readiness. Optional for older callers. */
+  role_profile_versions?: Row[];
 }
 export interface CareerCtx {
   now: string;
@@ -36,6 +39,10 @@ export interface CareerCtx {
   applied: Set<string>;
   weights: { recommend?: Weights; match?: Weights };
   optouts: Set<string>;
+  /** FS76: published FS05 role profiles (concept-role readiness). */
+  versions: Row[];
+  /** FS76: future-skills catalogues and my own future-skills rows (set by the caller; null when not loaded). */
+  future?: FutureCtx | null;
 }
 
 const cmp = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
@@ -61,10 +68,11 @@ export function careerCtxFrom(t: CareerTables, me: string, now: string): CareerC
     shortlist, opps: t.opportunities.filter((o) => o.status === 'open' && o.listed !== false && o.posted_by !== me), applied,
     weights: { recommend: t.engine_settings.find((s) => s.id === 'recommend')?.weights, match: t.engine_settings.find((s) => s.id === 'match')?.weights },
     optouts: new Set(mine(t.reco_optouts).filter((o) => o.opted_out).map((o) => String(o.surface))),
+    versions: (t.role_profile_versions ?? []).filter((v) => v.status === 'published'),
   };
 }
 
-export const CAREER_TABLES: Table[] = ['person_skills', 'skill_evidence', 'career_targets', 'opportunities', 'opportunity_applications', 'reco_optouts', 'engine_settings', 'training_records', 'enrolments', 'qual_records', 'licences'] as Table[];
+export const CAREER_TABLES: Table[] = ['role_profile_versions', 'person_skills', 'skill_evidence', 'career_targets', 'opportunities', 'opportunity_applications', 'reco_optouts', 'engine_settings', 'training_records', 'enrolments', 'qual_records', 'licences'] as Table[];
 
 /** Through the repository (both backends; RLS applies). Tables of features that are not in the schema read as empty. */
 export async function loadCareerCtx(repo: Repository, me: string, now: string): Promise<CareerCtx | null> {
@@ -78,6 +86,7 @@ export async function loadCareerCtx(repo: Repository, me: string, now: string): 
     safe('training_records', own), safe('enrolments', own), safe('sources'), safe('career_targets', own), safe('opportunities', { filter: { status: 'open' } }), safe('opportunity_applications', own),
     safe('engine_settings'), safe('reco_optouts', own),
   ]);
+  const role_profile_versions = await safe('role_profile_versions', { filter: { status: 'published' } }); // FS76
   return careerCtxFrom({ people, job_roles, career_paths, role_competencies, competencies, skills, person_skills, skill_evidence, licences, qual_records, qual_standards, programmes, courses, training_records,
-    enrolments, sources, career_targets, opportunities, opportunity_applications, engine_settings, reco_optouts }, me, now);
+    enrolments, sources, career_targets, opportunities, opportunity_applications, engine_settings, reco_optouts, role_profile_versions }, me, now);
 }

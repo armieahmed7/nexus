@@ -298,8 +298,9 @@ describe('FS63 · the uplift trend is labelled SIMULATED and suppressed under 10
 });
 
 describe('M37 · routes, benchmarks and seed', () => {
-  it('five routes with i18n titles; the tag route has a smoke param; every page renders the feature chips', () => {
-    expect(routes.map((r) => r.id).sort()).toEqual(['admin-national-tags', 'national-alignment', 'national-alignment-tag', 'national-occupations', 'national-report']);
+  it('five FS62/FS63 routes (eight in M37 after wave H) with i18n titles; the tag route has a smoke param; every page renders the feature chips', () => {
+    // FS wave H QA: + 3 M37 routes (FS73 national-emirati-pipeline; FS74 my-future-wallet, national-future-wallet), pinned in fs82-emirati-wallet.test.ts
+    expect(routes.map((r) => r.id).sort()).toEqual(['admin-national-tags', 'my-future-wallet', 'national-alignment', 'national-alignment-tag', 'national-emirati-pipeline', 'national-future-wallet', 'national-occupations', 'national-report']);
     for (const r of routes) { expect((en as Row).routes[r.id].title).toBeTruthy(); expect((ar as Row).routes[r.id].title).toMatch(/[؀-ۿ]/); }
     expect(JSON.parse(readFileSync('src/modules/m37/smoke.json', 'utf8'))['national-alignment-tag'].tagId).toBe('nt-ai-2031');
     expect(FEATURE_BENCHMARKS.FS62).toEqual(['JAHIZ', 'UAE-AI', 'NAFIS']);

@@ -10,10 +10,25 @@
 //                      rpc.journeyAggregate; the always-false open_read column keeps the applications R/A grants from reading rows.
 //   student_portfolio  the starter portfolio: a synthetic Mustaqbali starter credential (rpc.issueStarterCredentials, HR director)
 //                      and experiences. Own only; same open_read rule. Never a FANR certification.
+//
+// FS77 (FS wave H · E5) Student future-skills starter and intake baselines:
+//   starter_lessons    the public AI-literacy starter and SMR orientation (talent_content R where listed): short lessons, key points,
+//                      a non-scoring self-check (answer shown on the page; nothing stored for anonymous visitors), links to the FS09
+//                      ladder and FS38/FS39 content, and https sources with an as-of date (secondary sources flagged).
+//   induction_modules  the induction catalogue (public where listed): hours, refresher hours, mandatory flag (mandatory nuclear
+//                      modules can never be skipped by a baseline).
+//   intake_baselines   HR-set intake-year baselines (versioned rows ib-<year>-<scope>-v<n>, status draft|published|superseded): which
+//                      modules a joiner of that intake already holds, partly holds or does not hold, with the basis of each claim.
+//                      Public R for the published (listed) rows; drafts read by workforce_strategy (HR, admin, auditor) and sat
+//                      (training staff). Writes only through rpc.saveIntakeBaseline (workforce_strategy W = HR).
+//   induction_plans    one induction plan per joiner (ip-<person>), built by rpc.buildInductionPlan from the baseline for the joiner's
+//                      intake year (programme-specific first, then all programmes; none = full induction). Read by the joiner
+//                      (own_profile Own), HR (workforce_strategy) and training staff (sat).
 import type { TableDef } from '../../../data/schema';
 
 const PUBLIC_TALENT = [{ res: 'talent_content' }];
 const OWN_ONLY = [{ res: 'applications', person: 'person_id', where: 'open_read' }];
+const PUBLIC_LISTED = [{ res: 'talent_content', where: 'listed' }];
 
 export const TABLES_M06: Record<string, TableDef> = {
   journey_questions: {
@@ -46,5 +61,42 @@ export const TABLES_M06: Record<string, TableDef> = {
       sample: 'bool =true', open_read: 'bool =false', created_at: 'ts =now',
     },
     read: OWN_ONLY as TableDef['read'], write: { mode: 'rpc', res: 'applications' },
+  },
+
+  // ───────────── FS77 (FS wave H · E5)
+  starter_lessons: {
+    module: 'M06', label: 'Student future-skills starter: AI-literacy and SMR orientation lessons with sourced points and a non-scoring self-check (public) (FS77)',
+    cols: {
+      id: 'text pk', track: 'text enum:ai|smr idx', sort: 'int =0', title_en: 'text', title_ar: 'text', summary_en: 'text', summary_ar: 'text',
+      points: 'json =[]', self_check: 'json ={}', links: 'json =[]', induction_module_id: 'text? ref:induction_modules', sources: 'json =[]', as_of: 'date', listed: 'bool =true',
+    },
+    read: PUBLIC_LISTED as TableDef['read'], write: { mode: 'none' },
+  },
+  induction_modules: {
+    module: 'M06', label: 'Induction catalogue for new joiners: hours, refresher hours and whether the module is mandatory (public) (FS77)',
+    cols: {
+      id: 'text pk', sort: 'int =0', area: 'text enum:ai|digital|cyber|energy|smr|safety|radiation|site|company', title_en: 'text', title_ar: 'text', summary_en: 'text', summary_ar: 'text',
+      hours: 'num', refresh_hours: 'num =0', mandatory: 'bool =false', skill_ids: 'text[] =[]', listed: 'bool =true',
+    },
+    read: PUBLIC_LISTED as TableDef['read'], write: { mode: 'none' },
+  },
+  intake_baselines: {
+    module: 'M06', label: 'Intake-year baseline set by HR: induction modules the joiners of one intake already hold, partly hold or do not hold, with the basis (versioned; public when published) (FS77)',
+    cols: {
+      id: 'text pk', intake_year: 'int idx', programme: 'text enum:all|dnt|energy-pioneers|gdp|gpo|direct', version: 'int =1', status: 'text enum:draft|published|superseded idx',
+      entries: 'json =[]', note_en: 'text =\'\'', note_ar: 'text =\'\'', set_by: 'text?', set_at: 'ts =now', published_by: 'text?', published_at: 'ts?', listed: 'bool =false', sample: 'bool =true',
+    },
+    read: [{ res: 'talent_content', where: 'listed' }, { res: 'workforce_strategy' }, { res: 'sat' }] as TableDef['read'],
+    write: { mode: 'rpc', res: 'workforce_strategy' },
+  },
+  induction_plans: {
+    module: 'M06', label: 'Induction plan of one joiner, read from the baseline for their intake year: full, refresher or skip per module, with the hours saved (FS77)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people uniq', person_name: 'text =\'\'', programme: 'text enum:dnt|energy-pioneers|gdp|gpo|direct', intake_year: 'int idx',
+      baseline_id: 'text? ref:intake_baselines', baseline_version: 'int?', items: 'json =[]', hours_total: 'num =0', hours_planned: 'num =0', hours_saved: 'num =0',
+      revision: 'int =1', built_by: 'text?', built_at: 'ts =now', sample: 'bool =true',
+    },
+    read: [{ res: 'own_profile', person: 'person_id' }, { res: 'workforce_strategy' }, { res: 'sat' }] as TableDef['read'],
+    write: { mode: 'rpc', res: 'workforce_strategy' },
   },
 };

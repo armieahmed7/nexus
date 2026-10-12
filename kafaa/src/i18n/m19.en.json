@@ -483,7 +483,9 @@
       "externalEmpty": "No external completion recorded",
       "coachTitle": "Pathways the Coach ranks for you",
       "coachIntro": "Against your 2030 role profile as well as today's, with the reason for each.",
-      "privacy": "Your pathway progress and external completions are visible to you only. Others see only suppressed totals (10 people or more)."
+      "privacy": "Your pathway progress and external completions are visible to you only. Others see only suppressed totals (10 people or more).",
+      "askDalil": "Ask Dalil which pathway closes my gap",
+      "askQ": "Which pathway closes my gap?"
     },
     "coach": {
       "tab": "Future skills",
