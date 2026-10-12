@@ -7,6 +7,15 @@
 // links and role mappings), so the read rule is a plain national_alignment R/W/A read. Writes only through RPCs: FS62 saveNationalTag and
 // setTagLink (W: HR director, admin); FS63 saveRoleOccupation (W) and verifyOccupationCode / clearOccupationCode (A: admin only).
 // Measures (people counts) never live in these tables: the report RPC computes them from the data (national_alignment Agg/W/A).
+//
+// FS wave H · E2 (FS73, FS74; logged in the CONTRACT changelog):
+//  - pipeline_mirror (FS73): a SIMULATED, de-identified HR mirror of hires into the critical and future roles (no person id, no name):
+//    role, nationality group (reporting only), hire, leave and authorisation dates. Nobody reads a row directly (always-false open_read on
+//    workforce_strategy); the only reader is the FS73 aggregate RPC emiratiPipeline (anyRole hr_analyst, hr_director, auditor), which
+//    suppresses every count under 10. Seed only (write none): it mirrors the HR system, Kafa'a never edits it.
+//  - wallet_targets (FS74): the dated organisation target for the core-five Future Skills Wallet, a leadership setting with who set it,
+//    when, and its history. Read national_alignment R/W/A (staff see the target their wallet counts toward); written only through
+//    setWalletTarget (workforce_strategy A: the HR director). The measured counter is computed by the RPCs, never stored.
 import type { TableDef } from '../../../data/schema';
 
 const NA = [{ res: 'national_alignment' as const }];
@@ -46,5 +55,26 @@ export const TABLES_M37: Record<string, TableDef> = {
     },
     read: NA,
     write: { mode: 'rpc', res: 'national_alignment' },
+  },
+  // ───────────── FS73 Emirati pipeline by competency (wave H · E2)
+  pipeline_mirror: {
+    module: 'M37', label: 'SIMULATED, de-identified HR mirror of hires into critical and future roles: role, nationality group (reporting only), hire, leave and authorisation dates; read only by the suppressed FS73 aggregate (FS73)',
+    cols: {
+      id: 'text pk', role_id: 'text ref:job_roles idx', nationality_flag: 'text enum:uae|other', hired_on: 'date', left_on: 'date?', authorised_on: 'date?',
+      source: 'text =\'SIMULATED HR mirror\'', simulated: 'bool =true', open_read: 'bool =false',
+    },
+    read: [{ res: 'workforce_strategy', where: 'open_read' }],
+    write: { mode: 'none' },
+  },
+  // ───────────── FS74 Future Skills Wallet target (wave H · E2)
+  wallet_targets: {
+    module: 'M37', label: 'Dated organisation target for the core-five Future Skills Wallet: a leadership setting shown with who set it and when, with its history; a parameter, never a claim (FS74)',
+    cols: {
+      id: 'text pk', metric: 'text enum:core_five_complete', pct: 'int', due_on: 'date', note_en: 'text', note_ar: 'text',
+      set_by: 'text ref:people', set_by_role: 'text', set_at: 'ts =now', status: 'text enum:active|superseded =\'active\' idx', version: 'int =1',
+      history: 'json =[]', benchmark_ids: 'text[] =[]', sources: 'json =[]',
+    },
+    read: NA,
+    write: { mode: 'rpc', res: 'workforce_strategy' },
   },
 };

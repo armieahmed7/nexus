@@ -6723,6 +6723,39 @@ create table if not exists kafaa_role_occupations (
 );
 comment on table kafaa_role_occupations is '[M37] Current job role mapped to a national occupation label and indicative skill level (1-5); the MoHRE code is stored only when verified from an official source (else "code pending review"); Kafa''a is not a MoHRE system (FS63)';
 
+-- M37 · SIMULATED, de-identified HR mirror of hires into critical and future roles: role, nationality group (reporting only), hire, leave and authorisation dates; read only by the suppressed FS73 aggregate (FS73)
+create table if not exists kafaa_pipeline_mirror (
+  id text primary key,
+  role_id text not null,
+  nationality_flag text not null check (nationality_flag in ('uae', 'other')),
+  hired_on date not null,
+  left_on date,
+  authorised_on date,
+  source text not null default 'SIMULATED HR mirror',
+  simulated boolean not null default true,
+  open_read boolean not null default false
+);
+comment on table kafaa_pipeline_mirror is '[M37] SIMULATED, de-identified HR mirror of hires into critical and future roles: role, nationality group (reporting only), hire, leave and authorisation dates; read only by the suppressed FS73 aggregate (FS73)';
+
+-- M37 · Dated organisation target for the core-five Future Skills Wallet: a leadership setting shown with who set it and when, with its history; a parameter, never a claim (FS74)
+create table if not exists kafaa_wallet_targets (
+  id text primary key,
+  metric text not null check (metric in ('core_five_complete')),
+  pct integer not null,
+  due_on date not null,
+  note_en text not null,
+  note_ar text not null,
+  set_by text not null,
+  set_by_role text not null,
+  set_at timestamptz not null default now(),
+  status text not null default 'active' check (status in ('active', 'superseded')),
+  version integer not null default 1,
+  history jsonb not null default '[]'::jsonb,
+  benchmark_ids text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb
+);
+comment on table kafaa_wallet_targets is '[M37] Dated organisation target for the core-five Future Skills Wallet: a leadership setting shown with who set it and when, with its history; a parameter, never a claim (FS74)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -7269,6 +7302,8 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_pl
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_national_tags_parent_id_fk') then alter table kafaa_national_tags add constraint kafaa_national_tags_parent_id_fk foreign key (parent_id) references kafaa_national_tags(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_tag_links_tag_id_fk') then alter table kafaa_tag_links add constraint kafaa_tag_links_tag_id_fk foreign key (tag_id) references kafaa_national_tags(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_role_occupations_role_id_fk') then alter table kafaa_role_occupations add constraint kafaa_role_occupations_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_pipeline_mirror_role_id_fk') then alter table kafaa_pipeline_mirror add constraint kafaa_pipeline_mirror_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_wallet_targets_set_by_fk') then alter table kafaa_wallet_targets add constraint kafaa_wallet_targets_set_by_fk foreign key (set_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -8052,6 +8087,9 @@ create index if not exists kafaa_tag_links_tag_id_idx on kafaa_tag_links (tag_id
 create index if not exists kafaa_tag_links_target_table_idx on kafaa_tag_links (target_table);
 create index if not exists kafaa_tag_links_target_id_idx on kafaa_tag_links (target_id);
 create index if not exists kafaa_role_occupations_code_status_idx on kafaa_role_occupations (code_status);
+create index if not exists kafaa_pipeline_mirror_role_id_idx on kafaa_pipeline_mirror (role_id);
+create index if not exists kafaa_wallet_targets_set_by_idx on kafaa_wallet_targets (set_by);
+create index if not exists kafaa_wallet_targets_status_idx on kafaa_wallet_targets (status);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -8066,4 +8104,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 342) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 344) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

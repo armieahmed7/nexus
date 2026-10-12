@@ -2988,3 +2988,17 @@ create policy kafaa_read on kafaa_role_occupations for select to anon, authentic
 grant select on kafaa_role_occupations to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- pipeline_mirror
+alter table kafaa_pipeline_mirror enable row level security;
+drop policy if exists kafaa_read on kafaa_pipeline_mirror;
+create policy kafaa_read on kafaa_pipeline_mirror for select to anon, authenticated using (kafaa_rule_read('workforce_strategy', null::text, null::text, open_read));
+grant select on kafaa_pipeline_mirror to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- wallet_targets
+alter table kafaa_wallet_targets enable row level security;
+drop policy if exists kafaa_read on kafaa_wallet_targets;
+create policy kafaa_read on kafaa_wallet_targets for select to anon, authenticated using (kafaa_rule_read('national_alignment', null::text, null::text, true));
+grant select on kafaa_wallet_targets to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
