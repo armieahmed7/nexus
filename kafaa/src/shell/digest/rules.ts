@@ -15,15 +15,20 @@
  *   mentoring    an active mentoring agreement whose next session (cadence after the last one) falls within 7 days         urgency 3
  *   conversation my six-monthly career conversation when it is due within 30 days or overdue (F12 cadence)                 urgency 3
  *   refresher    refresher questions due today or earlier (F14), unless I paused refreshers                                urgency 3
+ *   future       FS75 (wave H): future-skills nudges from src/shell/digest/future.ts (fast-decay lapse, FS33 goal, AI-literacy
+ *                requirement, role 2030 profile change, FS70 rising skill, FS27 gig, FS17 pathway); approvals also gain FS67
+ *                fellowship sign-offs owed. Everything FS75 adds applies from FS75_FROM (2026-10-12); earlier days are unchanged.  urgency 3
  * Order: urgency (expiry < approvals < others), then days to the date (no date last), then kind, then score, then id.
  * Opting out of ranked recommendations (F24) removes the ranked kinds: no coach hint (coach), no match-based items (marketplace).
  * Expiry reminders cannot be muted. Speak-up routes never show or build a digest (the page guard has noTelemetry).
  */
 
-export type DigestKind = 'expiry' | 'approval' | 'coach' | 'opportunity' | 'mentoring' | 'conversation' | 'refresher';
+import { gatherFs75Approvals, gatherFuture, type FutureData } from './future.ts';
+
+export type DigestKind = 'expiry' | 'approval' | 'coach' | 'opportunity' | 'mentoring' | 'conversation' | 'refresher' | 'future';
 export type DigestFrequency = 'weekly' | 'fortnightly' | 'monthly';
-export const DIGEST_KINDS: DigestKind[] = ['expiry', 'approval', 'coach', 'opportunity', 'mentoring', 'conversation', 'refresher'];
-export const MUTABLE_KINDS: DigestKind[] = ['approval', 'coach', 'opportunity', 'mentoring', 'conversation', 'refresher'];
+export const DIGEST_KINDS: DigestKind[] = ['expiry', 'approval', 'coach', 'opportunity', 'mentoring', 'conversation', 'refresher', 'future'];
+export const MUTABLE_KINDS: DigestKind[] = ['approval', 'coach', 'opportunity', 'mentoring', 'conversation', 'refresher', 'future'];
 export const FREQUENCIES: DigestFrequency[] = ['weekly', 'fortnightly', 'monthly'];
 export const DIGEST_MAX = 7;
 export const EXPIRY_WINDOW_DAYS = 90;
@@ -32,9 +37,9 @@ export const NEW_OPP_DAYS = 21;
 export const MATCH_MIN = 0.7;
 export const MENTORING_AHEAD_DAYS = 7;
 export const CONVERSATION_DUE_SOON_DAYS = 30;
-export const CAPS: Record<DigestKind, number> = { expiry: 3, approval: 3, coach: 1, opportunity: 2, mentoring: 1, conversation: 1, refresher: 1 };
-export const URGENCY: Record<DigestKind, 1 | 2 | 3> = { expiry: 1, approval: 2, coach: 3, opportunity: 3, mentoring: 3, conversation: 3, refresher: 3 };
-export const KIND_RANK: Record<DigestKind, number> = { expiry: 1, approval: 2, coach: 3, opportunity: 4, mentoring: 5, conversation: 6, refresher: 7 };
+export const CAPS: Record<DigestKind, number> = { expiry: 3, approval: 3, coach: 1, opportunity: 2, mentoring: 1, conversation: 1, refresher: 1, future: 2 };
+export const URGENCY: Record<DigestKind, 1 | 2 | 3> = { expiry: 1, approval: 2, coach: 3, opportunity: 3, mentoring: 3, conversation: 3, refresher: 3, future: 3 };
+export const KIND_RANK: Record<DigestKind, number> = { expiry: 1, approval: 2, coach: 3, opportunity: 4, mentoring: 5, conversation: 6, refresher: 7, future: 8 };
 export const CADENCE_DAYS: Record<string, number> = { weekly: 7, fortnightly: 14, monthly: 30 };
 /** Asia/Dubai is UTC+4 all year (no daylight saving). */
 export const DUBAI_OFFSET_HOURS = 4;
@@ -90,7 +95,7 @@ export interface DigestHints {
 }
 
 type Row = Record<string, any>;
-export interface DigestData {
+export interface DigestData extends FutureData {
   people: Row[];
   qual_records: Row[];
   qual_standards: Row[];
@@ -423,6 +428,10 @@ export function gatherDigest(d: DigestData, me: string, today: string, hints: Di
     out.push(item({ id: `refresher:refresh_state:${me}`, kind: 'refresher', ref_table: 'refresh_state', ref_id: me, title_en: `${dueN} refresher ${dueN === 1 ? 'question' : 'questions'} due`, title_ar: `أسئلة تنشيط مستحقة: ${dueN}`,
       link: '/my/coach/refresh', days: 0, due_on: today, why: [{ code: 'refresher_due', vars: { n: dueN } }] }));
   }
+  // FS75 (wave H): fellowship sign-offs owed (approval) and the future-skills nudges (kind future), from FS75_FROM on (future.ts)
+  const ctx = { person, today, person_skills: d.person_skills, skills: d.skills, opportunities: d.opportunities, opportunity_applications: d.opportunity_applications,
+    people: d.people, reco_optouts: d.reco_optouts, taken: new Set(out.map((i) => i.id)) };
+  out.push(...(gatherFs75Approvals(d, ctx) as DigestItem[]), ...(gatherFuture(d, ctx) as DigestItem[]));
   return out;
 }
 

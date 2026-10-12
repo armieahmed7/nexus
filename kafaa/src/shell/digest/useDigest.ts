@@ -42,4 +42,4 @@ export function useNoNudges(): boolean {
 
 /** Item reasons as F02 reasons for <WhyThis> (digest.why.* unless the item carries the coach engine's own key). */
 export const itemReasons = (i: DigestItem): Reason[] => i.why.map((w) => ({ code: w.code, key: w.key ?? `digest.why.${w.code}`, vars: (w.vars ?? {}) as Reason['vars'] }));
-export const KIND_ICON: Record<string, string> = { expiry: 'alert', approval: 'check', coach: 'grad', opportunity: 'sparkle', mentoring: 'users', conversation: 'chat', refresher: 'reset' };
+export const KIND_ICON: Record<string, string> = { expiry: 'alert', approval: 'check', coach: 'grad', opportunity: 'sparkle', mentoring: 'users', conversation: 'chat', refresher: 'reset', future: 'chart' };
