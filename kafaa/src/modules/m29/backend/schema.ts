@@ -1,4 +1,4 @@
-// M29 tables (owners: wave B E2 (FS09, FS10), wave D E5 (FS36, FS37) and wave I E2 (FS80)). FS36/FS37 tables: ai_systems, ai_system_users, ai_drills, ai_drill_keys, ai_drill_attempts. Merged into SCHEMA by src/data/schema.ts; `npm run gen` regenerates types, SQL and RLS.
+// M29 tables (owners: wave B E2 (FS09, FS10), wave D E5 (FS36, FS37) and wave I E2 (FS80)). FS36/FS37 tables: ai_systems, ai_system_users, ai_drills, ai_drill_keys, ai_drill_attempts. FS80 tables: automations, automation_adoptions. Merged into SCHEMA by src/data/schema.ts; `npm run gen` regenerates types, SQL and RLS.
 // Same DSL as src/data/schema.ts. Table names must not start with "kafaa_" (the prefix is added) and must be unique.
 // Keep this file import-free except for `import type` (node scripts load it directly). New taxonomies carry _en/_ar columns.
 import type { TableDef } from '../../../data/schema';
@@ -120,6 +120,34 @@ export const TABLES_M29: Record<string, TableDef> = {
       feedback: 'json ={}', reasons: 'json =[]', evidence: 'json =[]', submitted_at: 'ts =now',
     },
     read: [{ res: 'own_profile', person: 'person_id' }],
+    write: { mode: 'rpc', res: 'ai_literacy' },
+  },
+
+  // ───────────── FS80 Automation and agent gallery with builder credit (wave I E2)
+  // Metadata only: no code, file or link column; `metadata_only` is checked true in SQL. Read: staff (ai_literacy R) see listed (approved)
+  // entries; the builder sees their own entries in every status (Own; the always-false open_read keeps R holders out of unlisted rows);
+  // admins (AI governance) and auditors read every entry through audit_log R. Adoption rows: the adopter (Own) and audit_log R only; the
+  // builder sees the counter on the entry, never who adopted. Builder and owner names are copied onto the entry (like the FS36 register's
+  // owner_en/_ar) because staff cannot read other people's rows.
+  automations: {
+    module: 'M29', label: 'Automation or agent gallery entry (metadata only, never run by Kafa\'a): purpose, data used, accountable owner, human check, how to use, the AI-system register row it runs on, governance decision and adoption counter (FS80)',
+    cols: {
+      id: 'text pk', title_en: 'text', title_ar: 'text', kind: 'text enum:workflow|agent|template|report idx', purpose_en: 'text', purpose_ar: 'text',
+      data_used_en: 'text', data_used_ar: 'text', data_classes: 'text[] =[]', system_id: 'text ref:ai_systems idx', builder_person_id: 'text ref:people idx', owner_person_id: 'text ref:people idx',
+      builder_en: 'text', builder_ar: 'text', owner_en: 'text', owner_ar: 'text', family_id: 'text?', oversight_en: 'text', oversight_ar: 'text', benefit_en: 'text', benefit_ar: 'text', how_en: 'text', how_ar: 'text', min_rung: 'int =1',
+      status: 'text enum:draft|submitted|returned|approved|rejected|retired =\'draft\' idx', listed: 'bool =false', version: 'int =1', metadata_only: 'bool =true',
+      adoption_count: 'int =0', first_adopted_on: 'date?', builder_level: 'int =0', submitted_at: 'ts?', decided_by: 'text?', decided_at: 'ts?', decision_note: 'text =\'\'',
+      history: 'json =[]', open_read: 'bool =false', created_at: 'ts =now', updated_at: 'ts =now',
+    },
+    read: [{ res: 'ai_literacy', where: 'listed' }, { res: 'ai_literacy', person: 'builder_person_id', where: 'open_read' }, { res: 'audit_log' }],
+    write: { mode: 'rpc', res: 'ai_literacy' },
+  },
+  automation_adoptions: {
+    module: 'M29', label: 'One person\'s recorded reuse of an approved gallery entry (one row per person and entry; the builder never adopts their own) (FS80)',
+    cols: {
+      id: 'text pk', automation_id: 'text ref:automations idx', person_id: 'text ref:people idx', family_id: 'text?', adopted_on: 'date', note: 'text =\'\'', open_read: 'bool =false', created_at: 'ts =now',
+    },
+    read: [{ res: 'ai_literacy', person: 'person_id', where: 'open_read' }, { res: 'audit_log' }],
     write: { mode: 'rpc', res: 'ai_literacy' },
   },
 };

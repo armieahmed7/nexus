@@ -3,7 +3,7 @@
 // FS09/FS10 SQL: supabase/migrations/20261010222001_kafaa_fs22_ai_fluency.sql. Pages never import this file.
 import type { SupabaseExtCtx } from '../../../data/ext/types';
 import type { FitnessStats } from '../fitness';
-import type { AiCoverageView, AiFluencyStats, AiFluencyView, FitnessContext, M29Rpc } from './rpc';
+import type { AiCoverageView, AiFluencyStats, AiFluencyView, AutomationStatsView, FitnessContext, M29Rpc } from './rpc';
 import type { DrillStats } from '../drills';
 
 export function makeSupabaseM29(x: SupabaseExtCtx): M29Rpc {
@@ -21,5 +21,10 @@ export function makeSupabaseM29(x: SupabaseExtCtx): M29Rpc {
     submitDrill: (input) => x.call('kafaa_submit_drill', { p: input ?? {} }, ['ai_drill_attempts', 'skill_evidence', 'person_skills']),
     drillStats: async () => (await x.rpc<DrillStats | null>('kafaa_drill_stats')) ?? null,
     saveDrill: (input) => x.call('kafaa_save_drill', { p: input ?? {} }, ['ai_drills', 'ai_drill_keys']),
+    // FS80: supabase/migrations/20261010292001_kafaa_fs92_automation_gallery.sql
+    submitAutomation: (input) => x.call('kafaa_submit_automation', { p: input ?? {} }, ['automations']),
+    decideAutomation: (input) => x.call('kafaa_decide_automation', { p: input ?? {} }, ['automations']),
+    adoptAutomation: (input) => x.call('kafaa_adopt_automation', { p: input ?? {} }, ['automations', 'automation_adoptions', 'skill_evidence', 'person_skills']),
+    automationStats: async () => (await x.rpc<AutomationStatsView | null>('kafaa_automation_stats')) ?? null,
   };
 }

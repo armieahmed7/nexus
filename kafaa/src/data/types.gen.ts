@@ -5076,6 +5076,57 @@ export interface AiDrillAttemptsRow {
   evidence: any;
   submitted_at: string;
 }
+export interface AutomationsRow {
+  id: string;
+  title_en: string;
+  title_ar: string;
+  kind: 'workflow' | 'agent' | 'template' | 'report';
+  purpose_en: string;
+  purpose_ar: string;
+  data_used_en: string;
+  data_used_ar: string;
+  data_classes: string[];
+  system_id: string;
+  builder_person_id: string;
+  owner_person_id: string;
+  builder_en: string;
+  builder_ar: string;
+  owner_en: string;
+  owner_ar: string;
+  family_id?: string | null;
+  oversight_en: string;
+  oversight_ar: string;
+  benefit_en: string;
+  benefit_ar: string;
+  how_en: string;
+  how_ar: string;
+  min_rung: number;
+  status: 'draft' | 'submitted' | 'returned' | 'approved' | 'rejected' | 'retired';
+  listed: boolean;
+  version: number;
+  metadata_only: boolean;
+  adoption_count: number;
+  first_adopted_on?: string | null;
+  builder_level: number;
+  submitted_at?: string | null;
+  decided_by?: string | null;
+  decided_at?: string | null;
+  decision_note: string;
+  history: any;
+  open_read: boolean;
+  created_at: string;
+  updated_at: string;
+}
+export interface AutomationAdoptionsRow {
+  id: string;
+  automation_id: string;
+  person_id: string;
+  family_id?: string | null;
+  adopted_on: string;
+  note: string;
+  open_read: boolean;
+  created_at: string;
+}
 export interface RoleTransformationsRow {
   id: string;
   role_id: string;
@@ -6265,6 +6316,8 @@ export interface Tables {
   ai_drills: AiDrillsRow;
   ai_drill_keys: AiDrillKeysRow;
   ai_drill_attempts: AiDrillAttemptsRow;
+  automations: AutomationsRow;
+  automation_adoptions: AutomationAdoptionsRow;
   role_transformations: RoleTransformationsRow;
   transformation_drafts: TransformationDraftsRow;
   transformation_milestones: TransformationMilestonesRow;
