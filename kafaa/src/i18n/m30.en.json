@@ -549,7 +549,7 @@
       "reviews_required": "Plans carry review dates: 1 to 12, in order, within the plan, at most 183 days apart.",
       "invalid_retraining": "Each retraining step needs a kind, English and Arabic titles, 1 to 400 hours and a due date within the plan; a course step names a course.",
       "invalid_practice": "Practice must be an eligible simulator scenario or OJT task for an alerted task.",
-      "banned_wording": "Describe how tasks change, not people: words such as \"replace\" or \"redundant\" are not used.",
+      "banned_wording": "Describe how tasks change, not people: the copy check refuses wording that frames people as no longer needed.",
       "retraining_required": "An active plan needs at least one retraining step.",
       "rung_practice_required": "Every junior task in the ladder-rung alert needs simulator or OJT practice.",
       "no_review_due": "No review is due yet (from 14 days before its date)."
