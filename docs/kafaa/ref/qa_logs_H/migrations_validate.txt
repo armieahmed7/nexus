@@ -1,0 +1,34 @@
+npm run migrations:validate (fsH-integration-qa @ e9b0f0b, 2026-10-12): 2430 checks passed, 0 failed; real	20m22.459s
+FS75 · FS68 supplier future-skills readiness, FS69 contractor pre-arrival check
+  ✓ FS75 grants: helpers executable by no API role; the 8 RPCs by authenticated only
+  ✓ FS75 migration: additive kafaa_* objects only, no removal words
+FS wave H · E1 · FS70 ENEC Skills on the Rise + FS71 hot technologies + FS72 skills you may have (M28)
+  ✓ FS70: SQL kafaa_rs_compute = TS risingSkills for 8 quarters and 3 malformed ones
+  ✓ FS70: kafaa_rs_bounds = quarterBounds and kafaa_rs_prev = prevQuarter
+  ✓ FS70: every published list equals what the rule computes on the seeded data (computed, never typed; rerun fs70 finalize if a later builder adds dated evidence)
+  ✓ FS70: SQL kafaa_mp_summary = TS pulseSummary for 2024-2026
+  ✓ FS71: kafaa_ht_brand_hits = brandHits for 25 probes (whole words, EN/AR)
+  ✓ FS71: kafaa_ht_problem = techProblem for 18 probes (id, name, name, description, brand, brand, brand, category, skills, skills, skills, status, name, category)
+  ✓ FS71: every stored badge list equals what the criteria give on the seeded data
+  ✓ FS72: SQL kafaa_ssg_candidates = TS inferSuggestions for all 106 active staff on 2026-10-11
+  ✓ FS72: SQL kafaa_ssg_candidates = TS inferSuggestions for all 106 active staff on 2027-02-15
+  ✓ FS72: SQL kafaa_ssg_candidates = TS inferSuggestions for all 106 active staff on 2027-02-16
+  ✓ FS72: every stored open suggestion equals the rule on 2026-10-11 (sources, reasons, score, level)
+  ✓ FS72: every suggestion carries one reason per source (i18n keys for WhyThis); levels never above 2
+FS wave H · E2 · FS73 Emirati pipeline by competency + FS74 Future Skills Wallet target (M37)
+  ✓ FS73 mirror: every row is SIMULATED, de-identified (no person id, name, gender or age column) and closed to direct reads
+  ✓ FS73: 14 critical and future roles (critical, or a growing FS16 outlook); concept and security-sensitive roles never enter
+FS83 · FS75 future-skills nudges in the weekly digest
+FS wave H · E4 · FS76 Dalil future-skills mode
+FS wave H · E5 · FS77 student future-skills starter and intake baselines
+FS QA · wave H integration (FS70-FS77, FS69 pre-arrival checks in the digest)
+  ✓ FS75 SQL = TS (approvals + future items, gather and compose) for 368 people on 2026-10-12 and 2026-10-19; 2 rising-skill nudges from the stored 2026-Q3 FS70 list; never more than 7 items
+  ✓ FS69 -> F36: 2 pre-arrival checks owed on 2026-10-12 (p-training-mgr), each to the evaluator who opened the share on the contractor's behalf, dated by mobilisation; none before the release; a check, a revoked link, a passed mobilisation or a self-made share removes it
+  ✓ FS74: kafaa_fw_status = walletStatus() for 106 active staff (evidence only); FS62 links the wallet target to nt-ai-2031, nt-jahiz (kafaa_na_links = effectiveLinks)
+  ✓ FS77: kafaa_ib_for names every induction plan's baseline (8 plans; 1 stale by planStale)
+  ✓ FS75: kafaa_build_digest twice for the training manager gives one run for 2026-W42 with the same 7 items (idempotent per period, at most 7)
+  ✓ FS72 -> FS55: the skill_suggestions card excludes the protected inputs and has 4 fairness rows; nobody reads another person's suggestion (sro 0, chco 0, k-hr-analyst 0, k-auditor 0, training-mgr 0)
+  ✓ FS72 -> 3.9 / FS74: a confirmed suggestion writes one rating evidence row (basis claimed, level 1) that kafaa_skills_apply keeps, and the wallet stays at 3 of 5 (claimed never counts)
+  ✓ FS73: kafaa_emirati_pipeline answers k-hr-analyst, chco, k-auditor; observers, partners, line managers, the training manager and admins get nothing
+sys	0m13.494s
+All migration checks passed

@@ -142,7 +142,7 @@ export function PlanTable({ plan, modules, year, testId = 'm06-plan' }: { plan: 
         const title = m ? { en: m.title_en, ar: m.title_ar } : { en: it.module_id, ar: it.module_id };
         return (
           <li key={it.module_id} className="flex flex-wrap items-center gap-x-3 gap-y-1.5 p-3" data-testid="m06-plan-item" data-module={it.module_id} data-action={it.action}>
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 basis-48">{/* FS wave H QA: the module title keeps its width at 390 px; the pills wrap below */}
               <div className="flex flex-wrap items-center gap-1.5">
                 <span className={`font-semibold ${it.action === 'skip' ? 'text-ink-3 line-through decoration-1' : ''}`}>{m ? pick(m as never, 'title') : it.module_id}</span>
                 {m?.mandatory && <span className="chip border-line bg-sunken text-ink-2">{t('m06.ind.mandatory')}</span>}

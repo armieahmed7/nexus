@@ -73,7 +73,7 @@ function MapView({ v, map, d }: { v: RoleTransformationView; map: RoleMap; d: Re
     <div className="space-y-6">
       <Card className="border-accent/40">
         <div className="flex flex-wrap items-start gap-4" data-testid="m30-hero">
-          <div className="min-w-0 flex-1 space-y-2">
+          <div className="min-w-0 flex-1 basis-64 space-y-2">{/* FS wave H QA: at 390 px the text wraps above the readiness ring instead of a one-word column */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="caps">{mine ? t('m30.my.myRole') : t('m30.my.exploring')}</span>
               <StatusPill status={map.status}>{t(`m30.status.${map.status}`)}</StatusPill>
