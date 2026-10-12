@@ -2614,6 +2614,81 @@ create table if not exists kafaa_student_portfolio (
 );
 comment on table kafaa_student_portfolio is '[M06] Student starter portfolio: synthetic Mustaqbali starter credential and experiences (own rows only; not a FANR certification) (F34)';
 
+-- M06 · Student future-skills starter: AI-literacy and SMR orientation lessons with sourced points and a non-scoring self-check (public) (FS77)
+create table if not exists kafaa_starter_lessons (
+  id text primary key,
+  track text not null check (track in ('ai', 'smr')),
+  sort integer not null default 0,
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  points jsonb not null default '[]'::jsonb,
+  self_check jsonb not null default '{}'::jsonb,
+  links jsonb not null default '[]'::jsonb,
+  induction_module_id text,
+  sources jsonb not null default '[]'::jsonb,
+  as_of date not null,
+  listed boolean not null default true
+);
+comment on table kafaa_starter_lessons is '[M06] Student future-skills starter: AI-literacy and SMR orientation lessons with sourced points and a non-scoring self-check (public) (FS77)';
+
+-- M06 · Induction catalogue for new joiners: hours, refresher hours and whether the module is mandatory (public) (FS77)
+create table if not exists kafaa_induction_modules (
+  id text primary key,
+  sort integer not null default 0,
+  area text not null check (area in ('ai', 'digital', 'cyber', 'energy', 'smr', 'safety', 'radiation', 'site', 'company')),
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  hours numeric not null,
+  refresh_hours numeric not null default 0,
+  mandatory boolean not null default false,
+  skill_ids text[] not null default '{}'::text[],
+  listed boolean not null default true
+);
+comment on table kafaa_induction_modules is '[M06] Induction catalogue for new joiners: hours, refresher hours and whether the module is mandatory (public) (FS77)';
+
+-- M06 · Intake-year baseline set by HR: induction modules the joiners of one intake already hold, partly hold or do not hold, with the basis (versioned; public when published) (FS77)
+create table if not exists kafaa_intake_baselines (
+  id text primary key,
+  intake_year integer not null,
+  programme text not null check (programme in ('all', 'dnt', 'energy-pioneers', 'gdp', 'gpo', 'direct')),
+  version integer not null default 1,
+  status text not null check (status in ('draft', 'published', 'superseded')),
+  entries jsonb not null default '[]'::jsonb,
+  note_en text not null default '',
+  note_ar text not null default '',
+  set_by text,
+  set_at timestamptz not null default now(),
+  published_by text,
+  published_at timestamptz,
+  listed boolean not null default false,
+  sample boolean not null default true
+);
+comment on table kafaa_intake_baselines is '[M06] Intake-year baseline set by HR: induction modules the joiners of one intake already hold, partly hold or do not hold, with the basis (versioned; public when published) (FS77)';
+
+-- M06 · Induction plan of one joiner, read from the baseline for their intake year: full, refresher or skip per module, with the hours saved (FS77)
+create table if not exists kafaa_induction_plans (
+  id text primary key,
+  person_id text not null unique,
+  person_name text not null default '',
+  programme text not null check (programme in ('dnt', 'energy-pioneers', 'gdp', 'gpo', 'direct')),
+  intake_year integer not null,
+  baseline_id text,
+  baseline_version integer,
+  items jsonb not null default '[]'::jsonb,
+  hours_total numeric not null default 0,
+  hours_planned numeric not null default 0,
+  hours_saved numeric not null default 0,
+  revision integer not null default 1,
+  built_by text,
+  built_at timestamptz not null default now(),
+  sample boolean not null default true
+);
+comment on table kafaa_induction_plans is '[M06] Induction plan of one joiner, read from the baseline for their intake year: full, refresher or skip per module, with the hours saved (FS77)';
+
 -- M07 · Handover 2030: positions with external or partner cover by role and plan year (SAMPLE, counts only) (F22)
 create table if not exists kafaa_external_cover (
   id text primary key,
@@ -6944,6 +7019,9 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_st
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_student_journeys_route_fk') then alter table kafaa_student_journeys add constraint kafaa_student_journeys_route_fk foreign key (route) references kafaa_talent_programmes(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_student_portfolio_person_id_fk') then alter table kafaa_student_portfolio add constraint kafaa_student_portfolio_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_student_portfolio_programme_id_fk') then alter table kafaa_student_portfolio add constraint kafaa_student_portfolio_programme_id_fk foreign key (programme_id) references kafaa_talent_programmes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_starter_lessons_induction_module_id_fk') then alter table kafaa_starter_lessons add constraint kafaa_starter_lessons_induction_module_id_fk foreign key (induction_module_id) references kafaa_induction_modules(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_induction_plans_person_id_fk') then alter table kafaa_induction_plans add constraint kafaa_induction_plans_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_induction_plans_baseline_id_fk') then alter table kafaa_induction_plans add constraint kafaa_induction_plans_baseline_id_fk foreign key (baseline_id) references kafaa_intake_baselines(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_external_cover_role_id_fk') then alter table kafaa_external_cover add constraint kafaa_external_cover_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_external_cover_function_fk') then alter table kafaa_external_cover add constraint kafaa_external_cover_function_fk foreign key (function) references kafaa_job_families(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_handover_cohorts_role_id_fk') then alter table kafaa_handover_cohorts add constraint kafaa_handover_cohorts_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
@@ -7561,6 +7639,12 @@ create index if not exists kafaa_journey_facts_source_id_idx on kafaa_journey_fa
 create index if not exists kafaa_student_journeys_route_idx on kafaa_student_journeys (route);
 create index if not exists kafaa_student_portfolio_person_id_idx on kafaa_student_portfolio (person_id);
 create index if not exists kafaa_student_portfolio_programme_id_idx on kafaa_student_portfolio (programme_id);
+create index if not exists kafaa_starter_lessons_track_idx on kafaa_starter_lessons (track);
+create index if not exists kafaa_starter_lessons_induction_module_id_idx on kafaa_starter_lessons (induction_module_id);
+create index if not exists kafaa_intake_baselines_intake_year_idx on kafaa_intake_baselines (intake_year);
+create index if not exists kafaa_intake_baselines_status_idx on kafaa_intake_baselines (status);
+create index if not exists kafaa_induction_plans_intake_year_idx on kafaa_induction_plans (intake_year);
+create index if not exists kafaa_induction_plans_baseline_id_idx on kafaa_induction_plans (baseline_id);
 create index if not exists kafaa_external_cover_period_idx on kafaa_external_cover (period);
 create index if not exists kafaa_external_cover_role_id_idx on kafaa_external_cover (role_id);
 create index if not exists kafaa_external_cover_function_idx on kafaa_external_cover (function);
@@ -8066,4 +8150,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 342) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 346) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

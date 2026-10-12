@@ -1480,6 +1480,38 @@ create policy kafaa_read on kafaa_student_portfolio for select to anon, authenti
 grant select on kafaa_student_portfolio to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- starter_lessons
+alter table kafaa_starter_lessons enable row level security;
+drop policy if exists kafaa_read on kafaa_starter_lessons;
+create policy kafaa_read on kafaa_starter_lessons for select to anon, authenticated using (kafaa_rule_read('talent_content', null::text, null::text, listed));
+grant select on kafaa_starter_lessons to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- induction_modules
+alter table kafaa_induction_modules enable row level security;
+drop policy if exists kafaa_read on kafaa_induction_modules;
+create policy kafaa_read on kafaa_induction_modules for select to anon, authenticated using (kafaa_rule_read('talent_content', null::text, null::text, listed));
+grant select on kafaa_induction_modules to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- intake_baselines
+alter table kafaa_intake_baselines enable row level security;
+drop policy if exists kafaa_read on kafaa_intake_baselines;
+create policy kafaa_read on kafaa_intake_baselines for select to anon, authenticated using (kafaa_rule_read('talent_content', null::text, null::text, listed)
+    or kafaa_rule_read('workforce_strategy', null::text, null::text, true)
+    or kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_intake_baselines to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- induction_plans
+alter table kafaa_induction_plans enable row level security;
+drop policy if exists kafaa_read on kafaa_induction_plans;
+create policy kafaa_read on kafaa_induction_plans for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('workforce_strategy', null::text, null::text, true)
+    or kafaa_rule_read('sat', null::text, null::text, true));
+grant select on kafaa_induction_plans to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- external_cover
 alter table kafaa_external_cover enable row level security;
 drop policy if exists kafaa_read on kafaa_external_cover;

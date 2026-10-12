@@ -2187,6 +2187,69 @@ export interface StudentPortfolioRow {
   open_read: boolean;
   created_at: string;
 }
+export interface StarterLessonsRow {
+  id: string;
+  track: 'ai' | 'smr';
+  sort: number;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  points: any;
+  self_check: any;
+  links: any;
+  induction_module_id?: string | null;
+  sources: any;
+  as_of: string;
+  listed: boolean;
+}
+export interface InductionModulesRow {
+  id: string;
+  sort: number;
+  area: 'ai' | 'digital' | 'cyber' | 'energy' | 'smr' | 'safety' | 'radiation' | 'site' | 'company';
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  hours: number;
+  refresh_hours: number;
+  mandatory: boolean;
+  skill_ids: string[];
+  listed: boolean;
+}
+export interface IntakeBaselinesRow {
+  id: string;
+  intake_year: number;
+  programme: 'all' | 'dnt' | 'energy-pioneers' | 'gdp' | 'gpo' | 'direct';
+  version: number;
+  status: 'draft' | 'published' | 'superseded';
+  entries: any;
+  note_en: string;
+  note_ar: string;
+  set_by?: string | null;
+  set_at: string;
+  published_by?: string | null;
+  published_at?: string | null;
+  listed: boolean;
+  sample: boolean;
+}
+export interface InductionPlansRow {
+  id: string;
+  person_id: string;
+  person_name: string;
+  programme: 'dnt' | 'energy-pioneers' | 'gdp' | 'gpo' | 'direct';
+  intake_year: number;
+  baseline_id?: string | null;
+  baseline_version?: number | null;
+  items: any;
+  hours_total: number;
+  hours_planned: number;
+  hours_saved: number;
+  revision: number;
+  built_by?: string | null;
+  built_at: string;
+  sample: boolean;
+}
 export interface ExternalCoverRow {
   id: string;
   period: string;
@@ -5853,6 +5916,10 @@ export interface Tables {
   journey_facts: JourneyFactsRow;
   student_journeys: StudentJourneysRow;
   student_portfolio: StudentPortfolioRow;
+  starter_lessons: StarterLessonsRow;
+  induction_modules: InductionModulesRow;
+  intake_baselines: IntakeBaselinesRow;
+  induction_plans: InductionPlansRow;
   external_cover: ExternalCoverRow;
   handover_cohorts: HandoverCohortsRow;
   skill_outlooks: SkillOutlooksRow;
