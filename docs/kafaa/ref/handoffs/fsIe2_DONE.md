@@ -94,7 +94,14 @@ Grants: anon executes nothing new; authenticated executes only the 4 RPCs.
 
 ## Gates
 
-GATES_PLACEHOLDER
+Run by the integration lead on `fsI-integration-qa` (2026-10-12), because the hand-off had no gate results after fsIe2's rebase:
+
+- `npm run gen`: OK, no diff after the merge of all five slots.
+- `check:i18n`: OK (40 namespaces, EN/AR in parity). `typecheck`: clean. `check:public`: OK.
+- `migrations:validate`: all checks passed (98 migrations plus the seed applied twice, 2,584 checks), incl. `scripts/validate/fs92-automation-gallery.mjs`.
+- Unit: `fs92-automation-gallery` 19/19 and `fs92-pages` 7/7, within the full suite (190 files, 3,360 tests, all green; `docs/kafaa/ref/qa_logs_I/unit_summary.txt`). Route pins are at 401 after the wave-I merge.
+- E2E (local backend): journey I3 in `tests/e2e/fswaveI.spec.ts` green; the M29 pages appear in `visual.spec.ts -g fsi` and in the local route sweep (0 mismatches).
+- Live-apply dry run of the wave-I bundle: `kafaa_fs92_automation_gallery_p1` applied twice, md5s and digests equal (`docs/kafaa/ref/live_apply/waveI/EXPECTED.md`).
 
 ## Gaps and hand-offs for the integration lead
 

@@ -1,0 +1,378 @@
+# npm run migrations:validate on fsI-integration-qa (after the wave-I wiring), 2026-10-12: 2584 checks passed, 0 failed. Passing check lines are omitted except the wave-I validators (fs91..fs95, fsqa9); every validator header, md5 and digest line is kept.
+
+> kafaa@0.1.0 migrations:validate
+> node scripts/validate-migrations.mjs
+
+pass 1: 98 migrations + seed applied
+pass 2: 98 migrations + seed applied
+RLS and RPC checks
+G1 checks (career map, qualification, licensing tracker)
+checks: fs11-foundation.mjs
+checks: fs12-decay.mjs
+checks: fs13-keyspace.mjs
+checks: fs14-role-profiles.mjs
+checks: fs15-task-future.mjs
+FS wave A · E5 · FS06 task layer with AI exposure and change horizon
+checks: fs21-crosswalk.mjs
+checks: fs22-ai-fluency.mjs
+FS wave B · E2 · FS09 AI fluency ladder + FS10 AI and digital fitness check
+checks: fs23-role-transformation.mjs
+FS wave B · E3 · FS11 role transformation maps + FS12 task exposure view
+checks: fs24-future-readiness.mjs
+checks: fs25-future-roles.mjs
+checks: fs31-pathways.mjs
+FS wave C · E1 · FS17 future-skill learning pathways + FS18 curated external catalogue
+checks: fs32-course-pack-academies.mjs
+FS wave C · E2 · FS19 future-skills course pack + FS20 academies and cohorts
+checks: fs33-assessment.mjs
+FS wave C · E3 · FS21 adaptive future-skills assessment + FS22 performance tasks and integrity reports
+checks: fs34-descriptors-scale.mjs
+checks: fs35-core-skills.mjs
+FS wave C · E5 · FS25 Nuclear Critical Core Skills + FS26 situational judgement practice
+checks: fs41-future-gigs.mjs
+FS41 · FS27 future-skills gigs and time envelopes · FS28 future-role rotations and secondments
+checks: fs42-rpl-credits.mjs
+checks: fs43-credentials-record-goals.mjs
+FS wave D · E3 · FS31 strategic micro-credentials + FS32 learner record + FS33 skill goals
+checks: fs44-translator-health.mjs
+checks: fs45-ai-register.mjs
+FS wave D · E5 · FS36 AI-literacy register + FS37 governed AI sandbox drills
+checks: fs51-next-gen.mjs
+FS wave E · E1 · FS38 SMR delta overlay + FS39 plant literacy log + FS40 digital-twin drills
+checks: fs52-energy-transition.mjs
+FS wave E · E2 · FS41 CleanEnergyComp + FS42 energy-system integration + FS43 ESG and GHG literacy (M32)
+    fs52 function md5: kafaa_cec_area_name=dd2a7f2960ab441feb35c74e052c6b81 kafaa_cec_basis_rank=a851459f25aef799893f65be8f0ff3d6 kafaa_cec_comp=d5e506ee842df5bb96756b79e4761409 kafaa_cec_level=be27dc5c6a2bb93bd4e8a920471c528c kafaa_cec_mine=10679750f77cf7772cdb869466a841c5 kafaa_cec_pct1=cc860c951f0a4b8854f089570bd7d4cf kafaa_cec_profile=9cdceec6893b83f5f096ead7c2035b4b kafaa_cec_stats=5cff0771d859583d4472752dd5c019ba kafaa_cec_stats_core=3d99dcd0392fd6d466c32b4217189d0e
+    fs52 digest kafaa_cec_competences: 12 rows, ids 700a857c, rows 0fe4010c
+    fs52 digest kafaa_cec_role_targets: 20 rows, ids 8b34b745, rows bce97c82
+    fs52 digest kafaa_value_chains: 3 rows, ids 85fe3fb3, rows 5f65bfb6
+    fs52 digest kafaa_transition_tracks: 2 rows, ids e077f44c, rows 041078be
+    fs52 digest kafaa_pathways (id like 'pw-et-%'): 2 rows, ids 392ac558, rows 2a1bd91f
+    fs52 digest kafaa_pathway_steps (id like 'pw-et-%'): 9 rows, ids 8fb84558, rows 058eed46
+    fs52 digest kafaa_external_resources (id like 'xr-et-%'): 5 rows, ids 36840d05, rows b7346ece
+    fs52 digest kafaa_courses (id like 'c-et-%'): 2 rows, ids 02c27961, rows 216b29e5
+    fs52 digest kafaa_credit_tags (item_id like 'pw-et-%' or item_id like 'c-et-%'): 4 rows, ids 8a4b7b8e, rows 6bc38a9a
+checks: fs53-lectures-localisation.mjs
+FS wave E · E3 · FS44 expert lecture library + FS45 localisation countdown
+checks: fs54-future-leadership.mjs
+checks: fs55-ai-safety-culture.mjs
+FS wave E · E5 · FS49 safety culture for an AI-augmented plant
+    fs49 function md5: kafaa_fs49_bi_ok 785bbf3cbeb5dee3935b3861cbe78eb4; kafaa_fs49_blank c22235ab86c37cf4feeb80653bbcb6bc; kafaa_fs49_content_guard 9aae38a552608db36a582d113adc3463; kafaa_fs49_cue_ids cadaf4c4e0e41bf24f9341764a9a5111; kafaa_fs49_hu_problems 2b6dd788dbb8f3ed37201c4390472582; kafaa_fs49_lesson_problems 6d82cbedb26030e9e9bed9d7e83f73e8
+    digest kafaa_hu_tools: 12:d60cb195
+    digest kafaa_oe_lessons: 13:944a5269
+    digest kafaa_sc_traits: 10:b17e349f
+checks: fs61-strategy-forecasts.mjs
+FS wave F · E1 · FS50 Critical Future-Skills Register + FS51 three-scenario skill forecasting bands (M35)
+    md5 kafaa_compute_skill_forecast=d5b48924 kafaa_critical_skill_board=f2651197 kafaa_crs_board_core=afbc295b kafaa_crs_held=2f69670e kafaa_crs_prev_quarter=c8b2992c kafaa_crs_problem=fc341d4e kafaa_crs_progress=a0ed15c0 kafaa_crs_quarter=7dd42a11 kafaa_crs_quarter_end=0bef1d5e kafaa_crs_review_problem=e2f07ae9 kafaa_crs_review_state=6d31c569 kafaa_crs_target_for=b8595553 kafaa_release_skill_forecast=e5bf1c0a kafaa_review_critical_skill=0d099e3b kafaa_save_critical_skill=8aae8c74 kafaa_save_skill_forecast=9ca79d34 kafaa_sf_base=23b89b26 kafaa_sf_compute=56e1de45 kafaa_sf_for=6c453998 kafaa_sf_needs=5a9b1aa4 kafaa_sf_normalize=40c8fead kafaa_sf_project=a6bb6802 kafaa_sf_survive=bc728777
+    digest kafaa_critical_skills 13 260aa525
+    digest kafaa_critical_skill_reviews 9 0b70d3b4
+    digest kafaa_skill_forecasts 4 d7d9f738
+checks: fs62-outlook-automation.mjs
+FS wave F · E2 · FS52 automation exposure in the skills outlook + FS53 external benchmark lines
+    fs62 function md5: kafaa_bv_guard 4069153a59be914b9e9597bbf4e94286; kafaa_bv_problems f6989f67c177846a36b86b0c131b914d; kafaa_outlook_automation 7686b9e5f6670e34c5e520acb8284533; kafaa_so_auto_base 41e42bc9943b658dd3434f55339bc105; kafaa_so_auto_for cd870851e0b139902b40f582df1a6dcb; kafaa_so_auto_profile 78e3c0c03211c99400a17d5d69e8804e; kafaa_so_auto_share dfa795a03dd0b4e2786f4e35200b1ebf; kafaa_so_compute 6d1ae5f98265187c736cc2b7068124fc; kafaa_so_for 4e0adcf82017d21cc266201dba7ce94f; kafaa_so_normalize 05d4567f8a7c42b487fc6a21e36dff29; kafaa_so_project 539ebf78066451496fa2b09a8b590179
+    digest kafaa_benchmark_values: 10:0354f3e7
+checks: fs63-taxonomy-governance.mjs
+FS wave F · E3 · FS54 skills council and taxonomy change tracker · FS55 engine cards, datasheet, model-risk template
+    fs63 function md5: kafaa_decide_skill_change 46f7a2f3150c2ef991c988695f842bef; kafaa_fs63_apply 4b64c6a470fa980ca9b6bd8c65350576; kafaa_fs63_blank b8b2bf4472876e5cebc2ea4c0170bccd; kafaa_fs63_clean 363a8c69607a4a2785550c65d29e3de4; kafaa_fs63_code 7dc72c8df47f5e18982cee9ee03d294c; kafaa_fs63_decide_problem 855c17e7d0bf8387f42bdfa4b7371eeb; kafaa_fs63_essence a66eac0e530a95c6c8eeb098e9a83688; kafaa_fs63_fairness_compute 9ebe645e1d190f6991541e00d4471bc3; kafaa_fs63_health f80a0eb00d1c410fdf3b24ecb6b79300; kafaa_fs63_https 38232696b6c785f250d648c792867ae4; kafaa_fs63_inclusion 93bc959c01551e02bcea8814e546c36d; kafaa_fs63_level_ok e1c1e23d2e041bd425b9a233f0d9c13e; kafaa_fs63_msg 14abb98d25532b81bd29be5ecd9ff97a; kafaa_fs63_name_ok 0cb40d0a07c95307a088328631415a3b; kafaa_fs63_next_id 2497f1c44c0c2e0d68374140a91a7e1e; kafaa_fs63_norm 08d3db46afdc70397f60d815d20602f8; kafaa_fs63_parts 5383f49e53270a9ee9a0b63d91719c29; kafaa_fs63_propose_problem 2da3a95d92aec9455906146b6cfd1686; kafaa_fs63_review_due d4b6e4a69d182b4e56b1f2ec66f3c6d1; kafaa_fs63_snapshot eeaf9555e595da2cb683328df2b8c12b; kafaa_fs63_sources 682a57ec63aa3673f65901193a59218f; kafaa_fs63_str ff09c9992cfb1bbb5eb7f83e78591147; kafaa_fs63_title b1a73c8c6c47035e057d54aea648f982; kafaa_propose_skill_change 9d8eebe3b55be5a920d4f878e33c7eec; kafaa_run_surface_fairness 755cefcdc3c8d6e1a32be371803d3b49; kafaa_skill_council_queue cd2c078ee674e5be15effff5e1156d33; kafaa_taxonomy_health bcdcfe113b426e78e4afb42dd51ef5b7
+    digest kafaa_engine_cards: 35:e99006e0
+    digest kafaa_skill_change_requests: 56:f6408eb6
+    digest kafaa_skill_changes: 49:90f34f09
+    digest kafaa_surface_fairness: 360:64bc0d3e
+    digest kafaa_skills: 120:06cac54d
+checks: fs64-skill-change-coverage.mjs
+FS wave F · E4 · FS56 skill-change effectiveness + FS57 curriculum coverage and gap backlog
+checks: fs65-aps-roleplay.mjs
+FS wave F · E5 · FS58 adaptive problem-solving practice + FS59 role-play library with saved feedback
+checks: fs71-disclosure-pilots.mjs
+FS wave G · E1 · FS60 ISO 30414 skills disclosure pack + FS61 skills pilots registry (M35)
+    md5 kafaa_approve_disclosure=79fb45b0 kafaa_close_pilot=f9ce3a45 kafaa_compute_disclosure=9c443206 kafaa_hcd_bi=d40e5f85 kafaa_hcd_bounds=f2644e7a kafaa_hcd_closed=3fcaf040 kafaa_hcd_computable=c65c3db7 kafaa_hcd_compute=393bd380 kafaa_hcd_len=9ba4c161 kafaa_hcd_line_problem=151597b3 kafaa_hcd_materiality_ok=6ceda4f6 kafaa_hcd_minutes=bd6fa7a6 kafaa_pilot_stats=ae05da5a kafaa_save_disclosure=deed545b kafaa_save_pilot=f327d37d kafaa_signoff_pilot=55a7678c kafaa_spl_adoption=831ac6b4 kafaa_spl_close_problem=76bb0db3 kafaa_spl_date_ok=8f3b2e06 kafaa_spl_group_ok=9b412526 kafaa_spl_num=7420cec9 kafaa_spl_problem=48b9f8fa kafaa_spl_reference=273d2fb5 kafaa_spl_signoff_problem=fac6276a
+    digest kafaa_hc_metrics 7 174d2ee9
+    digest kafaa_hc_disclosures 2 74a1adb8
+    digest kafaa_skill_pilots 11 e095feb7
+checks: fs72-national-alignment.mjs
+FS wave G · E2 · FS62 national-strategy alignment + FS63 MoHRE occupation mapping (M37)
+    fs72 function md5: kafaa_clear_occupation_code=f815ce6dedcf2b111a2b2411f5e5fa30 kafaa_na_group_name=290452bd75257c0989be6cb4b08d9171 kafaa_na_holders=9cba9f4de0273d8f5bff53ecf851e2cc kafaa_na_host=6546a7766ba0164610b54519827a47ab kafaa_na_len=d7afb4359bee5307e04c0081eb336225 kafaa_na_link_problem=6518decec3edf098ff577d8579f32490 kafaa_na_links=d39bee52fad4d85985261c869d2ce384 kafaa_na_measure=cb12ef8e35dcd08126c4e406123757d2 kafaa_na_pct1=42d77efa78f124b5b6a8809aa014560c kafaa_na_report_core=fd4686d3c935119b6db6b544dfbaeb06 kafaa_na_str=c29592d5a3a0a47d4fd10448701d9c4b kafaa_na_sup=7d3e01333c1cc2977abd7a1f1c6ba829 kafaa_na_tag_problem=eb08dee6d9dd2c5980993cbba48971bc kafaa_na_target=0b5554d2f05e10d8fe91b91b6a9e2323 kafaa_na_tier=a14a8bdc2619c62929aba60cf68c8dc2 kafaa_na_typed_free=4d61228f9aac4cada31f83c7e9ed79b0 kafaa_national_report=d3a2f9c3fae61f30394e0eec319828bf kafaa_occupation_trend=70488dc03fb315935138c4c6b9425d3f kafaa_ro_code_problem=7bf85166559eac42c7b8b08e85fe645f kafaa_ro_guard=fe9d0f8c63d3e90cdc9eae889978687d kafaa_ro_indicative=b96454ee359cc84816edc8a3035d652b kafaa_ro_problem=7a7c854be110ba9032e1bb04567a2e09 kafaa_ro_trend_core=df22df3885a4b870495a2e899d993abe kafaa_save_national_tag=a7e5774166673e31ff5ee1c4f34b4c6f kafaa_save_role_occupation=8797513986bb635de1abd8d75f853910 kafaa_set_tag_link=f1ecd711e48e0007ffc0fee8f534d548 kafaa_verify_occupation_code=1ad1472617c0f82f3bfff4cc8e8092af
+    fs72 digest kafaa_national_tags: 18 rows, ids fa0dc5a0, rows f446edea
+    fs72 digest kafaa_tag_links: 54 rows, ids 2f7c7854, rows 9100fda9
+    fs72 digest kafaa_role_occupations: 28 rows, ids 4f2ce4fb, rows 2bf6ce23
+checks: fs73-regional-pledges.mjs
+FS wave G · E3 · FS64 Regional skills plan for Al Dhafra + FS65 Skills pledges ledger (M36)
+    md5 kafaa_commit_provision=f271aa57 kafaa_pl_cell=15e308d3 kafaa_pl_count=56557d0b kafaa_pl_date=180547dd kafaa_pl_ledger=656fa3e5 kafaa_pl_problem=9a4234d1 kafaa_pl_progress_problem=e05535af kafaa_pl_status=5a3fb9e6 kafaa_pledge_ledger=1254cd32 kafaa_record_pledge_progress=de91157d kafaa_register_pledge=14e7c1b4 kafaa_release_regional_demand=8e7ce8ee kafaa_report_commitment_delivery=adb7f39e kafaa_review_commitment=d9964ba3 kafaa_rg_commit_problem=6a5b4584 kafaa_rg_delivery_problem=47506f20 kafaa_rg_first_open=63b341a3 kafaa_rg_is_int=8277ab18 kafaa_rg_locked=4720d501 kafaa_rg_rows=43987af6 kafaa_rg_status=b5f017e8 kafaa_rg_term_end=d1df08fc kafaa_rg_term_of_ord=6294d02c kafaa_rg_term_ord=1ae0d2bb kafaa_rg_term_start=39bfb59c kafaa_rg_term_state=dec569d4 kafaa_rg_txt=70e4d66c
+    digest kafaa_regional_demand 30 6c4b3202
+    digest kafaa_provider_commitments 13 6f3bd353
+    digest kafaa_pledges 16 2d80ed55
+    digest kafaa_pledge_progress 35 c978eac9
+    digest kafaa_organisations (2 new synthetic providers) 2 932c09ad
+checks: fs74-university-alignment.mjs
+FS wave G · E4 · FS66 university programme alignment + FS67 fellowships and sponsored placements
+checks: fs75-supplier-readiness.mjs
+FS75 · FS68 supplier future-skills readiness, FS69 contractor pre-arrival check
+checks: fs81-skill-signals.mjs
+FS wave H · E1 · FS70 ENEC Skills on the Rise + FS71 hot technologies + FS72 skills you may have (M28)
+    md5 kafaa_compute_skill_signals=1e8e61a7 kafaa_compute_technology_badges=50f97367 kafaa_fs81_msg=f36cc436 kafaa_ht_brand_hits=717b733e kafaa_ht_compute=7517f9aa kafaa_ht_len=97dc70f0 kafaa_ht_problem=bf2abbcb kafaa_ht_text=256d10d1 kafaa_ht_window=0a19af01 kafaa_manager_pulse_summary=ed040894 kafaa_mp_median=3dc34696 kafaa_mp_summary=da5c9752 kafaa_publish_skill_signals=2b6f5898 kafaa_publish_technology_badges=ff1bc2a1 kafaa_refresh_skill_suggestions=6e8933d2 kafaa_respond_suggestion=d3ced3e3 kafaa_rs_bounds=49c91f46 kafaa_rs_closed=49f20871 kafaa_rs_computable=2c185858 kafaa_rs_compute=b45304b8 kafaa_rs_counts=5534cc0f kafaa_rs_prev=2e1f6a68 kafaa_run_suggestion_fairness=363d195f kafaa_save_technology=ace61342 kafaa_ssg_candidates=db577fdd kafaa_ssg_fairness_compute=f7e78095 kafaa_submit_manager_pulse=989003aa kafaa_suggestion_stats=c8f3de55 kafaa_tag_technology=aee13dd1
+    digest kafaa_skill_signal_runs 4 e00c7ec4
+    digest kafaa_skill_signals 31 a9bfb9c9
+    digest kafaa_manager_pulse 24 63d13152
+    digest kafaa_technologies 18 563849b4
+    digest kafaa_technology_links 188 dc091f76
+    digest kafaa_technology_badges 82 50c110d1
+    digest kafaa_skill_suggestions 442 d10a209b
+    digest kafaa_skill_suggestion_fairness 4 65f93e38
+    digest kafaa_engine_cards[skill_suggestions] 1 2fca6a8c
+checks: fs82-emirati-wallet.mjs
+FS wave H · E2 · FS73 Emirati pipeline by competency + FS74 Future Skills Wallet target (M37)
+    fs82 function md5: kafaa_add_wallet_to_plan=5ee488bc1c5c0d9f218c5b9a3899b98f kafaa_emirati_pipeline=ebcce8445a5efaa6ee50471263c028c1 kafaa_ep_add_months=1b0ea82a84652a9acb1bee8e507acdc0 kafaa_ep_allowed=0360974631ab3523af0fa7ed3dfc001f kafaa_ep_area=bd59a0ccb5029f7bac50b6eaa1a39a81 kafaa_ep_core=1742be71db971726ad7647530fb29d62 kafaa_ep_roles=c09306a0ff78d8fe7da9135804fb52b7 kafaa_future_wallet_counter=79dcead1f05a6427198cbdd9c1be2aca kafaa_fw_counter_core=33fb767168c5fc6b9b21a4cb6f7cd8c5 kafaa_fw_items=94c4b7ca5ad366c85f88c964554e9a28 kafaa_fw_status=d9e0541f135ec2d669eb8fdfb8bcb2f8 kafaa_fw_target_problem=33628c49c6be070d32e57218ad67687e kafaa_fw_target_view=50b37329ba04d7e14eeb128691ffc40f kafaa_my_future_wallet=026f07939f31c255be1194fc814999c6 kafaa_na_link_problem=6518decec3edf098ff577d8579f32490 kafaa_na_links=d39bee52fad4d85985261c869d2ce384 kafaa_na_measure=cb12ef8e35dcd08126c4e406123757d2 kafaa_na_report_core=fd4686d3c935119b6db6b544dfbaeb06 kafaa_na_target=0b5554d2f05e10d8fe91b91b6a9e2323 kafaa_set_wallet_target=b8fa09e65e8e33ec69883481babb682c
+    fs82 digest kafaa_pipeline_mirror: 554 rows, ids cdfe99ef, rows b2e632c7
+    fs82 digest kafaa_wallet_targets: 1 rows, ids 079f585f, rows e1b83399
+    fs82 digest kafaa_tag_links: 54 rows, ids 2f7c7854, rows 9100fda9
+    fs82 digest kafaa_plan_activities (pa-fs74-*): 1 rows, rows 63474c13
+checks: fs83-digest-nudges.mjs
+FS83 · FS75 future-skills nudges in the weekly digest
+    md5: kafaa_dg_compose 057f34bc056b6d44728a65491591a51f · kafaa_dg_future dda5cd099c9678b90ff82d8d2482cb8a · kafaa_dg_gather 348c20506e3134ec9c9ec8c5f2481fde · kafaa_digest_stats b0b74c7edc6e9c448a865db2536f62eb · kafaa_set_digest_prefs b1ba391233325ff07fcd9e162f2dd7b8
+    kafaa_digest_nudge_rules: 8 rows, digest 7ca73787
+checks: fs84-dalil-future.mjs
+FS wave H · E4 · FS76 Dalil future-skills mode
+checks: fs85-student-starter.mjs
+FS wave H · E5 · FS77 student future-skills starter and intake baselines
+checks: fs91-balance-external-certs.mjs
+FS wave I · E1 · FS78 learning balance and protected study time + FS79 verified external certificates (M34)
+  ✓ the seeded rows load unchanged (row digest = seed.json): learning_balances 106, study_time_requests 23, external_certs 13, certificate evidence 9
+    md5 kafaa_decide_study_time=2df572f834db2c9cc343499672f6b6b6 kafaa_fs91_hist=ce772d508adaa2e0ab38b1c6d6724960 kafaa_fs91_is_date=2ff36383ebaa2dc4b3d7404a35e33976 kafaa_fs91_notify=dcb59b99768b1bc028428c30f262d0fb kafaa_fs91_s=6f86db886c02773b5b1e1fe5d8255971 kafaa_fs91_trim=cc91988372f0fa663ff9325b2878670a kafaa_lb_compute=2a014ddbd4c3b9223b102ba3b3dcf7e9 kafaa_lb_grant=9a5eda5658b77a3b74b64011857ec21a kafaa_lb_refresh=93364772d4a5466381218e933848446a kafaa_learning_balance=efe9a95277aefb09a67bc877aa44a959 kafaa_request_study_time=a7720b3a0d3c7df281efe1ddee22f830 kafaa_sb_cap=c45b5d522980f59dc441d2d2f467f261 kafaa_sb_check_decide=430270ebdec93ee6e4e776ed0d04c654 kafaa_sb_check_request=a6d953d04282224544a62f823355f889 kafaa_sb_gated=d7ae4467a1417ad18224d58ea0626ca6 kafaa_sb_message=dd5c1cd4d54afdf1be3af78708689d18 kafaa_sb_result_code=fbde28c4480e0bcd1c8d9d2960b385aa kafaa_sb_visible=6519eca0355459b17305bd750d430d5c kafaa_submit_external_cert=ce3da34ce1461106f3a0331c0736543b kafaa_verify_external_cert=203eef04dc448be6361b3232c7ac59ed kafaa_xc_basis=b68a8abc35604b568078238a5bf8a9a8 kafaa_xc_cap=00db0fe9bade6f75401748bb99d27d33 kafaa_xc_check_submit=5aa45a34c029575c939159f3ec7935cb kafaa_xc_check_verify=5dec9394bfa8e6ed95e1585cf440734b kafaa_xc_issuer_tier=d497fc46a6117d01f48f210f3546bf64 kafaa_xc_len=b192b948bc606f1bce52cd9a9262567f kafaa_xc_map=7558764416f00b4e94263f4341c11c0d kafaa_xc_message=7d075a2977926d0f9c817c1051d992ae kafaa_xc_note_message=d176ad6165cb6cf8db8214089212404e kafaa_xc_optlen=32d398f74193b931e86564d72ed1750a kafaa_xc_result_code=c0dc8a8700ec50e752e2998a67e7519b kafaa_xc_trust_tier=8d0450f450646fc806f104274274ef88
+    digest kafaa_learning_balances 106 e2534cef
+    digest kafaa_study_time_requests 23 e2bf3a58
+    digest kafaa_external_certs 13 35701bc0
+    digest kafaa_skill_evidence[external_certs] 9 9624b458
+  ✓ kafaa_lb_grant = grantFor for 368 people x 4 years (top-up from years of service only)
+  ✓ acceptance (FS78): the balance equals grants minus approved use (TS = SQL) for all 106 balances; stored used / pending / remaining = balanceOf; 256 approved hours
+  ✓ the outcome gate: kafaa_sb_gated = published + listed + catalogueCheck for 18 catalogue items (4 ungated: xr-enen2plus, xr-esg-reporting-placement-test, xr-iaea-nuclear-security-elearning, xr-nea-nextgen-2026)
+  ✓ kafaa_sb_check_request = checkRequest on 177 generated requests (dates, hours, item, no_line_manager, not_eligible, ok, pattern, reason, ungated)
+  ✓ kafaa_sb_check_decide = checkDecide on every seeded request x deciders x decisions (forbidden, invalid, note, ok, overdraw, self, state)
+  ✓ kafaa_sb_message / kafaa_xc_message and the result codes = SB_MSG / XC_MSG (49 messages)
+  ✓ kafaa_xc_issuer_tier / kafaa_xc_trust_tier = issuerTier / trustTier (accredited, claimed, enec_assessed, vendor_self_serve on the seed)
+  ✓ acceptance (FS79): kafaa_xc_map = certMapping on 93 crosswalk sets x 3 tiers; only reviewed crosswalk rows map (maps, missing, restricted, retired, unreviewed)
+  ✓ kafaa_xc_check_submit = checkSubmit on 54 generated certificates (accreditation, alignments, conflict, credential_ref, dates, issuer, issuer_kind, levels, note, ok, security_restricted, title, url)
+  ✓ kafaa_xc_check_verify = checkVerify on every seeded certificate x verifiers x decisions x methods x days (expired, invalid, method, method_tier, note, ok, self, state)
+  ✓ acceptance (FS79): no unverified (submitted, rejected, withdrawn, revoked) certificate has active evidence; 9 evidence rows, basis and level by tier, each through a reviewed crosswalk row
+  ✓ RLS (FS78): anonymous visitors read nothing; a balance and its requests are read by the person (k-ro 1/2), the line manager (sro reads k-ro's 2) and HR / auditors (106); RPL assessors (training manager, instructor) and other staff read none
+  ✓ RLS (FS79): the holder reads their own certificates (k-ro 2); verifiers and auditors read all 13; other staff none
+  ✓ anonymous callers cannot execute the FS78/FS79 RPCs; internal helpers are not callable; writes only through the RPCs (no direct insert or update by API roles)
+  ✓ acceptance (FS78): ungated items cannot be charged (a draft and a retired catalogue item are refused `ungated`; a course outside the catalogue is not found); contractors have no balance; one open request per item
+  ✓ a request reserves hours (k-ro pending 20 -> 60) and goes to the line manager (p-sro); a request beyond the balance is refused (insufficient_balance)
+  ✓ acceptance (FS78): study-time decisions need a second person (the requester is refused maker_checker; people outside the line read nothing) and write an audit row (+ one ledger row on approval); used 16 -> 56 h
+  ✓ the HR authority decides when the line manager cannot (decided_role hr_director); only the requester withdraws, once
+  ✓ learningBalance: self, the line manager in scope and HR read it; other staff and RPL assessors get null
+  ✓ the holder adds a certificate (https link only; security-area skills refused; same link twice refused); it reads as "claimed" and writes no evidence until verified
+  ✓ acceptance (FS79): a verifier who is not the holder verifies; only the reviewed crosswalk row maps (sk-fs-tr-creative L2, accredited cap; the unreviewed automation row does not); validated evidence and a skills recompute (none -> L2); one ledger row
+  ✓ acceptance (FS79): revoking makes the evidence inactive and the tier reads "claimed" again; rejected and withdrawn certificates have no tier and no evidence; after every flow no unverified certificate has active evidence
+  ✓ DB checks: evidence or a tier without verification, a self-decided request, a balance below zero and a self-verification are refused (check, check, check, check, check)
+  ✓ every call wrote exactly one audit row (30 calls) and only approvals, verifications and revocations wrote NEXUS ledger rows (3)
+  ✓ anon executes none of the 32 FS78/FS79 functions; authenticated only the 5 RPCs
+  ✓ the migration only touches kafaa_* objects and never removes anything (no removal keyword even in comments)
+checks: fs92-automation-gallery.mjs
+FS wave I · E2 · FS80 automation and agent gallery with builder credit
+  ✓ seed: 16 gallery entries in every status (1 draft, 2 submitted, 1 returned, 10 approved, 1 rejected, 1 retired)
+  ✓ acceptance (FS80): each entry links to its AI-system register row (kafaa_ai_systems)
+  ✓ seed: every entry passes the gallery check (no code, links, credentials, plant security or certification wording)
+  ✓ acceptance (FS80): nothing executes inside Kafa'a: metadata only, no code, script, file or link column among 39 columns
+  ✓ seed: 59 adoptions; every counter equals its adoption rows; one per person; never the builder; only after approval
+  ✓ acceptance (FS80): 9 builder credits, each written only after approval and the first adoption (an approved entry with no adopter has none), level 2 or 3 at 5 adopters
+  ✓ SQL kafaa_atm_problem equals automationProblem() on 36 valid and malformed entries (code, links, scripts, credentials, plant security, certification)
+  ✓ SQL kafaa_atm_decision_problem equals decisionProblem() on 756 cases (maker-checker, state, reason)
+  ✓ SQL kafaa_atm_adopt_problem equals adoptProblem() on 600 cases (approved only, never the builder, once, rung gate)
+  ✓ SQL kafaa_atm_level equals builderLevel() (0 before approval and adoption, 2 from the first adopter, 3 from 5)
+  ✓ SQL kafaa_atm_stats_core equals galleryStats() (59 adoptions, adopters 49)
+  ✓ statistics: every people count is 10 or more, or suppressed; security, safeguards and cyber are never broken out
+  ✓ RLS: anonymous visitors read no gallery entry and no adoption
+  ✓ RLS: staff read the 10 approved entries only (never drafts, submissions, returned, rejected or retired entries)
+  ✓ RLS: a builder also reads their own entries in every status (nse: the returned entry with its note)
+  ✓ RLS: AI governance (admin) and auditors read every entry
+  ✓ RLS: adoption rows are read by the adopter and auditors only; a builder (outage-planner, 7 adopters of their look-ahead) sees only their own 1 adoption, HR none
+  ✓ RBAC: anonymous visitors cannot execute submitAutomation; partners are refused (staff only)
+  ✓ submitAutomation: any staff member saves a draft and submits it (versioned, history kept, not listed until approved)
+  ✓ acceptance (FS80): links and code are refused ("metadata only"), credentials are refused, and an entry must run on a published register row
+  ✓ submitAutomation: someone else's entry reads as not found, an approved entry is locked, and the builder resubmits a returned entry (version 2)
+  ✓ RBAC: staff and the training manager cannot decide (ai_literacy A only)
+  ✓ acceptance (maker-checker): AI governance never decides an entry it built or owns; a second admin does
+  ✓ decideAutomation: a return needs a reason; approval lists the entry and writes the NEXUS ledger; a decided entry cannot be decided again; approval alone writes no evidence; every call is audited
+  ✓ adoptAutomation: a builder cannot adopt their own entry; an entry still under review reads as not found
+  ✓ adoptAutomation: an adopter below the entry's minimum FS09 rung is refused (sro rung 2, entry needs 3)
+  ✓ acceptance (FS80): the first adoption of an approved entry writes the builder's recorded evidence (ojt, validated, level 2), recomputes their skill state and writes the ledger
+  ✓ builder credit is AI-engineering evidence: the builder's FS09 rung is unchanged (2)
+  ✓ adoptAutomation: once per person; the counter counts adopters
+  ✓ F01 recompute keeps builder evidence (kind ojt is recorded, not derived)
+  ✓ builder credit rises in place from level 2 to level 3 at the 5th adopter (one evidence row per entry)
+  ✓ retiring an entry keeps the builder's evidence and closes it to new adopters
+  ✓ automationStats: HR (Agg), AI governance and auditors only; anonymous visitors cannot execute it
+  ✓ SQL kafaa_atm_stats_core still equals galleryStats() after the flows
+  ✓ table checks (a valid control row inserts): metadata_only is always true, no link in any text, builder credit only when approved and adopted, a decision never by the builder
+  ✓ grants: internal helpers are not executable by signed-in users
+  ✓ additive: the FS92 migration never uses a removal word (not even in comments) and alters only kafaa_* objects
+checks: fs93-transition-plans.mjs
+FS wave I · E3 · FS81 transition plans and ladder-rung protection
+  ✓ acceptance (FS81 plans are labelled SIMULATED and carry review dates): 10 seeded plans, every one simulated with dated reviews; the 7 active ones have a next review date
+  ✓ acceptance (FS81 every alert names the tasks and the practice added): 9 plan alerts name 36 junior tasks; every active, completed or withdrawn plan names practice for each; the draft still shows uncovered tasks
+  ✓ SQL kafaa_tp_rungs = rungsBelow() and kafaa_tp_alert = rungAlert() for all 39 roles x 2 horizons (incl. options, reasons and the no-role case)
+  ✓ SQL kafaa_tp_options = practiceOptions() on every alerted task; kafaa_tp_plan_alert = planAlert() on the 10 seeded plans and on mixed valid/invalid practice
+  ✓ SQL kafaa_tp_progress = practiceProgress() for every plan (acknowledged OJT repetitions since the start, e.g. w-mnt-03 2/3); kafaa_tp_date = isDate(); kafaa_tp_reviews_ok = reviewsOk() on 9 cadences
+  ✓ SQL kafaa_tp_problem = planProblem() on 61 generated inputs (14 distinct outcomes; activation without practice for a rung task is refused)
+  ✓ acceptance (FS81 plans are visible to the person and HR only), RLS: k-ro reads only their own plan; the shift supervisor (manager of crew B) reads only their own, none of the crew-B plans; anonymous, training manager, HR analyst, auditor, admin read no row directly (HR reads through the RPCs)
+  ✓ RPC reads: the HR director reads the 10 plans (= TS: order, alert, progress, review state); the shift supervisor cannot open crew-B plans; HR analyst, training manager, auditor and admin get nothing; k-ro opens only their own
+  ✓ role-level ladder-rung alerts (no person): training manager and HR read 9 Mastery Builder roles = roleRungAlerts() at 2030 and 2035; a manager gets nothing
+  ✓ HR editor reads: kafaa_transition_candidates = planCandidates() (86 active staff, 8 with an open plan); kafaa_preview_transition_plan = previewOf() (problem + alert, nothing saved); others get nothing
+  ✓ saveTransitionPlan: HR (transformation A) only (manager, training manager, HR analyst, admin refused); the HR director cannot decide their own plan
+  ✓ acceptance (FS81 ladder-rung alert): activating a plan without practice for every rung task is refused (rung_practice_required, audited); a draft can wait; one open plan per person; activation with practice for all 8 tasks writes the ledger and notifies the person
+  ✓ reviewTransitionPlan: HR only; the review due on 2026-10-01 is recorded with its outcome and the next date follows; a review more than 14 days ahead (2026-12-01) is no_review_due
+  ✓ closeTransitionPlan: a draft can only be withdrawn; completing and withdrawing write the ledger; a reason is required; closed plans cannot be edited
+  ✓ acknowledgeTransitionPlan: the person acknowledges once; nobody else can (not found)
+  ✓ database checks: a plan is always SIMULATED, carries review dates and an active plan has a next review; nobody writes plans directly (RPC only)
+  ✓ grants: internal helpers (rules, checks, notice writer) are not executable by signed-in users
+  ✓ grants: anonymous visitors execute none of the FS93 RPCs
+  ✓ RLS: the per-statement policy form, and no rule names transformation (so manager Scope never reads a plan)
+  ✓ additive: the FS93 migration removes nothing (the words never appear), alters and updates only kafaa_* objects
+checks: fs94-grants-consortium.mjs
+FS wave I · E4 · FS82 Rolling mobility micro-grants + FS83 UAE energy consortium trainee cohort (M36)
+  ✓ seed (FS82): four bi-monthly rounds, each the next contiguous slot after the previous deadline (10th of an even month, decisions 14 days later), budgets SIMULATED
+  ✓ seed (FS82): 45 applications pass the application check; every decision came after its deadline, never by the applicant, within the SIMULATED budget
+  ✓ seed: no F01 evidence is seeded (accepted outputs and confirmed visits belong to placement students and partner trainees only; staff evidence appears when HR or a host confirms)
+  ✓ acceptance (FS83): partner organisations are synthetic and labelled as such (three new synthetic employers plus the synthetic suppliers), cohorts SIMULATED
+  ✓ seed (FS83): 30 members within seats; every accepted trainee has a mentor from another organisation and a team; only ENEC trainees carry a person id
+  ✓ seed (FS83): every visit is cross-site; every confirmation is by the host side, never the logger or the visitor, on-behalf ones carry the host reference
+  ✓ acceptance (FS82): rounds open and close on schedule: SQL kafaa_gr_phase / kafaa_gr_slot / kafaa_gr_next_deadline = TS for 16 fixed days x 4 rounds (opens 11 Oct, open on the 10 Dec deadline, closed on 11 Dec)
+  ✓ eligibility: SQL kafaa_gr_eligibility = TS eligibility for 368 people x 3 days (early career under 10 years since hire; placement students)
+  ✓ application check: SQL kafaa_gr_app_problem = TS applicationProblem for 29 probes and 45 seeded applications
+  ✓ decision / output / schedule checks: SQL = TS for 14 + 7 + 11 probes (after the deadline only; award within request, maximum and budget; output after the activity; one round waiting at most)
+  ✓ acceptance (FS82): statistics under 10 are suppressed (SQL kafaa_gr_stats = TS grantStats on 4 days; rates and money only behind 10 or more)
+  ✓ consortium basics: SQL kafaa_cc_phase / kafaa_cc_org / kafaa_cc_code / kafaa_cc_enec_eligible = TS on both cohorts, fixed days and every person
+  ✓ consortium checks: SQL = TS for 15 nominations, 18 decisions, 57 visits, 45 visit levels and 180 confirmation routes
+  ✓ consortium figures: SQL kafaa_cc_stats = TS consortiumStats on 3 days; every count of 1-9 suppressed
+  ✓ acceptance (FS83): each partner sees only its own trainees: RLS gives alnoor-gm / alnoor-qaqc only Al Noor rows and gulfhydro-qa only Gulf Hydro-Valve rows, the ENEC trainee only their own, HR/admin/auditors all, staff and others none; applications own rows + HR; rounds staff only
+  ✓ writes only through the RPCs (no direct visit update, no direct application insert)
+  ✓ grants: anonymous visitors execute none of the 14 RPCs; internal helpers are not executable by signed-in users
+  ✓ scheduleGrantRound: HR only; the next slot is computed (gr-2027-02: 2026-12-11..2027-02-10); one round waiting at most; audit + ledger
+  ✓ applyGrant: early-career staff in the open round, one application per round; partners refused; activity after the deadline; 10+ years refused; HR files for a placement student only with a consent reference
+  ✓ acceptance (FS82): decisions are audited (HR director only, after the deadline, never their own; audit + ledger + notice); the SIMULATED budget stops approvals (111300 of 120000 AED committed)
+  ✓ outputs: the grantee logs the output after the activity; only HR (never the grantee or whoever submitted it) accepts it; evidence (rating, validated, ref_table grant_applications) is written only on acceptance and the skill state follows (kafaa_skills_apply)
+  ✓ grantStats: staff and auditors read the suppressed statistics (TS = SQL after the flows), which name no person; partners are refused
+  ✓ withdrawGrant: the applicant only, while submitted
+  ✓ nominateConsortiumTrainee: partner admins for their own organisation (pseudonymous code, no person), HR for ENEC early-career staff and for partners without Kafa'a access; closed cohorts, partner users, other organisations, ineligible and duplicate people refused
+  ✓ decideConsortiumMember: HR director only; the mentor comes from another consortium organisation; audit + ledger; decided once
+  ✓ logConsortiumVisit: the trainee, their own employer's administrator or the programme office; another organisation's trainee reads as not found; a visit is to another consortium organisation
+  ✓ acceptance (FS83): visits write evidence after host confirmation: nothing before; only the host (its administrator, the ENEC programme office, or on behalf of a host without access with its reference) confirms, never the logger; F01 evidence (ojt, validated) for ENEC staff, a visit record for partner trainees
+  ✓ visit level: the second confirmed visit to the same host with 12+ hours there is level 2 (kafaa_cc_level = visitLevel)
+  ✓ consortiumHostVisits: a host sees the visits it hosts as trainee codes and visiting organisations (no person, no member row; TS = SQL); the programme office sees ENEC sites and hosts without access; staff are refused
+  ✓ consortiumStats: every ecosystem reader (here a partner user) reads the suppressed figures (TS = SQL after the flows); observers are refused and the refusal is audited
+  ✓ additive: the FS94 migration never names a destructive statement, alters only kafaa_* tables and redefines no shared function
+  ✓ functions: 39 new function bodies present
+    md5 kafaa_apply_grant=51f16467c863bc90ab00fe13098297ae kafaa_cc_code=96f3392b0670e3295d9861dd97600496 kafaa_cc_decision_problem=fb5c436b3ea2a88c8f6e8070c26f2b3b kafaa_cc_enec_eligible=a28a370029d2c5aa2e02d666bd1378cc kafaa_cc_is_enec=6a282f90665f16c450eeaf515b83ae9a kafaa_cc_level=b972a2c3767a610725dff5cba3911480 kafaa_cc_nom_problem=7f101f74dc8eee30849f4865b92f4b60 kafaa_cc_org=2c5d0a84912e495b2456e3009c4d5928 kafaa_cc_partner=da6e26efae33a94751262a48be102c44 kafaa_cc_phase=555f7bc522b8cb9b8af6e2047e7faa0c kafaa_cc_route=338a178664cacea1b3cb5c7ea975f9cd kafaa_cc_stats=0f22fb36ffd582808d885d46457df166 kafaa_cc_visit_problem=d2cfe8864a4baf09aa144e4c46ec21f6 kafaa_confirm_consortium_visit=0f0c72fbe36a815c090087aa9364cdb0 kafaa_consortium_host_visits=315a8b93199f4c5c000d3f8abe57949c kafaa_consortium_stats=093bc196f32c44168aa49f6520a8b3b3 kafaa_decide_consortium_member=08a65b88bf75fa3d58d92a17e0717503 kafaa_decide_grant=b318945128b6fc11d68231a911831e58 kafaa_gr_app_problem=dcb8d8e43b8666d62d23b7ca1dd06ce9 kafaa_gr_cell=33b4a31b4f5a221fe772a4c0a1e85bd9 kafaa_gr_cost_total=9a5c6af947d9d711290f8ee6ad3876a2 kafaa_gr_decision_problem=a7b0419be13b1f9d953ed3e2fbcf25b3 kafaa_gr_eligibility=bbf1138a0f17d2f9f4b506511b93b418 kafaa_gr_full_years=8b71e32746fa2b2a276c41f9c5df394c kafaa_gr_next_deadline=9d2a6505e0f1c516bde966fcc41b09a2 kafaa_gr_output_problem=95ff48a896a029f00a526045127f71e6 kafaa_gr_phase=a7dd5920eddc4a38246358d9271201b5 kafaa_gr_rate=d446f9549eb917c25cf9e2d3cfd2c03a kafaa_gr_schedule_problem=90296af1e4ec733cce7d8e2d2f7e4795 kafaa_gr_slot=ad022ddbd41e359827cad4914d4921c9 kafaa_gr_stats=d33686fd9eb05795dfca2bbdc22c34fe kafaa_grant_stats=1b8c638597d063e22abd2b166a19f3ca kafaa_log_consortium_visit=624275d599fa54a2e16a6e6495ecc121 kafaa_nominate_consortium_trainee=2410af60ad70c1918233ffdc4c1bad74 kafaa_review_grant_output=29354d3474f63614bd8cb698dab9ae1a kafaa_schedule_grant_round=c8c8c61e62c8ce2d5c89201d48020828 kafaa_submit_grant_output=69c047bd59eb977b824049d274631cdd kafaa_withdraw_consortium_visit=56f45c56cf1924a58f616ffcb47ee759 kafaa_withdraw_grant=75a116a265fe127b0e08216a80d6498a
+    digest kafaa_grant_rounds 4 ca868735
+    digest kafaa_grant_applications 45 6e1517e7
+    digest kafaa_consortium_cohorts 2 de4b44e1
+    digest kafaa_consortium_members 30 c1a3a1de
+    digest kafaa_consortium_visits 45 8b621465
+    digest kafaa_organisations (3 new synthetic partners) 3 84b1a27f
+checks: fs95-team-targets-inventory.mjs
+FS wave I · E5 · FS84 team 2030 capability targets + organisation skills inventory (M17)
+  ✓ seed: 59 team targets: the 24 F11 targets stay 'current' (no profile versions), 35 adopted 2028/2030 targets with their profile versions
+  ✓ seed: every adopted set reproduces futureTargets() on the FS05 profiles published on its adoption date (team:ops-crew-b 2030, family:operations 2028, team:rp 2030)
+  ✓ SQL kafaa_tt_pct / kafaa_tt_l2028 = pctOf / level2028 (10 + 10 cases: round half up, half-way rounded up, lower 2030 levels kept)
+  ✓ SQL kafaa_tt_reqs (103 versions), kafaa_tt_need / kafaa_tt_version (41 roles x 2 horizons), kafaa_tt_derive (148 group x horizon x mode cases), kafaa_tt_inventory and kafaa_tt_quality (2 dimensions x 2 dates) = the TS rules (seed)
+  ✓ acceptance FS84: cells under 10 are suppressed (2386 of 2620 inventory cells null, the rest 10 or more; groups under 10 staff fully suppressed; security, safeguards and cyber families never broken out; all 119 non-security skills listed)
+  ✓ acceptance FS84: HR aggregates of a team under 10 are suppressed (35 groups: no counts, no holders, no members)
+  ✓ acceptance FS84: data-quality figures reproduce from rules (TS = SQL through the RPC): profile coverage 100 %, role requirements recorded 87 %, stale 2 % (FS03 ageing 43, FS54 review overdue 14), validated 35 %
+  ✓ acceptance FS84: each team target shows the 2030 role-profile version it came from (536 derived targets; every adopted row stores its versions)
+  ✓ seeded story: crew B's 2030 targets (adopted 2026-09-01) no longer match after the reactor-operator 2030 profile v2 (9 changed, 8 new); the operations family's 2028 targets are up to date
+  ✓ F11 unchanged: kafaa_team_coverage reads current targets only (adopted 2028/2030 targets never change coverage, targets or the crew profile)
+  ✓ kafaa_team_future_targets: the crew B shift manager reads named targets for team:ops-crew-b (= futureTargets, people mode); the HR director reads counts only (aggregate); an unknown horizon reads 2030; auditors (no skills_profile) and anonymous visitors are refused
+  ✓ kafaa_org_skill_inventory: HR analyst, HR director (Agg) and the training manager (A) read the inventory; line managers, auditors, observers, employees, platform admins and partners get null; anonymous cannot execute; reads are not audited and carry no person ids
+  ✓ acceptance (kafaa_adopt_future_targets): employees, managers outside the group and HR (Agg) refused; crew:profile and unknown horizons invalid; the shift manager re-adopts crew B's 2030 targets (17 rows written, the rest kept), a second call is unchanged; the training manager adopts the engineering 2028 targets; every call audited, no ledger
+  ✓ a target that no longer derives (sk-ns-01 left the shift-supervisor 2030 profile) is switched off on the next adoption, never removed
+  ✓ SQL kafaa_tt_reqs (103 versions), kafaa_tt_need / kafaa_tt_version (41 roles x 2 horizons), kafaa_tt_derive (148 group x horizon x mode cases), kafaa_tt_inventory and kafaa_tt_quality (2 dimensions x 2 dates) = the TS rules (generated edits: a republished 2030 profile, odd requirement levels, a security and an unknown requirement, a path-only profile, people without a role, claimed and inactive states, ageing evidence, overdue reviews, a group crossing 10, switched-off adopted targets)
+  ✓ internal rules are not executable by API roles; authenticated executes only the three FS84 RPCs and the redefined kafaa_team_coverage, anon none (kafaa_adopt_future_targets, kafaa_org_skill_inventory, kafaa_team_coverage, kafaa_team_future_targets)
+  ✓ the migration is additive: 16 kafaa_* objects created or redefined, ALTER only on kafaa_team_skill_targets (two columns with defaults), no removal words, writes only kafaa_* rows (inside the RPC)
+    fs95 function md5: kafaa_adopt_future_targets=21c66e0f0c6fe4aae647284cc34a3557 kafaa_org_skill_inventory=446cbe4486cc2d1c4e557ed824810760 kafaa_team_coverage=990d1de901ed061e36f30a7bb254ebb1 kafaa_team_future_targets=a8a9052d5d8d8aba73b2120d9c7139ad kafaa_tt_core=b7b9979e04bb64eeaf7c8a5028eb9d5c kafaa_tt_derive=15d6f11d0a58e4967d7b033cdab9684c kafaa_tt_inventory=16c459972658d3040c2129a91fc47a31 kafaa_tt_is_restricted=07b13af8e5fd1575c13e97393a9839fb kafaa_tt_l2028=1a395dbf37cce69b2bf33e2a1e6e185a kafaa_tt_need=7b64cd11c9331f347db3af66b14a86c2 kafaa_tt_pct=2a7447b83769946a140f1d0564d88223 kafaa_tt_qblock=63d1c2d1962a2a5cc880716a7ad45c14 kafaa_tt_quality=a53eb1adc1a7d5195628b516eeebb5c2 kafaa_tt_reqs=1514b49f46fc1128ec8ec4869ecad09b kafaa_tt_version=8f0e69ca037a046f06755758f152a7cc
+    fs95 digest kafaa_team_skill_targets (true): 59 rows, ids 243cafe8, rows 1d6492dd
+    fs95 digest kafaa_team_skill_targets (horizon = 'current'): 24 rows, ids 57d3e529, rows e1349542
+    fs95 digest kafaa_team_skill_targets (horizon <> 'current'): 35 rows, ids 3ee8187b, rows 7c6ad029
+checks: fsqa1-integration.mjs
+checks: fsqa2-integration.mjs
+checks: fsqa3-integration.mjs
+FS QA · wave C integration (FS17-FS26)
+checks: fsqa4-integration.mjs
+FS QA · wave D integration (FS27-FS37)
+checks: fsqa5-integration.mjs
+FS QA · wave E integration (FS38-FS49)
+checks: fsqa6-integration.mjs
+FS QA · wave F integration (FS50-FS59)
+checks: fsqa7-integration.mjs
+FS QA · wave G integration (FS60-FS69, FS48 card)
+checks: fsqa8-grants.mjs
+checks: fsqa8-integration.mjs
+FS QA · wave H integration (FS70-FS77, FS69 pre-arrival checks in the digest)
+checks: fsqa9-integration.mjs
+FS QA · wave I integration (FS78-FS84; FS79 trust tier in the M17 learner record)
+  ✓ FS79 -> FS32: SQL kafaa_lr_items = recordItems() for 12 certificate holders on two days
+  ✓ FS79 -> FS32: SQL kafaa_lr_bundle = buildBundle() and CLR-shaped for the full records of 12 holders
+  ✓ FS79 -> FS32: the 6 verified certificates are record items whose status is the trust tier; submitted, rejected, withdrawn and revoked ones never are
+  ✓ kafaa_lr_refs_ok accepts the xcert kind and still refuses unknown kinds
+  ✓ FS79 -> FS32: the holder (sro) shares a verified certificate; the public verify page shows it with its trust tier (accredited) and issuer, initials only, "not an authority"
+  ✓ FS79 -> FS32: after a verifier revokes the certificate it leaves the learner record and the shared link (no stale credential)
+  ✓ FS79/FS80/FS82/FS83 -> F01: certificate, builder, grant-output and visit evidence (recorded kinds) survive kafaa_skills_apply and count in the skill state
+  ✓ kafaa_skill_states_v2 and kafaa_skills_apply keep their pre-wave bodies (no redefinition in wave I)
+  ✓ FS81 (settled): the manager in scope (sro) reads none of the 3 team plans (table, plan view, board), only their own; HR reads all 10; training manager, HR analyst, auditor and admin read none
+  ✓ FS80 <- FS36: every gallery entry references its AI-system register row (foreign key kafaa_automations_system_id_fk)
+  ✓ the QA migration is additive: three internal FS32 functions replaced, no removal word, no table, row, policy or grant
+  ✓ kafaa_lr_items and kafaa_lr_bundle stay executable by no API role
+    md5 kafaa_lr_bundle=0606db93b948dc05cc2b545d822e3dbb kafaa_lr_items=b50b926b3e28017eae6b6e473873ea63 kafaa_lr_refs_ok=c224e285cef0bdac5df9cc99f095cda6
+checks: g2-learning.mjs
+checks: g4.mjs
+G4 checks (M09, M11)
+checks: w0-skills.mjs
+checks: w1e1-passport.mjs
+checks: w1e2-career.mjs
+checks: w1e3-coach.mjs
+checks: w1e4-opportunities.mjs
+W1E4 · F08 opportunity marketplace
+checks: w1e5-future.mjs
+checks: w2e1-checkins.mjs
+checks: w2e2-conversations.mjs
+checks: w2e3-mentoring-refreshers.mjs
+W2E3 · F13 mentoring 2.0
+W2E3 · F14 knowledge refreshers
+checks: w2e4-rotations.mjs
+W2E4 · F15 rotations and job shadowing
+checks: w2e5-leadership.mjs
+W2E5 · F16 leadership journeys, F17 communities of practice
+checks: w3e1-talent.mjs
+checks: w3e2-knowledge.mjs
+W3E2 · F20 knowledge loss risk assessment, F21 knowledge capture studio
+checks: w3e3-handover.mjs
+checks: w3e4-reserve.mjs
+W3E4 · F23 alumni and expert reserve
+checks: w3e5-transparency.mjs
+checks: w4e1-effectiveness.mjs
+W4E1 · F25 training effectiveness, F26 training needs forecast
+checks: w4e2-sat.mjs
+W4E2 · F27 SAT analysis workbench, F29 accreditation readiness
+checks: w4e3-simulator.mjs
+W4E3 · F28 simulator scenario library
+checks: w4e4-lrs.mjs
+checks: w4e5-instructors.mjs
+W4E5 · F31 instructor and SME pipeline
+checks: w4qa-integration.mjs
+checks: w5e1-microcred-ojt.mjs
+W5E1 · F32 micro-credentials, F38 OJT logbook
+checks: w5e2-contractor-passport.mjs
+W5E2 · F33 contractor and supplier skills passport
+checks: w5e3-journey.mjs
+W5E3 · F34 student-to-career journey
+checks: w5e4-outlook.mjs
+checks: w5e5-digest-dalil.mjs
+checks: w5qa-integration.mjs
+G3 checks (M06, M07, M10)
+G5 checks
+
+All migration checks passed
+
+real	22m48.939s
+user	22m15.454s
+sys	0m14.088s
+rc=0
