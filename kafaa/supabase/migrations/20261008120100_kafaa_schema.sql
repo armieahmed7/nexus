@@ -6002,6 +6002,72 @@ create table if not exists kafaa_credit_ledger (
 );
 comment on table kafaa_credit_ledger is '[M34] Personal credit ledger: one row per completed tagged item and RPL credit; reversed, never deleted (FS30)';
 
+-- M35 · Critical future skill on the strategic register: owner (function and role card), target level, people-equivalent targets by year, KPIs, build/buy/borrow/bot decision with rationale, FS04 gap plans; progress is computed, never stored (FS50)
+create table if not exists kafaa_critical_skills (
+  id text primary key,
+  skill_id text not null unique,
+  owner_function text not null,
+  owner_person_id text not null,
+  target_level integer not null,
+  targets jsonb not null default '[]'::jsonb,
+  kpis jsonb not null default '[]'::jsonb,
+  decision text not null check (decision in ('build', 'buy', 'borrow', 'bot')),
+  rationale_en text not null,
+  rationale_ar text not null,
+  decision_history jsonb not null default '[]'::jsonb,
+  gap_plan_ids text[] not null default '{}'::text[],
+  status text not null default 'draft' check (status in ('draft', 'active', 'retired')),
+  adopted_on date,
+  version integer not null default 1,
+  sort integer not null default 0,
+  benchmark_ids text[] not null default '{}'::text[],
+  created_by text not null,
+  created_at timestamptz not null default now(),
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_critical_skills is '[M35] Critical future skill on the strategic register: owner (function and role card), target level, people-equivalent targets by year, KPIs, build/buy/borrow/bot decision with rationale, FS04 gap plans; progress is computed, never stored (FS50)';
+
+-- M35 · Quarterly review of a critical future skill by the HR director: rating, the computed progress snapshot, notes EN/AR and any decision change; audited and ledgered (FS50)
+create table if not exists kafaa_critical_skill_reviews (
+  id text primary key,
+  critical_skill_id text not null,
+  quarter text not null,
+  rating text not null check (rating in ('met', 'on_track', 'at_risk', 'off_track')),
+  progress jsonb not null default '{}'::jsonb,
+  note_en text not null,
+  note_ar text not null,
+  decision_before text not null,
+  decision_after text not null,
+  reviewed_by text not null,
+  reviewed_at timestamptz not null default now()
+);
+comment on table kafaa_critical_skill_reviews is '[M35] Quarterly review of a critical future skill by the HR director: rating, the computed progress snapshot, notes EN/AR and any decision change; audited and ledgered (FS50)';
+
+-- M35 · Saved three-scenario skill forecast (baseline, ADVANCE, accelerated; SIMULATED): annual cycle and version, assumptions, aggregate suppressed results, method basis, release (FS51)
+create table if not exists kafaa_skill_forecasts (
+  id text primary key,
+  cycle integer not null,
+  version integer not null,
+  name text not null,
+  scenario text not null default 'baseline' check (scenario in ('baseline', 'advance', 'accelerated')),
+  params jsonb not null default '{}'::jsonb,
+  results jsonb not null default '{}'::jsonb,
+  basis jsonb not null default '{}'::jsonb,
+  method text not null,
+  status text not null default 'draft' check (status in ('draft', 'released', 'superseded')),
+  summary_en text not null default '',
+  summary_ar text not null default '',
+  created_by text not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  released_by text,
+  released_at timestamptz,
+  superseded_by text,
+  simulated boolean not null default true
+);
+comment on table kafaa_skill_forecasts is '[M35] Saved three-scenario skill forecast (baseline, ADVANCE, accelerated; SIMULATED): annual cycle and version, assumptions, aggregate suppressed results, method basis, release (FS51)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -6508,6 +6574,9 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_rp
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_rpl_evidence_person_id_fk') then alter table kafaa_rpl_evidence add constraint kafaa_rpl_evidence_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_rpl_evidence_attester_id_fk') then alter table kafaa_rpl_evidence add constraint kafaa_rpl_evidence_attester_id_fk foreign key (attester_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_credit_ledger_person_id_fk') then alter table kafaa_credit_ledger add constraint kafaa_credit_ledger_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_critical_skills_skill_id_fk') then alter table kafaa_critical_skills add constraint kafaa_critical_skills_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_critical_skills_owner_person_id_fk') then alter table kafaa_critical_skills add constraint kafaa_critical_skills_owner_person_id_fk foreign key (owner_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_critical_skill_reviews_critical_skill_id_fk') then alter table kafaa_critical_skill_reviews add constraint kafaa_critical_skill_reviews_critical_skill_id_fk foreign key (critical_skill_id) references kafaa_critical_skills(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -7211,6 +7280,11 @@ create index if not exists kafaa_credit_tags_item_id_idx on kafaa_credit_tags (i
 create index if not exists kafaa_credit_tags_status_idx on kafaa_credit_tags (status);
 create index if not exists kafaa_credit_ledger_person_id_idx on kafaa_credit_ledger (person_id);
 create index if not exists kafaa_credit_ledger_status_idx on kafaa_credit_ledger (status);
+create index if not exists kafaa_critical_skills_owner_person_id_idx on kafaa_critical_skills (owner_person_id);
+create index if not exists kafaa_critical_skills_status_idx on kafaa_critical_skills (status);
+create index if not exists kafaa_critical_skill_reviews_critical_skill_id_idx on kafaa_critical_skill_reviews (critical_skill_id);
+create index if not exists kafaa_skill_forecasts_cycle_idx on kafaa_skill_forecasts (cycle);
+create index if not exists kafaa_skill_forecasts_status_idx on kafaa_skill_forecasts (status);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -7225,4 +7299,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 314) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 317) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

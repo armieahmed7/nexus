@@ -2775,3 +2775,24 @@ create policy kafaa_read on kafaa_credit_ledger for select to anon, authenticate
 grant select on kafaa_credit_ledger to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- critical_skills
+alter table kafaa_critical_skills enable row level security;
+drop policy if exists kafaa_read on kafaa_critical_skills;
+create policy kafaa_read on kafaa_critical_skills for select to anon, authenticated using (kafaa_has_grant('workforce_strategy', array['Agg','R','W','A']));
+grant select on kafaa_critical_skills to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- critical_skill_reviews
+alter table kafaa_critical_skill_reviews enable row level security;
+drop policy if exists kafaa_read on kafaa_critical_skill_reviews;
+create policy kafaa_read on kafaa_critical_skill_reviews for select to anon, authenticated using (kafaa_has_grant('workforce_strategy', array['Agg','R','W','A']));
+grant select on kafaa_critical_skill_reviews to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- skill_forecasts
+alter table kafaa_skill_forecasts enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_forecasts;
+create policy kafaa_read on kafaa_skill_forecasts for select to anon, authenticated using (kafaa_has_grant('workforce_strategy', array['Agg','R','W','A']));
+grant select on kafaa_skill_forecasts to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+

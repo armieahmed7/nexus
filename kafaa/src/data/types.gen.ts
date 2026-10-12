@@ -5068,6 +5068,63 @@ export interface CreditLedgerRow {
   status: 'counted' | 'reversed';
   updated_at: string;
 }
+export interface CriticalSkillsRow {
+  id: string;
+  skill_id: string;
+  owner_function: string;
+  owner_person_id: string;
+  target_level: number;
+  targets: any;
+  kpis: any;
+  decision: 'build' | 'buy' | 'borrow' | 'bot';
+  rationale_en: string;
+  rationale_ar: string;
+  decision_history: any;
+  gap_plan_ids: string[];
+  status: 'draft' | 'active' | 'retired';
+  adopted_on?: string | null;
+  version: number;
+  sort: number;
+  benchmark_ids: string[];
+  created_by: string;
+  created_at: string;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface CriticalSkillReviewsRow {
+  id: string;
+  critical_skill_id: string;
+  quarter: string;
+  rating: 'met' | 'on_track' | 'at_risk' | 'off_track';
+  progress: any;
+  note_en: string;
+  note_ar: string;
+  decision_before: string;
+  decision_after: string;
+  reviewed_by: string;
+  reviewed_at: string;
+}
+export interface SkillForecastsRow {
+  id: string;
+  cycle: number;
+  version: number;
+  name: string;
+  scenario: 'baseline' | 'advance' | 'accelerated';
+  params: any;
+  results: any;
+  basis: any;
+  method: string;
+  status: 'draft' | 'released' | 'superseded';
+  summary_en: string;
+  summary_ar: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  released_by?: string | null;
+  released_at?: string | null;
+  superseded_by?: string | null;
+  simulated: boolean;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -5385,6 +5442,9 @@ export interface Tables {
   credit_tags: CreditTagsRow;
   credit_stacks: CreditStacksRow;
   credit_ledger: CreditLedgerRow;
+  critical_skills: CriticalSkillsRow;
+  critical_skill_reviews: CriticalSkillReviewsRow;
+  skill_forecasts: SkillForecastsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];
