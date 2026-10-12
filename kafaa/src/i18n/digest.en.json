@@ -25,7 +25,29 @@
     "cadence_monthly": "Agreed cadence: monthly",
     "conversation_due": "Six months since your last career conversation: due by {date}",
     "conversation_overdue": "Six-monthly career conversation: it was due by {date}",
-    "refresher_due": "{n} spaced-practice questions are due"
+    "refresher_due": "{n} spaced-practice questions are due",
+    "approval_fellowship": "Submitted on {date}: a fellowship milestone that names you as supervisor; sign it off or return it with a note",
+    "future_decay": "This skill is in the fast-changing class: your newest level-{level} evidence passes its {months}-month half-life on {date}, then it counts one level lower",
+    "future_decay_renew": "Fresh evidence (a check, a drill, a course or a validated rating) keeps the level; nothing is taken away from your record",
+    "future_goal_due": "Your target date is {date}",
+    "future_goal_overdue": "Your target date was {date}: keep it, move it or close the goal",
+    "future_goal_level": "You are at level {have} of the {level} you aimed for",
+    "future_goal_undated": "You added this goal on {date} without a date: a dated goal can be shared with your manager and planned",
+    "future_ai_required": "{system} asks its users for AI fluency rung {rung}; your evidence shows rung {have}",
+    "future_ai_group": "You are in its user group: {group} (AI-literacy register)",
+    "future_profile_published": "The 2030 profile of your role was published on {date}",
+    "future_profile_changed": "Version {version} of your role's 2030 profile was published on {date}",
+    "future_profile_gaps": "{n} of its skill requirements are above your current level",
+    "future_profile_ready": "You already hold every skill requirement it lists at the level it asks",
+    "future_rising": "Listed as growing in the {quarter} Skills on the Rise list",
+    "future_rising_family": "Published for your job family; you hold it below level 2",
+    "future_rising_role": "Your role's 2030 profile or one of your goals asks for it; you hold it below level 2",
+    "future_gig_goal": "It builds {skill}, one of your skill goals",
+    "future_gig_profile": "It builds {skill}, which your role's 2030 profile asks for",
+    "future_gig_new": "Future-skills gig posted on {date}, within the last three weeks",
+    "future_pathway_goal": "It takes {skill} to level {level}, one step towards your goal",
+    "future_pathway_profile": "It takes {skill} to level {level}, as your role's 2030 profile asks",
+    "future_pathway_effort": "About {months} months at {hours} hours a week"
   },
   "kind": {
     "expiry": "Expiring",
@@ -34,7 +56,8 @@
     "opportunity": "Opportunity",
     "mentoring": "Mentoring",
     "conversation": "Career conversation",
-    "refresher": "Refreshers"
+    "refresher": "Refreshers",
+    "future": "Future skills"
   },
   "kindHint": {
     "expiry": "Qualifications and mirrored licences expiring within 90 days",
@@ -43,7 +66,8 @@
     "opportunity": "New opportunities that match you at 70% or more",
     "mentoring": "Mentoring sessions due in the next week",
     "conversation": "Your six-monthly career conversation when it is due",
-    "refresher": "Refresher questions that are due"
+    "refresher": "Refresher questions that are due",
+    "future": "Your role's 2030 profile, skills on the rise, goals, AI-literacy needs, fast-changing skills, new gigs and pathways"
   },
   "line": {
     "expiry": "Expires in {n} days · {date}",
@@ -61,7 +85,17 @@
     "opportunity_open": "New for you",
     "mentoring_open": "Session due",
     "conversation_open": "Due",
-    "refresher_open": "Due today"
+    "refresher_open": "Due today",
+    "future_decay": "Level may slip in {n} days · {date}",
+    "future_goal": "Target in {n} days · {date}",
+    "future_open": "For your future skills",
+    "future_ai_literacy": "AI-literacy requirement",
+    "future_role_profile": "Your role in 2030",
+    "future_rising_skill": "Rising at ENEC",
+    "future_future_gig": "New future-skills gig",
+    "future_pathway": "New learning pathway",
+    "future_goal_open": "Skill goal",
+    "future": "For your future skills · {date}"
   },
   "period": {
     "weekly": "Week {w}, {y}",
@@ -130,6 +164,21 @@
     "kind": "Kind",
     "items": "Items",
     "suppressed": "Suppressed (under 10)",
-    "mutedNote": "People who muted at least one kind: {n}."
+    "mutedNote": "People who muted at least one kind: {n}.",
+    "futureRules": "Future-skills nudges (since {date}): at most {cap} per digest, after every other kind; the 8 published rules are listed below."
+  },
+  "future": {
+    "title": "Future-skills nudges",
+    "intro": "Since week 42 of 2026 your digest also tells you when your role's 2030 profile changes, a skill rises in your area, a fast-changing skill may slip, a goal is due, an AI system you use needs a higher rung, or a new gig or pathway fits you. At most 2 per digest; you can mute them in your nudge settings.",
+    "how": "How future-skills nudges work",
+    "window": "Window: {n} days",
+    "noWindow": "No time window",
+    "since": "From {date}",
+    "feature": "Source: {id}",
+    "link": "Where it links",
+    "empty": "The published rules are not available right now.",
+    "inThis": "{n} future-skills items in this digest",
+    "none": "No future-skills nudge this period.",
+    "method": "Every nudge is a published rule over your own records: no score about you is stored, and nothing is shown to anyone else."
   }
 }

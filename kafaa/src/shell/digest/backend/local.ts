@@ -18,6 +18,10 @@ const TABLES: (keyof DigestData)[] = [
   'career_targets', 'engine_settings', 'reco_optouts', 'ojt_logs', 'ojt_eval_requests', // W5 integration (F38)
   'plant_visits', // FS wave E integration (FS39 host confirmations)
   'roleplay_sessions', // FS wave F integration (FS59 role-play reviews owed)
+  // FS75 (wave H): future-skills nudges (src/shell/digest/future.ts) and FS67 fellowship sign-offs owed. skill_signals is FS70's table
+  // (same wave): read when the schema has it, otherwise it is an empty list (data-only coupling).
+  'role_profile_versions', 'skill_goals', 'skill_goal_plans', 'pathways', 'pathway_enrolments', 'ai_rungs', 'ai_skill_tracks', 'ai_systems', 'ai_system_users',
+  'skill_signals', 'fellowship_milestones',
 ];
 /** Everything the digest reads, straight from the in-memory tables (no RLS: the RPC is the gate and reads only the caller's items). */
 export function localDigestData(b: LocalBackend): DigestData {

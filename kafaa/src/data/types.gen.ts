@@ -2579,6 +2579,21 @@ export interface DigestPrefsRow {
   muted_kinds: string[];
   updated_at: string;
 }
+export interface DigestNudgeRulesRow {
+  id: string;
+  topic: 'decay' | 'goal' | 'ai_literacy' | 'role_profile' | 'rising_skill' | 'future_gig' | 'pathway' | 'fellowship';
+  kind: 'future' | 'approval';
+  name_en: string;
+  name_ar: string;
+  rule_en: string;
+  rule_ar: string;
+  window_days?: number | null;
+  link: string;
+  source_feature: string;
+  benchmark_ids: string[];
+  since: string;
+  sort: number;
+}
 export interface SkillClaimsRow {
   id: string;
   person_id: string;
@@ -6018,6 +6033,7 @@ export interface Tables {
   surface_fairness: SurfaceFairnessRow;
   digest_runs: DigestRunsRow;
   digest_prefs: DigestPrefsRow;
+  digest_nudge_rules: DigestNudgeRulesRow;
   skill_claims: SkillClaimsRow;
   badges: BadgesRow;
   skill_checkins: SkillCheckinsRow;

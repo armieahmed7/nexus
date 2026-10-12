@@ -4,6 +4,9 @@
 //    Read: the person only (notifications Own). Admins see aggregates through rpc.digestStats (suppressed below 10).
 //  - digest_prefs: the person's nudge settings (on or off, frequency, quiet hours, muted kinds). Read: the person only.
 // Both change only through RPCs (buildDigest, setDigestPrefs): server-side checks, audited.
+//  - digest_nudge_rules (FS75, wave H): the published method of the future-skills nudges (one row per topic: what triggers it, the
+//    window, where it links, the feature and benchmarks behind it). Public reference rows, seeded only (no write path); the rule
+//    itself lives in src/shell/digest/future.ts = SQL kafaa_dg_future, and tests/unit/fs83-digest-nudges.test.ts pins the windows here.
 import type { TableDef } from '../../../data/schema';
 
 export const TABLES_DIGEST: Record<string, TableDef> = {
@@ -24,5 +27,15 @@ export const TABLES_DIGEST: Record<string, TableDef> = {
     },
     read: [{ res: 'notifications', person: 'person_id' }],
     write: { mode: 'rpc', res: 'notifications' },
+  },
+  digest_nudge_rules: {
+    module: 'M14', label: 'Published method of the future-skills digest nudges: trigger, window, link, source feature and benchmarks per topic (FS75)',
+    cols: {
+      id: 'text pk', topic: 'text enum:decay|goal|ai_literacy|role_profile|rising_skill|future_gig|pathway|fellowship uniq', kind: 'text enum:future|approval',
+      name_en: 'text', name_ar: 'text', rule_en: 'text', rule_ar: 'text', window_days: 'int?', link: 'text', source_feature: 'text', benchmark_ids: 'text[] =[]',
+      since: 'date', sort: 'int =0',
+    },
+    read: [{ res: 'public_content' }],
+    write: { mode: 'none' },
   },
 };

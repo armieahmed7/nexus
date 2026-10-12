@@ -3072,6 +3072,24 @@ create table if not exists kafaa_digest_prefs (
 );
 comment on table kafaa_digest_prefs is '[M14] Nudge settings per person: on or off, frequency, quiet hours (Abu Dhabi time), muted kinds (F36)';
 
+-- M14 · Published method of the future-skills digest nudges: trigger, window, link, source feature and benchmarks per topic (FS75)
+create table if not exists kafaa_digest_nudge_rules (
+  id text primary key,
+  topic text not null unique check (topic in ('decay', 'goal', 'ai_literacy', 'role_profile', 'rising_skill', 'future_gig', 'pathway', 'fellowship')),
+  kind text not null check (kind in ('future', 'approval')),
+  name_en text not null,
+  name_ar text not null,
+  rule_en text not null,
+  rule_ar text not null,
+  window_days integer,
+  link text not null,
+  source_feature text not null,
+  benchmark_ids text[] not null default '{}'::text[],
+  since date not null,
+  sort integer not null default 0
+);
+comment on table kafaa_digest_nudge_rules is '[M14] Published method of the future-skills digest nudges: trigger, window, link, source feature and benchmarks per topic (FS75)';
+
 -- M17 · Self-claimed skill levels with a note (F03); claimed until validated (F10)
 create table if not exists kafaa_skill_claims (
   id text primary key,
@@ -8268,4 +8286,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 352) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 353) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

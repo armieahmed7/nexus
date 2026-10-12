@@ -1647,6 +1647,13 @@ create policy kafaa_read on kafaa_digest_prefs for select to anon, authenticated
 grant select on kafaa_digest_prefs to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- digest_nudge_rules
+alter table kafaa_digest_nudge_rules enable row level security;
+drop policy if exists kafaa_read on kafaa_digest_nudge_rules;
+create policy kafaa_read on kafaa_digest_nudge_rules for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_digest_nudge_rules to anon, authenticated;
+-- writes: reference data, no client writes
+
 -- skill_claims
 alter table kafaa_skill_claims enable row level security;
 drop policy if exists kafaa_read on kafaa_skill_claims;
