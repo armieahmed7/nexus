@@ -35,8 +35,8 @@ export type NoFairness = (typeof NO_FAIRNESS)[number];
 export interface RankedSurface {
   /** Engine card id (kafaa_engine_cards.id). */
   card: string;
-  /** Wave that added the card: F24 (the eight original cards) or FS55. */
-  wave: 'F24' | 'FS55';
+  /** Wave that added the card: F24 (the eight original cards), FS55, or FSQA6 (the wave-F integration: FS50, FS52 and FS58 surfaces). */
+  wave: 'F24' | 'FS55' | 'FSQA6';
   feature: string;
   module: string;
   route: string;
@@ -109,7 +109,18 @@ export const RANKED_SURFACES: RankedSurface[] = [
   S('passport', 'FS55', 'F03 · F10 · F11', 'M17', '/my/skills', 'match', 'match', 'options', ['src/modules/m17/passport.ts#transferableStrengths', 'src/modules/m17/checkins.ts#teamActions'],
     ['src/modules/m17/PassportView.tsx'], { none: 'content' }),
   S('accreditation', 'FS55', 'F29', 'M26', '/training/accreditation', 'skills', 'rules', 'content', ['src/modules/m26/accr.ts#suggestFor'], [], { none: 'content' }),
+  // ── FS wave F integration (fsqa6): the ranked lists wave F added (cards seeded by scripts/seed/ext/fsqa6-integration.mjs and inserted live by
+  //    supabase/migrations/20261010269001_kafaa_fs6qa_integration.sql). None ranks people: the register ranks its own rows, the outlook ranks
+  //    skill families, the practice suggestion ranks scenarios.
+  S('critical_attention', 'FSQA6', 'FS50', 'M35', '/workforce/critical-skills', 'skills', 'rules', 'options',
+    ['src/modules/m35/critical.ts#attentionOf', 'src/modules/m35/critical.ts#criticalBoard'], [], { none: 'no_outcome' }),
+  S('outlook_automation', 'FSQA6', 'FS52', 'M07', '/workforce/skills-outlook', 'skills', 'rules', 'options',
+    ['src/modules/m07/outlook.ts#rankAutomation', 'src/modules/m07/outlook.ts#automationProfile'], [], { none: 'no_outcome' }),
+  S('aps_next', 'FSQA6', 'FS58', 'M33', '/my/core-skills/problem-solving', 'recommend', 'rules', 'content',
+    ['src/modules/m33/aps.ts#pickScenario', 'src/modules/m33/aps.ts#nextReasons'], [], { none: 'content' }),
 ];
+/** The wave-F ranked surfaces the integration lead carded (fsqa6). */
+export const FSQA6_CARDS = RANKED_SURFACES.filter((s) => s.wave === 'FSQA6').map((s) => s.card);
 export const FS55_CARDS = RANKED_SURFACES.filter((s) => s.wave === 'FS55').map((s) => s.card);
 /** Rankers FS55 adds to two F24 cards (their pages already call them); the seed and the migration append them once (version + 1). */
 export const F24_ADDED_FUNCTIONS: Record<string, string[]> = {

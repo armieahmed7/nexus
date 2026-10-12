@@ -18,6 +18,7 @@
  *    uses) are computed from the catalogue, never entered (TAUGHT_BY is the shared "taught by" definition for FS57).
  */
 import { DECAY_CLASSES, FS_AREAS, OWNER_ROLES, REVIEW_CYCLE_MONTHS, addMonthsIso, levelEssence, reviewState, type DecayClass } from '../../domain/taxonomy.ts';
+import { taughtBy } from '../m25/coverage.ts'; // FS wave F integration: the one shared "taught by" rule (FS57 coverage = FS54 audit)
 
 export const CHANGE_KINDS = ['add', 'rename', 'split', 'retire', 'relevel'] as const;
 export type ChangeKind = (typeof CHANGE_KINDS)[number];
@@ -347,19 +348,22 @@ export function methodologyNotices<C extends { id: string; methodology: boolean;
 // ───────────── Staleness and the orphan-rate audit
 
 /**
- * "Taught by", shared with FS57 curriculum coverage (one definition; reconcile in the wave QA step if FS57 differs):
- *  course      a course whose id is one of the skill's evidence keys, an active FS19 course-skill link, or (core skills) a course
- *              that develops the skill's competency;
- *  pathway     a published FS17 pathway for the skill;
- *  assessment  a current qualification standard among the evidence keys, an active adaptive bank or item (FS21), an active
+ * "Taught by" is ONE rule shared with FS57 curriculum coverage (FS wave F integration, fsqa6): the teaching side comes from taughtBy() in
+ * src/modules/m25/coverage.ts (SQL kafaa_cov_taught), so the orphan audit and the coverage score always agree on what the catalogue teaches:
+ *  course      a catalogue course (supplier-academy courses excluded) that teaches the skill through its F01 mapping (core skill of one of its
+ *              competencies, or an evidence key) or an active FS19 course-skill link; security-area skills are never taught here;
+ *  pathway     a published, listed FS17 pathway for the skill whose learning step is filled (no open "learn" gap);
+ *  external    a published, listed FS18 external resource that names the skill;
+ *  assessment  (audit only) a current qualification standard among the evidence keys, an active adaptive bank or item (FS21), an active
  *              performance task (FS22), a published twin drill (FS40) or AI drill (FS37), or a fitness-check area (FS10).
  * A skill is used by a role when a published, non path-only role profile requires it (directly, or through its competency for a core
  * skill), a role requires its competency (core skills), or an active task in the job and task analysis links it.
- * Orphan: a live skill that nothing teaches, assesses or requires (no course, pathway, assessment or role).
+ * Orphan: a live skill that nothing teaches, assesses or requires (no course, pathway, external resource, assessment or role).
  */
 export const TAUGHT_BY = {
-  course: ['skills.evidence_keys -> courses', 'course_skill_links (active)', 'courses.competency_ids (core skills)'],
-  pathway: ['pathways (published)'],
+  course: ['taughtBy(): courses (not supplier) via skills.evidence_keys, courses.competency_ids (core skills), course_skill_links (active)'],
+  pathway: ['taughtBy(): pathways (published, listed, no open learn gap)'],
+  external: ['taughtBy(): external_resources (published, listed)'],
   assessment: ['skills.evidence_keys -> qual_standards (current)', 'adaptive_banks.skill_ids (active)', 'adaptive_items (active)', 'performance_tasks (active)', 'twin_scenarios (published)', 'ai_drills (published)', 'fitness_areas'],
   role: ['role_profile_versions (published, not path-only)', 'role_competencies (core skills)', 'jta_task_skills (active)'],
 } as const;
@@ -368,10 +372,12 @@ type R = Record<string, unknown>;
 export interface HealthData {
   skills: SkillLite[]; courses: R[]; courseSkillLinks: R[]; pathways: R[]; standards: R[]; adaptiveBanks: R[]; adaptiveItems: R[]; perfTasks: R[];
   twinScenarios: R[]; aiDrills: R[]; fitnessAreas: R[]; profileVersions: R[]; roleCompetencies: R[]; taskSkills: R[];
+  /** FS wave F integration: the inputs of the shared taughtBy() rule (security competencies, FS17 gaps, FS18 externals). */
+  competencies?: R[]; pathwayGaps?: R[]; externals?: R[];
 }
 export interface SkillHealth {
   skill_id: string; review: 'none' | 'ok' | 'due_soon' | 'overdue'; days_overdue: number | null;
-  course: boolean; pathway: boolean; assessment: boolean; role: boolean; taught: boolean; orphan: boolean;
+  course: boolean; pathway: boolean; external: boolean; assessment: boolean; role: boolean; taught: boolean; orphan: boolean;
 }
 export interface HealthSummary {
   as_of: string; skills: number; live: number; overdue: number; due_soon: number; no_review: number; stale_rate: number | null;
@@ -383,12 +389,11 @@ const r4 = (x: number) => Math.round(x * 10000) / 10000;
 /** Per live skill (sorted by id) the review state and what teaches, assesses or requires it, plus the summary (SQL kafaa_fs63_health). */
 export function taxonomyHealth(d: HealthData, today: string): { summary: HealthSummary; skills: SkillHealth[] } {
   const day = today.slice(0, 10);
-  const courseIds = new Set(d.courses.map((c) => str(c.id)));
   const stdIds = new Set(d.standards.filter((s) => s.status === 'current').map((s) => str(s.id)));
-  const courseByComp = new Map<string, boolean>();
-  for (const c of d.courses) for (const k of arr(c.competency_ids)) courseByComp.set(str(k), true);
-  const linked = new Set(d.courseSkillLinks.filter((l) => l.active !== false).map((l) => str(l.skill_id)));
-  const pw = new Set(d.pathways.filter((p) => p.status === 'published').map((p) => str(p.skill_id)));
+  // teaching side: the FS57 rule (one definition; SQL kafaa_cov_taught)
+  const tb = taughtBy({ skills: d.skills as unknown as R[], competencies: d.competencies ?? [], courses: d.courses, course_skill_links: d.courseSkillLinks, pathways: d.pathways,
+    pathway_gaps: d.pathwayGaps ?? [], external_resources: d.externals ?? [] } as never);
+  const teaches = (id: string, kind: string) => (tb.get(id) ?? []).some((i) => i.kind === kind);
   const asm = new Set<string>();
   for (const b of d.adaptiveBanks) if (b.status === 'active') for (const k of arr(b.skill_ids)) asm.add(str(k));
   for (const i of d.adaptiveItems) if (i.status === 'active') asm.add(str(i.skill_id));
@@ -407,14 +412,15 @@ export function taxonomyHealth(d: HealthData, today: string): { summary: HealthS
   const t = Date.parse(`${day}T00:00:00Z`);
   for (const s of [...d.skills].filter((x) => x.lifecycle !== 'obsolete').sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0))) {
     const keys = s.evidence_keys ?? [];
-    const course = keys.some((k) => courseIds.has(k)) || linked.has(s.id) || (!!s.core && courseByComp.has(s.competency_id));
-    const pathway = pw.has(s.id);
+    const course = teaches(s.id, 'course');
+    const pathway = teaches(s.id, 'pathway');
+    const external = teaches(s.id, 'external');
     const assessment = keys.some((k) => stdIds.has(k)) || asm.has(s.id);
     const role = roleSkill.has(s.id) || (!!s.core && roleComp.has(s.competency_id));
     const review = reviewState(s.review_due ?? null, day);
-    const taught = course || pathway || assessment;
+    const taught = course || pathway || external || assessment;
     rows.push({ skill_id: s.id, review, days_overdue: review === 'overdue' ? Math.round((t - Date.parse(`${String(s.review_due).slice(0, 10)}T00:00:00Z`)) / 86_400_000) : null,
-      course, pathway, assessment, role, taught, orphan: !taught && !role });
+      course, pathway, external, assessment, role, taught, orphan: !taught && !role });
   }
   const n = rows.length;
   const c = (f: (x: SkillHealth) => boolean) => rows.filter(f).length;

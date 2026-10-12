@@ -21,6 +21,7 @@ import type { ReleasedOutlook } from './backend/outlook.rpc';
 import { DefLink, ExportButton, MetricTile, useWatermarkedExport } from './shared';
 import { LinkOrNote, useOpenable } from './handoverUi';
 import { GapBars, ParamSlider, Tornado, useFamilyLabel } from './outlookUi';
+import { MethodologyBanner } from '../m16/MethodologyBanner'; // FS54 -> F35 (FS wave F integration): methodology-change banner
 
 /** Tables whose changes refresh the outlook. */
 const WATCH = ['person_skills', 'scenarios', 'klra_assessments', 'klra_positions', 'handover_cohorts', 'external_cover', 'future_skills', 'jta_tasks', 'jta_task_skills'] as unknown as Table[];
@@ -55,6 +56,7 @@ export default function SkillsOutlookPage() {
         <DefLink metric="outlook_gap" />
         <a href="#so-method" className="inline-flex items-center gap-1 text-[12px]"><Icon name="info" size={12} />{t('m07.so.howTitle')}</a>
       </div>
+      <MethodologyBanner dashboard="skills_outlook" />
       <Callout tone="sim" title={t('m07.so.simTitle')}>{t('m07.so.simBody')}</Callout>
       {canCompute ? <Workbench loadReq={loadReq} /> : (
         <>

@@ -168,10 +168,11 @@ export default async function fs25Checks({ db, as, one, count, ok }) {
   await db.query(`update kafaa_engine_cards set inputs_used = (select jsonb_agg(x) from jsonb_array_elements(inputs_used) with ordinality t(x, o) where o <= jsonb_array_length(inputs_used) - 2),
     scoring_functions = scoring_functions[1:cardinality(scoring_functions) - 5], limitations_en = 'x', limitations_ar = 'x', feature = 'x', version = version - 2 where id = 'navigator'`); // FS55 (fsFe3): - 5 and - 2 also take off the rankConcepts append
   const fs63 = readFileSync('supabase/migrations/20261010263001_kafaa_fs63_taxonomy_governance.sql', 'utf8'); // FS55 (fsFe3): the later migration appends rankConcepts to this card once (version + 1)
+  const qa6 = readFileSync('supabase/migrations/20261010269001_kafaa_fs6qa_integration.sql', 'utf8'); // FS wave F integration: the QA migration redefines kafaa_fs63_health after fs63 (shared "taught by" rule); replay it too so the shared database keeps the final body
   await db.exec(upd);
-  await db.exec(fs63);
+  await db.exec(fs63); await db.exec(qa6);
   const once = await cardNow();
   await db.exec(upd);
-  await db.exec(fs63);
+  await db.exec(fs63); await db.exec(qa6);
   ok(same(once, strip([cardSeed], cardCols)[0]) && same(await cardNow(), once), 'the migration\'s guarded card update turns the wave-3 card into the seeded one, and a second run changes nothing');
 }

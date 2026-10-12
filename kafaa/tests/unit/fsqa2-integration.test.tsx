@@ -39,7 +39,7 @@ describe('FS wave B · route registry', () => {
   it('227 routes, and the 15 wave-B routes are registered', async () => {
     const { loadRoutes } = await import('../smoke/routes');
     const R = loadRoutes();
-    expect(R.length).toBe(315); // FS wave E QA: + 27 (FS38-FS40 M31 9, FS41-FS43 M32 7, FS44/FS45 M24 4, FS46-FS48 M22 5, FS49 M08 2). FS wave D QA: + 29 (FS27/FS28 M20 6, FS29/FS30 M34 7, FS31-FS33 M17 7, FS34/FS35 M18 2, FS36/FS37 M29 7). FS wave C QA: + 32 wave-C routes (tests/unit/fsqa3-integration.test.tsx)
+    expect(R.length).toBe(338); // FS wave F QA: + 23 (FS50/FS51 M35 7, FS54/FS55 M16 6, FS56/FS57 M25 3, FS58/FS59 M33 7; FS52/FS53 M07 none). FS wave E QA: + 27 (FS38-FS40 M31 9, FS41-FS43 M32 7, FS44/FS45 M24 4, FS46-FS48 M22 5, FS49 M08 2). FS wave D QA: + 29 (FS27/FS28 M20 6, FS29/FS30 M34 7, FS31-FS33 M17 7, FS34/FS35 M18 2, FS36/FS37 M29 7). FS wave C QA: + 32 wave-C routes (tests/unit/fsqa3-integration.test.tsx)
     const paths = new Set(R.map((r) => r.path));
     for (const p of ['/skills', '/skills/:id', '/skills/frameworks', '/admin/skills/alignments', '/learn/ai-fluency', '/my/ai-fluency', '/my/ai-fluency/check', '/workforce/ai-fluency',
       '/training/ai-fitness/items', '/my/role-2030', '/my/role-2030/tasks', '/careers/roles/:slug/transformation', '/workforce/transformation', '/workforce/transformation/:roleId',

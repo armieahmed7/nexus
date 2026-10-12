@@ -122,7 +122,8 @@ export default async function fs63Checks({ db, count, ok, uid }) {
     const t = async (name) => (await q(`select to_jsonb(x) j from kafaa_${name} x`)).map((r) => r.j);
     return { skills: await t('skills'), courses: await t('courses'), courseSkillLinks: await t('course_skill_links'), pathways: await t('pathways'), standards: await t('qual_standards'),
       adaptiveBanks: await t('adaptive_banks'), adaptiveItems: await t('adaptive_items'), perfTasks: await t('performance_tasks'), twinScenarios: await t('twin_scenarios'), aiDrills: await t('ai_drills'),
-      fitnessAreas: await t('fitness_areas'), profileVersions: await t('role_profile_versions'), roleCompetencies: await t('role_competencies'), taskSkills: await t('jta_task_skills') };
+      fitnessAreas: await t('fitness_areas'), profileVersions: await t('role_profile_versions'), roleCompetencies: await t('role_competencies'), taskSkills: await t('jta_task_skills'),
+      competencies: await t('competencies'), pathwayGaps: await t('pathway_gaps'), externals: await t('external_resources') }; // FS wave F integration (fsqa6): shared taughtBy() inputs
   };
   const hd = await healthData();
   diff = [];

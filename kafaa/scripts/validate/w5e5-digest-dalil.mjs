@@ -15,7 +15,7 @@ export default async function w5e5Checks({ db, as, one, count, ok, uid }) {
   const today = S.meta.demo_today;
   const data = Object.fromEntries(['people', 'qual_records', 'qual_standards', 'licences', 'skill_checkins', 'skill_ratings', 'mentoring_requests', 'mentoring_agreements', 'mentoring_sessions', 'opportunities',
     'opportunity_applications', 'career_conversations', 'refresh_state', 'refresh_prefs', 'enrolments', 'courses', 'person_skills', 'skills', 'role_competencies', 'career_paths', 'career_targets',
-    'engine_settings', 'reco_optouts', 'ojt_logs', 'ojt_eval_requests', 'plant_visits' /* FS wave E integration (FS39 host confirmations) */].map((t) => [t, T[t] ?? []]));
+    'engine_settings', 'reco_optouts', 'ojt_logs', 'ojt_eval_requests', 'plant_visits' /* FS wave E integration (FS39 host confirmations) */, 'roleplay_sessions' /* FS wave F integration (FS59 reviews owed) */].map((t) => [t, T[t] ?? []]));
 
   // ── SQL = TS on a fresh database (earlier checks mutate data)
   const fresh = new PGlite();

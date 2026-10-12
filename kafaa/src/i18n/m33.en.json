@@ -911,7 +911,9 @@
       "unused": "Every criterion is checked by at least one turn.",
       "restricted": "Scenarios never touch plant security.",
       "status": "Status is draft, published or retired."
-    }
+    },
+    "evidenceLabel": "Validated role-play feedback",
+    "evidenceSystem": "Human Skills Studio (reviewer-validated)"
   },
   "wp": {
     "intro": "Problem-solving and role-play practice in aggregate. Any figure naming fewer than 10 people is suppressed and no person is listed.",

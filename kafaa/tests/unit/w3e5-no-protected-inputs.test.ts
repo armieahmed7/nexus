@@ -28,6 +28,9 @@ import { inputFor, previewEvidence, readinessV2 } from '../../src/modules/m21/re
 import { careerFacts } from '../../src/modules/m18/career';
 import { conceptReadiness, transitionEvidence } from '../../src/modules/m18/futureRoles';
 import { FS55_FUNCTIONS } from '../../src/modules/m16/surfaces'; // FS55 (fsFe3): its cards' rankers are checked by tests/unit/fs63-protected-inputs.test.ts
+import { attentionOf, boardInputFromTables, criticalBoard } from '../../src/modules/m35/critical'; // FS wave F QA (fsqa6 cards)
+import { automationProfile, baseFor, inputFromTables, normalizeParams, outlookFamilies, rankAutomation } from '../../src/modules/m07/outlook'; // FS wave F QA (fsqa6 cards)
+import { nextReasons, pickScenario } from '../../src/modules/m33/aps'; // FS wave F QA (fsqa6 cards)
 import { circleMembersView, coachFocus, flReadiness, flReasons, rankCircles, rankOffers, wfnArea } from '../../src/modules/m22/future'; // FS46-FS48 (fsEe4)
 
 type Rows = Record<string, any>[];
@@ -98,6 +101,13 @@ const RUN: Record<string, () => unknown> = {
   // FS48 (fsEe4): the mentoring card v2 lists the network rankings; every participant row carries gender and is never read
   'src/modules/m22/future.ts#rankCircles': () => T.wfn_participants.filter((p) => p.active).map((p) => rankCircles(p as never, T.wfn_circles as never, T.wfn_circle_members as never, wfnArea)),
   'src/modules/m22/future.ts#rankOffers': () => T.wfn_participants.filter((p) => p.active).map((p) => rankOffers(p as never, T.wfn_offers as never, T.wfn_requests as never, NOW, wfnArea)),
+  // FS wave F QA (fsqa6): the cards for the FS50 attention order, the FS52 automation ranking and the FS58 suggested scenario
+  'src/modules/m35/critical.ts#criticalBoard': () => criticalBoard(boardInputFromTables((t) => T[t] ?? []), NOW),
+  'src/modules/m35/critical.ts#attentionOf': () => criticalBoard(boardInputFromTables((t) => T[t] ?? []), NOW).rows.map((r) => attentionOf(trapRow(r as never, 'critical_board') as never)),
+  'src/modules/m07/outlook.ts#automationProfile': () => { const inp = inputFromTables((t: string) => T[t] ?? []); const p = normalizeParams({ automation_adoption: 50 }, outlookFamilies(inp))!; return automationProfile(baseFor(inp, p, true), p); },
+  'src/modules/m07/outlook.ts#rankAutomation': () => { const inp = inputFromTables((t: string) => T[t] ?? []); const p = normalizeParams({ automation_adoption: 50 }, outlookFamilies(inp))!; return rankAutomation(automationProfile(baseFor(inp, p, true), p).families.map((f) => trapRow(f as never, 'automation_families') as never)); },
+  'src/modules/m33/aps.ts#pickScenario': () => T.people.filter((x) => x.kind === 'staff').slice(0, 20).map((x, i) => pickScenario(T.aps_scenarios as never, new Map(T.aps_attempts.filter((a) => a.person_id === x.id).map((a) => [a.scenario_id, 1])), i, i + 7) ?? 'none'),
+  'src/modules/m33/aps.ts#nextReasons': () => T.aps_scenarios.map((sc) => nextReasons(sc as never, T.aps_attempts.filter((a) => a.person_id === ME && a.scenario_id === sc.id).length)),
 };
 const cardFns = [...new Set(S.tables.engine_cards.flatMap((c) => c.scoring_functions as string[]))];
 const tsFns = cardFns.filter((f) => !f.startsWith('sql:') && !FS55_FUNCTIONS.includes(f)); // FS55 (fsFe3): the FS55 cards' rankers have their runners in fs63-protected-inputs

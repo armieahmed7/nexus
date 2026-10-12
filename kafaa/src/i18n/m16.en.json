@@ -1096,17 +1096,18 @@
         "roleOnly": "Used by a role, not taught",
         "orphan": "Orphan"
       },
-      "coverNote": "{n} of {total} live skills are taught by a course, pathway or assessment.",
+      "coverNote": "{n} of {total} live skills are taught by a course, pathway or external resource, or assessed.",
       "ownerTitle": "Reviews due by owner",
       "ownerNone": "No review is due.",
       "taughtTitle": "What counts as taught or used",
       "taught": {
-        "course": "A course that names the skill in its evidence keys, an active course link, or a course whose competencies hold the skill.",
-        "pathway": "A published pathway that develops the skill.",
-        "assessment": "A current qualification standard that assesses the skill.",
+        "course": "A catalogue course (supplier-academy courses excluded) that teaches the skill: it names the skill in its evidence keys, holds the competency of a core skill, or has an active course link. Security skills are never taught here.",
+        "pathway": "A published pathway for the skill whose learning step is filled.",
+        "external": "A published external resource from the curated catalogue that names the skill.",
+        "assessment": "A current qualification standard, an adaptive bank or item, a performance task, a twin or AI drill, or a fitness-check area that assesses the skill.",
         "role": "A published role profile that requires the skill (career-path-only roles excluded)."
       },
-      "taughtShared": "The same definition is used by the curriculum-gap view, so both pages agree.",
+      "taughtShared": "Courses, pathways and external resources follow the exact rule of the curriculum coverage scorer, so both pages agree on what the catalogue teaches.",
       "drillTitle": "Skills",
       "drillNone": "No skill in this list.",
       "filter": {
@@ -1126,7 +1127,8 @@
         "course": "Course",
         "pathway": "Pathway",
         "assessment": "Assessment",
-        "role": "Role"
+        "role": "Role",
+        "external": "External resource"
       },
       "review": {
         "none": "No review date",
@@ -1142,7 +1144,7 @@
   },
   "mb": {
     "title": "The skills catalogue changed on {date} ({n} methodology changes in the window)",
-    "body": "Counts and levels on this page may move compared with earlier periods. Changes in the last {days} days: {kinds}.",
+    "body": "Counts and levels on this page may move compared with earlier periods. Kinds of change in the last {days} days: {kinds}.",
     "sep": ", ",
     "latest": "Latest",
     "link": "See the change log"

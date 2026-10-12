@@ -65,7 +65,7 @@ const bi = (x: string) => ({ en: x, ar: x });
 
 const digestData = () => Object.fromEntries(['people', 'qual_records', 'qual_standards', 'licences', 'skill_checkins', 'skill_ratings', 'mentoring_requests', 'mentoring_agreements', 'mentoring_sessions',
   'opportunities', 'opportunity_applications', 'career_conversations', 'refresh_state', 'refresh_prefs', 'enrolments', 'courses', 'person_skills', 'skills', 'role_competencies', 'career_paths', 'career_targets',
-  'engine_settings', 'reco_optouts', 'ojt_logs', 'ojt_eval_requests', 'plant_visits'].map((t) => [t, T[t] ?? []])) as unknown as DigestData;
+  'engine_settings', 'reco_optouts', 'ojt_logs', 'ojt_eval_requests', 'plant_visits', 'roleplay_sessions' /* FS wave F integration */].map((t) => [t, T[t] ?? []])) as unknown as DigestData;
 const W = Object.fromEntries(Object.entries(S.tables.engine_settings.find((s) => s.id === 'recommend')!.weights).filter(([, v]) => typeof v === 'number')) as Record<string, number>;
 const TR = (): TrData => ({ roles: T.job_roles as never, roleComps: T.role_competencies as never, competencies: T.competencies as never, skills: T.skills as never, courses: T.courses as never, links: T.course_skill_links as never, packs: T.course_pack_items as never, edges: T.career_paths as never, weights: W });
 const translation = () => { const tpl = (T.occupation_templates as unknown as OccupationTemplate[])[0]; return translate(TR(), heldOf(tpl), tpl.industry); };

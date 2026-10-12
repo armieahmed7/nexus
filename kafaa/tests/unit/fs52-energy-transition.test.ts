@@ -157,7 +157,7 @@ describe('FS41 · cecMine (Own) and cecStats (Agg) on the LocalBackend', () => {
     expect(p).toEqual(cecProfile(p.person_id, 'corporate', comps, targets, states, names));
     expect(p.level).toBe(2);
     expect(p.status).toBe('met');
-    await as('k-ro');
+    await as('nse'); // FS wave F QA: k-ro now holds validated role-play evidence on two transversal skills (FS59), so a persona with no counted evidence is used
     const ro = (await b.rpc.cecMine())!;
     expect(ro.level).toBe(0);
     expect(ro.grow.length).toBeGreaterThan(0);

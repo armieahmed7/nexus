@@ -54,7 +54,7 @@ export default async function fsqa5Checks({ db, as, ok, uid }) {
   // 2. digest approvals for hosts
   const data = Object.fromEntries(['people', 'qual_records', 'qual_standards', 'licences', 'skill_checkins', 'skill_ratings', 'mentoring_requests', 'mentoring_agreements', 'mentoring_sessions', 'opportunities',
     'opportunity_applications', 'career_conversations', 'refresh_state', 'refresh_prefs', 'enrolments', 'courses', 'person_skills', 'skills', 'role_competencies', 'career_paths', 'career_targets',
-    'engine_settings', 'reco_optouts', 'ojt_logs', 'ojt_eval_requests', 'plant_visits'].map((t) => [t, T[t] ?? []]));
+    'engine_settings', 'reco_optouts', 'ojt_logs', 'ojt_eval_requests', 'plant_visits', 'roleplay_sessions' /* FS wave F integration (fsqa6) */].map((t) => [t, T[t] ?? []]));
   const hosts = [...new Set(T.plant_visits.map((v) => v.host_person_id))].sort();
   const spread = T.people.filter((p) => p.kind === 'staff').map((p) => p.id).sort().filter((_, i) => i % 7 === 0);
   let dd = 0, dn = 0;
@@ -128,7 +128,7 @@ export default async function fsqa5Checks({ db, as, ok, uid }) {
     select 'r' || (to_jsonb(r) - 'built_at')::text x from kafaa_digest_runs r where id = any($1) union all
     select 'n' || jsonb_build_array(n.id, n.title_en, n.title_ar, n.body_en, n.body_ar)::text from kafaa_notifications n where id = any($2)) s`, [runIds, ntIds])).d;
   const final = await dig();
-  const noPv = { ...data, plant_visits: [] };
+  const noPv = { ...data, plant_visits: [], roleplay_sessions: [] }; // the wave-E state had neither the plant-visit (fs5qa) nor the role-play (fs6qa) approvals
   const prefsBy = new Map(T.digest_prefs.map((p) => [p.person_id, p]));
   await db.exec('begin');
   try {
@@ -141,9 +141,11 @@ export default async function fsqa5Checks({ db, as, ok, uid }) {
       await q(`update kafaa_notifications set title_en = $2, title_ar = $3, body_en = $4, body_ar = $5 where id = $1`, [r.notification_id, n.title_en, n.title_ar, n.body_en, n.body_ar]);
     }
     const live = await dig();
-    await db.exec(sql);
+    // FS wave F integration: the fs6qa replay follows (a wave-F role-play approval joins one of these digests), as the live bundle applies it
+    const qa6 = readFileSync('supabase/migrations/20261010269001_kafaa_fs6qa_integration.sql', 'utf8');
+    await db.exec(sql); await db.exec(qa6);
     const once = await dig();
-    await db.exec(sql);
+    await db.exec(sql); await db.exec(qa6);
     ok(live !== final && once === final && (await dig()) === final, 'forward proof: from the digests the engineer seeds left live, the QA migration reaches the seed (2 digest runs, 2 notices); a second run changes nothing');
   } finally { await db.exec('rollback'); }
 

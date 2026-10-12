@@ -306,7 +306,9 @@ describe('FS25/FS26 local RPC flows and RBAC', () => {
 
 describe('FS25/FS26 routes and i18n', () => {
   it('six routes with the right guards; EN and AR complete; every page shows its benchmark chips', () => {
-    expect(routes.map((r) => r.id)).toEqual(['learn-core-skills', 'learn-core-skill', 'my-core-skills', 'my-core-practice', 'workforce-core-skills', 'training-sjt-items']);
+    expect(routes.map((r) => r.id)).toEqual(['learn-core-skills', 'learn-core-skill', 'my-core-skills', 'my-core-practice', 'workforce-core-skills', 'training-sjt-items',
+      // FS wave F QA: + 7 M33 routes from FS58/FS59 (fsFe5)
+      'my-problem-solving', 'training-aps-scenarios', 'learn-role-play', 'my-role-play', 'my-role-play-scenario', 'training-role-play', 'workforce-core-practice']);
     expect(routes.find((r) => r.id === 'learn-core-skills')!.guard).toEqual({});
     expect(routes.find((r) => r.id === 'my-core-practice')!.guard.grant).toEqual({ res: 'skills_profile', levels: ['Own'] });
     expect(routes.find((r) => r.id === 'workforce-core-skills')!.guard.grant).toEqual({ res: 'skills_profile', levels: ['Agg'] });

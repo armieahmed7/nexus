@@ -7,6 +7,7 @@ import { useQuery, useRepo } from '../../data';
 import { L, useFormat, usePick, useT } from '../../i18n';
 import { BASE_YEAR, HORIZON, SCENARIOS, WORK_LEVEL, type ForecastResult, type LeverParam, type ScenarioKey, type SharedParam, type SkillForecast } from './forecast';
 import type { ProgressStatus } from './critical';
+import { MethodologyBanner } from '../m16/MethodologyBanner'; // FS54 -> FS51 (FS wave F integration)
 
 export type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -69,12 +70,16 @@ export function Year({ y }: { y: number | string | null | undefined }) {
 export function SimLabels({ method }: { method?: string }) {
   const t = useT();
   return (
+    <>
+    {/* FS54 -> FS51 (FS wave F integration): the catalogue methodology-change banner, next to the forecast's own method banner */}
+    <MethodologyBanner dashboard="skill_forecasts" />
     <div className="flex flex-wrap items-center gap-2 text-[12.5px] text-ink-2" data-testid="m35-sim-labels">
       <SimChip />
       <span>{t('m35.fc.labels', { n: 10 })}</span>
       {method && <span className="num rounded bg-sunken px-1.5 py-0.5 text-[11.5px]">{method}</span>}
       <L to="/workforce/skill-forecasts/method#definitions" className="inline-flex items-center gap-1 text-[12px]" data-testid="m35-definitions-link"><Icon name="info" size={12} />{t('m35.fc.definitions')}</L>
     </div>
+    </>
   );
 }
 /** The methodology banner: a method or catalogue change voids year-on-year comparison. */

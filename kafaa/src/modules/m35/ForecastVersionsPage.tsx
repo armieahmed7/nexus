@@ -64,8 +64,8 @@ function Versions({ rows, skillName }: { rows: Row[]; skillName: (id: string) =>
       <Section title={t('m35.ver.compare')} description={t('m35.ver.compareIntro')}>
         <div className="mb-3 flex flex-wrap items-end gap-3">
           {([['a', a, setA], ['b', b, setB]] as const).map(([k, v, set]) => (
-            <label key={k} className="flex flex-col gap-1 text-[13px]"><span className="font-semibold">{t(`m35.ver.pick.${k}`)}</span>
-              <select className="input w-auto" value={v} onChange={(e) => set(e.target.value)} data-testid={`m35-ver-pick-${k}`}>
+            <label key={k} className="flex min-w-0 max-w-full flex-col gap-1 text-[13px]"><span className="font-semibold">{t(`m35.ver.pick.${k}`)}</span>
+              <select className="input w-auto max-w-full" value={v} onChange={(e) => set(e.target.value)} data-testid={`m35-ver-pick-${k}`}>
                 {sorted.map((r) => <option key={r.id} value={r.id}>{`${r.cycle} v${r.version} · ${r.name}`}</option>)}
               </select>
             </label>

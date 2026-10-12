@@ -768,3 +768,79 @@ for (const s of SET_FSE) {
     await page.screenshot({ path: join(SHOTS_FSE, `${s.name}.png`), fullPage: false });
   });
 }
+
+// FS wave F (FS50-FS59): every new page (and the pages the wave-F wiring touched) in Arabic RTL and at 390 px, plus the feature set
+// saved to KAFAA_SHOTS_FSF. LOCAL backend (openFse): the wave-F QA session had no live access; rerun in supabase mode after the live apply.
+const FSF_PAGES: Shot[] = [
+  { name: 'fsf-critical-skills', path: '/workforce/critical-skills', persona: 'chco' },
+  { name: 'fsf-critical-skill', path: '/workforce/critical-skills/cs-sk-fs-ai-verify', persona: 'chco' },
+  { name: 'fsf-skill-forecasts', path: '/workforce/skill-forecasts', persona: 'training-mgr' },
+  { name: 'fsf-skill-forecast', path: '/workforce/skill-forecasts/skills/sk-fs-ai-verify', persona: 'k-hr-analyst' },
+  { name: 'fsf-forecast-versions', path: '/workforce/skill-forecasts/versions', persona: 'chco' },
+  { name: 'fsf-generations', path: '/workforce/skill-forecasts/generations', persona: 'training-mgr' },
+  { name: 'fsf-forecast-method', path: '/workforce/skill-forecasts/method', persona: 'k-auditor' },
+  { name: 'fsf-skills-outlook', path: '/workforce/skills-outlook', persona: 'chco' },
+  { name: 'fsf-skills-outlook-manager', path: '/workforce/skills-outlook', persona: 'sro' },
+  { name: 'fsf-workforce-overview', path: '/workforce', persona: 'sro' },
+  { name: 'fsf-skills-changes', path: '/skills/changes' },
+  { name: 'fsf-skills-change-propose', path: '/skills/changes/propose?kind=add', persona: 'k-ro' },
+  { name: 'fsf-skills-council', path: '/admin/skills-council', persona: 'training-mgr' },
+  { name: 'fsf-skills-health', path: '/admin/skills-health', persona: 'chco' },
+  { name: 'fsf-datasheet', path: '/skills/datasheet' },
+  { name: 'fsf-model-risk', path: '/admin/ai-transparency/model-risk', persona: 'k-auditor' },
+  { name: 'fsf-ai-transparency', path: '/admin/ai-transparency', persona: 'k-admin' },
+  { name: 'fsf-skill-change', path: '/training/skill-change', persona: 'chco' },
+  { name: 'fsf-effectiveness-course', path: '/training/effectiveness/c-hu', persona: 'training-mgr' },
+  { name: 'fsf-coverage', path: '/training/coverage', persona: 'training-mgr' },
+  { name: 'fsf-coverage-backlog', path: '/training/coverage/backlog', persona: 'training-mgr' },
+  { name: 'fsf-problem-solving', path: '/my/core-skills/problem-solving', persona: 'k-lo-trainee' },
+  { name: 'fsf-problem-solving-run', path: '/my/core-skills/problem-solving', persona: 'k-lo-trainee', then: async (p) => { await p.locator('[data-testid="m33-aps-scenario"][data-id="aps-os-001"] [data-testid="m33-aps-start"]').click(); } },
+  { name: 'fsf-aps-scenarios', path: '/training/aps/scenarios', persona: 'training-mgr' },
+  { name: 'fsf-role-play-library', path: '/learn/role-play', persona: 'nse' },
+  { name: 'fsf-my-role-play', path: '/my/role-play?tab=history', persona: 'k-ro' },
+  { name: 'fsf-role-play-session', path: '/my/role-play/rp-st-01', persona: 'qc-inspector', then: async (p) => { await p.locator('[data-testid="m33-rp-start"]').click(); } },
+  { name: 'fsf-training-role-play', path: '/training/role-play', persona: 'training-mgr' },
+  { name: 'fsf-workforce-practice', path: '/workforce/core-skills/practice', persona: 'chco' },
+  { name: 'fsf-my-digest', path: '/my', persona: 'training-mgr' },
+];
+for (const s of FSF_PAGES) {
+  test(`rtl ${s.name}`, async ({ page }) => {
+    const w = watchErrors(page);
+    await openFse(page, { ...s, ar: true });
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
+    expect(await overflowX(page), 'no horizontal scroll').toBeLessThanOrEqual(1);
+    expect(await textIssues(page)).toEqual([]);
+    await page.screenshot({ path: join(OUT, 'rtl', `${s.name}.png`), fullPage: true });
+    expect(w.take()).toEqual([]);
+  });
+  test(`mobile ${s.name}`, async ({ page }) => {
+    const w = watchErrors(page);
+    await openFse(page, { ...s, mobile: true });
+    expect(await overflowX(page), `${s.name}: page scrolls sideways at 390 px`).toBeLessThanOrEqual(1);
+    expect(await textIssues(page)).toEqual([]);
+    await page.screenshot({ path: join(OUT, 'mobile', `${s.name}.png`), fullPage: true });
+    expect(w.take()).toEqual([]);
+  });
+}
+const SHOTS_FSF = process.env.KAFAA_SHOTS_FSF || 'test-results/shots_fsF';
+mkdirSync(SHOTS_FSF, { recursive: true });
+const SET_FSF: Shot[] = [
+  { name: '01-critical-skills-register-en', path: '/workforce/critical-skills', persona: 'chco' },
+  { name: '02-skill-forecast-bands-en', path: '/workforce/skill-forecasts/skills/sk-fs-ai-verify', persona: 'k-hr-analyst' },
+  { name: '03-outlook-automation-en', path: '/workforce/skills-outlook', persona: 'chco', then: async (p) => { await p.locator('[data-testid="m07-au-card"]').scrollIntoViewIfNeeded(); } },
+  { name: '04-market-lines-en', path: '/workforce/skills-outlook', persona: 'chco', then: async (p) => { await p.locator('[data-testid="m07-mk-panel-skills_outlook"]').scrollIntoViewIfNeeded(); } },
+  { name: '05-skills-council-en', path: '/admin/skills-council', persona: 'training-mgr' },
+  { name: '06-skills-datasheet-en', path: '/skills/datasheet' },
+  { name: '07-coverage-whatif-en', path: '/training/coverage', persona: 'training-mgr', then: async (p) => { await p.locator('[data-testid="m25-cov-whatif"]').scrollIntoViewIfNeeded(); } },
+  { name: '08-problem-solving-en', path: '/my/core-skills/problem-solving', persona: 'k-lo-trainee' },
+  { name: '09-role-play-library-ar', path: '/learn/role-play', persona: 'nse', ar: true },
+  { name: '10-skill-change-mobile', path: '/training/skill-change', persona: 'chco', mobile: true },
+];
+for (const s of SET_FSF) {
+  test(`shot fsf ${s.name}`, async ({ page }) => {
+    if (!s.mobile) await page.setViewportSize({ width: 1440, height: 900 });
+    await openFse(page, s);
+    await page.screenshot({ path: join(SHOTS_FSF, `${s.name}.png`), fullPage: false });
+  });
+}

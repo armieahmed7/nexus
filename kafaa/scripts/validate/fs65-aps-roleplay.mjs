@@ -220,8 +220,9 @@ export default async function fs65Checks({ db, one, as, ok, uid }) {
     }
     ok(leak === 0, 'acceptance FS59: feedback history is visible only to its owner: line managers, HR, the training manager (even as reviewer), admins, auditors and instructors read none of it');
     const readers = await q(`select proname from pg_proc where prosrc ilike '%kafaa_aps_attempts%' or prosrc ilike '%kafaa_roleplay_sessions%' order by 1`);
-    ok(readers.every((r) => /^kafaa_(aps_|rp_|start_aps|submit_aps|save_aps|start_roleplay|roleplay_|request_roleplay|withdraw_roleplay|attach_roleplay|save_roleplay)/.test(r.proname)),
-      `only FS58/FS59 functions read the practice tables (${readers.length}); no talent-review or qualification function does`);
+    // FS wave F integration (fsqa6): the F36 digest gatherer kafaa_dg_gather also reads kafaa_roleplay_sessions (reviews owed to me by name); it is not a talent or qualification function
+    ok(readers.every((r) => r.proname === 'kafaa_dg_gather' || /^kafaa_(aps_|rp_|start_aps|submit_aps|save_aps|start_roleplay|roleplay_|request_roleplay|withdraw_roleplay|attach_roleplay|save_roleplay)/.test(r.proname)),
+      `only FS58/FS59 functions (and the F36 digest gatherer) read the practice tables (${readers.length}); no talent-review or qualification function does`);
 
     // ── RPC flows (rolled back)
     const ev0 = Number((await q('select count(*)::int n from kafaa_skill_evidence'))[0].n);

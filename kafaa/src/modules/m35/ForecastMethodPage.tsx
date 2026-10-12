@@ -5,6 +5,7 @@ import { Page, Section, Callout, SourceLink, BenchmarkChips, SimChip, KeyValue }
 import { L, useFormat, useT } from '../../i18n';
 import { DEFAULTS, LEVER_LIMITS, METHOD, PLANT_LIFE, SCENARIOS, SHARED_LIMITS, type LeverParam, type SharedParam } from './forecast';
 import { useParamFormat } from './ui';
+import { MethodologyBanner } from '../m16/MethodologyBanner'; // FS54 -> FS51 (FS wave F integration)
 
 const TERMS = ['simulated', 'pe', 'working', 'demand', 'supply', 'band', 'gap', 'mix', 'suppressed', 'pace', 'advance', 'development', 'generations', 'register'];
 const STEPS = ['scope', 'demand', 'phase', 'uplift', 'supply', 'develop', 'suppress', 'generations', 'versions'];
@@ -17,6 +18,7 @@ export default function ForecastMethodPage() {
     <Page title={t('m35.routes.workforce-skill-forecast-method.title')} intro={t('m35.met.intro')} wide eyebrow={<div className="flex min-w-0 max-w-full flex-wrap items-center gap-2"><BenchmarkChips feature="FS51" /><SimChip /></div>}
       actions={<L to="/workforce/skill-forecasts" className="btn-ghost btn-sm no-underline">{t('m35.fcd.back')}</L>}>
       <div className="space-y-6" data-testid="m35-method">
+        <MethodologyBanner dashboard="skill_forecasts" />
         <Section id="definitions" title={t('m35.met.definitions')}>
           <dl className="grid grid-cols-1 gap-3 md:grid-cols-2" data-testid="m35-met-terms">
             {TERMS.map((k) => (

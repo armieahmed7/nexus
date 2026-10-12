@@ -1,0 +1,90 @@
+{
+  "wave": "F",
+  "wave_digit": 6,
+  "branch": "fsF-integration-qa",
+  "generated_on": "2026-10-12",
+  "base_ref": "origin/fsE-integration-qa",
+  "demo_day": "2026-10-08",
+  "max_kb": 60,
+  "out": "../docs/kafaa/ref/live_apply/waveF",
+  "migrations": [
+    {
+      "file": "20261010261001_kafaa_fs61_strategy_forecasts.sql",
+      "part": "kafaa_fs61_strategy_forecasts"
+    },
+    {
+      "file": "20261010262001_kafaa_fs62_outlook_automation.sql",
+      "part": "kafaa_fs62_outlook_automation"
+    },
+    {
+      "file": "20261010263001_kafaa_fs63_taxonomy_governance.sql",
+      "part": "kafaa_fs63_taxonomy_governance"
+    },
+    {
+      "file": "20261010264001_kafaa_fs64_skill_change_coverage.sql",
+      "part": "kafaa_fs64_skill_change_coverage"
+    },
+    {
+      "file": "20261010265001_kafaa_fs65_aps_roleplay.sql",
+      "part": "kafaa_fs65_aps_roleplay"
+    },
+    {
+      "file": "20261010269001_kafaa_fs6qa_integration.sql",
+      "part": "kafaa_fs6qa_integration"
+    }
+  ],
+  "seed_first": [
+    "skill_forecasts",
+    "critical_skills",
+    "aps_scenarios",
+    "roleplay_scenarios"
+  ],
+  "evidence_ref_tables": [
+    "roleplay_sessions"
+  ],
+  "digests": [
+    {
+      "label": "kafaa_skill_evidence (wave-F evidence)",
+      "table": "skill_evidence",
+      "where": "ref_table = 'roleplay_sessions'"
+    },
+    {
+      "label": "kafaa_engine_cards (8 F24 + 23 FS55 + 3 wave-F cards)",
+      "table": "engine_cards",
+      "where": "true"
+    },
+    {
+      "label": "kafaa_skills (unchanged by wave F; FS54 retires through the FS02 guard)",
+      "table": "skills",
+      "where": "true"
+    },
+    {
+      "label": "kafaa_skill_outlooks (unchanged: adoption 0 = stored)",
+      "table": "skill_outlooks",
+      "where": "true"
+    },
+    {
+      "label": "kafaa_pathway_gaps (unchanged by wave F)",
+      "table": "pathway_gaps",
+      "where": "true"
+    },
+    {
+      "label": "kafaa_notifications (FS59 role-play notices)",
+      "table": "notifications",
+      "where": "kind = 'roleplay'"
+    },
+    {
+      "label": "kafaa_digest_runs (FS59 replay)",
+      "table": "digest_runs",
+      "where": "id in ('dg:p-k-instructor:2026-W38', 'dg:p-k-instructor:2026-W39', 'dg:p-sq-lead:2026-W38', 'dg:p-sq-lead:2026-W39', 'dg:p-sq-lead:2026-W40', 'dg:p-sq-lead:2026-W41', 'dg:p-training-mgr:2026-W41')"
+    },
+    {
+      "label": "kafaa_notifications (FS59 digest replay)",
+      "table": "notifications",
+      "where": "id in ('nt-dg-p-k-instructor-2026-W38', 'nt-dg-p-k-instructor-2026-W39', 'nt-dg-p-sq-lead-2026-W38', 'nt-dg-p-sq-lead-2026-W39', 'nt-dg-p-sq-lead-2026-W40', 'nt-dg-p-sq-lead-2026-W41', 'nt-dg-p-training-mgr-2026-W41')"
+    }
+  ],
+  "pre_state": "**Pre-wave state: the state AFTER the wave-E bundle.** Wave F is stacked on wave E (`fsE-integration-qa`): apply `docs/kafaa/ref/live_apply/waveE/` first and check it against `waveE/EXPECTED.md`. The md5s \"before wave F\" below are the wave-E end state (for example `kafaa_dg_gather` `b5852630`, `kafaa_skill_states_v2` `b1634eba`, `kafaa_skills_apply` `9da9fe27`, as listed after the wave-E bundle). The PGlite dry run started from `origin/fsE-integration-qa`'s migrations and seed, applied all 33 parts twice and found every md5 and digest below equal.",
+  "notes": "Notes on the parts. **Pre-wave state:** this bundle starts from the state AFTER the wave-E bundle (`docs/kafaa/ref/live_apply/waveE/`, checked against `waveE/EXPECTED.md`); apply and verify wave E first. The dry run loaded `origin/fsE-integration-qa`'s migrations and seed into PGlite as that state. **Shared redefinitions:** the fs62 parts redefine `kafaa_so_normalize`, `kafaa_so_project`, `kafaa_so_compute`, `kafaa_so_for` (from the w5e4 bodies, adoption 0 = today's outlooks); `kafaa_so_base` is not touched. The fs65 parts hold the final `kafaa_skill_states_v2` / `kafaa_skills_apply` (the wave-E union plus `'roleplay_sessions'`); the fs6qa part does not restate them. The fs63 parts add four columns to `kafaa_engine_cards`, insert the FS55 cards on conflict do nothing and reconcile the live experts / marketplace / mentoring / rotations cards through guarded updates of their content columns (no removals; version and last change untouched). The fs6qa part redefines `kafaa_fs63_health` (one taught-by rule with FS57) and `kafaa_dg_gather` (role-play reviews owed), inserts the three wave-F engine cards on conflict do nothing, and replays seven digests and their notices with updates guarded on the exact wave-E values. **Seed rows** load with `kafaa.seeding` on, forecasts before register rows before reviews, scenarios before attempts and sessions, the 26 role-play evidence rows and 19 role-play notices with the rest; the last part replays `kafaa_skills_apply` for the people with role-play evidence. No new policy resource or grant: no `kafaa_policy_matrix` rows to insert. The FS17 gap backlog, the FS30 credit ledger and the five stored outlooks are unchanged by wave F.",
+  "after": "## 5. After the checks\n\n- Live tables touched by E2E journeys can hold extra rows (handover section 6): compare `person_skills`, digests and notifications for the listed ids or people only.\n- If a replayed digest differs only for a person who used the live site since the seed was loaded, record it rather than forcing it (the guarded updates leave such a row alone; no row is ever removed).\n- Then merge `fsE-integration-qa` (wave E) and `fsF-integration-qa` (wave F, retargeted to `main` once wave E is merged) to `main` with the go-ahead, and run the full route sweep in supabase mode (handover 3.11)."
+}

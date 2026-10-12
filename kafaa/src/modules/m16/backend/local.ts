@@ -37,6 +37,7 @@ export function localHealthData(b: LocalBackend): HealthData {
     skills: raw('skills') as unknown as SkillLite[], courses: raw('courses'), courseSkillLinks: raw('course_skill_links'), pathways: raw('pathways'), standards: raw('qual_standards'),
     adaptiveBanks: raw('adaptive_banks'), adaptiveItems: raw('adaptive_items'), perfTasks: raw('performance_tasks'), twinScenarios: raw('twin_scenarios'), aiDrills: raw('ai_drills'),
     fitnessAreas: raw('fitness_areas'), profileVersions: raw('role_profile_versions'), roleCompetencies: raw('role_competencies'), taskSkills: raw('jta_task_skills'),
+    competencies: raw('competencies'), pathwayGaps: raw('pathway_gaps'), externals: raw('external_resources'), // FS wave F integration: shared taughtBy() inputs
   };
 }
 /** FS55: the rows the surface fairness snapshot reads. */
