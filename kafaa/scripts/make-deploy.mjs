@@ -30,7 +30,9 @@ writeFileSync(`${OUT}/netlify.toml`, '[build]\n  publish = "."\n  command = ""\n
 
 const redirects = readFileSync(`${OUT}/_redirects`, 'utf8');
 const rules = redirects.split('\n').map((l) => l.trim().replace(/\s+/g, ' '));
-for (const line of ['/ /kafaa/ 302', '/kafaa /kafaa/ 301', '/kafaa/.well-known/* /.well-known/:splat 200!', '/kafaa/* /kafaa/index.html 200']) {
+const SPA = '/kafaa/* /kafaa/index.html 200';
+const ASSETS_404 = '/kafaa/assets/* /kafaa/asset-missing.txt 404';
+for (const line of ['/ /kafaa/ 302', '/kafaa /kafaa/ 301', '/kafaa/.well-known/* /.well-known/:splat 200!', ASSETS_404, SPA]) {
   if (!rules.includes(line)) {
     console.error(`make-deploy: _redirects is missing "${line}"`);
     process.exit(1);
@@ -39,6 +41,16 @@ for (const line of ['/ /kafaa/ 302', '/kafaa /kafaa/ 301', '/kafaa/.well-known/*
 // Netlify applies the first matching rule: the issuer rewrite must sit above the SPA fallback.
 if (rules.indexOf('/kafaa/.well-known/* /.well-known/:splat 200!') > rules.indexOf('/kafaa/* /kafaa/index.html 200')) {
   console.error('make-deploy: the /kafaa/.well-known/* rewrite must come before the /kafaa/* SPA rule in _redirects');
+  process.exit(1);
+}
+// A chunk of an earlier deploy must 404 (the app then reloads once, src/shell/chunkReload.ts), not fall through to the SPA rule:
+// index.html served as 200 text/html for a .js chunk is rejected as a module script and the page stays broken.
+if (rules.indexOf(ASSETS_404) > rules.indexOf(SPA)) {
+  console.error('make-deploy: the /kafaa/assets/* 404 rule must come before the /kafaa/* SPA rule in _redirects');
+  process.exit(1);
+}
+if (!existsSync(`${OUT}/kafaa/asset-missing.txt`)) {
+  console.error(`make-deploy: ${OUT}/kafaa/asset-missing.txt (the body of the /kafaa/assets/* 404) is missing`);
   process.exit(1);
 }
 const html = readFileSync(`${OUT}/kafaa/index.html`, 'utf8');

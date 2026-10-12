@@ -107,13 +107,5 @@ export function syncState(i: { status: string; last_success: string; threshold_h
   return i.status === 'degraded' ? 'degraded' : 'ok';
 }
 
-// ───────────── M12 contact routing (role mailboxes, never a named person)
-export const CONTACT_ROUTES: Record<string, string> = {
-  careers: 'Careers team (role mailbox)',
-  programmes: 'Talent programmes team (role mailbox)',
-  suppliers: 'Supplier development (role mailbox)',
-  universities: 'University partnerships (role mailbox)',
-  media: 'Media relations (role mailbox)',
-  accessibility: 'Digital accessibility (role mailbox)',
-  other: 'General enquiries (role mailbox)',
-};
+// ───────────── M12 contact routing (role mailboxes, never a named person): ./contact.ts (import-free, so PGlite validators load it)
+export { CONTACT_ROUTES, CONTACT_LIMITS, contactRequestProblems } from './contact';

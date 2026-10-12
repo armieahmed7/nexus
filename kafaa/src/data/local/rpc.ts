@@ -426,12 +426,26 @@ export class LocalRpc implements Rpc {
   }
 
   // ───────────── Public and aggregate reads
+  // Audit 2026-10-12: rate-limited and audited like the badge check (SQL: 20261012155001_kafaa_audit_verify_certificate.sql).
   async verifyCertificate(no: string): Promise<CertificateCheck> {
     await this.b.whenReady();
-    const c = this.b.raw('certificates').find((x) => x.id.toUpperCase() === no.trim().toUpperCase());
-    if (!c) return { found: false };
+    const key = String(no ?? '').trim().toUpperCase().slice(0, 64);
+    const since = new Date(Date.now() - 60_000).toISOString();
+    const recent = (this.b.raw('audit_events') as RowOf<'audit_events'>[]).filter((a) => a.action === 'certificate.verify' && String(a.ts) > since);
+    if (recent.filter((a) => a.entity_id === key).length >= 20 || recent.length >= 600) {
+      const message = 'Too many verification requests: try again in a minute';
+      await this.refuse('certificate.verify', 'certificates', key || null, 'rate_limited', message);
+      return { found: false, code: 'rate_limited', message };
+    }
+    const c = key ? this.b.raw('certificates').find((x) => x.id.toUpperCase() === key) : undefined;
+    if (!c) {
+      await this.refuse('certificate.verify', 'certificates', key || null, 'not_found', "No Kafa'a certificate has this number");
+      return { found: false };
+    }
     const co = this.b.rawGet('courses', c.course_id);
     const status = c.status === 'valid' && c.valid_to && c.valid_to < todayIso() ? 'expired' : c.status;
+    await this.b.audit('certificate.verify', 'certificates', key, 'ok', status, 'not_applicable', null, null);
+    this.b.changed(['audit_events'] as never);
     return { found: true, certificate_no: c.id, status, course_code: co?.code, course_en: co?.title_en, course_ar: co?.title_ar, issued_on: c.issued_on, valid_to: c.valid_to ?? null, holder_initials: c.holder_initials, note: "Internal Kafa'a course certificate. Not an operator licence." };
   }
   async releaseTargets() {

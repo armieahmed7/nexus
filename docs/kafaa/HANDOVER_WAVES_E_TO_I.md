@@ -171,6 +171,7 @@ deploy_out/
   _redirects     / /kafaa/ 302
                  /kafaa /kafaa/ 301
                  /kafaa/.well-known/* /.well-known/:splat 200!     (issuer keys; must stay above the SPA rule)
+                 /kafaa/assets/* /kafaa/asset-missing.txt 404     (stale chunks 404 so open tabs reload once; above the SPA rule)
                  /kafaa/* /kafaa/index.html 200
   netlify.toml   [build] publish = "."  command = ""
   .well-known/kafaa-issuer.json         (Netlify does not publish nested dot-folders such as /kafaa/.well-known/)

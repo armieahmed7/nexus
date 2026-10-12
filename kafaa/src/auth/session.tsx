@@ -11,6 +11,7 @@ import type { Identity, Repository, PeopleRow } from '../data/types';
 import { grantsFor, type Level, type PlatformRole, type Resource, ROLE_LABELS } from './policy';
 import { activeNexusPersona, signInNexusPersona, signOutNexus } from './nexusSession';
 import personasJson from '../seed/personas.json';
+import { hardReload, isChunkLoadError, reloadOnce } from '../shell/chunkReload';
 
 export interface PersonaCard {
   persona: string;
@@ -26,7 +27,11 @@ export interface PersonaCard {
 export const PERSONAS = personasJson as unknown as PersonaCard[];
 
 export interface Session {
-  status: 'loading' | 'anon' | 'signed_in';
+  /** 'error': the session could not be resolved (e.g. the local-demo seed chunk failed to load); see `error` and `retry`. */
+  status: 'loading' | 'anon' | 'signed_in' | 'error';
+  error: Error | null;
+  /** Resolve the session again (a full reload when the failure was a stale chunk after a deploy). */
+  retry: () => void;
   backend: BackendKind;
   persona: PersonaCard | null;
   identity: Identity;
@@ -61,13 +66,30 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [identity, setIdentity] = useState<Identity>(ANON);
   const [person, setPerson] = useState<PeopleRow | null>(null);
   const [status, setStatus] = useState<Session['status']>('loading');
+  const [error, setError] = useState<Error | null>(null);
+  const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
     let alive = true;
     setStatus('loading');
+    setError(null);
     repo.setPersona(personaId);
     (async () => {
-      const who = await repo.whoami().catch(() => ANON);
+      let who: Identity;
+      try {
+        who = await repo.whoami();
+      } catch (e) {
+        // Never fall back to "signed out" silently: a person who chose a persona would see the sign-in gate with no reason.
+        if (!alive) return;
+        const err = e instanceof Error ? e : new Error(String(e));
+        console.error('[kafaa] could not resolve the session', err);
+        if (isChunkLoadError(err) && reloadOnce()) return;
+        setIdentity(ANON);
+        setPerson(null);
+        setError(err);
+        setStatus('error');
+        return;
+      }
       const me = who.personId ? await repo.get('people', who.personId).catch(() => null) : null;
       if (!alive) return;
       setIdentity(who);
@@ -77,7 +99,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     return () => {
       alive = false;
     };
-  }, [repo, personaId]);
+  }, [repo, personaId, attempt]);
+
+  const retry = useCallback(() => {
+    if (isChunkLoadError(error)) hardReload();
+    else setAttempt((n) => n + 1);
+  }, [error]);
 
   // Pick up NEXUS role-card changes made in another tab (supabase mode).
   useEffect(() => {
@@ -148,6 +175,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     const roles = identity.roles;
     return {
       status,
+      error,
+      retry,
       backend,
       persona: PERSONAS.find((p) => p.persona === identity.personaId) ?? null,
       identity,
@@ -161,7 +190,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       personas: PERSONAS,
       repo,
     };
-  }, [status, backend, identity, person, signIn, signOut, switchBackend, repo]);
+  }, [status, error, retry, backend, identity, person, signIn, signOut, switchBackend, repo]);
 
   return (
     <SessionContext.Provider value={value}>

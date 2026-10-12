@@ -28,6 +28,11 @@ export default function VerifyPage() {
             setErr(null);
             try {
               const r = await repo.rpc.verifyCertificate(v.no.trim());
+              if (r.code === 'rate_limited') {
+                setRes(null);
+                setErr(r.message ?? 'rate_limited');
+                return;
+              }
               setRes({ no: v.no.trim(), r });
             } catch (e) {
               setErr(e instanceof Error ? e.message : String(e));

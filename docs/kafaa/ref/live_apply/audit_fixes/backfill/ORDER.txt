@@ -1,0 +1,7 @@
+01_kafaa_audit_backfill_p01.sql
+02_kafaa_audit_backfill_p02.sql
+03_kafaa_audit_backfill_p03.sql
+04_kafaa_audit_backfill_p04.sql
+05_kafaa_audit_backfill_p05.sql
+06_kafaa_audit_backfill_p06.sql
+07_kafaa_audit_backfill_p07.sql

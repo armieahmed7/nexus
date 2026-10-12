@@ -4,15 +4,23 @@ import { RequireGuard } from '../auth/guards';
 import type { RouteDef } from '../routes/types';
 import { ErrorState, Skeleton } from '../ui/Page';
 import { translate, useLang } from '../i18n';
+import { hardReload, isChunkLoadError, reloadOnce } from './chunkReload';
 
-class Boundary extends Component<{ children: ReactNode; lang: 'en' | 'ar'; routeId: string }, { error: Error | null }> {
+/** Per-route error boundary. A failed chunk load (stale deploy) reloads the page once; its "Try again" always does a full reload,
+ *  because React.lazy keeps the rejected import and re-rendering would only show the same error. */
+export class Boundary extends Component<{ children: ReactNode; lang: 'en' | 'ar'; routeId: string; reload?: () => void }, { error: Error | null }> {
   state = { error: null as Error | null };
   static getDerivedStateFromError(error: Error) {
     return { error };
   }
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error(`[kafaa] page ${this.props.routeId} crashed`, error, info.componentStack);
+    if (isChunkLoadError(error)) reloadOnce({ reload: this.props.reload });
   }
+  private retry = () => {
+    if (isChunkLoadError(this.state.error)) hardReload(this.props.reload);
+    else this.setState({ error: null });
+  };
   componentDidUpdate(prev: { routeId: string }) {
     if (prev.routeId !== this.props.routeId && this.state.error) this.setState({ error: null });
   }
@@ -20,7 +28,7 @@ class Boundary extends Component<{ children: ReactNode; lang: 'en' | 'ar'; route
     if (this.state.error)
       return (
         <div className="mx-auto max-w-3xl p-6" data-testid="page-crash">
-          <ErrorState title={translate(this.props.lang, 'shell.crash')} error={this.state.error} retry={() => this.setState({ error: null })} />
+          <ErrorState title={translate(this.props.lang, 'shell.crash')} error={this.state.error} retry={this.retry} />
         </div>
       );
     return this.props.children;

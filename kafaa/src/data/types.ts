@@ -80,6 +80,9 @@ export interface CertificateCheck {
   valid_to?: string | null;
   holder_initials?: string;
   note?: string;
+  /** 'rate_limited' when the check was refused (audit 2026-10-12: 20 per number / 600 in total per minute); see message. */
+  code?: string;
+  message?: string;
 }
 
 // ── [G3] inputs for the M06/M07/M10 RPCs
@@ -312,13 +315,20 @@ export interface NexusReads {
   source: 'live' | 'snapshot';
 }
 
+export interface InsertOptions {
+  returning?: 'row' | 'minimal';
+}
+
 export interface Repository {
   readonly backend: 'local' | 'supabase';
   list<K extends Table>(table: K, q?: Query<RowOf<K>>): Promise<RowOf<K>[]>;
   get<K extends Table>(table: K, id: string): Promise<RowOf<K> | null>;
   count<K extends Table>(table: K, q?: Query<RowOf<K>>): Promise<number>;
-  /** Direct writes, allowed only where the table's write rule permits (src/data/schema.ts). Consequential actions use rpc. */
-  insert<K extends Table>(table: K, row: Partial<RowOf<K>>): Promise<Result<RowOf<K>>>;
+  /** Direct writes, allowed only where the table's write rule permits (src/data/schema.ts). Consequential actions use rpc.
+   *  `returning: 'minimal'` does not read the row back (PostgREST return=minimal): needed where the writer may insert but not read,
+   *  e.g. a signed-out visitor sending the contact form (INSERT ... RETURNING must also pass the SELECT policy). `data` is then the row
+   *  as sent, with its client-generated id, and no server defaults. */
+  insert<K extends Table>(table: K, row: Partial<RowOf<K>>, opts?: InsertOptions): Promise<Result<RowOf<K>>>;
   update<K extends Table>(table: K, id: string, patch: Partial<RowOf<K>>): Promise<Result<RowOf<K>>>;
   rpc: Rpc;
   nexus: NexusReads;
