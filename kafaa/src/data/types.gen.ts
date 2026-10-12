@@ -2187,6 +2187,69 @@ export interface StudentPortfolioRow {
   open_read: boolean;
   created_at: string;
 }
+export interface StarterLessonsRow {
+  id: string;
+  track: 'ai' | 'smr';
+  sort: number;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  points: any;
+  self_check: any;
+  links: any;
+  induction_module_id?: string | null;
+  sources: any;
+  as_of: string;
+  listed: boolean;
+}
+export interface InductionModulesRow {
+  id: string;
+  sort: number;
+  area: 'ai' | 'digital' | 'cyber' | 'energy' | 'smr' | 'safety' | 'radiation' | 'site' | 'company';
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  hours: number;
+  refresh_hours: number;
+  mandatory: boolean;
+  skill_ids: string[];
+  listed: boolean;
+}
+export interface IntakeBaselinesRow {
+  id: string;
+  intake_year: number;
+  programme: 'all' | 'dnt' | 'energy-pioneers' | 'gdp' | 'gpo' | 'direct';
+  version: number;
+  status: 'draft' | 'published' | 'superseded';
+  entries: any;
+  note_en: string;
+  note_ar: string;
+  set_by?: string | null;
+  set_at: string;
+  published_by?: string | null;
+  published_at?: string | null;
+  listed: boolean;
+  sample: boolean;
+}
+export interface InductionPlansRow {
+  id: string;
+  person_id: string;
+  person_name: string;
+  programme: 'dnt' | 'energy-pioneers' | 'gdp' | 'gpo' | 'direct';
+  intake_year: number;
+  baseline_id?: string | null;
+  baseline_version?: number | null;
+  items: any;
+  hours_total: number;
+  hours_planned: number;
+  hours_saved: number;
+  revision: number;
+  built_by?: string | null;
+  built_at: string;
+  sample: boolean;
+}
 export interface ExternalCoverRow {
   id: string;
   period: string;
@@ -2416,6 +2479,26 @@ export interface FutureSkillMapRow {
   updated_by?: string | null;
   updated_at: string;
 }
+export interface DalilIntentsRow {
+  id: string;
+  kind: 'role_2030' | 'ai_rung' | 'skill_crosswalk' | 'pathway_gap';
+  audience: 'both' | 'public' | 'personal';
+  feature: string;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  examples_en: string[];
+  examples_ar: string[];
+  cites: string[];
+  sources: any;
+  benchmark_ids: string[];
+  enabled: boolean;
+  changed_role?: string | null;
+  changed_at?: string | null;
+  change_note?: string | null;
+  sort: number;
+}
 export interface EngineCardsRow {
   id: string;
   engine_surface: 'skills' | 'recommend' | 'match' | 'search';
@@ -2578,6 +2661,21 @@ export interface DigestPrefsRow {
   quiet_end?: number | null;
   muted_kinds: string[];
   updated_at: string;
+}
+export interface DigestNudgeRulesRow {
+  id: string;
+  topic: 'decay' | 'goal' | 'ai_literacy' | 'role_profile' | 'rising_skill' | 'future_gig' | 'pathway' | 'fellowship';
+  kind: 'future' | 'approval';
+  name_en: string;
+  name_ar: string;
+  rule_en: string;
+  rule_ar: string;
+  window_days?: number | null;
+  link: string;
+  source_feature: string;
+  benchmark_ids: string[];
+  since: string;
+  sort: number;
 }
 export interface SkillClaimsRow {
   id: string;
@@ -4668,6 +4766,122 @@ export interface SkillGoalsRow {
   created_at: string;
   updated_at: string;
 }
+export interface SkillSignalRunsRow {
+  id: string;
+  quarter: string;
+  method: string;
+  status: 'published';
+  counts: any;
+  published_by: string;
+  published_role?: string | null;
+  published_at: string;
+  summary_en: string;
+  summary_ar: string;
+}
+export interface SkillSignalsRow {
+  id: string;
+  run_id: string;
+  quarter: string;
+  skill_id: string;
+  category: 'now' | 'growing';
+  rank: number;
+  score: number;
+  moved_by: string[];
+  signals: any;
+  families: string[];
+  reasons: any;
+  published_at: string;
+}
+export interface ManagerPulseRow {
+  id: string;
+  year: number;
+  person_id: string;
+  family_id?: string | null;
+  team_size?: number | null;
+  share_pct: number;
+  submitted_at: string;
+  updated_at: string;
+}
+export interface TechnologiesRow {
+  id: string;
+  name_en: string;
+  name_ar: string;
+  description_en: string;
+  description_ar: string;
+  category: 'plant_data' | 'analytics' | 'automation' | 'digital_twin' | 'inspection' | 'work_management' | 'ai_tools' | 'simulation';
+  skill_ids: string[];
+  status: 'active' | 'retired';
+  version: number;
+  created_by?: string | null;
+  created_at: string;
+  updated_by?: string | null;
+  updated_at: string;
+  sort: number;
+}
+export interface TechnologyLinksRow {
+  id: string;
+  technology_id: string;
+  ref_table: 'opportunities' | 'role_profile_versions';
+  ref_id: string;
+  family_id?: string | null;
+  role_id?: string | null;
+  source_on: string;
+  active: boolean;
+  linked_by?: string | null;
+  linked_at: string;
+}
+export interface TechnologyBadgesRow {
+  id: string;
+  quarter: string;
+  technology_id: string;
+  scope: 'enec' | 'role';
+  role_id?: string | null;
+  rank?: number | null;
+  sources: number;
+  families: number;
+  recent: number;
+  via_profile: boolean;
+  family_opportunities: number;
+  criteria: string;
+  published_by: string;
+  published_at: string;
+}
+export interface SkillSuggestionsRow {
+  id: string;
+  person_id: string;
+  skill_id: string;
+  status: 'open' | 'confirmed' | 'rejected' | 'not_me' | 'expired';
+  level: number;
+  score: number;
+  sources: string[];
+  reasons: any;
+  first_on: string;
+  generated_on: string;
+  responded_on?: string | null;
+  suppressed_until?: string | null;
+  evidence_id?: string | null;
+  history: any;
+  version: number;
+  updated_at: string;
+}
+export interface SkillSuggestionFairnessRow {
+  id: string;
+  period: string;
+  as_of: string;
+  card: string;
+  metric: string;
+  dimension: 'gender' | 'nationality';
+  group_key: 'f' | 'm' | 'uae' | 'other';
+  n?: number | null;
+  positives?: number | null;
+  rate?: number | null;
+  ratio?: number | null;
+  suppressed: boolean;
+  flagged: boolean;
+  source: string;
+  run_by?: string | null;
+  created_at: string;
+}
 export interface AiRungsRow {
   id: string;
   rung: number;
@@ -5705,6 +5919,33 @@ export interface RoleOccupationsRow {
   updated_by: string;
   updated_at: string;
 }
+export interface PipelineMirrorRow {
+  id: string;
+  role_id: string;
+  nationality_flag: 'uae' | 'other';
+  hired_on: string;
+  left_on?: string | null;
+  authorised_on?: string | null;
+  source: string;
+  simulated: boolean;
+  open_read: boolean;
+}
+export interface WalletTargetsRow {
+  id: string;
+  metric: 'core_five_complete';
+  pct: number;
+  due_on: string;
+  note_en: string;
+  note_ar: string;
+  set_by: string;
+  set_by_role: string;
+  set_at: string;
+  status: 'active' | 'superseded';
+  version: number;
+  history: any;
+  benchmark_ids: string[];
+  sources: any;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -5853,6 +6094,10 @@ export interface Tables {
   journey_facts: JourneyFactsRow;
   student_journeys: StudentJourneysRow;
   student_portfolio: StudentPortfolioRow;
+  starter_lessons: StarterLessonsRow;
+  induction_modules: InductionModulesRow;
+  intake_baselines: IntakeBaselinesRow;
+  induction_plans: InductionPlansRow;
   external_cover: ExternalCoverRow;
   handover_cohorts: HandoverCohortsRow;
   skill_outlooks: SkillOutlooksRow;
@@ -5866,6 +6111,7 @@ export interface Tables {
   fellowships: FellowshipsRow;
   fellowship_milestones: FellowshipMilestonesRow;
   future_skill_map: FutureSkillMapRow;
+  dalil_intents: DalilIntentsRow;
   engine_cards: EngineCardsRow;
   reco_optouts: RecoOptoutsRow;
   fairness_snapshots: FairnessSnapshotsRow;
@@ -5875,6 +6121,7 @@ export interface Tables {
   surface_fairness: SurfaceFairnessRow;
   digest_runs: DigestRunsRow;
   digest_prefs: DigestPrefsRow;
+  digest_nudge_rules: DigestNudgeRulesRow;
   skill_claims: SkillClaimsRow;
   badges: BadgesRow;
   skill_checkins: SkillCheckinsRow;
@@ -5998,6 +6245,14 @@ export interface Tables {
   skill_frameworks: SkillFrameworksRow;
   skill_alignments: SkillAlignmentsRow;
   skill_goals: SkillGoalsRow;
+  skill_signal_runs: SkillSignalRunsRow;
+  skill_signals: SkillSignalsRow;
+  manager_pulse: ManagerPulseRow;
+  technologies: TechnologiesRow;
+  technology_links: TechnologyLinksRow;
+  technology_badges: TechnologyBadgesRow;
+  skill_suggestions: SkillSuggestionsRow;
+  skill_suggestion_fairness: SkillSuggestionFairnessRow;
   ai_rungs: AiRungsRow;
   ai_skill_tracks: AiSkillTracksRow;
   ai_role_targets: AiRoleTargetsRow;
@@ -6050,6 +6305,8 @@ export interface Tables {
   national_tags: NationalTagsRow;
   tag_links: TagLinksRow;
   role_occupations: RoleOccupationsRow;
+  pipeline_mirror: PipelineMirrorRow;
+  wallet_targets: WalletTargetsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];

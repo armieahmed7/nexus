@@ -13,6 +13,7 @@ import { useRecoOptOut } from '../../modules/m16/optout';
 import { dubaiHour, hintOk, inQuietHours, type DigestHints } from './rules';
 import type { DigestBuildResult } from './backend/rpc';
 import { DigestItemRow } from './DigestItemRow';
+import { FutureNudgeStrip } from './FutureNudges';
 import { useDigest, useNoNudges, type RunRow } from './useDigest';
 
 export function usePeriodLabel() {
@@ -88,6 +89,7 @@ export function DigestPanel() {
                 {view.current.items.map((i) => <DigestItemRow key={i.id} i={i} />)}
               </ol>
             )}
+            <FutureNudgeStrip items={view.current.items} asOf={view.current.as_of} />
             <p className="text-[12px] text-ink-3">{t('digest.panel.rule')}</p>
             {view.history.length > 0 && <History runs={view.history} label={label} />}
           </div>

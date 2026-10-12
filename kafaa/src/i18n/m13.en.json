@@ -20,7 +20,8 @@
       "applicant": "I'm Dalil. As well as careers and programmes, I can tell you the status of your own applications. I answer only from approved sources and cite them.",
       "staff": "I'm Dalil in staff mode. I can answer from the catalogue and internal guides cleared for me, and tell you about your own qualifications, licence, learning and plan. I never decide qualification or licensing outcomes.",
       "partner": "I'm Dalil in partner mode. I can help with supplier readiness, the supplier academy and In-Country Value guidance, and your organisation's onboarding status.",
-      "career": "Career mode: ask where you can go next, what you need for a role, which courses close a gap, which opportunities fit you or when you could reach a role. I answer from your own records and cite them; answers are indicative, never a decision."
+      "career": "Career mode: ask where you can go next, what you need for a role, which courses close a gap, which opportunities fit you or when you could reach a role. I answer from your own records and cite them; answers are indicative, never a decision.",
+      "future": "Future skills mode: ask how your role changes by 2030, which AI rung you need, what a skill means and its international equivalent, or which pathway closes your gap. Every answer is cited; 2030 content is a planning assumption, never a decision."
     },
     "aboutDalil": "FAQ · What is Dalil?",
     "contactPage": "Contact form",
@@ -225,7 +226,8 @@
     "applicant": "Applicant",
     "staff": "Staff",
     "partner": "Partner",
-    "career": "Career"
+    "career": "Career",
+    "future": "Future skills"
   },
   "handoff": {
     "careers": "Careers team",
@@ -303,7 +305,11 @@
       "c1": "Where can I go next?",
       "c2": "What are my gaps for my target role?",
       "c3": "Which opportunities fit me?",
-      "c4": "Practise an interview"
+      "c4": "Practise an interview",
+      "f1": "How will my role change by 2030?",
+      "f2": "Which AI rung do I need?",
+      "f3": "What is the ESCO equivalent of digital twin validation?",
+      "f4": "Which pathway closes my gap?"
     }
   },
   "admin": {
@@ -703,6 +709,173 @@
       "persona": "Evaluation persona",
       "personaValue": "RO → SRO",
       "personaSub": "Synthetic: RO licence since 2023, SRO target, set gaps"
+    },
+    "concept": {
+      "cite": "{role} (concept role)",
+      "noProfile": "{role} is a concept role without a published profile yet.",
+      "assumption": "A concept role is a planning assumption: no vacancy, no deployment decision implied.",
+      "band": {
+        "profile_met": "you meet its profile",
+        "within": "within about {months} months",
+        "stretch": "a stretch of about {months} months"
+      },
+      "bridgeWait": "Your route in: {months} more months in your current role first.",
+      "bridgeMet": "Your route in: your time in role is already enough.",
+      "bridgeOther": "Route in from {role} after {months} months in that role.",
+      "intro": "{role} is a concept role. Against its {horizon} profile you meet {pct}% ({band}); {n} requirements are still above your levels.",
+      "introNoPct": "{role} is a concept role. {n} requirements of its {horizon} profile are still above your levels.",
+      "roadmap": "{role} is a concept role with no vacancy or date: against its {horizon} profile you are {band}."
+    }
+  },
+  "future": {
+    "off": "{name} answers are switched off by the AI owner for now. The pages behind them are still open.",
+    "assumption": "Planning assumption, no deployment decision implied.",
+    "notDecision": "Indicative only: a planning view, never a decision about you.",
+    "cite": {
+      "faq": "About Dalil",
+      "skills": "Skills catalogue",
+      "careers": "Careers and roles",
+      "signIn": "Sign in",
+      "transformation": "{role} · role transformation map",
+      "myRole": "My role in 2030",
+      "roadmap": "My career roadmap",
+      "ladder": "AI fluency ladder",
+      "myFluency": "My AI fluency",
+      "check": "AI and digital fitness check",
+      "frameworks": "International frameworks",
+      "skill": "{skill} · skill page",
+      "pathways": "My pathways",
+      "coach": "Learning Coach",
+      "futureMode": "Future skills mode"
+    },
+    "follow": {
+      "role_2030": "How will my role change by 2030?",
+      "ai_rung": "Which AI rung do I need?",
+      "skill_crosswalk": "What is the ESCO equivalent of AI output verification and challenge?",
+      "pathway_gap": "Which pathway closes my gap?",
+      "role_example": "How will the {role} role change by 2030?",
+      "concept_gap": "What do I need to become a {role}?",
+      "xw_example": "What is the ESCO equivalent of {skill}?"
+    },
+    "r30": {
+      "general": "Every current role has a 2030 transformation map: its technology drivers, which tasks grow with people, become AI-assisted or shrink, and what the 2030 profile adds. Name a role, for example \"How will the {example} role change by 2030?\"",
+      "signInHint": "Sign in and use Future skills mode to see your own role and your time-to-ready.",
+      "switchHint": "Use Future skills mode to get the answer for your own role and your time-to-ready.",
+      "pathOnly": "{role} is shown at career-path level only: Kafa'a does not publish task or skill changes for security, safeguards or cyber roles.",
+      "concept": "{role} is a concept role: no vacancy exists today. Its {horizon} profile asks for {list}.",
+      "conceptNoProfile": "{role} is a concept role and has no published profile yet.",
+      "conceptAsk": "Ask \"What do I need to become a {role}?\" for your readiness against that profile.",
+      "noMap": "{role} has no published transformation map yet.",
+      "archetype": "Role archetype: {archetype}",
+      "drivers": "Drivers: {list}",
+      "publicAdded": "New or raised in the 2030 profile: {list}",
+      "intro": "{role} in 2030 ({archetype}) is driven by {drivers}.",
+      "introNoArch": "{role} in 2030 is driven by {drivers}.",
+      "tasks": "Of {rated} analysed tasks, {grow} stay with people and grow, {augmented} become AI-assisted and {shrink} shrink as parts move to tools that a person still checks.",
+      "added": "The 2030 profile adds or raises {n} requirements.",
+      "meReady": "At your current levels you already meet the 2030 profile.",
+      "me": "At your current levels you meet {pct}% of it: about {months} months of development at two months per level.",
+      "gap": "{skill}: you hold {have}, 2030 asks for {need}",
+      "cardNew": "New in 2030 · level {to}",
+      "cardRaised": "Raised in 2030 · level {from} → {to}"
+    },
+    "change": {
+      "new": "new",
+      "raised": "raised"
+    },
+    "rung": {
+      "overview": "The AI fluency ladder has four rungs (Aware, Practitioner, Builder, Assurer), each across the same four dimensions, with a target for every job family. Name a role to see its target.",
+      "signIn": "Sign in to see the rung your own evidence shows.",
+      "switch": "Use Future skills mode to see the rung your own evidence shows.",
+      "forRole": "For {role}: ",
+      "target": "{family} roles aim for {rung} on the AI fluency ladder{plus}.",
+      "plus": ", plus {cells}",
+      "claimed": "Only evidenced skills count: self-ratings never move anyone up the ladder.",
+      "mine": "Your evidence puts you at {rung}.",
+      "mineNone": "Your evidence does not put you on the ladder yet.",
+      "noFamily": "No AI fluency target is set for your job family.",
+      "met": "You meet your family's target.",
+      "missing": "Still to evidence for the target: {n}.",
+      "cellSub": "Needs level {level} in {skills}",
+      "engineering": "AI-engineering skills shown apart (they never raise the literacy rung): {n}."
+    },
+    "why": {
+      "have": "You hold level {have} on this cell's literacy skills; it needs {need}",
+      "learn": "Evidence it with: {item}",
+      "match": "Match type: {match}",
+      "reviewed": "Reviewed by a second framework owner",
+      "indicative": "Indicative: not reviewed by a second framework owner yet",
+      "asOf": "Copied from the source on {date}"
+    },
+    "xw": {
+      "general": "Kafa'a maps its skills to {n} international frameworks ({list} and others), with the match type and the review state of each row. Name a skill, for example \"What is the ESCO equivalent of {example}?\"",
+      "security": "{skill} is a security skill: Kafa'a shows it at career-path level only, without a crosswalk.",
+      "row": "{framework}: {code}\"{label}\" ({match}, {review})",
+      "pending": "code pending review",
+      "match": {
+        "exact": "exact match",
+        "close": "close match",
+        "broad": "broader concept",
+        "partial": "partial match"
+      },
+      "review": {
+        "reviewed": "reviewed",
+        "indicative": "indicative"
+      },
+      "noRows": "No published crosswalk row for this skill yet.",
+      "none": "No published {framework} row for this skill yet; the other frameworks are on the skill page.",
+      "rows": "Published crosswalk rows by framework ({n}):"
+    },
+    "pw": {
+      "signIn": "Pathways are matched to your own skills and your role's 2030 profile, so sign in and ask in Future skills mode. Meanwhile the skills catalogue explains every future skill.",
+      "switch": "Pathways are matched to your own skills and your role's 2030 profile: ask in Future skills mode for your answer.",
+      "noAccess": "Future-skill pathways are open to ENEC staff.",
+      "card": "Level {level} · {months} months · {hours} h a week",
+      "unranked": "You turned off ranked suggestions in the Learning Coach, so here are {n} open pathways in catalogue order.",
+      "noSkill": "{skill} has no learning pathway: pathways cover future skills only.",
+      "none": "No open pathway closes a gap for you right now: you already hold the next level, you follow it already, or your 2030 profile asks for nothing new yet.",
+      "introSkill": "For {skill}, these {n} pathways close your gap, best first.",
+      "intro": "These {n} pathways close your 2030 gaps first, ranked the same way as your Learning Coach.",
+      "level": "{skill} from level {from} to {to}"
+    },
+    "ui": {
+      "banner": "Future skills mode: how your role changes by 2030, the AI rung you need, what a skill means internationally and which pathway closes your gap. Personal answers come from your own records.",
+      "bannerAnon": "Future skills mode: public answers only. Sign in to get answers from your own records.",
+      "intentsTitle": "What future skills mode answers",
+      "intentsIntro": "Four answer types, each built from a Kafa'a feature and cited. The AI owner can switch any of them off.",
+      "on": "On",
+      "off": "Switched off",
+      "personal": "Personal when signed in",
+      "public": "Public content",
+      "both": "Public, personal when signed in",
+      "cites": "Cites",
+      "try": "Try",
+      "evalNote": "Released only when the evaluation set reaches the citation floor and every security question still declines.",
+      "signInFor": "sign in for the personal answer",
+      "bannerPublic": "Future skills mode: public answers. Answers from your own records are for staff with a skills profile."
+    },
+    "admin": {
+      "tab": "Future skills",
+      "intro": "Future skills mode (FS76) adds four intents to Dalil. Each one is a governed row: the AI owner can switch it off, with a reason, and the change is audited and written to the NEXUS ledger.",
+      "intents": "Future-skills intents",
+      "intent": "Intent",
+      "status": "Status",
+      "audience": "Audience",
+      "feature": "Built on",
+      "changed": "Last change",
+      "never": "Unchanged since release",
+      "changedBy": "{when} · {note}",
+      "turnOff": "Switch off",
+      "turnOn": "Switch on",
+      "reason": "Reason (shown in the audit trail)",
+      "reasonHint": "5 to 300 characters.",
+      "consequenceOff": "Dalil stops giving this answer type on every page within a minute; the pages it cites stay open. Turns that would carry it are refused by the log.",
+      "consequenceOn": "Dalil gives this answer type again, with citations.",
+      "ownerOnly": "Only the AI owner switches intents",
+      "evalTitle": "Future skills mode ({n} cases: evaluation persona and anonymous visitor)",
+      "publicClean": "Public answers clean",
+      "publicCleanSub": "No personal data in any anonymous answer",
+      "logsNote": "Future-skills turns are logged like every Dalil turn (career sessions for staff, public sessions for visitors) and marked by their intent."
     }
   }
 }

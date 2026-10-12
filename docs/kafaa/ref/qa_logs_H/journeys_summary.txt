@@ -1,0 +1,10 @@
+✓  1 [chromium] › tests/e2e/fswaveH.spec.ts:63:1 › H1 FS70: staff see the quarterly list with the signals that moved each skill, signa
+✓  2 [chromium] › tests/e2e/fswaveH.spec.ts:119:1 › H2 FS71: hot across ENEC separate from in demand for my role, with published crite
+✓  3 [chromium] › tests/e2e/fswaveH.spec.ts:164:1 › H3 FS72: my suggestions with reasons; confirming makes claimed evidence; a rejecti
+✓  4 [chromium] › tests/e2e/fswaveH.spec.ts:211:1 › H4 FS73: the HR director sees Emirati-ready successors, progression and retention 
+✓  5 [chromium] › tests/e2e/fswaveH.spec.ts:248:1 › H5 FS74: my wallet is computed from evidence with next steps and links to my plan;
+✓  6 [chromium] › tests/e2e/fswaveH.spec.ts:305:1 › H6 FS75 + FS69: the release-day digest holds at most 7 items with future-skills nu
+✓  7 [chromium] › tests/e2e/fswaveH.spec.ts:368:1 › H7 FS76: future-skills mode answers the four intents with citations; anonymous que
+✓  8 [chromium] › tests/e2e/fswaveH.spec.ts:434:1 › H8 FS77: the public starter cites every fact with a source and as-of date and stor
+✓  9 [chromium] › tests/e2e/fswaveH.spec.ts:486:1 › H9 wiring: Dalil future mode, the wallet and the starter are linked from the pages
+visual -g fsh:   66 passed (3.5m)

@@ -1,0 +1,191 @@
+npm run migrations:validate on fsH-integration-qa @ e9b0f0b (2026-10-12): 92 migrations + seed applied twice; 2430 checks passed, 0 failed; real	20m22.459s; result: All migration checks passed
+Wave-H validator sections (fs81..fs85, fsqa8):
+FS75 · FS68 supplier future-skills readiness, FS69 contractor pre-arrival check
+  ✓ FS68: kafaa_fr_compute = supplierFutureReadiness for all 3 supplier organisations (requirements, counts, groups, suggestions, academy gaps)
+  ✓ FS68: organisations with fewer than 10 contractors (org-gulfhydro) return no counts at all
+  ✓ FS68: shown organisations have at least 10 contractors
+  ✓ FS68: every course suggestion carries the F33 engine reasons (academy_course / enec_course + closes_gap)
+  ✓ FS68: future requirements are the 2030 needs the role's current profile does not ask for (or asks lower)
+  ✓ FS68 what-if: org-gulfhydro with 10+ contractors shows values (SQL = TS)
+  ✓ FS68: alnoor-gm sees only Al Noor; gulfhydro-qa sees only Gulf Hydro-Valve (suppressed: under 10 contractors)
+  ✓ FS68: ENEC evaluators (equivalency A), auditors and supplier management (partner_org A) see every supplier organisation
+  ✓ FS68: staff get nothing; anonymous visitors cannot call it
+  ✓ FS69: 7 seeded pre-arrival shares (active, expired, revoked; self and on behalf with a consent reference)
+  ✓ FS69: the 4 stored check summaries reproduce from the shared items (precheckFromShare)
+  ✓ FS69: kafaa_pa_check = precheckFromShare for 112 share x standard pairs
+  ✓ FS69: the evaluator list has every share, active first, without items or tokens
+  ✓ FS69: partner admins list their organisation only, a contractor their own shares, staff nothing
+  ✓ FS69 RLS: contractor own, partner admin own organisation, evaluators all, staff and anonymous none
+  ✓ FS69: evaluators cannot read the FS32 share rows (items and tokens) directly
+  ✓ FS69: the table cannot be written directly (RPC only)
+  ✓ FS69: the evaluator sees the 5 shared items only (5 held items stay hidden, no token)
+  ✓ FS69: an expired link shows nothing personal
+  ✓ FS69: precheckFromShare (SQL = TS) stores only its summary: skill evidence, skill states, qualification records, evaluations and equivalency requests unchanged
+  ✓ FS69: the check is audited (no ledger) and says it is guidance
+  ✓ FS69: an expired link and a revoked link are refused (the link expires as set)
+  ✓ FS69: only ENEC evaluators run the check (auditors read, partners and contractors cannot run it)
+  ✓ FS69: unknown or security standards refused; partner admins do not open the shared items
+  ✓ FS69: TS accepts the self share input
+  ✓ FS69: a contractor creates their own pre-arrival share (FS32 link + M09 row)
+  ✓ FS69: an evaluator records a share on the contractor's behalf only with the consent reference, and the contractor is notified
+  ✓ FS69: creation is audited and goes to the ledger
+  ✓ FS69: refusals forbidden (partner admin on behalf, staff), mobilise after expiry, consent missing, unshareable item, staff person (forbidden, forbidden, mobilise, consent_required, not_shareable, not_found)
+  ✓ FS69: the contractor revokes at any time; an evaluator revokes on request with a reason; a revoked link shows nothing and cannot be checked
+  ✓ FS69: the FS32 public verify page shows the shared items only (initials only)
+  ✓ FS75 grants: helpers executable by no API role; the 8 RPCs by authenticated only
+  ✓ FS75 migration: additive kafaa_* objects only, no removal words
+FS wave H · E1 · FS70 ENEC Skills on the Rise + FS71 hot technologies + FS72 skills you may have (M28)
+  ✓ seed: 4 published Skills on the Rise lists (31 listed skills), one per ended quarter
+  ✓ acceptance (FS70): each listed skill shows which signals moved it (moved_by, each with its reason)
+  ✓ acceptance (FS70): every signal under 10 is suppressed (no stored value or previous value under 10)
+  ✓ acceptance (FS71): no vendor brand name in any of the 18 technology tags (deny-list of 76 names, EN/AR)
+  ✓ seed: badge lists kept for 2026-Q2, 2026-Q3
+  ✓ seed: 440 open suggestions for 88 people (at most 6 each), earlier answers kept, none confirmed (no evidence seeded)
+  ✓ acceptance (FS72): the surface has an engine card (protected inputs excluded) and a fairness snapshot
+  ✓ FS70: SQL kafaa_rs_compute = TS risingSkills for 8 quarters and 3 malformed ones
+  ✓ FS70: kafaa_rs_bounds = quarterBounds and kafaa_rs_prev = prevQuarter
+  ✓ FS70: every published list equals what the rule computes on the seeded data (computed, never typed; rerun fs70 finalize if a later builder adds dated evidence)
+  ✓ FS70: SQL kafaa_mp_summary = TS pulseSummary for 2024-2026
+  ✓ acceptance (FS70): the pulse is an aggregate only: 10 responses show a median, 9 show nothing; families and bands under 10 are suppressed (SQL = TS)
+  ✓ FS71: kafaa_ht_brand_hits = brandHits for 25 probes (whole words, EN/AR)
+  ✓ FS71: kafaa_ht_problem = techProblem for 18 probes (id, name, name, description, brand, brand, brand, category, skills, skills, skills, status, name, category)
+  ✓ acceptance (FS71): the badges reproduce from the published criteria: SQL kafaa_ht_compute = TS technologyBadges for 8 quarters
+  ✓ FS71: every stored badge list equals what the criteria give on the seeded data
+  ✓ FS72: SQL kafaa_ssg_candidates = TS inferSuggestions for all 106 active staff on 2026-10-11
+  ✓ FS72: SQL kafaa_ssg_candidates = TS inferSuggestions for all 106 active staff on 2027-02-15
+  ✓ FS72: SQL kafaa_ssg_candidates = TS inferSuggestions for all 106 active staff on 2027-02-16
+  ✓ acceptance (FS72): a rejected suggestion does not return for 180 days (hidden on 2027-02-15, back on 2027-02-16); a "not me" from March returned after its 180 days with the answer kept in history
+  ✓ FS72: every stored open suggestion equals the rule on 2026-10-11 (sources, reasons, score, level)
+  ✓ FS72: every suggestion carries one reason per source (i18n keys for WhyThis); levels never above 2
+  ✓ acceptance (FS72): the fairness snapshot follows the F24 rules (SQL kafaa_ssg_fairness_compute = TS suggestionFairness = the stored rows; groups under 10 suppress the comparison)
+  ✓ refusal messages: SQL kafaa_fs81_msg = TS RS_MSG / HT_MSG / SSG_MSG
+  ✓ RLS (FS70/FS71): staff read the published lists, technologies, tags and badges (internal_content R); anonymous visitors, partners, observers and universities read nothing
+  ✓ acceptance (FS72): no suggestion is readable by a manager (sro reads 0 of k-ro's 7), HR, the training manager, admins or auditors; each person reads only their own
+  ✓ RLS (FS70): pulse answers are read by the manager who gave them only; HR and the training manager see aggregates through the RPC
+  ✓ RLS (FS72): the fairness snapshot is read by admins, auditors and HR (aggregates only), not by staff or anonymous visitors
+  ✓ writes only through the RPCs (no direct update or insert by API roles)
+  ✓ check constraints: a confirmation names its evidence, a rejection hides for exactly 180 days, suggestions stay claims (level <= 2), pulse answers are 0-100 %, run ids follow the quarter
+  ✓ grants: anonymous visitors cannot execute the 12 RPCs
+  ✓ grants: internal helpers are not executable by signed-in users
+  ✓ computeSkillSignals: HR and auditors compute (TS = SQL); staff are refused; quarters before 2025-Q1 are refused; refusals are audited
+  ✓ acceptance (FS70): publishSkillSignals: HR publishes an ended quarter (audit + ledger, rows = the rule); the training manager is refused; the current quarter is refused; a published quarter is kept (refused, never overwritten)
+  ✓ submitManagerPulse: a line manager answers while the pulse is open (open today; answering again updates); staff without a team are refused; 0-100 % only
+  ✓ managerPulseSummary: HR reads the aggregate (TS = SQL); a manager cannot read it; years outside 2025..now refused
+  ✓ acceptance (FS71): saveTechnology refuses a vendor brand name; framework owners add and version generic tags; staff are refused
+  ✓ tagTechnology: a tag takes its family and date from the source server-side; no duplicates; unknown and draft sources refused; untagging keeps the row inactive
+  ✓ acceptance (FS71): past badge lists are kept per quarter (a published quarter is refused, never overwritten); the open quarter and an empty quarter cannot publish; computing is for framework owners
+  ✓ refreshSkillSuggestions: k-ro's suggestions recomputed for 2026-10-12 (6 open = TS); audited
+  ✓ acceptance (FS72): confirm writes k-ro's own claimed evidence (kind rating, ref_table skill_suggestions) and updates the skill state; someone else's suggestion reads as not found; a rejection hides it for 180 days and a refresh does not bring it back; the manager sees the confirmed claim, never the suggestions
+  ✓ runSuggestionFairness: admins store this week's snapshot (audit + ledger); staff refused; future dates refused
+  ✓ suggestionStats: HR reads counts by status with every count under 10 suppressed; staff are refused
+  ✓ additive: the FS81 migration names no destructive statement, alters only kafaa_* tables, redefines no shared function and updates no existing row (the card is inserted on conflict do nothing)
+  ✓ functions: 29 new function bodies present
+    md5 kafaa_compute_skill_signals=1e8e61a7 kafaa_compute_technology_badges=50f97367 kafaa_fs81_msg=f36cc436 kafaa_ht_brand_hits=717b733e kafaa_ht_compute=7517f9aa kafaa_ht_len=97dc70f0 kafaa_ht_problem=bf2abbcb kafaa_ht_text=256d10d1 kafaa_ht_window=0a19af01 kafaa_manager_pulse_summary=ed040894 kafaa_mp_median=3dc34696 kafaa_mp_summary=da5c9752 kafaa_publish_skill_signals=2b6f5898 kafaa_publish_technology_badges=ff1bc2a1 kafaa_refresh_skill_suggestions=6e8933d2 kafaa_respond_suggestion=d3ced3e3 kafaa_rs_bounds=49c91f46 kafaa_rs_closed=49f20871 kafaa_rs_computable=2c185858 kafaa_rs_compute=b45304b8 kafaa_rs_counts=5534cc0f kafaa_rs_prev=2e1f6a68 kafaa_run_suggestion_fairness=363d195f kafaa_save_technology=ace61342 kafaa_ssg_candidates=db577fdd kafaa_ssg_fairness_compute=f7e78095 kafaa_submit_manager_pulse=989003aa kafaa_suggestion_stats=c8f3de55 kafaa_tag_technology=aee13dd1
+    digest kafaa_skill_signal_runs 4 e00c7ec4
+    digest kafaa_skill_signals 31 a9bfb9c9
+    digest kafaa_manager_pulse 24 63d13152
+    digest kafaa_technologies 18 563849b4
+    digest kafaa_technology_links 188 dc091f76
+    digest kafaa_technology_badges 82 50c110d1
+    digest kafaa_skill_suggestions 442 d10a209b
+    digest kafaa_skill_suggestion_fairness 4 65f93e38
+    digest kafaa_engine_cards[skill_suggestions] 1 2fca6a8c
+FS wave H · E2 · FS73 Emirati pipeline by competency + FS74 Future Skills Wallet target (M37)
+  ✓ seed: 554 SIMULATED mirror spells and the wallet target (60 % by 2027-12-31, set by the HR director role card) load unchanged
+  ✓ FS73 mirror: every row is SIMULATED, de-identified (no person id, name, gender or age column) and closed to direct reads
+  ✓ SQL kafaa_ep_add_months = addMonths on 49 cases (month ends and leap years clamp the same way)
+  ✓ SQL kafaa_ep_roles / kafaa_ep_core = pipelineRoles / emiratiPipeline for 5 scopes (seed)
+  ✓ FS73: 14 critical and future roles (critical, or a growing FS16 outlook); concept and security-sensitive roles never enter
+  ✓ acceptance FS73: every cell under 10 is suppressed (342 of 506 people cells null, the rest 10 or more; a share only beside its count and base)
+  ✓ SQL kafaa_ep_roles / kafaa_ep_core = pipelineRoles / emiratiPipeline for 5 scopes (generated edits: nationality changes, missing month estimates, withdrawn successors, new growing outlooks, a slate on a concept role, small mirror groups)
+  ✓ acceptance FS73: a slate on a concept role never enters (QA_A gap: M23 reads audited here) and small mirror groups stay suppressed after the edits
+  ✓ acceptance FS73: HR analyst, HR director and auditors read the pipeline; observers, partners (admin and user), universities, managers, the training manager, employees and platform admins get null; anonymous cannot execute; reads are not audited and carry no person ids
+  ✓ acceptance FS73: nationality is read only inside the suppressed aggregate (kafaa_ep_area); no engine card scores with an FS73/FS74 function; no function reads gender or age
+  ✓ SQL kafaa_fw_status / kafaa_fw_counter_core = walletStatus / walletCounter for all 106 active staff (seed)
+  ✓ acceptance FS74: the counter shows its target (60 % by 2027-12-31) with who set it (Chief Human Capital Officer (role card)) and when (2026-10-05T09:00:00Z); every count under 10 suppressed; security, safeguards and cyber never broken out
+  ✓ SQL kafaa_fw_status / kafaa_fw_counter_core = walletStatus / walletCounter for all 106 active staff (generated edits: a high self-rating, claimed plant-data states, expired and revoked cyber awards, claimed AI states, retired core skills)
+  ✓ acceptance FS74: wallet status is computed from evidence only: a level-4 self-rating does not earn plant-data basics, and a state that becomes self-claimed no longer counts
+  ✓ SQL kafaa_fw_target_problem / kafaa_fw_items = targetProblem / ITEM_TITLE and ITEM_PLAN_KIND (14 cases, 4 problem codes)
+  ✓ wiring FS62 <- FS74: the wallet target is a target table (SQL kafaa_na_target / kafaa_na_links / kafaa_na_report_core / kafaa_na_link_problem = TS), tagged to Jahiz and the AI strategy, measured as the suppressed wallet share against 60 % by 2027-12-31
+  ✓ RLS: nobody reads a mirror row directly (only the aggregate RPC); staff, HR, admins and auditors read the wallet target (national_alignment R); anonymous, partners, universities and observers read nothing ({"anon":[0,0],"sro":[0,1],"nse":[0,1],"k-auditor":[0,1],"chco":[0,1],"k-hr-analyst":[0,1],"k-admin":[0,1],"alnoor-gm":[0,0],"k-university":[0,0],"k-observer":[0,0]})
+  ✓ the wallet target cannot be written through the API, only through setWalletTarget
+  ✓ kafaa_my_future_wallet: an employee reads their own wallet (= walletStatus) with the target; partners, observers and auditors (no skills_profile Own) get null
+  ✓ kafaa_future_wallet_counter: HR analyst, HR director and admins (national_alignment Agg/W/A) read the counter; staff, auditors and observers get null
+  ✓ acceptance FS74 (kafaa_set_wallet_target): the target date and value are a leadership setting: staff, the HR analyst and platform admins refused, a bad value or an unchanged target refused; the HR director sets it (version 2, the earlier setting kept in history with who and when, ledger); every call audited
+  ✓ acceptance FS74 (kafaa_add_wallet_to_plan): the wallet links to the development plan: 3 open items become plan activities (a draft plan is created), never twice; auditors and partners refused; the wallet shows them as in the plan
+  ✓ internal rules are not executable by API roles; authenticated executes only the five RPCs, anon none (kafaa_add_wallet_to_plan, kafaa_emirati_pipeline, kafaa_future_wallet_counter, kafaa_my_future_wallet, kafaa_set_wallet_target)
+  ✓ the migration is additive: 30 kafaa_* objects created or redefined, no removal words, writes and alters only kafaa_* objects (inside the RPCs)
+    fs82 function md5: kafaa_add_wallet_to_plan=5ee488bc1c5c0d9f218c5b9a3899b98f kafaa_emirati_pipeline=ebcce8445a5efaa6ee50471263c028c1 kafaa_ep_add_months=1b0ea82a84652a9acb1bee8e507acdc0 kafaa_ep_allowed=0360974631ab3523af0fa7ed3dfc001f kafaa_ep_area=bd59a0ccb5029f7bac50b6eaa1a39a81 kafaa_ep_core=1742be71db971726ad7647530fb29d62 kafaa_ep_roles=c09306a0ff78d8fe7da9135804fb52b7 kafaa_future_wallet_counter=79dcead1f05a6427198cbdd9c1be2aca kafaa_fw_counter_core=33fb767168c5fc6b9b21a4cb6f7cd8c5 kafaa_fw_items=94c4b7ca5ad366c85f88c964554e9a28 kafaa_fw_status=d9e0541f135ec2d669eb8fdfb8bcb2f8 kafaa_fw_target_problem=33628c49c6be070d32e57218ad67687e kafaa_fw_target_view=50b37329ba04d7e14eeb128691ffc40f kafaa_my_future_wallet=026f07939f31c255be1194fc814999c6 kafaa_na_link_problem=6518decec3edf098ff577d8579f32490 kafaa_na_links=d39bee52fad4d85985261c869d2ce384 kafaa_na_measure=cb12ef8e35dcd08126c4e406123757d2 kafaa_na_report_core=fd4686d3c935119b6db6b544dfbaeb06 kafaa_na_target=0b5554d2f05e10d8fe91b91b6a9e2323 kafaa_set_wallet_target=b8fa09e65e8e33ec69883481babb682c
+    fs82 digest kafaa_pipeline_mirror: 554 rows, ids cdfe99ef, rows b2e632c7
+    fs82 digest kafaa_wallet_targets: 1 rows, ids 079f585f, rows e1b83399
+    fs82 digest kafaa_tag_links: 54 rows, ids 2f7c7854, rows 9100fda9
+    fs82 digest kafaa_plan_activities (pa-fs74-*): 1 rows, rows 63474c13
+FS83 · FS75 future-skills nudges in the weekly digest
+  ✓ before the release (2026-10-08, 2026-10-11): SQL = TS for 368 people x 2 days (1950 composed items, 0 FS75 candidates)
+  ✓ release gate: no FS75 item on any day before 2026-10-12, so the seeded digests (2026-W38..W41) are unchanged
+  ✓ release day 2026-10-12, every person: SQL = TS for 368 people x 1 days (1125 composed items, 201 FS75 candidates)
+  ✓ later days, every active staff member: SQL = TS for 106 people x 3 days (1300 composed items, 311 FS75 candidates)
+  ✓ seeded data gives FS75 nudges on 2026-10-12: {"ai_literacy":74,"pathway":33,"role_profile":86,"fellowship":3,"goal":1,"future_gig":2,"rising_skill":2}
+  ✓ every digest keeps at most 7 items and at most 2 future-skills items, ordered by urgency
+  ✓ every FS75 item has an internal deep link, a title in EN and AR and reasons with digest.why keys (141 items)
+  ✓ synthetic edge cases (decay, goals, FS70 signals, opt-out): SQL = TS for 8 people x 4 days (182 composed items, 71 FS75 candidates)
+  ✓ decay: a held level-3 fast skill whose level-3 evidence turns 18 months old is flagged, dated by its half-life
+  ✓ goal: a dated FS33 goal shows within 30 days of its date and drops out 30 days after it
+  ✓ goal: an FS07 goal without a dated plan asks for a date
+  ✓ rising skill: a growing skill on the latest FS70 list for my family is nudged first; an older quarter and an "in demand now" row are not
+  ✓ rising skill: a family signal reaches only that family
+  ✓ future gig: none after an opt-out of marketplace ranking (F24)
+  ✓ the same synthetic rows give nothing on 2026-10-11 (release gate)
+  ✓ 'future' can be muted (and then never shows); expiry still cannot be muted; unknown kinds are refused
+  ✓ idempotent per period: two builds in 2026-W42 give one run with the same 5 items
+  ✓ digest statistics list 8 kinds including future (counts under 10 suppressed)
+  ✓ kafaa_dg_future is closed to anon and authenticated (internal helper)
+  ✓ the 8 published nudge rules are public reference rows
+  ✓ the migration is additive: kafaa_* objects only, no removal statements
+    md5: kafaa_dg_compose 057f34bc056b6d44728a65491591a51f · kafaa_dg_future dda5cd099c9678b90ff82d8d2482cb8a · kafaa_dg_gather 348c20506e3134ec9c9ec8c5f2481fde · kafaa_digest_stats b0b74c7edc6e9c448a865db2536f62eb · kafaa_set_digest_prefs b1ba391233325ff07fcd9e162f2dd7b8
+    kafaa_digest_nudge_rules: 8 rows, digest 7ca73787
+FS wave H · E4 · FS76 Dalil future-skills mode
+  ✓ seed: the 4 future-skills intents equal futureIntents.ts (EN/AR examples, cited routes, https sources with as-of dates, FS76 benchmarks), all switched on
+  ✓ seed: three staff future-skills conversations (synthetic workers, career sessions) and one anonymous public one (client key only), dated after 2026-10-08
+  ✓ seed: release gate r1.1 runs the public, career and future-skills sets (68/68 cited, security 19/19)
+  ✓ parity: kafaa_dl_intent_base = intentBase() and the personal pattern = isPersonalIntent() on 13 intents
+  ✓ RLS: anonymous visitors and staff read the public catalogue; nobody (not even the AI owner) changes it with a direct write
+  ✓ setDalilIntent: only the AI owner (dalil_config A) switches an intent; a reason of 5-300 characters is required; unknown and unchanged intents are refused
+  ✓ setDalilIntent: the AI owner switches an intent off with a reason; the row keeps the acting role, time and reason; one audit row and one NEXUS ledger entry
+  ✓ dalilFutureTurn: a turn whose intent is switched off is refused (audited) and nothing is logged
+  ✓ dalilFutureTurn: a staff turn is logged as a career turn (mode staff, submode career, the future intent kept) through kafaa_dalil_career_turn
+  ✓ dalilFutureTurn: personal answers (flag or .personal intent) only for staff with a skills profile; a partner's public future answer is logged in partner mode
+  ✓ dalilFutureTurn: the Dalil kill switch still stops future-skills turns for staff and partners
+  ✓ grants: anonymous visitors execute nothing new (they keep kafaa_dalil_turn); the intent rule is internal
+  ✓ RLS: the catalogue uses the per-statement policy form
+  ✓ additive: the FS84 migration removes nothing (the words never appear), alters only kafaa_* objects and redefines no shared function
+  ✓ digests: kafaa_dalil_future_turn 26341ff1398c0040ed6032b248298b7b, kafaa_dl_intent_base dc41031590e016881e8814d44d843fae, kafaa_set_dalil_intent 7c920607cf9a4ef3421db42f0d58afeb; kafaa_dalil_intents 4 rows 69e50c66
+FS wave H · E5 · FS77 student future-skills starter and intake baselines
+  ✓ acceptance (FS77 all facts cite sources): 8 starter lessons, every one with https sources and an as-of date; SMR text has no site, headcount or deployment claim
+  ✓ seed: 12 induction modules (6 mandatory), 7 valid baselines; exactly the published ones are listed
+  ✓ seed: 8 induction plans = inductionPlan() of the baseline each names; mandatory modules always full; one stale plan (ip-w-lo-10)
+  ✓ SQL kafaa_ib_problem = baselineProblem() on 40 generated drafts (mandatory modules never held or partial); kafaa_ib_clean = cleanEntries()
+  ✓ SQL kafaa_ib_for = baselineFor() for 10 intake years x 6 scopes (programme first, then all programmes, highest published version)
+  ✓ SQL kafaa_ip_compute = inductionPlan() on 9 baselines (incl. none and a hand-made one); kafaa_ip_problem = planProblem(); kafaa_ip_joiners = joinerCandidates() (9 joiners)
+  ✓ RLS (Public R): anonymous visitors, staff and partners read the 8 lessons, 12 modules and 4 published baselines only, and no induction plan
+  ✓ RLS: a joiner reads only their own plan; HR (workforce_strategy), training staff (sat) and auditors read every plan and every baseline incl. drafts
+  ✓ saveIntakeBaseline: HR only (a manager and the training manager are refused); a mandatory module can never be marked held
+  ✓ saveIntakeBaseline: saving updates the open draft (audited, no ledger); publishing makes it public, writes the ledger and reports the 6 2027 plans that now read a different baseline
+  ✓ saveIntakeBaseline: a new version supersedes the previous published one (versions kept, one listed)
+  ✓ acceptance (FS77 induction plans read the baseline for the joiner's intake year): 2027 DNT reads ib-2027-all-v1 (8 h saved), 2026 GDP reads the programme baseline ib-2026-gdp-v1, 2025 reads ib-2025-all-v2, 2030 has none (full induction); HR only; the joiner is notified
+  ✓ inductionJoiners: HR and training staff only
+  ✓ grants: internal helpers (rules, plan builder, joiner list, notification writer) are not executable by signed-in users
+  ✓ grants: anonymous visitors execute none of the FS85 RPCs (the starter itself needs no RPC)
+  ✓ RLS: the four tables use the per-statement policy form
+  ✓ additive: the FS85 migration removes nothing (the words never appear), alters and updates only kafaa_* objects
+FS QA · wave H integration (FS70-FS77, FS69 pre-arrival checks in the digest)
+  ✓ FS75 SQL = TS (approvals + future items, gather and compose) for 368 people on 2026-10-12 and 2026-10-19; 2 rising-skill nudges from the stored 2026-Q3 FS70 list; never more than 7 items
+  ✓ FS69 -> F36: 2 pre-arrival checks owed on 2026-10-12 (p-training-mgr), each to the evaluator who opened the share on the contractor's behalf, dated by mobilisation; none before the release; a check, a revoked link, a passed mobilisation or a self-made share removes it
+  ✓ FS74: kafaa_fw_status = walletStatus() for 106 active staff (evidence only); FS62 links the wallet target to nt-ai-2031, nt-jahiz (kafaa_na_links = effectiveLinks)
+  ✓ FS77: kafaa_ib_for names every induction plan's baseline (8 plans; 1 stale by planStale)
+  ✓ FS75: kafaa_build_digest twice for the training manager gives one run for 2026-W42 with the same 7 items (idempotent per period, at most 7)
+  ✓ FS72 -> FS55: the skill_suggestions card excludes the protected inputs and has 4 fairness rows; nobody reads another person's suggestion (sro 0, chco 0, k-hr-analyst 0, k-auditor 0, training-mgr 0)
+  ✓ FS72 -> 3.9 / FS74: a confirmed suggestion writes one rating evidence row (basis claimed, level 1) that kafaa_skills_apply keeps, and the wallet stays at 3 of 5 (claimed never counts)
+  ✓ FS73: kafaa_emirati_pipeline answers k-hr-analyst, chco, k-auditor; observers, partners, line managers, the training manager and admins get nothing
+  ✓ the QA migration has no removal word, no ALTER, no new object, no data statement: one internal function replaced (same signature)
+  ✓ kafaa_dg_future stays closed to API roles — md5 kafaa_dg_future 0700d1621e373737887f980d2760c6cc, kafaa_dg_gather 348c20506e3134ec9c9ec8c5f2481fde (fs83 body), kafaa_dg_compose 057f34bc056b6d44728a65491591a51f

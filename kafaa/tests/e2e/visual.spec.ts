@@ -922,3 +922,82 @@ for (const s of SET_FSG) {
     await page.screenshot({ path: join(SHOTS_FSG, `${s.name}.png`), fullPage: false });
   });
 }
+
+// FS wave H (FS70-FS77): every new page (and the pages the wave-H wiring touched) in Arabic RTL and at 390 px, plus the feature set
+// saved to KAFAA_SHOTS_FSH. LOCAL backend (openFse), clock fixed on the release day (2026-10-12, 09:00 Abu Dhabi) so the digest shows the
+// week-42 nudges; the wave-H QA session had no live access: rerun in supabase mode after the live apply.
+const FSH_DAY = new Date('2026-10-12T05:00:00Z');
+const FSH_PAGES: Shot[] = [
+  { name: 'fsh-skills-rising', path: '/skills/rising', persona: 'k-ro' },
+  { name: 'fsh-skills-rising-method', path: '/skills/rising/method' },
+  { name: 'fsh-skill-signals', path: '/workforce/skill-signals', persona: 'chco' },
+  { name: 'fsh-manager-pulse', path: '/my/manager-pulse', persona: 'sro' },
+  { name: 'fsh-technologies', path: '/skills/technologies', persona: 'k-ro' },
+  { name: 'fsh-admin-technologies', path: '/admin/skills/technologies', persona: 'training-mgr' },
+  { name: 'fsh-suggestions', path: '/my/skills/suggestions', persona: 'k-ro' },
+  { name: 'fsh-emirati-pipeline', path: '/national/emirati-pipeline', persona: 'chco' },
+  { name: 'fsh-my-future-wallet', path: '/my/future-wallet', persona: 'k-ro' },
+  { name: 'fsh-future-wallet-counter', path: '/national/future-wallet', persona: 'chco' },
+  { name: 'fsh-starter', path: '/pathways/journey/starter' },
+  { name: 'fsh-my-induction', path: '/my/induction', persona: 'k-lo-trainee' },
+  { name: 'fsh-intake-baselines', path: '/workforce/intake-baselines', persona: 'k-hr-analyst' },
+  { name: 'fsh-my-digest', path: '/my', persona: 'k-ro' },
+  { name: 'fsh-my-digest-prearrival', path: '/my', persona: 'training-mgr' },
+  { name: 'fsh-digest-settings', path: '/my/settings', persona: 'k-ro' },
+  { name: 'fsh-admin-digest', path: '/admin/digest', persona: 'k-admin' },
+  { name: 'fsh-ask-future', path: '/ask?mode=future' },
+  { name: 'fsh-ask-future-staff', path: '/ask?mode=future', persona: 'k-ro' },
+  { name: 'fsh-admin-dalil', path: '/admin/dalil', persona: 'ai-governance' },
+  { name: 'fsh-journey', path: '/pathways/journey' },
+  { name: 'fsh-my-role-2030', path: '/my/role-2030', persona: 'k-ro' },
+  { name: 'fsh-my-ai-fluency', path: '/my/ai-fluency', persona: 'k-ro' },
+  { name: 'fsh-ladder', path: '/learn/ai-fluency' },
+  { name: 'fsh-skill', path: '/skills/sk-fs-ai-use', persona: 'k-ro' },
+  { name: 'fsh-my-pathways', path: '/my/pathways', persona: 'k-ro' },
+  { name: 'fsh-my-plan', path: '/my/plan', persona: 'k-ro' },
+  { name: 'fsh-ai-transparency', path: '/admin/ai-transparency', persona: 'k-auditor' },
+];
+for (const s of FSH_PAGES) {
+  test(`rtl ${s.name}`, async ({ page }) => {
+    const w = watchErrors(page);
+    await page.clock.setFixedTime(FSH_DAY);
+    await openFse(page, { ...s, ar: true });
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
+    expect(await overflowX(page), 'no horizontal scroll').toBeLessThanOrEqual(1);
+    expect(await textIssues(page)).toEqual([]);
+    await page.screenshot({ path: join(OUT, 'rtl', `${s.name}.png`), fullPage: true });
+    expect(w.take()).toEqual([]);
+  });
+  test(`mobile ${s.name}`, async ({ page }) => {
+    const w = watchErrors(page);
+    await page.clock.setFixedTime(FSH_DAY);
+    await openFse(page, { ...s, mobile: true });
+    expect(await overflowX(page), `${s.name}: page scrolls sideways at 390 px`).toBeLessThanOrEqual(1);
+    expect(await textIssues(page)).toEqual([]);
+    await page.screenshot({ path: join(OUT, 'mobile', `${s.name}.png`), fullPage: true });
+    expect(w.take()).toEqual([]);
+  });
+}
+const SHOTS_FSH = process.env.KAFAA_SHOTS_FSH || 'test-results/shots_fsH';
+mkdirSync(SHOTS_FSH, { recursive: true });
+const SET_FSH: Shot[] = [
+  { name: '01-skills-on-the-rise-en', path: '/skills/rising', persona: 'k-ro' },
+  { name: '02-hot-technologies-en', path: '/skills/technologies', persona: 'k-ro' },
+  { name: '03-skills-you-may-have-en', path: '/my/skills/suggestions', persona: 'k-ro' },
+  { name: '04-emirati-pipeline-en', path: '/national/emirati-pipeline', persona: 'chco' },
+  { name: '05-future-skills-wallet-en', path: '/my/future-wallet', persona: 'k-ro' },
+  { name: '06-wallet-counter-en', path: '/national/future-wallet', persona: 'chco' },
+  { name: '07-digest-future-nudges-en', path: '/my', persona: 'k-ro' },
+  { name: '08-dalil-future-mode-en', path: '/ask?mode=future', persona: 'k-ro' },
+  { name: '09-student-starter-ar', path: '/pathways/journey/starter', ar: true },
+  { name: '10-intake-baselines-mobile', path: '/workforce/intake-baselines', persona: 'k-hr-analyst', mobile: true },
+];
+for (const s of SET_FSH) {
+  test(`shot fsh ${s.name}`, async ({ page }) => {
+    await page.clock.setFixedTime(FSH_DAY);
+    if (!s.mobile) await page.setViewportSize({ width: 1440, height: 900 });
+    await openFse(page, s);
+    await page.screenshot({ path: join(SHOTS_FSH, `${s.name}.png`), fullPage: false });
+  });
+}

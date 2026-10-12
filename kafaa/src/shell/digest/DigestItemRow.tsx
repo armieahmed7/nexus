@@ -4,6 +4,7 @@ import { Icon, StatusPill, WhyThis, type PillTone } from '../../ui';
 import type { IconName } from '../../ui/Icon';
 import type { DigestItem } from './rules';
 import { itemReasons, KIND_ICON } from './useDigest';
+import { futureTopic } from './future';
 
 const URGENCY_TONE: Record<number, PillTone> = { 1: 'bad', 2: 'sim', 3: 'info' };
 
@@ -13,6 +14,11 @@ export function DigestItemRow({ i, compact = false, onOpen }: { i: DigestItem; c
   const lang = useLang();
   const title = lang === 'ar' ? i.title_ar || i.title_en : i.title_en;
   const line = (() => {
+    if (i.kind === 'future') { // FS75: one line per topic (dated: decay lapse, goal target date)
+      const tp = futureTopic(i) ?? 'open';
+      if (i.days != null && i.due_on) return i.days < 0 ? t('digest.line.overdue', { date: f.date(i.due_on) }) : i.days === 0 ? t('digest.line.today') : t(`digest.line.future_${tp}`, { n: f.num(i.days), date: f.date(i.due_on) });
+      return t(tp === 'goal' ? 'digest.line.future_goal_open' : tp === 'decay' || tp === 'open' ? 'digest.line.future_open' : `digest.line.future_${tp}`);
+    }
     if (i.kind === 'opportunity') return t('digest.line.opportunity', { pct: f.num(Math.round((i.score ?? 0) * 100)) });
     if (i.kind === 'refresher') return t('digest.line.refresher');
     if (i.days == null) return t(`digest.line.${i.kind}_open`);

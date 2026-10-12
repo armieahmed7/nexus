@@ -165,7 +165,8 @@
     "noGame": {
       "title": "No points, no streaks, no leaderboards",
       "body": "The ladder describes evidence. It does not rank people, award points or reward streaks, and nobody else sees your rung; leaders see only suppressed aggregates."
-    }
+    },
+    "toStarter": "Future-skills starter for students"
   },
   "my": {
     "intro": "Your rung on the AI fluency ladder, worked out from your skill evidence. Each reason points at the evidence behind it.",
@@ -240,7 +241,10 @@
       "body": "{max} rungs, no points and no streaks. Your rung changes only when evidence changes, and evidence ages: digital and AI skills fall in the fast-changing decay class."
     },
     "toDrills": "Sandbox drills",
-    "toRegister": "AI systems I use"
+    "toRegister": "AI systems I use",
+    "askDalil": "Ask Dalil which rung I need",
+    "askQ": "Which AI rung do I need?",
+    "toWallet": "My Future Skills Wallet"
   },
   "fit": {
     "intro": "A short adaptive check of your digital and AI skills. It takes about ten minutes, adapts to your answers and is scored on the server. You can take it once a quarter.",

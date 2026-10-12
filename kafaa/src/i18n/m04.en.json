@@ -754,7 +754,8 @@
       "core": "Core",
       "important": "Important",
       "useful": "Useful"
-    }
+    },
+    "toWallet": "My Future Skills Wallet"
   },
   "schedule": {
     "addPerson": "Add a person",

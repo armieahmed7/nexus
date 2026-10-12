@@ -36,6 +36,18 @@
     "workforce-journeys": {
       "title": "Student journey insights",
       "purpose": "Aggregate counts of saved student journeys by stage, route and interest family (cells under 10 suppressed), and Mustaqbali starter credentials."
+    },
+    "pathways-starter": {
+      "title": "Future-skills starter",
+      "purpose": "AI-literacy starter and SMR orientation for students: short sourced lessons with a self-check, and what induction will not re-teach for each intake. Nothing is stored."
+    },
+    "my-induction": {
+      "title": "My induction plan",
+      "purpose": "Your induction plan, read from the baseline for your intake year: what you do in full, as a short refresher, or skip."
+    },
+    "workforce-intake-baselines": {
+      "title": "Intake baselines and induction plans",
+      "purpose": "HR sets what each intake year already holds, so induction skips it; induction plans read the baseline for the joiner's intake year."
     }
   },
   "pathways": {
@@ -434,7 +446,8 @@
       "ready": "Readiness checklist",
       "practice": "Practice quizzes",
       "parents": "For parents",
-      "portfolio": "My portfolio"
+      "portfolio": "My portfolio",
+      "starter": "Future-skills starter"
     },
     "boardTitle": "Your journey board",
     "boardHint": "Four stations from school to your first role. Every programme fact links its public source and the date it refers to.",
@@ -547,7 +560,14 @@
     "route_chosen": "You chose this route on the board",
     "route_study": "Your answer about study length: \"{a}\"",
     "route_stage": "It fits where you are now: {stage}",
-    "route_family": "It leads to families you matched: {families}"
+    "route_family": "It leads to families you matched: {families}",
+    "ib_mandatory": "{module} is mandatory: always taught in full",
+    "ib_no_baseline": "No published baseline for the {year} intake: full module",
+    "ib_no_entry": "The {year} baseline does not cover {module}: full module",
+    "ib_held": "The {year} intake already holds {module} ({basis})",
+    "ib_partial": "The {year} intake partly holds {module} ({basis}): a {hours} h refresher",
+    "ib_not_held": "The {year} baseline says the intake does not hold {module} yet",
+    "ib_version": "Read from baseline {id}, version {version}"
   },
   "jparents": {
     "eyebrow": "Student-to-career journey",
@@ -663,5 +683,235 @@
     "rulesTitle": "Aggregate only",
     "rulesBody": "Individual journeys stay private to each student. HR sees counts of 10 or more; application decisions stay in the funnel and ENEC HR's official process.",
     "funnelLink": "Open the application funnel"
+  },
+  "starter": {
+    "eyebrow": "Future skills · students",
+    "intro": "Two short starters before you join ENEC: AI literacy and next-generation reactors. Read, check yourself and follow the sources. Self-checks are for you only.",
+    "storeNothing": "Nothing on this page is stored or sent",
+    "storeSigned": "Signed in: you can keep your progress in your saved journey",
+    "jump": "On this page",
+    "nav": {
+      "ai": "AI literacy",
+      "smr": "SMR orientation",
+      "induction": "Your intake",
+      "catalogue": "Induction modules"
+    },
+    "backJourney": "Back to the journey",
+    "track": {
+      "ai": "AI-literacy starter",
+      "smr": "SMR orientation"
+    },
+    "trackHint": {
+      "ai": "Five short lessons: what AI is, checking outputs, fairness and privacy, AI learning in the UAE, and AI at a nuclear plant.",
+      "smr": "Three short lessons on small modular reactors, what changes for Barakah roles, and nuclear careers."
+    },
+    "lessonsN": "{n} lessons",
+    "noLessons": "No starter lessons are published yet",
+    "noDeployTitle": "Planning view only",
+    "noDeploy": "No deployment decision is implied. These lessons help you learn about newer reactor designs; nothing here is a site, a headcount or a schedule.",
+    "noDeployShort": "Planning view: no deployment decision implied.",
+    "progress": "{done} of {total} lessons checked",
+    "checked": "Checked",
+    "keyPoints": "Key points",
+    "checkYourself": "Check yourself",
+    "right": "That's right.",
+    "notQuite": "Not quite.",
+    "relatedModule": "Matches the induction module: {module}",
+    "sources": "Sources",
+    "asOf": "as of {date}",
+    "secondary": "Secondary source",
+    "secondaryHint": "Reported by a secondary source or a news report; confirm against the original.",
+    "save": "Keep my progress",
+    "saved": "Starter progress saved in your journey",
+    "saveHint": "Save which lessons you checked to your journey. Only you can see it.",
+    "saveNotForRole": "Progress is kept for students and applicants with a Kafa'a account; you can still use every lesson.",
+    "saveAnon": "Nothing is saved while you are not signed in. Sign in as a student to keep your progress.",
+    "signIn": "Sign in to keep your progress",
+    "baselinesTitle": "What induction will not re-teach",
+    "baselinesHint": "HR publishes a baseline for each intake year: modules the intake already holds are skipped, partly held ones become a short refresher. Mandatory nuclear modules are always taught.",
+    "noModules": "The induction catalogue is not published yet",
+    "noBaselines": "No intake baseline is published yet",
+    "previewTitle": "Induction for an intake",
+    "previewYear": "Intake year",
+    "previewRoute": "Entry programme",
+    "previewFrom": "From the baseline for {scope}, version {version}, published {date}.",
+    "previewNone": "No published baseline for this intake yet: the full induction applies.",
+    "catalogueTitle": "Induction modules",
+    "catalogueHint": "Every module new joiners can take, with its hours. Modules marked always taught are never skipped.",
+    "rulesTitle": "How this works",
+    "rulesBody": "The starter is static content: answering a self-check sends nothing and keeps no result. Baselines describe a whole intake year, never one person, and only shorten induction; they never compare or select anyone.",
+    "teaserTitle": "Future-skills starter",
+    "teaserHint": "Get ready for the skills new joiners need: AI literacy and next-generation reactors. Try one self-check here.",
+    "teaserOpen": "Open the starter"
+  },
+  "ind": {
+    "action": {
+      "full": "Full module",
+      "refresher": "Short refresher",
+      "skip": "Skipped: already held"
+    },
+    "basis": {
+      "national_curriculum": "National school curriculum",
+      "programme_curriculum": "Programme or degree curriculum",
+      "intake_diagnostic": "Intake diagnostic",
+      "none": "No basis"
+    },
+    "basisLower": {
+      "national_curriculum": "national school curriculum",
+      "programme_curriculum": "programme or degree curriculum",
+      "intake_diagnostic": "intake diagnostic",
+      "none": "no basis"
+    },
+    "status": {
+      "held": "Held",
+      "partial": "Partly held",
+      "not_held": "Not held"
+    },
+    "area": {
+      "ai": "AI",
+      "digital": "Digital",
+      "cyber": "Cyber hygiene",
+      "energy": "Energy",
+      "smr": "Next-generation reactors",
+      "safety": "Safety culture",
+      "radiation": "Radiation protection",
+      "site": "Site",
+      "company": "ENEC"
+    },
+    "programme": {
+      "all": "All programmes",
+      "dnt": "Diploma in Nuclear Technology",
+      "energy-pioneers": "Energy Pioneers",
+      "gdp": "Graduate Development Program",
+      "gpo": "Graduate Plant Operator",
+      "direct": "Direct hire"
+    },
+    "mandatory": "Always taught",
+    "hoursN": "{n} h",
+    "hoursOf": "{n} of {of} h",
+    "ofTotal": "of {n} h in full",
+    "refresherN": "Refresher {n} h",
+    "totals": {
+      "planned": "Hours planned",
+      "saved": "Hours already held",
+      "total": "Full induction",
+      "skipped": "Modules skipped",
+      "refreshers": "Short refreshers"
+    }
+  },
+  "myind": {
+    "eyebrow": "Induction",
+    "intro": "Your induction plan, built by HR from the baseline for your intake year. Modules your intake already holds are skipped; mandatory nuclear modules are always taught.",
+    "emptyTitle": "No induction plan yet",
+    "emptyBody": "HR builds an induction plan when you join one of ENEC's entry programmes. Meanwhile you can try the future-skills starter.",
+    "openStarter": "Open the future-skills starter",
+    "intake": "{programme}, intake {year}",
+    "baselineUsed": "Read from baseline {id}, version {version}",
+    "noBaseline": "No baseline was published for your intake when the plan was built, so it is the full induction.",
+    "builtOn": "Built on {date} (revision {n})",
+    "staleTitle": "A newer baseline is published",
+    "stale": "HR has published a different baseline for your intake since this plan was built. HR will rebuild your plan.",
+    "planTitle": "Your modules",
+    "planHint": "Each module shows whether you do it in full, as a short refresher or skip it, and why.",
+    "notAuthorityTitle": "Not a qualification record",
+    "notAuthority": "This plan only shortens induction. It is not a qualification, licence or authorisation record; those stay with the licensee's systems."
+  },
+  "ibw": {
+    "eyebrow": "Workforce · induction",
+    "intro": "Set what each intake year already holds so induction stops re-teaching it, and keep every joiner's induction plan on the current baseline. Mandatory nuclear modules are locked.",
+    "readOnly": "Read only: baselines and plans are edited by HR (workforce strategy W).",
+    "stat": {
+      "published": "Published baselines",
+      "drafts": "Drafts",
+      "plans": "Induction plans",
+      "stale": "Plans to rebuild"
+    },
+    "tab": {
+      "baselines": "Baselines",
+      "plans": "Induction plans",
+      "joiners": "Joiners"
+    },
+    "new": "New baseline for {year}",
+    "editDraft": "Edit draft",
+    "newVersion": "New version",
+    "status": {
+      "draft": "Draft",
+      "published": "Published",
+      "superseded": "Superseded"
+    },
+    "version": "Version {n}",
+    "counts": "{held} held, {partial} partly held",
+    "publishedOn": "Published {date}",
+    "savedOn": "Saved {date}",
+    "editorTitle": "Intake baseline",
+    "editorEyebrow": "Draft",
+    "year": "Intake year",
+    "yearHint": "Between {min} and {max}",
+    "scope": "Applies to",
+    "locked": "Always taught: mandatory modules cannot be skipped or shortened by a baseline.",
+    "entryStatus": "The intake",
+    "noEntry": "Not covered",
+    "basis": "Basis",
+    "source": "Source (https)",
+    "noteEn": "Note (English)",
+    "noteAr": "Note (Arabic)",
+    "baselineNoteEn": "Baseline note (English)",
+    "baselineNoteAr": "Baseline note (Arabic)",
+    "affected": "Plans of this intake",
+    "replaces": "Replaces {id} when published",
+    "firstForIntake": "First baseline for this intake",
+    "valid": "Ready to save.",
+    "problem": {
+      "year": "Give an intake year between 2020 and 2035.",
+      "programme": "Choose all programmes or one entry programme.",
+      "entries": "Mark at least one module as held, partly held or not held.",
+      "module": "Every entry names a listed induction module.",
+      "duplicate": "Each induction module appears once.",
+      "status": "Each entry is held, partly held or not held.",
+      "basis": "A held or partly held module needs its basis.",
+      "mandatory": "Mandatory nuclear modules are never skipped or shortened.",
+      "source": "A national-curriculum basis cites an https source; sources start with https://.",
+      "note": "Notes are at most 300 characters per module and 600 for the baseline."
+    },
+    "saveDraft": "Save draft",
+    "publish": "Publish",
+    "confirmDraftTitle": "Save this draft?",
+    "confirmDraft": "The draft is visible to HR, training staff and auditors only. Induction plans keep reading the published baseline.",
+    "confirmPublishTitle": "Publish this baseline?",
+    "confirmPublish": "It becomes the public baseline for the {year} intake and replaces the previous version. {n} induction plans of that intake will read it once rebuilt.",
+    "savedToast": "Draft baseline saved",
+    "publishedToast": "Baseline published",
+    "staleTitle": "{n} plans read an older baseline",
+    "staleBody": "A newer baseline is published for their intake. Rebuild them so induction stops re-teaching what they hold.",
+    "rebuildStale": "Rebuild all",
+    "rebuild": "Rebuild",
+    "view": "View",
+    "noPlans": "No induction plans yet",
+    "none": "None",
+    "current": "Current",
+    "stale": "To rebuild",
+    "col": {
+      "joiner": "Joiner",
+      "programme": "Programme",
+      "year": "Intake",
+      "baseline": "Baseline",
+      "planned": "Hours planned",
+      "saved": "Hours held",
+      "state": "State"
+    },
+    "planOf": "{programme}, intake {year}",
+    "confirmRebuildTitle": "Rebuild induction plans?",
+    "confirmRebuild": "{n} plans will be rebuilt from the published baseline for each joiner's intake year. Each joiner is notified.",
+    "rebuiltToast": "Plan rebuilt for {name}",
+    "joinersHint": "Joiners with a plan, offered or accepted applicants of the entry programmes (intake the year after the decision) and entry-level staff hired in the last year.",
+    "from": {
+      "plan": "has a plan",
+      "offer": "offer or accepted",
+      "hire": "hired this year"
+    },
+    "build": "Build plan",
+    "confirmBuildTitle": "Build an induction plan for {name}?",
+    "confirmBuild": "The plan reads the published baseline for this programme and intake year (all programmes if there is no programme baseline). The joiner is notified.",
+    "builtToast": "Induction plan built"
   }
 }

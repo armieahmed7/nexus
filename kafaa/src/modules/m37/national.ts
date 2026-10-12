@@ -15,6 +15,7 @@ import type { Reason } from '../../domain/engines/types';
 import { publicTextIsClean } from '../../domain/future.ts';
 import { cecLevel } from '../m32/cec.ts';
 import { aiRung } from '../m29/fluency.ts';
+import { walletStatus, walletWorld } from './wallet.ts'; // FS74 (fsHe2): the wallet target row and its measure
 
 export const STRATEGIES = ['nes_2031', 'we_uae_2031', 'ai_2031', 'net_zero_2050', 'jahiz', 'centennial_2071'] as const;
 export type Strategy = (typeof STRATEGIES)[number];
@@ -33,7 +34,7 @@ export const JAHIZ_GROUP_NAME: Record<string, { en: string; ar: string }> = {
 export const DERIVE_RULES = ['future_group', 'cec_net_zero'] as const;
 export const ITEM_KINDS = ['skill', 'programme', 'target'] as const;
 export type ItemKind = (typeof ITEM_KINDS)[number];
-export type MeasureKind = 'holders' | 'completers' | 'enrolled' | 'awarded' | 'applicants' | 'participants' | 'at_target' | 'org_share' | 'family_share';
+export type MeasureKind = 'holders' | 'completers' | 'enrolled' | 'awarded' | 'applicants' | 'participants' | 'at_target' | 'org_share' | 'family_share' | 'wallet_share';
 /** Tables a tag may link to: what kind of item each row is and which measure the report computes for it. A later wave (FS74's future
  *  target) adds a table here and in SQL kafaa_na_target (create or replace); no check constraint has to be widened. */
 export const TARGET_TABLES: Record<string, { kind: ItemKind; measure: MeasureKind }> = {
@@ -47,6 +48,7 @@ export const TARGET_TABLES: Record<string, { kind: ItemKind; measure: MeasureKin
   critical_skills: { kind: 'target', measure: 'at_target' },
   ai_org_targets: { kind: 'target', measure: 'org_share' },
   cec_role_targets: { kind: 'target', measure: 'family_share' },
+  wallet_targets: { kind: 'target', measure: 'wallet_share' }, // FS74 (fsHe2, wave H): the Future Skills Wallet target (SQL lists in the fs82 migration)
 };
 export const TABLE_ORDER = Object.keys(TARGET_TABLES);
 export const MIN_GROUP = 10;
@@ -152,10 +154,11 @@ export interface NaWorld {
   critical_skills: Row[]; ai_org_targets: Row[]; cec_role_targets: Row[]; job_families: Row[];
   people: Row[]; person_skills: Row[]; courses: Row[]; enrolments: Row[]; training_records: Row[]; pathway_enrolments: Row[]; microcred_awards: Row[];
   applications: Row[]; leadership_nominations: Row[]; ai_rungs: Row[]; ai_skill_tracks: Row[];
+  wallet_targets: Row[]; core_skills: Row[]; // FS74 (fsHe2)
 }
 export const WORLD_TABLES = ['national_tags', 'tag_links', 'skills', 'cec_competences', 'programmes', 'pathways', 'microcred_defs', 'talent_programmes', 'leadership_programmes',
   'critical_skills', 'ai_org_targets', 'cec_role_targets', 'job_families', 'people', 'person_skills', 'courses', 'enrolments', 'training_records', 'pathway_enrolments',
-  'microcred_awards', 'applications', 'leadership_nominations', 'ai_rungs', 'ai_skill_tracks'] as const;
+  'microcred_awards', 'applications', 'leadership_nominations', 'ai_rungs', 'ai_skill_tracks', 'wallet_targets', 'core_skills'] as const;
 export function worldFrom(raw: (t: string) => Row[]): NaWorld {
   const w = Object.fromEntries(WORLD_TABLES.map((t) => [t, raw(t) ?? []])) as Row;
   return { ...w, tags: w.national_tags, links: w.tag_links } as NaWorld;
@@ -238,6 +241,10 @@ export function targetView(w: NaWorld, table: string, id: string): { exists: boo
       const f = w.job_families.find((x) => x.id === r.family_id);
       return { exists: true, title_en: `CleanEnergyComp target: ${f?.name_en ?? r.family_id}`, title_ar: `هدف كفاءات الطاقة النظيفة: ${f?.name_ar ?? r.family_id}`, active: true, area: null };
     }
+    case 'wallet_targets': { // FS74 (fsHe2)
+      const r = find(w.wallet_targets ?? []); if (!r) return none;
+      return { exists: true, title_en: 'Future Skills Wallet target: the core five', title_ar: 'هدف محفظة مهارات المستقبل: المهارات الخمس الأساسية', active: r.status === 'active', area: null };
+    }
     default: return none;
   }
 }
@@ -286,6 +293,15 @@ export function measureOf(w: NaWorld, ix: Ix, table: string, id: string): Measur
       let n = 0;
       for (const p of fam) if (cecLevel(w.cec_competences as never, w.person_skills.filter((s) => s.person_id === p.id && s.active) as never) >= Number(t.level)) n++;
       return { kind, n: fam.length >= MIN_GROUP ? sup(n) : null, base: sup(fam.length), pct: fam.length >= MIN_GROUP && n >= MIN_GROUP ? pct1(n, fam.length) : null, target: Number(t.level), due_on: null };
+    }
+    case 'wallet_targets': { // FS74 (fsHe2): active staff with a complete core-five wallet against the leadership target
+      const t = (w.wallet_targets ?? []).find((x) => x.id === id); if (!t) return m(0);
+      const ww = walletWorld((name) => (w as unknown as Record<string, Row[]>)[name] ?? []);
+      const today = new Date().toISOString().slice(0, 10);
+      const base = ix.staff.size;
+      let n = 0;
+      for (const pid of ix.staff.keys()) if (walletStatus(pid, ww.inputsFor(pid), today).complete) n++;
+      return { kind, n: base >= MIN_GROUP ? sup(n) : null, base: sup(base), pct: base >= MIN_GROUP && n >= MIN_GROUP ? pct1(n, base) : null, target: Number(t.pct), due_on: String(t.due_on).slice(0, 10) };
     }
     default: return null;
   }

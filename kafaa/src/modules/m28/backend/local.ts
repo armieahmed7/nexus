@@ -9,6 +9,7 @@ import { todayIso } from '../../../domain/rules';
 import { AL_MSG, REASON_MAX, REASON_MIN, alResultCode, canonLevelMap, checkAlignment, type AlignmentInput } from '../crosswalk';
 import { GOAL_MAX_ACTIVE, GOAL_MSG } from '../crosswalk';
 import type { M28Rpc, SaveAlignmentResult, SkillGoalResult } from './rpc';
+import { makeLocalFs70 } from './local.fs70'; // FS wave H · E1 (FS70, FS71, FS72)
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 const str = (s: unknown) => (typeof s === 'string' ? s.trim() : '');
@@ -31,6 +32,7 @@ export function makeLocalM28(b: LocalBackend, h: LocalRpcHelpers): M28Rpc {
   });
 
   return {
+    ...makeLocalFs70(b, h),
     async saveAlignment(input: AlignmentInput) {
       await b.whenReady();
       type R = SaveAlignmentResult;
