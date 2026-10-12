@@ -16,7 +16,11 @@ export default function MyCoreSkillsPage() {
   const q = useQuery(['person_skills', 'sjt_attempts'], () => repo.rpc.coreSkillsMine(), []);
   return (
     <Page title={t('m33.routes.my-core-skills.title')} intro={t('m33.my.intro')} wide eyebrow={<BenchmarkChips feature="FS25" />}
-      actions={<L to="/my/core-skills/practice" className="btn-primary btn-sm no-underline" data-testid="m33-my-to-practice"><Icon name="sparkle" size={14} /> {t('m33.my.practice')}</L>}>
+      actions={<span className="flex flex-wrap gap-2">
+        <L to="/my/core-skills/practice" className="btn-primary btn-sm no-underline" data-testid="m33-my-to-practice"><Icon name="sparkle" size={14} /> {t('m33.my.practice')}</L>
+        <L to="/my/core-skills/problem-solving" className="btn-outline btn-sm no-underline" data-testid="m33-my-to-aps">{t('m33.routes.my-problem-solving.title')}</L>
+        <L to="/my/role-play" className="btn-outline btn-sm no-underline" data-testid="m33-my-to-roleplay">{t('m33.routes.my-role-play.title')}</L>
+      </span>}>
       <Async state={ref}>{(d) => <Async state={q}>{(p) => (p ? <Mine d={d} p={p} /> : <EmptyState title={t('m33.my.none')} />)}</Async>}</Async>
     </Page>
   );

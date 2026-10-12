@@ -60,4 +60,52 @@ export const TABLES_M33: Record<string, TableDef> = {
     read: [{ res: 'own_profile', person: 'person_id' }],
     write: { mode: 'rpc', res: 'skills_profile' },
   },
+
+  // ───────────── FS58 Adaptive problem-solving practice (wave F · E5)
+  aps_scenarios: {
+    module: 'M33', label: 'Adaptive problem-solving practice scenario (PIAAC-style, EN/AR): the first plan, then one or more mid-task changes revealed only after the earlier choice; per stage the facts to judge and 3-4 options with expert effectiveness 0-3, a why each and the debrief; training staff read the key, takers get stages without it (FS58)',
+    cols: {
+      id: 'text pk', code: 'text uniq', theme: 'text enum:outage_schedule|conflicting_data|supply_delay|staffing_change|weather_logistics|procedure_revision|digital_tool_outage|priority_conflict idx',
+      title_en: 'text', title_ar: 'text', summary_en: 'text', summary_ar: 'text', context_en: 'text', context_ar: 'text',
+      core_skill_ids: 'text[] =[]', skill_ids: 'text[] =[]', difficulty: 'int =2', est_minutes: 'int =10', stages: 'json =[]', sources: 'json =[]',
+      status: 'text enum:draft|published|retired =\'draft\' idx', version: 'int =1', sort: 'int =0', updated_by: 'text?', updated_at: 'ts =now',
+    },
+    read: [{ res: 'secure_items' }],
+    write: { mode: 'rpc', res: 'secure_items' },
+  },
+  aps_attempts: {
+    module: 'M33', label: 'One person\'s adaptive problem-solving practice run: the stages answered (choice, facts picked, effectiveness), points, the 0-100 practice score, band and dimensions. Own only: never a manager, HR, talent review or a qualification (FS58)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', scenario_id: 'text ref:aps_scenarios idx', scenario_version: 'int =1', attempt_no: 'int', period: 'text idx',
+      status: 'text enum:in_progress|completed|abandoned =\'in_progress\' idx', stage_ids: 'text[] =[]', responses: 'json =[]', points: 'int?', max_points: 'int?', score: 'int?',
+      band: 'text? enum:emerging|developing|adaptive|strategic', dims: 'json ={}', reasons: 'json =[]', started_at: 'ts =now', completed_at: 'ts?',
+    },
+    read: [{ res: 'own_profile', person: 'person_id' }],
+    write: { mode: 'rpc', res: 'skills_profile' },
+  },
+
+  // ───────────── FS59 Role-play practice library with saved feedback (wave F · E5)
+  roleplay_scenarios: {
+    module: 'M33', label: 'ENEC-authored role-play practice scenario (EN/AR): the setting, the counterpart, 3-5 turns with hints and example answers, and the published deterministic rubric (criteria with what each looks for and a tip); staff read published ones (listed), training staff all (FS59)',
+    cols: {
+      id: 'text pk', code: 'text uniq', kind: 'text enum:pre_job_brief|shift_turnover|raise_concern|regulator_interview|knowledge_transfer|ai_peer_coaching idx',
+      title_en: 'text', title_ar: 'text', summary_en: 'text', summary_ar: 'text', setting_en: 'text', setting_ar: 'text', counterpart_en: 'text', counterpart_ar: 'text',
+      role_en: 'text', role_ar: 'text', core_skill_ids: 'text[] =[]', skill_ids: 'text[] =[]', level: 'int =1', pass_pct: 'int =70', est_minutes: 'int =15',
+      turns: 'json =[]', rubric: 'json =[]', sources: 'json =[]', status: 'text enum:draft|published|retired =\'draft\' idx', listed: 'bool =false',
+      version: 'int =1', sort: 'int =0', updated_by: 'text?', updated_at: 'ts =now',
+    },
+    read: [{ res: 'internal_content', where: 'listed' }, { res: 'secure_items' }],
+    write: { mode: 'rpc', res: 'secure_items' },
+  },
+  roleplay_sessions: {
+    module: 'M33', label: 'One person\'s role-play practice session: the rubric ticks and word count per turn and the summary (never the answer text); the review request to a named reviewer and, once validated, the evidence written. Own only; the named reviewer sees a requested session through the review queue RPC (FS59)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', scenario_id: 'text ref:roleplay_scenarios idx', scenario_version: 'int =1', period: 'text idx',
+      status: 'text enum:in_progress|completed =\'in_progress\' idx', turns: 'json =[]', passed: 'int?', total: 'int?', pct: 'int?', ready: 'bool =false', reasons: 'json =[]',
+      started_at: 'ts =now', completed_at: 'ts?', review_status: 'text enum:none|requested|validated|declined|withdrawn =\'none\' idx', reviewer_id: 'text? ref:people idx',
+      review_context: 'text?', requested_at: 'ts?', reviewed_by: 'text?', reviewed_at: 'ts?', review_note: 'text?', level: 'int =0', evidence_ids: 'text[] =[]',
+    },
+    read: [{ res: 'own_profile', person: 'person_id' }],
+    write: { mode: 'rpc', res: 'skills_profile' },
+  },
 };

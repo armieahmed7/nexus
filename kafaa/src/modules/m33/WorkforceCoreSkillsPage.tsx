@@ -19,7 +19,8 @@ export default function WorkforceCoreSkillsPage() {
     return { core, sjt };
   }, []);
   return (
-    <Page title={t('m33.routes.workforce-core-skills.title')} intro={t('m33.wf.intro')} wide eyebrow={<BenchmarkChips ids={FS25_FS26} />}>
+    <Page title={t('m33.routes.workforce-core-skills.title')} intro={t('m33.wf.intro')} wide eyebrow={<BenchmarkChips ids={FS25_FS26} />}
+      actions={<L to="/workforce/core-skills/practice" className="btn-outline btn-sm no-underline" data-testid="m33-wf-to-practice">{t('m33.routes.workforce-core-practice.title')}</L>}>
       <Async state={ref}>{(d) => <Async state={q}>{(s) => (s.core && s.sjt ? <Stats d={d} core={s.core} sjt={s.sjt} /> : <EmptyState title={t('m33.wf.none')} />)}</Async>}</Async>
     </Page>
   );

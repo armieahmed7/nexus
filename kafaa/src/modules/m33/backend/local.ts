@@ -13,6 +13,7 @@ import {
   type CoreName, type SjtItem, type SjtItemInput, type SjtResponse,
 } from '../sjt';
 import type { M33Rpc, SjtContext, SjtResult, SjtStep } from './rpc';
+import { makeLocalFs65 } from './local.fs65'; // FS58/FS59 (wave F · E5)
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 const hex = (n: number) => Array.from(crypto.getRandomValues(new Uint8Array(n)), (x) => x.toString(16).padStart(2, '0')).join('');
@@ -61,6 +62,7 @@ export function makeLocalM33(b: LocalBackend, h: LocalRpcHelpers): M33Rpc {
   });
 
   return {
+    ...makeLocalFs65(b, h),
     async coreSkillsMine() {
       await b.whenReady();
       const pid = me();
