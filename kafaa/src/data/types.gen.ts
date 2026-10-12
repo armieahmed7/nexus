@@ -5357,6 +5357,92 @@ export interface SkillForecastsRow {
   superseded_by?: string | null;
   simulated: boolean;
 }
+export interface HcMetricsRow {
+  id: string;
+  key: string;
+  iso_area: string;
+  name_en: string;
+  name_ar: string;
+  definition_en: string;
+  definition_ar: string;
+  formula_en: string;
+  formula_ar: string;
+  source_en: string;
+  source_ar: string;
+  source_tables: string[];
+  owner_function: string;
+  owner_person_id: string;
+  owner_en: string;
+  owner_ar: string;
+  unit: 'pct' | 'hours' | 'credits' | 'pp';
+  basis: 'ytd' | 'quarter' | 'point';
+  better: 'up' | 'down';
+  benchmark_ids: string[];
+  status: 'active' | 'retired';
+  sort: number;
+  version: number;
+  simulated: boolean;
+}
+export interface HcDisclosuresRow {
+  id: string;
+  period: string;
+  period_start: string;
+  period_end: string;
+  status: 'draft' | 'published';
+  metric_values: any;
+  narratives: any;
+  approvals: any;
+  materiality_en: string;
+  materiality_ar: string;
+  method: string;
+  computed_on: string;
+  prepared_by: string;
+  created_at: string;
+  updated_by?: string | null;
+  updated_at: string;
+  published_by?: string | null;
+  published_at?: string | null;
+  version: number;
+  simulated: boolean;
+}
+export interface SkillPilotsRow {
+  id: string;
+  title_en: string;
+  title_ar: string;
+  hypothesis_en: string;
+  hypothesis_ar: string;
+  comparison_en: string;
+  comparison_ar: string;
+  pilot_n?: number | null;
+  comparison_n?: number | null;
+  owner_person_id: string;
+  evaluator_person_id: string;
+  metrics: any;
+  skill_ids: string[];
+  start_on: string;
+  end_on: string;
+  status: 'draft' | 'running' | 'evaluating' | 'closed';
+  result?: 'success' | 'mixed' | 'failed' | null;
+  recommendation?: 'adopted' | 'expanded' | 'further_funded' | 'not_adopted' | null;
+  adoption?: 'adopted' | 'expanded' | 'further_funded' | 'not_adopted' | null;
+  result_en: string;
+  result_ar: string;
+  lessons_en: string;
+  lessons_ar: string;
+  signoff_by?: string | null;
+  signoff_at?: string | null;
+  closed_by?: string | null;
+  closed_at?: string | null;
+  published: boolean;
+  benchmark_ids: string[];
+  created_by: string;
+  created_at: string;
+  updated_by?: string | null;
+  updated_at: string;
+  version: number;
+  sort: number;
+  simulated: boolean;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -5687,6 +5773,9 @@ export interface Tables {
   critical_skills: CriticalSkillsRow;
   critical_skill_reviews: CriticalSkillReviewsRow;
   skill_forecasts: SkillForecastsRow;
+  hc_metrics: HcMetricsRow;
+  hc_disclosures: HcDisclosuresRow;
+  skill_pilots: SkillPilotsRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];

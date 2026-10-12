@@ -14,6 +14,7 @@ import {
 } from '../critical';
 import { SCENARIOS, forecastFor, forecastInputFromTables, simulatedName, type ForecastResult } from '../forecast';
 import type { CriticalReviewInput, M35Rpc, SaveForecastInput } from './rpc';
+import { makeLocalFs60 } from './local.fs60'; // FS wave G · E1 (FS60, FS61)
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -83,6 +84,7 @@ export function makeLocalM35(b: LocalBackend, h: LocalRpcHelpers): M35Rpc {
   });
 
   return {
+    ...makeLocalFs60(b, h), // FS wave G · E1: FS60 disclosure pack, FS61 skills pilots
     // ───────────── FS50
     async criticalSkillBoard() {
       await b.whenReady();

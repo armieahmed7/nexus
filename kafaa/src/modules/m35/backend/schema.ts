@@ -45,4 +45,44 @@ export const TABLES_M35: Record<string, TableDef> = {
     read: WS,
     write: { mode: 'rpc', res: 'workforce_strategy' },
   },
+
+  // ───────────── FS60 ISO 30414 skills and capability disclosure pack
+  hc_metrics: {
+    module: 'M35', label: 'Disclosure metric library mapped to the ISO 30414 area Skills, Capabilities and Development: definition, formula, data source, owner (function and role card), unit, period basis; values are computed, never stored here (FS60)',
+    cols: {
+      id: 'text pk', key: 'text uniq', iso_area: 'text', name_en: 'text', name_ar: 'text', definition_en: 'text', definition_ar: 'text', formula_en: 'text', formula_ar: 'text',
+      source_en: 'text', source_ar: 'text', source_tables: 'text[] =[]', owner_function: 'text', owner_person_id: 'text ref:people', owner_en: 'text', owner_ar: 'text',
+      unit: 'text enum:pct|hours|credits|pp', basis: 'text enum:ytd|quarter|point', better: 'text enum:up|down', benchmark_ids: 'text[] =[]',
+      status: 'text enum:active|retired =\'active\'', sort: 'int =0', version: 'int =1', simulated: 'bool =true',
+    },
+    read: [{ res: 'workforce_strategy' }],
+    write: { mode: 'none' },
+  },
+  hc_disclosures: {
+    module: 'M35', label: 'Quarterly ISO 30414 skills disclosure (SIMULATED): computed metric values, owner narratives with variance explanations, maker-checker approvals per metric, materiality statement; a metric publishes only with a narrative and a second approver (FS60)',
+    cols: {
+      id: 'text pk', period: 'text uniq', period_start: 'date', period_end: 'date', status: 'text enum:draft|published =\'draft\' idx',
+      metric_values: 'json ={}', narratives: 'json ={}', approvals: 'json ={}', materiality_en: 'text =\'\'', materiality_ar: 'text =\'\'',
+      method: 'text', computed_on: 'date', prepared_by: 'text', created_at: 'ts =now', updated_by: 'text?', updated_at: 'ts =now',
+      published_by: 'text?', published_at: 'ts?', version: 'int =1', simulated: 'bool =true',
+    },
+    read: [{ res: 'workforce_strategy' }],
+    write: { mode: 'rpc', res: 'workforce_strategy' },
+  },
+
+  // ───────────── FS61 Skills pilots registry
+  skill_pilots: {
+    module: 'M35', label: 'Skills pilot (workforce experiment): hypothesis, comparison group, named independent evaluator (role card), metrics, result including failures, evaluator sign-off, adoption decision; closed pilots are published and stay visible (FS61)',
+    cols: {
+      id: 'text pk', title_en: 'text', title_ar: 'text', hypothesis_en: 'text', hypothesis_ar: 'text', comparison_en: 'text', comparison_ar: 'text',
+      pilot_n: 'int?', comparison_n: 'int?', owner_person_id: 'text ref:people idx', evaluator_person_id: 'text ref:people idx', metrics: 'json =[]', skill_ids: 'text[] =[]',
+      start_on: 'date', end_on: 'date', status: 'text enum:draft|running|evaluating|closed =\'draft\' idx', result: 'text? enum:success|mixed|failed',
+      recommendation: 'text? enum:adopted|expanded|further_funded|not_adopted', adoption: 'text? enum:adopted|expanded|further_funded|not_adopted',
+      result_en: 'text =\'\'', result_ar: 'text =\'\'', lessons_en: 'text =\'\'', lessons_ar: 'text =\'\'', signoff_by: 'text?', signoff_at: 'ts?',
+      closed_by: 'text?', closed_at: 'ts?', published: 'bool =false', benchmark_ids: 'text[] =[]', created_by: 'text', created_at: 'ts =now', updated_by: 'text?',
+      updated_at: 'ts =now', version: 'int =1', sort: 'int =0', simulated: 'bool =true',
+    },
+    read: [{ res: 'workforce_strategy', special: 'agg_ok' }, { res: 'internal_content', where: 'published' }, { res: 'own_profile', person: 'evaluator_person_id' }],
+    write: { mode: 'rpc', res: 'workforce_strategy' },
+  },
 };

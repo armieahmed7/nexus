@@ -2868,3 +2868,26 @@ create policy kafaa_read on kafaa_skill_forecasts for select to anon, authentica
 grant select on kafaa_skill_forecasts to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- hc_metrics
+alter table kafaa_hc_metrics enable row level security;
+drop policy if exists kafaa_read on kafaa_hc_metrics;
+create policy kafaa_read on kafaa_hc_metrics for select to anon, authenticated using (kafaa_rule_read('workforce_strategy', null::text, null::text, true));
+grant select on kafaa_hc_metrics to anon, authenticated;
+-- writes: reference data, no client writes
+
+-- hc_disclosures
+alter table kafaa_hc_disclosures enable row level security;
+drop policy if exists kafaa_read on kafaa_hc_disclosures;
+create policy kafaa_read on kafaa_hc_disclosures for select to anon, authenticated using (kafaa_rule_read('workforce_strategy', null::text, null::text, true));
+grant select on kafaa_hc_disclosures to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- skill_pilots
+alter table kafaa_skill_pilots enable row level security;
+drop policy if exists kafaa_read on kafaa_skill_pilots;
+create policy kafaa_read on kafaa_skill_pilots for select to anon, authenticated using (kafaa_has_grant('workforce_strategy', array['Agg','R','W','A'])
+    or kafaa_rule_read('internal_content', null::text, null::text, published)
+    or kafaa_rule_read('own_profile', evaluator_person_id, null::text, true));
+grant select on kafaa_skill_pilots to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
