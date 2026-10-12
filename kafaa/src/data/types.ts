@@ -80,6 +80,9 @@ export interface CertificateCheck {
   valid_to?: string | null;
   holder_initials?: string;
   note?: string;
+  /** 'rate_limited' when the check was refused (audit 2026-10-12: 20 per number / 600 in total per minute); see message. */
+  code?: string;
+  message?: string;
 }
 
 // ── [G3] inputs for the M06/M07/M10 RPCs
