@@ -56,7 +56,7 @@ export function BenchmarkChip({ id, row: given }: { id: string; row?: BenchmarkR
     <>
       <button
         type="button"
-        className="chip max-w-full border-accent/30 bg-accent-soft normal-case tracking-normal text-eyebrow hover:border-accent"
+        className="chip min-w-0 max-w-full shrink whitespace-normal text-start border-accent/30 bg-accent-soft normal-case tracking-normal text-eyebrow hover:border-accent"
         onClick={() => setOpen(true)}
         title={name}
         aria-haspopup="dialog"
@@ -64,8 +64,8 @@ export function BenchmarkChip({ id, row: given }: { id: string; row?: BenchmarkR
         data-testid={`benchmark-chip-${id}`}
       >
         <Icon name="book" size={12} />
-        <span className="max-w-[15rem] truncate">{shortName(name)}</span>
-        <span className="tabular-nums text-ink-3">{year(row)}</span>
+        <span className="min-w-0 max-w-[15rem] break-words">{shortName(name)}</span>
+        <span className="min-w-0 tabular-nums text-ink-3">{year(row)}</span>
       </button>
       <BenchmarkDrawer row={row} open={open} onClose={() => setOpen(false)} />
     </>

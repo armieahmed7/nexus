@@ -17,6 +17,16 @@
 //  - knowledge_assets: staff read published assets (`published` = status published); the author and the SME read their own
 //    drafts; reviewers (knowledge W/A) get the review queue through rpc.reviewQueue.
 //  - asset_reviews: the reviewer and the asset author read them. asset_uses: own rows only ("used by" counts on the asset).
+//  - FS44 (wave E · E3) lectures: the expert lecture library (synthetic metadata). Staff read published lectures (knowledge R where
+//    `published`); the speaker and whoever recorded it read their own drafts. contributions: a delivered lecture or a published asset
+//    waiting for (or given) validation by the knowledge-management owner; the contributor reads their own rows, the KM owner works the
+//    queue through rpc.contributionQueue. Validated contributions write F01 evidence (kind rating, basis validated, ref_table lectures /
+//    knowledge_assets) through the RPC only.
+//  - FS45 (wave E · E3) localisation_items: SAMPLE plan of programmes and qualification steps a partner still delivers or signs off, with
+//    a target transfer date no later than 2030-12-31 (check constraint in the FS53 migration). Not personal, so staff read every row
+//    (knowledge R). There is deliberately no readiness column: readiness is computed from the F31 instructor pipeline by
+//    rpc.localisationBoard (src/modules/m24/localisation.ts = SQL kafaa_lz_*). Status and target change only through
+//    rpc.setLocalisationStatus (the training manager).
 import type { TableDef } from '../../../data/schema';
 
 type RR = TableDef['read'];
@@ -124,6 +134,49 @@ export const TABLES_M24: Record<string, TableDef> = {
     module: 'M24', label: 'A person marked a knowledge asset as used (feeds the "used by N" count, shown from 10) (F21)',
     cols: { id: 'text pk', asset_id: 'text ref:knowledge_assets idx', person_id: 'text ref:people idx', used_on: 'date' },
     read: [{ res: 'own_profile', person: 'person_id' }],
+    write: { mode: 'rpc', res: 'knowledge' },
+  },
+
+  // ───────────── FS44 Expert lecture library and knowledge that counts as evidence (wave E · E3)
+  lectures: {
+    module: 'M24', label: 'Expert lecture library: recorded talk metadata (synthetic), linked skills and the KLRA position it protects (FS44)',
+    cols: {
+      id: 'text pk', title_en: 'text', title_ar: 'text', abstract_en: 'text', abstract_ar: 'text',
+      speaker_id: 'text ref:people idx', speaker_name: 'text =\'\'', speaker_name_ar: 'text =\'\'', speaker_role_id: 'text?',
+      format: 'text enum:talk|masterclass|walkthrough|panel =\'talk\'', lang: 'text enum:en|ar =\'en\'', delivered_on: 'date idx', duration_min: 'int',
+      recording_code: 'text?', chapters: 'json =[]', skill_ids: 'text[] =[]',
+      position_id: 'text?', position_title_en: 'text =\'\'', position_title_ar: 'text =\'\'',
+      system_family: 'text enum:reactor_core|primary|secondary|electrical|i_and_c|chemistry|radiation_protection|maintenance|outage|human_performance|emergency_preparedness|training idx',
+      status: 'text enum:draft|review|published|withdrawn =\'draft\' idx', published: 'bool =false', published_by: 'text?', published_at: 'ts?', withdrawn_reason: 'text?',
+      synthetic: 'bool =true', history: 'json =[]', created_by: 'text ref:people idx', created_at: 'ts =now', updated_at: 'ts =now',
+    },
+    read: [{ res: 'knowledge', where: 'published' }, { res: 'own_profile', person: 'speaker_id' }, { res: 'own_profile', person: 'created_by' }],
+    write: { mode: 'rpc', res: 'knowledge' },
+  },
+  contributions: {
+    module: 'M24', label: 'Expert contribution (delivered lecture or published knowledge asset) waiting for or given validation; validated ones write F01 evidence (FS44)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', person_name: 'text =\'\'', person_name_ar: 'text =\'\'',
+      kind: 'text enum:lecture|asset', contributor_role: 'text enum:speaker|author|sme', ref_table: 'text enum:lectures|knowledge_assets', ref_id: 'text idx',
+      title_en: 'text =\'\'', title_ar: 'text =\'\'', skill_ids: 'text[] =[]', level: 'int =2',
+      status: 'text enum:pending|validated|rejected =\'pending\' idx', submitted_on: 'date', decided_by: 'text?', decided_role: 'text?', decided_on: 'date?',
+      note: 'text?', evidence_ids: 'text[] =[]', created_at: 'ts =now',
+    },
+    read: [{ res: 'own_profile', person: 'person_id' }],
+    write: { mode: 'rpc', res: 'knowledge' },
+  },
+
+  // ───────────── FS45 Localisation countdown to 2030 (wave E · E3)
+  localisation_items: {
+    module: 'M24', label: 'Localisation countdown: a programme or qualification step a partner still delivers or signs off, with its 2030 target (SAMPLE plan; readiness computed, never stored) (FS45)',
+    cols: {
+      id: 'text pk', programme_id: 'text? ref:programmes idx', title_en: 'text', title_ar: 'text', scope: 'text enum:delivery|signoff|both =\'delivery\'',
+      partner_org_id: 'text ref:organisations idx', partner_role_en: 'text =\'\'', partner_role_ar: 'text =\'\'', standard_ids: 'text[] =[]', discipline: 'text =\'\'',
+      instructors_needed: 'int =1', baseline_on: 'date', target_on: 'date idx',
+      status: 'text enum:partner_led|co_delivery|uae_led_supervised|transferred|on_hold =\'partner_led\' idx', status_note: 'text =\'\'', status_by: 'text?', status_at: 'ts?',
+      history: 'json =[]', sample: 'bool =true', sort: 'int =0', created_at: 'ts =now', updated_at: 'ts =now',
+    },
+    read: [{ res: 'knowledge' }],
     write: { mode: 'rpc', res: 'knowledge' },
   },
 };

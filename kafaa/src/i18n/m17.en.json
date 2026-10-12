@@ -1314,7 +1314,8 @@
     "route": {
       "fs19": "FS19",
       "manual": "A training manager checks it",
-      "none": "No content route yet"
+      "none": "No content route yet",
+      "twin": "digital-twin drill (SIMULATED)"
     },
     "howTitle": "How to earn it",
     "howEyebrow": "Existing and FS19 content",

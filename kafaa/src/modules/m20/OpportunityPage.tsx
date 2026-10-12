@@ -9,6 +9,7 @@ import { NEED_LEVEL, roleNeed } from './match';
 import { useMarket, useMatches, useLabels, defaultTarget, KindChip, FlagChips, MatchRing, OppPill, AppStepper, AppTimeline, usePersonName, useRange, seatsLeft, AppPill, type MarketData, type Opp } from './ui';
 import { ApplicantCard } from './Pipeline';
 import { ChannelChip, EnvelopeFitNote } from './fsUi';
+import { TwinDrillRoutes } from '../m31/links'; // FS wave E integration (FS40 -> FS27 gigs)
 
 export default function OpportunityPage() {
   const t = useT();
@@ -91,6 +92,7 @@ function Detail({ d, o, me, currentRole, family }: { d: MarketData; o: Opp; me: 
               );
             })}
           </ul>
+          <div className="mt-3"><TwinDrillRoutes skillIds={[...o.skills_needed, ...o.skills_gained]} /></div>
         </Section>
 
         {isPoster && (

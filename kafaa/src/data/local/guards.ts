@@ -10,12 +10,15 @@
 import type { AccessContext } from '../access';
 import { skillGuard } from '../../domain/taxonomy'; // FS02: obsolete, never delete (SQL: kafaa_fs_skill_guard)
 import { benchmarkProblems } from '../../domain/benchmarks'; // FS01: https sources, as-of date, listed = published (SQL checks)
+import { huCardProblems, lessonProblems } from '../../modules/m08/aiCulture'; // FS49 (wave E integration): import-free rule = SQL trigger kafaa_fs49_content_guard
 
 type Row = Record<string, unknown>;
 const changed = (before: Row | null, next: Row, k: string) => (before ? JSON.stringify(before[k] ?? null) !== JSON.stringify(next[k] ?? null) : next[k] != null);
 const statusTo = (before: Row | null, next: Row, allowed: string[]) => (before ? before.status !== next.status : true) && next.status != null && !allowed.includes(String(next.status));
 
-export function directWriteGuard(table: string, before: Row | null, next: Row, ctx: AccessContext): string | null {
+/** `world` (optional) lists the rows of another table, for guards that check references (FS49: drills, lessons, traits exist). */
+export function directWriteGuard(table: string, before: Row | null, next: Row, ctx: AccessContext, world?: (t: string) => Row[]): string | null {
+  const ids = (t: string) => (world ? world(t).map((r) => String(r.id)) : []);
   switch (table) {
     case 'enrolments': {
       if (ctx.has('training', ['W', 'A'])) return null;
@@ -44,6 +47,14 @@ export function directWriteGuard(table: string, before: Row | null, next: Row, c
     case 'benchmarks': { // FS01: the same rules as the SQL checks kafaa_benchmarks_*_ck
       const p = benchmarkProblems(next as never);
       return p.length ? `Benchmark not saved: ${p.join(', ')} (every source must be https, with an as-of date; listed only when published)` : null;
+    }
+    case 'hu_tools': { // FS49 (wave E integration): every card in EN and AR, AI angle or trap + example + practice, known cues, links a drill or lesson that exists
+      const p = huCardProblems(next, world ? { drills: ids('ai_drills'), lessons: ids('oe_lessons'), traits: ids('sc_traits') } : null);
+      return p.length ? `kafaa_fs49: ${p[0]} (${String(next.id)})` : null;
+    }
+    case 'oe_lessons': { // FS49 (wave E integration): AI-era lessons need EN/AR text and a public https source with year and as-of date; linked drills exist
+      const p = lessonProblems(next, world ? { drills: ids('ai_drills') } : null);
+      return p.length ? `kafaa_fs49: ${p[0]} (${String(next.id)})` : null;
     }
     default:
       return null;

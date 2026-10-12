@@ -14,6 +14,7 @@ import {
 } from '../klra';
 import { DEPARTING_BANDS, KC_MSG, LIMITS, REVIEW_KINDS, SME_AVAILABILITY, SME_KINDS, SYSTEM_FAMILIES, TEMPLATE_IDS, assetText, between, restrictedGuidance, reviewState, wordCount, type KeyPoint } from '../capture';
 import type { Suggestion } from '../enrich';
+import { makeLocalFs44 } from './local.fs44';
 import type { CaptureSessionView, KlraAction, KlraPosition, KlraRow, M24Rpc, QueueAsset, ReviewView } from './rpc';
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -92,6 +93,7 @@ export function makeLocalM24(b: LocalBackend, h: LocalRpcHelpers): M24Rpc {
   const hist = (status: string, note: string | null = null) => ({ at: nowTs(), status, by: me(), note });
 
   return {
+    ...makeLocalFs44(b, h), // FS44/FS45 (FS wave E · E3)
     // ───────────────────────────── F20
     async klraRegister(period) {
       await b.whenReady();

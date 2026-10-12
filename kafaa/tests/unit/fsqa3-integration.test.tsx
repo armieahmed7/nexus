@@ -37,10 +37,10 @@ const WAVE_C = ['/learn/pathways', '/learn/pathways/:id', '/my/pathways', '/trai
   '/learn/core-skills', '/learn/core-skills/:id', '/my/core-skills', '/my/core-skills/practice', '/workforce/core-skills', '/training/sjt/items'];
 
 describe('FS wave C · route registry', () => {
-  it('259 routes after wave C (288 after wave D), and the 32 wave-C routes are registered', async () => {
+  it('259 routes after wave C (288 after wave D, 315 after wave E), and the 32 wave-C routes are registered', async () => {
     const { loadRoutes } = await import('../smoke/routes');
     const R = loadRoutes();
-    expect(R.length).toBe(288); // FS wave D QA: + 29 wave-D routes (tests/unit/fsqa4-integration.test.tsx)
+    expect(R.length).toBe(315); // FS wave E QA: + 27 wave-E routes (tests/unit/fsqa5-integration.test.tsx). FS wave D QA: + 29 wave-D routes (tests/unit/fsqa4-integration.test.tsx)
     const paths = new Set(R.map((r) => r.path));
     expect(WAVE_C.length).toBe(32);
     for (const p of WAVE_C) expect(paths.has(p), p).toBe(true);

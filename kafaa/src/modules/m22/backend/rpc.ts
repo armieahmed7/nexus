@@ -3,8 +3,16 @@
 // backend/local.ts and SQL kafaa_<name> in supabase/migrations/20261009125001_kafaa_w2e5_leadership.sql (+ backend/supabase.ts).
 import type { Result } from '../../../data/types';
 import type { ExpertRow, LeadershipStats, My360 } from '../domain';
+import type { FlReadiness, FlStats, ProgrammeStats, WfnStats } from '../future';
 
-export type { ExpertRow, LeadershipStats, My360 };
+export type { ExpertRow, LeadershipStats, My360, FlReadiness, FlStats, ProgrammeStats, WfnStats };
+
+/** FS48: opt in (active true, with areas and ways to take part) or withdraw (active false: no trace left in any ranking). */
+export interface WfnOptinInput { active: boolean; interests?: string[]; strands?: string[]; mentor?: boolean }
+/** FS47: the participant's policy project (draft or submit). */
+export interface PolicyProjectInput { nomination_id: string; title: string; question: string; summary: string; sponsor_role: string; submit?: boolean }
+/** FS48: a request row as the programme owner sees it (rpc.wfnDesk). */
+export interface WfnDeskRow { id: string; offer_id: string; offer_title_en: string; offer_title_ar: string; strand: string; person_id: string; person_name: string; person_name_ar: string; statement: string; status: string; outcome: string | null; note: string | null; created_at: string; updated_at: string }
 
 export interface PostInput {
   community_id: string;
@@ -57,4 +65,32 @@ export interface M22Rpc {
   requestExpert(expertId: string, skillId: string, message: string): Promise<Result<{ id: string }>>;
   /** The expert accepts or declines a request, with an optional short reply. */
   answerExpertRequest(id: string, decision: 'accepted' | 'declined', reply?: string): Promise<Result<{ status: string }>>;
+  // ── FS46 (wave E · E4): 360 form 2. request360 / submit360 / my360 keep their signatures (form version handled inside).
+  /** HR view of 360 form 2 by academy programme (approved or completed nominations), cells under 10 subjects suppressed. Null for others. */
+  leadershipProgrammeStats(): Promise<ProgrammeStats | null>;
+  // ── FS47 Future Leaders track (nominations live in leadership_nominations; selection is decideNomination)
+  /** HR (HR analyst or HR director) nominates a staff member for the Future Leaders track. Audited, no ledger. */
+  nominateFutureLeader(personId: string, reason: string): Promise<Result<{ id: string; status: string; cohort_id: string }>>;
+  /** Readiness on the five nuclear-management competencies, for me or for Future Leaders nominees I can see (HR, training manager). */
+  flReadiness(personIds: string[]): Promise<FlReadiness[]>;
+  /** The training manager records (or clears) a completed module for a selected participant of a running cohort. Audited. */
+  recordFlModule(nominationId: string, moduleId: string, done: boolean): Promise<Result<{ modules_done: string[] }>>;
+  /** The selected participant saves or submits their policy project (screened like community posts). Audited. */
+  savePolicyProject(input: PolicyProjectInput): Promise<Result<{ project_status: string }>>;
+  /** The training manager or HR authority accepts or returns a submitted project; never their own. Completing the track writes a ledger row. */
+  reviewPolicyProject(nominationId: string, decision: 'accept' | 'return', note?: string): Promise<Result<{ project_status: string; completed: boolean }>>;
+  /** Track statistics (nominations, cohorts, modules, projects), every count under 10 suppressed. Null for others. */
+  futureLeadersStats(): Promise<FlStats | null>;
+  // ── FS48 Women in future nuclear skills (opt-in; HR aggregates only)
+  setWfnOptin(input: WfnOptinInput): Promise<Result<{ active: boolean }>>;
+  /** Join or leave a mentor circle (opted-in participants; mentors take the mentor seat). */
+  joinWfnCircle(circleId: string, join: boolean): Promise<Result<{ member: boolean; role: string | null }>>;
+  /** Ask for a visiting placement or sponsored study (opted-in participants; three open requests at most). */
+  requestWfnOffer(offerId: string, statement: string): Promise<Result<{ id: string }>>;
+  /** The programme owner (training manager) shortlists, places, completes (with outcome) or declines a request. Placement writes a ledger row. */
+  decideWfnRequest(id: string, decision: 'shortlist' | 'place' | 'complete' | 'decline', note?: string, outcome?: 'progressed' | 'same_role'): Promise<Result<{ status: string }>>;
+  /** Requests made to offers, for the programme owner only (empty for everyone else). */
+  wfnDesk(): Promise<WfnDeskRow[]>;
+  /** Pipeline metrics (participation, completion, progression, the gender share per future-skills programme), suppressed under 10. Null for others. */
+  wfnStats(): Promise<WfnStats | null>;
 }

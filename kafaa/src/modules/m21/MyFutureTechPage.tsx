@@ -18,6 +18,7 @@ import { FS13Chips, PreviewModal, ReadinessMeter, useBi, useRaiseLabels, useRais
 import type { RaiseAction } from './raises';
 import { FutureMeData, GoalButton, IndexBadge, IndexMeter, InterestToggle, LevelDots, RELATION_TONE, techSlug, useFutureMe, useLabels, useReadiness } from './shared';
 import { ResourceList } from './MyFuturePage';
+import { NextGenLink } from '../m31/links'; // FS wave E integration (FS38 -> FS13)
 
 export default function MyFutureTechPage() {
   const t = useT();
@@ -103,6 +104,7 @@ function Tech({ d, id }: { d: FutureMeData; id: string }) {
           <div className="mt-3"><SourceList sources={(x.sources as Source[]) ?? []} dates={dates} /></div>
         </Card>
       </section>
+      <div className="my-4"><NextGenLink compact /></div>
 
       <Section title={t('m21.tech.skillsTitle')} description={t(f2 ? 'm21.v2.tech.skillsDesc' : 'm21.tech.skillsDesc')}>
         <div className="card overflow-x-auto">

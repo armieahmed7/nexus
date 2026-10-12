@@ -62,6 +62,7 @@ function Board({ d }: { d: InsData }) {
         { id: 'hours', label: t('m02.ins.board.tabHours'), content: <HoursTab d={d} /> },
       ]} />
       <Section title={t('m02.ins.facts.title')}><ProgrammeFacts /></Section>
+      <p className="text-[13px]" data-testid="m02-ins-localisation-link"><L to="/knowledge/localisation">{t('m02.ins.localisationLink')}</L></p>
       <MirrorNote />
       <ConfirmDialog open={sweep} onClose={() => setSweep(false)} title={t('m02.ins.board.sweepTitle')} consequence={t('m02.ins.board.sweepBody')} actingAs={t('m02.ins.asTm')}
         onConfirm={async () => { await run(() => repo.rpc.instructorCurrencySweep()); }} />

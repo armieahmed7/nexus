@@ -20,6 +20,14 @@
     "admin-ecp": {
       "title": "ECP referrals",
       "purpose": "Referral metadata only (channel, category, status). Concern text never enters Kafa'a."
+    },
+    "my-safety-culture-ai": {
+      "title": "Safety culture with AI in the loop",
+      "purpose": "Questioning attitude and conservative decisions with AI and automation, AI-era HU tool cards linked to drills, and sourced international lessons."
+    },
+    "admin-hu-tools": {
+      "title": "HU tool cards and AI lessons",
+      "purpose": "Content health of every HU tool card and the sourced international lessons on automation; edit or add a card."
     }
   },
   "sc": {
@@ -76,7 +84,10 @@
     "concernsLink": "See the ECP channels",
     "noGameTitle": "No points, no badges",
     "noGameBody": "Safety culture is never scored or gamified in Kafa'a.",
-    "noGamePill": "Locked by design"
+    "noGamePill": "Locked by design",
+    "huAiTitle": "Tools for an AI-augmented plant",
+    "huAiHint": "When an AI or automated tool is in the loop",
+    "huAiLink": "Open the cards and drills"
   },
   "speak": {
     "eyebrow": "Employee Concerns Program",
@@ -118,7 +129,11 @@
     "whenToUse": "When to use it",
     "coreWhen": "On every job, by everyone, including supplemental workers.",
     "conditionalWhen": "When the task, its risk or the procedure calls for it; your pre-job brief decides.",
-    "noGame": "There are no points, streaks or badges for safety-culture learning."
+    "noGame": "There are no points, streaks or badges for safety-culture learning.",
+    "toAi": "With AI in the loop",
+    "aiTitle": "With AI and automation in the loop",
+    "aiMore": "HU tools for AI",
+    "aiWhen": "Whenever an AI or automated tool informs the job: a summary, a recommendation, a pre-filled entry or a translation."
   },
   "oe": {
     "intro": "Curated, de-identified lessons from this and other plants, each reviewed by the OE Screening Committee before publication.",
@@ -156,7 +171,14 @@
     "lessonEn": "Lesson (English)",
     "lessonAr": "Lesson (Arabic)",
     "pickTrait": "Pick at least one trait.",
-    "sourceInternal": "Internal (ENEC)"
+    "sourceInternal": "Internal (ENEC)",
+    "topic": "Topic",
+    "topics": {
+      "general": "Plant and industry",
+      "ai_automation": "Automation and AI"
+    },
+    "publicSource": "Public source",
+    "toAi": "Safety culture with AI in the loop"
   },
   "ecp": {
     "intro": "Referral metadata for the Employee Concerns Program team. The concern itself stays in the ECP system.",
@@ -232,5 +254,148 @@
     "sysRefHint": "The case reference in the ECP system, for example ECP-SYS/2026-123.",
     "anonLabel": "Raised anonymously",
     "anonHint": "Tick when the person chose not to give their name to the ECP."
+  },
+  "hu": {
+    "linksStaff": "{n} practice drills and lessons are linked to this tool; they open for signed-in staff.",
+    "practise": "Practise:",
+    "practised": "Passed",
+    "tryAgain": "Not yet",
+    "read": "Read:",
+    "topic": {
+      "classic": "Classic tool",
+      "ai_automation": "AI and automation"
+    },
+    "trap": "The trap",
+    "counter": "Counter-moves",
+    "synthetic": "Synthetic example",
+    "aiAngle": "With AI in the loop"
+  },
+  "ai": {
+    "intro": "AI and automated tools now summarise procedures, recommend maintenance and pre-fill checklists. A healthy safety culture treats their output like any other input: question it, check it against the controlled source and keep the decision with a person.",
+    "toDrills": "Practise in the AI drills",
+    "toLearning": "Safety-culture learning",
+    "tile": {
+      "aiCards": "AI-era HU tools",
+      "aiCardsSub": "Automation bias, mode, over-reliance, verification",
+      "classic": "Classic tools with an AI angle",
+      "classicSub": "Every HU tool, revisited for AI",
+      "drills": "Practice drills linked",
+      "drillsSub": "Synthetic sandbox drills (FS37)",
+      "lessons": "International lessons",
+      "lessonsSub": "Public guidance, each with its source and date"
+    },
+    "traitsTitle": "Two traits, with AI in the loop",
+    "traitsIntro": "Questioning attitude and conservative decision-making, as they look when a tool informs the work.",
+    "traitEyebrow": "Trait with AI in the loop",
+    "looksLike": "What it looks like with AI",
+    "supportedBy": "Supported by:",
+    "cardsTitle": "HU tool cards for automation and AI",
+    "cardsIntro": "Each card names the trap, the counter-moves and links a drill to practise or a lesson to read.",
+    "fitTitle": "Which tool fits this moment?",
+    "fitIntro": "Pick a moment where a tool is in the loop; the matching HU tools are listed with the reasons.",
+    "fitPick": "Moments with a tool in the loop",
+    "sit": {
+      "summary": "An AI summary of a procedure before a job",
+      "twin": "A digital twin or advisor recommends an action",
+      "autofill": "A tool pre-filled a checklist or work order",
+      "mode": "An automated system changed mode or display",
+      "pressure": "Time pressure and the tool says all clear",
+      "handover": "Tool-generated shift turnover notes",
+      "translation": "A tool translated a procedure step",
+      "disagree": "The tool disagrees with your own reading"
+    },
+    "fitNote": "A fixed rule matches the moment's cues with each card's cues (AI-era cards first on a tie). It ranks content, never people, and stores nothing.",
+    "classicTitle": "The classic tools, with AI in the loop",
+    "classicIntro": "The HU tools you already use, and what each one means when a tool is involved.",
+    "lessonsTitle": "International lessons on automation and digital systems",
+    "lessonsIntro": "Lessons drawn from public international guidance. Read the source: each lesson is a short summary of it.",
+    "noLessons": "No lesson on automation is published yet.",
+    "lessonsNote": "Only public, international sources; no ENEC events. Lessons are reviewed by the OE Screening Committee before publication.",
+    "concernTitle": "If a tool's output worries you",
+    "concernBody": "Stop and raise it with your supervisor. For a nuclear safety or quality concern, the Employee Concerns Program channels are listed on",
+    "concernLink": "Raise a concern",
+    "noGame": "Nothing here is scored and nothing you do on this page is stored. Which AI tools are approved, and for what, is in the",
+    "toRegister": "AI-literacy register",
+    "sourceMeta": "published {year} · as of {date}",
+    "reviewed": "Reviewed {date} by the {body}",
+    "tools": "HU tools:",
+    "reason": {
+      "cue": "This tool is for moments when {cue}",
+      "ai": "Written for work with AI and automated tools",
+      "practise": "{n} practice drills linked"
+    }
+  },
+  "adm": {
+    "intro": "Content health for the HU and safety-culture lead: every card in English and Arabic, with at least one drill or lesson a reader can open, and every international lesson with a public source and date.",
+    "card": "HU tool card",
+    "topic": "Topic",
+    "kind": "Kind",
+    "links": "Links",
+    "linkCounts": "{d} drills · {l} lessons",
+    "cues": "Situation cues",
+    "health": "Check",
+    "ready": "Ready",
+    "sourced": "Sourced",
+    "problem": {
+      "name": "Name missing in English or Arabic",
+      "description": "Description missing in English or Arabic",
+      "ai_angle": "The AI-in-the-loop angle is missing in English or Arabic",
+      "ai_text": "The trap or the example is missing in English or Arabic",
+      "practice": "Counter-moves need at least two steps, each in both languages",
+      "cues": "Unknown situation cue, or none chosen",
+      "links": "Link at least one drill or lesson",
+      "drill_unknown": "A linked drill does not exist",
+      "lesson_unknown": "A linked lesson does not exist",
+      "trait_unknown": "A linked trait does not exist",
+      "no_live": "No linked drill or lesson is published yet",
+      "id": "Use an id like hu-ai-name that is not taken"
+    },
+    "lproblem": {
+      "text": "Title, summary or lesson missing in English or Arabic",
+      "sources": "No public source",
+      "source_label": "A source has no label",
+      "source_url": "A source link is not https",
+      "source_year": "A source has no valid year",
+      "source_as_of": "A source has no as-of date",
+      "drill_unknown": "A linked drill does not exist"
+    },
+    "tile": {
+      "complete": "Cards complete",
+      "completeSub": "English and Arabic, cues and links",
+      "linked": "Cards with a live link",
+      "linkedSub": "A published drill or lesson",
+      "drills": "Drills linked",
+      "drillsSub": "Distinct published drills",
+      "lessons": "Lessons sourced",
+      "lessonsSub": "International lessons with source and date"
+    },
+    "cardsTitle": "HU tool cards",
+    "cardsIntro": "The same check runs in the database for every writer, so an incomplete card cannot be saved anywhere.",
+    "new": "New HU tool card",
+    "lessonsTitle": "International lessons on automation",
+    "lessonsIntro": "Edit lesson text and publication on Operating experience; sources are checked here.",
+    "editTitle": "Edit {name}",
+    "id": "Card id",
+    "f": {
+      "name_en": "Name (English)",
+      "name_ar": "Name (Arabic)",
+      "description_en": "Description (English)",
+      "description_ar": "Description (Arabic)",
+      "trap_en": "The trap (English)",
+      "trap_ar": "The trap (Arabic)",
+      "example_en": "Synthetic plant example (English)",
+      "example_ar": "Synthetic plant example (Arabic)",
+      "ai_en": "With AI in the loop (English)",
+      "ai_ar": "With AI in the loop (Arabic)",
+      "step_en": "Step {n} (English)",
+      "step_ar": "Step {n} (Arabic)"
+    },
+    "addStep": "Add a step",
+    "drills": "Practice drills",
+    "lessons": "Lessons",
+    "checkOk": "Ready to save: complete in both languages and linked.",
+    "confirmTitle": "Save this HU tool card",
+    "confirmBody": "The card is visible at once on the public safety-culture page and to all staff, with its drill and lesson links.",
+    "saved": "HU tool card saved"
   }
 }

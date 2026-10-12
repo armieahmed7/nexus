@@ -1045,6 +1045,9 @@ export interface ScTraitsRow {
   description_ar: string;
   behaviours: any;
   prompts: any;
+  ai_behaviours: any;
+  ai_prompts: any;
+  ai_hu_ids: string[];
 }
 export interface HuToolsRow {
   id: string;
@@ -1053,6 +1056,19 @@ export interface HuToolsRow {
   description_en: string;
   description_ar: string;
   kind: 'core' | 'conditional';
+  topic: 'classic' | 'ai_automation';
+  sort: number;
+  ai_en: string;
+  ai_ar: string;
+  trap_en: string;
+  trap_ar: string;
+  practice: any;
+  example_en: string;
+  example_ar: string;
+  cues: string[];
+  trait_ids: string[];
+  drill_ids: string[];
+  lesson_ids: string[];
 }
 export interface OeLessonsRow {
   id: string;
@@ -1070,6 +1086,10 @@ export interface OeLessonsRow {
   status: 'draft' | 'in_review' | 'published';
   affected_standard_ids: string[];
   sample: boolean;
+  topic: 'general' | 'ai_automation';
+  sources: any;
+  hu_ids: string[];
+  drill_ids: string[];
 }
 export interface EcpChannelsRow {
   id: string;
@@ -3323,6 +3343,7 @@ export interface Leadership360RequestsRow {
   subject_name_ar: string;
   invited_at: string;
   submitted_at?: string | null;
+  form_version: number;
 }
 export interface Leadership360Row {
   id: string;
@@ -3332,6 +3353,7 @@ export interface Leadership360Row {
   scores: any;
   submitted_at: string;
   open_read: boolean;
+  form_version: number;
 }
 export interface CommunitiesRow {
   id: string;
@@ -3437,6 +3459,182 @@ export interface KsSessionsRow {
   skill_ids: string[];
   synthetic: boolean;
   sources: any;
+}
+export interface LeadershipBehavioursRow {
+  id: string;
+  form_from: number;
+  sort: number;
+  trait_id?: string | null;
+  title_en: string;
+  title_ar: string;
+  short_en: string;
+  short_ar: string;
+  statement_en: string;
+  statement_ar: string;
+  framework_en: string;
+  framework_ar: string;
+  anchors: any;
+  coach: any;
+  links: any;
+  programme_ids: string[];
+  benchmark_ids: string[];
+  sources: any;
+}
+export interface FlCompetenciesRow {
+  id: string;
+  code: string;
+  sort: number;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  area_en: string;
+  area_ar: string;
+  descriptors: any;
+  skill_targets: any;
+  route: any;
+  external_ids: string[];
+  sources: any;
+}
+export interface FlExternalRow {
+  id: string;
+  kind: 'summer_school' | 'school' | 'masters' | 'mobility' | 'trainee' | 'internship';
+  sort: number;
+  owner_en: string;
+  owner_ar: string;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  dates_en: string;
+  dates_ar: string;
+  year_from?: number | null;
+  year_to?: number | null;
+  competency_ids: string[];
+  sources: any;
+}
+export interface FlCohortsRow {
+  id: string;
+  code: string;
+  year: number;
+  status: 'planned' | 'open' | 'running' | 'completed';
+  seats: number;
+  starts_on: string;
+  ends_on: string;
+  title_en: string;
+  title_ar: string;
+  modules: any;
+  brief_en: string;
+  brief_ar: string;
+  mentor_en: string;
+  mentor_ar: string;
+  sort: number;
+}
+export interface FlParticipantsRow {
+  id: string;
+  nomination_id: string;
+  person_id: string;
+  cohort_id: string;
+  person_name: string;
+  person_name_ar: string;
+  modules_done: string[];
+  project_title?: string | null;
+  project_question?: string | null;
+  project_summary?: string | null;
+  project_sponsor_role?: string | null;
+  project_status: 'none' | 'draft' | 'submitted' | 'returned' | 'accepted';
+  project_submitted_on?: string | null;
+  project_reviewed_by?: string | null;
+  project_review_note?: string | null;
+  project_decided_on?: string | null;
+  status: 'active' | 'completed' | 'withdrawn';
+  completed_on?: string | null;
+  history: any;
+  updated_at: string;
+}
+export interface WfnProgrammesRow {
+  id: string;
+  strand: 'circles' | 'visiting' | 'sponsored';
+  sort: number;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  pattern_en: string;
+  pattern_ar: string;
+  fact_en: string;
+  fact_ar: string;
+  sources: any;
+}
+export interface WfnParticipantsRow {
+  id: string;
+  person_id: string;
+  active: boolean;
+  interests: string[];
+  strands: string[];
+  mentor: boolean;
+  joined_on?: string | null;
+  withdrawn_on?: string | null;
+  updated_at: string;
+}
+export interface WfnCirclesRow {
+  id: string;
+  sort: number;
+  status: 'active' | 'closed';
+  seats: number;
+  focus: string[];
+  skill_ids: string[];
+  starts_on: string;
+  title_en: string;
+  title_ar: string;
+  mentor_role_en: string;
+  mentor_role_ar: string;
+  cadence_en: string;
+  cadence_ar: string;
+  is_full: boolean;
+  mentor_open: boolean;
+}
+export interface WfnCircleMembersRow {
+  id: string;
+  circle_id: string;
+  person_id: string;
+  role: 'member' | 'mentor';
+  active: boolean;
+  joined_on?: string | null;
+  left_on?: string | null;
+}
+export interface WfnOffersRow {
+  id: string;
+  strand: 'visiting' | 'sponsored';
+  sort: number;
+  status: 'open' | 'closed';
+  seats: number;
+  weeks?: number | null;
+  months?: number | null;
+  closes_on: string;
+  focus: string[];
+  title_en: string;
+  title_ar: string;
+  host_en: string;
+  host_ar: string;
+  placement_en: string;
+  placement_ar: string;
+}
+export interface WfnRequestsRow {
+  id: string;
+  offer_id: string;
+  person_id: string;
+  person_name: string;
+  person_name_ar: string;
+  statement: string;
+  status: 'interested' | 'shortlisted' | 'placed' | 'completed' | 'declined' | 'withdrawn';
+  outcome?: 'progressed' | 'same_role' | null;
+  decided_by?: string | null;
+  decided_on?: string | null;
+  note?: string | null;
+  history: any;
+  created_at: string;
+  updated_at: string;
 }
 export interface ReviewCyclesRow {
   id: string;
@@ -3750,6 +3948,84 @@ export interface AssetUsesRow {
   asset_id: string;
   person_id: string;
   used_on: string;
+}
+export interface LecturesRow {
+  id: string;
+  title_en: string;
+  title_ar: string;
+  abstract_en: string;
+  abstract_ar: string;
+  speaker_id: string;
+  speaker_name: string;
+  speaker_name_ar: string;
+  speaker_role_id?: string | null;
+  format: 'talk' | 'masterclass' | 'walkthrough' | 'panel';
+  lang: 'en' | 'ar';
+  delivered_on: string;
+  duration_min: number;
+  recording_code?: string | null;
+  chapters: any;
+  skill_ids: string[];
+  position_id?: string | null;
+  position_title_en: string;
+  position_title_ar: string;
+  system_family: 'reactor_core' | 'primary' | 'secondary' | 'electrical' | 'i_and_c' | 'chemistry' | 'radiation_protection' | 'maintenance' | 'outage' | 'human_performance' | 'emergency_preparedness' | 'training';
+  status: 'draft' | 'review' | 'published' | 'withdrawn';
+  published: boolean;
+  published_by?: string | null;
+  published_at?: string | null;
+  withdrawn_reason?: string | null;
+  synthetic: boolean;
+  history: any;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+export interface ContributionsRow {
+  id: string;
+  person_id: string;
+  person_name: string;
+  person_name_ar: string;
+  kind: 'lecture' | 'asset';
+  contributor_role: 'speaker' | 'author' | 'sme';
+  ref_table: 'lectures' | 'knowledge_assets';
+  ref_id: string;
+  title_en: string;
+  title_ar: string;
+  skill_ids: string[];
+  level: number;
+  status: 'pending' | 'validated' | 'rejected';
+  submitted_on: string;
+  decided_by?: string | null;
+  decided_role?: string | null;
+  decided_on?: string | null;
+  note?: string | null;
+  evidence_ids: string[];
+  created_at: string;
+}
+export interface LocalisationItemsRow {
+  id: string;
+  programme_id?: string | null;
+  title_en: string;
+  title_ar: string;
+  scope: 'delivery' | 'signoff' | 'both';
+  partner_org_id: string;
+  partner_role_en: string;
+  partner_role_ar: string;
+  standard_ids: string[];
+  discipline: string;
+  instructors_needed: number;
+  baseline_on: string;
+  target_on: string;
+  status: 'partner_led' | 'co_delivery' | 'uae_led_supervised' | 'transferred' | 'on_hold';
+  status_note: string;
+  status_by?: string | null;
+  status_at?: string | null;
+  history: any;
+  sample: boolean;
+  sort: number;
+  created_at: string;
+  updated_at: string;
 }
 export interface EvalSurveysRow {
   id: string;
@@ -4400,6 +4676,178 @@ export interface TransformationArchetypesRow {
   as_of: string;
   sort: number;
 }
+export interface SmrDeltasRow {
+  id: string;
+  role_id: string;
+  tech_id: string;
+  rank: number;
+  path_only: boolean;
+  dims: any;
+  changes_en: string;
+  changes_ar: string;
+  stays_en: string;
+  stays_ar: string;
+  skills: any;
+  training: any;
+  concept_role_ids: string[];
+  sources: any;
+  benchmark_ids: string[];
+  status: 'draft' | 'published' | 'retired';
+  listed: boolean;
+  version: number;
+  as_of: string;
+  sort: number;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface PlantVisitsRow {
+  id: string;
+  person_id: string;
+  kind: 'reference_plant' | 'simulator_observation' | 'partner_facility';
+  host_person_id: string;
+  visit_on: string;
+  hours: number;
+  note: string;
+  status: 'logged' | 'confirmed' | 'declined' | 'withdrawn';
+  decided_by?: string | null;
+  decided_at?: string | null;
+  decline_reason?: string | null;
+  level: number;
+  evidence: any;
+  created_at: string;
+}
+export interface TwinScenariosRow {
+  id: string;
+  code: string;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  scenario_en: string;
+  scenario_ar: string;
+  system_en: string;
+  system_ar: string;
+  difficulty: number;
+  level: number;
+  skill_ids: string[];
+  series: any;
+  components: any;
+  modes: any;
+  checks: any;
+  actions: any;
+  rationales: any;
+  max_checks: number;
+  est_minutes: number;
+  synthetic: boolean;
+  sources: any;
+  status: 'draft' | 'published' | 'retired';
+  listed: boolean;
+  version: number;
+  sort: number;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface TwinKeysRow {
+  id: string;
+  scenario_id: string;
+  component_id: string;
+  mode_id: string;
+  useful_checks: string[];
+  unsafe_checks: string[];
+  conservative_actions: string[];
+  best_action: string;
+  unsafe_actions: string[];
+  sound_rationales: string[];
+  explain: any;
+  pass_pct: number;
+}
+export interface TwinAttemptsRow {
+  id: string;
+  person_id: string;
+  scenario_id: string;
+  scenario_version: number;
+  attempt_no: number;
+  checks: string[];
+  component_id: string;
+  mode_id: string;
+  action_id: string;
+  rationale_ids: string[];
+  points: number;
+  max_points: number;
+  pct: number;
+  critical_ok: boolean;
+  passed: boolean;
+  level: number;
+  feedback: any;
+  reasons: any;
+  evidence: any;
+  submitted_at: string;
+}
+export interface CecCompetencesRow {
+  id: string;
+  code: string;
+  area: 'values' | 'complexity' | 'futures' | 'acting';
+  name_en: string;
+  name_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  plant_en: string;
+  plant_ar: string;
+  outcomes: any;
+  greencomp_area: string;
+  skill_ids: string[];
+  learning: any;
+  jahiz_group: string;
+  net_zero: boolean;
+  benchmark_ids: string[];
+  sources: any;
+  status: 'active' | 'retired';
+  version: number;
+  as_of: string;
+  sort: number;
+}
+export interface CecRoleTargetsRow {
+  id: string;
+  family_id: string;
+  level: number;
+  focus_ids: string[];
+  rationale_en: string;
+  rationale_ar: string;
+}
+export interface ValueChainsRow {
+  id: string;
+  code: string;
+  name_en: string;
+  name_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  stages: any;
+  facts: any;
+  skill_ids: string[];
+  lane_ids: string[];
+  pathway_ids: string[];
+  cec_ids: string[];
+  benchmark_ids: string[];
+  sources: any;
+  status: 'active' | 'retired';
+  as_of: string;
+  sort: number;
+}
+export interface TransitionTracksRow {
+  id: string;
+  feature: 'FS42' | 'FS43';
+  pathway_id: string;
+  credential_code?: string | null;
+  max_hours?: number | null;
+  audience_en: string;
+  audience_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  chain_ids: string[];
+  benchmark_ids: string[];
+  sources: any;
+  sort: number;
+}
 export interface CoreSkillsRow {
   id: string;
   code: string;
@@ -4844,6 +5292,17 @@ export interface Tables {
   expert_optin: ExpertOptinRow;
   expert_requests: ExpertRequestsRow;
   ks_sessions: KsSessionsRow;
+  leadership_behaviours: LeadershipBehavioursRow;
+  fl_competencies: FlCompetenciesRow;
+  fl_external: FlExternalRow;
+  fl_cohorts: FlCohortsRow;
+  fl_participants: FlParticipantsRow;
+  wfn_programmes: WfnProgrammesRow;
+  wfn_participants: WfnParticipantsRow;
+  wfn_circles: WfnCirclesRow;
+  wfn_circle_members: WfnCircleMembersRow;
+  wfn_offers: WfnOffersRow;
+  wfn_requests: WfnRequestsRow;
   review_cycles: ReviewCyclesRow;
   perf_ratings: PerfRatingsRow;
   review_placements: ReviewPlacementsRow;
@@ -4861,6 +5320,9 @@ export interface Tables {
   knowledge_assets: KnowledgeAssetsRow;
   asset_reviews: AssetReviewsRow;
   asset_uses: AssetUsesRow;
+  lectures: LecturesRow;
+  contributions: ContributionsRow;
+  localisation_items: LocalisationItemsRow;
   eval_surveys: EvalSurveysRow;
   eval_responses: EvalResponsesRow;
   l3_observations: L3ObservationsRow;
@@ -4904,6 +5366,15 @@ export interface Tables {
   transformation_drafts: TransformationDraftsRow;
   transformation_milestones: TransformationMilestonesRow;
   transformation_archetypes: TransformationArchetypesRow;
+  smr_deltas: SmrDeltasRow;
+  plant_visits: PlantVisitsRow;
+  twin_scenarios: TwinScenariosRow;
+  twin_keys: TwinKeysRow;
+  twin_attempts: TwinAttemptsRow;
+  cec_competences: CecCompetencesRow;
+  cec_role_targets: CecRoleTargetsRow;
+  value_chains: ValueChainsRow;
+  transition_tracks: TransitionTracksRow;
   core_skills: CoreSkillsRow;
   core_skill_targets: CoreSkillTargetsRow;
   core_skill_candidates: CoreSkillCandidatesRow;

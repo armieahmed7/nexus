@@ -11,4 +11,8 @@
 
 [build.environment]
   NODE_VERSION = "22"
+  # tsc --noEmit type-checks the generated 22 MB src/seed/seed.json and needs about 2.3-2.5 GB of V8 heap; with the
+  # default heap of the Netlify build image it dies with "JavaScript heap out of memory" (reproduced locally with
+  # --max-old-space-size=2048 on both main and fsE-integration-qa). vite build peaks near 3 GB as well.
+  NODE_OPTIONS = "--max-old-space-size=4096"
   # Set VITE_NEXUS_DEMO_PASSWORD in the Netlify UI (Site configuration > Environment variables), never here.

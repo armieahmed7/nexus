@@ -15,6 +15,7 @@ import { FutureMeData, GoalButton, IndexBadge, IndexMeter, InterestToggle, Sourc
 import { toV1Family, v2Levels } from './raises';
 import { FamiliesV2, FS13Chips, PlannedLearning, ReadinessHero, TracksSection, useRaises, WhatRaisesIt } from './v2ui';
 import { LanesSection } from './LanesSection';
+import { NextGenLink } from '../m31/links'; // FS wave E integration (FS38 -> FS13)
 import { ConceptBandPill, useConceptReadiness } from '../m18/futureUi'; // FS wave B: FS15 concept readiness (one rule, conceptReadiness)
 
 export default function MyFuturePage() {
@@ -25,6 +26,7 @@ export default function MyFuturePage() {
     <Page title={t('m21.routes.my-future.title')} eyebrow={t('m21.page.eyebrow')} intro={t('m21.page.intro')} actions={<EngineBadge engine={eng} />} wide>
       <NoDecision />
       <FS13Chips />
+      <div className="mb-4"><NextGenLink /></div>
       <Async state={q} isEmpty={(d) => !d} empty={<EmptyState title={t('m21.page.signIn')} />}>
         {(d) => <Body d={d!} />}
       </Async>

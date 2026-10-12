@@ -117,8 +117,9 @@ export function takesYou(def: Pick<DefRow, 'code' | 'role_ids'>, w: Pick<UnlockW
 }
 
 // ───────────── satisfiability ("every definition is satisfiable through existing or FS19 content")
-export interface ContentWorld { courses: Row[]; course_skill_links: Row[]; adaptive_banks: Row[]; performance_tasks: Row[]; opportunities: Row[]; skills: Row[] }
-export interface Route { kind: 'course' | 'adaptive' | 'task' | 'opportunity' | 'manual'; id: string; level: number | null; fs19: boolean }
+/** twin_scenarios (FS40, wave E integration) is optional: a published digital-twin drill is a route to the skills it evidences (level <= 2). */
+export interface ContentWorld { courses: Row[]; course_skill_links: Row[]; adaptive_banks: Row[]; performance_tasks: Row[]; opportunities: Row[]; skills: Row[]; twin_scenarios?: Row[] }
+export interface Route { kind: 'course' | 'adaptive' | 'task' | 'opportunity' | 'manual' | 'twin'; id: string; level: number | null; fs19: boolean }
 const isFs19 = (courseId: string) => courseId.startsWith('c-fs-');
 /** The content routes that can satisfy one criterion (empty = not satisfiable). */
 export function routesFor(c: Criterion, w: ContentWorld): Route[] {
@@ -145,6 +146,9 @@ export function routesFor(c: Criterion, w: ContentWorld): Route[] {
   }
   for (const b of w.adaptive_banks) if (b.status === 'active' && (b.skill_ids ?? []).includes(c.ref) && Number(b.evidence_cap ?? 3) >= min) out.push({ kind: 'adaptive', id: b.id, level: Number(b.evidence_cap ?? 3), fs19: false });
   for (const t of w.performance_tasks) if (t.status === 'active' && (t.skill_ids ?? []).includes(c.ref) && Number(t.evidence_level ?? 2) >= min) out.push({ kind: 'task', id: t.id, level: Number(t.evidence_level ?? 2), fs19: false });
+  // FS40 (wave E integration): published digital-twin drills evidence their skills at the drill level, never above 2 (= m31 twinDrillsFor)
+  for (const d of [...(w.twin_scenarios ?? [])].sort((a, b) => Number(a.sort ?? 0) - Number(b.sort ?? 0) || cmp(a.id, b.id)))
+    if (d.status === 'published' && d.listed !== false && (d.skill_ids ?? []).includes(c.ref) && Math.min(Number(d.level) || 1, 2) >= min) out.push({ kind: 'twin', id: d.id, level: Math.min(Number(d.level) || 1, 2), fs19: false });
   return out;
 }
 export function satisfiability(def: Pick<DefRow, 'criteria'>, w: ContentWorld): { ok: boolean; missing: string[]; routes: Record<string, Route[]> } {

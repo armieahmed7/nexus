@@ -1,0 +1,89 @@
+# FS wave E integration and QA (FS38-FS49), 11 Oct 2026
+
+Repo `/workspace/nexus` (app in `kafaa/`), branch `fsE-integration-qa` (from `main`; it is the `fsE-integration` integration of this session, renamed at push time because another session had already pushed a different `fsE-integration` at 22:52 UTC, which was left untouched). Commits: merges `c535e73` (fsEe1), `cd23c8e` (fsEe2), `8406245` (fsEe3), `352f826` (fsEe4), `db26d8c` (fsEe5), then one QA commit (wiring, QA migration, tests, fixes, live-apply bundle, this report). Pushed to `origin/fsE-integration-qa` only; `main` and Netlify were not touched. **Live Supabase was not available in this session: nothing was applied live.** The live-apply bundle must be applied before this branch reaches `main`, because merging to `main` deploys production.
+
+## Merge
+- `fsEe1`..`fsEe5` merged `--no-ff` in slot order:
+  - fsEe1: FS38 SMR delta overlay, FS39 plant literacy and reference-plant log, FS40 digital-twin drills (M31);
+  - fsEe2: FS41 clean-energy competences, FS42 energy-transition pathways, FS43 value chains and transition tracks (M32);
+  - fsEe3: FS44 lecture library and contributions, FS45 localisation countdown (M24);
+  - fsEe4: FS46 future-leader competencies, FS47 Future Leaders programme and 360 form 2, FS48 women-in-nuclear network circles (M22);
+  - fsEe5: FS49 AI in safety culture: HU cards for AI tools, AI OE lessons (M08).
+- Conflicts were of three kinds:
+  - generated files, regenerated with `npm run gen`;
+  - the CONTRACT changelog, where both sides were kept;
+  - the shared "no derived future-skill state" invariants (`src/domain/skills.ts`, `f01-skills.mjs`, the fs11/fs12/w0/fsqa1 tests and validators), where the recorded-evidence lists were unioned (`plant_visits`, `twin_attempts`, `lectures`, `knowledge_assets`).
+- Result: 315 routes (288 + 27), 312 seed tables, 6 new migrations (5 feature files + the QA file).
+
+## Cross-feature wiring (CONTRACT changelog "FS wave E integration and QA")
+Migration `20261010259001_kafaa_fs5qa_integration.sql`, seed `scripts/seed/ext/fsqa5-integration.mjs` (FINALIZE_LAST, adds no rows, fails `npm run gen` if an invariant breaks), PGlite validator `scripts/validate/fsqa5-integration.mjs`, unit test `tests/unit/fsqa5-integration.test.tsx` (one test per wiring criterion), E2E `tests/e2e/fswaveE.spec.ts`.
+- **Recorded evidence (handover 3.9):** one final `kafaa_skill_states_v2` / `kafaa_skills_apply` in the QA migration with the union of all eight ref tables; TS `RECORDED_REF_TABLES` matches. Function md5s: states_v2 `b1634eba`, skills_apply `9da9fe27`.
+- **Passport labels (M17):** visit evidence, drill evidence and contribution evidence have their own labels in EN and AR.
+- **FS38 -> FS13/FS14 and the ADVANCE lanes:** `NextGenLink` on `/future`, `/future/:tech`, `/my/future`, `/my/future/:tech` and in the HZ-4 / HZ-8 lane drawers (staff who may open `/my/next-gen` get the personal delta, everyone else `/careers/next-gen`; always "no deployment decision implied").
+- **FS40 -> FS31/FS27/FS14:** published twin drills are a credential route (`kind: 'twin'`, level <= 2): MC-TWINS shows `/my/twin-drills/tw-sensor-drift`; the gig page lists matching drills; the HZ-6 / HZ-11 lanes link the twin training.
+- **FS41 -> FS14/FS31:** `cecCitations()` = SQL `kafaa_cec_cites(jsonb)` (internal; no API role may execute it). MC-CLEAN-ENERGY cites CEC-2.2 and CEC-3.1 on its credential page. HZ-5 links the competence framework, HZ-9 / HZ-10 the energy-system hub.
+- **FS42/FS43 -> FS17/FS30/FS31:** both new pathways pass `pathwayProblems()` and carry 4 FS30 credit tags; credit ledger unchanged (426 rows). MC-H2-HEAT stays a draft (settled decision).
+- **FS17 gap backlog:** unchanged (215 rows, 145 open); wave-E content fills no backlog step. Twin drills are deliberately not added to `kafaa_pw_discover` (it would move the FS57 backlog; logged in CONTRACT).
+- **FS45 -> F22/M02:** `/workforce/handover` shows the localisation-overdue panel; `/training/instructors` links the countdown.
+- **FS48 -> F13:** no M04 `circle` type is needed (circles are M22 rows).
+- **FS49 -> FS37 (fsEe5 contract request):** the local backend now applies the same HU-card and OE-lesson checks as the SQL trigger `kafaa_fs49_content_guard` on direct writes (same first problem code).
+- **FS39 -> F36 digest:** "approvals I owe" lists plant visits and simulator observations that name me as host and are still `logged` (TS `gatherDigest` = SQL `kafaa_dg_gather`, parity on 50 cases; md5 `b5852630`). Two seeded digests and their notifications change; the QA migration replays them with guarded updates.
+- **RLS performance:** the 8 fs51/fs53 tables get the perf policy form (ALTER POLICY only; same visible rows for 13 identities, proved in fsqa5). fs52/fs54 tables already had it.
+- **Route pins:** 315 in 8 files, each with a per-module comment; M22 pin 15; FS18 external catalogue pin 13.
+
+## Live-apply bundle (`docs/kafaa/ref/live_apply/waveE/`)
+- Generated by `kafaa/scripts/live-apply-bundle.mjs` from `docs/kafaa/ref/live_apply/waveE.config.json`; checked by `kafaa/scripts/verify-live-bundle.mjs`.
+- 28 parts in apply order, each at most ~60 KB (`kafaa_fs5<e>_<topic>_pN.sql`):
+  - 1-8: the five feature migrations (fs51 p1-p2, fs52 p1, fs53 p1-p2, fs54 p1-p2, fs55 p1);
+  - 9: the QA migration (final 3.9 union, digest gatherer, `kafaa_cec_cites`, perf policies, guarded digest refresh);
+  - 10-27: seed rows (`insert ... on conflict (id) do nothing`, FS49 lessons first, `kafaa.seeding` on);
+  - 28: replay of `kafaa_skills_apply` for the 26 people with wave-E evidence (demo day 2026-10-08).
+- `EXPECTED.md` lists the pre-wave md5s that must be live before starting (for example `kafaa_dg_gather 183dc72d`, `kafaa_skill_states_v2 07434363`, `kafaa_skills_apply 55089400`), the md5 of all 110 new or redefined function bodies, the count and digest of 44 tables or slices, the grants, and what to do afterwards.
+- Dry run: main's migrations and seed were loaded into PGlite (the pre-wave state), all 28 parts applied twice (idempotence): **110/110 md5s and 44/44 digests equal the expected values.**
+- Checks: no removal words anywhere (comments and strings included); every target is a `kafaa_*` object; no non-kafaa table is altered.
+
+## Gates (final, after the last edits)
+- gen: OK; regenerating leaves `seed.json`, `seed.sql` and `types.gen.ts` unchanged (md5 before = after). fsqa5 prints its invariants: recorded evidence kept, 2 pathways pass, 4 credit tags, MC-H2-HEAT draft, gap backlog 215/145, MC-TWINS twin route, 4 host confirmations.
+- check:i18n: OK (40 namespaces, EN/AR in parity).
+- typecheck: clean.
+- check:public: OK (75 public tables).
+- migrations:validate: "All migration checks passed" (all validators, including the new `fsqa5-integration` and the updated `w5e5-digest-dalil`).
+- vite build: OK.
+- build:deploy: OK. `deploy_out/kafaa/index.html` keeps both badge-hiding lines; the issuer JSON is at `/.well-known/kafaa-issuer.json`, `/kafaa/.well-known/kafaa-issuer.json` and `/kafaa/issuer/kafaa-issuer.json`; `kafaa/ojt-sw.js` is there; `_redirects` keeps its order (`/` 302, `/kafaa` 301, `/kafaa/.well-known/*` 200!, `/kafaa/*` 200); `grep -rE "service_role|sb_secret_" deploy_out` finds nothing. (The build warns that the demo password was not set, as expected in this session.) `deploy_out/` is gitignored and was not committed or deployed.
+- **Unit tests: 143 files, 2,501 tests, all green**, run one file per vitest process in 2 serial lanes (`docs/kafaa/ref/qa_logs_E/unit_lanes.sh`; per-file results in `qa_logs_E/unit_summary.txt`).
+  - The first full pass had 2 failing files, both from QA changes, both fixed and rerun green: `fs51-pages` (the drill page's screen-reader table is now inside an `sr-only` wrapper; selector updated) and `w5e5-digest` (its recompute data now includes `plant_visits`).
+  - `fsqa5-integration` has 16 tests, one per wiring criterion.
+
+## Browser E2E (one Chromium, workers=1, vite preview, local mode)
+- **Journeys `tests/e2e/fswaveE.spec.ts`:** 6 of 6 pass (E1-E6, about 1.3 min) and cover every wave-E acceptance criterion:
+  - E1 FS38-FS40: the SMR delta for all 28 roles (sources, no deployment or staffing language, path-only security), my delta and the HR matrix; the offline plant explainer with SIMULATED on every screen; host-confirmed visits as evidence; a twin drill scored with evidence;
+  - E2 FS41-FS43: CleanEnergyComp (12 competences, EN/AR, targets for every family), my progress and the suppressed HR view; three sourced value chains; the ESG and system-integration pathways;
+  - E3 FS44/FS45: the lecture library (skills, protected KLRA positions), a security topic refused, a validated contribution writes evidence while pending ones write nothing; the localisation countdown with computed readiness and overdue items;
+  - E4 FS46-FS48: 12 behaviours with anchors (EN/AR), form-2 360 next to the readable form-1 cycle, suppressed programme view; the Future Leaders track and HR nomination; network circles;
+  - E5 FS49: AI-era HU cards in EN and AR each linking a drill or lesson, traits with AI examples, sourced international lessons, the lead console blocks an unlinked card; speak-up sends nothing;
+  - E6 wiring: Future Me and ADVANCE link the SMR delta; MC-TWINS lists twin drills; the twin gig shows them; MC-CLEAN-ENERGY cites CleanEnergyComp; passport labels; hosts see confirmations in the digest; benchmark chips; Arabic RTL on the new pages.
+- **Visual `visual.spec.ts -g fse`:** 78 of 78 pass: 34 pages in RTL and 34 at 390 px, checked by eye on contact sheets, plus 10 shots (`docs/kafaa/ref/shots_E/`).
+- **Route sweep (local mode, `E2E_BACKEND=local`):** live Supabase was not reachable, so the sweep ran on the local backend for the wave-E modules and every module the wiring touched (M31, M32, M24, M22, M08, M07, M11, M21, M17, M20, M02): 128 routes x 17 sessions = 2,176 checks; 1,072 ok, 992 forbidden as expected, 112 sign-in as expected; **0 mismatches, 0 console or text issues** (18/18 tests, 36 min). The full sweep in supabase mode must run after the live apply.
+
+## Bugs fixed during QA
+1. `fs55-ai-safety-culture.test.ts` did not typecheck (`get()` returns a row type).
+2. At 390 px a long benchmark chip label (IAEA-WFP) made the page wider than the screen; chips now wrap (`src/ui/Benchmark.tsx`).
+3. M31 badge rows (eyebrows) did not wrap at 390 px.
+4. The FS40 drill page's screen-reader table overflowed at 390 px; it now sits in an `sr-only` wrapper.
+5. The digest did not list host confirmations owed for plant visits (FS39 -> F36 wiring above).
+6. Local direct writes to `hu_tools` / `oe_lessons` skipped the FS49 checks that the SQL trigger applies (fsEe5 contract request).
+7. Two unit tests did not follow QA changes (see Gates).
+
+## Screenshots
+`docs/kafaa/ref/shots_E/` holds 10 shots:
+- 01-08 EN: SMR delta grid, my SMR delta, plant literacy, twin drill, clean-energy competences, value chain, lecture library, localisation countdown;
+- 09: Future Leaders, AR;
+- 10: AI in safety culture, mobile.
+
+## Remaining issues
+- **The live apply has not been done** (no Supabase access in this session). Apply `docs/kafaa/ref/live_apply/waveE/` in order and compare with `EXPECTED.md` before merging; then run the full route sweep in supabase mode (handover 3.11).
+- The plant-log host tab shows "A colleague" when the host cannot read the visitor's `people` row under RLS (supabase mode only).
+- The twin-drill chart units "index" and "norm %" stay in English in Arabic.
+- FS47 nomination reasons in the seed are English free text (shown as entered in Arabic too).
+- Vite chunk-size warnings (the seed chunk).
+- `deploy_out/` was rebuilt and checked (see Gates); it is gitignored and was not deployed.

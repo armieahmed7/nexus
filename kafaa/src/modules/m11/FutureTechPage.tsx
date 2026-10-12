@@ -6,6 +6,7 @@ import { useT, usePick, L } from '../../i18n';
 import { SourceList, useSourceDates, type Source } from '../m09/shared';
 import { useFutureData, type FutureData } from './FuturePage';
 import { AREAS, NoDecision, RELATION_CLS, TECH_ORGS, techSlug } from './shared';
+import { NextGenLink } from '../m31/links'; // FS wave E integration (FS38 -> ADVANCE pages)
 
 export default function FutureTechPage() {
   const t = useT();
@@ -44,6 +45,7 @@ function Tech({ d, id }: { d: FutureData; id: string }) {
   return (
     <Page title={pick(x, 'family')} eyebrow={x.designs} intro={pick(x, 'skill_areas')} actions={<L to="/future" className="btn-outline">{t('m11.tech.back')}</L>}>
       <NoDecision />
+      <div className="mb-4"><NextGenLink compact /></div>
       <Grid cols={2}>
         <Card title={t('m11.tech.mou')}>
           <KeyValue items={[

@@ -2,10 +2,11 @@
 // No points, no badges, no scores. Reflection notes stay in this browser only and never reach Kafa'a's database
 // (individual safety-culture responses never enter Kafa'a).
 import { useEffect, useMemo, useState } from 'react';
-import { useQuery, useRepo } from '../../data';
+import { useSession } from '../../auth/session';
 import { L, useFormat, useLang, usePick, useT } from '../../i18n';
 import { Async, Callout, Card, Icon, Page, Section, StatusPill, Tabs } from '../../ui';
-import type { ScTraitsRow } from '../../data/types';
+import type { HuToolsRow, ScTraitsRow } from '../../data/types';
+import { CardLinks, useFs49Data, type Fs49Data } from './aiUi'; // FS49: AI-era HU cards, trait AI examples, drill and lesson links
 
 const NOTES_KEY = 'kafaa.sc.reflections.v1';
 type Bi = { en: string; ar: string };
@@ -23,11 +24,9 @@ export default function MySafetyCulturePage() {
   const f = useFormat();
   const pick = usePick();
   const lang = useLang();
-  const repo = useRepo();
-  const data = useQuery(['sc_traits', 'hu_tools', 'oe_lessons'], async () => {
-    const [traits, hu, oe] = await Promise.all([repo.list('sc_traits', { order: [['n', 'asc']] }), repo.list('hu_tools'), repo.list('oe_lessons', { filter: { status: 'published' } }).catch(() => [])]);
-    return { traits, hu, oe };
-  });
+  const s = useSession();
+  const fs = useFs49Data(s.identity.personId);
+  const data = { ...fs, data: fs.data ? { traits: fs.data.traits, hu: fs.data.cards, oe: fs.data.lessons, fs: fs.data } : undefined };
   const week = useMemo(() => {
     const d = new Date();
     const start = Date.UTC(d.getUTCFullYear(), 0, 1);
@@ -52,7 +51,8 @@ export default function MySafetyCulturePage() {
   const bi = (x: Bi) => (lang === 'ar' && x.ar ? x.ar : x.en);
 
   return (
-    <Page title={t('m08.routes.my-safety-culture.title')} intro={t('m08.my.intro')}>
+    <Page title={t('m08.routes.my-safety-culture.title')} intro={t('m08.my.intro')}
+      actions={<L to="/my/safety-culture/ai" className="btn-outline btn-sm no-underline" data-testid="m08-my-to-ai"><Icon name="sparkle" />{t('m08.my.toAi')}</L>}>
       <Async state={data} isEmpty={(d) => d.traits.length === 0}>
         {(d) => (
           <Tabs
@@ -101,6 +101,18 @@ export default function MySafetyCulturePage() {
                             </div>
                           </div>
                         </Card>
+                        {(focus.ai_behaviours as Bi[]).length > 0 && (
+                          <Card eyebrow={t('m08.ai.traitEyebrow')} title={t('m08.my.aiTitle')} actions={<L to="/my/safety-culture/ai" className="text-[12.5px]">{t('m08.my.aiMore')}</L>}>
+                            <div className="grid gap-3 md:grid-cols-2" data-testid="m08-my-trait-ai">
+                              <ul className="list-disc space-y-1 ps-5 text-[13px]">
+                                {(focus.ai_behaviours as Bi[]).map((b, i) => <li key={i}>{bi(b)}</li>)}
+                              </ul>
+                              <ul className="list-disc space-y-1 ps-5 text-[13px]">
+                                {(focus.ai_prompts as Bi[]).map((b, i) => <li key={i}>{bi(b)}</li>)}
+                              </ul>
+                            </div>
+                          </Card>
+                        )}
                         <Card title={t('m08.my.notesTitle')}>
                           <label className="block">
                             <span className="sr-only">{t('m08.my.notesTitle')}</span>
@@ -139,7 +151,7 @@ export default function MySafetyCulturePage() {
                     <Callout tone="info">{t('m08.my.huIntro')}</Callout>
                     <div className="grid gap-3 md:grid-cols-2" data-testid="m08-hu-refreshers">
                       {d.hu.map((h) => (
-                        <HuCard key={h.id} name={pick(h, 'name')} body={pick(h, 'description')} kind={h.kind} />
+                        <HuCard key={h.id} card={h} fs={d.fs} />
                       ))}
                     </div>
                   </div>
@@ -156,21 +168,30 @@ export default function MySafetyCulturePage() {
   );
 }
 
-function HuCard({ name, body, kind }: { name: string; body: string; kind: string }) {
+function HuCard({ card, fs }: { card: HuToolsRow; fs: Fs49Data }) {
   const t = useT();
+  const pick = usePick();
   const [open, setOpen] = useState(false);
+  const kind = card.kind;
+  const ai = card.topic === 'ai_automation';
   return (
-    <div className="card p-4">
+    <div className="card p-4" data-testid="m08-my-hu" data-id={card.id}>
       <div className="flex items-center justify-between gap-2">
-        <div className="font-semibold">{name}</div>
-        <StatusPill tone={kind === 'core' ? 'accent' : 'neutral'}>{t(`m08.sc.hu.${kind}`)}</StatusPill>
+        <div className="font-semibold">{pick(card, 'name')}</div>
+        <span className="flex flex-wrap gap-1">
+          {ai && <StatusPill tone="accent">{t('m08.hu.topic.ai_automation')}</StatusPill>}
+          <StatusPill tone={kind === 'core' ? 'accent' : 'neutral'}>{t(`m08.sc.hu.${kind}`)}</StatusPill>
+        </span>
       </div>
-      <p className="mt-1 text-[13px] text-ink-2">{body}</p>
+      <p className="mt-1 text-[13px] text-ink-2">{pick(card, 'description')}</p>
+      {/* FS49: the AI-in-the-loop angle (classic tools) or the trap to watch for (AI-era tools) */}
+      <p className="mt-2 text-[12.5px] text-ink-2"><span className="font-semibold">{t(ai ? 'm08.hu.trap' : 'm08.hu.aiAngle')}: </span>{pick(card, ai ? 'trap' : 'ai')}</p>
       <button className="btn-ghost btn-sm mt-2" aria-expanded={open} onClick={() => setOpen(!open)}>
         <Icon name="chevronDown" className={open ? 'rotate-180' : ''} />
         {t('m08.my.whenToUse')}
       </button>
-      {open && <p className="mt-1 text-[12.5px] text-ink-2">{t(kind === 'core' ? 'm08.my.coreWhen' : 'm08.my.conditionalWhen')}</p>}
+      {open && <p className="mt-1 text-[12.5px] text-ink-2">{t(ai ? 'm08.my.aiWhen' : kind === 'core' ? 'm08.my.coreWhen' : 'm08.my.conditionalWhen')}</p>}
+      <div className="mt-2"><CardLinks card={card} data={fs} /></div>
     </div>
   );
 }

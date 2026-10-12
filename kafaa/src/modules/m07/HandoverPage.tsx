@@ -14,6 +14,7 @@ import { groupReasons, isWhatIf, riskList, OSSA_END_DEFAULT, PIPE_ROUTES, type H
 import type { HandoverResult } from './backend/rpc';
 import { DefLink, ExportButton, MetricTile, PeriodSelect, useWatermarkedExport } from './shared';
 import { HandoverBurndown, LinkOrNote, Sup, cellText, useOpenable } from './handoverUi';
+import { LocalisationOverduePanel } from '../m24/links'; // FS wave E integration (FS45 -> F22: overdue localisation items on the board)
 
 const OSSA_SOURCE = 'https://world-nuclear-news.org/articles/agreement-assures-korean-expert-support-for-uae-pl';
 const NAFIS_SOURCE = 'https://gulfnews.com/uae/nafis-2026-introduces-5-ai-enabled-priorities-to-measure-the-quality-of-emiratisation-in-the-private-sector-1.500427621';
@@ -68,6 +69,7 @@ export default function HandoverPage() {
       <Callout tone="info" title={t('m07.ho.mirrorTitle')}>
         {t('m07.ho.mirrorBody')} <SourceLink href={OSSA_SOURCE} date="2026-10-08">{t('m07.ho.ossaSource')}</SourceLink>
       </Callout>
+      <LocalisationOverduePanel />
 
       <Card>
         <div className="flex flex-wrap items-end gap-4" data-testid="m07-ho-controls">

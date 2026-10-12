@@ -33,7 +33,7 @@ describe('FS wave A · route registry', () => {
   it('212 routes, and the 6 wave-A routes are registered', async () => {
     const { loadRoutes } = await import('../smoke/routes');
     const R = loadRoutes();
-    expect(R.length).toBe(288); // FS wave D QA: + 29 (FS27/FS28 M20 6, FS29/FS30 M34 7, FS31-FS33 M17 7, FS34/FS35 M18 2, FS36/FS37 M29 7). FS wave C QA: + 32 (FS17/FS18 M19 6, FS19/FS20 M04 6, FS21/FS22 M05 7, FS23/FS24 M02 7, FS25/FS26 M33 6). FS wave B QA: + 11 (FS09/FS10 5, FS11/FS12 5, FS16 1). FS wave B · E1: + 4 M28 routes (FS07, FS08)
+    expect(R.length).toBe(315); // FS wave E QA: + 27 (FS38-FS40 M31 9, FS41-FS43 M32 7, FS44/FS45 M24 4, FS46-FS48 M22 5, FS49 M08 2). FS wave D QA: + 29 (FS27/FS28 M20 6, FS29/FS30 M34 7, FS31-FS33 M17 7, FS34/FS35 M18 2, FS36/FS37 M29 7). FS wave C QA: + 32 (FS17/FS18 M19 6, FS19/FS20 M04 6, FS21/FS22 M05 7, FS23/FS24 M02 7, FS25/FS26 M33 6). FS wave B QA: + 11 (FS09/FS10 5, FS11/FS12 5, FS16 1). FS wave B · E1: + 4 M28 routes (FS07, FS08)
     const paths = new Set(R.map((r) => r.path));
     for (const p of ['/my/skills/confidence', '/admin/skills-confidence', '/workforce/future/keyspace', '/careers/horizons', '/careers/roles/:slug/profile', '/training/sat/future']) expect(paths.has(p), p).toBe(true);
   });
@@ -147,7 +147,7 @@ describe('FS wave A · FS04 -> FS02 keyspace', () => {
     for (const sc of [...new Set(T.future_skills.map((f) => f.scenario))]) {
       // FS10: states backed only by the AI and digital fitness check (recorded F01 evidence on FS02 skills) are left out here, so the
       // invariant still isolates the keyspace rows; with them, the ai-governance key gains holders (see fs22-ai-fluency).
-      const fit = new Set((T.skill_evidence as { active: boolean; ref_table: string; person_id: string; skill_id: string }[]).filter((e) => e.active && ['fitness_attempts', 'cohort_capstones', 'adaptive_attempts', 'task_attempts', 'ai_drill_attempts', 'rpl_requests'].includes(e.ref_table)) /* FS21/FS22 too */.map((e) => `ps:${e.person_id}:${e.skill_id}`));
+      const fit = new Set((T.skill_evidence as { active: boolean; ref_table: string; person_id: string; skill_id: string }[]).filter((e) => e.active && ['fitness_attempts', 'cohort_capstones', 'adaptive_attempts', 'task_attempts', 'ai_drill_attempts', 'plant_visits', 'twin_attempts', 'rpl_requests', 'lectures', 'knowledge_assets'].includes(e.ref_table)) /* FS21/FS22 too; FS44 validated contributions */.map((e) => `ps:${e.person_id}:${e.skill_id}`));
       const inp = (m: MapRow[]) => ({ futureSkills: T.future_skills as never, map: m, people: T.people as never, states: (T.person_skills as { id: string }[]).filter((x) => !fit.has(x.id)) as never });
       const a = futureRadar(inp(map), sc as string).rows.map((r) => [r.key, r.readiness, r.ready_n]);
       const b = futureRadar(inp(map.filter((m) => !qa.has(m.id))), sc as string).rows.map((r) => [r.key, r.readiness, r.ready_n]);
