@@ -27,7 +27,7 @@ export default function TrainingEquivalencyPage() {
     return { eq, orgs, standards, tasks, quals };
   });
   return (
-    <Page title={t('m09.routes.training-equivalency.title')} intro={t('m09.eqr.intro')} wide>
+    <Page title={t('m09.routes.training-equivalency.title')} intro={t('m09.eqr.intro')} wide actions={<L to="/training/equivalency/prearrival" className="btn-outline" data-testid="m09-eqr-prearrival">{t('m09.pa.eqLink')}</L>} /* FS69 (fsGe5) */>
       <Callout tone="info" title={t('m09.eqr.ruleTitle')}>{t('m09.eqr.ruleBody')}</Callout>
       <Async state={q} isEmpty={(d) => d.eq.length === 0} empty={<EmptyState title={t('m09.eqr.empty')} />}>{(d) => <Queue d={d} />}</Async>
     </Page>

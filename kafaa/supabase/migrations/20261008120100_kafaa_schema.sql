@@ -2741,6 +2741,25 @@ create table if not exists kafaa_contractor_engagements (
 );
 comment on table kafaa_contractor_engagements is '[M09] SIMULATED mirror of contractor work history at ENEC with supervisor skill sign-offs (F33)';
 
+-- M09 · Contractor pre-arrival shares: an FS32 share link checked against a qualification standard before mobilisation (FS69)
+create table if not exists kafaa_prearrival_shares (
+  id text primary key,
+  share_id text not null unique,
+  person_id text not null,
+  org_id text not null,
+  standard_id text not null,
+  mobilise_on date not null,
+  created_via text not null check (created_via in ('self', 'on_behalf')),
+  created_by text not null,
+  consent_ref text not null default '',
+  note text not null default '',
+  checked_by text,
+  checked_at timestamptz,
+  check_summary jsonb,
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_prearrival_shares is '[M09] Contractor pre-arrival shares: an FS32 share link checked against a qualification standard before mobilisation (FS69)';
+
 -- M11 · One future-skill keyspace: ADVANCE, radar and gap-plan keys resolved to catalogue skills (FS04)
 create table if not exists kafaa_future_skill_map (
   id text primary key,
@@ -6565,6 +6584,10 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ta
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_contractor_engagements_person_id_fk') then alter table kafaa_contractor_engagements add constraint kafaa_contractor_engagements_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_contractor_engagements_org_id_fk') then alter table kafaa_contractor_engagements add constraint kafaa_contractor_engagements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_contractor_engagements_role_id_fk') then alter table kafaa_contractor_engagements add constraint kafaa_contractor_engagements_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_prearrival_shares_share_id_fk') then alter table kafaa_prearrival_shares add constraint kafaa_prearrival_shares_share_id_fk foreign key (share_id) references kafaa_record_shares(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_prearrival_shares_person_id_fk') then alter table kafaa_prearrival_shares add constraint kafaa_prearrival_shares_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_prearrival_shares_org_id_fk') then alter table kafaa_prearrival_shares add constraint kafaa_prearrival_shares_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_prearrival_shares_standard_id_fk') then alter table kafaa_prearrival_shares add constraint kafaa_prearrival_shares_standard_id_fk foreign key (standard_id) references kafaa_qual_standards(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_skill_map_sk_id_fk') then alter table kafaa_future_skill_map add constraint kafaa_future_skill_map_sk_id_fk foreign key (sk_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_reco_optouts_person_id_fk') then alter table kafaa_reco_optouts add constraint kafaa_reco_optouts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_change_requests_skill_id_fk') then alter table kafaa_skill_change_requests add constraint kafaa_skill_change_requests_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
@@ -7161,6 +7184,9 @@ create index if not exists kafaa_contractor_engagements_person_id_idx on kafaa_c
 create index if not exists kafaa_contractor_engagements_org_id_idx on kafaa_contractor_engagements (org_id);
 create index if not exists kafaa_contractor_engagements_role_id_idx on kafaa_contractor_engagements (role_id);
 create index if not exists kafaa_contractor_engagements_status_idx on kafaa_contractor_engagements (status);
+create index if not exists kafaa_prearrival_shares_person_id_idx on kafaa_prearrival_shares (person_id);
+create index if not exists kafaa_prearrival_shares_org_id_idx on kafaa_prearrival_shares (org_id);
+create index if not exists kafaa_prearrival_shares_standard_id_idx on kafaa_prearrival_shares (standard_id);
 create index if not exists kafaa_future_skill_map_key_idx on kafaa_future_skill_map (key);
 create index if not exists kafaa_future_skill_map_key_kind_idx on kafaa_future_skill_map (key_kind);
 create index if not exists kafaa_future_skill_map_sk_id_idx on kafaa_future_skill_map (sk_id);
@@ -7604,4 +7630,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 327) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 328) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

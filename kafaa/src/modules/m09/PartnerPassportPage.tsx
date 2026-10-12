@@ -16,7 +16,7 @@ export default function PartnerPassportPage() {
   const { isAdmin, personId } = useMyOrg();
   return (
     <Page title={t('m09.routes.partner-passport.title')} intro={t(isAdmin ? 'm09.cp.introAdmin' : 'm09.cp.introSelf')}
-      actions={<L to="/partner/workforce/precheck" className="btn-outline" data-testid="m09-cp-precheck-link">{t('m09.cp.toPrecheck')}</L>}>
+      actions={<span className="flex flex-wrap gap-2">{/* FS68/FS69 (fsGe5) */}<L to="/partner/workforce/precheck" className="btn-outline" data-testid="m09-cp-precheck-link">{t('m09.cp.toPrecheck')}</L><L to="/partner/workforce/prearrival" className="btn-outline" data-testid="m09-cp-prearrival-link">{t('m09.pa.cpLink')}</L>{isAdmin && <L to="/partner/workforce/future-readiness" className="btn-outline" data-testid="m09-cp-fr-link">{t('m09.fr.cpLink')}</L>}</span>}>
       <NotAuthority />
       {isAdmin ? <AdminView /> : <OwnPassport personId={personId} />}
     </Page>
