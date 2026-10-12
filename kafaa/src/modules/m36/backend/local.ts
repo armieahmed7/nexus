@@ -1,4 +1,4 @@
-// M36 LocalBackend RPC implementations (owners: wave G E3 (FS64, FS65) and wave I E4 (FS82, FS83)). Installed on every LocalRpc instance by src/data/ext/local.ts.
+// M36 LocalBackend RPC implementations (owners: wave G E3 (FS64, FS65) and wave I E4 (FS82, FS83, in ./local.fs82.ts)). Installed on every LocalRpc instance by src/data/ext/local.ts.
 // 1:1 mirror of supabase/migrations/20261010273001_kafaa_fs73_regional_pledges.sql: the same checks in the same order, the same refusal
 // codes and messages (RG_MSG, PL_MSG), one audit row for every refusal and every call, ledger rows on a demand release, on every
 // commitment change and on every pledge registration. Rules: src/modules/m36/{regional,pledges}.ts. Pages never import this file.
@@ -13,6 +13,7 @@ import {
 } from '../regional';
 import { ENEC_ENTITIES, pledgeLedger, pledgeProblem, pledgeStatus, progressProblem, latestProgress, type Ledger, type PledgeInput, type ProgressInput } from '../pledges';
 import type { M36Rpc, ReleaseDemandInput, ReviewCommitmentInput } from './rpc';
+import { makeLocalFs82 } from './local.fs82'; // FS82/FS83 (fsIe4)
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -100,6 +101,7 @@ export function makeLocalM36(b: LocalBackend, h: LocalRpcHelpers): M36Rpc {
   };
 
   return {
+    ...makeLocalFs82(b, h), // FS82 mobility micro-grants + FS83 consortium cohort (wave I · E4)
     // ───────────── FS64
     async releaseRegionalDemand(input: ReleaseDemandInput) {
       await b.whenReady();
