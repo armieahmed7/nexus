@@ -14,5 +14,11 @@ export function makeSupabaseM34(x: SupabaseExtCtx): M34Rpc {
     rplEvidenceOptions: (personId) => x.rpc('kafaa_rpl_evidence_options', { p_person: personId ?? null }),
     tagCredit: (input) => x.call('kafaa_tag_credit', { p: input ?? {} }, ['credit_tags', 'credit_ledger']),
     syncCredits: (personId) => x.call('kafaa_sync_credits', { p_person: personId ?? null }, ['credit_ledger']),
+    // FS wave I · E1 · FS78/FS79 (supabase/migrations/20261010291001_kafaa_fs91_balance_external_certs.sql)
+    requestStudyTime: (input) => x.call('kafaa_request_study_time', { p: input ?? {} }, ['study_time_requests', 'learning_balances', 'notifications']),
+    decideStudyTime: (input) => x.call('kafaa_decide_study_time', { p: input ?? {} }, ['study_time_requests', 'learning_balances', 'notifications']),
+    learningBalance: (personId, year) => x.rpc('kafaa_learning_balance', { p_person: personId ?? null, p_year: year ?? null }),
+    submitExternalCert: (input) => x.call('kafaa_submit_external_cert', { p: input ?? {} }, ['external_certs']),
+    verifyExternalCert: (input) => x.call('kafaa_verify_external_cert', { p: input ?? {} }, ['external_certs', 'skill_evidence', 'person_skills', 'notifications']),
   };
 }
