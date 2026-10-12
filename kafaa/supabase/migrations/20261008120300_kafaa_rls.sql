@@ -2735,6 +2735,35 @@ create policy kafaa_read on kafaa_sjt_attempts for select to anon, authenticated
 grant select on kafaa_sjt_attempts to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- aps_scenarios
+alter table kafaa_aps_scenarios enable row level security;
+drop policy if exists kafaa_read on kafaa_aps_scenarios;
+create policy kafaa_read on kafaa_aps_scenarios for select to anon, authenticated using (kafaa_rule_read('secure_items', null::text, null::text, true));
+grant select on kafaa_aps_scenarios to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- aps_attempts
+alter table kafaa_aps_attempts enable row level security;
+drop policy if exists kafaa_read on kafaa_aps_attempts;
+create policy kafaa_read on kafaa_aps_attempts for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_aps_attempts to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- roleplay_scenarios
+alter table kafaa_roleplay_scenarios enable row level security;
+drop policy if exists kafaa_read on kafaa_roleplay_scenarios;
+create policy kafaa_read on kafaa_roleplay_scenarios for select to anon, authenticated using (kafaa_rule_read('internal_content', null::text, null::text, listed)
+    or kafaa_rule_read('secure_items', null::text, null::text, true));
+grant select on kafaa_roleplay_scenarios to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
+-- roleplay_sessions
+alter table kafaa_roleplay_sessions enable row level security;
+drop policy if exists kafaa_read on kafaa_roleplay_sessions;
+create policy kafaa_read on kafaa_roleplay_sessions for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true));
+grant select on kafaa_roleplay_sessions to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- rpl_requests
 alter table kafaa_rpl_requests enable row level security;
 drop policy if exists kafaa_read on kafaa_rpl_requests;

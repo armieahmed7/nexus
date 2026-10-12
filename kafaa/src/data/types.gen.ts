@@ -4933,6 +4933,101 @@ export interface SjtAttemptsRow {
   started_at: string;
   completed_at?: string | null;
 }
+export interface ApsScenariosRow {
+  id: string;
+  code: string;
+  theme: 'outage_schedule' | 'conflicting_data' | 'supply_delay' | 'staffing_change' | 'weather_logistics' | 'procedure_revision' | 'digital_tool_outage' | 'priority_conflict';
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  context_en: string;
+  context_ar: string;
+  core_skill_ids: string[];
+  skill_ids: string[];
+  difficulty: number;
+  est_minutes: number;
+  stages: any;
+  sources: any;
+  status: 'draft' | 'published' | 'retired';
+  version: number;
+  sort: number;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface ApsAttemptsRow {
+  id: string;
+  person_id: string;
+  scenario_id: string;
+  scenario_version: number;
+  attempt_no: number;
+  period: string;
+  status: 'in_progress' | 'completed' | 'abandoned';
+  stage_ids: string[];
+  responses: any;
+  points?: number | null;
+  max_points?: number | null;
+  score?: number | null;
+  band?: 'emerging' | 'developing' | 'adaptive' | 'strategic' | null;
+  dims: any;
+  reasons: any;
+  started_at: string;
+  completed_at?: string | null;
+}
+export interface RoleplayScenariosRow {
+  id: string;
+  code: string;
+  kind: 'pre_job_brief' | 'shift_turnover' | 'raise_concern' | 'regulator_interview' | 'knowledge_transfer' | 'ai_peer_coaching';
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  setting_en: string;
+  setting_ar: string;
+  counterpart_en: string;
+  counterpart_ar: string;
+  role_en: string;
+  role_ar: string;
+  core_skill_ids: string[];
+  skill_ids: string[];
+  level: number;
+  pass_pct: number;
+  est_minutes: number;
+  turns: any;
+  rubric: any;
+  sources: any;
+  status: 'draft' | 'published' | 'retired';
+  listed: boolean;
+  version: number;
+  sort: number;
+  updated_by?: string | null;
+  updated_at: string;
+}
+export interface RoleplaySessionsRow {
+  id: string;
+  person_id: string;
+  scenario_id: string;
+  scenario_version: number;
+  period: string;
+  status: 'in_progress' | 'completed';
+  turns: any;
+  passed?: number | null;
+  total?: number | null;
+  pct?: number | null;
+  ready: boolean;
+  reasons: any;
+  started_at: string;
+  completed_at?: string | null;
+  review_status: 'none' | 'requested' | 'validated' | 'declined' | 'withdrawn';
+  reviewer_id?: string | null;
+  review_context?: string | null;
+  requested_at?: string | null;
+  reviewed_by?: string | null;
+  reviewed_at?: string | null;
+  review_note?: string | null;
+  level: number;
+  evidence_ids: string[];
+}
 export interface RplRequestsRow {
   id: string;
   person_id: string;
@@ -5380,6 +5475,10 @@ export interface Tables {
   core_skill_candidates: CoreSkillCandidatesRow;
   sjt_items: SjtItemsRow;
   sjt_attempts: SjtAttemptsRow;
+  aps_scenarios: ApsScenariosRow;
+  aps_attempts: ApsAttemptsRow;
+  roleplay_scenarios: RoleplayScenariosRow;
+  roleplay_sessions: RoleplaySessionsRow;
   rpl_requests: RplRequestsRow;
   rpl_evidence: RplEvidenceRow;
   credit_tags: CreditTagsRow;

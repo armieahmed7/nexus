@@ -5852,6 +5852,113 @@ create table if not exists kafaa_sjt_attempts (
 );
 comment on table kafaa_sjt_attempts is '[M33] One person''s situational judgement practice set: the items, answers with expert effectiveness, score and tally per core skill. Own only: never read by managers, HR or talent review (FS26)';
 
+-- M33 · Adaptive problem-solving practice scenario (PIAAC-style, EN/AR): the first plan, then one or more mid-task changes revealed only after the earlier choice; per stage the facts to judge and 3-4 options with expert effectiveness 0-3, a why each and the debrief; training staff read the key, takers get stages without it (FS58)
+create table if not exists kafaa_aps_scenarios (
+  id text primary key,
+  code text not null unique,
+  theme text not null check (theme in ('outage_schedule', 'conflicting_data', 'supply_delay', 'staffing_change', 'weather_logistics', 'procedure_revision', 'digital_tool_outage', 'priority_conflict')),
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  context_en text not null,
+  context_ar text not null,
+  core_skill_ids text[] not null default '{}'::text[],
+  skill_ids text[] not null default '{}'::text[],
+  difficulty integer not null default 2,
+  est_minutes integer not null default 10,
+  stages jsonb not null default '[]'::jsonb,
+  sources jsonb not null default '[]'::jsonb,
+  status text not null default 'draft' check (status in ('draft', 'published', 'retired')),
+  version integer not null default 1,
+  sort integer not null default 0,
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_aps_scenarios is '[M33] Adaptive problem-solving practice scenario (PIAAC-style, EN/AR): the first plan, then one or more mid-task changes revealed only after the earlier choice; per stage the facts to judge and 3-4 options with expert effectiveness 0-3, a why each and the debrief; training staff read the key, takers get stages without it (FS58)';
+
+-- M33 · One person's adaptive problem-solving practice run: the stages answered (choice, facts picked, effectiveness), points, the 0-100 practice score, band and dimensions. Own only: never a manager, HR, talent review or a qualification (FS58)
+create table if not exists kafaa_aps_attempts (
+  id text primary key,
+  person_id text not null,
+  scenario_id text not null,
+  scenario_version integer not null default 1,
+  attempt_no integer not null,
+  period text not null,
+  status text not null default 'in_progress' check (status in ('in_progress', 'completed', 'abandoned')),
+  stage_ids text[] not null default '{}'::text[],
+  responses jsonb not null default '[]'::jsonb,
+  points integer,
+  max_points integer,
+  score integer,
+  band text check (band in ('emerging', 'developing', 'adaptive', 'strategic')),
+  dims jsonb not null default '{}'::jsonb,
+  reasons jsonb not null default '[]'::jsonb,
+  started_at timestamptz not null default now(),
+  completed_at timestamptz
+);
+comment on table kafaa_aps_attempts is '[M33] One person''s adaptive problem-solving practice run: the stages answered (choice, facts picked, effectiveness), points, the 0-100 practice score, band and dimensions. Own only: never a manager, HR, talent review or a qualification (FS58)';
+
+-- M33 · ENEC-authored role-play practice scenario (EN/AR): the setting, the counterpart, 3-5 turns with hints and example answers, and the published deterministic rubric (criteria with what each looks for and a tip); staff read published ones (listed), training staff all (FS59)
+create table if not exists kafaa_roleplay_scenarios (
+  id text primary key,
+  code text not null unique,
+  kind text not null check (kind in ('pre_job_brief', 'shift_turnover', 'raise_concern', 'regulator_interview', 'knowledge_transfer', 'ai_peer_coaching')),
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  setting_en text not null,
+  setting_ar text not null,
+  counterpart_en text not null,
+  counterpart_ar text not null,
+  role_en text not null,
+  role_ar text not null,
+  core_skill_ids text[] not null default '{}'::text[],
+  skill_ids text[] not null default '{}'::text[],
+  level integer not null default 1,
+  pass_pct integer not null default 70,
+  est_minutes integer not null default 15,
+  turns jsonb not null default '[]'::jsonb,
+  rubric jsonb not null default '[]'::jsonb,
+  sources jsonb not null default '[]'::jsonb,
+  status text not null default 'draft' check (status in ('draft', 'published', 'retired')),
+  listed boolean not null default false,
+  version integer not null default 1,
+  sort integer not null default 0,
+  updated_by text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_roleplay_scenarios is '[M33] ENEC-authored role-play practice scenario (EN/AR): the setting, the counterpart, 3-5 turns with hints and example answers, and the published deterministic rubric (criteria with what each looks for and a tip); staff read published ones (listed), training staff all (FS59)';
+
+-- M33 · One person's role-play practice session: the rubric ticks and word count per turn and the summary (never the answer text); the review request to a named reviewer and, once validated, the evidence written. Own only; the named reviewer sees a requested session through the review queue RPC (FS59)
+create table if not exists kafaa_roleplay_sessions (
+  id text primary key,
+  person_id text not null,
+  scenario_id text not null,
+  scenario_version integer not null default 1,
+  period text not null,
+  status text not null default 'in_progress' check (status in ('in_progress', 'completed')),
+  turns jsonb not null default '[]'::jsonb,
+  passed integer,
+  total integer,
+  pct integer,
+  ready boolean not null default false,
+  reasons jsonb not null default '[]'::jsonb,
+  started_at timestamptz not null default now(),
+  completed_at timestamptz,
+  review_status text not null default 'none' check (review_status in ('none', 'requested', 'validated', 'declined', 'withdrawn')),
+  reviewer_id text,
+  review_context text,
+  requested_at timestamptz,
+  reviewed_by text,
+  reviewed_at timestamptz,
+  review_note text,
+  level integer not null default 0,
+  evidence_ids text[] not null default '{}'::text[]
+);
+comment on table kafaa_roleplay_sessions is '[M33] One person''s role-play practice session: the rubric ticks and word count per turn and the summary (never the answer text); the review request to a named reviewer and, once validated, the evidence written. Own only; the named reviewer sees a requested session through the review queue RPC (FS59)';
+
 -- M34 · RPL requests: target skill or micro-credential, narrative, maker-checker decision (full, partial, not yet), RPL statement (FS29)
 create table if not exists kafaa_rpl_requests (
   id text primary key,
@@ -6502,6 +6609,11 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_co
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sjt_items_core_skill_id_fk') then alter table kafaa_sjt_items add constraint kafaa_sjt_items_core_skill_id_fk foreign key (core_skill_id) references kafaa_core_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sjt_attempts_person_id_fk') then alter table kafaa_sjt_attempts add constraint kafaa_sjt_attempts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_sjt_attempts_core_skill_id_fk') then alter table kafaa_sjt_attempts add constraint kafaa_sjt_attempts_core_skill_id_fk foreign key (core_skill_id) references kafaa_core_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_aps_attempts_person_id_fk') then alter table kafaa_aps_attempts add constraint kafaa_aps_attempts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_aps_attempts_scenario_id_fk') then alter table kafaa_aps_attempts add constraint kafaa_aps_attempts_scenario_id_fk foreign key (scenario_id) references kafaa_aps_scenarios(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_roleplay_sessions_person_id_fk') then alter table kafaa_roleplay_sessions add constraint kafaa_roleplay_sessions_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_roleplay_sessions_scenario_id_fk') then alter table kafaa_roleplay_sessions add constraint kafaa_roleplay_sessions_scenario_id_fk foreign key (scenario_id) references kafaa_roleplay_scenarios(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_roleplay_sessions_reviewer_id_fk') then alter table kafaa_roleplay_sessions add constraint kafaa_roleplay_sessions_reviewer_id_fk foreign key (reviewer_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_rpl_requests_person_id_fk') then alter table kafaa_rpl_requests add constraint kafaa_rpl_requests_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_rpl_requests_skill_id_fk') then alter table kafaa_rpl_requests add constraint kafaa_rpl_requests_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_rpl_evidence_request_id_fk') then alter table kafaa_rpl_evidence add constraint kafaa_rpl_evidence_request_id_fk foreign key (request_id) references kafaa_rpl_requests(id) deferrable initially deferred; end if; end $$;
@@ -7201,6 +7313,20 @@ create index if not exists kafaa_sjt_attempts_person_id_idx on kafaa_sjt_attempt
 create index if not exists kafaa_sjt_attempts_period_idx on kafaa_sjt_attempts (period);
 create index if not exists kafaa_sjt_attempts_core_skill_id_idx on kafaa_sjt_attempts (core_skill_id);
 create index if not exists kafaa_sjt_attempts_status_idx on kafaa_sjt_attempts (status);
+create index if not exists kafaa_aps_scenarios_theme_idx on kafaa_aps_scenarios (theme);
+create index if not exists kafaa_aps_scenarios_status_idx on kafaa_aps_scenarios (status);
+create index if not exists kafaa_aps_attempts_person_id_idx on kafaa_aps_attempts (person_id);
+create index if not exists kafaa_aps_attempts_scenario_id_idx on kafaa_aps_attempts (scenario_id);
+create index if not exists kafaa_aps_attempts_period_idx on kafaa_aps_attempts (period);
+create index if not exists kafaa_aps_attempts_status_idx on kafaa_aps_attempts (status);
+create index if not exists kafaa_roleplay_scenarios_kind_idx on kafaa_roleplay_scenarios (kind);
+create index if not exists kafaa_roleplay_scenarios_status_idx on kafaa_roleplay_scenarios (status);
+create index if not exists kafaa_roleplay_sessions_person_id_idx on kafaa_roleplay_sessions (person_id);
+create index if not exists kafaa_roleplay_sessions_scenario_id_idx on kafaa_roleplay_sessions (scenario_id);
+create index if not exists kafaa_roleplay_sessions_period_idx on kafaa_roleplay_sessions (period);
+create index if not exists kafaa_roleplay_sessions_status_idx on kafaa_roleplay_sessions (status);
+create index if not exists kafaa_roleplay_sessions_review_status_idx on kafaa_roleplay_sessions (review_status);
+create index if not exists kafaa_roleplay_sessions_reviewer_id_idx on kafaa_roleplay_sessions (reviewer_id);
 create index if not exists kafaa_rpl_requests_person_id_idx on kafaa_rpl_requests (person_id);
 create index if not exists kafaa_rpl_requests_skill_id_idx on kafaa_rpl_requests (skill_id);
 create index if not exists kafaa_rpl_requests_status_idx on kafaa_rpl_requests (status);
@@ -7225,4 +7351,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 314) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 318) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
