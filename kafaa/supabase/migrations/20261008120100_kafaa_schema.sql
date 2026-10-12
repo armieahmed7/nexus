@@ -6330,6 +6330,111 @@ create table if not exists kafaa_skill_forecasts (
 );
 comment on table kafaa_skill_forecasts is '[M35] Saved three-scenario skill forecast (baseline, ADVANCE, accelerated; SIMULATED): annual cycle and version, assumptions, aggregate suppressed results, method basis, release (FS51)';
 
+-- M36 · Released regional skill demand for Al Dhafra (SIMULATED): per catalogue area and horizon year, the working-level demand and gap bands across the three FS51 scenarios and the planning-scenario gap, cells of 1-9 suppressed; built only by rpc.releaseRegionalDemand from a released FS51 forecast (FS64)
+create table if not exists kafaa_regional_demand (
+  id text primary key,
+  release_id text not null,
+  forecast_id text not null,
+  forecast_name text not null,
+  cycle integer not null,
+  region text not null default 'al_dhafra',
+  scenario text not null check (scenario in ('baseline', 'advance', 'accelerated')),
+  area text not null,
+  year integer not null,
+  demand_low integer,
+  demand_high integer,
+  gap_low integer,
+  gap_high integer,
+  gap_plan integer,
+  skills_n integer not null default 0,
+  withheld_n integer not null default 0,
+  skill_ids text[] not null default '{}'::text[],
+  suppressed boolean not null default false,
+  note_en text not null default '',
+  note_ar text not null default '',
+  status text not null default 'current' check (status in ('current', 'superseded')),
+  released boolean not null default true,
+  released_by text not null,
+  released_at timestamptz not null default now(),
+  simulated boolean not null default true
+);
+comment on table kafaa_regional_demand is '[M36] Released regional skill demand for Al Dhafra (SIMULATED): per catalogue area and horizon year, the working-level demand and gap bands across the three FS51 scenarios and the planning-scenario gap, cells of 1-9 suppressed; built only by rpc.releaseRegionalDemand from a released FS51 forecast (FS64)';
+
+-- M36 · A provider's commitment against the released regional demand: planned cohorts or course changes per academic term, delivery reported each term, ENEC acknowledgement; one organisation's rows (FS64)
+create table if not exists kafaa_provider_commitments (
+  id text primary key,
+  org_id text not null,
+  org_name_en text not null,
+  org_name_ar text not null,
+  org_kind text not null,
+  release_id text not null,
+  area text not null,
+  kind text not null check (kind in ('cohort', 'course_change', 'new_course', 'apprenticeship')),
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  skill_ids text[] not null default '{}'::text[],
+  level integer not null,
+  plan jsonb not null default '[]'::jsonb,
+  delivery jsonb not null default '[]'::jsonb,
+  status text not null default 'active' check (status in ('active', 'withdrawn')),
+  withdrawn_reason text,
+  hr_status text not null default 'pending' check (hr_status in ('pending', 'acknowledged', 'queried')),
+  hr_note text,
+  hr_by text,
+  hr_at timestamptz,
+  version integer not null default 1,
+  history jsonb not null default '[]'::jsonb,
+  created_by text not null,
+  created_at timestamptz not null default now(),
+  updated_by text,
+  updated_at timestamptz not null default now(),
+  open_read boolean not null default false,
+  sample boolean not null default false
+);
+comment on table kafaa_provider_commitments is '[M36] A provider''s commitment against the released regional demand: planned cohorts or course changes per academic term, delivery reported each term, ENEC acknowledgement; one organisation''s rows (FS64)';
+
+-- M36 · A numeric upskilling pledge by one organisation: people x skill area x target date; pledged, started and completed are never merged (FS65)
+create table if not exists kafaa_pledges (
+  id text primary key,
+  org_id text not null,
+  org_name_en text not null,
+  org_name_ar text not null,
+  org_kind text not null,
+  area text not null,
+  people integer not null,
+  target_date date not null,
+  pledged_on date not null,
+  title_en text not null,
+  title_ar text not null,
+  department_en text,
+  department_ar text,
+  status text not null default 'active' check (status in ('active', 'withdrawn')),
+  created_by text not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  open_read boolean not null default false,
+  sample boolean not null default false
+);
+comment on table kafaa_pledges is '[M36] A numeric upskilling pledge by one organisation: people x skill area x target date; pledged, started and completed are never merged (FS65)';
+
+-- M36 · A dated progress snapshot of a pledge: people started and people completed, cumulative and never decreasing (FS65)
+create table if not exists kafaa_pledge_progress (
+  id text primary key,
+  pledge_id text not null,
+  org_id text not null,
+  as_of date not null,
+  started integer not null,
+  completed integer not null,
+  note_en text,
+  note_ar text,
+  reported_by text not null,
+  reported_at timestamptz not null default now(),
+  open_read boolean not null default false
+);
+comment on table kafaa_pledge_progress is '[M36] A dated progress snapshot of a pledge: people started and people completed, cumulative and never decreasing (FS65)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -6850,6 +6955,11 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_cr
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_critical_skills_skill_id_fk') then alter table kafaa_critical_skills add constraint kafaa_critical_skills_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_critical_skills_owner_person_id_fk') then alter table kafaa_critical_skills add constraint kafaa_critical_skills_owner_person_id_fk foreign key (owner_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_critical_skill_reviews_critical_skill_id_fk') then alter table kafaa_critical_skill_reviews add constraint kafaa_critical_skill_reviews_critical_skill_id_fk foreign key (critical_skill_id) references kafaa_critical_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_regional_demand_forecast_id_fk') then alter table kafaa_regional_demand add constraint kafaa_regional_demand_forecast_id_fk foreign key (forecast_id) references kafaa_skill_forecasts(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_provider_commitments_org_id_fk') then alter table kafaa_provider_commitments add constraint kafaa_provider_commitments_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_pledges_org_id_fk') then alter table kafaa_pledges add constraint kafaa_pledges_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_pledge_progress_pledge_id_fk') then alter table kafaa_pledge_progress add constraint kafaa_pledge_progress_pledge_id_fk foreign key (pledge_id) references kafaa_pledges(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_pledge_progress_org_id_fk') then alter table kafaa_pledge_progress add constraint kafaa_pledge_progress_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -7590,6 +7700,18 @@ create index if not exists kafaa_critical_skills_status_idx on kafaa_critical_sk
 create index if not exists kafaa_critical_skill_reviews_critical_skill_id_idx on kafaa_critical_skill_reviews (critical_skill_id);
 create index if not exists kafaa_skill_forecasts_cycle_idx on kafaa_skill_forecasts (cycle);
 create index if not exists kafaa_skill_forecasts_status_idx on kafaa_skill_forecasts (status);
+create index if not exists kafaa_regional_demand_release_id_idx on kafaa_regional_demand (release_id);
+create index if not exists kafaa_regional_demand_forecast_id_idx on kafaa_regional_demand (forecast_id);
+create index if not exists kafaa_regional_demand_area_idx on kafaa_regional_demand (area);
+create index if not exists kafaa_regional_demand_status_idx on kafaa_regional_demand (status);
+create index if not exists kafaa_provider_commitments_org_id_idx on kafaa_provider_commitments (org_id);
+create index if not exists kafaa_provider_commitments_area_idx on kafaa_provider_commitments (area);
+create index if not exists kafaa_provider_commitments_status_idx on kafaa_provider_commitments (status);
+create index if not exists kafaa_pledges_org_id_idx on kafaa_pledges (org_id);
+create index if not exists kafaa_pledges_area_idx on kafaa_pledges (area);
+create index if not exists kafaa_pledges_status_idx on kafaa_pledges (status);
+create index if not exists kafaa_pledge_progress_pledge_id_idx on kafaa_pledge_progress (pledge_id);
+create index if not exists kafaa_pledge_progress_org_id_idx on kafaa_pledge_progress (org_id);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -7604,4 +7726,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 327) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 331) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

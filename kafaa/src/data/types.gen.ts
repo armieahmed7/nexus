@@ -5357,6 +5357,99 @@ export interface SkillForecastsRow {
   superseded_by?: string | null;
   simulated: boolean;
 }
+export interface RegionalDemandRow {
+  id: string;
+  release_id: string;
+  forecast_id: string;
+  forecast_name: string;
+  cycle: number;
+  region: string;
+  scenario: 'baseline' | 'advance' | 'accelerated';
+  area: string;
+  year: number;
+  demand_low?: number | null;
+  demand_high?: number | null;
+  gap_low?: number | null;
+  gap_high?: number | null;
+  gap_plan?: number | null;
+  skills_n: number;
+  withheld_n: number;
+  skill_ids: string[];
+  suppressed: boolean;
+  note_en: string;
+  note_ar: string;
+  status: 'current' | 'superseded';
+  released: boolean;
+  released_by: string;
+  released_at: string;
+  simulated: boolean;
+}
+export interface ProviderCommitmentsRow {
+  id: string;
+  org_id: string;
+  org_name_en: string;
+  org_name_ar: string;
+  org_kind: string;
+  release_id: string;
+  area: string;
+  kind: 'cohort' | 'course_change' | 'new_course' | 'apprenticeship';
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  skill_ids: string[];
+  level: number;
+  plan: any;
+  delivery: any;
+  status: 'active' | 'withdrawn';
+  withdrawn_reason?: string | null;
+  hr_status: 'pending' | 'acknowledged' | 'queried';
+  hr_note?: string | null;
+  hr_by?: string | null;
+  hr_at?: string | null;
+  version: number;
+  history: any;
+  created_by: string;
+  created_at: string;
+  updated_by?: string | null;
+  updated_at: string;
+  open_read: boolean;
+  sample: boolean;
+}
+export interface PledgesRow {
+  id: string;
+  org_id: string;
+  org_name_en: string;
+  org_name_ar: string;
+  org_kind: string;
+  area: string;
+  people: number;
+  target_date: string;
+  pledged_on: string;
+  title_en: string;
+  title_ar: string;
+  department_en?: string | null;
+  department_ar?: string | null;
+  status: 'active' | 'withdrawn';
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  open_read: boolean;
+  sample: boolean;
+}
+export interface PledgeProgressRow {
+  id: string;
+  pledge_id: string;
+  org_id: string;
+  as_of: string;
+  started: number;
+  completed: number;
+  note_en?: string | null;
+  note_ar?: string | null;
+  reported_by: string;
+  reported_at: string;
+  open_read: boolean;
+}
 
 export interface Tables {
   organisations: OrganisationsRow;
@@ -5687,6 +5780,10 @@ export interface Tables {
   critical_skills: CriticalSkillsRow;
   critical_skill_reviews: CriticalSkillReviewsRow;
   skill_forecasts: SkillForecastsRow;
+  regional_demand: RegionalDemandRow;
+  provider_commitments: ProviderCommitmentsRow;
+  pledges: PledgesRow;
+  pledge_progress: PledgeProgressRow;
 }
 export type Table = keyof Tables;
 export type RowOf<T extends Table> = Tables[T];
