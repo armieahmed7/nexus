@@ -15,6 +15,7 @@ import type { PlatformRole } from '../../auth/policy';
 import { LocalRpc } from './rpc';
 import { directWriteGuard } from './guards';
 import nexusSnapshot from '../../seed/nexus_snapshot.json';
+import { retryableOnce } from '../../shell/chunkReload';
 
 type Rows = Record<string, Record<string, unknown>[]>;
 /** v2 (W5 QA): only the tables changed since the seed are stored. The whole tenant (about 11.6 million characters after wave 5) no
@@ -30,15 +31,23 @@ interface SeedFile {
   tables: Rows;
 }
 
-let seedPromise: Promise<SeedFile> | null = null;
-export const loadSeed = () => (seedPromise ??= import('../../seed/seed.json').then((m) => (m.default ?? m) as unknown as SeedFile));
+/** The seed chunk, loaded once. A failed load (a stale chunk after a deploy, a dropped connection) is not cached, so the next call
+ *  tries again instead of failing for the rest of the page's life. */
+export const loadSeed = retryableOnce(() => import('../../seed/seed.json').then((m) => (m.default ?? m) as unknown as SeedFile));
 
 export class LocalBackend implements Repository {
   readonly backend = 'local' as const;
   private tables: Rows = {};
   private byId: Record<string, Map<string, Record<string, unknown>>> = {};
   private listeners = new Set<(t: Table[]) => void>();
-  private ready: Promise<void>;
+  private readyPromise: Promise<void> | null = null;
+  /** Resolves once the seed (and any persisted local changes) are loaded. A failed load is retried on the next call. */
+  private get ready(): Promise<void> {
+    return (this.readyPromise ??= this.init().catch((err: unknown) => {
+      this.readyPromise = null;
+      throw err;
+    }));
+  }
   private personaId: string | null = null;
   private nexusPersonas = new Set<string>();
   private saveTimer: ReturnType<typeof setTimeout> | null = null;
@@ -47,7 +56,7 @@ export class LocalBackend implements Repository {
   readonly nexus: NexusReads;
 
   constructor() {
-    this.ready = this.init();
+    void this.ready.catch(() => undefined); // start loading now; callers that await `ready` see (and retry) a failure
     this.rpc = new LocalRpc(this);
     this.nexus = this.makeNexusReads();
   }

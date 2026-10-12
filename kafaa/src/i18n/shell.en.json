@@ -94,7 +94,9 @@
     "signInBody": "This page is for signed-in users. Choose a demo role card to continue.",
     "forbiddenTitle": "You don't have access to this page",
     "forbiddenBody": "Your role does not include this page. The attempt was recorded in the audit log.",
-    "goHome": "Go to the home page"
+    "goHome": "Go to the home page",
+    "sessionErrorTitle": "We couldn't load your session",
+    "sessionErrorBody": "Your sign-in could not be checked because part of the app did not load (it may have just been updated). Try again; if it keeps failing, reload the page."
   },
   "notFound": {
     "title": "Page not found",
