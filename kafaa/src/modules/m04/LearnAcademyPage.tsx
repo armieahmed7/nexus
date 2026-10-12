@@ -39,6 +39,7 @@ function Academy({ d, a }: { d: AcademyData; a: Row }) {
       actions={staff && open.length ? <button type="button" className="btn-primary" onClick={() => setNominate(true)} data-testid="m04-acad-nominate"><Icon name="plus" size={14} />{t('m04.acad.nominate.cta')}</button> : null}>
       <div className="space-y-6">
         <TemplateTriad compact />
+        {a.id === 'ac-energy' && <p className="text-[13px]" data-testid="m04-acad-to-consortium"><L to="/ecosystem/consortium">{t('m04.acad.toConsortium')}</L></p>}{/* FS83 (wave-I integration): the consortium cohort builds on this academy */}
         {a.no_decision && <NoDecisionNote />}
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           <Card title={t('m04.acad.triad.modules')} eyebrow={t('m04.acad.modulesN', { n: f.num(a.module_course_ids.length), h: f.num(hours) })} className="lg:col-span-2">

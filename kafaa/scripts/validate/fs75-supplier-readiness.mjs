@@ -78,10 +78,10 @@ export default async function fs75Checks({ db, as, count, ok, uid }) {
 
   // ── FS69
   const D = {};
-  const load = async () => { for (const t of ['microcred_awards', 'microcred_defs', 'badges', 'certificates', 'qual_records', 'qual_standards', 'person_skills', 'skills', 'competencies', 'people', 'task_items', 'task_skill_links', 'courses', 'record_shares', 'prearrival_shares']) D[t] = await rows(`kafaa_${t}`); };
+  const load = async () => { for (const t of ['microcred_awards', 'microcred_defs', 'badges', 'certificates', 'qual_records', 'qual_standards', 'person_skills', 'skills', 'competencies', 'people', 'task_items', 'task_skill_links', 'courses', 'record_shares', 'prearrival_shares', 'external_certs' /* FS79 -> FS32 (wave I integration) */]) D[t] = await rows(`kafaa_${t}`); };
   await load();
   const world = (pid) => ({ today, person: pid, initials: D.people.find((p) => p.id === pid)?.initials || '—', microcred_awards: D.microcred_awards, microcred_defs: D.microcred_defs, badges: D.badges,
-    certificates: D.certificates, qual_records: D.qual_records, qual_standards: D.qual_standards, person_skills: D.person_skills, skills: D.skills, competencies: D.competencies });
+    certificates: D.certificates, qual_records: D.qual_records, qual_standards: D.qual_standards, person_skills: D.person_skills, skills: D.skills, competencies: D.competencies, external_certs: D.external_certs ?? [] }); // FS79 -> FS32 (wave I integration)
   const shareOf = (r) => D.record_shares.find((s) => s.id === r.share_id);
   const viewOf = (s) => (s.revoked_at ? 'revoked' : String(s.expires_on).slice(0, 10) < today ? 'expired' : 'active');
   const seeded = D.prearrival_shares;

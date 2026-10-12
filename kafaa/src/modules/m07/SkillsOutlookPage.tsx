@@ -13,6 +13,7 @@ import { MIN_GROUP_SIZE } from '../../auth/policy';
 import { publicTextIsClean } from '../../domain/future';
 import { Page, Section, Grid, Card, Async, EmptyState, Callout, DataTable, StatusPill, ConfirmDialog, Modal, Drawer, SimChip, LineChart, BarChart, WhyThis, TextField, TextArea, Icon, type Column } from '../../ui';
 import { L, useFormat, useLang, useT } from '../../i18n';
+import { GuardedLink } from '../../shell/GuardedLink'; // wave-I integration entry link
 import { AUTO_PARAM, BASELINE, LIMITS, OVERRIDE_MAX, adoptionOf, familyReasons, isBaseline, withAutoBar, type AutoParam, type FamilyOutlook, type NumParam, type OutlookParams, type OutlookResult } from './outlook';
 import { AutoSlider, AutomationCard } from './automationUi'; // FS52
 import { MarketPanel, ReleasedMarketPanel } from './marketUi'; // FS53
@@ -49,7 +50,7 @@ export default function SkillsOutlookPage() {
   const canCompute = s.hasRole('hr_director', 'hr_analyst', 'auditor');
   const [loadReq, setLoadReq] = useState<{ params: OutlookParams; id: string | null; name: string; n: number } | null>(null);
   return (
-    <Page title={t('m07.routes.workforce-skills-outlook.title')} intro={t('m07.so.intro')} wide actions={<SimChip />}>
+    <Page title={t('m07.routes.workforce-skills-outlook.title')} intro={t('m07.so.intro')} wide actions={<span className="flex flex-wrap items-center gap-2"><GuardedLink to="/workforce/skills-inventory" testId="m07-so-to-inventory">{t('m07.so.toInventory')}</GuardedLink>{/* FS84 (wave-I integration) */}<SimChip /></span>}>
       <div className="flex flex-wrap items-center gap-2 text-[12.5px] text-ink-2" data-testid="m07-so-labels">
         <SimChip />
         <span>{t('m07.so.labels', { n: MIN_GROUP_SIZE })}</span>

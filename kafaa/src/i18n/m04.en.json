@@ -848,7 +848,8 @@
     "tabUse": "Utilisation",
     "utilisation": "Utilisation",
     "utilisationSub": "{n} slots in view",
-    "weekOf": "Week of {date}"
+    "weekOf": "Week of {date}",
+    "toRungAlerts": "Ladder-rung alerts: where the simulator practice is needed"
   },
   "reasons": {
     "focus_skill": "Offers the skills you picked: {skills}",
@@ -1663,7 +1664,8 @@
       "alumni": "Alumni",
       "declined": "Not taken forward",
       "withdrawn": "Withdrawn"
-    }
+    },
+    "toConsortium": "This academy is the base of the UAE energy consortium trainee cohort"
   },
   "tra": {
     "intro": "Decide nominations, follow cohort rosters, module progress and capstones, and see the alumni. Statistics describing fewer than 10 people are suppressed.",

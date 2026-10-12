@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 /** [FS QA · wave H integration] Cross-feature wiring of FS70-FS77 on the integration branch, one test per integration criterion:
- *   routes          380 routes (367 after wave G + 13 wave-H routes), each wave-H path registered
+ *   routes          380 routes after wave H (367 after wave G + 13 wave-H routes; 401 after wave I), each wave-H path registered
  *   benchmarks      every wave-H page shows its card's FS01 benchmark chips
  *   FS70 lists      the stored Skills on the Rise lists and badge lists still equal the rules on the final seed
  *   FS70 -> FS75    the digest's rising-skill nudge reads the stored FS70 rows (data-only coupling)
@@ -66,10 +66,10 @@ const staff = () => T.people.filter((p) => p.kind === 'staff' && p.status === 'a
 afterEach(() => { vi.useRealTimers(); });
 
 describe('FS wave H · route registry', () => {
-  it('380 routes, and the 13 wave-H routes are registered with their paths', async () => {
+  it('380 routes after wave H (401 after wave I), and the 13 wave-H routes are registered with their paths', async () => {
     const { ROUTES } = await import('../../src/routes/registry');
     const R = ROUTES as Row[];
-    expect(R.length).toBe(380); // FS wave H QA: + 13 (FS70-FS72 M28 7, FS73/FS74 M37 3, FS77 M06 3; FS75 shell digest and FS76 M13 none)
+    expect(R.length).toBe(401); // FS wave I QA: + 21 (FS78/FS79 M34 5: my-learning-balance, team-study-time, workforce-learning-balances, my-external-certs, external-certs-queue; FS80 M29 4: workforce-ai-automations, workforce-ai-automation, my-ai-builds, admin-ai-automations; FS81 M30 4: my-transition-plan, workforce-transition-plans, workforce-transition-plan, workforce-rung-alerts; FS82/FS83 M36 6: my-grants, ecosystem-grants, workforce-grants, ecosystem-consortium, ecosystem-consortium-cohort, my-consortium; FS84 M17 2: team-skills-future, workforce-skills-inventory). FS wave H QA: + 13 (FS70-FS72 M28 7, FS73/FS74 M37 3, FS77 M06 3; FS75 shell digest and FS76 M13 none)
     for (const [, id, path] of WAVE_H) expect(R.find((r) => r.id === id)?.path, id).toBe(path);
   });
 });

@@ -234,8 +234,9 @@ export const MATRIX: Record<Resource, Row> = {
     ...fill(STAFF.filter((r) => r !== 'auditor'), ['R', 'Own']),
     hr_analyst: ['R', 'Own', 'Agg'], hr_director: ['R', 'Own', 'Agg'], training_manager: ['R', 'Own', 'W'], admin: ['R', 'Own', 'W', 'A'], auditor: ['R'],
   },
-  // transformation (FS05/FS06/FS11/FS12/FS81): staff read role views; managers their team's transition plans; HR aggregates and
-  // decides transition plans; training_manager and HR director edit role profiles.
+  // transformation (FS05/FS06/FS11/FS12/FS81): staff read role views; HR aggregates and decides transition plans; training_manager and
+  // HR director edit role profiles. FS81 transition plans are visible to the person and HR only (settled decision, wave I): managers in
+  // scope do not see them (the table's only read rule is own_profile Own; HR reads through the RPCs). Comment only, no grant change.
   transformation: {
     ...fill(STAFF.filter((r) => r !== 'auditor'), ['R', 'Own']),
     manager: ['R', 'Own', 'Scope'], training_manager: ['R', 'Own', 'W'], hr_analyst: ['R', 'Own', 'Agg'], hr_director: ['R', 'Own', 'Agg', 'W', 'A'], auditor: ['R'],

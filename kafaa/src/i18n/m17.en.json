@@ -131,7 +131,9 @@
     "lr_qual": "{title}: mirrored as qualified or not qualified only",
     "lr_skill": "Skill {title} from your skills passport",
     "lr_provenance": "Level {level}, basis: {basis}",
-    "lr_never": "Security and medical detail is never part of the record"
+    "lr_never": "Security and medical detail is never part of the record",
+    "lr_xcert": "External certificate {title}: verified with the issuer",
+    "lr_tier": "Trust tier: {tier}"
   },
   "passport": {
     "intro": "Your skills as Kafa'a derives them from recorded evidence: qualification records, courses, assessments, JPMs, validated ratings and credentials. Every level shows how it was evidenced.",
@@ -283,7 +285,9 @@
       "credential": "Credential",
       "rating": "Rating",
       "claim": "Self-claim",
-      "validated": "Validated rating"
+      "validated": "Validated rating",
+      "xcert": "External certificate",
+      "automation": "Builder credit: approved automation adopted by colleagues"
     },
     "sys": {
       "assess": "Kafa'a assessments",
@@ -291,7 +295,11 @@
       "wallet": "Kafa'a credential wallet",
       "application": "the application form",
       "onboarding": "the onboarding profile",
-      "passport": "Kafa'a skills passport"
+      "passport": "Kafa'a skills passport",
+      "recognition": "Kafa'a recognition",
+      "gallery": "the automation gallery",
+      "grants": "the micro-grant programme",
+      "consortium": "the energy consortium cohort"
     }
   },
   "claims": {
@@ -1416,13 +1424,15 @@
       "mc": "Micro-credentials",
       "badge": "Badges",
       "qual": "Qualification mirror",
-      "skill": "Skills"
+      "skill": "Skills",
+      "xcert": "External certificates"
     },
     "kindEmpty": {
       "mc": "No micro-credentials yet.",
       "badge": "No badges yet.",
       "qual": "No qualification lines.",
-      "skill": "No skills at level 1 or above yet."
+      "skill": "No skills at level 1 or above yet.",
+      "xcert": "No verified external certificates."
     },
     "empty": "Nothing to share yet",
     "emptyBody": "Credentials, qualification lines and skills appear here as you earn them.",
@@ -1786,5 +1796,16 @@
     "total": "All staff",
     "skillsN": "{n} skills, {shown} with a count to show",
     "heatNote": "Cells show people and the share of the group's staff. Holders count verified, evidenced and validated levels at the skill's key level; self-claims never count."
+  },
+  "xc": {
+    "title": "External certificates",
+    "eyebrow": "{n} verified of {all}",
+    "manage": "Add or follow a certificate",
+    "body": "Certificates from universities, professional bodies, vendors and online platforms, with the trust tier each one earned. Only verified certificates count as evidence; the tier sets how far.",
+    "loading": "Loading certificates…",
+    "empty": "No external certificates yet",
+    "emptyBody": "Add one with its verification link; a verifier checks it with the issuer before it counts.",
+    "notAuthority": "Kafa'a is not the issuer and not an authority",
+    "expires": "expires {date}"
   }
 }

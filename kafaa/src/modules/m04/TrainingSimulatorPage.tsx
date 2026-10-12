@@ -5,6 +5,7 @@ import { Page, Grid, Card, StatTile, BarChart, Donut, DataTable, Modal, Callout,
 import { useAction, useQuery, useRepo } from '../../data';
 import type { SimulatorSlotsRow } from '../../data/types';
 import { useFormat, useT } from '../../i18n';
+import { GuardedLink } from '../../shell/GuardedLink'; // wave-I integration entry link
 import { useSession } from '../../auth/session';
 import { bookingPriority, canDisplace } from '../../domain/rules';
 import { Chip, G2Pill, useLabels, usePeople } from './ui';
@@ -29,6 +30,7 @@ export default function TrainingSimulatorPage() {
   return (
     <Page title={t('m04.routes.training-simulator.title')} intro={t('m04.sim.intro')} wide>
       <Callout title={t('m04.sim.ruleTitle')}>{t('m04.sim.ruleBody')}</Callout>
+      <div className="mt-3"><GuardedLink to="/workforce/rung-alerts" testId="m04-sim-to-rung-alerts">{t('m04.sim.toRungAlerts')}</GuardedLink></div>{/* FS81 (wave-I integration): ladder-rung alerts name the simulator practice added */}
       <Async state={q}>
         {(rows) => {
           const now = new Date();

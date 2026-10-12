@@ -34,6 +34,7 @@ export function makeLocalM17Fs4(b: LocalBackend, h: LocalRpcHelpers): Fs4Rpc {
   const recordWorld = (person: string, today: string): RecordWorld => ({
     today, person, initials: String(get('people', person)?.initials || '—'), microcred_awards: raw('microcred_awards'), microcred_defs: raw('microcred_defs'), badges: raw('badges'),
     certificates: raw('certificates'), qual_records: raw('qual_records'), qual_standards: raw('qual_standards'), person_skills: raw('person_skills'), skills: raw('skills'), competencies: raw('competencies'),
+    external_certs: raw('external_certs'), // FS79 -> FS32 (wave I integration)
   });
   const secComps = () => new Set(raw('competencies').filter((c) => c.domain === 'security').map((c) => String(c.id)));
   // FS07's setSkillGoal (M28) can remove a goal or change its level from a skill page: keep the plan in step, like the SQL trigger

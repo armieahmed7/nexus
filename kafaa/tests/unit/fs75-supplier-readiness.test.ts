@@ -24,7 +24,7 @@ const today = () => new Date().toISOString().slice(0, 10);
 const plus = (d: number) => new Date(Date.parse(`${today()}T00:00:00Z`) + d * 86_400_000).toISOString().slice(0, 10);
 const raw = (t: string) => b.raw(t as never) as unknown as Row[];
 const frWorld = () => ({ orgs: raw('organisations'), people: raw('people'), states: raw('person_skills'), skills: raw('skills') as never, comps: raw('competencies'), targets: raw('contract_role_targets'), profiles: raw('role_profile_versions'), roles: raw('job_roles'), courses: raw('courses') });
-const rw = (pid: string) => ({ today: today(), person: pid, initials: String(b.rawGet('people', pid)?.initials ?? '—'), microcred_awards: raw('microcred_awards'), microcred_defs: raw('microcred_defs'), badges: raw('badges'), certificates: raw('certificates'), qual_records: raw('qual_records'), qual_standards: raw('qual_standards'), person_skills: raw('person_skills'), skills: raw('skills'), competencies: raw('competencies') });
+const rw = (pid: string) => ({ today: today(), person: pid, initials: String(b.rawGet('people', pid)?.initials ?? '—'), microcred_awards: raw('microcred_awards'), microcred_defs: raw('microcred_defs'), badges: raw('badges'), certificates: raw('certificates'), qual_records: raw('qual_records'), qual_standards: raw('qual_standards'), person_skills: raw('person_skills'), skills: raw('skills'), competencies: raw('competencies'), external_certs: raw('external_certs') }); // FS79 -> FS32 (wave I integration)
 const audits = (action: string) => raw('audit_events').filter((a) => a.action === action);
 
 describe('FS68 supplier future-skills readiness', () => {
