@@ -250,7 +250,9 @@
       "skill": "requires this skill",
       "course": "through a course that builds it"
     },
-    "descriptorsLink": "All descriptors and levels"
+    "descriptorsLink": "All descriptors and levels",
+    "askDalil": "Ask Dalil about this skill",
+    "askQ": "What is the ESCO equivalent of {name}?"
   },
   "fw": {
     "eyebrow": "Skills Intelligence · crosswalk",

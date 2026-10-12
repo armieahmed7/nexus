@@ -42,7 +42,9 @@
     "exploring": "Exploring a role",
     "version": "Version {v}",
     "draftPending": "Draft pending",
-    "edit": "Edit this map"
+    "edit": "Edit this map",
+    "askDalil": "Ask Dalil about my role in 2030",
+    "askQ": "How will my role change by 2030?"
   },
   "driverCounts": "· {tasks} tasks · {skills} skills",
   "ready": {

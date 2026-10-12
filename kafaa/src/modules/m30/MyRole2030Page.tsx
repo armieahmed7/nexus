@@ -23,7 +23,10 @@ export default function MyRole2030Page() {
   return (
     <Page title={t('m30.routes.my-role-2030.title')} intro={t('m30.my.intro')} wide
       eyebrow={<span className="inline-flex flex-wrap items-center gap-2"><SimChip label={t('m30.planning.chip')} /><BenchTies feature={FS11} /><EngineBadge engine={eng} /></span>}
-      actions={<L to={`/my/role-2030/tasks${p.role ? `?role=${p.role}` : ''}`} className="btn-outline no-underline" data-testid="m30-to-tasks">{t('m30.my.toTasks')}</L>}>
+      actions={<span className="flex flex-wrap gap-2">
+        <L to={`/my/role-2030/tasks${p.role ? `?role=${p.role}` : ''}`} className="btn-outline no-underline" data-testid="m30-to-tasks">{t('m30.my.toTasks')}</L>
+        <L to={`/ask?mode=future&q=${encodeURIComponent(t('m30.my.askQ'))}`} className="btn-outline no-underline" data-testid="m30-ask-dalil">{t('m30.my.askDalil')}</L>{/* FS76 (wave-H integration) */}
+      </span>}>
       <Async state={ref}>{(d) => (
         <div className="space-y-6">
           <div className="flex flex-wrap items-end gap-4" data-testid="m30-controls">

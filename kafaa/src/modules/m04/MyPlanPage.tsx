@@ -21,7 +21,8 @@ export default function MyPlanPage() {
   }, [me]);
   const manager = s.can('dev_plans', ['A']);
   return (
-    <Page title={t('m04.routes.my-plan.title')} intro={t('m04.plan.intro')}>
+    <Page title={t('m04.routes.my-plan.title')} intro={t('m04.plan.intro')}
+      actions={<L to="/my/future-wallet" className="btn-outline btn-sm no-underline" data-testid="m04-plan-to-wallet">{t('m04.plan.toWallet')}</L>}>{/* FS74 (wave-H integration) */}
       <Async state={plans} isEmpty={() => false}>
         {(d) => {
           const plan = d.mine.find((p) => p.status !== 'closed') ?? null;

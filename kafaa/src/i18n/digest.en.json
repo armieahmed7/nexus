@@ -27,6 +27,8 @@
     "conversation_overdue": "Six-monthly career conversation: it was due by {date}",
     "refresher_due": "{n} spaced-practice questions are due",
     "approval_fellowship": "Submitted on {date}: a fellowship milestone that names you as supervisor; sign it off or return it with a note",
+    "approval_prearrival": "Opened on {date} on a contractor's behalf from {org} (signed consent on file): you named yourself as the evaluator, so the pre-arrival check is yours to run from the shared items only",
+    "approval_prearrival_mobilise": "Mobilises on {date}: check before arrival; nothing is decided or recorded until a person does it",
     "future_decay": "This skill is in the fast-changing class: your newest level-{level} evidence passes its {months}-month half-life on {date}, then it counts one level lower",
     "future_decay_renew": "Fresh evidence (a check, a drill, a course or a validated rating) keeps the level; nothing is taken away from your record",
     "future_goal_due": "Your target date is {date}",

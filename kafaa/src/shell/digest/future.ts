@@ -26,7 +26,9 @@
  *                 the target), which I have not started.
  * "My future skills": my active FS07/FS33 goals (target level) and the skill requirements of my role's 2030 profile above my level.
  * Approvals (FS67 hand-off from wave G): fellowship milestones submitted to me as the named supervisor and waiting for my sign-off.
- * Pre-arrival checks (FS69) name no person to act, so they stay out of the digest (logged in the FS75 hand-off).
+ * Pre-arrival checks (FS69, wave-H integration): a share an evaluator opened on a contractor's behalf (assessor-on-behalf, with the signed-consent
+ * reference) names that evaluator; while the link is active, unchecked and the mobilisation date is today or later, the check is owed by them
+ * (dated: days to mobilisation). Self-made shares name no evaluator and stay out (any equivalency-A evaluator may check them).
  * Order inside the kind: dated items first (days), then a fixed topic priority (score), then id. Non-staff people get no future item.
  */
 import { aiRung } from '../../modules/m29/fluency.ts';
@@ -68,6 +70,11 @@ export interface FutureData {
   /** FS70 (fsHe1, same wave): published list rows with quarter, skill_id, category ('now' | 'growing'), rank and families (text[]). */
   skill_signals?: Row[];
   fellowship_milestones?: Row[];
+  /** FS69 (wave-H integration): pre-arrival shares, their FS32 links, the standards and the contractor organisations. */
+  prearrival_shares?: Row[];
+  record_shares?: Row[];
+  qual_standards?: Row[];
+  organisations?: Row[];
 }
 
 /** The digest item shape (same as rules.ts DigestItem; kept structural so this file has no value import from rules.ts). */
@@ -157,6 +164,32 @@ export function gatherFs75Approvals(d: FutureData, c: FutureCtx): FutureItem[] {
     out.push({ id: `approval:fellowship_milestones:${m.id}`, kind: 'approval', urgency: 2, ref_table: 'fellowship_milestones', ref_id: m.id,
       title_en: `Fellowship milestone to sign off: ${en}`, title_ar: `مرحلة زمالة بانتظار اعتمادك: ${ar}`, meta_en: en, meta_ar: ar,
       link: `/universities/fellowships/${m.fellowship_id}`, due_on: null, days: null, score: null, why: [{ code: 'approval_fellowship', vars: { date: at } }] });
+  }
+  out.push(...gatherPrearrivalOwed(d, c));
+  return out;
+}
+
+/** FS69 -> F36 (wave-H integration, SQL block in kafaa_dg_future of 20261010289001_kafaa_fs8qa_integration.sql): pre-arrival checks I owe.
+ *  A share I opened on a contractor's behalf, not yet checked, whose FS32 link is active and whose mobilisation date is today or later;
+ *  never for a security-restricted standard. Dated by the mobilisation date. The contractor is not named (the organisation is). */
+export function gatherPrearrivalOwed(d: FutureData, c: FutureCtx): FutureItem[] {
+  if (c.today < FS75_FROM) return [];
+  const me = c.person.id;
+  const out: FutureItem[] = [];
+  for (const pa of d.prearrival_shares ?? []) {
+    const opened = d10(pa.created_at);
+    const mob = d10(pa.mobilise_on);
+    if (pa.created_via !== 'on_behalf' || pa.created_by !== me || pa.person_id === me || pa.checked_at || !opened || opened > c.today || !mob || mob < c.today) continue;
+    const s = (d.record_shares ?? []).find((x) => x.id === pa.share_id);
+    if (!s || s.revoked_at || !s.expires_on || d10(s.expires_on) < c.today) continue;
+    const std = (d.qual_standards ?? []).find((x) => x.id === pa.standard_id);
+    if (!std || std.security_restricted) continue;
+    const org = (d.organisations ?? []).find((x) => x.id === pa.org_id);
+    const o = bi(org?.name_en ?? pa.org_id, org?.name_ar);
+    out.push({ id: `approval:prearrival_shares:${pa.id}`, kind: 'approval', urgency: 2, ref_table: 'prearrival_shares', ref_id: pa.id,
+      title_en: `Pre-arrival check to run: ${std.title_en}`, title_ar: `فحص ما قبل الوصول بانتظارك: ${std.title_ar || std.title_en}`, meta_en: o.en, meta_ar: o.ar,
+      link: `/training/equivalency/prearrival/${pa.id}`, due_on: mob, days: between(c.today, mob), score: null,
+      why: [{ code: 'approval_prearrival', vars: { date: opened, org: o } }, { code: 'approval_prearrival_mobilise', vars: { date: mob } }] });
   }
   return out;
 }

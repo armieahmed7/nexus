@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 /** [FS QA · wave G integration] Cross-feature wiring of FS60-FS69 on the integration branch, one test per integration criterion:
- *   routes        367 routes (338 after wave F + 29 wave-G routes), each wave-G path registered
+ *   routes        367 routes after wave G (338 after wave F + 29 wave-G routes; 380 after wave H), each wave-G path registered
  *   benchmarks    every wave-G page names its card's FS01 benchmark chips; every chip is a published registry row with https sources
  *   FS60 inputs   the stored disclosure values equal the formula on the final seed (FS50, FS09/FS36, training records, xAPI, FS30)
  *   FS61          the adoption reference is the FSC figure read from kafaa_benchmarks, never typed into M35 copy
@@ -74,10 +74,10 @@ const fresh = async (persona: string | null = null) => {
 afterEach(() => { vi.useRealTimers(); });
 
 describe('FS wave G · route registry', () => {
-  it('367 routes, and the 29 wave-G routes are registered', async () => {
+  it('367 routes after wave G (380 after wave H), and the 29 wave-G routes are registered', async () => {
     const { loadRoutes } = await import('../smoke/routes');
     const R = loadRoutes();
-    expect(R.length).toBe(367); // FS wave G QA: + 29 (M35 6, M37 5, M36 6, M10 7, M09 5)
+    expect(R.length).toBe(380); // FS wave H QA: + 13 (FS70-FS72 M28 7: skills-rising, skills-rising-method, workforce-skill-signals, my-manager-pulse, skills-technologies, admin-skills-technologies, my-skills-suggestions; FS73/FS74 M37 3: national-emirati-pipeline, my-future-wallet, national-future-wallet; FS77 M06 3: pathways-starter, my-induction, workforce-intake-baselines; FS75 shell digest and FS76 M13 none). FS wave G QA: + 29 (M35 6, M37 5, M36 6, M10 7, M09 5)
     const byId = new Map(R.map((r) => [r.id, r.path]));
     expect(WAVE_G.length).toBe(29);
     for (const [, id, path] of WAVE_G) expect(byId.get(id), id).toBe(path);

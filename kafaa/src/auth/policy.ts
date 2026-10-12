@@ -246,9 +246,9 @@ export const MATRIX: Record<Resource, Row> = {
     ...fill(STAFF.filter((r) => r !== 'auditor'), ['Own']),
     manager: ['Own', 'Scope'], instructor: ['Own', 'A'], training_manager: ['Own', 'A'], hr_analyst: ['Own', 'Agg'], hr_director: ['Own', 'Agg', 'A'], auditor: ['R'],
   },
-  // workforce_strategy (FS50/FS51/FS60/FS61): never public; HR analyst aggregates and drafts; HR director decides; auditors read.
+  // workforce_strategy (FS50/FS51/FS60/FS61; wave H: FS70 skill signals, FS74 wallet target (A), FS77 intake baselines and induction plans (W)): never public; HR analyst aggregates and drafts; HR director decides; auditors read.
   workforce_strategy: { hr_analyst: ['Agg', 'W'], hr_director: ['Agg', 'W', 'A'], training_manager: ['Agg'], admin: ['R'], auditor: ['R'] },
-  // ecosystem (FS64-FS69, FS77, FS82, FS83): partners read released aggregates and write their own organisation's commitments;
+  // ecosystem (FS64-FS69, FS82, FS83; FS77 uses talent_content R + workforce_strategy W instead, wave-H QA): partners read released aggregates and write their own organisation's commitments;
   // staff apply for grants (Own); HR runs and decides the programmes.
   ecosystem: {
     ...fill(STAFF.filter((r) => r !== 'auditor'), ['R', 'Own']),
