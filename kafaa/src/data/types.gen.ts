@@ -2336,6 +2336,10 @@ export interface EngineCardsRow {
   last_change_id?: string | null;
   sources: any;
   sort: number;
+  kernel_surface?: 'skills' | 'recommend' | 'match' | 'search' | 'transform' | 'assess' | 'rules' | null;
+  ranks?: 'content' | 'people' | 'options' | null;
+  fairness_metric?: string | null;
+  fairness_none?: 'f24' | 'content' | 'anonymous' | 'no_outcome' | 'non_staff' | null;
 }
 export interface RecoOptoutsRow {
   id: string;
@@ -2378,6 +2382,72 @@ export interface EngineChangesRow {
   changed_at: string;
   audit_seq?: number | null;
   ledger_seq?: number | null;
+}
+export interface SkillChangeRequestsRow {
+  id: string;
+  kind: 'add' | 'rename' | 'split' | 'retire' | 'relevel';
+  skill_id?: string | null;
+  title_en: string;
+  title_ar: string;
+  proposal: any;
+  rationale: string;
+  development: string;
+  assessment: string;
+  inclusion: any;
+  status: 'submitted' | 'first_approved' | 'first_rejected' | 'published' | 'rejected';
+  proposed_by: string;
+  proposed_role?: string | null;
+  proposed_at: string;
+  votes: any;
+  first_by?: string | null;
+  first_decision?: 'approve' | 'reject' | null;
+  second_by?: string | null;
+  decided_at?: string | null;
+  change_id?: string | null;
+  updated_at: string;
+}
+export interface SkillChangesRow {
+  id: string;
+  request_id?: string | null;
+  kind: 'add' | 'rename' | 'split' | 'retire' | 'relevel';
+  skill_id: string;
+  skill_code: string;
+  skill_name_en: string;
+  skill_name_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  before: any;
+  after: any;
+  version_before?: number | null;
+  version_after?: number | null;
+  new_skill_ids: string[];
+  replaced_by?: string | null;
+  effective_on: string;
+  methodology: boolean;
+  dashboards: string[];
+  decided_roles: string[];
+  proposed_role?: string | null;
+  published_at: string;
+  ledger_seq?: number | null;
+  sources: any;
+}
+export interface SurfaceFairnessRow {
+  id: string;
+  period: string;
+  as_of: string;
+  card: string;
+  metric: string;
+  dimension: 'gender' | 'nationality';
+  group_key: 'f' | 'm' | 'uae' | 'other';
+  n?: number | null;
+  positives?: number | null;
+  rate?: number | null;
+  ratio?: number | null;
+  suppressed: boolean;
+  flagged: boolean;
+  source: string;
+  run_by?: string | null;
+  created_at: string;
 }
 export interface DigestRunsRow {
   id: string;
@@ -5308,6 +5378,9 @@ export interface Tables {
   reco_optouts: RecoOptoutsRow;
   fairness_snapshots: FairnessSnapshotsRow;
   engine_changes: EngineChangesRow;
+  skill_change_requests: SkillChangeRequestsRow;
+  skill_changes: SkillChangesRow;
+  surface_fairness: SurfaceFairnessRow;
   digest_runs: DigestRunsRow;
   digest_prefs: DigestPrefsRow;
   skill_claims: SkillClaimsRow;

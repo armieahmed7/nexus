@@ -67,7 +67,8 @@ describe('F24 schema, route and i18n', () => {
 
 describe('F24 engine cards (model and engine card for each surface)', () => {
   it('seeds one card per surface: Navigator, Coach, Marketplace and Talent review evidence among them, bilingual, with sources', () => {
-    expect(T.engine_cards.map((c) => c.id).sort()).toEqual([...CARD_IDS].sort());
+    // FS55 (fsFe3) adds 23 cards for the newer ranked surfaces (tests/unit/fs63-engine-lint.test.ts); the eight F24 cards are all still here
+    expect(T.engine_cards.filter((c) => (CARD_IDS as readonly string[]).includes(c.id)).map((c) => c.id).sort()).toEqual([...CARD_IDS].sort());
     for (const c of T.engine_cards) {
       expect(c.inputs_excluded, c.id).toEqual([...EXCLUDED_ON_CARDS]);
       expect(c.inputs_used.length, c.id).toBeGreaterThan(0);
@@ -217,7 +218,10 @@ describe('F24 acceptance: every weight change has audit and ledger rows and appe
     const l0 = ledgerN();
     const r = await b.rpc.changeEngineWeights('recommend', 'deterministic', { current_role: 1, target_role: 0.8, core: 3, important: 2, useful: 1 }, 'Targets matter more after the career conversations pilot');
     expect(r.ok).toBe(true);
-    expect(r.data).toMatchObject({ change_id: 'ec:recommend:002', surface: 'recommend', cards: ['coach', 'future', 'navigator'] });
+    expect(r.data).toMatchObject({ change_id: 'ec:recommend:002', surface: 'recommend' });
+    // FS55 (fsFe3): every card on the recommend slot is bumped, the F24 three among them
+    expect(r.data!.cards).toEqual(T.engine_cards.filter((c) => c.engine_surface === 'recommend').map((c) => c.id).sort());
+    expect(r.data!.cards).toEqual(expect.arrayContaining(['coach', 'future', 'navigator']));
     const ch = b.rawGet('engine_changes', 'ec:recommend:002')!;
     expect(ch).toMatchObject({ engine_before: 'deterministic', engine_after: 'deterministic', changed_by: 'p-ai-governance', changed_by_role: 'admin', audit_seq: r.audit_seq, ledger_seq: r.ledger_seq });
     expect(weightDiff(ch.weights_before as never, ch.weights_after as never)).toEqual([{ key: 'target_role', from: 0.6, to: 0.8 }]);
