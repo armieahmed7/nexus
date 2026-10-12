@@ -2293,6 +2293,98 @@ export interface ContractorEngagementsRow {
   source: 'mirror';
   created_at: string;
 }
+export interface ProgrammeAlignmentsRow {
+  id: string;
+  university_org_id: string;
+  code: string;
+  title_en: string;
+  title_ar: string;
+  degree: 'bachelor' | 'master' | 'diploma' | 'doctorate' | 'certificate';
+  nqf_level?: number | null;
+  field_en: string;
+  field_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  target_role_ids: string[];
+  skills: any;
+  placement: boolean;
+  accreditation_ref: string;
+  status: 'draft' | 'submitted' | 'endorsed' | 'returned';
+  version: number;
+  submitted_by?: string | null;
+  submitted_at?: string | null;
+  decided_by?: string | null;
+  decided_at?: string | null;
+  decision_note?: string | null;
+  criteria: any;
+  covers_from?: string | null;
+  valid_to?: string | null;
+  coverage_snapshot?: any | null;
+  history: any;
+  sample: boolean;
+  created_by?: string | null;
+  updated_at: string;
+}
+export interface ProgrammeGraduatesRow {
+  id: string;
+  person_id: string;
+  programme_id: string;
+  university_org_id: string;
+  graduated_on: string;
+  hired_on: string;
+  status: 'evidence_written' | 'awaiting_endorsement' | 'not_covered';
+  evidence_ids: string[];
+  evidence_on?: string | null;
+  recorded_by: string;
+  recorded_at: string;
+  updated_at: string;
+}
+export interface FellowshipsRow {
+  id: string;
+  kind: 'nest_fellowship' | 'sponsored_study';
+  title_en: string;
+  title_ar: string;
+  fellow_person_id: string;
+  fellow_initials: string;
+  university_org_id?: string | null;
+  host_kind: 'research_challenge' | 'advance_study';
+  host_ref: string;
+  supervisor_person_id: string;
+  supervisor_name_en: string;
+  supervisor_name_ar: string;
+  starts_on: string;
+  ends_on: string;
+  placement_en: string;
+  placement_ar: string;
+  status: 'active' | 'completed' | 'withdrawn';
+  completed_on?: string | null;
+  withdrawn_on?: string | null;
+  withdraw_reason?: string | null;
+  sample: boolean;
+  created_by?: string | null;
+  created_at: string;
+  updated_at: string;
+}
+export interface FellowshipMilestonesRow {
+  id: string;
+  fellowship_id: string;
+  fellow_person_id: string;
+  university_org_id?: string | null;
+  supervisor_person_id: string;
+  n: number;
+  kind: string;
+  owner: 'enec' | 'university';
+  required: boolean;
+  due_on: string;
+  status: 'planned' | 'submitted' | 'signed_off';
+  submitted_by?: string | null;
+  submitted_at?: string | null;
+  note: string;
+  signed_by?: string | null;
+  signed_at?: string | null;
+  return_note?: string | null;
+  updated_at: string;
+}
 export interface FutureSkillMapRow {
   id: string;
   key: string;
@@ -5512,6 +5604,10 @@ export interface Tables {
   contract_role_targets: ContractRoleTargetsRow;
   task_skill_links: TaskSkillLinksRow;
   contractor_engagements: ContractorEngagementsRow;
+  programme_alignments: ProgrammeAlignmentsRow;
+  programme_graduates: ProgrammeGraduatesRow;
+  fellowships: FellowshipsRow;
+  fellowship_milestones: FellowshipMilestonesRow;
   future_skill_map: FutureSkillMapRow;
   engine_cards: EngineCardsRow;
   reco_optouts: RecoOptoutsRow;
