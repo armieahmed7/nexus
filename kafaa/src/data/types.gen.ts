@@ -2745,6 +2745,8 @@ export interface TeamSkillTargetsRow {
   active: boolean;
   set_by?: string | null;
   updated_at: string;
+  horizon: 'current' | '2028' | '2030';
+  profile_version_ids: string[];
 }
 export interface MicrocredDefsRow {
   id: string;

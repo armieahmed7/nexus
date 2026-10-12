@@ -8,6 +8,7 @@ import type { ConfidenceStats, HalfLivesInput } from '../decay'; // FS03 (future
 import type { UnlockInput, UnlockView, ReportRow } from '../futureCreds'; // FS31 (wave D · E3)
 import type { RecordItem, ShareInput, VerifyResult } from '../learnerRecord'; // FS32
 import type { GoalInput } from '../skillGoals'; // FS33
+import type { DataQuality, FtHorizon, FutureTargets, InvDim, OrgInventory } from '../teamTargets'; // FS84 (wave I · E5)
 
 export interface ClaimInput {
   skill_id: string;
@@ -152,7 +153,28 @@ export interface Fs4Rpc {
   /** FS33: share an active goal with my manager, or make it private again. Own; audited. */
   shareSkillGoal(skillId: string, shared: boolean): Promise<Result<{ id: string; shared: boolean }>>;
 }
-export interface M17Rpc extends Fs03Rpc, Fs4Rpc {
+// ───────────── FS · wave I · E5 · FS84 team 2030 targets and the organisation skills inventory.
+// SQL: supabase/migrations/20261010295001_kafaa_fs95_team_targets_inventory.sql. Rules: teamTargets.ts.
+export interface TeamFutureTargets extends FutureTargets {
+  mode: 'people' | 'aggregate';
+  groups: Group[];
+  /** People mode only: names and roles of the group's members (the same people rpc.teamCoverage shows). */
+  people: { id: string; name_en: string; name_ar: string; job_role_id: string | null }[];
+}
+export interface AdoptInput { team_id: string; horizon: FtHorizon; note?: string | null }
+export interface SkillInventory { inventory: OrgInventory; quality: DataQuality }
+export interface Fs9Rpc {
+  /** FS84: team targets for 2028 or 2030 derived from the FS05 role profiles, with the gap to them, the profile version each target came
+   *  from and the stored (adopted) targets (read; Scope/A in people mode, HR Agg counts only with a group under 10 suppressed). */
+  teamFutureTargets(groupKey: string | null, horizon: FtHorizon): Promise<TeamFutureTargets>;
+  /** FS84: a manager in scope (or the training manager) adopts the derived targets as the group's stored 2028 or 2030 targets; rows that
+   *  no longer derive are switched off, never removed. Audited. */
+  adoptFutureTargets(input: AdoptInput): Promise<Result<{ written: number; retired: number; kept: number }>>;
+  /** FS84: the organisation skills inventory (every non-security skill by area and entity or job family) and the data-quality panel
+   *  (read; skills_profile Agg (HR) or A; every cell under 10 suppressed; null for anyone else). */
+  orgSkillInventory(dim: InvDim): Promise<SkillInventory | null>;
+}
+export interface M17Rpc extends Fs03Rpc, Fs4Rpc, Fs9Rpc {
   /** F03: self-claim a skill level. Own only; 20 claims a day; refused for security competencies (security_restricted). */
   claimSkill(input: ClaimInput): Promise<Result<{ id: string; level: number; state_level: number }>>;
   /** F04: wrap one of my valid Kafa'a course certificates or course completions in a signed badge (not_eligible otherwise). */

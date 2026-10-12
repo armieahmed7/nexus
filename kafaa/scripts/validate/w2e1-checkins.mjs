@@ -30,6 +30,7 @@ export default async function w2e1Checks({ db, as, one, ok, uid }) {
   // ── world for the TS side (read as superuser)
   const T = {};
   for (const t of ['people', 'skills', 'competencies', 'person_skills', 'skill_evidence', 'team_skill_targets', 'licences', 'medical_due', 'skill_ratings', 'skill_checkins']) T[t] = await q(`select * from kafaa_${t}`);
+  T.team_skill_targets = T.team_skill_targets.filter((t) => t.horizon === 'current'); // [FS84 · fsIe5] F11 coverage reads current targets only (adopted 2028/2030 targets are FS84's)
   for (const r of T.licences) r.last_synced = new Date(r.last_synced).toISOString();
   const sec = securityComps(T.competencies);
   const skillsSorted = T.skills.slice().sort((a, b) => (a.sort ?? 0) - (b.sort ?? 0) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
