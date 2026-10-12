@@ -12,6 +12,7 @@ import { detectGuard } from './guard';
 import { bestSentences, pickLang, SearchIndex, type Hit } from './search';
 import { hasAny, normText, tokenize, type Lang } from './text';
 import type { AnswerEngine, AskInput, Corpus, CorpusDoc, DalilAnswer, DalilLink } from './types';
+import { answerFuture } from '../career/future';
 
 const say = (lang: Lang, key: string, vars?: Record<string, string | number>) => translate(lang, `m13.engine.${key}`, vars);
 
@@ -73,6 +74,9 @@ export class RetrievalEngine implements AnswerEngine {
     if (hasAny(norm, HUMAN)) {
       return { intent: 'handoff', lang, text: say(lang, corpus.signedIn ? 'handoff.offer' : 'handoff.anon'), citations: [{ label: say(lang, 'contactPage'), url: '/contact' }], followUps: [], links: [{ label: say(lang, 'contactPage'), to: '/contact' }], refused: false, handoff: corpus.signedIn, confidence: 1 };
     }
+    // ── FS76 future-skills intents (public content only here: the corpus never carries personal future data)
+    const fut = corpus.future ? answerFuture(input, { pub: corpus.future.pub, me: null }, { signedIn: corpus.signedIn }) : null;
+    if (fut) return fut;
     // ── personal records (own data only; never anyone else's)
     if (hasAny(norm, MY) && MY_TOPICS.some(([, w]) => hasAny(norm, w))) {
       return this.personal(input, corpus, norm);

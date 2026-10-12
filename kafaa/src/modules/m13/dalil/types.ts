@@ -2,6 +2,7 @@
 import type { DalilCitation, DalilMode } from '../../../data/types';
 import type { Reason } from '../../../domain/engines/types';
 import type { Lang } from './text';
+import type { FutureCtx } from '../career/future';
 
 export type DocKind =
   | 'page' | 'news' | 'role' | 'programme' | 'training' | 'course' | 'partner' | 'faq' | 'fact' | 'trait' | 'hu_tool'
@@ -47,6 +48,8 @@ export interface Corpus {
   personal: CorpusDoc[];
   signedIn: boolean;
   builtAt: string;
+  /** FS76: future-skills catalogues for the four future intents (public content; `me` is always null here, personal answers come from career mode). */
+  future?: FutureCtx | null;
 }
 
 export interface DalilLink {
@@ -56,7 +59,7 @@ export interface DalilLink {
 /** W5E5 (F37): a result card in a career-mode answer (role, gap, course, opportunity, milestone), with its reasons (<WhyThis>). */
 export interface AnswerCard {
   id: string;
-  kind: 'role' | 'gap' | 'gate' | 'course' | 'opportunity' | 'milestone';
+  kind: 'role' | 'gap' | 'gate' | 'course' | 'opportunity' | 'milestone' | 'skill' | 'rung' | 'framework' | 'pathway'; // FS76: skill, rung, framework, pathway
   title: string;
   sub?: string;
   /** 0..100 (readiness or match); absent when the person opted out of ranking or the role is career-path only. */

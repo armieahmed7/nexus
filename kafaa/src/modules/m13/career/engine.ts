@@ -21,6 +21,10 @@ import { defaultTargetRole } from '../../../shell/digest/rules';
 import { hasAny, normText, tokenize, type Lang } from '../dalil/text';
 import type { AnswerCard, AnswerEngine, AskInput, Corpus, DalilAnswer } from '../dalil/types';
 import type { CareerCtx } from './context';
+import { answerFuture } from './future';
+import { conceptReadiness, type ConceptReadiness } from '../../m18/futureRoles';
+import { findRole } from './roles';
+export { findRole, ROLE_TOKENS } from './roles';
 
 type Row = Record<string, any>;
 const say = (lang: Lang, key: string, vars?: Record<string, string | number>) => translate(lang, `m13.career.${key}`, vars);
@@ -28,7 +32,6 @@ const bi = (row: Row | undefined, k: string, lang: Lang) => (row ? String((lang 
 const BAND_RANK: Record<string, number> = { ready_now: 0, ready_in: 1, stretch: 2, current: 3, path_only: 4 };
 const REG_ID = 'fanr-reg17';
 
-export const ROLE_TOKENS: Record<string, string> = { qsro: 'senior-reactor-operator', qro: 'reactor-operator', qlo: 'local-operator', qshiftsup: 'shift-supervisor' };
 export const K = {
   roleplay: ['practice', 'practise', 'role play', 'role-play', 'roleplay', 'mock interview', 'rehearse', 'interview practice', 'تدرب', 'تمرين', 'محاكاة', 'لعب الأدوار', 'مقابلة تجريبية', 'أتدرب'],
   when: ['when could', 'when can', 'when will', 'when would', 'how long', 'how soon', 'by when', 'what date', 'roadmap', 'timeline', 'متى', 'كم من الوقت', 'خارطة', 'جدول زمني', 'موعد'],
@@ -40,23 +43,6 @@ export const K = {
   conversation: ['career conversation', 'conversation with my manager', 'talk to my manager', 'حوار مهني', 'الحوار المهني', 'مع مديري'],
 };
 
-/** A role named in the question: domain tokens (SRO, RO, LO, shift supervisor) or most of a role title in either language. */
-export function findRole(q: string, roles: Row[]): string | null {
-  const toks = tokenize(q);
-  const byTok = toks.map((t) => ROLE_TOKENS[t]).find((id) => id && roles.some((r) => r.id === id));
-  if (byTok) return byTok;
-  const qt = new Set(toks);
-  let best: string | null = null;
-  let bestScore = 0;
-  for (const r of roles) for (const title of [r.title_en, r.title_ar]) {
-    const tt = new Set(tokenize(String(title ?? '')));
-    if (!tt.size) continue;
-    const overlap = [...tt].filter((x) => qt.has(x)).length;
-    const score = overlap / tt.size;
-    if ((overlap >= 2 || score >= 0.6) && overlap > 0 && score > bestScore) { best = r.id; bestScore = score; }
-  }
-  return best;
-}
 /** A competency (or one of its skills) named in the question. */
 export function findCompetency(q: string, comps: Row[], skills: Row[]): string | null {
   const qt = new Set(tokenize(q));
@@ -83,6 +69,9 @@ export class CareerEngine implements AnswerEngine {
     const ctx = this.ctx;
     if (!ctx) return { intent: 'career.no_profile', lang, text: say(lang, 'noProfile'), citations: [{ label: say(lang, 'cite.navigator'), url: '/my/career' }], followUps: [], refused: false, confidence: 1, personal: true };
     const q = input.question.trim();
+    // FS76: the future-skills intents (role in 2030, AI rung, skill crosswalk, pathway for my gap), from my own records
+    const fut = answerFuture(input, ctx.future ?? null);
+    if (fut) return fut;
     const norm = normText(q);
     const role = findRole(q, ctx.roles);
     if (hasAny(norm, K.roleplay)) return this.roleplay(lang, role, hasAny(norm, K.conversation) ? 'career_conversation' : role || hasAny(norm, ['interview', 'مقابلة']) ? 'interview' : 'career_conversation');
@@ -172,6 +161,7 @@ export class CareerEngine implements AnswerEngine {
     if (role?.security_sensitive) {
       return this.base(lang, 'career.path_only', say(lang, 'gap.pathOnly', { role: title }), [this.roleCite(lang, roleId)], { links: [{ label: say(lang, 'link.role', { role: title }), to: `/careers/roles/${roleId}` }], followUps: [say(lang, 'follow.next')] });
     }
+    if (role?.lifecycle === 'concept') return this.conceptAnswer(lang, roleId, 'gap'); // FS76 closes QA_B: concept roles read FS15, not F05
     const [r] = careerReadiness(c.data, c.me, [roleId], c.now);
     const navOff = c.optouts.has('navigator');
     const primary = r.routes[0] ?? null;
@@ -265,6 +255,7 @@ export class CareerEngine implements AnswerEngine {
     const title = bi(role, 'title', lang) || target;
     if (role?.security_sensitive) return this.base(lang, 'career.path_only', say(lang, 'gap.pathOnly', { role: title }), [this.roleCite(lang, target), cite]);
     if (target === mine) return this.base(lang, 'career.roadmap_date', say(lang, 'roadmap.already', { role: title }), [cite, this.roleCite(lang, target)]);
+    if (role?.lifecycle === 'concept') return this.conceptAnswer(lang, target, 'roadmap'); // FS76 (QA_B): FS15 months, never an F05 route
     const routes = routeOptions(c.edges as unknown as RmEdge[], mine, target);
     if (!routes.length) return this.base(lang, 'career.roadmap_date', say(lang, 'roadmap.noRoute', { role: title }), [cite, this.roleCite(lang, target)], { followUps: [say(lang, 'follow.next')] });
     const fx = careerFacts(c.data, c.me, c.now);
@@ -284,6 +275,33 @@ export class CareerEngine implements AnswerEngine {
         cards: ms.slice(0, 4).map((b) => ({ id: b.id, kind: 'milestone', title: lang === 'ar' ? b.title.ar : b.title.en, sub: `${quarterLabel(b.start)}${b.rule_ref ? ` · ${b.rule_ref}` : ''}`, to: `/my/career/roadmap?role=${target}` })),
         followUps: [say(lang, 'follow.gap', { role: title }), say(lang, 'follow.courses', { role: title })], links: [{ label: say(lang, 'link.roadmap'), to: `/my/career/roadmap?role=${target}` }],
       });
+  }
+
+  /** FS76 (closes QA_B): a concept role asked about directly reads FS15 conceptReadiness against its FS05 profile, the same rule as the
+   *  Navigator, the roadmap and the career-conversation agenda. Never "ready now", never a vacancy or a deployment decision. */
+  private conceptAnswer(lang: Lang, roleId: string, view: 'gap' | 'roadmap'): DalilAnswer {
+    const c = this.ctx!;
+    const title = bi(this.roleRow(roleId), 'title', lang) || roleId;
+    const w = c.data.weights as Record<string, unknown> | undefined;
+    const weights = w && typeof w === 'object' ? Object.fromEntries(Object.entries(w).filter(([, v]) => typeof v === 'number')) as Record<string, number> : undefined;
+    const [r]: (ConceptReadiness | undefined)[] = conceptReadiness({ roles: c.roles as never, versions: c.versions as never, edges: c.edges as never, skills: c.skills as never, competencies: c.competencies as never,
+      states: c.states.map((s) => ({ ...s, person_id: c.me })) as never, weights }, careerFacts(c.data, c.me, c.now), c.me, [roleId]);
+    const roadmapCite = { label: say(lang, 'cite.roadmap'), url: `/my/career/roadmap?role=${roleId}` };
+    const roleCite = { label: say(lang, 'concept.cite', { role: title }), url: `/careers/roles/${roleId}` };
+    const intent = view === 'gap' ? 'career.concept_gap' : 'career.concept_roadmap';
+    if (!r) return this.base(lang, intent, `${say(lang, 'concept.noProfile', { role: title })} ${say(lang, 'concept.assumption')}`, [roleCite, roadmapCite]);
+    const band = r.band === 'profile_met' ? say(lang, 'concept.band.profile_met') : say(lang, `concept.band.${r.band}`, { months: r.months });
+    const name = (g: { kind: string; ref_id: string }) => (g.kind === 'skill' ? bi(c.skills.find((s) => s.id === g.ref_id), 'name', lang) : this.compName(g.ref_id, lang)) || g.ref_id;
+    const bullets = r.gaps.slice(0, 3).map((g) => `${say(lang, 'gap.line', { skill: name(g), from: g.have, to: g.need })}${(lang === 'ar' ? g.why.ar : g.why.en) ? ` · ${lang === 'ar' ? g.why.ar : g.why.en}` : ''}`);
+    if (r.bridge) bullets.unshift(r.bridge.mine ? (r.bridge.remaining_months > 0 ? say(lang, 'concept.bridgeWait', { months: r.bridge.remaining_months }) : say(lang, 'concept.bridgeMet')) : say(lang, 'concept.bridgeOther', { role: bi(this.roleRow(r.bridge.from_role_id), 'title', lang) || '-', months: r.bridge.need_months }));
+    const navOff = c.optouts.has('navigator');
+    const card: AnswerCard = { id: r.role_id, kind: 'role', title, sub: band, pct: navOff ? null : r.pct, status: r.band === 'profile_met' ? 'ready_now' : r.band === 'within' ? 'ready_in' : 'stretch', to: `/my/career/roadmap?role=${roleId}`, reasons: r.reasons as Reason[] };
+    const lead = view === 'gap' ? (navOff ? say(lang, 'concept.introNoPct', { role: title, horizon: r.horizon, n: r.gaps.length }) : say(lang, 'concept.intro', { role: title, horizon: r.horizon, pct: r.pct, band, n: r.gaps.length }))
+      : say(lang, 'concept.roadmap', { role: title, band, horizon: r.horizon });
+    return this.base(lang, intent, `${lead} ${say(lang, 'concept.assumption')} ${say(lang, 'notDecision')}`, [roleCite, roadmapCite, { label: say(lang, 'cite.passport'), url: '/my/skills' }], {
+      bullets, cards: [card], unranked: navOff, links: [{ label: say(lang, 'link.roadmap'), to: `/my/career/roadmap?role=${roleId}` }, { label: title, to: `/careers/roles/${roleId}` }],
+      followUps: [say(lang, 'follow.courses', { role: title }), say(lang, 'follow.next')],
+    });
   }
 
   private roleplay(lang: Lang, roleId: string | null, scenario: 'interview' | 'career_conversation'): DalilAnswer {

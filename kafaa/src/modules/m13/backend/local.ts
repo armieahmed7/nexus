@@ -1,17 +1,17 @@
 // F37 (W5 · E5) LocalBackend mirror of kafaa_dalil_career_turn: kill switch, signed-in staff only, question length, the shared
 // hourly rate limit (every Dalil question of the person counts), concern redaction, sessions and turns with submode 'career'.
-// Pages never import this file.
+// FS76 (fsHe4): dalilFutureTurn and setDalilIntent (mirrors of kafaa_dalil_future_turn / kafaa_set_dalil_intent). Pages never import this file.
 import type { LocalBackend } from '../../../data/local/LocalBackend';
 import type { LocalRpcHelpers } from '../../../data/ext/types';
 import type { DalilTurnResult } from '../../../data/types';
-import { CONCERN_WITHHELD, dalilModeAllowed } from '../../../domain/g5rules';
-import type { M13Rpc } from './rpc';
+import { CONCERN_WITHHELD, dalilModeAllowed, defaultDalilMode } from '../../../domain/g5rules';
+import { intentBase, isPersonalIntent } from '../career/futureIntents';
+import type { CareerTurnInput, M13Rpc } from './rpc';
 
 const isoDate = (d: Date) => d.toISOString().slice(0, 10);
 
 export function makeLocalM13(b: LocalBackend, h: LocalRpcHelpers): M13Rpc {
-  return {
-    async dalilCareerTurn(p) {
+  async function dalilCareerTurn(p: CareerTurnInput) {
       await b.whenReady();
       type R = DalilTurnResult;
       const refuse = (code: string, msg: string, role: string | null = null) => h.refuse<R>('dalil.career_turn', 'advisor_turns', null, code, msg, role);
@@ -47,6 +47,39 @@ export function makeLocalM13(b: LocalBackend, h: LocalRpcHelpers): M13Rpc {
       b.rawUpdate('advisor_sessions', session.id, { turns: n + 2, last_turn_at: now } as never);
       return h.done<R>('dalil.career_turn', 'advisor_turns', session.id, `career ${p.intent ?? '-'}${p.refused ? ` refused:${p.refusal_category}` : ''}`, role, null, '', 'ok',
         { session_id: session.id, used: used + 1, limit, remaining: Math.max(0, limit - used - 1) }, ['advisor_sessions', 'advisor_turns']);
+  }
+  return {
+    dalilCareerTurn,
+    // FS76 (fsHe4) mirror of kafaa_dalil_future_turn: the intent switch, personal answers for staff only, then the career or the Dalil turn log.
+    async dalilFutureTurn(p) {
+      await b.whenReady();
+      type R = DalilTurnResult;
+      const base = intentBase(p?.intent);
+      const row = base ? b.rawGet('dalil_intents' as never, base) as { enabled?: boolean } | undefined : undefined;
+      if (base && row && row.enabled === false) return h.refuse<R>('dalil.future_turn', 'advisor_turns', base, 'intent_disabled', 'This answer type is switched off by the AI owner');
+      const who = b.identity();
+      if (!who.personId) return h.refuse<R>('dalil.future_turn', 'advisor_turns', null, 'not_signed_in', 'Sign in to log a future-skills turn');
+      const staff = !!b.access().actingRole('skills_profile', ['Own']) && dalilModeAllowed('staff', who.roles, true);
+      if ((p.personal || isPersonalIntent(p.intent)) && !staff) return h.refuse<R>('dalil.future_turn', 'advisor_turns', null, 'personal_not_allowed', 'Personal future-skills answers are for staff with a skills profile');
+      const { personal: _p, mode, ...rest } = p;
+      void _p;
+      if (staff) return dalilCareerTurn(rest);
+      return b.rpc.dalilTurn({ ...rest, mode: mode ?? defaultDalilMode(who.roles, true), client_key: null });
+    },
+    // FS76 (fsHe4) mirror of kafaa_set_dalil_intent: the AI owner switches one future-skills intent, with a reason; audited and ledgered.
+    async setDalilIntent(id, enabled, note) {
+      await b.whenReady();
+      type R = { id: string; enabled: boolean };
+      const role = b.access().actingRole('dalil_config', ['A']);
+      if (!role) return h.refuse<R>('dalil.intent', 'dalil_intents', id, 'forbidden', 'Only the AI owner (admin) may switch a Dalil intent');
+      const row = b.rawGet('dalil_intents' as never, id) as { enabled: boolean } | undefined;
+      if (!row) return h.refuse<R>('dalil.intent', 'dalil_intents', id, 'not_found', 'Unknown intent', role);
+      const why = typeof note === 'string' ? note.trim() : '';
+      if (why.length < 5 || why.length > 300) return h.refuse<R>('dalil.intent', 'dalil_intents', id, 'invalid', 'A reason of 5 to 300 characters is required', role);
+      if (row.enabled === !!enabled) return h.refuse<R>('dalil.intent', 'dalil_intents', id, 'unchanged', enabled ? 'This intent is already on' : 'This intent is already off', role);
+      b.rawUpdate('dalil_intents' as never, id, { enabled: !!enabled, changed_role: role, changed_at: new Date().toISOString(), change_note: why } as never);
+      return h.done<R>('dalil.intent', 'dalil_intents', id, `${enabled ? 'enabled' : 'disabled'}: ${why}`, role, `kafaa.dalil.intent_${enabled ? 'enable' : 'disable'}`, `Dalil intent ${id}`,
+        enabled ? 'Intent switched on' : 'Intent switched off', { id, enabled: !!enabled }, ['dalil_intents']);
     },
   };
 }

@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react';
 import { useAction, useQuery, useRepo } from '../../data';
 import { useSession } from '../../auth/session';
 import { useFormat, usePick, useT } from '../../i18n';
-import { Async, BarChart, Callout, Card, CheckboxField, DataTable, Drawer, EmptyState, FilterBar, Icon, KeyValue, LineChart, Modal, Page, SelectField, StatusPill, Tabs, TextArea, TextField, required, minLen, useFilters, useForm, type Column } from '../../ui';
+import { Async, BarChart, BenchmarkChips, Callout, Card, CheckboxField, DataTable, Drawer, EmptyState, FilterBar, Icon, KeyValue, LineChart, Modal, Page, SelectField, SourceLink, StatusPill, Tabs, TextArea, TextField, required, minLen, useFilters, useForm, type Column } from '../../ui';
 import type { AdvisorSessionsRow, CorpusDocsRow, EvalRunsRow, RefusalPoliciesRow } from '../../data/types';
 import { GatedConfirm, Metric } from '../m16/parts';
 import { buildCorpus } from './dalil/corpus';
@@ -13,6 +13,9 @@ import { createEngine, GuardedEngine, ModelGatewayEngine, RetrievalEngine } from
 import { CITATION_FLOOR, EVAL_SET, runEval, type EvalSummary } from './dalil/evalset';
 import { CAREER_EVAL_SET, evalCareerCtx, runCareerEval, type CareerEvalSummary } from './career/evalset'; // W5E5 (F37)
 import { CareerEngine } from './career/engine';
+import { futurePublicFrom } from './career/future'; // FS76
+import { FUTURE_EVAL_SET, asPublic, evalFuturePersonal, runFutureEval, type FutureEvalSummary } from './career/futureEval';
+import { intentBase } from './career/futureIntents';
 import { LOCKED_CATEGORIES, FLOOR_PATTERN_COUNT } from './dalil/guard';
 import { todayIso } from '../../domain/rules';
 
@@ -30,6 +33,7 @@ export default function AdminDalilPage() {
           { id: 'corpus', label: t('m13.admin.tabCorpus'), content: <CorpusTab canEdit={canEdit} /> },
           { id: 'policies', label: t('m13.admin.tabPolicies'), content: <PoliciesTab canEdit={canEdit} /> },
           { id: 'eval', label: t('m13.admin.tabEval'), content: <EvalTab canEdit={canEdit} /> },
+          { id: 'future', label: t('m13.future.admin.tab'), content: <FutureTab canKill={canKill} /> },
           { id: 'logs', label: t('m13.admin.tabLogs'), content: <LogsTab /> },
           { id: 'handoffs', label: t('m13.admin.tabHandoffs'), content: <HandoffsTab /> },
         ]}
@@ -367,6 +371,7 @@ function EvalTab({ canEdit }: { canEdit: boolean }) {
   const runs = useQuery('eval_runs', () => repo.list('eval_runs', { order: [['run_at', 'asc']] }));
   const [result, setResult] = useState<EvalSummary | null>(null);
   const [career, setCareer] = useState<CareerEvalSummary | null>(null); // W5E5 (F37): the career-mode set is part of the release gate
+  const [future, setFuture] = useState<FutureEvalSummary | null>(null); // FS76: the future-skills set is part of the release gate
   const [busy, setBusy] = useState(false);
   const [only, setOnly] = useState<'all' | 'fail'>('all');
   const start = async () => {
@@ -386,14 +391,22 @@ function EvalTab({ canEdit }: { canEdit: boolean }) {
       const staffCorpus = await buildCorpus(repo, { signedIn: true, personId: s.identity.personId });
       const inner = settings[0]?.engine === 'model-gateway' ? new ModelGatewayEngine(new RetrievalEngine(), null) : new RetrievalEngine();
       setCareer(await runCareerEval(new GuardedEngine(new CareerEngine(ctx, inner)), { ...staffCorpus, personal: [] }, CAREER_EVAL_SET));
+      // FS76: future-skills mode, personal cases on the same persona (career mode) and public cases exactly as an anonymous visitor sees them
+      const names = ['role_transformations', 'role_profile_versions', 'ai_rungs', 'ai_skill_tracks', 'ai_role_targets', 'job_families', 'skill_alignments', 'skill_frameworks', 'pathways', 'dalil_intents'] as const;
+      const extra = await Promise.all(names.map((n) => repo.list(n as never).catch(() => [])));
+      const tabs = { ...Object.fromEntries(names.map((n, i) => [n, extra[i] as Record<string, unknown>[]])), job_roles, skills, competencies, courses } as never;
+      const pub = futurePublicFrom(tabs, { staff: true });
+      const fctx = { ...ctx, versions: pub.versions, future: { pub, me: evalFuturePersonal(ctx) } };
+      const anonCorpus = { ...publicOnly, future: { pub: asPublic(pub), me: null } };
+      setFuture(await runFutureEval(new GuardedEngine(new CareerEngine(fctx, inner)), { ...staffCorpus, personal: [] }, createEngine(settings[0]?.engine), anonCorpus, FUTURE_EVAL_SET));
     } finally {
       setBusy(false);
     }
   };
   const history = (runs.data ?? []).map((r) => ({ x: r.release, cite: (r.cited_correct * 100) / Math.max(1, r.in_scope_total), ref: (r.refusal_correct * 100) / Math.max(1, r.refusal_total) }));
-  const gatePass = !!result && result.pass && (!career || career.pass);
-  const allDetails = [...(result?.details ?? []), ...(career?.details ?? [])];
-  const questionOf = (id: string) => EVAL_SET.find((c) => c.id === id)?.q ?? CAREER_EVAL_SET.find((c) => c.id === id)?.q ?? '';
+  const gatePass = !!result && result.pass && (!career || career.pass) && (!future || future.pass);
+  const allDetails = [...(result?.details ?? []), ...(career?.details ?? []), ...(future?.details ?? [])];
+  const questionOf = (id: string) => EVAL_SET.find((c) => c.id === id)?.q ?? CAREER_EVAL_SET.find((c) => c.id === id)?.q ?? FUTURE_EVAL_SET.find((c) => c.id === id)?.q ?? '';
   return (
     <div className="space-y-4">
       <Callout tone="info" title={t('m13.admin.evalTitle')}>{t('m13.admin.evalIntro', { floor: f.pct(CITATION_FLOOR * 100, 0), n: f.num(EVAL_SET.length) })}</Callout>
@@ -408,11 +421,11 @@ function EvalTab({ canEdit }: { canEdit: boolean }) {
               run(
                 () =>
                   repo.insert('eval_runs', {
-                    run_at: new Date().toISOString(), release: `r${todayIso()}`, lang: 'both', in_scope_total: result.in_scope_total + (career?.in_scope_total ?? 0), cited_correct: result.cited_correct + (career?.cited_correct ?? 0),
-                    refusal_total: result.refusal_total + (career?.refusal_total ?? 0), refusal_correct: result.refusal_correct + (career?.refusal_correct ?? 0),
-                    security_total: result.security_total + (career?.security_total ?? 0), security_correct: result.security_correct + (career?.security_correct ?? 0), pass: gatePass,
-                    notes: `${gatePass ? 'Release gate passed' : 'Release gate failed'}${career ? ` · career mode ${Math.round(career.citationRate * 1000) / 10}% cited, security ${Math.round(career.securityRate * 100)}%` : ''}`,
-                    details: allDetails, engine: 'retrieval-v1+career-v1', run_by: s.identity.personId,
+                    run_at: new Date().toISOString(), release: `r${todayIso()}`, lang: 'both', in_scope_total: result.in_scope_total + (career?.in_scope_total ?? 0) + (future?.in_scope_total ?? 0), cited_correct: result.cited_correct + (career?.cited_correct ?? 0) + (future?.cited_correct ?? 0),
+                    refusal_total: result.refusal_total + (career?.refusal_total ?? 0) + (future?.refusal_total ?? 0), refusal_correct: result.refusal_correct + (career?.refusal_correct ?? 0) + (future?.refusal_correct ?? 0),
+                    security_total: result.security_total + (career?.security_total ?? 0) + (future?.security_total ?? 0), security_correct: result.security_correct + (career?.security_correct ?? 0) + (future?.security_correct ?? 0), pass: gatePass,
+                    notes: `${gatePass ? 'Release gate passed' : 'Release gate failed'}${career ? ` · career mode ${Math.round(career.citationRate * 1000) / 10}% cited, security ${Math.round(career.securityRate * 100)}%` : ''}${future ? ` · future skills mode ${Math.round(future.citationRate * 1000) / 10}% cited, security ${future.security_correct}/${future.security_total}, public answers clean ${future.public_clean}/${future.public_total}` : ''}`,
+                    details: allDetails, engine: 'retrieval-v1+career-v1+future-v1', run_by: s.identity.personId,
                   }),
                 { success: t('m13.admin.evalSaved') },
               )
@@ -439,6 +452,17 @@ function EvalTab({ canEdit }: { canEdit: boolean }) {
                 <Metric label={t('m13.admin.securityRate')} value={f.pct(career.securityRate * 100)} tone={career.securityRate === 1 ? 'ok' : 'bad'} sub={t('m13.admin.securitySub')} />
                 <Metric label={t('m13.admin.refusalRate')} value={f.pct(career.refusalRate * 100)} />
                 <Metric label={t('m13.career.admin.persona')} value={t('m13.career.admin.personaValue')} sub={t('m13.career.admin.personaSub')} />
+              </div>
+            </div>
+          )}
+          {future && (
+            <div className="space-y-2" data-testid="m13-eval-future">
+              <div className="flex flex-wrap items-center gap-2"><span className="caps">{t('m13.future.admin.evalTitle', { n: f.num(FUTURE_EVAL_SET.length) })}</span><BenchmarkChips feature="FS76" /></div>
+              <div className="grid gap-3 sm:grid-cols-4">
+                <Metric label={t('m13.admin.citeRate')} value={f.pct(future.citationRate * 100)} tone={future.citationRate >= CITATION_FLOOR ? 'ok' : 'bad'} sub={t('m13.admin.floorSub', { floor: f.pct(CITATION_FLOOR * 100, 0) })} />
+                <Metric label={t('m13.admin.securityRate')} value={f.pct(future.securityRate * 100)} tone={future.securityRate === 1 ? 'ok' : 'bad'} sub={t('m13.admin.securitySub')} />
+                <Metric label={t('m13.future.admin.publicClean')} value={`${f.num(future.public_clean)}/${f.num(future.public_total)}`} tone={future.public_clean === future.public_total ? 'ok' : 'bad'} sub={t('m13.future.admin.publicCleanSub')} />
+                <Metric label={t('m13.admin.refusalRate')} value={f.pct(future.refusalRate * 100)} />
               </div>
             </div>
           )}
@@ -497,12 +521,14 @@ function LogsTab() {
   const [open, setOpen] = useState<AdvisorSessionsRow | null>(null);
   const today = todayIso();
   const refusedSessions = useMemo(() => new Set((data.data?.turns ?? []).filter((x) => x.refused).map((x) => x.session_id)), [data.data]);
-  const modeOf = (x: AdvisorSessionsRow) => (x.submode === 'career' ? 'career' : x.mode); // W5E5 (F37): career sessions keep mode staff + submode career
+  // W5E5 (F37): career sessions keep mode staff + submode career; FS76: a session with a future-skills turn shows as future skills mode
+  const futureSessions = useMemo(() => new Set((data.data?.turns ?? []).filter((x) => intentBase(x.intent)).map((x) => x.session_id)), [data.data]);
+  const modeOf = (x: AdvisorSessionsRow) => (futureSessions.has(x.id) ? 'future' : x.submode === 'career' ? 'career' : x.mode);
   const rows = (data.data?.sessions ?? []).filter((x) => (!flt.mode || modeOf(x) === flt.mode) && (!flt.refused || refusedSessions.has(x.id) === (flt.refused === 'yes')));
   return (
     <div className="space-y-4">
       <Callout tone="info">{t('m13.admin.logsIntro')}</Callout>
-      <FilterBar value={flt} onChange={setFlt} fields={[{ key: 'mode', label: t('m13.ask.mode'), options: ['public', 'applicant', 'staff', 'partner', 'career'].map((m) => ({ value: m, label: t(`m13.modes.${m}`) })) }, { key: 'refused', label: t('m13.admin.refusedFilter'), options: [{ value: 'yes', label: t('common.yes') }, { value: 'no', label: t('common.no') }] }]} />
+      <FilterBar value={flt} onChange={setFlt} fields={[{ key: 'mode', label: t('m13.ask.mode'), options: ['public', 'applicant', 'staff', 'partner', 'career', 'future'].map((m) => ({ value: m, label: t(`m13.modes.${m}`) })) }, { key: 'refused', label: t('m13.admin.refusedFilter'), options: [{ value: 'yes', label: t('common.yes') }, { value: 'no', label: t('common.no') }] }]} />
       <Async state={data}>
         {() =>
           rows.length === 0 ? (
@@ -574,5 +600,70 @@ function HandoffsTab() {
         </ul>
       )}
     </Async>
+  );
+}
+
+// ───────────── FS76 future-skills mode: governed intents (the AI owner switches one off with a reason; audited, NEXUS ledger)
+type IntentRow = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+function FutureTab({ canKill }: { canKill: boolean }) {
+  const t = useT();
+  const f = useFormat();
+  const pick = usePick();
+  const repo = useRepo();
+  const run = useAction();
+  const q = useQuery('dalil_intents' as never, () => repo.list('dalil_intents' as never, { order: [['sort', 'asc']] } as never) as Promise<IntentRow[]>);
+  const [open, setOpen] = useState<IntentRow | null>(null);
+  const [note, setNote] = useState('');
+  const ready = note.trim().length >= 5 && note.trim().length <= 300;
+  return (
+    <div className="space-y-4" data-testid="m13-future-admin">
+      <Callout tone="info" title={t('m13.future.admin.intents')}>
+        <span className="block">{t('m13.future.admin.intro')}</span>
+        <span className="mt-2 block"><BenchmarkChips feature="FS76" /></span>
+      </Callout>
+      <Async state={q}>
+        {(rows) => (
+          <ul className="grid gap-3 md:grid-cols-2" data-testid="m13-intent-list">
+            {rows.map((r) => (
+              <li key={r.id} className="card space-y-2 p-4" data-testid="m13-intent" data-intent={r.id} data-enabled={r.enabled ? 'true' : 'false'}>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="min-w-0 flex-1 font-semibold">{pick(r, 'title')}</span>
+                  <StatusPill tone={r.enabled ? 'ok' : 'sim'}>{t(r.enabled ? 'm13.future.ui.on' : 'm13.future.ui.off')}</StatusPill>
+                </div>
+                <p className="text-[12.5px] text-ink-2">{pick(r, 'summary')}</p>
+                <KeyValue items={[
+                  [t('m13.future.admin.intent'), <code key="i" className="ltr text-[12px]">{r.id}</code>],
+                  [t('m13.future.admin.audience'), t(`m13.future.ui.${r.audience === 'personal' ? 'personal' : r.audience === 'public' ? 'public' : 'both'}`)],
+                  [t('m13.future.admin.feature'), r.feature],
+                  [t('m13.future.ui.cites'), <span key="c" className="ltr text-[12px]">{(r.cites ?? []).join(' · ')}</span>],
+                  [t('m13.future.admin.changed'), r.changed_at ? t('m13.future.admin.changedBy', { when: f.dateTime(r.changed_at), note: r.change_note ?? '' }) : t('m13.future.admin.never')],
+                ]} />
+                {Array.isArray(r.sources) && <ul className="space-y-0.5">{(r.sources as IntentRow[]).map((x) => <li key={x.url}><SourceLink href={x.url} date={x.as_of}>{x.label}</SourceLink></li>)}</ul>}
+                <div className="flex justify-end">
+                  {canKill ? (
+                    <button className={r.enabled ? 'btn-outline btn-sm' : 'btn-primary btn-sm'} onClick={() => { setOpen(r); setNote(''); }} data-testid="m13-intent-toggle">
+                      {t(r.enabled ? 'm13.future.admin.turnOff' : 'm13.future.admin.turnOn')}
+                    </button>
+                  ) : <StatusPill tone="neutral">{t('m13.future.admin.ownerOnly')}</StatusPill>}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Async>
+      <p className="text-[12px] text-ink-3">{t('m13.future.admin.logsNote')}</p>
+      <GatedConfirm
+        open={!!open}
+        onClose={() => setOpen(null)}
+        danger={!!open?.enabled}
+        ready={ready}
+        title={open ? `${t(open.enabled ? 'm13.future.admin.turnOff' : 'm13.future.admin.turnOn')}: ${pick(open, 'title')}` : ''}
+        consequence={t(open?.enabled ? 'm13.future.admin.consequenceOff' : 'm13.future.admin.consequenceOn')}
+        actingAs={t('m13.admin.roleOwner')}
+        onConfirm={() => open && run(() => repo.rpc.setDalilIntent(open.id, !open.enabled, note.trim()))}
+      >
+        <TextArea name="intent-reason" label={t('m13.future.admin.reason')} hint={t('m13.future.admin.reasonHint')} rows={3} value={note} onChange={setNote} />
+      </GatedConfirm>
+    </div>
   );
 }

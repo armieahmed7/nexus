@@ -1582,6 +1582,13 @@ create policy kafaa_read on kafaa_future_skill_map for select to anon, authentic
 grant select on kafaa_future_skill_map to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- dalil_intents
+alter table kafaa_dalil_intents enable row level security;
+drop policy if exists kafaa_read on kafaa_dalil_intents;
+create policy kafaa_read on kafaa_dalil_intents for select to anon, authenticated using (kafaa_rule_read('public_content', null::text, null::text, true));
+grant select on kafaa_dalil_intents to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- engine_cards
 alter table kafaa_engine_cards enable row level security;
 drop policy if exists kafaa_read on kafaa_engine_cards;
