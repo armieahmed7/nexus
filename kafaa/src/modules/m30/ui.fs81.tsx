@@ -126,7 +126,7 @@ function TaskCard({ task, refs, progress, mode, selected, onToggle }: {
           <div className="font-semibold">{pick(task as never, 'title')}</div>
           <div className="flex flex-wrap items-center gap-1.5 text-[12px]">
             <span className="num text-ink-3">{task.code}</span>
-            <span className="chip border-line bg-sunken text-ink-2">{task.rung === 'below' ? t('m30.tp.rungBelow', { role: pick(refs?.roleById.get(task.role_id), 'title') || task.role_id }) : t('m30.tp.rungOwn')}</span>
+            <span className="chip max-w-full whitespace-normal border-line bg-sunken text-start text-ink-2">{task.rung === 'below' ? t('m30.tp.rungBelow', { role: pick(refs?.roleById.get(task.role_id), 'title') || task.role_id }) : t('m30.tp.rungOwn')}</span>
             <HorizonChip horizon={task.horizon} />
             {task.driver && <DriverChip driver={task.driver} />}
             <WhyThis reasons={task.reasons} testId="m30-tp-task-why" />

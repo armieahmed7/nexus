@@ -32,6 +32,10 @@ Choose with `VITE_KAFAA_BACKEND` (`supabase` unless set to `local`; see `.env.ex
 
 `npm run build:deploy` builds and assembles `deploy_out/`: `_redirects` at the root (`/ → /kafaa/`, `/kafaa → /kafaa/`, SPA fallback for `/kafaa/*`) and the app under `deploy_out/kafaa/`.
 
+## Future-skills programme (FS01-FS84)
+
+The future-skills and competencies programme (`docs/kafaa/ref/PLAN.md`) was built in waves A to I; every feature, its routes, tests, status and open issues are in `docs/kafaa/ref/PROGRAMME_STATUS.md`, and each wave's QA report is `docs/kafaa/ref/QA_<wave>.md`. Waves E to I reach the live project through the ordered live-apply bundles in `docs/kafaa/ref/live_apply/wave<W>/` (apply in order, compare with each `EXPECTED.md`, then merge: merging to `main` deploys production).
+
 ## Where things are
 
 - `CONTRACT.md`: how the module groups build on the foundation (ownership, conventions, repository rule, i18n, guards, acceptance checklists).

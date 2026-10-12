@@ -1,0 +1,107 @@
+{
+  "wave": "I",
+  "wave_digit": 9,
+  "branch": "fsI-integration-qa",
+  "generated_on": "2026-10-12",
+  "base_ref": "origin/fsH-integration-qa",
+  "demo_day": "2026-10-08",
+  "max_kb": 60,
+  "out": "../docs/kafaa/ref/live_apply/waveI",
+  "migrations": [
+    {
+      "file": "20261010291001_kafaa_fs91_balance_external_certs.sql",
+      "part": "kafaa_fs91_balance_external_certs"
+    },
+    {
+      "file": "20261010292001_kafaa_fs92_automation_gallery.sql",
+      "part": "kafaa_fs92_automation_gallery"
+    },
+    {
+      "file": "20261010293001_kafaa_fs93_transition_plans.sql",
+      "part": "kafaa_fs93_transition_plans"
+    },
+    {
+      "file": "20261010294001_kafaa_fs94_grants_consortium.sql",
+      "part": "kafaa_fs94_grants_consortium"
+    },
+    {
+      "file": "20261010295001_kafaa_fs95_team_targets_inventory.sql",
+      "part": "kafaa_fs95_team_targets_inventory"
+    },
+    {
+      "file": "20261010299001_kafaa_fs9qa_integration.sql",
+      "part": "kafaa_fs9qa_integration"
+    }
+  ],
+  "table_grants": true,
+  "table_grants_note": "Scope: the 11 tables the wave-I migrations create. Each one revokes every API-role privilege and grants SELECT only, so on live (where the Supabase default privileges give anon and authenticated ALL on a new `public` table) the rows below must hold exactly as listed. On a PostgreSQL 17 project ALL also held MAINTAIN; it must not appear below either. The PGlite dry run (`verify-live-bundle.mjs`) starts from the Supabase default privileges and checks this table after the parts.",
+  "seed_first": [
+    "organisations",
+    "grant_rounds",
+    "consortium_cohorts",
+    "consortium_members",
+    "automations",
+    "external_certs",
+    "learning_balances"
+  ],
+  "evidence_ref_tables": [
+    "external_certs",
+    "automations"
+  ],
+  "row_updates": [],
+  "replay_row_update": {
+    "live_rows": "the 14 existing person-skill rows of these 15 people that the seed changed (5 from FS79 certificate evidence for 7 holders, 9 from FS80 builder credit for 9 builders, one person in both), plus any other derived state of the same 15 people that is stale live; live holds extra journey rows for some personas (p-k-ro, p-sro, p-nse): compare by id",
+    "local_rows": "14 updated in place; 3 new rows come from the seed part (kafaa_person_skills 3), not from an update",
+    "effect": "kafaa_skills_apply(person, 2026-10-08) re-derives the skill states of the people whose recorded wave-I evidence (certificates, builder credit) the seed parts just inserted, because on conflict do nothing never updates an existing person-skill row; recorded evidence is kept and nobody else changes. The 24 existing kafaa_team_skill_targets rows also change, but through the column defaults of the fs95 alter table (horizon 'current', profile_version_ids '{}'), not through an update statement"
+  },
+  "digests": [
+    {
+      "label": "kafaa_skill_evidence (FS79 certificate evidence)",
+      "table": "skill_evidence",
+      "where": "ref_table = 'external_certs'"
+    },
+    {
+      "label": "kafaa_skill_evidence (FS80 builder credit)",
+      "table": "skill_evidence",
+      "where": "ref_table = 'automations'"
+    },
+    {
+      "label": "kafaa_skill_evidence (FS82/FS83: none seeded; written only on acceptance or host confirmation)",
+      "table": "skill_evidence",
+      "where": "ref_table in ('grant_applications', 'consortium_visits')"
+    },
+    {
+      "label": "kafaa_organisations (the 3 new synthetic consortium partners)",
+      "table": "organisations",
+      "where": "id in ('org-cx-grid', 'org-cx-solar', 'org-cx-h2')"
+    },
+    {
+      "label": "kafaa_team_skill_targets (whole table after the FS84 columns)",
+      "table": "team_skill_targets",
+      "where": "true"
+    },
+    {
+      "label": "kafaa_team_skill_targets (the 24 F11 rows, horizon current by the column default)",
+      "table": "team_skill_targets",
+      "where": "horizon = 'current'"
+    },
+    {
+      "label": "kafaa_team_skill_targets (the 35 new FS84 rows)",
+      "table": "team_skill_targets",
+      "where": "horizon <> 'current'"
+    },
+    {
+      "label": "kafaa_notifications (FS78/FS79 notices)",
+      "table": "notifications",
+      "where": "id like 'nt-str-%' or id like 'nt-xc-%'"
+    },
+    {
+      "label": "kafaa_record_shares (unchanged by wave I: no seeded share holds an xcert reference)",
+      "table": "record_shares",
+      "where": "true"
+    }
+  ],
+  "pre_state": "**Pre-wave state: the state AFTER the wave-H bundle** (`docs/kafaa/ref/live_apply/waveH/EXPECTED.md`). Waves E, F and G reached `main` with PRs #1-#3 (their bundles are applied by the apply session); wave H is draft PR #4 (`fsH-integration-qa`) and wave I is stacked on it: apply `waveH/` and check it against its `EXPECTED.md`, and only then this bundle. Wave I needs earlier objects live: F01 `kafaa_skill_evidence` / `kafaa_person_skills` / `kafaa_skills_apply`, F11 `kafaa_team_skill_targets` and `kafaa_team_coverage` (w2e1), FS05 `kafaa_role_profile_versions`, FS06/FS11 `kafaa_rt_*` and `kafaa_fx_exposure`, FS08 `kafaa_skill_alignments`, FS18 `kafaa_external_resources` / `kafaa_xr_check`, FS20 academies, FS27 `kafaa_opp_line_manager`, FS30 credits, FS32 `kafaa_record_shares` and the `kafaa_lr_*` functions (fs43), FS36 `kafaa_ai_systems`, F28 `kafaa_sim_scenarios`, F38 `kafaa_ojt_logs`. The shared functions wave I redefines are `kafaa_team_coverage` (fs95, from its only body, w2e1) and the three FS32 helpers `kafaa_lr_refs_ok`, `kafaa_lr_items`, `kafaa_lr_bundle` (fs9qa, from their only bodies, fs43). `kafaa_skill_states_v2` and `kafaa_skills_apply` are not redefined (wave-I evidence uses recorded kinds). The PGlite dry run started from `origin/fsH-integration-qa`'s migrations and seed (the post-wave-H state, which equals live after the wave-H bundle for every object wave I reads), applied every part twice and found every md5 and digest below equal.",
+  "notes": "Notes on the parts. **Pre-wave state:** the state AFTER the wave-H bundle (see section 0). **New objects:** the five feature migrations create 11 new `kafaa_*` tables (FS78/FS79 `learning_balances`, `study_time_requests`, `external_certs`; FS80 `automations`, `automation_adoptions`; FS81 `transition_plans`; FS82/FS83 `grant_rounds`, `grant_applications`, `consortium_cohorts`, `consortium_members`, `consortium_visits`) with RLS in the per-statement form, their RPCs and internal helpers, plus two additive columns on `kafaa_team_skill_targets` (`horizon` default 'current', `profile_version_ids` default '{}'; the 24 existing rows take the defaults through `alter table ... add column if not exists`, not through an UPDATE statement). **Shared redefinitions:** `kafaa_fs95_team_targets_inventory` replaces `kafaa_team_coverage` (from the w2e1 body; F11 reads horizon 'current' only); the QA part `kafaa_fs9qa_integration_p1` replaces the FS32 helpers `kafaa_lr_refs_ok` (accepts the new `xcert:` share reference), `kafaa_lr_items` (verified, unexpired external certificates as record items with their trust tier) and `kafaa_lr_bundle` (the record statement of such a certificate), same signatures, still executable by no API role. **Statements that update existing rows:** no top-level UPDATE; the replay part re-derives the person-skill states of the people whose recorded wave-I evidence the seed parts insert (section 1a). **Seed rows** load with `kafaa.seeding` on: the three synthetic consortium partners first, rounds before applications, cohorts before members before visits, gallery entries before adoptions, certificates before their evidence; new rows of existing tables: 9 FS79 and 9 FS80 `skill_evidence` rows, 3 new `person_skills` rows, FS78/FS79/FS81/FS82/FS83 notifications, the 35 FS84 team targets and the 3 organisations. No new policy resource: no `kafaa_policy_matrix` rows to insert. **Table grants:** section 4a lists the grants on the new tables only. **Expected drift after live use:** journeys add requests, certificates, adoptions, plans, applications, visits, targets and audit rows; live `kafaa_person_skills` holds extra journey rows for some personas (compare the replayed people's states by id).",
+  "after": "## 5. After the checks\n\n- Live `kafaa_person_skills` already holds more rows than the seed for some personas (handover section 6), so compare the replayed people's states by id; FS84 inventory and data-quality figures can differ slightly from local for the same reason (the rules are proved equal on the same data).\n- The seeded FS82 round to 10 Dec 2026 is open from 11 Oct; the round to 10 Oct is closed with 14 applications waiting for the HR director (decisions from 24 Oct are 'late' only in wording). FS81 overdue and due-soon review states depend on the run date.\n- Then retarget `fsH-integration-qa` (PR #4) and then this branch to `main` with the go-ahead, and run the full route sweep in supabase mode (handover 3.11), including `gulfhydro-qa` and `alnoor-gm` for the FS83 partner isolation, a line manager on `/workforce/transition-plans` (forbidden) and the HR director on the FS82 console.\n- Programme close-out (handover 7.3): after waves H and I are live, run every FS journey spec (A to I) in supabase mode on the deployed commit and update `docs/kafaa/ref/PROGRAMME_STATUS.md`."
+}

@@ -1001,3 +1001,86 @@ for (const s of SET_FSH) {
     await page.screenshot({ path: join(SHOTS_FSH, `${s.name}.png`), fullPage: false });
   });
 }
+
+// FS wave I (FS78-FS84): every new page (and the pages the wave-I wiring touched) in Arabic RTL and at 390 px, plus the feature set
+// saved to KAFAA_SHOTS_FSI. LOCAL backend (openFse), clock fixed on 2026-10-12, 09:00 Abu Dhabi (the FS82 round to 10 Dec is open);
+// the wave-I QA session had no live access: rerun in supabase mode after the live apply.
+const FSI_DAY = new Date('2026-10-12T05:00:00Z');
+const FSI_PAGES: Shot[] = [
+  { name: 'fsi-my-learning-balance', path: '/my/learning-balance', persona: 'k-ro' },
+  { name: 'fsi-team-study-time', path: '/team/study-time', persona: 'sro' },
+  { name: 'fsi-learning-balances-hr', path: '/workforce/learning-balances', persona: 'chco' },
+  { name: 'fsi-my-external-certs', path: '/my/recognition/certificates', persona: 'k-ro' },
+  { name: 'fsi-external-certs-queue', path: '/recognition/certificates', persona: 'training-mgr' },
+  { name: 'fsi-recognition-balance-tab', path: '/recognition?tab=balance' },
+  { name: 'fsi-ai-automations', path: '/workforce/ai-automations', persona: 'k-ro' },
+  { name: 'fsi-ai-automation', path: '/workforce/ai-automations/atm-procedure-revision-digest', persona: 'k-ro' },
+  { name: 'fsi-my-ai-builds', path: '/my/ai-fluency/builds', persona: 'nse' },
+  { name: 'fsi-admin-ai-automations', path: '/admin/ai-automations', persona: 'ai-governance' },
+  { name: 'fsi-my-transition-plan', path: '/my/transition-plan', persona: 'k-ro' },
+  { name: 'fsi-transition-plans', path: '/workforce/transition-plans', persona: 'chco' },
+  { name: 'fsi-transition-plan', path: '/workforce/transition-plans/tp-w-ro-01-1', persona: 'chco' },
+  { name: 'fsi-rung-alerts', path: '/workforce/rung-alerts', persona: 'training-mgr' },
+  { name: 'fsi-my-grants', path: '/my/grants', persona: 'nse' },
+  { name: 'fsi-ecosystem-grants', path: '/ecosystem/grants', persona: 'nse' },
+  { name: 'fsi-workforce-grants', path: '/workforce/grants', persona: 'chco' },
+  { name: 'fsi-consortium', path: '/ecosystem/consortium' },
+  { name: 'fsi-consortium-cohort', path: '/ecosystem/consortium/cc-2026', persona: 'chco' },
+  { name: 'fsi-consortium-cohort-partner', path: '/ecosystem/consortium/cc-2026', persona: 'alnoor-gm' },
+  { name: 'fsi-my-consortium', path: '/my/consortium', persona: 'k-lo-trainee' },
+  { name: 'fsi-team-skills-future', path: '/team/skills/future', persona: 'sro' },
+  { name: 'fsi-skills-inventory', path: '/workforce/skills-inventory', persona: 'chco' },
+  { name: 'fsi-wallet', path: '/my/skills/wallet', persona: 'k-ro' },
+  { name: 'fsi-credentials', path: '/my/skills/credentials', persona: 'sro' },
+  { name: 'fsi-learner-record', path: '/my/skills/record', persona: 'sro' },
+  { name: 'fsi-passport', path: '/my/skills', persona: 'k-ro' },
+  { name: 'fsi-skills-outlook', path: '/workforce/skills-outlook', persona: 'chco' },
+  { name: 'fsi-academy-energy', path: '/learn/academies/ac-energy' },
+  { name: 'fsi-simulator', path: '/training/simulator', persona: 'training-mgr' },
+  { name: 'fsi-ai-system', path: '/workforce/ai-register/ais-doc-search', persona: 'k-ro' },
+  { name: 'fsi-transformation', path: '/workforce/transformation', persona: 'chco' },
+];
+for (const s of FSI_PAGES) {
+  test(`rtl ${s.name}`, async ({ page }) => {
+    const w = watchErrors(page);
+    await page.clock.setFixedTime(FSI_DAY);
+    await openFse(page, { ...s, ar: true });
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
+    await expect(page.locator('html')).toHaveAttribute('lang', 'ar');
+    expect(await overflowX(page), 'no horizontal scroll').toBeLessThanOrEqual(1);
+    expect(await textIssues(page)).toEqual([]);
+    await page.screenshot({ path: join(OUT, 'rtl', `${s.name}.png`), fullPage: true });
+    expect(w.take()).toEqual([]);
+  });
+  test(`mobile ${s.name}`, async ({ page }) => {
+    const w = watchErrors(page);
+    await page.clock.setFixedTime(FSI_DAY);
+    await openFse(page, { ...s, mobile: true });
+    expect(await overflowX(page), `${s.name}: page scrolls sideways at 390 px`).toBeLessThanOrEqual(1);
+    expect(await textIssues(page)).toEqual([]);
+    await page.screenshot({ path: join(OUT, 'mobile', `${s.name}.png`), fullPage: true });
+    expect(w.take()).toEqual([]);
+  });
+}
+const SHOTS_FSI = process.env.KAFAA_SHOTS_FSI || 'test-results/shots_fsI';
+mkdirSync(SHOTS_FSI, { recursive: true });
+const SET_FSI: Shot[] = [
+  { name: '01-my-learning-balance-en', path: '/my/learning-balance', persona: 'k-ro' },
+  { name: '02-external-certificates-en', path: '/my/recognition/certificates', persona: 'k-ro' },
+  { name: '03-wallet-trust-tier-en', path: '/my/skills/wallet', persona: 'k-ro' },
+  { name: '04-automation-gallery-en', path: '/workforce/ai-automations', persona: 'k-ro' },
+  { name: '05-my-transition-plan-en', path: '/my/transition-plan', persona: 'k-ro' },
+  { name: '06-micro-grants-en', path: '/my/grants', persona: 'nse' },
+  { name: '07-consortium-en', path: '/ecosystem/consortium' },
+  { name: '08-team-2030-targets-en', path: '/team/skills/future', persona: 'sro' },
+  { name: '09-skills-inventory-ar', path: '/workforce/skills-inventory', persona: 'chco', ar: true },
+  { name: '10-learner-record-mobile', path: '/my/skills/record', persona: 'sro', mobile: true },
+];
+for (const s of SET_FSI) {
+  test(`shot fsi ${s.name}`, async ({ page }) => {
+    await page.clock.setFixedTime(FSI_DAY);
+    if (!s.mobile) await page.setViewportSize({ width: 1440, height: 900 });
+    await openFse(page, s);
+    await page.screenshot({ path: join(SHOTS_FSI, `${s.name}.png`), fullPage: false });
+  });
+}

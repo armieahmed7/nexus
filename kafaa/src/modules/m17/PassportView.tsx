@@ -285,7 +285,7 @@ export function PassportView({ d, readOnly = false }: { d: PassportData; readOnl
                     <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[12.5px] text-ink-2">
                       <BasisChip basis={s.item!.basis} />
                       {s.item!.roles.slice(0, 3).map((r) => (
-                        <span key={r.id} className="chip border-line bg-sunken text-ink-2">
+                        <span key={r.id} className="chip max-w-full whitespace-normal border-line bg-sunken text-start text-ink-2">
                           {pick(d.roles.find((x) => x.id === r.id), 'title')} · {t('m17.strengths.needs', { n: f.num(r.need) })}
                         </span>
                       ))}
