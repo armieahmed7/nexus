@@ -32,7 +32,7 @@ export default function MyRecognitionPage() {
   const tab = sp.get('tab') === 'attest' ? 'attest' : 'requests';
   return (
     <Page title={t('m34.routes.my-recognition.title')} eyebrow={t('m34.my.eyebrow')} intro={t('m34.my.intro')} wide
-      actions={<L to="/recognition" className="btn-outline">{t('m34.my.how')}</L>}>
+      actions={<><L to="/recognition" className="btn-outline">{t('m34.my.how')}</L><L to="/my/recognition/certificates" className="btn-outline" data-testid="m34-to-certs">{t('m34.xc.toCerts')}</L><L to="/my/learning-balance" className="btn-outline">{t('m34.sb.toBalance')}</L></>}>
       <Bench />
       <NotAuthority />
       <Async state={q}>{(d) => (

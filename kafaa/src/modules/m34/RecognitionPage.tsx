@@ -10,6 +10,7 @@ import { useSession } from '../../auth/session';
 import { EVIDENCE_KINDS, LEVEL_NAMES } from './rpl';
 import { CREDIT_HOURS, ITEM_KINDS, NQF_BY_LEVEL } from './credits';
 import { Bench, IndicativeNote, KIND_ICON, NotAuthority, NqfBadge, useCredits, type Row } from './ui';
+import { BalanceCertsTab } from './fs91public'; // FS78/FS79 (fsIe1)
 
 const NQF_URL = 'https://uaelegislation.gov.ae/en/legislations/2615/download';
 const WAM_URL = 'https://www.wam.ae/en/article/c12hbfm-national-qualifications-centre-discusses';
@@ -17,14 +18,15 @@ const WAM_URL = 'https://www.wam.ae/en/article/c12hbfm-national-qualifications-c
 export default function RecognitionPage() {
   const t = useT();
   const [sp, setSp] = useSearchParams();
-  const tab = sp.get('tab') === 'nqf' ? 'nqf' : 'rpl';
+  const tab = sp.get('tab') === 'nqf' ? 'nqf' : sp.get('tab') === 'balance' ? 'balance' : 'rpl'; // FS78/FS79 (fsIe1): third tab
   return (
     <Page title={t('m34.routes.recognition.title')} eyebrow={t('m34.pub.eyebrow')} intro={t('m34.pub.intro')} wide>
       <Bench />
       <NotAuthority />
-      <Tabs value={tab} onChange={(id) => setSp(id === 'nqf' ? { tab: 'nqf' } : {}, { replace: true })} tabs={[
+      <Tabs value={tab} onChange={(id) => setSp(id === 'rpl' ? {} : { tab: id }, { replace: true })} tabs={[
         { id: 'rpl', label: t('m34.pub.tabRpl'), content: <RplTab /> },
         { id: 'nqf', label: t('m34.pub.tabNqf'), content: <NqfTab /> },
+        { id: 'balance', label: t('m34.pub.tabBalance'), content: <BalanceCertsTab /> }, // FS78/FS79 (fsIe1)
       ]} />
     </Page>
   );

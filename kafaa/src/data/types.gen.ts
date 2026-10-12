@@ -5622,6 +5622,83 @@ export interface CreditLedgerRow {
   status: 'counted' | 'reversed';
   updated_at: string;
 }
+export interface LearningBalancesRow {
+  id: string;
+  person_id: string;
+  person_name: string;
+  person_name_ar: string;
+  entity_id?: string | null;
+  job_family_id?: string | null;
+  year: number;
+  base_hours: number;
+  topup_hours: number;
+  topup_basis: 'mid_career' | 'none';
+  service_years: number;
+  granted_hours: number;
+  used_hours: number;
+  pending_hours: number;
+  remaining_hours: number;
+  simulated: boolean;
+  open_read: boolean;
+  refreshed_at: string;
+  created_at: string;
+}
+export interface StudyTimeRequestsRow {
+  id: string;
+  person_id: string;
+  person_name: string;
+  person_name_ar: string;
+  line_manager_id?: string | null;
+  line_manager_name: string;
+  year: number;
+  resource_id: string;
+  resource_title_en: string;
+  resource_title_ar: string;
+  hours: number;
+  credits: number;
+  starts_on: string;
+  ends_on: string;
+  pattern: 'release_days' | 'shift_blocks' | 'non_shift_week';
+  reason: string;
+  status: 'requested' | 'approved' | 'declined' | 'withdrawn';
+  decided_by?: string | null;
+  decided_role?: string | null;
+  decided_on?: string | null;
+  decision_note?: string | null;
+  history: any;
+  open_read: boolean;
+  created_at: string;
+  updated_at: string;
+}
+export interface ExternalCertsRow {
+  id: string;
+  person_id: string;
+  person_name: string;
+  title: string;
+  issuer: string;
+  issuer_kind: 'enec' | 'university' | 'professional_body' | 'vendor' | 'online_platform';
+  accreditation_ref?: string | null;
+  credential_ref: string;
+  issued_on: string;
+  expires_on?: string | null;
+  verification_url: string;
+  resource_id?: string | null;
+  alignment_ids: string[];
+  levels: any;
+  note?: string | null;
+  status: 'submitted' | 'verified' | 'rejected' | 'withdrawn' | 'revoked';
+  tier?: 'enec_assessed' | 'accredited' | 'vendor_self_serve' | null;
+  method?: 'issuer_url' | 'issuer_registry' | 'enec_assessment' | 'document_check' | null;
+  verified_by?: string | null;
+  verified_role?: string | null;
+  verified_on?: string | null;
+  decision_note?: string | null;
+  mapped: any;
+  evidence_ids: string[];
+  history: any;
+  created_at: string;
+  updated_at: string;
+}
 export interface CriticalSkillsRow {
   id: string;
   skill_id: string;
@@ -6292,6 +6369,9 @@ export interface Tables {
   credit_tags: CreditTagsRow;
   credit_stacks: CreditStacksRow;
   credit_ledger: CreditLedgerRow;
+  learning_balances: LearningBalancesRow;
+  study_time_requests: StudyTimeRequestsRow;
+  external_certs: ExternalCertsRow;
   critical_skills: CriticalSkillsRow;
   critical_skill_reviews: CriticalSkillReviewsRow;
   skill_forecasts: SkillForecastsRow;
