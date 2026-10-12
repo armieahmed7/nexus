@@ -1,0 +1,5 @@
+01_kafaa_audit_rpc_only_tables_p1.sql
+02_kafaa_audit_grants_p1.sql
+03_kafaa_audit_integrity_p1.sql
+04_kafaa_audit_contact_requests_p1.sql
+05_kafaa_audit_verify_certificate_p1.sql
