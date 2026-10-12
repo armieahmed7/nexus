@@ -2416,6 +2416,26 @@ export interface FutureSkillMapRow {
   updated_by?: string | null;
   updated_at: string;
 }
+export interface DalilIntentsRow {
+  id: string;
+  kind: 'role_2030' | 'ai_rung' | 'skill_crosswalk' | 'pathway_gap';
+  audience: 'both' | 'public' | 'personal';
+  feature: string;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  examples_en: string[];
+  examples_ar: string[];
+  cites: string[];
+  sources: any;
+  benchmark_ids: string[];
+  enabled: boolean;
+  changed_role?: string | null;
+  changed_at?: string | null;
+  change_note?: string | null;
+  sort: number;
+}
 export interface EngineCardsRow {
   id: string;
   engine_surface: 'skills' | 'recommend' | 'match' | 'search';
@@ -6024,6 +6044,7 @@ export interface Tables {
   fellowships: FellowshipsRow;
   fellowship_milestones: FellowshipMilestonesRow;
   future_skill_map: FutureSkillMapRow;
+  dalil_intents: DalilIntentsRow;
   engine_cards: EngineCardsRow;
   reco_optouts: RecoOptoutsRow;
   fairness_snapshots: FairnessSnapshotsRow;

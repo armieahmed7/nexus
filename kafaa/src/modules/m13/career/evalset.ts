@@ -52,7 +52,7 @@ export const CAREER_EVAL_SET: CareerEvalCase[] = [
 export const EVAL_PERSON = 'eval-career-ro';
 const LEVELS: Record<string, number> = { 'pf-01': 3, 'pf-02': 3, 'pf-03': 3, 'co-01': 4, 'co-02': 3, 'co-03': 3, 'ns-02': 3, 'hu-01': 4, 'ld-01': 2, 'ld-02': 2, 'ep-01': 3, 'sc-01': 3, 'hu-02': 3 };
 type Row = Record<string, any>;
-export type EvalCatalogue = Pick<CareerTables, 'job_roles' | 'career_paths' | 'role_competencies' | 'competencies' | 'skills' | 'qual_standards' | 'programmes' | 'courses' | 'sources' | 'opportunities' | 'engine_settings'>;
+export type EvalCatalogue = Pick<CareerTables, 'job_roles' | 'career_paths' | 'role_competencies' | 'competencies' | 'skills' | 'qual_standards' | 'programmes' | 'courses' | 'sources' | 'opportunities' | 'engine_settings' | 'role_profile_versions'>;
 export function evalCareerCtx(cat: EvalCatalogue, now: string): CareerCtx {
   const person = { id: EVAL_PERSON, kind: 'staff', status: 'active', job_role_id: 'reactor-operator', job_family_id: 'operations', hire_date: '2019-03-01', display_name: 'Evaluation persona', display_name_ar: 'شخصية التقييم' };
   const core = new Map(cat.skills.filter((s: Row) => s.core).map((s: Row) => [s.competency_id, s.id]));

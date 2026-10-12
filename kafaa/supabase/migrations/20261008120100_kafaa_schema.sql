@@ -2882,6 +2882,29 @@ create table if not exists kafaa_future_skill_map (
 );
 comment on table kafaa_future_skill_map is '[M11] One future-skill keyspace: ADVANCE, radar and gap-plan keys resolved to catalogue skills (FS04)';
 
+-- M13 · Dalil future-skills intent (FS76): catalogue text, cited routes and sources; the AI owner can switch it off
+create table if not exists kafaa_dalil_intents (
+  id text primary key,
+  kind text not null unique check (kind in ('role_2030', 'ai_rung', 'skill_crosswalk', 'pathway_gap')),
+  audience text not null check (audience in ('both', 'public', 'personal')),
+  feature text not null,
+  title_en text not null,
+  title_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  examples_en text[] not null default '{}'::text[],
+  examples_ar text[] not null default '{}'::text[],
+  cites text[] not null default '{}'::text[],
+  sources jsonb not null default '[]'::jsonb,
+  benchmark_ids text[] not null default '{}'::text[],
+  enabled boolean not null default true,
+  changed_role text,
+  changed_at timestamptz,
+  change_note text,
+  sort integer not null default 0
+);
+comment on table kafaa_dalil_intents is '[M13] Dalil future-skills intent (FS76): catalogue text, cited routes and sources; the AI owner can switch it off';
+
 -- M16 · Model and engine card per recommendation surface: inputs used and never used, weights, owner, oversight, last change (F24)
 create table if not exists kafaa_engine_cards (
   id text primary key,
@@ -8286,4 +8309,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 353) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 354) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
