@@ -305,7 +305,7 @@ alter policy kafaa_read on kafaa_wfn_circle_members using ((((SELECT kafaa_has_g
 alter policy kafaa_read on kafaa_wfn_offers using ((((SELECT kafaa_has_grant('knowledge'::text, ARRAY['R'::text, 'W'::text, 'A'::text])))));
 alter policy kafaa_read on kafaa_wfn_requests using ((((SELECT kafaa_has_grant('own_profile'::text, ARRAY['R'::text, 'W'::text, 'A'::text]))) OR ((person_id = (SELECT kafaa_me())) AND (SELECT kafaa_has_grant('own_profile'::text, ARRAY['Own'::text, 'Scope'::text]))) OR ((SELECT kafaa_has_grant('own_profile'::text, ARRAY['Scope'::text])) AND kafaa_rule_read('own_profile'::text, person_id, NULL::text, false))));
 -- Every FS46-FS48 table is read-only for API roles: reference data, or rows written only by the SECURITY DEFINER RPCs below.
-revoke insert, update on kafaa_leadership_behaviours, kafaa_fl_competencies, kafaa_fl_external, kafaa_fl_cohorts, kafaa_fl_participants, kafaa_wfn_programmes, kafaa_wfn_participants, kafaa_wfn_circles, kafaa_wfn_circle_members, kafaa_wfn_offers, kafaa_wfn_requests from anon, authenticated;
+revoke all on kafaa_leadership_behaviours, kafaa_fl_competencies, kafaa_fl_external, kafaa_fl_cohorts, kafaa_fl_participants, kafaa_wfn_programmes, kafaa_wfn_participants, kafaa_wfn_circles, kafaa_wfn_circle_members, kafaa_wfn_offers, kafaa_wfn_requests from anon, authenticated;
 grant select on kafaa_leadership_behaviours, kafaa_fl_competencies, kafaa_fl_external, kafaa_fl_cohorts, kafaa_fl_participants, kafaa_wfn_programmes, kafaa_wfn_participants, kafaa_wfn_circles, kafaa_wfn_circle_members, kafaa_wfn_offers, kafaa_wfn_requests to anon, authenticated;
 
 -- ═════════════ FS46 · 360 form version 2 (redefinitions keep their signatures and grants)

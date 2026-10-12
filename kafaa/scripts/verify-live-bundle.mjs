@@ -8,6 +8,9 @@ const cfg = JSON.parse(readFileSync(process.argv[2], 'utf8'));
 const read = (p) => readFileSync(p, 'utf8');
 const db = new PGlite();
 await db.exec(read('supabase/tests/nexus_stubs.sql'));
+// table_grants (wave H on): start from the Supabase default privileges, as live does, so the grants check below sees what the
+// partial revokes of earlier waves left open and what the bundle closes
+if (cfg.table_grants) await db.exec((await import('./validate/fsqa8-grants.mjs')).SUPABASE_DEFAULT_PRIVILEGES);
 const first = cfg.migrations[0].file;
 // every migration before the wave as the base ref has it (the generated schema / RLS files differ after the wave), then the base seed
 const baseFiles = execSync(`git ls-tree -r --name-only ${cfg.base_ref} -- supabase/migrations`).toString().trim().split('\n').map((x) => x.split('/').pop()).filter((f) => f.endsWith('.sql') && f < first).sort();
@@ -44,6 +47,23 @@ for (const m of md.matchAll(/^\| `([^`]+)` \| `([^`]+)` \| (\d+) \| `([0-9a-f]{8
   dn++; if (String(r.n) !== cnt || r.d !== dig) { dbad++; console.log(`✗ ${label}: ${r.n}:${r.d} != ${cnt}:${dig}`); }
 }
 console.log(`digests: ${dn - dbad}/${dn} equal`);
+let gbad = 0;
+if (cfg.table_grants) {
+  const sec = md.split('### 4a. Table grants after the apply')[1] ?? '';
+  const sql = sec.match(/```sql\n([\s\S]*?)\n```/)?.[1];
+  const want = [...sec.matchAll(/^\| (anon|authenticated|PUBLIC) \| ([A-Z, ]+) \| (\d+) \| (.*) \|$/gm)].map((m) => ({ g: m[1], p: m[2], n: Number(m[3]), which: m[4] }));
+  const got = sql ? (await db.query(sql)).rows : [];
+  const key = (r) => `${r.g} | ${r.p}`;
+  for (const w of want) {
+    const r = got.find((x) => key(x) === key(w));
+    const names = [...w.which.matchAll(/`(kafaa_\w+)`/g)].map((m) => m[1]);
+    const okk = r && r.n === w.n && (w.which.startsWith('every other') || r.tables === names.join(', '));
+    if (!okk) { gbad++; console.log(`✗ table grants ${key(w)}: ${r ? `${r.n} (${r.n <= 12 ? r.tables : '...'})` : 'missing'} != ${w.n}`); }
+  }
+  for (const r of got) if (!want.some((w) => key(w) === key(r))) { gbad++; console.log(`✗ table grants: unexpected ${key(r)} on ${r.n} (${r.tables.slice(0, 200)})`); }
+  if (!sql || !want.length) { gbad++; console.log('✗ table grants: EXPECTED.md section 4a missing'); }
+  console.log(`table grants (from the Supabase default privileges, after the parts twice): ${want.length - Math.min(gbad, want.length)}/${want.length} rows equal${gbad ? '' : '; nothing else is granted'}`);
+}
 let sbad = 0;
 for (const s of cfg.dry_run_live_state ?? []) { const r = (await db.query(s.check)).rows[0]; const okk = Object.values(r ?? {})[0] === true; if (!okk) sbad++; console.log(`${okk ? '✓' : '✗'} after the parts (twice): ${s.expect}`); }
 if (sbad) process.exit(1);
@@ -54,4 +74,4 @@ if (process.env.DEBUG_TABLE) {
   for (const r of rows) { const s = T.find((x) => x.id === r.id); if (!s) { console.log('extra', r.id); continue; } for (const k of Object.keys(r)) { const same = JSON.stringify(r[k]) === JSON.stringify(s[k]) || String(r[k]) === String(s[k]) || (typeof r[k] === 'string' && !isNaN(Date.parse(r[k])) && Date.parse(r[k]) === Date.parse(s[k])) || Number(r[k]) === Number(s[k]); if (!same) { if (shown++ < 12) console.log(r.id, k, JSON.stringify(r[k]).slice(0, 120), "| seed", JSON.stringify(s[k]).slice(0, 120)); } } }
   console.log('diff fields', shown);
 }
-process.exit(bad || dbad ? 1 : 0);
+process.exit(bad || dbad || gbad ? 1 : 0);
