@@ -1531,6 +1531,14 @@ create policy kafaa_read on kafaa_contractor_engagements for select to anon, aut
 grant select on kafaa_contractor_engagements to anon, authenticated;
 -- writes: reference data, no client writes
 
+-- prearrival_shares
+alter table kafaa_prearrival_shares enable row level security;
+drop policy if exists kafaa_read on kafaa_prearrival_shares;
+create policy kafaa_read on kafaa_prearrival_shares for select to anon, authenticated using (kafaa_rule_read('own_profile', person_id, null::text, true)
+    or kafaa_rule_read('equivalency', null::text, org_id, true));
+grant select on kafaa_prearrival_shares to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- programme_alignments
 alter table kafaa_programme_alignments enable row level security;
 drop policy if exists kafaa_read on kafaa_programme_alignments;

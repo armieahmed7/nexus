@@ -10,6 +10,13 @@
 //                           signed off. Read by the person (own_profile Own), their partner admin (equivalency OwnOrg) and ENEC
 //                           evaluators (equivalency R/A). Signed-off engagements become `ojt` evidence on the passport.
 // The passport itself is F01's person_skills / skill_evidence, whose read rules gained org scope for contractors (W5E2, F33).
+//
+//   prearrival_shares       [FS69 · fsGe5] a contractor's pre-arrival share: the FS32 share link (kafaa_record_shares: token, items,
+//                           expiry, revocation) plus the qualification standard and mobilisation date the ENEC evaluator checks before
+//                           arrival, how it was created (self, or on behalf by an evaluator with the consent reference) and the last
+//                           check summary (counts only, from the shared items). Read by the contractor (own_profile Own), their partner
+//                           admin (equivalency OwnOrg) and ENEC evaluators and auditors (equivalency A/R). The shared items themselves
+//                           reach the evaluator only through rpc.prearrivalShare / rpc.precheckFromShare.
 import type { TableDef } from '../../../data/schema';
 
 export const TABLES_M09: Record<string, TableDef> = {
@@ -38,5 +45,15 @@ export const TABLES_M09: Record<string, TableDef> = {
       supervisor_role_en: 'text =\'\'', supervisor_role_ar: 'text =\'\'', skills: 'json =[]', source: 'text enum:mirror =\'mirror\'', created_at: 'ts =now',
     },
     read: [{ res: 'own_profile', person: 'person_id' }, { res: 'equivalency', org: 'org_id' }], write: { mode: 'none' },
+  },
+  // [FS69 · fsGe5]
+  prearrival_shares: {
+    module: 'M09', label: 'Contractor pre-arrival shares: an FS32 share link checked against a qualification standard before mobilisation (FS69)',
+    cols: {
+      id: 'text pk', share_id: 'text ref:record_shares uniq', person_id: 'text ref:people idx', org_id: 'text ref:organisations idx',
+      standard_id: 'text ref:qual_standards idx', mobilise_on: 'date', created_via: 'text enum:self|on_behalf', created_by: 'text',
+      consent_ref: 'text =\'\'', note: 'text =\'\'', checked_by: 'text?', checked_at: 'ts?', check_summary: 'json?', created_at: 'ts =now',
+    },
+    read: [{ res: 'own_profile', person: 'person_id' }, { res: 'equivalency', org: 'org_id' }], write: { mode: 'rpc', res: 'equivalency' },
   },
 };

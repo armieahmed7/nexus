@@ -2293,6 +2293,22 @@ export interface ContractorEngagementsRow {
   source: 'mirror';
   created_at: string;
 }
+export interface PrearrivalSharesRow {
+  id: string;
+  share_id: string;
+  person_id: string;
+  org_id: string;
+  standard_id: string;
+  mobilise_on: string;
+  created_via: 'self' | 'on_behalf';
+  created_by: string;
+  consent_ref: string;
+  note: string;
+  checked_by?: string | null;
+  checked_at?: string | null;
+  check_summary?: any | null;
+  created_at: string;
+}
 export interface ProgrammeAlignmentsRow {
   id: string;
   university_org_id: string;
@@ -5844,6 +5860,7 @@ export interface Tables {
   contract_role_targets: ContractRoleTargetsRow;
   task_skill_links: TaskSkillLinksRow;
   contractor_engagements: ContractorEngagementsRow;
+  prearrival_shares: PrearrivalSharesRow;
   programme_alignments: ProgrammeAlignmentsRow;
   programme_graduates: ProgrammeGraduatesRow;
   fellowships: FellowshipsRow;
