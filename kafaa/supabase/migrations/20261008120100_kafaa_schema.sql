@@ -3268,7 +3268,9 @@ create table if not exists kafaa_team_skill_targets (
   note text,
   active boolean not null default true,
   set_by text,
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  horizon text not null default 'current' check (horizon in ('current', '2028', '2030')),
+  profile_version_ids text[] not null default '{}'::text[]
 );
 comment on table kafaa_team_skill_targets is '[M17] Team skill coverage targets set by managers (F11)';
 
@@ -8292,6 +8294,7 @@ create index if not exists kafaa_skill_ratings_skill_id_idx on kafaa_skill_ratin
 create index if not exists kafaa_skill_ratings_status_idx on kafaa_skill_ratings (status);
 create index if not exists kafaa_team_skill_targets_team_id_idx on kafaa_team_skill_targets (team_id);
 create index if not exists kafaa_team_skill_targets_skill_id_idx on kafaa_team_skill_targets (skill_id);
+create index if not exists kafaa_team_skill_targets_horizon_idx on kafaa_team_skill_targets (horizon);
 create index if not exists kafaa_microcred_defs_code_idx on kafaa_microcred_defs (code);
 create index if not exists kafaa_microcred_defs_stacks_into_idx on kafaa_microcred_defs (stacks_into);
 create index if not exists kafaa_microcred_defs_status_idx on kafaa_microcred_defs (status);

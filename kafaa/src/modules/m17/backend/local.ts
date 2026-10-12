@@ -22,6 +22,7 @@ import { makeLocalM17W2 } from './local.w2'; // W2 · w2e1: F10 check-ins, F11 t
 import { makeLocalM17W5 } from './local.w5'; // W5 · w5e1: F32 micro-credentials
 import { makeLocalM17Fs03 } from './local.fs03'; // FS · wave A · E2: FS03 honest skill states
 import { makeLocalM17Fs4 } from './local.fs4'; // FS · wave D · E3: FS31 strategic tier, FS32 learner record, FS33 skill goals
+import { makeLocalM17Fs9 } from './local.fs9'; // FS · wave I · E5: FS84 team 2030 targets, organisation skills inventory
 
 /** Offline demo key (in-browser backend only; see the file header). Not the server key. */
 export const OFFLINE_SEED = '80df5566f0f615286d25a424ee54b2c33e94253912786453b748dd943143864d';
@@ -36,6 +37,7 @@ export function makeLocalM17(b: LocalBackend, h: LocalRpcHelpers): M17Rpc {
     ...makeLocalM17W5(b, h, OFFLINE_SEED),
     ...makeLocalM17Fs03(b, h),
     ...makeLocalM17Fs4(b, h),
+    ...makeLocalM17Fs9(b, h),
     async claimSkill(input) {
       await b.whenReady();
       type R = { id: string; level: number; state_level: number };
