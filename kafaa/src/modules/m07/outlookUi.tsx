@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react';
 import { SimChip } from '../../ui';
 import { useFormat, useT } from '../../i18n';
-import { BASELINE, LIMITS, type FamilyOutlook, type NumParam, type TornadoBar } from './outlook';
+import { AUTO_PARAM, BASELINE, LIMITS, type AutoParam, type FamilyOutlook, type NumParam, type TornadoBar } from './outlook';
 
 const HATCH = 'bg-[repeating-linear-gradient(45deg,rgb(var(--sunken))_0_4px,rgb(var(--line-strong))_4px_6px)]';
 
@@ -89,7 +89,7 @@ export function GapBars({ families, year, label, onPick, picked }: { families: F
 }
 
 /** Tornado: each assumption from the low to the high end of its range; bars sorted by swing around the current value. */
-export function Tornado({ bars, current, format }: { bars: TornadoBar[]; current: number; format: (k: NumParam, v: number) => string }) {
+export function Tornado({ bars, current, format }: { bars: TornadoBar[]; current: number; format: (k: NumParam | AutoParam, v: number) => string }) {
   const t = useT();
   const f = useFormat();
   const vals = [current, ...bars.flatMap((b) => [b.low, b.high])];
@@ -104,7 +104,10 @@ export function Tornado({ bars, current, format }: { bars: TornadoBar[]; current
           const a = Math.min(b.low, b.high), z = Math.max(b.low, b.high);
           return (
             <div key={b.param} className="grid grid-cols-[minmax(110px,34%)_1fr] items-center gap-2 text-[12.5px]" data-testid={`m07-so-tornado-${b.param}`}>
-              <span className="truncate font-semibold" title={t(`m07.so.param.${b.param}`)}>{t(`m07.so.param.${b.param}`)}</span>
+              <span className="min-w-0">
+                <span className="block truncate font-semibold" title={t(`m07.so.param.${b.param}`)}>{t(`m07.so.param.${b.param}`)}</span>
+                {b.param === AUTO_PARAM && <span className="chip mt-0.5 border-line bg-sunken text-[10.5px] text-ink-2" data-testid="m07-au-tornado-tag">{t('m07.au.tornadoTag')}</span>}
+              </span>
               <span>
                 <span className="relative block h-5 rounded bg-sunken">
                   {/* the low end of the range in one tone, the high end in the other, meeting at today's value */}

@@ -1501,6 +1501,13 @@ create policy kafaa_read on kafaa_skill_outlooks for select to anon, authenticat
 grant select on kafaa_skill_outlooks to anon, authenticated;
 -- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
 
+-- benchmark_values
+alter table kafaa_benchmark_values enable row level security;
+drop policy if exists kafaa_read on kafaa_benchmark_values;
+create policy kafaa_read on kafaa_benchmark_values for select to anon, authenticated using (kafaa_has_grant('workforce_analytics', array['Agg','R','W','A']));
+grant select on kafaa_benchmark_values to anon, authenticated;
+-- writes: reference data, no client writes
+
 -- contract_role_targets
 alter table kafaa_contract_role_targets enable row level security;
 drop policy if exists kafaa_read on kafaa_contract_role_targets;

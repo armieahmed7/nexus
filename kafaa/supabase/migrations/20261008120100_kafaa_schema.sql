@@ -2667,6 +2667,32 @@ create table if not exists kafaa_skill_outlooks (
 );
 comment on table kafaa_skill_outlooks is '[M07] Saved skills supply-and-demand outlooks (SIMULATED; aggregate, suppressed results) (F35)';
 
+-- M07 · External benchmark values for workforce dashboards: copies of sourced FS01 figures, market statistics never summed with measured numbers (FS53)
+create table if not exists kafaa_benchmark_values (
+  id text primary key,
+  benchmark_id text not null,
+  figure_key text not null,
+  metric text not null,
+  label_en text not null,
+  label_ar text not null,
+  value numeric not null,
+  unit text not null check (unit in ('pct', 'count', 'score')),
+  scale_max numeric,
+  as_of date not null,
+  source_url text not null,
+  verification text not null check (verification in ('primary', 'secondary', 'unverified')),
+  shown boolean not null default false,
+  held_reason_en text not null default '',
+  held_reason_ar text not null default '',
+  pack_ref text not null,
+  compare_to text check (compare_to in ('ai_task_share', 'demand_growth_2030', 'digital_holders')),
+  dashboards text[] not null default '{}'::text[],
+  note_en text not null default '',
+  note_ar text not null default '',
+  sort integer not null default 0
+);
+comment on table kafaa_benchmark_values is '[M07] External benchmark values for workforce dashboards: copies of sourced FS01 figures, market statistics never summed with measured numbers (FS53)';
+
 -- M09 · ENEC role profiles a contractor organisation is contracted to staff, with a headcount band (F33)
 create table if not exists kafaa_contract_role_targets (
   id text primary key,
@@ -6294,6 +6320,7 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_ex
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_handover_cohorts_role_id_fk') then alter table kafaa_handover_cohorts add constraint kafaa_handover_cohorts_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_handover_cohorts_programme_id_fk') then alter table kafaa_handover_cohorts add constraint kafaa_handover_cohorts_programme_id_fk foreign key (programme_id) references kafaa_programmes(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_handover_cohorts_talent_programme_id_fk') then alter table kafaa_handover_cohorts add constraint kafaa_handover_cohorts_talent_programme_id_fk foreign key (talent_programme_id) references kafaa_talent_programmes(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_benchmark_values_benchmark_id_fk') then alter table kafaa_benchmark_values add constraint kafaa_benchmark_values_benchmark_id_fk foreign key (benchmark_id) references kafaa_benchmarks(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_contract_role_targets_org_id_fk') then alter table kafaa_contract_role_targets add constraint kafaa_contract_role_targets_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_contract_role_targets_role_id_fk') then alter table kafaa_contract_role_targets add constraint kafaa_contract_role_targets_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_task_skill_links_standard_id_fk') then alter table kafaa_task_skill_links add constraint kafaa_task_skill_links_standard_id_fk foreign key (standard_id) references kafaa_qual_standards(id) deferrable initially deferred; end if; end $$;
@@ -6877,6 +6904,7 @@ create index if not exists kafaa_handover_cohorts_role_id_idx on kafaa_handover_
 create index if not exists kafaa_handover_cohorts_programme_id_idx on kafaa_handover_cohorts (programme_id);
 create index if not exists kafaa_handover_cohorts_talent_programme_id_idx on kafaa_handover_cohorts (talent_programme_id);
 create index if not exists kafaa_skill_outlooks_status_idx on kafaa_skill_outlooks (status);
+create index if not exists kafaa_benchmark_values_benchmark_id_idx on kafaa_benchmark_values (benchmark_id);
 create index if not exists kafaa_contract_role_targets_org_id_idx on kafaa_contract_role_targets (org_id);
 create index if not exists kafaa_contract_role_targets_role_id_idx on kafaa_contract_role_targets (role_id);
 create index if not exists kafaa_contract_role_targets_active_idx on kafaa_contract_role_targets (active);
@@ -7299,4 +7327,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 317) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 318) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

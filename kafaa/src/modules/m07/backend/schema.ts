@@ -43,4 +43,20 @@ export const TABLES_M07: Record<string, TableDef> = {
     },
     read: HR_PLAN as TableDef['read'], write: { mode: 'rpc', res: 'observer_release' },
   },
+  // ───────────── FS53 (wave F · E2) External benchmark lines, kept apart from measured numbers. Each row copies one sourced FS01 figure
+  // (kafaa_benchmarks.figures: key, value, unit, labels, as-of, one of the benchmark's https URLs); the guard trigger kafaa_bv_guard
+  // (= benchmarkValueProblems in src/modules/m07/market.ts) refuses any drift. Figures the research packs flag as secondary or
+  // unverified are stored held (shown = false, with a reason) and never drawn. Read wherever a workforce dashboard is visible
+  // (workforce_analytics Agg/R: line managers, HR, auditors; observers hold Agg too and may read these public figures). Seed only.
+  benchmark_values: {
+    module: 'M07', label: 'External benchmark values for workforce dashboards: copies of sourced FS01 figures, market statistics never summed with measured numbers (FS53)',
+    cols: {
+      id: 'text pk', benchmark_id: 'text ref:benchmarks idx', figure_key: 'text', metric: 'text', label_en: 'text', label_ar: 'text',
+      value: 'num', unit: 'text enum:pct|count|score', scale_max: 'num?', as_of: 'date', source_url: 'text',
+      verification: 'text enum:primary|secondary|unverified', shown: 'bool =false', held_reason_en: 'text =\'\'', held_reason_ar: 'text =\'\'',
+      pack_ref: 'text', compare_to: 'text? enum:ai_task_share|demand_growth_2030|digital_holders', dashboards: 'text[] =[]',
+      note_en: 'text =\'\'', note_ar: 'text =\'\'', sort: 'int =0',
+    },
+    read: [{ res: 'workforce_analytics', special: 'agg_ok' }], write: { mode: 'none' },
+  },
 };

@@ -11,7 +11,7 @@ export const DIM_COL: Record<Dim, 'family_id' | 'level' | 'entity_id'> = { famil
 /** Metric registry: every tile links to /workforce/definitions#<key>, which names the definition, GRI disclosure and source table. */
 export interface MetricDef {
   key: string;
-  table: 'kafaa_kpi_series' | 'kafaa_workforce_snapshots' | 'kafaa_critical_roles' | 'kafaa_scholar_cohorts' | 'kafaa_training_records' | 'kafaa_applications' | 'kafaa_external_cover' | 'kafaa_handover_cohorts' | 'kafaa_skill_outlooks';
+  table: 'kafaa_kpi_series' | 'kafaa_workforce_snapshots' | 'kafaa_critical_roles' | 'kafaa_scholar_cohorts' | 'kafaa_training_records' | 'kafaa_applications' | 'kafaa_external_cover' | 'kafaa_handover_cohorts' | 'kafaa_skill_outlooks' | 'kafaa_jta_tasks' | 'kafaa_benchmark_values';
   kpi?: string; // kpi_series.metric
   gri?: string;
   unit: '%' | 'people' | 'h' | 'count' | 'days';
@@ -56,6 +56,9 @@ export const METRICS: MetricDef[] = [
   { key: 'outlook_demand', table: 'kafaa_skill_outlooks', unit: 'people', sim: true },
   { key: 'outlook_gap', table: 'kafaa_skill_outlooks', unit: 'people', sim: true },
   { key: 'outlook_tornado', table: 'kafaa_skill_outlooks', unit: 'people', sim: true },
+  // FS52 automation exposure (FS06 task layer) and FS53 market statistics (copies of FS01 figures, never summed with measured numbers)
+  { key: 'outlook_automation', table: 'kafaa_jta_tasks', unit: '%', sim: true },
+  { key: 'market_reference', table: 'kafaa_benchmark_values', unit: '%' },
 ];
 export const metricByKey = (k: string) => METRICS.find((m) => m.key === k);
 

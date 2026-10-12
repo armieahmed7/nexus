@@ -9,6 +9,7 @@ import { L, hasKey, useFormat, usePick, useT } from '../../i18n';
 import { shareRows, valueRows } from './metrics';
 import { HandoverBurndown } from './handoverUi'; // [W3E3] F22
 import { KpiTile, SampleBanner, SR2024, kpiLatest, kpiSeries, useAggregates, useKpis, usePeriods } from './shared';
+import { ReleasedMarketPanel } from './marketUi'; // FS53
 
 export default function WorkforcePage() {
   const t = useT();
@@ -101,6 +102,9 @@ export default function WorkforcePage() {
           </Async>
         </Card>
       </Grid>
+
+      {/* FS53: market statistics beside numbers measured at ENEC (latest released outlook), never summed */}
+      <ReleasedMarketPanel dashboard="overview" />
 
       <Section title={t('m07.overview.explore')}>
         <Grid cols={3}>
