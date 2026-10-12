@@ -6330,6 +6330,101 @@ create table if not exists kafaa_skill_forecasts (
 );
 comment on table kafaa_skill_forecasts is '[M35] Saved three-scenario skill forecast (baseline, ADVANCE, accelerated; SIMULATED): annual cycle and version, assumptions, aggregate suppressed results, method basis, release (FS51)';
 
+-- M35 · Disclosure metric library mapped to the ISO 30414 area Skills, Capabilities and Development: definition, formula, data source, owner (function and role card), unit, period basis; values are computed, never stored here (FS60)
+create table if not exists kafaa_hc_metrics (
+  id text primary key,
+  key text not null unique,
+  iso_area text not null,
+  name_en text not null,
+  name_ar text not null,
+  definition_en text not null,
+  definition_ar text not null,
+  formula_en text not null,
+  formula_ar text not null,
+  source_en text not null,
+  source_ar text not null,
+  source_tables text[] not null default '{}'::text[],
+  owner_function text not null,
+  owner_person_id text not null,
+  owner_en text not null,
+  owner_ar text not null,
+  unit text not null check (unit in ('pct', 'hours', 'credits', 'pp')),
+  basis text not null check (basis in ('ytd', 'quarter', 'point')),
+  better text not null check (better in ('up', 'down')),
+  benchmark_ids text[] not null default '{}'::text[],
+  status text not null default 'active' check (status in ('active', 'retired')),
+  sort integer not null default 0,
+  version integer not null default 1,
+  simulated boolean not null default true
+);
+comment on table kafaa_hc_metrics is '[M35] Disclosure metric library mapped to the ISO 30414 area Skills, Capabilities and Development: definition, formula, data source, owner (function and role card), unit, period basis; values are computed, never stored here (FS60)';
+
+-- M35 · Quarterly ISO 30414 skills disclosure (SIMULATED): computed metric values, owner narratives with variance explanations, maker-checker approvals per metric, materiality statement; a metric publishes only with a narrative and a second approver (FS60)
+create table if not exists kafaa_hc_disclosures (
+  id text primary key,
+  period text not null unique,
+  period_start date not null,
+  period_end date not null,
+  status text not null default 'draft' check (status in ('draft', 'published')),
+  metric_values jsonb not null default '{}'::jsonb,
+  narratives jsonb not null default '{}'::jsonb,
+  approvals jsonb not null default '{}'::jsonb,
+  materiality_en text not null default '',
+  materiality_ar text not null default '',
+  method text not null,
+  computed_on date not null,
+  prepared_by text not null,
+  created_at timestamptz not null default now(),
+  updated_by text,
+  updated_at timestamptz not null default now(),
+  published_by text,
+  published_at timestamptz,
+  version integer not null default 1,
+  simulated boolean not null default true
+);
+comment on table kafaa_hc_disclosures is '[M35] Quarterly ISO 30414 skills disclosure (SIMULATED): computed metric values, owner narratives with variance explanations, maker-checker approvals per metric, materiality statement; a metric publishes only with a narrative and a second approver (FS60)';
+
+-- M35 · Skills pilot (workforce experiment): hypothesis, comparison group, named independent evaluator (role card), metrics, result including failures, evaluator sign-off, adoption decision; closed pilots are published and stay visible (FS61)
+create table if not exists kafaa_skill_pilots (
+  id text primary key,
+  title_en text not null,
+  title_ar text not null,
+  hypothesis_en text not null,
+  hypothesis_ar text not null,
+  comparison_en text not null,
+  comparison_ar text not null,
+  pilot_n integer,
+  comparison_n integer,
+  owner_person_id text not null,
+  evaluator_person_id text not null,
+  metrics jsonb not null default '[]'::jsonb,
+  skill_ids text[] not null default '{}'::text[],
+  start_on date not null,
+  end_on date not null,
+  status text not null default 'draft' check (status in ('draft', 'running', 'evaluating', 'closed')),
+  result text check (result in ('success', 'mixed', 'failed')),
+  recommendation text check (recommendation in ('adopted', 'expanded', 'further_funded', 'not_adopted')),
+  adoption text check (adoption in ('adopted', 'expanded', 'further_funded', 'not_adopted')),
+  result_en text not null default '',
+  result_ar text not null default '',
+  lessons_en text not null default '',
+  lessons_ar text not null default '',
+  signoff_by text,
+  signoff_at timestamptz,
+  closed_by text,
+  closed_at timestamptz,
+  published boolean not null default false,
+  benchmark_ids text[] not null default '{}'::text[],
+  created_by text not null,
+  created_at timestamptz not null default now(),
+  updated_by text,
+  updated_at timestamptz not null default now(),
+  version integer not null default 1,
+  sort integer not null default 0,
+  simulated boolean not null default true
+);
+comment on table kafaa_skill_pilots is '[M35] Skills pilot (workforce experiment): hypothesis, comparison group, named independent evaluator (role card), metrics, result including failures, evaluator sign-off, adoption decision; closed pilots are published and stay visible (FS61)';
+
 -- Foreign keys (deferrable so seed data can load in any order inside one transaction)
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_agreements_org_id_fk') then alter table kafaa_agreements add constraint kafaa_agreements_org_id_fk foreign key (org_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_people_entity_id_fk') then alter table kafaa_people add constraint kafaa_people_entity_id_fk foreign key (entity_id) references kafaa_organisations(id) deferrable initially deferred; end if; end $$;
@@ -6850,6 +6945,9 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_cr
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_critical_skills_skill_id_fk') then alter table kafaa_critical_skills add constraint kafaa_critical_skills_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_critical_skills_owner_person_id_fk') then alter table kafaa_critical_skills add constraint kafaa_critical_skills_owner_person_id_fk foreign key (owner_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_critical_skill_reviews_critical_skill_id_fk') then alter table kafaa_critical_skill_reviews add constraint kafaa_critical_skill_reviews_critical_skill_id_fk foreign key (critical_skill_id) references kafaa_critical_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_hc_metrics_owner_person_id_fk') then alter table kafaa_hc_metrics add constraint kafaa_hc_metrics_owner_person_id_fk foreign key (owner_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_pilots_owner_person_id_fk') then alter table kafaa_skill_pilots add constraint kafaa_skill_pilots_owner_person_id_fk foreign key (owner_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_pilots_evaluator_person_id_fk') then alter table kafaa_skill_pilots add constraint kafaa_skill_pilots_evaluator_person_id_fk foreign key (evaluator_person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 
 -- Indexes
 create index if not exists kafaa_organisations_kind_idx on kafaa_organisations (kind);
@@ -7590,6 +7688,11 @@ create index if not exists kafaa_critical_skills_status_idx on kafaa_critical_sk
 create index if not exists kafaa_critical_skill_reviews_critical_skill_id_idx on kafaa_critical_skill_reviews (critical_skill_id);
 create index if not exists kafaa_skill_forecasts_cycle_idx on kafaa_skill_forecasts (cycle);
 create index if not exists kafaa_skill_forecasts_status_idx on kafaa_skill_forecasts (status);
+create index if not exists kafaa_hc_metrics_owner_person_id_idx on kafaa_hc_metrics (owner_person_id);
+create index if not exists kafaa_hc_disclosures_status_idx on kafaa_hc_disclosures (status);
+create index if not exists kafaa_skill_pilots_owner_person_id_idx on kafaa_skill_pilots (owner_person_id);
+create index if not exists kafaa_skill_pilots_evaluator_person_id_idx on kafaa_skill_pilots (evaluator_person_id);
+create index if not exists kafaa_skill_pilots_status_idx on kafaa_skill_pilots (status);
 
 create or replace function kafaa_append_only() returns trigger language plpgsql set search_path = public as $$
 begin
@@ -7604,4 +7707,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 327) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 330) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

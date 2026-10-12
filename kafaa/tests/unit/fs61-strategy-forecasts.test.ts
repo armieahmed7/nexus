@@ -311,8 +311,10 @@ describe('FS51 · model, scenarios, versions and RBAC', () => {
 
 describe('FS50/FS51 · routes, benchmarks and i18n', () => {
   it('seven routes, all guarded by workforce_strategy (never public, no staff grant); param routes have smoke samples', async () => {
-    expect(routes.map((r) => r.id)).toEqual(['workforce-critical-skills', 'workforce-critical-skill', 'workforce-skill-forecasts', 'workforce-skill-forecast', 'workforce-skill-forecast-versions', 'workforce-skill-generations', 'workforce-skill-forecast-method']);
-    for (const r of routes) expect(r.guard).toEqual({ signedIn: true, grant: { res: 'workforce_strategy', levels: ['Agg', 'R', 'W', 'A'] } });
+    // FS wave G · E1 (fsGe1) adds the FS60/FS61 routes to M35 after these seven (tests/unit/fs71-disclosure-pilots.test.ts checks their guards)
+    const fs5051 = routes.filter((r) => /^workforce-(critical-skill|skill-)/.test(r.id));
+    expect(fs5051.map((r) => r.id)).toEqual(['workforce-critical-skills', 'workforce-critical-skill', 'workforce-skill-forecasts', 'workforce-skill-forecast', 'workforce-skill-forecast-versions', 'workforce-skill-generations', 'workforce-skill-forecast-method']);
+    for (const r of fs5051) expect(r.guard).toEqual({ signedIn: true, grant: { res: 'workforce_strategy', levels: ['Agg', 'R', 'W', 'A'] } });
     const smoke = (await import('../../src/modules/m35/smoke.json')).default as Record<string, Record<string, string>>;
     expect(T.critical_skills.some((r) => r.id === smoke['workforce-critical-skill'].id)).toBe(true);
     expect(T.skills.some((s) => s.id === smoke['workforce-skill-forecast'].skillId)).toBe(true);

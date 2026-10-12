@@ -9,7 +9,13 @@
     "workforce-skill-forecast": { "title": "Skill forecast", "purpose": "One skill's three-scenario band by level, with reasons and the generations view." },
     "workforce-skill-forecast-versions": { "title": "Forecast versions", "purpose": "The annual refresh with saved versions: releases, supersession and comparison rules." },
     "workforce-skill-generations": { "title": "Generations view", "purpose": "Who holds these skills across the plant's operating life: a long-horizon view (SIMULATED)." },
-    "workforce-skill-forecast-method": { "title": "Forecast method and definitions", "purpose": "Definitions, method, assumptions, what is not yet modelled and the sources." }
+    "workforce-skill-forecast-method": { "title": "Forecast method and definitions", "purpose": "Definitions, method, assumptions, what is not yet modelled and the sources." },
+    "workforce-disclosure": {"title": "ISO 30414 skills disclosure", "purpose": "Quarterly skills and capability disclosure: computed metrics, owner narratives, variance explanations and a second approver for every line (SIMULATED)."},
+    "workforce-disclosure-metrics": {"title": "Disclosure metric library", "purpose": "Every disclosure metric with its definition, formula, data source and owner, mapped to the ISO 30414 Skills, Capabilities and Development area."},
+    "workforce-disclosure-pack": {"title": "Disclosure pack (print view)", "purpose": "The printable pack of one quarter: only approved lines carry values; CSV and JSON downloads (SIMULATED)."},
+    "workforce-pilots": {"title": "Skills pilots registry", "purpose": "Every workforce experiment with its hypothesis, comparison group, independent evaluator, result (failures included) and adoption status."},
+    "workforce-pilot": {"title": "Skills pilot", "purpose": "One pilot: design, metrics against the comparison group, the evaluator's sign-off and the adoption decision."},
+    "skills-pilots": {"title": "Skills pilots: what we tried", "purpose": "Published results of workforce pilots, failures included; named evaluators sign off their pilots here."}
   },
   "actingDirector": "HR director",
   "actingAnalyst": "HR analyst",
@@ -402,5 +408,407 @@
     "specialised": "Specialised skills that no role profile names yet.",
     "skills": "Skills with no profile demand ({n})",
     "skillsNote": "No role profile names these skills at any horizon, so there is nothing to forecast yet."
+  },
+  "hc": {
+    "intro": "One quarterly pack for the ISO 30414 Skills, Capabilities and Development area. Every value is computed from the platform's records, every line carries an owner narrative and a variance explanation, and nothing publishes until a second person approves it. SIMULATED demo data.",
+    "toLibrary": "Metric library",
+    "noMetrics": "No disclosure metrics yet",
+    "none": "No disclosure has been prepared yet",
+    "period": "Quarter",
+    "prepare": "Prepare {p}",
+    "prepareConfirm": "Prepare the draft",
+    "prepareConsequence": "Creates the draft disclosure for this quarter with freshly computed values. Narratives and approvals follow; nothing is published.",
+    "actingPreparer": "HR analyst or HR director",
+    "status": {
+      "draft": "In review",
+      "published": "Published"
+    },
+    "step": {
+      "computed": "Values computed",
+      "narratives": "Narratives written",
+      "approval": "Second approval",
+      "published": "Published"
+    },
+    "tile": {
+      "status": "Status",
+      "publishedBy": "Published by {who} on {date}",
+      "draftSub": "Lines publish one by one after a second approval",
+      "approved": "Lines approved",
+      "approvedSub": "Approved by a second person",
+      "ready": "Ready for approval",
+      "readySub": "Narrative and variance written",
+      "missing": "Narrative missing",
+      "missingSub": "Cannot be approved yet",
+      "headcount": "Active staff",
+      "computedOn": "Values computed on {date}"
+    },
+    "preparedBy": "Prepared by {who} on {date}",
+    "window": "Quarter {start} to {end}; year-to-date metrics count from 1 January",
+    "refresh": "Recompute values",
+    "refreshConsequence": "Recomputes the values of every line that is not yet approved from today's records. Approved lines keep the values that were approved.",
+    "approveAll": "Approve {n} ready lines",
+    "approve": "Approve and publish",
+    "approveTitle": "Approve: {name}",
+    "approveConsequence": "Publishes the line with its value, narrative and variance explanation. You confirm you did not write the narrative. One audit row and one ledger row are written; an approved line cannot change.",
+    "materiality": "Materiality statement",
+    "materialityEdit": "Edit statement",
+    "noMateriality": "No materiality statement yet: lines cannot be approved without it.",
+    "materialityEn": "Materiality statement (English)",
+    "materialityAr": "Materiality statement (Arabic)",
+    "materialityConsequence": "Saves which interpretation of materiality this disclosure applies (ISO 30414 asks organisations to state it).",
+    "lines": "Metric lines",
+    "linesIntro": "Each line: the computed value, the change against the last published value, the owner narrative and the variance explanation. Values are SIMULATED.",
+    "basis": {
+      "ytd": "Year to date",
+      "quarter": "This quarter",
+      "point": "On the computation day"
+    },
+    "unit": {
+      "pct": "Percentage",
+      "hours": "Hours per employee",
+      "credits": "Credits per employee",
+      "pp": "Percentage points"
+    },
+    "unitShort": {
+      "pct": "%",
+      "hours": "h",
+      "credits": "credits",
+      "pp": "pts"
+    },
+    "noPrev": "No earlier published value",
+    "vsPrev": "against {p}",
+    "line": {
+      "approved": "Published",
+      "ready": "Ready for approval",
+      "missing": "Narrative missing"
+    },
+    "varianceLabel": "Variance:",
+    "writtenBy": "Written by {who} on {date}",
+    "noNarrative": "No narrative yet. A metric publishes only with its narrative and variance explanation.",
+    "approvedBy": "Approved by {who} on {date}",
+    "formula": "Definition and formula",
+    "source": "Data source",
+    "owner": "Owner",
+    "whyValue": "Why this value?",
+    "rowsNote": "{on} of {den} measured register rows; {ex} left out",
+    "editLine": "Edit narrative",
+    "writeLine": "Write narrative",
+    "editTitle": "Narrative: {name}",
+    "editConsequence": "Saves the owner narrative and variance explanation for this line. The HR director must approve it before it publishes, and cannot approve a line he wrote himself.",
+    "narrativeEn": "Owner narrative (English)",
+    "narrativeAr": "Owner narrative (Arabic)",
+    "varianceEn": "Variance explanation (English)",
+    "varianceAr": "Variance explanation (Arabic)",
+    "lenHint": "{lo} to {hi} characters",
+    "saveLine": "Save",
+    "problem": {
+      "metric": "Choose a metric from the library.",
+      "narrative": "Write the owner narrative in English and in Arabic (20 to 1200 characters each).",
+      "variance": "Write the variance explanation in English and in Arabic (10 to 600 characters each).",
+      "materiality": "Write the materiality statement in English and in Arabic (40 to 1500 characters each)."
+    },
+    "blocked": {
+      "already_approved": "Already approved",
+      "no_narrative": "Needs a narrative and a variance explanation first",
+      "maker_checker": "You wrote this narrative: a second person must approve it"
+    },
+    "dim": {
+      "site": "By site",
+      "shift": "By shift crew",
+      "grade": "By grade"
+    },
+    "dimNone": {
+      "site": "No unit (corporate and support)",
+      "shift": "Day work (no crew)",
+      "grade": "No grade recorded"
+    },
+    "grade": {
+      "entry": "Entry",
+      "professional": "Professional",
+      "senior": "Senior",
+      "leadership": "Leadership"
+    },
+    "crew": "Crew {c}",
+    "cellSuppressed": "suppressed (fewer than 10 people)",
+    "cellNot": "not trained this year: {n} of {of}",
+    "csv": "CSV",
+    "json": "JSON",
+    "printView": "Print view",
+    "how": {
+      "title": "How the values are made",
+      "body": "Every value is computed from training records, the learning record store, FS30 credits, FS09 AI fluency rungs and the FS50 register, never typed. Any count of fewer than {n} people shows \"suppressed\", and participation is read by site, shift crew and grade only, never by nationality or gender."
+    },
+    "notAssurance": {
+      "title": "SIMULATED, not an assurance statement",
+      "body": "The pack follows the shape of the ISO 30414:2025 Skills, Capabilities and Development area. Kafa'a is not an auditor or a certification body; the numbers are demonstration data."
+    },
+    "roleCard": "Role card",
+    "reason": {
+      "trained_pct": "{num} of {den} active staff completed learning between 1 January and the end of the quarter.",
+      "active_learners_pct": "{num} of {den} active staff recorded learning activity in the quarter.",
+      "hours_per_employee": "{num} recorded learning hours year to date across {den} active staff.",
+      "ai_fundamentals_pct": "{num} of {den} active staff are at AI fluency rung 1 (Aware) or higher.",
+      "critical_on_track_pct": "{num} of {den} adopted critical skills with measured progress are met or on track; {excluded} left out.",
+      "credits_per_employee": "{num} counted learning credits year to date across {den} active staff.",
+      "participation_gap_pp": "The largest gap between groups of 10 or more people within site, shift crew or grade.",
+      "suppressed": "Fewer than {n} people: the value is suppressed.",
+      "prev": "Compared with the last published value ({period}).",
+      "basis": {
+        "ytd": "Counts from 1 January to the end of the quarter.",
+        "quarter": "Counts within the quarter only.",
+        "point": "Measured on the day the values were computed."
+      }
+    }
+  },
+  "hcm": {
+    "intro": "The disclosure metrics, each with a definition, a formula, a data source and an owner. Values are always computed from the formula; the library holds no numbers.",
+    "back": "Back to the disclosure",
+    "isoEyebrow": "From the benchmark registry",
+    "area": "Skills, Capabilities and Development",
+    "areaIntro": "{n} metrics, centred on the area the ISO 30414:2025 edition keeps as a first-class section.",
+    "areaName": "ISO 30414 area: Skills, Capabilities and Development",
+    "isoArea": "ISO 30414 area",
+    "better": {
+      "up": "Higher is better",
+      "down": "Lower is better"
+    },
+    "rules": {
+      "title": "Rules every metric follows",
+      "body": "A definition, a formula reproduced in TS and SQL, a named owner, a narrative and variance explanation each quarter, a second approver and an as-of date. Counts of fewer than {n} people are suppressed."
+    }
+  },
+  "hcp": {
+    "title": "Skills disclosure pack {p}",
+    "intro": "Print view of the quarter's pack. Only approved lines carry values; the rest read \"not published\".",
+    "notFound": "No disclosure for this quarter",
+    "print": "Print",
+    "simulated": "SIMULATED demonstration pack",
+    "asOf": "As of {date} · active staff {n}",
+    "col": {
+      "metric": "Metric",
+      "value": "Value",
+      "change": "Change",
+      "approval": "Approval"
+    },
+    "notPublished": "not published",
+    "approval": "Approved by {who} (narrative by {by}) on {date}",
+    "awaiting": "Awaiting a narrative or a second approver",
+    "footer": "Generated by Kafa'a from synthetic demonstration data. Not an assurance statement; Kafa'a is not an auditor or a certification body."
+  },
+  "sp": {
+    "intro": "Workforce experiments, registered before they start and published when they end, failures included. Each pilot has a hypothesis, a comparison group and a named independent evaluator who signs off the result.",
+    "toStaff": "Staff view",
+    "add": "Register a pilot",
+    "kpi": {
+      "title": "Adoption rate",
+      "eyebrow": "Computed from pilot statuses",
+      "of": "{a} of {n} closed pilots adopted, expanded or further funded",
+      "line": "Adoption rate against the Future Skills Centre reference",
+      "reference": "Future Skills Centre reference: {v} of completed projects report adoption, expansion or further investment.",
+      "source": "Future Skills Centre Impact Report 2025",
+      "definition": "Closed pilots that were adopted, expanded or further funded, divided by all closed pilots. Failed pilots stay in the count.",
+      "mix": "Adoption decisions"
+    },
+    "tile": {
+      "closed": "Closed pilots",
+      "closedSub": "{s} successful, {m} mixed",
+      "failed": "Failed, kept visible",
+      "failedSub": "Lessons published like any result",
+      "evaluating": "Signed off",
+      "evaluatingSub": "Waiting for HR to close",
+      "running": "Running",
+      "runningSub": "Evaluator named",
+      "draft": "Draft",
+      "draftSub": "Not started"
+    },
+    "registry": "Registry",
+    "registryIntro": "Every pilot with its status, result and adoption decision.",
+    "filter": "Filter pilots",
+    "all": "All",
+    "allResults": "All results",
+    "none": "No pilots match",
+    "col": {
+      "pilot": "Pilot",
+      "status": "Status",
+      "result": "Result",
+      "adoption": "Adoption",
+      "evaluator": "Independent evaluator",
+      "owner": "Owner"
+    },
+    "window": "{a} to {b}",
+    "status": {
+      "draft": "Draft",
+      "running": "Running",
+      "evaluating": "Signed off",
+      "closed": "Closed"
+    },
+    "result": {
+      "success": "Success",
+      "mixed": "Mixed",
+      "failed": "Failed"
+    },
+    "adoption": {
+      "adopted": "Adopted",
+      "expanded": "Expanded",
+      "further_funded": "Further funded",
+      "not_adopted": "Not adopted"
+    },
+    "noResult": "No result yet",
+    "adoptionPending": "Pending",
+    "failureVisible": "Failure kept visible",
+    "unit": {
+      "pct": "Percentage",
+      "count": "Count",
+      "hours": "Hours",
+      "score": "Score",
+      "days": "Days"
+    },
+    "unitShort": {
+      "pct": "%",
+      "count": "items",
+      "hours": "h",
+      "score": "pts",
+      "days": "days"
+    },
+    "vsComparison": "{d} against the comparison group",
+    "lessons": "Lessons:",
+    "how": {
+      "title": "How a pilot closes",
+      "body": "The named evaluator, never the pilot owner or the person who registered it, signs off the result. Only then can HR close the pilot with an adoption decision; closing publishes the result to staff."
+    },
+    "failures": {
+      "title": "Failures stay visible",
+      "body": "A failed pilot is published like any other and stays in the adoption rate. What did not work is part of the evidence."
+    }
+  },
+  "spd": {
+    "intro": "Design, measured results against the comparison group, the independent evaluator's sign-off and the adoption decision. SIMULATED demo data.",
+    "notFound": "Pilot not found",
+    "back": "Back to the registry",
+    "edit": "Edit pilot",
+    "design": "Design",
+    "hypothesis": "Hypothesis",
+    "comparison": "Comparison group",
+    "people": "People",
+    "evaluator": "Independent evaluator",
+    "owner": "Owner",
+    "pilotN": "Pilot group",
+    "comparisonN": "Comparison group size",
+    "version": "Version",
+    "independence": "The evaluator is never the pilot owner or the person who registered the pilot. Group sizes under 10 people are suppressed.",
+    "metrics": "Metrics",
+    "metricsIntro": "Baseline and target set before the start; pilot and comparison values entered by the evaluator at sign-off.",
+    "metric": "Metric",
+    "baseline": "Baseline",
+    "target": "Target",
+    "pilot": "Pilot",
+    "comparisonValue": "Comparison",
+    "lift": "Difference",
+    "chart": "Pilot against comparison",
+    "result": "Evaluator's result",
+    "recommends": "recommends",
+    "summary": "Result",
+    "signedBy": "Signed off by {who} on {date}",
+    "awaitingSignoff": "Waiting for the sign-off of {who}.",
+    "decision": "Adoption decision",
+    "closedBy": "Closed by {who} on {date}",
+    "published": "Published to staff",
+    "adoption": "Adoption decision",
+    "close": "Close and publish",
+    "closeTitle": "Close: {name}",
+    "closeConsequence": "Records the adoption decision, closes the pilot and publishes its result to staff. A closed pilot stays visible, failures included. One audit row and one ledger row are written.",
+    "blocked": {
+      "no_signoff": "The evaluator has not signed off yet: a pilot cannot close without it.",
+      "maker_checker": "You are the evaluator: someone else in HR closes the pilot."
+    },
+    "notClosed": "Not closed yet.",
+    "history": "History",
+    "ev": {
+      "registered": "Registered",
+      "started": "Started",
+      "window": "Planned to end on {b}",
+      "signed": "Signed off by the evaluator",
+      "closed": "Closed and published"
+    }
+  },
+  "spp": {
+    "intro": "What ENEC tried, what worked and what did not. Every closed pilot is published here, failures included. SIMULATED demo data.",
+    "none": "No published results match",
+    "noneMine": "You are not the evaluator of any pilot.",
+    "signed": "Signed off on {date}",
+    "notRunning": "Not running: nothing to sign off.",
+    "tab": {
+      "results": "Published results",
+      "evaluate": "Pilots I evaluate"
+    }
+  },
+  "spe": {
+    "newTitle": "Register a pilot",
+    "editTitle": "Edit pilot",
+    "save": "Save pilot",
+    "id": "Pilot id",
+    "idHint": "sp- followed by lowercase letters, digits and hyphens",
+    "titleEn": "Title (English)",
+    "titleAr": "Title (Arabic)",
+    "hypothesisEn": "Hypothesis (English)",
+    "hypothesisAr": "Hypothesis (Arabic)",
+    "comparisonEn": "Comparison group (English)",
+    "comparisonAr": "Comparison group (Arabic)",
+    "owner": "Owner (role card)",
+    "evaluator": "Independent evaluator (role card)",
+    "evaluatorHint": "Not the owner and not you",
+    "choose": "Choose",
+    "pilotN": "Pilot group size",
+    "comparisonN": "Comparison group size",
+    "start": "Start",
+    "end": "End",
+    "skill": "Skills",
+    "addSkill": "Add a skill",
+    "removeSkill": "Remove skill",
+    "status": "Status",
+    "metrics": "Metrics",
+    "mKey": "Key",
+    "mLabelEn": "Label (English)",
+    "mLabelAr": "Label (Arabic)",
+    "mUnit": "Unit",
+    "mBaseline": "Baseline",
+    "mTarget": "Target",
+    "addMetric": "Add a metric",
+    "removeMetric": "Remove the last metric",
+    "consequence": "Saves the pilot in the registry. The named evaluator signs off the result; HR closes it afterwards.",
+    "problem": {
+      "id": "Use an id like sp-short-name (lowercase letters, digits and hyphens).",
+      "title": "Write the title in English and in Arabic (5 to 140 characters).",
+      "hypothesis": "Write the hypothesis in English and in Arabic (20 to 800 characters).",
+      "comparison": "Describe the comparison group in English and in Arabic (10 to 600 characters).",
+      "people": "Choose an owner and an evaluator from active staff role cards.",
+      "independence": "The evaluator must be independent: not the owner and not the person registering the pilot.",
+      "metrics": "Add one to five metrics, each with a key, labels in English and Arabic, a unit, a baseline and a target.",
+      "skills": "Choose up to six catalogue skills.",
+      "dates": "Choose start and end dates from 2024 to 2030, the start on or before the end.",
+      "groups": "Group sizes are whole numbers from 0 to 100000.",
+      "status": "Choose draft or running; a running pilot stays running."
+    }
+  },
+  "sso": {
+    "result": "Result",
+    "recommendation": "Recommendation",
+    "summaryEn": "Result summary (English)",
+    "summaryAr": "Result summary (Arabic)",
+    "lessonsEn": "Lessons (English)",
+    "lessonsAr": "Lessons (Arabic)",
+    "pilotValue": "Pilot value",
+    "comparisonValue": "Comparison value (optional)",
+    "submit": "Sign off the evaluation",
+    "title": "Sign off: {name}",
+    "consequence": "Records your independent evaluation: the result (a failure is a result too), your recommendation and the measured values. HR then closes the pilot. One audit row and one ledger row are written.",
+    "actingEvaluator": "Named evaluator",
+    "problem": {
+      "result": "Choose success, mixed or failed.",
+      "recommendation": "Choose a recommendation; a failed pilot is not adopted or is funded for a redesign.",
+      "summary": "Write the result summary in English and in Arabic (20 to 1200 characters).",
+      "lessons": "Write the lessons in English and in Arabic (10 to 1200 characters).",
+      "metrics": "Enter a measured pilot value for every metric."
+    }
   }
 }
