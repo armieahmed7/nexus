@@ -13,7 +13,10 @@ import { useFormat, useLang, usePick, useT } from '../../i18n';
 import { Async, BarChart, Callout, Card, DataTable, Drawer, EmptyState, Grid, Icon, LineChart, Page, RadioGroup, Section, SimChip, SourceLink, StatTile, StatusPill, Tabs, type Column } from '../../ui';
 import { DEFAULT_SETTINGS, SURFACES, modelGatewayUrl, resolveEngine, type Surface } from '../../domain/engines';
 import { todayIso } from '../../domain/rules';
-import type { EngineCardsRow, EngineChangesRow, EngineSettingsRow, FairnessSnapshotsRow } from '../../data/types';
+import type { EngineCardsRow, EngineChangesRow, EngineSettingsRow, FairnessSnapshotsRow, SurfaceFairnessRow } from '../../data/types';
+import { L } from '../../i18n';
+import { BenchmarkChips } from '../../ui';
+import { SurfaceFairnessTab, SurfacesTab } from './surfacesUi'; // FS55 (wave F · E3)
 import { GatedConfirm } from './parts';
 import { EngineCardView } from './EngineCardView';
 import { FOUR_FIFTHS, METRICS, comparisons, isoWeek, type Comparison, type FairnessRow } from './fairness';
@@ -28,19 +31,21 @@ export default function AiTransparencyPage() {
   const repo = useRepo();
   const canLog = s.can('integrations', ['R', 'A']);
   const canRun = s.can('integrations', ['A']);
-  const q = useQuery(['engine_cards', 'engine_settings', 'fairness_snapshots', 'engine_changes', 'reco_optouts', 'data_requests'], async () => {
-    const [cards, settings, snaps, changes, stats, requests] = await Promise.all([
+  const q = useQuery(['engine_cards', 'engine_settings', 'fairness_snapshots', 'engine_changes', 'reco_optouts', 'data_requests', 'surface_fairness'], async () => {
+    const [cards, settings, snaps, changes, stats, requests, surfaceSnaps] = await Promise.all([
       repo.list('engine_cards', { order: [['sort', 'asc']] }),
       repo.list('engine_settings'),
       repo.list('fairness_snapshots', { order: [['as_of', 'asc']] }).catch(() => [] as FairnessSnapshotsRow[]),
       canLog ? repo.list('engine_changes', { order: [['changed_at', 'desc']] }).catch(() => [] as EngineChangesRow[]) : Promise.resolve([] as EngineChangesRow[]),
       repo.rpc.optoutStats().catch(() => [] as OptoutStat[]),
       canLog ? repo.list('data_requests', { filter: { kind: 'correction' }, order: [['created_at', 'desc']] }).catch(() => []) : Promise.resolve([]),
+      repo.list('surface_fairness', { order: [['as_of', 'asc']] }).catch(() => [] as SurfaceFairnessRow[]), // FS55
     ]);
-    return { cards, settings, snaps, changes, stats, requests: requests.filter((r) => (r.note ?? '').startsWith('[AI')) };
+    return { cards, settings, snaps, changes, stats, requests: requests.filter((r) => (r.note ?? '').startsWith('[AI')), surfaceSnaps };
   }, [canLog]);
   return (
-    <Page title={t('m16.routes.admin-ai-transparency.title')} eyebrow={t('m16.ai.eyebrow')} intro={t('m16.ai.intro')} wide actions={<SimChip label={t('m16.ai.synthetic')} />}>
+    <Page title={t('m16.routes.admin-ai-transparency.title')} eyebrow={<span className="flex flex-wrap items-center gap-2"><span>{t('m16.ai.eyebrow')}</span><BenchmarkChips feature="FS55" /></span>} intro={t('m16.ai.intro')} wide
+      actions={<span className="flex flex-wrap items-center gap-2"><L to="/admin/ai-transparency/model-risk" className="btn-outline btn-sm" data-testid="m16-to-model-risk">{t('m16.reg.toModelRisk')}</L><SimChip label={t('m16.ai.synthetic')} /></span>}>
       <Async state={q}>
         {(d) => {
           const periods = [...new Set(d.snaps.map((r) => r.period))].sort();
@@ -61,6 +66,9 @@ export default function AiTransparencyPage() {
                 { id: 'fairness', label: t('m16.ai.tab.fairness'), badge: comps.filter((c) => c.flagged).length || undefined, content: <FairnessTab snaps={d.snaps as unknown as FairnessRow[]} periods={periods} canRun={canRun} /> },
                 ...(canLog ? [{ id: 'changes', label: t('m16.ai.tab.changes'), badge: d.changes.length, content: <ChangesTab changes={d.changes} settings={d.settings} cards={d.cards} canChange={canRun} /> }] : []),
                 { id: 'optouts', label: t('m16.ai.tab.optouts'), content: <OptoutsTab stats={d.stats} requests={canLog ? d.requests : null} cards={d.cards} /> },
+                // FS55 (wave F · E3): the ranked-surface registry and the fairness of the surfaces added since F24
+                { id: 'surfaces', label: t('m16.reg.tab'), badge: d.cards.length, content: <SurfacesTab cards={d.cards} /> },
+                { id: 'surface-fairness', label: t('m16.sf.tab'), badge: d.surfaceSnaps.filter((r) => r.flagged && r.period === d.surfaceSnaps[d.surfaceSnaps.length - 1]?.period).length || undefined, content: <SurfaceFairnessTab rows={d.surfaceSnaps} canRun={canRun} cards={d.cards} /> },
               ]} />
               <Callout title={t('m16.ai.footerTitle')}>{t('m16.ai.footerBody')}</Callout>
             </div>

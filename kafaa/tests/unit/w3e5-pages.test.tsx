@@ -96,7 +96,7 @@ describe('F24 /admin/ai-transparency', () => {
   it('admin: eight engine cards, the flagged comparison this week, the change log and the run button', async () => {
     await renderPage(<AiTransparencyPage />, { persona: 'k-admin', path: '/admin/ai-transparency' });
     const cards = await screen.findByTestId('m16-engine-cards', {}, W);
-    expect(within(cards).getAllByTestId('m16-engine-card')).toHaveLength(8);
+    expect(within(cards).getAllByTestId('m16-engine-card')).toHaveLength(getLocalBackend().raw('engine_cards').length); // FS55 (fsFe3): 8 F24 cards + 23 for the newer ranked surfaces
     for (const c of within(cards).getAllByTestId('m16-engine-card')) expect(within(c).getByTestId('m16-card-excluded').querySelectorAll('li')).toHaveLength(3);
     fireEvent.click(screen.getByRole('tab', { name: /Fairness monitor/ }));
     const comps = await screen.findByTestId('m16-fair-comparisons', {}, W);

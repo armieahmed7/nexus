@@ -27,6 +27,7 @@ import { rankBridges, rankFutureRoles, rankResources, readinessIndex } from '../
 import { inputFor, previewEvidence, readinessV2 } from '../../src/modules/m21/readiness'; // FS13
 import { careerFacts } from '../../src/modules/m18/career';
 import { conceptReadiness, transitionEvidence } from '../../src/modules/m18/futureRoles';
+import { FS55_FUNCTIONS } from '../../src/modules/m16/surfaces'; // FS55 (fsFe3): its cards' rankers are checked by tests/unit/fs63-protected-inputs.test.ts
 import { circleMembersView, coachFocus, flReadiness, flReasons, rankCircles, rankOffers, wfnArea } from '../../src/modules/m22/future'; // FS46-FS48 (fsEe4)
 
 type Rows = Record<string, any>[];
@@ -99,7 +100,7 @@ const RUN: Record<string, () => unknown> = {
   'src/modules/m22/future.ts#rankOffers': () => T.wfn_participants.filter((p) => p.active).map((p) => rankOffers(p as never, T.wfn_offers as never, T.wfn_requests as never, NOW, wfnArea)),
 };
 const cardFns = [...new Set(S.tables.engine_cards.flatMap((c) => c.scoring_functions as string[]))];
-const tsFns = cardFns.filter((f) => !f.startsWith('sql:'));
+const tsFns = cardFns.filter((f) => !f.startsWith('sql:') && !FS55_FUNCTIONS.includes(f)); // FS55 (fsFe3): the FS55 cards' rankers have their runners in fs63-protected-inputs
 
 describe('F24: no scoring function reads gender, nationality or age', () => {
   it('every TypeScript scoring function on the engine cards has a runner here (nothing listed goes unchecked)', () => {

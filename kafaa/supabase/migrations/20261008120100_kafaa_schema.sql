@@ -2761,7 +2761,11 @@ create table if not exists kafaa_engine_cards (
   last_changed_at timestamptz not null default now(),
   last_change_id text,
   sources jsonb not null default '[]'::jsonb,
-  sort integer not null default 0
+  sort integer not null default 0,
+  kernel_surface text check (kernel_surface in ('skills', 'recommend', 'match', 'search', 'transform', 'assess', 'rules')),
+  ranks text check (ranks in ('content', 'people', 'options')),
+  fairness_metric text,
+  fairness_none text check (fairness_none in ('f24', 'content', 'anonymous', 'no_outcome', 'non_staff'))
 );
 comment on table kafaa_engine_cards is '[M16] Model and engine card per recommendation surface: inputs used and never used, weights, owner, oversight, last change (F24)';
 
@@ -2815,6 +2819,81 @@ create table if not exists kafaa_engine_changes (
   ledger_seq integer
 );
 comment on table kafaa_engine_changes is '[M16] Change log of engine settings and weights (F02 settings): before, after, rationale, audit and ledger (F24)';
+
+-- M16 · Skill change requests (add, rename, split, retire, re-level) with the inclusion-rule checks and two council votes (FS54)
+create table if not exists kafaa_skill_change_requests (
+  id text primary key,
+  kind text not null check (kind in ('add', 'rename', 'split', 'retire', 'relevel')),
+  skill_id text,
+  title_en text not null,
+  title_ar text not null,
+  proposal jsonb not null default '{}'::jsonb,
+  rationale text not null,
+  development text not null,
+  assessment text not null,
+  inclusion jsonb not null default '[]'::jsonb,
+  status text not null default 'submitted' check (status in ('submitted', 'first_approved', 'first_rejected', 'published', 'rejected')),
+  proposed_by text not null,
+  proposed_role text,
+  proposed_at timestamptz not null default now(),
+  votes jsonb not null default '[]'::jsonb,
+  first_by text,
+  first_decision text check (first_decision in ('approve', 'reject')),
+  second_by text,
+  decided_at timestamptz,
+  change_id text,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_skill_change_requests is '[M16] Skill change requests (add, rename, split, retire, re-level) with the inclusion-rule checks and two council votes (FS54)';
+
+-- M16 · Published skill changes: the public taxonomy change log with before and after, methodology flag and affected dashboards (FS54)
+create table if not exists kafaa_skill_changes (
+  id text primary key,
+  request_id text,
+  kind text not null check (kind in ('add', 'rename', 'split', 'retire', 'relevel')),
+  skill_id text not null,
+  skill_code text not null,
+  skill_name_en text not null,
+  skill_name_ar text not null,
+  summary_en text not null,
+  summary_ar text not null,
+  before jsonb not null default '{}'::jsonb,
+  after jsonb not null default '{}'::jsonb,
+  version_before integer,
+  version_after integer,
+  new_skill_ids text[] not null default '{}'::text[],
+  replaced_by text,
+  effective_on date not null,
+  methodology boolean not null default false,
+  dashboards text[] not null default '{}'::text[],
+  decided_roles text[] not null default '{}'::text[],
+  proposed_role text,
+  published_at timestamptz not null default now(),
+  ledger_seq integer,
+  sources jsonb not null default '[]'::jsonb
+);
+comment on table kafaa_skill_changes is '[M16] Published skill changes: the public taxonomy change log with before and after, methodology flag and affected dashboards (FS54)';
+
+-- M16 · Weekly fairness snapshot per FS55 ranked surface: outcome rate by gender and nationality, suppressed below 10, four-fifths flag (FS55; aggregates only)
+create table if not exists kafaa_surface_fairness (
+  id text primary key,
+  period text not null,
+  as_of date not null,
+  card text not null,
+  metric text not null,
+  dimension text not null check (dimension in ('gender', 'nationality')),
+  group_key text not null check (group_key in ('f', 'm', 'uae', 'other')),
+  n integer,
+  positives integer,
+  rate numeric,
+  ratio numeric,
+  suppressed boolean not null default false,
+  flagged boolean not null default false,
+  source text not null,
+  run_by text,
+  created_at timestamptz not null default now()
+);
+comment on table kafaa_surface_fairness is '[M16] Weekly fairness snapshot per FS55 ranked surface: outcome rate by gender and nationality, suppressed below 10, four-fifths flag (FS55; aggregates only)';
 
 -- M14 · Personal digest per period: up to 7 items with deep links and reasons, and the notification written (F36)
 create table if not exists kafaa_digest_runs (
@@ -6238,6 +6317,9 @@ do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_co
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_contractor_engagements_role_id_fk') then alter table kafaa_contractor_engagements add constraint kafaa_contractor_engagements_role_id_fk foreign key (role_id) references kafaa_job_roles(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_future_skill_map_sk_id_fk') then alter table kafaa_future_skill_map add constraint kafaa_future_skill_map_sk_id_fk foreign key (sk_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_reco_optouts_person_id_fk') then alter table kafaa_reco_optouts add constraint kafaa_reco_optouts_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_change_requests_skill_id_fk') then alter table kafaa_skill_change_requests add constraint kafaa_skill_change_requests_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_change_requests_proposed_by_fk') then alter table kafaa_skill_change_requests add constraint kafaa_skill_change_requests_proposed_by_fk foreign key (proposed_by) references kafaa_people(id) deferrable initially deferred; end if; end $$;
+do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_changes_skill_id_fk') then alter table kafaa_skill_changes add constraint kafaa_skill_changes_skill_id_fk foreign key (skill_id) references kafaa_skills(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_digest_runs_person_id_fk') then alter table kafaa_digest_runs add constraint kafaa_digest_runs_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_digest_prefs_person_id_fk') then alter table kafaa_digest_prefs add constraint kafaa_digest_prefs_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
 do $$ begin if not exists (select 1 from pg_constraint where conname = 'kafaa_skill_claims_person_id_fk') then alter table kafaa_skill_claims add constraint kafaa_skill_claims_person_id_fk foreign key (person_id) references kafaa_people(id) deferrable initially deferred; end if; end $$;
@@ -6827,6 +6909,17 @@ create index if not exists kafaa_reco_optouts_surface_idx on kafaa_reco_optouts 
 create index if not exists kafaa_fairness_snapshots_period_idx on kafaa_fairness_snapshots (period);
 create index if not exists kafaa_fairness_snapshots_metric_idx on kafaa_fairness_snapshots (metric);
 create index if not exists kafaa_engine_changes_surface_idx on kafaa_engine_changes (surface);
+create index if not exists kafaa_skill_change_requests_kind_idx on kafaa_skill_change_requests (kind);
+create index if not exists kafaa_skill_change_requests_skill_id_idx on kafaa_skill_change_requests (skill_id);
+create index if not exists kafaa_skill_change_requests_status_idx on kafaa_skill_change_requests (status);
+create index if not exists kafaa_skill_change_requests_proposed_by_idx on kafaa_skill_change_requests (proposed_by);
+create index if not exists kafaa_skill_changes_request_id_idx on kafaa_skill_changes (request_id);
+create index if not exists kafaa_skill_changes_kind_idx on kafaa_skill_changes (kind);
+create index if not exists kafaa_skill_changes_skill_id_idx on kafaa_skill_changes (skill_id);
+create index if not exists kafaa_skill_changes_effective_on_idx on kafaa_skill_changes (effective_on);
+create index if not exists kafaa_surface_fairness_period_idx on kafaa_surface_fairness (period);
+create index if not exists kafaa_surface_fairness_card_idx on kafaa_surface_fairness (card);
+create index if not exists kafaa_surface_fairness_metric_idx on kafaa_surface_fairness (metric);
 create index if not exists kafaa_digest_runs_person_id_idx on kafaa_digest_runs (person_id);
 create index if not exists kafaa_digest_runs_period_idx on kafaa_digest_runs (period);
 create index if not exists kafaa_skill_claims_person_id_idx on kafaa_skill_claims (person_id);
@@ -7225,4 +7318,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 314) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 317) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

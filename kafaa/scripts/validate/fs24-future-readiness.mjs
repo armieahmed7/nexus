@@ -92,9 +92,11 @@ export default async function fs24Checks({ db, as, one, count, ok }) {
     const pre = await digests();
     ok(TABLES.every((t) => pre[t].d !== seedD[t].d), 'before the migration the pre-FS13 rows differ from the seed in all five tables');
     await f.exec(sql);
+    await f.exec(readFileSync('supabase/migrations/20261010263001_kafaa_fs63_taxonomy_governance.sql', 'utf8')); // FS55 (fsFe3): the later migration appends bridgePlan and rankRaises to this card once (version + 1)
     const post = await digests();
     for (const t of TABLES) ok(post[t].n === seedD[t].n && post[t].d === seedD[t].d, `SQL = TS: ${t} after the migration equals the seed (${post[t].n} rows)`);
     await f.exec(sql);
+    await f.exec(readFileSync('supabase/migrations/20261010263001_kafaa_fs63_taxonomy_governance.sql', 'utf8')); // FS55 (fsFe3)
     const again = await digests();
     ok(TABLES.every((t) => again[t].d === seedD[t].d), 'idempotent: a second run changes nothing');
   } finally { await f.exec('rollback'); }
@@ -173,5 +175,5 @@ export default async function fs24Checks({ db, as, one, count, ok }) {
 
   // engine card
   const card = (await q(`select version, scoring_functions from kafaa_engine_cards where id = 'future'`))[0];
-  ok(card.version === 2 && card.scoring_functions.includes('sql:kafaa_fm_readiness_of') && card.scoring_functions.includes('src/modules/m21/readiness.ts#readinessV2'), 'the Future Me engine card is at version 2 and names readiness v2 (TS and SQL)');
+  ok(card.version === 3 && card.scoring_functions.includes('src/modules/m21/raises.ts#rankRaises') && card.scoring_functions.includes('sql:kafaa_fm_readiness_of') && card.scoring_functions.includes('src/modules/m21/readiness.ts#readinessV2'), 'the Future Me engine card is at version 2 and names readiness v2 (TS and SQL); FS55 (fsFe3) appends two rankers once: version 3');
 }

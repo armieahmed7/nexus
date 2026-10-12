@@ -99,7 +99,7 @@ export function outcomes(d: FairnessData, asOf: string): { metric: MetricId; sur
   const day = asOf.slice(0, 10);
   const cut = Date.parse(`${day}T00:00:00Z`) + DAY;
   // hire dates compare as dates (a malformed 5-digit year is in the future, as in SQL), not as strings
-  const base = d.people.filter((p) => p.kind === 'staff' && p.status === 'active' && !!p.job_role_id && (!p.hire_date || Date.parse(String(p.hire_date).slice(0, 10)) <= Date.parse(day)));
+  const base = basePopulation(d.people, day);
   const inBase = new Set(base.map((p) => p.id));
   // navigator
   const optedOut = new Set(d.optouts.filter((o) => o.surface === 'navigator' && o.opted_out).map((o) => o.person_id));
@@ -142,32 +142,47 @@ export function outcomes(d: FairnessData, asOf: string): { metric: MetricId; sur
 /** The snapshot rows for one as-of date, in a fixed order (metric, dimension, group). */
 export function fairnessSnapshot(d: FairnessData, asOf: string, minGroup = MIN_GROUP_SIZE): FairnessRow[] {
   const day = asOf.slice(0, 10);
-  const period = isoWeek(day);
   const byId = new Map(d.people.map((p) => [p.id, p]));
   const rows: FairnessRow[] = [];
-  for (const m of outcomes(d, day)) {
-    for (const dim of DIMENSIONS) {
-      const cells = dim.groups.map((g) => {
-        let n = 0, pos = 0;
-        for (const [pid, ok] of m.people) {
-          const v = (byId.get(pid) as Record<string, unknown> | undefined)?.[dim.col];
-          if (v === g) { n++; if (ok) pos++; }
-        }
-        return { g, n, pos };
-      });
-      const suppressed = cells.some((c) => c.n < minGroup);
-      const best = suppressed ? 0 : Math.max(...cells.map((c) => c.pos / c.n));
-      for (const c of cells) {
-        const rate = suppressed ? null : r4(c.pos / c.n);
-        const ratio = suppressed || best <= 0 ? null : r4(c.pos / c.n / best);
-        rows.push({
-          id: `fs:${period}:${m.metric}:${dim.dimension}:${c.g}`, period, as_of: day, surface: m.surface, metric: m.metric, dimension: dim.dimension, group_key: c.g,
-          n: suppressed ? null : c.n, positives: suppressed ? null : c.pos, rate, ratio, suppressed, flagged: ratio != null && ratio < FOUR_FIFTHS, source: m.source,
-        });
+  for (const m of outcomes(d, day)) rows.push(...groupRows(m, byId, day, minGroup));
+  return rows;
+}
+
+/**
+ * FS55: the rows of one outcome (people in the population -> positive outcome) per dimension and group, with the suppression and
+ * four-fifths rules above. Shared by the F24 snapshot and the FS55 surface snapshot (prefix 'sf'); SQL kafaa_fairness_rows.
+ */
+export function groupRows(m: { metric: string; surface: string; source: string; people: Map<string, boolean> }, byId: Map<string, Record<string, unknown> | { id: string }>, asOf: string, minGroup = MIN_GROUP_SIZE, prefix = 'fs'): FairnessRow[] {
+  const day = asOf.slice(0, 10);
+  const period = isoWeek(day);
+  const rows: FairnessRow[] = [];
+  for (const dim of DIMENSIONS) {
+    const cells = dim.groups.map((g) => {
+      let n = 0, pos = 0;
+      for (const [pid, ok] of m.people) {
+        const v = (byId.get(pid) as Record<string, unknown> | undefined)?.[dim.col];
+        if (v === g) { n++; if (ok) pos++; }
       }
+      return { g, n, pos };
+    });
+    const suppressed = cells.some((c) => c.n < minGroup);
+    const best = suppressed ? 0 : Math.max(...cells.map((c) => c.pos / c.n));
+    for (const c of cells) {
+      const rate = suppressed ? null : r4(c.pos / c.n);
+      const ratio = suppressed || best <= 0 ? null : r4(c.pos / c.n / best);
+      rows.push({
+        id: `${prefix}:${period}:${m.metric}:${dim.dimension}:${c.g}`, period, as_of: day, surface: m.surface, metric: m.metric as MetricId, dimension: dim.dimension, group_key: c.g,
+        n: suppressed ? null : c.n, positives: suppressed ? null : c.pos, rate, ratio, suppressed, flagged: ratio != null && ratio < FOUR_FIFTHS, source: m.source,
+      });
     }
   }
   return rows;
+}
+
+/** FS55: the population of every fairness comparison (active staff with a job role, hired by the as-of date). */
+export function basePopulation<P extends FairnessData['people'][number]>(people: P[], asOf: string): P[] {
+  const day = asOf.slice(0, 10);
+  return people.filter((p) => p.kind === 'staff' && p.status === 'active' && !!p.job_role_id && (!p.hire_date || Date.parse(String(p.hire_date).slice(0, 10)) <= Date.parse(day)));
 }
 
 /** One comparison (metric x dimension) of a snapshot: its groups, the lowest ratio and whether it is flagged or suppressed. */

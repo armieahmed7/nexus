@@ -7,6 +7,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import seed from '../../src/seed/seed.json';
 import { LocalBackend } from '../../src/data/local/LocalBackend';
+import { F24_ADDED_FUNCTIONS } from '../../src/modules/m16/surfaces'; // FS55 (fsFe3)
 import { lintRanked } from '../../src/domain/engines';
 import {
   creditBp, deltaOf, evidenceOptions, fullEvidence, index10, inputFor, learningActions, normSteps, previewEvidence, readinessV2, unreachableKeys, type RV2, type RV2Tables,
@@ -226,8 +227,9 @@ describe('FS13 RPCs (LocalBackend mirror of kafaa_future_readiness / kafaa_recor
 describe('FS13 engine card (F24) and seed', () => {
   it('the Future Me card is at version 2 and names the v2 rule in TS and SQL', () => {
     const card = T.engine_cards.find((c) => c.id === 'future')!;
-    expect(card.version).toBe(FS13_CARD.version);
-    expect(card.scoring_functions).toEqual(FS13_CARD.scoring_functions);
+    // FS55 (fsFe3) appends the bridge-plan and raise rankers its page uses, once: version + 1
+    expect(card.version).toBe(FS13_CARD.version + 1);
+    expect(card.scoring_functions).toEqual([...FS13_CARD.scoring_functions, ...F24_ADDED_FUNCTIONS.future]);
     expect(card.scoring_functions).toContain('sql:kafaa_fm_readiness_of');
     expect(card.inputs_used.map((i: Row) => i.key)).toEqual(expect.arrayContaining(['future_skill_map', 'learning']));
     expect(card.inputs_excluded).toEqual(['gender', 'nationality_flag', 'age']);
