@@ -26,7 +26,7 @@ Sign in at `/kafaa/sign-in` with any role card. The default backend is the live 
 
 Choose with `VITE_KAFAA_BACKEND` (`supabase` unless set to `local`; see `.env.example`) or per browser from the backend chip (`localStorage["kafaa.backend"]`). Never commit `.env.local`.
 
-"Back to NEXUS" and NEXUS deep links are root-relative when Kafa'a is served on the NEXUS origin and point to `VITE_NEXUS_URL` (default `https://enecai.xyz/`) everywhere else.
+NEXUS deep links (the header has no "Back to NEXUS" link since the 2026-10-13 homepage refresh) are root-relative when Kafa'a is served on the NEXUS origin and point to `VITE_NEXUS_URL` (default `https://enecai.xyz/`) everywhere else.
 
 ### Deploy folder
 

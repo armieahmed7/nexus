@@ -138,7 +138,7 @@ Main dependencies: React 18.3, React Router 6.28, Vite 5.4, TypeScript 5.6, Tail
 | `VITE_KAFAA_BACKEND` | `supabase` (default) or `local`. Unit tests force `local` (vitest.config.ts). |
 | `VITE_SUPABASE_URL` | `https://hlirqxoddysxtdezwcgv.supabase.co` |
 | `VITE_SUPABASE_ANON_KEY` | leave empty to use the built-in public anon key (already shipped in the NEXUS bundle by design) |
-| `VITE_NEXUS_URL` | `https://enecai.xyz/` (target of "Back to NEXUS" off the NEXUS origin) |
+| `VITE_NEXUS_URL` | `https://enecai.xyz/` (target of NEXUS deep links off the NEXUS origin; the header has no "Back to NEXUS" link since 2026-10-13) |
 | `VITE_NEXUS_DEMO_PASSWORD` | the shared NEXUS demo password. **`.env.local` only**, gitignored. Needed for supabase-mode E2E and for the deploy build (role cards sign in with it). Armie supplies it; it is not in the README and must not be invented or written into any file you commit, report or prompt. |
 | `KAFAA_E2E_PASSWORD` | optional, for `scripts/e2e-supabase.mjs` (same password) |
 

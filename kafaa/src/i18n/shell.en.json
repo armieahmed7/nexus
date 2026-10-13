@@ -1,8 +1,7 @@
 {
   "brand": "Kafa'a",
-  "brandSub": "ENEC NEXUS · Workforce",
+  "brandSub": "Upskilling platform",
   "brandHome": "Kafa'a home",
-  "backToNexus": "Back to NEXUS",
   "skipToContent": "Skip to content",
   "menu": "Menu",
   "signIn": "Sign in",
@@ -106,7 +105,7 @@
     "launch": "Ask Dalil"
   },
   "footer": {
-    "tagline": "Careers, competencies and qualifications for the UAE's nuclear energy workforce.",
+    "tagline": "Skills, learning and credentials for the UAE's nuclear energy workforce.",
     "explore": "Explore",
     "help": "Help",
     "legal": "Legal",

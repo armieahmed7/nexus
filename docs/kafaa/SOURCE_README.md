@@ -51,7 +51,7 @@ cd kafaa
 | `VITE_KAFAA_BACKEND` | `supabase` (default) or `local`. `local` runs an in-browser store seeded from `src/seed/seed.json`. |
 | `VITE_SUPABASE_URL` | Supabase project URL (the NEXUS project `hlirqxoddysxtdezwcgv`). |
 | `VITE_SUPABASE_ANON_KEY` | Public anon key. Leave it empty to use the built-in default in `src/config.ts`. |
-| `VITE_NEXUS_URL` | Target of "Back to NEXUS" and NEXUS deep links when the app is not served on the NEXUS origin. |
+| `VITE_NEXUS_URL` | Target of NEXUS deep links when the app is not served on the NEXUS origin. |
 | `VITE_NEXUS_DEMO_PASSWORD` | Shared NEXUS demo-account password. Set it only in `.env.local`, which is gitignored. Never commit it. |
 | `KAFAA_E2E_PASSWORD` | Used only by `scripts/e2e-supabase.mjs` (live end-to-end check). |
 

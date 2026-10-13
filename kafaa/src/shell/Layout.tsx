@@ -1,5 +1,5 @@
 /**
- * Kafa'a shell: header (brand, Back to NEXUS, search, language, notices, backend, account), lens switcher,
+ * Kafa'a shell: header (brand, search, language, notices, backend, account), lens switcher,
  * role-aware navigation, breadcrumbs, footer with the concept disclaimer, Rehearsal chip and the Dalil launcher.
  */
 import { Suspense, useEffect, useState, type ReactNode } from 'react';
@@ -8,7 +8,6 @@ import { useSession, roleLabel } from '../auth/session';
 import { L, NL, useI18n, useNav, useT } from '../i18n';
 import { Icon } from '../ui/Icon';
 import { Skeleton } from '../ui/Page';
-import { config } from '../config';
 import { routeForPath, ROUTE_BY_ID } from '../routes/registry';
 import type { Lens, RouteDef } from '../routes/types';
 import { sections, useAccessibleNav, zoneLens } from './access';
@@ -122,12 +121,8 @@ function Header({ lens, onMenu }: { lens: Lens; onMenu: () => void }) {
             <Icon name="menu" />
           </button>
         )}
+        {/* No "Back to NEXUS" link: Kafa'a stands on its own as the upskilling platform (homepage refresh, 2026-10-13). */}
         <Brand />
-        {/* Plain anchor on purpose: NEXUS is a different app ("/" on the NEXUS origin, https://enecai.xyz/ elsewhere). */}
-        <a href={config.nexusHome} className="btn-ghost btn-sm ms-1 hidden sm:inline-flex" data-testid="back-to-nexus">
-          <Icon name="back" size={14} />
-          {t('shell.backToNexus')}
-        </a>
         <div className="ms-auto flex min-w-0 items-center gap-0.5 sm:gap-1">
           <button className="btn-ghost btn-sm" onClick={() => setSearchOpen(true)} aria-label={t('shell.search.open')} data-testid="open-search">
             <Icon name="search" />
