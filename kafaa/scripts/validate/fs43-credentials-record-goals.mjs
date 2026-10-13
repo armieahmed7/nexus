@@ -32,7 +32,7 @@ export default async function fs43Checks({ db, one, ok, uid }) {
   const load = async (t) => (await q(`select * from kafaa_${t} order by id collate "C"`)).map((r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [k, norm(v)])));
   const D = {};
   for (const t of ['microcred_defs', 'microcred_awards', 'microcred_unlocks', 'courses', 'training_records', 'attempts', 'opportunities', 'opportunity_applications', 'person_skills', 'adaptive_attempts',
-    'task_attempts', 'integrity_reports', 'rotation_templates', 'rotation_placements', 'people', 'badges', 'certificates', 'qual_records', 'qual_standards', 'skills', 'competencies', 'record_shares', 'skill_goal_plans']) D[t] = await load(t);
+    'task_attempts', 'integrity_reports', 'rotation_templates', 'rotation_placements', 'people', 'badges', 'certificates', 'qual_records', 'qual_standards', 'skills', 'competencies', 'record_shares', 'skill_goal_plans', 'external_certs' /* FS79 -> FS32 (wave I integration) */]) D[t] = await load(t);
   for (const r of D.person_skills) { r.confidence = Number(r.confidence); }
   const staff = D.people.filter((p) => p.kind === 'staff' && p.status === 'active').map((p) => p.id).sort();
 
@@ -147,7 +147,7 @@ export default async function fs43Checks({ db, one, ok, uid }) {
 
   // ── FS32 items and bundle parity, CLR shape, nothing restricted
   const rw = (pid) => ({ today: DAY, person: pid, initials: D.people.find((p) => p.id === pid)?.initials || '—', microcred_awards: D.microcred_awards, microcred_defs: D.microcred_defs, badges: D.badges,
-    certificates: D.certificates, qual_records: D.qual_records, qual_standards: D.qual_standards, person_skills: D.person_skills, skills: D.skills, competencies: D.competencies });
+    certificates: D.certificates, qual_records: D.qual_records, qual_standards: D.qual_standards, person_skills: D.person_skills, skills: D.skills, competencies: D.competencies, external_certs: D.external_certs ?? [] }); // FS79 -> FS32 (wave I integration)
   const idiff = [];
   for (const pid of staff) { const s = (await q(`select kafaa_lr_items($1, $2::date) i`, [pid, DAY]))[0].i; if (!same(s, recordItems(rw(pid)))) idiff.push(pid); }
   ok(idiff.length === 0, `SQL kafaa_lr_items equals recordItems() for all ${staff.length} staff${idiff.length ? ` (${idiff[0]})` : ''}`);

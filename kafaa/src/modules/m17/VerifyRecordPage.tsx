@@ -8,6 +8,7 @@ import { useT, usePick, useFormat } from '../../i18n';
 import { verifyCredential } from './issuer';
 import { SignatureChip, issuerKeyUrl } from './WalletPage';
 import { ITEM_KINDS, type RecordItem, type VerifyResult } from './learnerRecord';
+import { ItemStatus } from './xcUi'; // FS79 -> FS32 (wave I integration): the trust tier of a shared external certificate
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = any;
@@ -105,7 +106,7 @@ function VerifyLine({ i }: { i: Omit<RecordItem, 'id'> }) {
   return (
     <li className="rounded-card border border-line px-3 py-2" data-kind={i.kind}>
       <span className="block text-[13.5px] font-semibold">{pick(i, 'title')}</span>
-      <span className="block text-[12px] text-ink-3"><span className="num">{i.code}</span> · {t(`m17.lr.status.${i.status}`)}{i.level != null && <> · {t('common.skills.level', { level: f.num(i.level) })}</>}{i.band && <> · {t(`m17.lr.band.${i.band}`)}</>}{i.date && <> · {f.date(i.date)}</>}</span>
+      <span className="block text-[12px] text-ink-3"><span className="num">{i.code}</span> · <ItemStatus i={i} />{i.level != null && <> · {t('common.skills.level', { level: f.num(i.level) })}</>}{i.band && <> · {t(`m17.lr.band.${i.band}`)}</>}{i.date && <> · {f.date(i.date)}</>}</span>
     </li>
   );
 }

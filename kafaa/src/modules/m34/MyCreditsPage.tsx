@@ -27,7 +27,7 @@ export default function MyCreditsPage() {
     return { ledger: (ledger ?? []).filter((r) => r.person_id === me), tags: tags ?? [], stacks: stacks ?? [], world };
   }, [me]);
   return (
-    <Page title={t('m34.routes.my-credits.title')} eyebrow={t('m34.cr.eyebrow')} intro={t('m34.cr.intro')} wide actions={<L to="/recognition?tab=nqf" className="btn-outline">{t('m34.cr.how')}</L>}>
+    <Page title={t('m34.routes.my-credits.title')} eyebrow={t('m34.cr.eyebrow')} intro={t('m34.cr.intro')} wide actions={<><L to="/recognition?tab=nqf" className="btn-outline">{t('m34.cr.how')}</L><L to="/my/learning-balance" className="btn-outline" data-testid="m34-to-balance">{t('m34.sb.toBalance')}</L></>}>
       <Bench />
       <IndicativeNote />
       <Async state={q}>{(d) => <Body d={d} me={me} />}</Async>

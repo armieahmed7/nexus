@@ -282,7 +282,7 @@ export function makeLocalM17W2(b: LocalBackend, h: LocalRpcHelpers): Pick<M17Rpc
       const ids = mem.map((p) => p.id);
       const size = ids.length;
       const suppressed = !s.peopleMode && size < MIN_GROUP_SIZE;
-      const allTargets = b.raw('team_skill_targets') as unknown as (TargetRow & { id: string })[];
+      const allTargets = (b.raw('team_skill_targets') as unknown as (TargetRow & { id: string; horizon?: string | null })[]).filter((t) => (t.horizon ?? 'current') === 'current'); // FS84: F11 reads current targets only
       const targets = allTargets.filter((t) => t.active !== false && g && t.team_id === g.key).map(tgt).sort((x, y) => cmp(x.skill_id, y.skill_id));
       const profile = allTargets.filter((t) => t.active !== false && t.team_id === CREW_PROFILE).map(tgt).sort((x, y) => cmp(x.skill_id, y.skill_id));
       const crewPeople = s.peopleMode ? s.pool.filter((p) => !!p.crew) : [];

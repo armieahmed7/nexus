@@ -26,6 +26,7 @@ export default function MyRole2030Page() {
       actions={<span className="flex flex-wrap gap-2">
         <L to={`/my/role-2030/tasks${p.role ? `?role=${p.role}` : ''}`} className="btn-outline no-underline" data-testid="m30-to-tasks">{t('m30.my.toTasks')}</L>
         <L to={`/ask?mode=future&q=${encodeURIComponent(t('m30.my.askQ'))}`} className="btn-outline no-underline" data-testid="m30-ask-dalil">{t('m30.my.askDalil')}</L>{/* FS76 (wave-H integration) */}
+        <L to="/my/transition-plan" className="btn-ghost no-underline" data-testid="m30-to-transition-plan">{t('m30.tp.links.mine')}</L>{/* FS81 (wave I · E3) */}
       </span>}>
       <Async state={ref}>{(d) => (
         <div className="space-y-6">

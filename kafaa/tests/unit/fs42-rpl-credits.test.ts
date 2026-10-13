@@ -245,7 +245,7 @@ describe('FS29/FS30 rules, seed, routes and i18n', () => {
   });
 
   it('routes, benchmarks and i18n: 7 routes with titles in EN and AR, FS29/FS30 benchmarks, Arabic is Arabic', () => {
-    expect(routes.length).toBe(7);
+    expect(routes.filter((r) => !['my-learning-balance', 'team-study-time', 'workforce-learning-balances', 'my-external-certs', 'external-certs-queue'].includes(r.id)).length).toBe(7); // FS wave I (fsIe1): FS78/FS79 routes are pinned in fs91-balance-external-certs.test.ts
     for (const r of routes) {
       expect((en as Row).routes[r.id]?.title, r.id).toBeTruthy();
       expect((ar as Row).routes[r.id]?.title, r.id).toBeTruthy();

@@ -44,5 +44,9 @@ export function makeSupabaseM17(x: SupabaseExtCtx): M17Rpc {
     saveSkillGoal: (i) => x.call('kafaa_save_skill_goal', { p: i }, ['skill_goals', 'skill_goal_plans']),
     withdrawSkillGoal: (skillId) => x.call('kafaa_withdraw_skill_goal', { p_skill: skillId }, ['skill_goals', 'skill_goal_plans']),
     shareSkillGoal: (skillId, shared) => x.call('kafaa_share_skill_goal', { p_skill: skillId, p_shared: shared }, ['skill_goal_plans']),
+    // FS · wave I · E5 · FS84 (supabase/migrations/20261010295001_kafaa_fs95_team_targets_inventory.sql)
+    teamFutureTargets: (g, h) => x.rpc('kafaa_team_future_targets', { p_group: g, p_horizon: h }),
+    adoptFutureTargets: (i) => x.call('kafaa_adopt_future_targets', { p: i }, ['team_skill_targets']),
+    orgSkillInventory: (dim) => x.rpc('kafaa_org_skill_inventory', { p_dim: dim }),
   };
 }

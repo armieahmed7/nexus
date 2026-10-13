@@ -1,0 +1,30 @@
+base state loaded (migrations before the wave + base seed)
+pass 1: 12 parts applied
+pass 2: 12 parts applied
+function bodies: 134/134 equal
+digests: 21/21 equal
+table grants (from the Supabase default privileges, after the parts twice): 2/2 rows equal; nothing else is granted
+--- removal-word grep (comments and strings included):
+none
+--- non-kafaa DDL/DML targets:
+      1 update your   (an English phrase inside a refusal message string in kafaa_sb_message, not a statement)
+(end)
+--- ALTER statements (kafaa_* tables only):
+      4     alter table kafaa_automations
+      1     alter table kafaa_consortium_cohorts
+      1     alter table kafaa_consortium_visits
+      2     alter table kafaa_external_certs
+      1     alter table kafaa_grant_applications
+      1     alter table kafaa_grant_rounds
+      1     alter table kafaa_learning_balances
+      2     alter table kafaa_study_time_requests
+      4     alter table kafaa_transition_plans
+      1 alter table kafaa_automation_adoptions
+      1 alter table kafaa_automations
+      1 alter table kafaa_consortium_cohorts
+      1 alter table kafaa_consortium_members
+      1 alter table kafaa_consortium_visits
+      1 alter table kafaa_grant_applications
+      1 alter table kafaa_grant_rounds
+      2 alter table kafaa_team_skill_targets
+      1 alter table kafaa_transition_plans

@@ -68,4 +68,47 @@ export const TABLES_M34: Record<string, TableDef> = {
     },
     read: [{ res: 'own_profile', person: 'person_id' }, { res: 'audit_log' }], write: { mode: 'rpc', res: 'recognition' },
   },
+
+  // ───────────── FS wave I · E1 · FS78 Learning balance and protected study time (SkillsFuture Level-Up, UK LLE). Rules:
+  // src/modules/m34/balance.ts (SQL kafaa_lb_* / kafaa_sb_*). SIMULATED. A balance is read by its person (recognition Own), the line
+  // manager in scope (recognition Scope) and HR (workforce_strategy R/W/A: HR analyst, HR director, admin, auditors); `open_read` is
+  // always false, so recognition R/W/A (RPL assessors) does not open other people's balances. Written only by rpc.requestStudyTime /
+  // decideStudyTime (stored used / pending / remaining = balanceOf() over the requests).
+  learning_balances: {
+    module: 'M34', label: 'Annual learning balance (SIMULATED): base grant plus a mid-career top-up from years of service, in hours and credits (1 credit = 10 hours); grants minus approved use (FS78)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', person_name: 'text =\'\'', person_name_ar: 'text =\'\'', entity_id: 'text?', job_family_id: 'text?', year: 'int idx', base_hours: 'int =0', topup_hours: 'int =0', topup_basis: 'text enum:mid_career|none =\'none\'',
+      service_years: 'int =0', granted_hours: 'int =0', used_hours: 'int =0', pending_hours: 'int =0', remaining_hours: 'int =0',
+      simulated: 'bool =true', open_read: 'bool =false', refreshed_at: 'ts =now', created_at: 'ts =now',
+    },
+    read: [{ res: 'recognition', person: 'person_id', where: 'open_read' }, { res: 'workforce_strategy' }], write: { mode: 'rpc', res: 'recognition' },
+  },
+  study_time_requests: {
+    module: 'M34', label: 'Protected study hours for one outcome-gated catalogue item (FS18): requested by the person, decided by the line manager in scope or the HR authority (maker-checker, audited) (FS78)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', person_name: 'text =\'\'', person_name_ar: 'text =\'\'', line_manager_id: 'text? ref:people idx', line_manager_name: 'text =\'\'', year: 'int idx',
+      resource_id: 'text ref:external_resources idx', resource_title_en: 'text =\'\'', resource_title_ar: 'text =\'\'', hours: 'int', credits: 'num =0',
+      starts_on: 'date', ends_on: 'date', pattern: 'text enum:release_days|shift_blocks|non_shift_week', reason: 'text =\'\'',
+      status: 'text enum:requested|approved|declined|withdrawn =\'requested\' idx', decided_by: 'text?', decided_role: 'text?', decided_on: 'date?', decision_note: 'text?',
+      history: 'json =[]', open_read: 'bool =false', created_at: 'ts =now', updated_at: 'ts =now',
+    },
+    read: [{ res: 'recognition', person: 'person_id', where: 'open_read' }, { res: 'recognition', person: 'line_manager_id', where: 'open_read' }, { res: 'workforce_strategy' }],
+    write: { mode: 'rpc', res: 'recognition' },
+  },
+  // ───────────── FS wave I · E1 · FS79 Verified import of external certificates (corporate reskilling, skills-platform mechanics,
+  // Open Badges 3.0). Rules: src/modules/m34/extcerts.ts (SQL kafaa_xc_*). Read by the holder (recognition Own), the line manager in
+  // scope, and verifiers / auditors (recognition R/W/A). Written only by rpc.submitExternalCert / verifyExternalCert; only a verified
+  // certificate writes F01 evidence (kind credential, ref_table external_certs), and only through reviewed FS08 crosswalk rows.
+  external_certs: {
+    module: 'M34', label: 'External certificates (university, professional body, vendor, online platform, ENEC): metadata, https verification link, crosswalk entries, trust tier and verification (FS79)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', person_name: 'text =\'\'', title: 'text', issuer: 'text',
+      issuer_kind: 'text enum:enec|university|professional_body|vendor|online_platform', accreditation_ref: 'text?', credential_ref: 'text', issued_on: 'date', expires_on: 'date?',
+      verification_url: 'text', resource_id: 'text?', alignment_ids: 'text[] =[]', levels: 'json ={}', note: 'text?',
+      status: 'text enum:submitted|verified|rejected|withdrawn|revoked =\'submitted\' idx', tier: 'text? enum:enec_assessed|accredited|vendor_self_serve',
+      method: 'text? enum:issuer_url|issuer_registry|enec_assessment|document_check', verified_by: 'text?', verified_role: 'text?', verified_on: 'date?', decision_note: 'text?',
+      mapped: 'json =[]', evidence_ids: 'text[] =[]', history: 'json =[]', created_at: 'ts =now', updated_at: 'ts =now',
+    },
+    read: [{ res: 'recognition', person: 'person_id' }], write: { mode: 'rpc', res: 'recognition' },
+  },
 };

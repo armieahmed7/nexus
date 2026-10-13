@@ -5,6 +5,7 @@
  * the F04/F32 status rules, so node scripts load it directly.
  *
  *   items         what a person can put in a record: micro-credential awards (active or renewal due), F04 badges (active),
+ *                 verified FS79 external certificates (not expired; the status is the trust tier, wave I integration),
  *                 qualification mirror lines (qualified / not qualified only) and skills with their provenance badge. Never a
  *                 security standard, a security skill, a medical flag or a date that is not on a public credential.
  *   bundle        a 1EdTech CLR 2.0-shaped ClrCredential: the signed Open Badges 3.0 credentials as they were issued, plus a Kafa'a
@@ -16,6 +17,7 @@
  */
 import { CONTEXTS, ISSUER_ID, ISSUER_NAME, ISSUER_URL } from './issuer.ts';
 import { awardView } from './microcred.ts';
+import { trustTier } from '../m34/extcerts.ts'; // FS79 -> FS32 (wave I integration): the trust tier of a verified external certificate
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = any;
@@ -26,9 +28,11 @@ export const CLR_CONTEXT = 'https://purl.imsglobal.org/spec/clr/v2p0/context-2.0
 export const VC_CONTEXT = CONTEXTS[0];
 export const OB_CONTEXT = CONTEXTS[1];
 export const RECORD_NOTICE_EN = "Kafa'a learner record (internal recognition). Qualification lines mirror the licensee's systems as qualified or not qualified only; Kafa'a is not an authority and nothing here is a FANR certificate or licence.";
-export const ITEM_KINDS = ['mc', 'badge', 'qual', 'skill'] as const;
+export const ITEM_KINDS = ['mc', 'badge', 'xcert', 'qual', 'skill'] as const; // xcert: FS79 verified external certificate (wave I integration)
 export type ItemKind = (typeof ITEM_KINDS)[number];
-const KIND_ORDER: Record<string, number> = { mc: 1, badge: 2, qual: 3, skill: 4 };
+const KIND_ORDER: Record<string, number> = { mc: 1, badge: 2, xcert: 3, qual: 4, skill: 5 };
+/** English trust-tier names used inside a shared record statement (the pages show the localised TrustTierBadge). Same text in SQL. */
+export const XCERT_TIER_EN: Record<string, string> = { enec_assessed: 'ENEC-assessed', accredited: 'accredited third party', vendor_self_serve: 'vendor self-serve' };
 export const SHARE_RULES = { maxItems: 30, minDays: 1, maxDays: 90, labelMin: 3, labelMax: 80, maxActive: 10, verifyPerTokenPerMin: 20, verifyPerMin: 600, reasonMax: 300 } as const;
 
 /** Refusal and result messages: identical in SQL. */
@@ -62,10 +66,12 @@ export interface RecordWorld {
   person_skills: Row[];
   skills: Row[];
   competencies: Row[];
+  /** FS79 (wave I integration): external certificates; only the person's verified, unexpired ones become record items. */
+  external_certs?: Row[];
 }
 export interface RecordItem {
   ref: string; kind: ItemKind; id: string; code: string; title_en: string; title_ar: string;
-  /** mc/badge: active | renewal_due; qual: qualified | not_qualified; skill: the provenance basis. */
+  /** mc/badge: active | renewal_due; xcert: the trust tier (enec_assessed | accredited | vendor_self_serve); qual: qualified | not_qualified; skill: the provenance basis. */
   status: string;
   level: number | null;
   band: string | null;
@@ -104,6 +110,10 @@ export function recordItems(w: RecordWorld): RecordItem[] {
     const ach = b.achievement ?? {};
     out.push({ ref: `badge:${b.id}`, kind: 'badge', id: b.id, code: String(ach.code ?? ''), title_en: String(ach.name_en ?? ''), title_ar: String(ach.name_ar ?? ''), status: 'active', level: null, band: null, date: d10(b.issued_on) });
   }
+  for (const c of w.external_certs ?? []) { // FS79 -> FS32 (wave I integration) = the xcert branch of kafaa_lr_items
+    if (c.person_id !== w.person || c.status !== 'verified' || (c.expires_on && String(c.expires_on).slice(0, 10) < w.today)) continue;
+    out.push({ ref: `xcert:${c.id}`, kind: 'xcert', id: c.id, code: String(c.credential_ref ?? ''), title_en: String(c.title ?? ''), title_ar: String(c.title ?? ''), status: trustTier(c), level: null, band: null, date: d10(c.issued_on) });
+  }
   const stds = new Map(w.qual_standards.map((s) => [s.id, s]));
   for (const r of w.qual_records) {
     const s = stds.get(r.standard_id);
@@ -123,8 +133,9 @@ export function recordItems(w: RecordWorld): RecordItem[] {
 // ───────────── the CLR-shaped bundle
 export interface BundleMeta { id: string; issued_on: string; valid_until: string | null }
 const issuer = () => ({ id: ISSUER_ID, type: ['Profile'], name: ISSUER_NAME, url: ISSUER_URL });
-/** A Kafa'a record statement (unsigned AchievementCredential) for one mirror line or skill. */
-function statement(meta: BundleMeta, initials: string, it: RecordItem): Row {
+/** A Kafa'a record statement (unsigned AchievementCredential) for one mirror line, skill or verified external certificate. */
+function statement(meta: BundleMeta, initials: string, it: RecordItem, cert?: Row): Row {
+  if (it.kind === 'xcert') return xcertStatement(meta, initials, it, cert);
   const qual = it.kind === 'qual';
   return {
     '@context': [VC_CONTEXT, OB_CONTEXT],
@@ -149,6 +160,34 @@ function statement(meta: BundleMeta, initials: string, it: RecordItem): Row {
     },
   };
 }
+/** FS79 -> FS32 (wave I integration): the record statement for a verified external certificate, with its trust tier (= kafaa_lr_bundle). */
+function xcertStatement(meta: BundleMeta, initials: string, it: RecordItem, cert?: Row): Row {
+  const issuerName = String(cert?.issuer ?? '');
+  return {
+    '@context': [VC_CONTEXT, OB_CONTEXT],
+    id: `urn:kafaa:clr:${meta.id}:${it.kind}:${it.id}`,
+    type: ['VerifiableCredential', 'AchievementCredential'],
+    name: it.title_en,
+    issuer: issuer(),
+    validFrom: `${meta.issued_on}T00:00:00Z`,
+    credentialSubject: {
+      type: ['AchievementSubject'],
+      holderInitials: initials,
+      achievement: {
+        id: `urn:kafaa:external-certificate:${it.id}`,
+        type: ['Achievement'],
+        achievementType: 'Certificate',
+        humanCode: it.code,
+        name: it.title_en,
+        nameAr: it.title_ar,
+        criteria: { narrative: `External certificate issued by ${issuerName}, verified for Kafa'a with the issuer (trust tier: ${XCERT_TIER_EN[it.status] ?? it.status}). Kafa'a is not the issuer and not an authority.` },
+      },
+      kafaaTrustTier: it.status,
+      kafaaIssuer: issuerName,
+    },
+  };
+}
+
 /**
  * The CLR 2.0-shaped ClrCredential for the chosen items (only those still shareable today, in record order). Signed credentials are
  * embedded exactly as issued. Same as kafaa_lr_bundle(person, refs, today, id, valid_until).
@@ -159,10 +198,11 @@ export function buildBundle(w: RecordWorld, refs: string[], meta: BundleMeta): R
   const vcs: Row[] = [];
   const awards = new Map(w.microcred_awards.map((a) => [a.id, a]));
   const badges = new Map(w.badges.map((b) => [b.id, b]));
+  const certs = new Map((w.external_certs ?? []).map((c) => [c.id, c]));
   for (const it of items) {
     if (it.kind === 'mc') vcs.push(awards.get(it.id)?.credential ?? {});
     else if (it.kind === 'badge') vcs.push(badges.get(it.id)?.credential ?? {});
-    else vcs.push(statement(meta, w.initials, it));
+    else vcs.push(statement(meta, w.initials, it, certs.get(it.id)));
   }
   // stacked credential -> shared component (both shared): isParentOf
   const assoc: Row[] = [];

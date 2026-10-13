@@ -27,7 +27,7 @@ export default function TeamSkillsPage() {
   const q = useQuery(['team_skill_targets', 'person_skills', 'skill_evidence'], () => repo.rpc.teamCoverage(group), [group]);
   const courses = useQuery('courses', () => repo.list('courses') as Promise<Row[]>, []);
   return (
-    <Page wide title={t('m17.routes.team-skills.title')} intro={t('m17.tm.intro')} actions={<L to="/team/skills/validate" className="btn-outline btn-sm no-underline">{t('m17.tm.toValidate')}</L>}>
+    <Page wide title={t('m17.routes.team-skills.title')} intro={t('m17.tm.intro')} actions={<div className="flex flex-wrap gap-2"><L to="/team/skills/validate" className="btn-outline btn-sm no-underline">{t('m17.tm.toValidate')}</L><L to="/team/skills/future" className="btn-ghost btn-sm no-underline" data-testid="m17-tm-to-future">{t('m17.tt.fromHeatmap')}</L></div>}>
       <Async state={{ data: q.data && cat.data ? { cov: q.data, cat: cat.data, courses: courses.data ?? [] } : undefined, loading: q.loading || cat.loading, error: q.error ?? cat.error, reload: q.reload }}>
         {(d) => <Team cov={d.cov} cat={d.cat} courses={d.courses} onGroup={setGroup} />}
       </Async>

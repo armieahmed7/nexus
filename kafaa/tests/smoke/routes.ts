@@ -27,7 +27,8 @@ export function loadRoutes(root = 'src/modules'): SmokeRoute[] {
     }
     const re = /\{\s*id:\s*'([^']+)',\s*path:\s*'([^']+)',\s*module:\s*'([^']+)',\s*zone:\s*'[^']+',\s*guard:\s*(\{[^}]*\}[^}]*\}|\{[^}]*\})/g;
     let m: RegExpExecArray | null;
-    while ((m = re.exec(src))) out.push({ id: m[1], path: m[2], module: m[3], guard: m[4] });
+    // Inline guards can carry TS casts too (`res: 'recognition' as const`, FS78 M34): drop them so the guard text evaluates as JS (FS wave I QA).
+    while ((m = re.exec(src))) out.push({ id: m[1], path: m[2], module: m[3], guard: m[4].replace(/ as const/g, '') });
   }
   return out;
 }

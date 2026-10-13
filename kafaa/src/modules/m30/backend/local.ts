@@ -7,6 +7,7 @@ import { nowTs } from '../../../data/audit';
 import { todayIso } from '../../../domain/rules';
 import { RT_MSG, checkTransformation, exposureAggregate, isPathOnly, transformRole, transformationOverview, type RtInput } from '../transform';
 import type { M30Rpc, PublishResult, RoleTransformationView, RtDraft } from './rpc';
+import { makeLocalFs81 } from './local.fs81'; // FS81 (FS wave I · E3)
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 const str = (s: unknown) => (typeof s === 'string' ? s.trim() : '');
@@ -43,6 +44,7 @@ export function makeLocalM30(b: LocalBackend, h: LocalRpcHelpers): M30Rpc {
   };
 
   return {
+    ...makeLocalFs81(b, h),
     async roleTransformation(roleId = null, horizon = '2030') {
       await b.whenReady();
       if (!me() || !anyGrant()) return null;

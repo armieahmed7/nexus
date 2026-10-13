@@ -790,7 +790,8 @@
       "definitions": "Definitions",
       "taskFuture": "Task exposure (FS06)"
     },
-    "notOpen": "not open to your role"
+    "notOpen": "not open to your role",
+    "toInventory": "Organisation skills inventory"
   },
   "au": {
     "tornadoTag": "AI and automation · FS52",

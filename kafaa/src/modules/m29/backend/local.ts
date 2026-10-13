@@ -16,6 +16,7 @@ import {
   type FitArea, type FitItem, type FitResponse, type ItemInput,
 } from '../fitness';
 import { makeLocalFs36 } from './local.fs36';
+import { makeLocalFs80 } from './local.fs80';
 import type { AiFluencyStats, AiFluencyView, FitnessContext, FitnessItemView, FitnessResult, FitnessStep, M29Rpc } from './rpc';
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -69,6 +70,7 @@ export function makeLocalM29(b: LocalBackend, h: LocalRpcHelpers): M29Rpc {
 
   return {
     ...makeLocalFs36(b, h), // FS36/FS37 (wave D E5)
+    ...makeLocalFs80(b, h), // FS80 (wave I E2)
     async aiFluency() {
       await b.whenReady();
       const pid = me();

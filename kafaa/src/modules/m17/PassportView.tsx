@@ -18,6 +18,8 @@ import { BandChip, IntervalBar, SourceRecordView } from './confidenceUi'; // FS0
 import { sourceRecord, type RecordRow } from './decay'; // FS03
 import { AddGoalButton } from './goalsUi'; // FS33
 import { useSession } from '../../auth/session';
+import { trustTier, type CertLite, type TrustTier } from '../m34/extcerts'; // FS79 (wave I integration)
+import { TrustTierBadge } from '../m34/fs91ui';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = any;
@@ -65,7 +67,7 @@ export type PassportVM = ReturnType<typeof usePassportModel>;
 export function useEvidenceLabel(d: PassportData) {
   const t = useT();
   const pick = usePick();
-  return (e: Row): { title: string; system: string; ref: string } => {
+  return (e: Row): { title: string; system: string; ref: string; tier?: TrustTier } => {
     const course = (id: string | undefined) => d.courses.find((c) => c.id === id);
     if (e.kind === 'qual') {
       const r = d.quals.find((q) => q.id === e.ref_id);
@@ -92,6 +94,14 @@ export function useEvidenceLabel(d: PassportData) {
       return { title: `${t('m17.evidence.kind.assessment')} ${c ? `${c.code} · ${pick(c, 'title')}` : ''}`, system: t('m17.evidence.sys.assess'), ref: e.ref_id };
     }
     if (e.kind === 'jpm') return { title: t('m17.evidence.kind.jpm'), system: t('m17.evidence.sys.jpm'), ref: e.ref_id };
+    // FS wave I integration: evidence written by the wave-I features
+    if (e.kind === 'credential' && e.ref_table === 'external_certs') { // FS79: a verified external certificate, with its trust tier
+      const c = (d.xcerts ?? []).find((x) => x.id === e.ref_id);
+      return { title: `${t('m17.evidence.kind.xcert')}${c ? ` · ${c.title}` : ''}`, system: c?.issuer ?? t('m17.evidence.sys.recognition'), ref: c?.credential_ref ?? e.ref_id, tier: c ? trustTier(c as CertLite) : undefined };
+    }
+    if (e.kind === 'ojt' && e.ref_table === 'automations') return { title: t('m17.evidence.kind.automation'), system: t('m17.evidence.sys.gallery'), ref: e.ref_id }; // FS80: builder credit (approved and adopted)
+    if (e.kind === 'rating' && e.ref_table === 'grant_applications') return { title: t('m36.gr.evidenceLabel'), system: t('m17.evidence.sys.grants'), ref: e.ref_id }; // FS82: accepted micro-grant output
+    if (e.kind === 'ojt' && e.ref_table === 'consortium_visits') return { title: t('m36.cc.evidenceLabel'), system: t('m17.evidence.sys.consortium'), ref: e.ref_id }; // FS83: host-confirmed consortium visit
     if (e.kind === 'credential' && e.ref_table === 'programme_alignments') return { title: t('m10.ua.evidenceLabel'), system: t('m10.ua.evidenceSystem'), ref: e.ref_id }; // FS66: graduate of an endorsed university programme, validated at hire (wave G integration)
     if (e.kind === 'credential' && e.ref_table === 'microcred_awards') { // FS03: back-filled micro-credential evidence
       const a = (d.mcAwards ?? []).find((x) => x.id === e.ref_id);
@@ -275,7 +285,7 @@ export function PassportView({ d, readOnly = false }: { d: PassportData; readOnl
                     <div className="mt-1.5 flex flex-wrap items-center gap-1.5 text-[12.5px] text-ink-2">
                       <BasisChip basis={s.item!.basis} />
                       {s.item!.roles.slice(0, 3).map((r) => (
-                        <span key={r.id} className="chip border-line bg-sunken text-ink-2">
+                        <span key={r.id} className="chip max-w-full whitespace-normal border-line bg-sunken text-start text-ink-2">
                           {pick(d.roles.find((x) => x.id === r.id), 'title')} · {t('m17.strengths.needs', { n: f.num(r.need) })}
                         </span>
                       ))}
@@ -527,7 +537,7 @@ function EvidenceDrawer({ d, line, onClose, readOnly = false }: { d: PassportDat
               <li key={e.id} className={`rounded-card border p-3 ${i === 0 ? 'border-accent/40 bg-accent-soft/40' : 'border-line'}`} data-testid="m17-evidence-row" data-kind={e.kind}>
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <span className="font-semibold">{x.title}</span>
-                  <BasisChip basis={e.basis} />
+                  <span className="flex flex-wrap items-center gap-1.5">{x.tier && <TrustTierBadge tier={x.tier} />}<BasisChip basis={e.basis} /></span>
                 </div>
                 <div className="mt-1 text-[12.5px] text-ink-2">{t('m17.evidence.recorded', { system: x.system, date: f.date(e.observed_on) })}</div>
                 <div className="mt-1 flex flex-wrap items-center gap-2 text-[12px] text-ink-3">
