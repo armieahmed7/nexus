@@ -33,7 +33,11 @@
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()"
 
-# Content-hashed build output never changes under the same name: cache for a year. Missing chunks still 404 through _redirects.
+# Content-hashed build output never changes under the same name: cache for a year. Missing chunks still 404 through _redirects
+# (the 404 carries the same header, since Netlify matches headers on the request path: after a rollback, a browser that asked for a
+# chunk name while it did not exist may keep that 404 until it clears its cache; chunk names are content hashes, so this needs a rollback).
+# Netlify's deploy-preview drawer (/.netlify/scripts/cdp, previews only) frames app.netlify.com and asks for camera/microphone: the CSP
+# and Permissions-Policy refuse that on previews; production has no drawer.
 [[headers]]
   for = "/kafaa/assets/*"
   [headers.values]

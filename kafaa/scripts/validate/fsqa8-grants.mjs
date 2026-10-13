@@ -22,7 +22,7 @@
 // explicit grant is documented; every documented exception is still granted) read the explicit grants only and stay schema-wide.
 //
 // Documented exceptions (the earlier-wave convention):
-//   ANON_WRITE  kafaa_contact_requests INSERT: the M12 public contact form (anonInsert in src/data/schema.ts).
+//   ANON_WRITE  none since audit 2026-10-13 (the M12 contact form sends through kafaa_submit_contact; it was kafaa_contact_requests INSERT).
 //   AUTH_WRITE_COLUMNS  kafaa_contact_requests UPDATE (status) to authenticated: staff mark a request routed / closed
 //               (src/modules/m16/AdminPage.tsx); granted by kafaa_audit_contact_requests, RLS (kafaa_update) decides who may.
 //   AUTH_WRITE  the tables some migration explicitly grants INSERT/UPDATE to authenticated: the generated RLS file
@@ -65,9 +65,17 @@ alter default privileges in schema public grant all on sequences to anon, authen
 alter default privileges in schema public grant all on functions to anon, authenticated;
 `;
 
-export const ANON_WRITE = { kafaa_contact_requests: ['INSERT'] };
+// audit 2026-10-13: the contact form sends through kafaa_submit_contact, so anon holds no write at all (was kafaa_contact_requests INSERT)
+export const ANON_WRITE = {};
 /** Column-level client writes: { table: { PRIV: [columns] } } for authenticated (table-level privilege not held). */
-export const AUTH_WRITE_COLUMNS = { kafaa_contact_requests: { UPDATE: ['status'] } };
+const PEOPLE_COLS = ['id', 'persona_id', 'display_name', 'display_name_ar', 'initials', 'kind', 'entity_id', 'org_id', 'job_role_id', 'job_family_id', 'team_id', 'crew', 'unit',
+  'level', 'nationality_flag', 'gender', 'language', 'digits', 'hire_date', 'status', 'manager_id', 'synthetic', 'notes'];
+// audit 2026-10-13 (20261013100005_kafaa_audit2_people_scholars.sql): kafaa_people writes are column grants; persona binding, status and
+// organisation are not writable by signed-in users (no INSERT of persona_id; no UPDATE of id, persona_id, status, org_id)
+export const AUTH_WRITE_COLUMNS = {
+  kafaa_contact_requests: { UPDATE: ['status'] },
+  kafaa_people: { INSERT: PEOPLE_COLS.filter((c) => c !== 'persona_id'), UPDATE: PEOPLE_COLS.filter((c) => !['id', 'persona_id', 'status', 'org_id'].includes(c)) },
+};
 export const AUTH_WRITE = Object.fromEntries([
   'kafaa_adv_skills', 'kafaa_adv_technologies', 'kafaa_adv_tracks', 'kafaa_assessment_forms', 'kafaa_benchmarks',
   'kafaa_blueprints', 'kafaa_career_paths', 'kafaa_career_targets', 'kafaa_competencies', 'kafaa_consents',
@@ -77,7 +85,7 @@ export const AUTH_WRITE = Object.fromEntries([
   'kafaa_feature_flags', 'kafaa_future_interest', 'kafaa_future_roles', 'kafaa_future_skills', 'kafaa_glossary', 'kafaa_hu_tools',
   'kafaa_integrations', 'kafaa_internships', 'kafaa_job_families', 'kafaa_job_roles', 'kafaa_jpms', 'kafaa_learning_goals',
   'kafaa_licence_candidates', 'kafaa_licence_programmes', 'kafaa_mentoring_requests', 'kafaa_mentors', 'kafaa_notifications',
-  'kafaa_oe_lessons', 'kafaa_people', 'kafaa_plan_activities', 'kafaa_proficiency_levels', 'kafaa_programmes',
+  'kafaa_oe_lessons', 'kafaa_plan_activities', 'kafaa_proficiency_levels', 'kafaa_programmes',
   'kafaa_refresh_prefs', 'kafaa_refusal_policies', 'kafaa_reporting_obligations', 'kafaa_requal_cycles', 'kafaa_requal_rules',
   'kafaa_roadmaps', 'kafaa_role_competencies', 'kafaa_role_responsibilities', 'kafaa_scenarios', 'kafaa_scholar_cohorts',
   'kafaa_scholars', 'kafaa_sessions', 'kafaa_skill_bridges', 'kafaa_skills', 'kafaa_sources', 'kafaa_supplier_readiness',
@@ -144,7 +152,7 @@ export default async function fsqa8Grants({ ok }) {
   ok(L.size >= 360, `live-like grants: ${L.size} public.kafaa_* relations loaded on top of the Supabase default privileges`);
   ok(inW.length >= 60 && inW.length === W.size, `scope: ${inW.length} public.kafaa_* relations created by migrations from ${WAVE_FROM || 'the first one (every relation; audit-fixes PR #5 merged)'}${WAVE_FROM ? ' (waves E-I)' : ''}; ${L.size - inW.length} earlier ones are audit-only`);
   const v = (await violations(live)).filter((x) => W.has(x.table));
-  for (const [role, label] of [['anon', `anon holds SELECT only on every ${SCOPE}public.kafaa_* relation (exception: kafaa_contact_requests INSERT)`],
+  for (const [role, label] of [['anon', `anon holds SELECT only on every ${SCOPE}public.kafaa_* relation (no exception since audit 2026-10-13)`],
     ['authenticated', `authenticated holds SELECT plus only the documented INSERT/UPDATE grants on every ${SCOPE}public.kafaa_* relation`],
     ['public', `PUBLIC holds no privilege on any ${SCOPE}public.kafaa_* relation`]]) {
     const mine = v.filter((x) => x.role === role);
