@@ -9,7 +9,7 @@ grant, policy or ENEC NEXUS row is changed. `kafaa_audit_events` and `kafaa_xapi
 |---|---|---|---|
 | 01 | `kafaa_cleanup_dup_enrolments` | 3 kafaa_enrolments rows set to `cancelled` | applied 2026-10-13 10:54 UTC (version 20261013105442) |
 | 02 | `kafaa_cleanup_fs31_award_notices` | 102 kafaa_notifications rows inserted | applied 2026-10-13 10:57 UTC (version 20261013105732) |
-| 03 | `kafaa_cleanup_e2e_applications` | 37 kafaa_application_events + 15 kafaa_applications rows deleted | NOT applied: apply_migration returned `cancelled` (destructive statement needs confirmation) |
+| 03 | `kafaa_cleanup_e2e_applications` | 37 kafaa_application_events + 15 kafaa_applications rows deleted | applied by hand in the Supabase SQL editor by the owner 2026-10-13 ~12:49 UTC (not via apply_migration, so no schema_migrations row); verified 12:51 UTC: applications 237→222, events 546→509, 0 `app-`+32-hex ids left, withdrawn gpo 0 / energy-pioneers 1, 0 orphan events, the 37 kafaa_audit_events rows still present, audit chain intact (15764 rows, 0 breaks) |
 | 04 | `kafaa_cleanup_history_repair` | 12 supabase_migrations.schema_migrations rows inserted | applied 2026-10-13 10:59 UTC (version 20261013105914) |
 
 ## 01 · duplicate open enrolments
