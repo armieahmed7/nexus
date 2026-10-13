@@ -5,12 +5,13 @@
 -- Since FS75 (2026-10-12) the approvals of a training manager gained two pre-arrival checks dated 48-49 days ahead (FS69) and a
 -- fellowship sign-off (FS67). Ordered by days, the two future-dated checks came first and, with the cap of 3 approvals, pushed out a
 -- plant visit to confirm and role-play reviews that are owed now. From the FS75 release day on (the digest day = due_on - days >=
--- 2026-10-12, the same gate as FS75_FROM), the order key puts every approval that is owed (no date, due today or overdue) before every
--- approval dated in the future: a future-dated approval sorts after the undated ones, by its days. Earlier days keep the old order, so
--- the seeded W38-W41 digests (records) are unchanged. Other kinds, the caps and the 7-item limit are unchanged.
+-- 2026-10-12, the same gate as FS75_FROM), the order key puts every approval that is owed (no date, overdue, or due within 14 days,
+-- APPROVAL_SOON_DAYS) before every approval due further ahead, which sorts after the undated ones by its days; within 14 days of its
+-- date such an approval ranks by days again, so it is never starved until it lapses. Earlier days keep the old order, so the seeded
+-- W38-W41 digests (records) are unchanged. Other kinds, the caps and the 7-item limit are unchanged.
 create or replace function kafaa_dg_compose(p_items jsonb, p_muted text[]) returns jsonb language sql immutable set search_path = public as $$
   with x as (
-    select e, e->>'kind' as k, (e->>'urgency')::int as u, case when e->>'kind' = 'approval' and (e->>'days')::int > 0 and (e->>'due_on')::date - (e->>'days')::int >= date '2026-10-12' then 100000 + (e->>'days')::int
+    select e, e->>'kind' as k, (e->>'urgency')::int as u, case when e->>'kind' = 'approval' and (e->>'days')::int > 14 and (e->>'due_on')::date - (e->>'days')::int >= date '2026-10-12' then 100000 + (e->>'days')::int
              else coalesce((e->>'days')::int, 100000) end as dd,
            case e->>'kind' when 'expiry' then 1 when 'approval' then 2 when 'coach' then 3 when 'opportunity' then 4 when 'mentoring' then 5 when 'conversation' then 6 when 'refresher' then 7 else 8 end as kr,
            coalesce((e->>'score')::float8, 0) as sc, e->>'id' as id

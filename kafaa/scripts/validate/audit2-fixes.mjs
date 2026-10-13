@@ -186,7 +186,7 @@ export default async function audit2Checks({ db, as, one, ok, uid }) {
     const people = (await q(`select id from kafaa_people where status = 'active' order by id`)).map((x) => x.id);
     let diffs = [], moved = 0;
     const canon = (xs) => JSON.stringify(xs.map((i) => i.id));
-    for (const day of ['2026-10-11', '2026-10-13', '2026-10-19']) {
+    for (const day of ['2026-10-11', '2026-10-13', '2026-10-19', '2026-11-23']) {
       for (const pid of people) {
         const cands = (await q1('select kafaa_dg_gather($1, $2::date, $3::jsonb) r', [pid, day, '{}'])).r;
         if (!cands.some((i) => i.kind === 'approval')) continue;
@@ -197,10 +197,12 @@ export default async function audit2Checks({ db, as, one, ok, uid }) {
         if (old !== ts.filter((i) => i.kind === 'approval').map((i) => i.id).join()) { moved++; if (day < '2026-10-12') diffs.push(`${pid}@${day} changed before the release`); }
       }
     }
-    ok(diffs.length === 0, `digest: SQL kafaa_dg_compose = TS composeDigest for every active person with approvals on 2026-10-11, 13 and 19; nothing changes before 2026-10-12 (${moved} approval lists reordered later)${diffs.length ? `; diffs ${diffs.slice(0, 4)}` : ''}`);
+    ok(diffs.length === 0, `digest: SQL kafaa_dg_compose = TS composeDigest for every active person with approvals on 2026-10-11, 10-13, 10-19 and 11-23; nothing changes before 2026-10-12 (${moved} approval lists reordered later)${diffs.length ? `; diffs ${diffs.slice(0, 4)}` : ''}`);
     const tm = (await q1(`select kafaa_dg_compute('p-training-mgr', '2026-10-13'::date, '{}'::jsonb) r`)).r.filter((i) => i.kind === 'approval');
     ok(tm.some((i) => i.ref_table === 'plant_visits') && tm.some((i) => i.ref_table === 'roleplay_sessions') && !tm.some((i) => i.ref_table === 'prearrival_shares'),
       `the training manager's 2026-10-13 digest keeps the owed plant visit and role-play review ahead of pre-arrival checks due in weeks (${tm.map((i) => i.ref_table)})`);
+    const tm2 = (await q1(`select kafaa_dg_compute('p-training-mgr', '2026-11-23'::date, '{}'::jsonb) r`)).r.filter((i) => i.kind === 'approval');
+    ok(tm2.some((i) => i.ref_table === 'prearrival_shares' && i.days <= 14), `within 14 days of mobilisation the pre-arrival check ranks by days again and is in the digest (2026-11-23: ${tm2.map((i) => `${i.ref_table}:${i.days}`)})`);
 
     // ── 7. re-apply
     const apps0 = Number((await q1(`select count(*)::int n from kafaa_applications`)).n);

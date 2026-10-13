@@ -13,7 +13,7 @@ UPDATE of existing rows) is a separate part in `data_update/`, to apply only wit
 Dry run: `cd kafaa && node scripts/verify-audit2-bundle.mjs origin/main` (PGlite, Supabase default privileges, every migration and the
 seed of `main` at `28d0456`, then the 2026-10-13 live clean-up of the three duplicate enrolments). It applies every part twice and the
 data part twice, compares the md5s and counts below, checks the NEXUS fingerprint is unchanged and runs the behaviour checks of
-`kafaa/scripts/validate/audit2-fixes.mjs` (62 checks). Result on 2026-10-13: all checks passed. The "before" numbers of the dry run are
+`kafaa/scripts/validate/audit2-fixes.mjs` (64 checks). Result on 2026-10-13: all checks passed. The "before" numbers of the dry run are
 the numbers live returned on 2026-10-13 (read-only queries below).
 
 ## 0. Before you start (all read-only)
@@ -54,7 +54,7 @@ select person_id, course_id, string_agg(id || ' ' || status, ', ') from kafaa_en
 | 3 | `kafaa_audit2_verify_links_p1` | `20261013100003_kafaa_audit2_verify_links.sql` | `kafaa_verify_badge` / `_microcred` / `_record_share`: rate limits counted in `kafaa_rate_limits` (20 a minute per link, **60 a minute per client IP** across kinds, 600 a minute per kind); **one audit row per link, outcome and hour** instead of one per page view; helpers `kafaa_verify_limited` / `kafaa_verify_audit` / `kafaa_verify_refuse` (no API role). Same signatures and grants | 6 |
 | 4 | `kafaa_audit2_contact_rpc_p1` | `20261013100004_kafaa_audit2_contact_rpc.sql` | new `kafaa_submit_contact(p jsonb)` (SECURITY DEFINER, anon + authenticated): the part-04 bounds, mailbox derived from the topic, 5 requests per 10 minutes per client and 30 a minute in total; `kafaa_insert` policy on `kafaa_contact_requests` now admits admins only (users_roles W/A); **anon loses INSERT** on the table | 7 |
 | 5 | `kafaa_audit2_people_scholars_p1` | `20261013100005_kafaa_audit2_people_scholars.sql` | `kafaa_people`: authenticated INSERT/UPDATE become column grants (no UPDATE of `id`, `persona_id`, `status`, `org_id`; no INSERT of `persona_id`); `kafaa_scholars` insert/update policies lose the self branch (cohorts W/A only); drops the duplicate SELECT policy `kafaa_g3_read_university` on `kafaa_scholar_cohorts` (its rule is a branch of `kafaa_read`); `search_path = public` on `kafaa_mnt_trim` and `kafaa_mnt_ratings` | 8, 9, 20 |
-| 6 | `kafaa_audit2_digest_order_p1` | `20261013100006_kafaa_audit2_digest_order.sql` | `kafaa_dg_compose`: from 2026-10-12 an approval dated in the future sorts after the owed ones (undated, due or overdue); earlier days unchanged (seeded W38-W41 digests identical). SQL = TS (`dayKey` in `rules.ts`) | 4 |
+| 6 | `kafaa_audit2_digest_order_p1` | `20261013100006_kafaa_audit2_digest_order.sql` | `kafaa_dg_compose`: from 2026-10-12 an approval due more than 14 days ahead sorts after the owed ones (undated, overdue or due within 14 days), and ranks by days again inside 14 days; earlier days unchanged (seeded W38-W41 digests identical). SQL = TS (`dayKey` in `rules.ts`) | 4 |
 | 7 | `kafaa_audit2_reapply_p1` | `20261013100007_kafaa_audit2_reapply.sql` | `kafaa_submit_application`: re-applying after withdrawing reopens the caller's latest withdrawn application for the programme (same id, decision and deletion schedule cleared, new event "Application received again"), so the live E2E journeys stop adding rows | 5 |
 | 8 | `kafaa_audit2_role_notes_ar_p1` | `20261013100008_kafaa_audit2_role_notes_ar.sql` | `alter table kafaa_job_roles add column if not exists basis_note_ar text` (no values: see section 6) | 15 |
 | 9 | `kafaa_audit2_enrolment_open_unique_p1` | `20261013100009_kafaa_audit2_enrolment_open_unique.sql` | **last**: raises an exception (nothing changed) while any person holds two open enrolments of one course; otherwise creates the partial unique index `kafaa_enrolments_open_person_course_uniq` on `(person_id, course_id) where status in (assigned, requested, approved, waitlisted, enrolled, in_progress)` | 10 |
@@ -78,7 +78,7 @@ write one `contact.submit` audit row (plus the table trigger's row) per request;
 | `kafaa_verify_microcred(p_slug text)` | `8464b164cb263fcd6240ed05fab94783` |
 | `kafaa_verify_record_share(p_token text)` | `69fc6c84fc399dd1abb0afb89f9f8c20` |
 | `kafaa_submit_contact(p jsonb)` | `b92ab10f49735c14da752fbff2c9f663` |
-| `kafaa_dg_compose(p_items jsonb, p_muted text[])` | `0d928eff2cdbdf503bb51ca82238172f` |
+| `kafaa_dg_compose(p_items jsonb, p_muted text[])` | `c22518b0b999c41be0c7f63cb0b2ad21` |
 | `kafaa_submit_application(p_programme_id text, p_answers jsonb)` | `f7d534fad842a67d8dd31246f30ba552` |
 | `kafaa_mnt_trim(p text)` | `d173d66609191e910620e3df3bd46f12` |
 | `kafaa_mnt_ratings(p jsonb)` | `336276477fa2a6612d7f7017712ef447` |

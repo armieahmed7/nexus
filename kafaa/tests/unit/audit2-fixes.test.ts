@@ -40,6 +40,11 @@ describe('finding 4: owed approvals before future-dated ones (from FS75_FROM)', 
     expect(dayKey(items[0])).toBeGreaterThan(dayKey(items[3]));
     expect(composeDigest(items, { muted_kinds: [] }).map((i) => i.ref_table)).toEqual(['skill_checkins', 'fellowship_milestones', 'plant_visits']);
   });
+  it('within 14 days of its date a future-dated approval ranks by days again (never starved until it lapses)', () => {
+    const day = '2026-11-23';
+    const items = [ap('approval:prearrival_shares:a', 7, day), ap('approval:fellowship_milestones:f', null, day), ap('approval:plant_visits:v', null, day), ap('approval:roleplay_sessions:r', null, day)];
+    expect(composeDigest(items, { muted_kinds: [] }).map((i) => i.ref_table)).toEqual(['prearrival_shares', 'fellowship_milestones', 'plant_visits']);
+  });
   it('before 2026-10-12 the order is unchanged (dated before undated)', () => {
     const day = '2026-10-08';
     const items = [ap('approval:skill_checkins:a', 12, day), ap('approval:plant_visits:v', null, day)];

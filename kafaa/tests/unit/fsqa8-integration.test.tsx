@@ -207,11 +207,21 @@ describe('FS wave H · FS69 -> F36', () => {
       expect(`${i.title_en} ${i.meta_en}`).not.toContain(T.people.find((x) => x.id === pa.person_id)?.display_name ?? '§');
     }
     expect(T.people.some((p) => gatherDigest(T as never, p.id, '2026-10-11').some((i) => i.ref_table === 'prearrival_shares'))).toBe(false);
+    // audit 2026-10-13 (finding 4): on the release day the checks are seven weeks away, so the owed plant visit and role-play reviews
+    // keep the 3 approval places; within APPROVAL_SOON_DAYS (14) of mobilisation the check ranks by days again and is in the digest
     onDay();
     const b = await fresh('training-mgr');
     const r = await b.rpc.buildDigest();
     expect(r.ok).toBe(true);
-    expect(r.data!.items.some((i) => i.ref_table === 'prearrival_shares')).toBe(true);
+    const appr = r.data!.items.filter((i) => i.kind === 'approval').map((i) => i.ref_table);
+    expect(appr).toContain('plant_visits');
+    expect(appr).toContain('roleplay_sessions');
+    expect(appr).not.toContain('prearrival_shares');
+    onDay('2026-11-23T05:00:00Z');
+    const b2 = await fresh('training-mgr');
+    const r2 = await b2.rpc.buildDigest();
+    expect(r2.ok).toBe(true);
+    expect(r2.data!.items.some((i) => i.ref_table === 'prearrival_shares' && i.link === '/training/equivalency/prearrival/pa-calnoor01-mech')).toBe(true);
   }, 120000);
 });
 

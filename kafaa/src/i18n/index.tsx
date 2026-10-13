@@ -110,7 +110,8 @@ function storeLang(l: Lang) {
 /**
  * Audit 2026-10-13 (finding 14): the stored language was written but never read. A visitor who last chose Arabic and enters through an
  * unprefixed link (a bookmark, a shared link, NEXUS) is sent to the /ar twin of that page; the redirect only ever adds /ar, so it cannot
- * loop. An explicit choice of English (the language switch) stores 'en', so English sticks. Returns the new pathname or null.
+ * loop. The stored value changes only through the language switch, so an explicit choice of English sticks and merely opening an /ar
+ * link does not turn later English entries into Arabic. Returns the new pathname or null.
  */
 export function preferredLangPath(pathname: string, basename: string, stored: Lang | null): string | null {
   if (stored !== 'ar') return null;
@@ -151,8 +152,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     const html = document.documentElement;
     html.lang = lang;
     html.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    // an /ar page is an Arabic choice; an unprefixed page is not a choice (English is stored only by the language switch)
-    if (lang === 'ar') storeLang('ar');
+    // the stored language changes only through the language switch (setLang): following an /ar or an unprefixed link is not a choice
   }, [lang]);
 
   const setLang = useCallback(

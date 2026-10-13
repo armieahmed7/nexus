@@ -341,8 +341,16 @@ test('H6 FS75 + FS69: the release-day digest holds at most 7 items with future-s
     await expect(tid(page, 'digest-future')).toHaveCount(0);
   }
   await clean(page, w);
-  // FS69: the training manager opened two shares on contractors' behalf and owes their checks (dated by mobilisation)
+  // FS69: the training manager opened two shares on contractors' behalf and owes their checks (dated by mobilisation).
+  // Audit 2026-10-13 (finding 4): on the release day the checks are seven weeks away and the owed plant visit and role-play reviews
+  // keep the three approval places; within 14 days of mobilisation (here 2026-11-23, 7 days before pa-calnoor01-mech) the check ranks
+  // by days again and is in the digest.
   await asLocal(page, 'training-mgr');
+  await go(page, '/my');
+  const releaseDay = tid(page, 'digest-items').locator('[data-testid="digest-item"][data-kind="approval"]');
+  await expect(releaseDay.filter({ hasText: 'Plant visit to confirm' }).first()).toBeVisible(W);
+  await expect(releaseDay.filter({ hasText: 'Pre-arrival check to run' })).toHaveCount(0);
+  await page.clock.setFixedTime(new Date('2026-11-23T05:00:00Z'));
   await go(page, '/my');
   const owed = tid(page, 'digest-items').locator('[data-testid="digest-item"][data-kind="approval"]').filter({ hasText: 'Pre-arrival check to run' });
   await expect(owed.first()).toBeVisible(W);
