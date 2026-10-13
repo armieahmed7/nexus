@@ -2,8 +2,11 @@
 
 Makes the 14 Kafa'a-only personas on `/kafaa/sign-in` (k-lo-trainee, k-ro, k-instructor, k-licensing-coord, k-hr-analyst, k-editor,
 k-admin, k-auditor, k-ecp, k-student, k-graduate, k-university, k-observer, k-contractor) sign in for real on the deployed site, with
-the data saved to the live `kafaa_*` tables, like the NEXUS role cards. Branch `claude/kafaa-persona-signin`. Nothing here has been
-applied: the session that built it was read-only on live Supabase (project `hlirqxoddysxtdezwcgv`).
+the data saved to the live `kafaa_*` tables, like the NEXUS role cards. Branch `claude/kafaa-persona-signin`. **Applied and verified on 2026-10-13** (project `hlirqxoddysxtdezwcgv`):
+part 1 via `apply_migration` `kafaa_persona_signin_p1` (live md5s matched section 0 before, and match the "after" column now; grants and
+simulated-JWT checks as in section 2; NEXUS table grants, policies, functions, auth users and profiles unchanged); Edge Function
+`kafaa-persona-signin` version 1 deployed with JWT verification on; all 14 persona cards signed in end to end from the PR #7 deploy
+preview, creating exactly 14 `@personas.kafaa.demo` Auth users (auth.users 43 -> 57, the 43 NEXUS users unchanged).
 
 Two backend pieces, then the merge. There is **no secret and no password** to add anywhere: the Edge Function uses the service role
 key that Supabase injects into every hosted function, and the browser never sees a password.
