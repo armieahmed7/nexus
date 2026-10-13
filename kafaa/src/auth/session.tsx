@@ -1,7 +1,8 @@
 /**
  * Who is signed in, with which Kafa'a roles, on which backend.
  *   local mode    : explicit persona choice on /sign-in (no passwords), stored in "kafaa.session.v1". Anonymous by default.
- *   supabase mode : NEXUS same-origin role-card session (nexus.active + consent). Opening a URL never signs anyone in (B-01).
+ *   supabase mode : NEXUS role cards use the NEXUS same-origin role-card session (nexus.active + consent); the Kafa'a-only personas
+ *                   (k-*) sign in through the kafaa-persona-signin Edge Function (./personaSession). Opening a URL never signs anyone in (B-01).
  * Sessions expire on inactivity: 30 minutes, 15 for elevated roles (M14).
  */
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
@@ -10,6 +11,7 @@ import { makeBackend, RepoProvider, getLocalBackend } from '../data';
 import type { Identity, Repository, PeopleRow } from '../data/types';
 import { grantsFor, type Level, type PlatformRole, type Resource, ROLE_LABELS } from './policy';
 import { activeNexusPersona, signInNexusPersona, signOutNexus } from './nexusSession';
+import { activeKafaaPersona, signInKafaaPersona, signOutKafaa, K_KAFAA_ACTIVE } from './personaSession';
 import personasJson from '../seed/personas.json';
 import { hardReload, isChunkLoadError, reloadOnce } from '../shell/chunkReload';
 
@@ -39,7 +41,8 @@ export interface Session {
   roles: PlatformRole[];
   hasRole: (...r: PlatformRole[]) => boolean;
   can: (res: Resource, levels: Level[]) => boolean;
-  signIn: (persona: string) => Promise<{ ok: boolean; message?: string }>;
+  /** code (supabase mode, Kafa'a personas): 'kafaa_unavailable' | 'kafaa_not_resolved' | 'kafaa_failed'; the sign-in page translates it. */
+  signIn: (persona: string) => Promise<{ ok: boolean; message?: string; code?: string }>;
   signOut: () => void;
   switchBackend: (b: BackendKind) => void;
   personas: PersonaCard[];
@@ -49,6 +52,11 @@ export interface Session {
 const ANON: Identity = { personId: null, personaId: null, orgId: null, roles: ['public'], assignments: [] };
 const SessionContext = createContext<Session | null>(null);
 const ELEVATED: PlatformRole[] = ['admin', 'auditor', 'hr_director', 'licensing_coord', 'training_manager', 'ecp_officer', 'instructor', 'hr_analyst', 'manager', 'partner_admin', 'editor'];
+
+/** The live (supabase-mode) persona: a Kafa'a persona chosen on /sign-in, else the NEXUS role card. */
+function livePersona(): string | null {
+  return activeKafaaPersona() ?? activeNexusPersona();
+}
 
 function storedLocalPersona(): string | null {
   try {
@@ -61,7 +69,7 @@ function storedLocalPersona(): string | null {
 
 export function SessionProvider({ children }: { children: ReactNode }) {
   const [backend, setBackend] = useState<BackendKind>(config.backend);
-  const [personaId, setPersonaId] = useState<string | null>(() => (config.backend === 'supabase' ? activeNexusPersona() : storedLocalPersona()));
+  const [personaId, setPersonaId] = useState<string | null>(() => (config.backend === 'supabase' ? livePersona() : storedLocalPersona()));
   const repo = useMemo(() => makeBackend(backend), [backend]);
   const [identity, setIdentity] = useState<Identity>(ANON);
   const [person, setPerson] = useState<PeopleRow | null>(null);
@@ -106,18 +114,21 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     else setAttempt((n) => n + 1);
   }, [error]);
 
-  // Pick up NEXUS role-card changes made in another tab (supabase mode).
+  // Pick up NEXUS role-card and Kafa'a persona changes made in another tab (supabase mode).
   useEffect(() => {
     if (backend !== 'supabase') return;
     const onStorage = (e: StorageEvent) => {
-      if (e.key === 'nexus.active' || e.key === 'nexus.auth.v1.consent') setPersonaId(activeNexusPersona());
+      if (e.key === 'nexus.active' || e.key === 'nexus.auth.v1.consent' || e.key === K_KAFAA_ACTIVE) setPersonaId(livePersona());
     };
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
   }, [backend]);
 
   const signOut = useCallback(() => {
-    if (backend === 'supabase') signOutNexus();
+    if (backend === 'supabase') {
+      signOutKafaa();
+      signOutNexus();
+    }
     try {
       localStorage.removeItem(config.sessionKey);
     } catch {
@@ -131,9 +142,16 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       const card = PERSONAS.find((p) => p.persona === persona);
       if (!card) return { ok: false, message: 'Unknown persona' };
       if (backend === 'supabase') {
-        if (!card.nexus) return { ok: false, message: "This persona exists only in the local demo. Switch to the local demo backend to use it." };
+        if (!card.nexus) {
+          // Kafa'a-only persona: a real Supabase session from the kafaa-persona-signin Edge Function (no password on the client).
+          const r = await signInKafaaPersona(persona);
+          if (!r.ok) return { ok: false, code: `kafaa_${r.code}` };
+          setPersonaId(persona);
+          return { ok: true };
+        }
         const ok = await signInNexusPersona(persona);
         if (!ok) return { ok: false, message: 'Choose this role card in ENEC NEXUS first (Sign in), then come back.' };
+        signOutKafaa(); // the NEXUS role card now wins over an earlier Kafa'a persona choice
         setPersonaId(persona);
         return { ok: true };
       }
@@ -151,7 +169,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const switchBackend = useCallback((b: BackendKind) => {
     setBackendOverride(b === config.envBackend ? null : b);
     setBackend(b);
-    setPersonaId(b === 'supabase' ? activeNexusPersona() : storedLocalPersona());
+    setPersonaId(b === 'supabase' ? livePersona() : storedLocalPersona());
   }, []);
 
   // Inactivity timeout

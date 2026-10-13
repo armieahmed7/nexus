@@ -28,14 +28,18 @@
     "localTitle": "Local demo",
     "localBody": "All 57 personas are available. Data is synthetic and stays in this browser.",
     "liveTitle": "Live NEXUS record",
-    "liveBody": "Data is the live ENEC NEXUS demo record. Choosing a NEXUS role card signs you in to that card's NEXUS demo account.",
+    "liveBody": "Data is the live ENEC NEXUS demo record. Choosing a NEXUS role card signs you in to that card's NEXUS demo account; choosing a Kafa'a persona signs you in to that persona's shared Kafa'a demo account. Changes are saved and other visitors of the same card see them.",
     "openNexus": "Open NEXUS sign-in",
     "filter": "Filter role cards",
     "anonymous": "Browse without signing in",
-    "localOnly": "Local demo only",
+    "kafaaBadge": "Kafa'a",
     "current": "Signed in",
     "failed": "Sign-in failed",
-    "localOnlyError": "This persona exists only in the local demo. Switch to local demo data to use it.",
+    "errors": {
+      "kafaa_unavailable": "Live sign-in for Kafa'a personas is not switched on for this site yet. Use local demo data to try this persona now.",
+      "kafaa_not_resolved": "The Kafa'a persona signed in, but the live Kafa'a records do not recognise it yet (a database update is pending). Use local demo data to try this persona now.",
+      "kafaa_failed": "Kafa'a persona sign-in failed. Try again in a moment, or use local demo data."
+    },
     "signedInAs": "Signed in as {who}",
     "groups": {
       "kafaa": "Kafa'a personas",
@@ -46,7 +50,7 @@
       "oversight": "Oversight and audit"
     },
     "groupHelp": {
-      "kafaa": "Workforce roles Kafa'a adds for the demo (trainee, operator, instructor, licensing, HR, editor, admin, ECP). Local demo only.",
+      "kafaa": "Workforce roles Kafa'a adds for the demo (trainee, operator, instructor, licensing, HR, editor, admin, ECP). Each signs in to a shared Kafa'a demo account.",
       "staff": "The NEXUS role cards with elevated Kafa'a roles such as line manager, licensing coordinator or auditor.",
       "staffBasic": "NEXUS role cards that see Kafa'a as ordinary employees.",
       "partners": "Supplier, contractor and university users see only their own organisation.",
