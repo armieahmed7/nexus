@@ -208,8 +208,8 @@ English; nothing breaks).
 
 ## 7. Not in this bundle
 
-- The 15 withdrawn `app-<uuid>` E2E applications already on live and the duplicate-enrolment clean-up are handled by the separate data
-  clean-up (owner-approved). Part 7 stops new ones accumulating.
+- The 15 withdrawn `app-<uuid>` E2E applications and the duplicate enrolments were removed on live by the separate, owner-approved data
+  clean-up (`docs/kafaa/ref/live_apply/cleanup/`, PR #9, parts 01-04 applied 2026-10-13). Part 7 stops new ones accumulating.
 - `kafaa_verify_certificate` (audit fix part 05) still writes one audit row per check; it was not in the final-audit findings.
 - Migration history: the parts are applied with `apply_migration`, so they appear in `supabase_migrations.schema_migrations` under the
   names above.

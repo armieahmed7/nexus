@@ -14,7 +14,7 @@ Built from the final report template (handover section 7.4) where it fits. First
 | Wave I (FS78-FS84) | #6 | `0e7acdf` | `waveI/` applied 2026-10-13 05:01-05:32 UTC | |
 | Persona sign-in (14 Kafa'a personas) | #7 | `e61150c` | `persona_signin/` part 1 and the Edge Function `kafaa-persona-signin` | |
 | Layout fix at 390 px (/esg, /emergency, /universities) | #8 | `28d0456` | none | |
-| Data clean-up 2026-10-13 | (docs) | | `kafaa_cleanup_dup_enrolments`, `kafaa_cleanup_fs31_award_notices`, `kafaa_cleanup_history_repair` | owner-approved data changes |
+| Data clean-up 2026-10-13 | #9 | `c392947` | `kafaa_cleanup_dup_enrolments`, `kafaa_cleanup_fs31_award_notices`, `kafaa_cleanup_e2e_applications` (by hand, verified), `kafaa_cleanup_history_repair` | owner-approved data changes |
 | Final audit fixes | this PR | | `audit2/` (9 parts + 1 approval-gated data part), **not applied** | see "Final audit" below |
 
 ### As-applied names of the audit-fix parts (migration history after the 2026-10-13 repair)
@@ -130,7 +130,7 @@ approval-gated data part for the 16 Arabic role notes). Apply it before merging:
 4. **Backlog (not written):** digest items for waiting study-time decisions (FS78), certificates waiting for a verifier (FS79), AI-governance approvals (FS80) and due plan reviews (FS81); the FS74 wallet nudge; the M19 `external_completions` "verified" hook into FS79; an expiry sweep for the evidence of a certificate that expires after verification (the learner record already drops expired certificates).
 5. **English-only seeded free text** (FS47, FS54, FS64, FS65). The UI is fully EN + AR; seeded rationales and notes show as entered.
 6. **Product calls already logged:** FS69 evaluators can read contractor passports through F33 RLS. The FS80 per-entry adoption counter is not suppressed. FS77 public baselines show HR role-card ids.
-7. **Live data residue:** 15 withdrawn `app-<uuid>` applications from E2E journey runs (gpo/p-nse 9, energy-pioneers/p-buyer 6) stay until the owner approves removing them; since the final-audit fixes, re-applying reopens the withdrawn application, so the journeys add no more rows.
+7. **Live data residue:** the 15 withdrawn `app-<uuid>` applications from E2E journey runs (gpo/p-nse 9, energy-pioneers/p-buyer 6) were removed by the owner-approved data clean-up (PR #9, `live_apply/cleanup/` part 03, 2026-10-13); since the final-audit fixes, re-applying reopens the withdrawn application, so the journeys add no more rows.
 
 ## Things Armie needs to do
 - Decide how staff sign in on the production origin (final audit, high finding).
