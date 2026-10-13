@@ -20,7 +20,7 @@ export default function EmergencyPage() {
       </section>
       <ul className="grid gap-3 sm:grid-cols-2" data-testid="m12-emergency-links">
         {LINKS.map((l) => (
-          <li key={l.k}>
+          <li key={l.k} className="min-w-0">
             <OfficialLink href={l.url} title={t(`m12.emergency.links.${l.k}`)} />
           </li>
         ))}
