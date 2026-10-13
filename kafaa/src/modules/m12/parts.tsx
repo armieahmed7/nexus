@@ -79,9 +79,9 @@ export function NewsCard({ item }: { item: ContentPagesRow }) {
 /** A link to an official external page (emergency guidance, regulators). */
 export function OfficialLink({ href, title, children }: { href: string; title: ReactNode; children?: ReactNode }) {
   return (
-    <a href={href} target="_blank" rel="noopener noreferrer" className="card link-plain flex items-start gap-3 p-4 hover:border-accent" data-testid="official-link">
-      <Icon name="external" className="mt-0.5 text-eyebrow" />
-      <span className="min-w-0">
+    <a href={href} target="_blank" rel="noopener noreferrer" className="card link-plain flex min-w-0 items-start gap-3 p-4 hover:border-accent" data-testid="official-link">
+      <Icon name="external" className="mt-0.5 shrink-0 text-eyebrow" />
+      <span className="min-w-0 flex-1">
         <span className="block font-semibold">{title}</span>
         {children && <span className="mt-0.5 block text-[12.5px] text-ink-2">{children}</span>}
         <span className="ltr mt-1 block truncate text-[11.5px] text-ink-3">{href.replace(/^https?:\/\//, '')}</span>

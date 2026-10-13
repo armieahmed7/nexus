@@ -56,11 +56,11 @@ export function CurriculumAlignment() {
       <Async state={q} empty={<EmptyState />} isEmpty={(d) => d.roles.length === 0}>
         {(d) => (
           <div className="space-y-3">
-            <fieldset>
+            <fieldset className="min-w-0">
               <legend className="caps mb-1">{t('m10.curr.targetRoles')}</legend>
               <div className="flex max-h-48 flex-wrap gap-2 overflow-auto" data-testid="m10-roles">
                 {d.roles.filter((r) => !r.security_sensitive).map((r) => (
-                  <label key={r.id} className={`chip cursor-pointer ${sel.includes(r.id) ? 'border-accent/40 bg-accent-soft text-eyebrow' : 'border-line bg-sunken text-ink-2'}`}>
+                  <label key={r.id} className={`chip max-w-full cursor-pointer whitespace-normal ${sel.includes(r.id) ? 'border-accent/40 bg-accent-soft text-eyebrow' : 'border-line bg-sunken text-ink-2'}`}>
                     <input type="checkbox" className="sr-only" checked={sel.includes(r.id)} onChange={(e) => setSel(e.target.checked ? [...sel, r.id] : sel.filter((x) => x !== r.id))} />
                     {pick(r, 'title')}
                   </label>
