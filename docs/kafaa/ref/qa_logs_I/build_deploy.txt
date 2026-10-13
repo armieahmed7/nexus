@@ -1,0 +1,8 @@
+FS wave I build:deploy check (2026-10-12), run on a copy of the working tree (/dev/shm, node_modules linked) so the unit lane and the vite preview kept their files:
+- npm run build:deploy: rc 0, vite built in 49.1 s, 2 min 38 s in all.
+- NODE_OPTIONS=--max-old-space-size=4096 npm run build:deploy (the netlify.toml limit): rc 0, vite built in 50.7 s, 2 min 34 s in all.
+- deploy_out/kafaa/index.html keeps both badge-hiding lines (the #nl-badge-frame/#nl-hud-frame style and the hidden #nl-badge-frame div).
+- Issuer JSON: deploy_out/.well-known/kafaa-issuer.json, deploy_out/kafaa/.well-known/kafaa-issuer.json, deploy_out/kafaa/issuer/kafaa-issuer.json. deploy_out/kafaa/ojt-sw.js present.
+- _redirects order: "/ /kafaa/ 302", "/kafaa /kafaa/ 301", "/kafaa/.well-known/* /.well-known/:splat 200!", "/kafaa/* /kafaa/index.html 200".
+- grep -E "service_role|sb_secret_" over deploy_out: no match.
+- make-deploy warned that VITE_NEXUS_DEMO_PASSWORD was not set (no .env.local in this container; Netlify sets it). deploy_out/ is gitignored, not committed, not deployed.

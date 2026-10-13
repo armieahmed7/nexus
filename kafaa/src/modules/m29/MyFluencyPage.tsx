@@ -35,6 +35,7 @@ export default function MyFluencyPage() {
         <L to="/learn/ai-fluency" className="btn-outline btn-sm no-underline" data-testid="m29-my-to-ladder">{t('m29.my.toLadder')}</L>
         <L to="/my/ai-fluency/drills" className="btn-outline btn-sm no-underline" data-testid="m29-my-to-drills">{t('m29.my.toDrills')}</L>{/* FS37 */}
         <L to="/workforce/ai-register" className="btn-outline btn-sm no-underline" data-testid="m29-my-to-register">{t('m29.my.toRegister')}</L>{/* FS36 */}
+        <L to="/workforce/ai-automations" className="btn-outline btn-sm no-underline" data-testid="m29-my-to-automations">{t('m29.atm.fromFluency')}</L>{/* FS80 */}
         <L to="/my/future-wallet" className="btn-outline btn-sm no-underline" data-testid="m29-my-to-wallet">{t('m29.my.toWallet')}</L>{/* FS74 (wave-H integration) */}
         <L to={`/ask?mode=future&q=${encodeURIComponent(t('m29.my.askQ'))}`} className="btn-outline btn-sm no-underline" data-testid="m29-my-ask-dalil">{t('m29.my.askDalil')}</L>{/* FS76 (wave-H integration) */}
       </span>}>

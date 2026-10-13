@@ -12,6 +12,16 @@
 //    sourced, planning gates labelled SIMULATED; "no deployment decision implied". Seeded only.
 //  - transformation_archetypes: the three SkillsFuture Singapore role archetypes with what each means for learning. Public, seeded.
 // The task bands, skills added, bridge curriculum and time-to-ready are computed (rule transformRole, TS = SQL), never stored.
+//
+// FS81 Transition plans and ladder-rung protection (FS wave I · E3):
+//  - transition_plans: one SIMULATED HR record per person whose role is changing: protected role (kept while retraining) and until when,
+//    target role, horizon, why, retraining steps, the synthetic practice added for ladder-rung alerts (simulator scenarios, OJT
+//    repetitions), dated reviews (at most 183 days apart), status draft|active|completed|withdrawn, acknowledgement, history.
+//    Visible to the person (own_profile Own on person_id) and to HR only: HR (transformation A) reads and decides every plan through
+//    the SECURITY DEFINER RPCs (transitionPlans, transitionPlanView), so no read rule names `transformation` and managers in scope
+//    read nothing (logged deviation from the policy.ts comment "managers their team's transition plans"). Written only by
+//    rpc.saveTransitionPlan / reviewTransitionPlan / closeTransitionPlan (HR) and acknowledgeTransitionPlan (the person).
+//    The ladder-rung alert is computed (rule rungAlert in ../transition.ts, TS = SQL kafaa_tp_alert), never stored.
 import type { TableDef } from '../../../data/schema';
 
 export const TABLES_M30: Record<string, TableDef> = {
@@ -52,5 +62,18 @@ export const TABLES_M30: Record<string, TableDef> = {
     },
     read: [{ res: 'public_content' }],
     write: { mode: 'none' },
+  },
+  transition_plans: {
+    module: 'M30', label: 'Transition plan (SIMULATED HR): protected role, retraining, target role, ladder-rung practice and review dates; person and HR only (FS81)',
+    cols: {
+      id: 'text pk', person_id: 'text ref:people idx', current_role_id: 'text? ref:job_roles', protected_role_id: 'text ref:job_roles', protected_until: 'date',
+      target_role_id: 'text ref:job_roles idx', horizon: "text enum:2030|2035 ='2030'", trigger: 'text enum:task_automation|role_redesign|new_technology|career_move',
+      start_on: 'date', end_on: 'date', reviews: 'json =[]', next_review_on: 'date? idx', retraining: 'json =[]', practice: 'json =[]',
+      note_en: "text =''", note_ar: "text =''", status: "text enum:draft|active|completed|withdrawn ='draft' idx", simulated: 'bool =true',
+      acknowledged_at: 'ts?', revision: 'int =1', history: 'json =[]', created_by: 'text?', created_at: 'ts =now', updated_by: 'text?', updated_at: 'ts =now',
+      activated_by: 'text?', activated_at: 'ts?', closed_by: 'text?', closed_at: 'ts?', close_note: 'text?',
+    },
+    read: [{ res: 'own_profile', person: 'person_id' }],
+    write: { mode: 'rpc', res: 'transformation' },
   },
 };

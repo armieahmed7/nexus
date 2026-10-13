@@ -2745,6 +2745,8 @@ export interface TeamSkillTargetsRow {
   active: boolean;
   set_by?: string | null;
   updated_at: string;
+  horizon: 'current' | '2028' | '2030';
+  profile_version_ids: string[];
 }
 export interface MicrocredDefsRow {
   id: string;
@@ -5076,6 +5078,57 @@ export interface AiDrillAttemptsRow {
   evidence: any;
   submitted_at: string;
 }
+export interface AutomationsRow {
+  id: string;
+  title_en: string;
+  title_ar: string;
+  kind: 'workflow' | 'agent' | 'template' | 'report';
+  purpose_en: string;
+  purpose_ar: string;
+  data_used_en: string;
+  data_used_ar: string;
+  data_classes: string[];
+  system_id: string;
+  builder_person_id: string;
+  owner_person_id: string;
+  builder_en: string;
+  builder_ar: string;
+  owner_en: string;
+  owner_ar: string;
+  family_id?: string | null;
+  oversight_en: string;
+  oversight_ar: string;
+  benefit_en: string;
+  benefit_ar: string;
+  how_en: string;
+  how_ar: string;
+  min_rung: number;
+  status: 'draft' | 'submitted' | 'returned' | 'approved' | 'rejected' | 'retired';
+  listed: boolean;
+  version: number;
+  metadata_only: boolean;
+  adoption_count: number;
+  first_adopted_on?: string | null;
+  builder_level: number;
+  submitted_at?: string | null;
+  decided_by?: string | null;
+  decided_at?: string | null;
+  decision_note: string;
+  history: any;
+  open_read: boolean;
+  created_at: string;
+  updated_at: string;
+}
+export interface AutomationAdoptionsRow {
+  id: string;
+  automation_id: string;
+  person_id: string;
+  family_id?: string | null;
+  adopted_on: string;
+  note: string;
+  open_read: boolean;
+  created_at: string;
+}
 export interface RoleTransformationsRow {
   id: string;
   role_id: string;
@@ -5134,6 +5187,38 @@ export interface TransformationArchetypesRow {
   sources: any;
   as_of: string;
   sort: number;
+}
+export interface TransitionPlansRow {
+  id: string;
+  person_id: string;
+  current_role_id?: string | null;
+  protected_role_id: string;
+  protected_until: string;
+  target_role_id: string;
+  horizon: '2030' | '2035';
+  trigger: 'task_automation' | 'role_redesign' | 'new_technology' | 'career_move';
+  start_on: string;
+  end_on: string;
+  reviews: any;
+  next_review_on?: string | null;
+  retraining: any;
+  practice: any;
+  note_en: string;
+  note_ar: string;
+  status: 'draft' | 'active' | 'completed' | 'withdrawn';
+  simulated: boolean;
+  acknowledged_at?: string | null;
+  revision: number;
+  history: any;
+  created_by?: string | null;
+  created_at: string;
+  updated_by?: string | null;
+  updated_at: string;
+  activated_by?: string | null;
+  activated_at?: string | null;
+  closed_by?: string | null;
+  closed_at?: string | null;
+  close_note?: string | null;
 }
 export interface SmrDeltasRow {
   id: string;
@@ -5622,6 +5707,83 @@ export interface CreditLedgerRow {
   status: 'counted' | 'reversed';
   updated_at: string;
 }
+export interface LearningBalancesRow {
+  id: string;
+  person_id: string;
+  person_name: string;
+  person_name_ar: string;
+  entity_id?: string | null;
+  job_family_id?: string | null;
+  year: number;
+  base_hours: number;
+  topup_hours: number;
+  topup_basis: 'mid_career' | 'none';
+  service_years: number;
+  granted_hours: number;
+  used_hours: number;
+  pending_hours: number;
+  remaining_hours: number;
+  simulated: boolean;
+  open_read: boolean;
+  refreshed_at: string;
+  created_at: string;
+}
+export interface StudyTimeRequestsRow {
+  id: string;
+  person_id: string;
+  person_name: string;
+  person_name_ar: string;
+  line_manager_id?: string | null;
+  line_manager_name: string;
+  year: number;
+  resource_id: string;
+  resource_title_en: string;
+  resource_title_ar: string;
+  hours: number;
+  credits: number;
+  starts_on: string;
+  ends_on: string;
+  pattern: 'release_days' | 'shift_blocks' | 'non_shift_week';
+  reason: string;
+  status: 'requested' | 'approved' | 'declined' | 'withdrawn';
+  decided_by?: string | null;
+  decided_role?: string | null;
+  decided_on?: string | null;
+  decision_note?: string | null;
+  history: any;
+  open_read: boolean;
+  created_at: string;
+  updated_at: string;
+}
+export interface ExternalCertsRow {
+  id: string;
+  person_id: string;
+  person_name: string;
+  title: string;
+  issuer: string;
+  issuer_kind: 'enec' | 'university' | 'professional_body' | 'vendor' | 'online_platform';
+  accreditation_ref?: string | null;
+  credential_ref: string;
+  issued_on: string;
+  expires_on?: string | null;
+  verification_url: string;
+  resource_id?: string | null;
+  alignment_ids: string[];
+  levels: any;
+  note?: string | null;
+  status: 'submitted' | 'verified' | 'rejected' | 'withdrawn' | 'revoked';
+  tier?: 'enec_assessed' | 'accredited' | 'vendor_self_serve' | null;
+  method?: 'issuer_url' | 'issuer_registry' | 'enec_assessment' | 'document_check' | null;
+  verified_by?: string | null;
+  verified_role?: string | null;
+  verified_on?: string | null;
+  decision_note?: string | null;
+  mapped: any;
+  evidence_ids: string[];
+  history: any;
+  created_at: string;
+  updated_at: string;
+}
 export interface CriticalSkillsRow {
   id: string;
   skill_id: string;
@@ -5857,6 +6019,132 @@ export interface PledgeProgressRow {
   reported_by: string;
   reported_at: string;
   open_read: boolean;
+}
+export interface GrantRoundsRow {
+  id: string;
+  opens_on: string;
+  closes_on: string;
+  decide_by: string;
+  budget: number;
+  max_award: number;
+  currency: string;
+  note?: string | null;
+  simulated: boolean;
+  created_by: string;
+  created_at: string;
+  sample: boolean;
+}
+export interface GrantApplicationsRow {
+  id: string;
+  round_id: string;
+  person_id: string;
+  initials: string;
+  job_role_id?: string | null;
+  years?: number | null;
+  basis: 'early_career' | 'placement';
+  kind: 'conference' | 'short_course' | 'site_visit' | 'exchange';
+  title: string;
+  purpose: string;
+  destination: string;
+  starts_on: string;
+  ends_on: string;
+  costs: any;
+  amount: number;
+  skill_id: string;
+  output_kind: 'report' | 'presentation';
+  status: 'submitted' | 'approved' | 'declined' | 'withdrawn';
+  awarded?: number | null;
+  decided_by?: string | null;
+  decided_at?: string | null;
+  decision_note?: string | null;
+  output_status: 'none' | 'submitted' | 'accepted' | 'returned';
+  output: any;
+  output_reviewed_by?: string | null;
+  output_reviewed_at?: string | null;
+  output_note?: string | null;
+  evidence: any;
+  profile_evidence: boolean;
+  on_behalf: boolean;
+  consent_ref?: string | null;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  sample: boolean;
+}
+export interface ConsortiumCohortsRow {
+  id: string;
+  code: string;
+  title_en: string;
+  title_ar: string;
+  summary_en: string;
+  summary_ar: string;
+  intake_year: number;
+  academy_id: string;
+  nominations_close_on: string;
+  starts_on: string;
+  ends_on: string;
+  partners: any;
+  modules: any;
+  project_en: string;
+  project_ar: string;
+  deliverable_en: string;
+  deliverable_ar: string;
+  mentors: any;
+  skills: string[];
+  budget: any;
+  currency: string;
+  sources: any;
+  simulated: boolean;
+  synthetic: boolean;
+  listed: boolean;
+  sort: number;
+}
+export interface ConsortiumMembersRow {
+  id: string;
+  cohort_id: string;
+  org_id: string;
+  person_id?: string | null;
+  initials?: string | null;
+  trainee_code: string;
+  discipline: 'mechanical' | 'electrical' | 'chemical' | 'operations' | 'instrumentation' | 'environmental' | 'digital';
+  status: 'nominated' | 'accepted' | 'declined' | 'withdrawn' | 'completed';
+  nominated_by: string;
+  nominated_at: string;
+  decided_by?: string | null;
+  decided_at?: string | null;
+  decision_note?: string | null;
+  mentor_id?: string | null;
+  team?: string | null;
+  open_read: boolean;
+  sample: boolean;
+}
+export interface ConsortiumVisitsRow {
+  id: string;
+  cohort_id: string;
+  member_id: string;
+  org_id: string;
+  person_id?: string | null;
+  trainee_code: string;
+  host_org_id: string;
+  module_id?: string | null;
+  visit_on: string;
+  hours: number;
+  note: string;
+  skill_id: string;
+  status: 'logged' | 'confirmed' | 'declined' | 'withdrawn';
+  logged_by: string;
+  logged_via: 'self' | 'employer' | 'programme';
+  confirmed_via?: 'host' | 'enec_host' | 'on_behalf' | null;
+  host_ref?: string | null;
+  decided_by?: string | null;
+  decided_at?: string | null;
+  decline_reason?: string | null;
+  level: number;
+  evidence: any;
+  profile_evidence: boolean;
+  created_at: string;
+  open_read: boolean;
+  sample: boolean;
 }
 export interface NationalTagsRow {
   id: string;
@@ -6265,10 +6553,13 @@ export interface Tables {
   ai_drills: AiDrillsRow;
   ai_drill_keys: AiDrillKeysRow;
   ai_drill_attempts: AiDrillAttemptsRow;
+  automations: AutomationsRow;
+  automation_adoptions: AutomationAdoptionsRow;
   role_transformations: RoleTransformationsRow;
   transformation_drafts: TransformationDraftsRow;
   transformation_milestones: TransformationMilestonesRow;
   transformation_archetypes: TransformationArchetypesRow;
+  transition_plans: TransitionPlansRow;
   smr_deltas: SmrDeltasRow;
   plant_visits: PlantVisitsRow;
   twin_scenarios: TwinScenariosRow;
@@ -6292,6 +6583,9 @@ export interface Tables {
   credit_tags: CreditTagsRow;
   credit_stacks: CreditStacksRow;
   credit_ledger: CreditLedgerRow;
+  learning_balances: LearningBalancesRow;
+  study_time_requests: StudyTimeRequestsRow;
+  external_certs: ExternalCertsRow;
   critical_skills: CriticalSkillsRow;
   critical_skill_reviews: CriticalSkillReviewsRow;
   skill_forecasts: SkillForecastsRow;
@@ -6302,6 +6596,11 @@ export interface Tables {
   provider_commitments: ProviderCommitmentsRow;
   pledges: PledgesRow;
   pledge_progress: PledgeProgressRow;
+  grant_rounds: GrantRoundsRow;
+  grant_applications: GrantApplicationsRow;
+  consortium_cohorts: ConsortiumCohortsRow;
+  consortium_members: ConsortiumMembersRow;
+  consortium_visits: ConsortiumVisitsRow;
   national_tags: NationalTagsRow;
   tag_links: TagLinksRow;
   role_occupations: RoleOccupationsRow;

@@ -61,6 +61,9 @@ export const TABLES_M17: Record<string, TableDef> = {
     cols: {
       id: 'text pk', team_id: 'text idx', skill_id: 'text ref:skills idx', min_people: 'int =2', min_level: 'int =3', note: 'text?',
       active: 'bool =true', set_by: 'text?', updated_at: 'ts =now',
+      // FS84 (wave I · E5): additive. 'current' = the F11 coverage target (default; every F11 reader keeps to it); 2028 and 2030 = team
+      // targets adopted from the FS05 role profiles (id tst:<horizon>:<group>:<skill>) with the profile versions they came from.
+      horizon: "text enum:current|2028|2030 ='current' idx", profile_version_ids: 'text[] =[]',
     },
     read: [{ res: 'skills_profile' }], write: { mode: 'rpc', res: 'skills_profile' },
   },

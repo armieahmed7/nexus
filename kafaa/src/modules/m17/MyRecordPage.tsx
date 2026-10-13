@@ -10,15 +10,17 @@ import { useSession } from '../../auth/session';
 import type { Reason } from '../../domain/engines/types';
 import { ITEM_KINDS, SHARE_RULES, shareProblem, shareView, type ItemKind, type RecordItem, type ShareRow } from './learnerRecord';
 import { addDays, todayIso } from './goalsUi';
+import { ItemStatus, XTIER_AR, XTIER_EN } from './xcUi'; // FS79 -> FS32 (wave I integration)
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = any;
 export const recordShareUrl = (token: string) => `${typeof window !== 'undefined' ? window.location.origin : ''}${import.meta.env.BASE_URL ?? '/kafaa/'}verify/record/${token}`;
 const SHARE_TONE = { active: 'ok', expired: 'neutral', revoked: 'bad' } as const;
-const KIND_ICON: Record<ItemKind, string> = { mc: 'shield', badge: 'sparkle', qual: 'check', skill: 'chart' };
+const KIND_ICON: Record<ItemKind, string> = { mc: 'shield', badge: 'sparkle', xcert: 'grad', qual: 'check', skill: 'chart' };
 
 export function itemReasons(i: RecordItem): Reason[] {
-  const out: Reason[] = [{ code: `lr_${i.kind}`, key: `m17.reasons.lr_${i.kind}`, vars: { title: { en: i.title_en, ar: i.title_ar } }, ref: { table: i.kind === 'mc' ? 'microcred_awards' : i.kind === 'badge' ? 'badges' : i.kind === 'qual' ? 'qual_records' : 'person_skills', id: i.id } }];
+  const out: Reason[] = [{ code: `lr_${i.kind}`, key: `m17.reasons.lr_${i.kind}`, vars: { title: { en: i.title_en, ar: i.title_ar } }, ref: { table: i.kind === 'mc' ? 'microcred_awards' : i.kind === 'badge' ? 'badges' : i.kind === 'xcert' ? 'external_certs' : i.kind === 'qual' ? 'qual_records' : 'person_skills', id: i.id } }];
+  if (i.kind === 'xcert') out.push({ code: 'lr_tier', key: 'm17.reasons.lr_tier', vars: { tier: { en: XTIER_EN[i.status] ?? i.status, ar: XTIER_AR[i.status] ?? i.status } } }); // FS79 (wave I integration)
   if (i.kind === 'skill') out.push({ code: 'lr_provenance', key: 'm17.reasons.lr_provenance', vars: { basis: i.status, level: i.level ?? 0 } });
   out.push({ code: 'lr_never', key: 'm17.reasons.lr_never' });
   return out;
@@ -36,7 +38,7 @@ export function ItemLine({ i, checked, onToggle }: { i: RecordItem; checked?: bo
         <span className="block text-[13.5px] font-semibold">{pick(i, 'title')}</span>
         <span className="block text-[12px] text-ink-3">
           <span className="num">{i.code}</span>
-          {' · '}{t(`m17.lr.status.${i.status}`)}
+          {' · '}<ItemStatus i={i} />
           {i.level != null && <> · {t('common.skills.level', { level: f.num(i.level) })}</>}
           {i.band && <> · {t(`m17.lr.band.${i.band}`)}</>}
           {i.date && <> · {f.date(i.date)}</>}

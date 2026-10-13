@@ -1,0 +1,46 @@
+
+> kafaa@0.1.0 gen
+> node scripts/gen-all.mjs
+
+gen-schema: 369 SQL tables, 370 TS row types
+gen-policy: 486 matrix rows
+fs25/26: 16 core skills, 8 candidates not added, 320 family targets, 48 SJT items, 194 practice sets for 70 staff (no skill evidence written)
+fs46-48: 12 behaviours (4 future, anchors 1-5 EN/AR), 120 form-2 360 requests / 105 responses (16 subjects), FL 25 nominations, 20 participants, 7 external programmes (as of 2026-10-10); WiN 21 participants (18 active), 29 memberships, 17 requests
+fs03: 143 credential evidence rows back-filled for micro-credential awards; 137 skill states changed by the final derivation
+fs09: 297 fitness attempts for 100 staff, 1563 assessment evidence rows (level <= 2), 577 new skill states; digests unchanged; F35 outlooks recomputed (0 changed); 0 F23 member snapshots refreshed
+fs15/16: 156 SIMULATED role moves, 75 outlook labels (2026: 12 changing, 10 growing, 3 stable)
+fs17/18: 94 published pathways (+1 draft), 285 steps, 192 requested steps in the gap backlog; 115 enrolments; 11 external resources (8 published)
+fs19: 20 pack courses (49 skill links, copy check passed), 4 academies, 7 cohorts, 61 members, 50 capstones, 186 module enrolments, 60 capstone evidence rows, 34 new skill states; digests unchanged
+fs21/22: 100 items in 6 banks, 256 adaptive attempts, 39 task attempts, 105 integrity reports (11 flagged), 816 evidence rows, 493 new skill states; digests unchanged; F35 outlooks 0 changed; 0 F23 snapshots refreshed
+fs27/28: 15 open future gigs (3/3/3/3/3), 23 envelopes, 21 applications (16 inside an envelope); 3 future-role templates; 16 secondments (5 capture sessions)
+fs29/30: 4 stacks, 173 credit tags, 15 RPL requests (7 decided), 50 evidence items, 5 people credited (5 new skill states), 324 ledger rows; digests unchanged
+fs31: 8 FS31 definitions (3 strategic), 6 unlocks; 102 awards {"MC-AI-ASSURER":12,"MC-CLEAN-ENERGY":11,"MC-CYBER-HYGIENE":39,"MC-DATA-DECISIONS":4,"MC-QUESTION-AI":9,"MC-SMR-FOUND":20,"MC-SYSTEMS":0,"MC-TWINS":7}; 173 credential evidence rows; 0 skill levels changed; fs33: 16 goal plans (7 shared); fs32: 4 share links
+fs34/35: 12 ESCO-aligned occupation templates (33 exact ESCO ties), 43 health snapshots for 27 staff (k-ro: 2025-09-22 5/5 executed, 2026-03-30 5/5 executed, 2026-09-28 5/5 charted)
+fs36: 8 register entries (doc-search 79.2%, pdm-advisor 44%, dalil 84%, meeting-notes 50%, outage-optimiser 10%, drafting 89.6%, chem-triage 11.1%, chat-pilot 92.3%), 7 drills, 107 drill attempts by 41 staff (47 passed), 47 evidence rows (level <= 2), 6 new skill states; digests unchanged; F35 outlooks recomputed (0 changed); 0 F23 snapshots refreshed
+fs38/39/40: 88 published SMR deltas (+2 drafts) for 28 roles; 27 plant visits (18 confirmed, 4 waiting for the host), 18 visit evidence rows; 5 twin drills, 77 attempts by 24 staff (39 passed), 87 evidence rows (level <= 2); 41 new skill states; digests rebuilt (changed); F35 outlooks recomputed (0 changed); 0 F23 snapshots refreshed
+fs41: CleanEnergyComp 12 competences, 20 family targets; 3 value chains; FS42/FS43 pathways (FS43 9 h at 1 h a week); 5 readings, 2 manager electives
+fs44/45: 17 lectures (13 published, 16 protect a KLRA position), 27 contributions (6 validated, 19 pending), 8 contribution evidence rows (level <= 3), 7 new skill states; digests unchanged; F35 outlooks recomputed (0 changed); 0 F23 snapshots refreshed; localisation 16 items (2 transferred, 2 overdue, 3 high, 6 medium, 3 low, average readiness 59%) on 2026-10-08
+fs49: 4 AI-era HU cards + 8 classic cards with an AI angle (every card links a drill or lesson), 2 traits extended, 7 sourced international lessons
+fs54/55: 31 engine cards, 56 skill change requests (6 open), 49 published changes, 360 surface fairness rows
+fs56/57: 26 learning items measured as of 2026-10-08 (12 with 10+ measured, 5 move skills); backlog 91 rows, 6 decisions
+fs58/59: 6 published APS scenarios (+1 draft), 154 runs by 57 staff {"completed":148,"abandoned":5,"in_progress":1}; 6 published role-play scenarios (+1 draft), 94 sessions by 50 staff, reviews {"validated":13,"none":74,"requested":4,"withdrawn":1,"declined":2}, 26 evidence rows (level <= 2), 18 new skill states; digests rebuilt (changed); F35 outlooks recomputed (0 changed); 0 F23 snapshots refreshed
+fs60/61: 7 ISO 30414 metrics; disclosures 2026-Q2 published (7/7 approved), 2026-Q3 draft (2/7 approved); 2026-Q3 trained_pct=64.2 active_learners_pct=60.4 hours_per_employee=10 ai_fundamentals_pct=89.6 critical_on_track_pct=62.5 credits_per_employee=2.91 participation_gap_pp=72.7; 11 pilots (8 closed, 2 failed kept visible), adoption 75%
+fs62: 18 national tags (5 flagged: secondary or indirect source), 52 curated links, 118 effective links (66 derived from data); fs63: 28 role occupations, codes pending review
+fs64/65: regional release rdr-2025-1 (30 rows, 10 areas, from sf-2025-v1); 13 provider commitments by 7 providers; 16 pledges by 11 organisations, 35 progress snapshots; 2 synthetic providers added
+fs68: 3 supplier organisations (1 suppressed), 6 contracted roles; fs69: 7 pre-arrival shares (4 checked)
+fs70: 4 Skills on the Rise lists (31 rows), 24 pulse answers; 18 technologies, 188 tags, 82 badges over 2 quarters; 440 open suggestions for 88 people, 2 answered; 4 fairness rows; engine card skill_suggestions
+fs73: 554 SIMULATED mirror spells over 14 critical and future roles (8 competency areas), Emirati successors 14; fs74: wallet target 60% by 2027-12-31, complete wallets <10 of 106, 2 tag links, plan activities pa-fs74-p-k-ro-plant_data
+fs78/79: 106 balances (66 with the mid-career top-up), 23 study-time requests (14 approved, 7 waiting), 13 external certificates (6 verified), 9 evidence rows (8 active) for 7 people (3 new skill states), 16 notices
+fs80: 16 gallery entries (10 approved, 2 submitted, 1 returned, 1 draft, 1 rejected, 1 retired), 59 adoptions, 9 builder credits (6 at level 3), 0 new and 9 changed sk-fs-ai-automation states; FS09 rungs and FS72 suggestions unchanged
+fs81: 10 SIMULATED transition plans (7 active, 1 draft, 1 completed, 1 withdrawn); 9 ladder-rung alerts naming 36 junior tasks, 41 practice items added
+fs82/83: 4 grant rounds, 45 applications (18 approved); 2 consortium cohorts, 30 members, 45 visits (34 confirmed, no F01 evidence); 3 synthetic partners added
+  fs84: 35 adopted future targets (team:ops-crew-b 2030, family:operations 2028, team:rp 2030); 24 F11 targets stay current
+fsqa1: 53 role-profile versions re-pointed to FS02 skills, 48 future task links re-pointed, 12 keyspace rows added
+fsqa3: pathway gap backlog 215 rows (172 open, 43 filled by FS19 courses and FS21/FS22 assessments on 2026-10-11)
+fsqa4: 12 FS31 credit tags, 426 ledger rows, 4 wave-D unlocks; gap backlog 215 rows (145 open, 27 more filled by FS27 gigs and FS31 credentials)
+fsqa5: recorded evidence plant_visits/twin_attempts/lectures/knowledge_assets kept by recomputes; 2 wave-E pathways pass pathwayProblems, 4 credit tags, MC-H2-HEAT draft; gap backlog unchanged (215 rows, 145 open); MC-TWINS twin routes tw-sensor-drift; 4 host confirmations in the digest
+fsqa6: FS56 measures recomputed after the FS59 evidence (1 of 26 rows moved); 35 engine cards for 35 ranked surfaces (+3 wave F); recorded evidence roleplay_sessions (13 validated sessions); gap backlog complete (91 rows); 4 role-play reviews owed (7 seeded digests list one); methodology notices outlook 37, forecasts 37
+fsqa7: FS60 2 disclosures reproduce from the formula; FS61 adoption 75% vs the FSC reference from kafaa_benchmarks; FS62 links net zero 12, Jahiz 54, AI target 1; FS64 30 released demand rows = demandRows(released FS51); FS66 programme evidence recorded (0 seeded); FS69 7 pre-arrival shares on FS32 (6 on behalf with consent); 13 commitments and 16 pledges each name one organisation; FS48 mentoring card v2 (live step 13 -> 14 is a no-op here)
+fsqa8: FS70 4 lists and FS71 badges reproduce; 2 rising-skill nudges on 2026-10-12 from 2026-Q3; FS72 card + 4 fairness rows; wallet evidence only (2 complete, 2 FS62 tags); 2 pre-arrival checks owed; FS76 gate 68/68; 8 induction plans (1 stale)
+fsqa9: FS79 6 verified certificates in 12 holders' learner records (tier as status, CLR-shaped); 9 certificate evidence rows by tier; 16 gallery entries on register rows; wave-I evidence recorded; 10 SIMULATED plans with reviews; FS78 unit 10 h = FS30; 35 FS84 targets with versions
+build-seed: 37718 rows across 367 tables; 57 personas

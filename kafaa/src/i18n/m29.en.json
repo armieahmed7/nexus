@@ -50,6 +50,22 @@
     "training-ai-drills": {
       "title": "Sandbox drill bank",
       "purpose": "The drills, their keys and how people do on them, suppressed under 10."
+    },
+    "workforce-ai-automations": {
+      "title": "Automation and agent gallery",
+      "purpose": "Governed automations and agents colleagues built, the AI system each runs on, how often they are reused and the builder's credit. Metadata only: Kafa'a never runs them."
+    },
+    "workforce-ai-automation": {
+      "title": "Gallery entry",
+      "purpose": "One governed automation or agent: purpose, data, owner, human check, how to use, register row, adoption and builder credit."
+    },
+    "my-ai-builds": {
+      "title": "What I built",
+      "purpose": "Share a governed automation or agent you built, follow AI governance's decision and see your builder credit."
+    },
+    "admin-ai-automations": {
+      "title": "Gallery review",
+      "purpose": "AI governance reviews submitted automations and agents against the register, decides and retires entries."
     }
   },
   "rung": {
@@ -904,6 +920,352 @@
     "confirm": {
       "title": "Save this drill?",
       "body": "The drill and its key are versioned and audited. A published drill opens to all staff."
+    }
+  },
+  "atm": {
+    "kind": {
+      "workflow": "Workflow",
+      "agent": "Agent",
+      "template": "Template",
+      "report": "Report"
+    },
+    "class": {
+      "public": "Public information",
+      "internal": "Internal",
+      "controlled_docs": "Controlled documents",
+      "personal": "Personal data"
+    },
+    "classHelp": {
+      "public": "Published, open information",
+      "internal": "ENEC internal information",
+      "controlled_docs": "Read only from controlled-document systems",
+      "personal": "Information about people: AI governance checks it is needed"
+    },
+    "adopter": "adopter",
+    "adopters": "adopters",
+    "youAdopted": "You use this",
+    "needs": "Needs",
+    "builtBy": "Built by {name}",
+    "sysHidden": "AI system not visible to you",
+    "meta": {
+      "title": "Metadata only: Kafa'a never runs an automation",
+      "body": "Each entry describes a tool built inside an approved AI system: what it is for, the data it uses, who owns it and who checks its output. There is no code, file or link here, and nothing runs in Kafa'a. Use the tool in the AI system named on the entry."
+    },
+    "why": {
+      "approved": "Approved by AI governance on {date}",
+      "notApproved": "Not approved yet: no builder credit before approval",
+      "register": "Runs on the register entry {system}",
+      "rung": "Users need rung {rung} or higher on the AI fluency ladder",
+      "metadata": "Listed as a description only; Kafa'a does not run it",
+      "adopted": "{n} colleagues adopted it, the first on {date}",
+      "noAdopter": "No colleague has adopted it yet: credit starts at the first adoption",
+      "level2": "Builder credit at level {level} (automation design), validated by approval and reuse",
+      "level3": "Builder credit at level {level}: reused by {at} or more colleagues",
+      "none": "No builder credit yet",
+      "engineering": "Automation design is an AI-engineering skill: it shows on the passport and never changes the literacy rung"
+    },
+    "credit": {
+      "level": "Builder credit: level {n}",
+      "levelShort": "credit L{n}",
+      "none": "No builder credit yet",
+      "rule": "The builder receives recorded evidence (automation design, level 2) once the entry is approved and a first colleague adopts it; level 3 from 5 adopters.",
+      "toNext": "{n} more adopters raise the credit to level 3.",
+      "top": "Highest builder credit reached (level 3)."
+    },
+    "block": {
+      "signin": "Adoption is for ENEC staff with an AI fluency profile.",
+      "not_approved": "Only approved entries can be adopted.",
+      "own_build": "You built this: adoption counts reuse by others.",
+      "already": "You already use this.",
+      "rung_low": "This entry needs",
+      "you": "you are on",
+      "drills": "Practise in the sandbox drills",
+      "note": "Keep the note short and plain."
+    },
+    "err": {
+      "not_signed_in": "Sign in to use the automation gallery",
+      "forbidden": "Not allowed for your role",
+      "not_found": "Gallery entry not found",
+      "locked": "Only a draft or returned entry can change",
+      "invalid": "Check the entry",
+      "maker_checker": "The builder and the owner never decide their own entry",
+      "own_build": "Builders do not adopt their own entry",
+      "already": "You already adopted this entry",
+      "rung_low": "This entry needs a higher AI fluency rung",
+      "error": "Something went wrong"
+    },
+    "ok": {
+      "adopted": "Adopted: the counter is updated",
+      "draft": "Draft saved",
+      "submitted": "Sent to AI governance",
+      "approve": "Entry approved and listed",
+      "return": "Entry returned to the builder",
+      "reject": "Entry rejected",
+      "retire": "Entry retired"
+    },
+    "f": {
+      "kind": "Kind",
+      "system": "AI system",
+      "data": "Data",
+      "sort": "Order"
+    },
+    "sort": {
+      "adopted": "Most adopted",
+      "newest": "Newest decision"
+    },
+    "gal": {
+      "intro": "Automations and agents colleagues built inside approved AI systems, reviewed by AI governance. Reuse one, or share what you built: approved entries that colleagues adopt earn the builder recorded evidence.",
+      "share": "Share what you built",
+      "toRegister": "AI-literacy register",
+      "tile": {
+        "entries": "Approved entries",
+        "adoptions": "Adoptions",
+        "adoptionsSub": "colleagues reusing a tool",
+        "systems": "AI systems used",
+        "systemsSub": "register rows behind the entries",
+        "mine": "Entries I use"
+      },
+      "list": {
+        "title": "Approved entries",
+        "intro": "Every approved entry is listed. The order is the number of adopters or the decision date, never a personal ranking."
+      },
+      "none": "No entry matches."
+    },
+    "how": {
+      "title": "How builder credit works",
+      "intro": "Credit for building a governed tool, not for consuming content.",
+      "submit": {
+        "title": "Describe",
+        "body": "Describe the tool: purpose, data, owner, the human check and how to use it. No code, links or credentials."
+      },
+      "review": {
+        "title": "Review",
+        "body": "AI governance checks it against the AI-system register; never the builder or the owner."
+      },
+      "listed": {
+        "title": "Listed",
+        "body": "Approved entries appear in the gallery with the register row they run on."
+      },
+      "adopted": {
+        "title": "First adoption",
+        "body": "When the first colleague adopts it, the builder receives recorded evidence (automation design, level 2)."
+      },
+      "reuse": {
+        "title": "Reuse",
+        "body": "From {n} adopters the credit rises to level {level}. Retiring an entry keeps what it earned."
+      }
+    },
+    "one": {
+      "intro": "A governed automation or agent, described as metadata. Use it in the AI system named below; Kafa'a never runs it.",
+      "notFound": "This entry is not in the gallery, or you cannot see it.",
+      "back": "Back to the gallery",
+      "returned": "Returned by AI governance",
+      "rejected": "Rejected by AI governance",
+      "retired": "Retired",
+      "purpose": "What it is for",
+      "data": "Data it uses",
+      "dataEyebrow": "As described by the builder",
+      "oversight": "Human check on the output",
+      "how": "How to use it",
+      "howEyebrow": "Plain steps inside the AI system",
+      "benefit": "Expected benefit",
+      "adoption": "Adoption",
+      "adoptionEyebrow": "Colleagues who reuse it",
+      "firstOn": "First adopted on {date}",
+      "youOn": "You adopted it on {date}",
+      "adopt": "I use this",
+      "credit": "Builder credit",
+      "creditEyebrow": "Recorded F01 evidence",
+      "facts": "Entry",
+      "builder": "Builder",
+      "owner": "Accountable owner",
+      "minRung": "Minimum rung",
+      "version": "Version",
+      "decided": "Decided",
+      "register": "AI-system register row",
+      "registerEyebrow": "What it runs on",
+      "history": "History",
+      "confirm": {
+        "title": "Record that you use this entry",
+        "body": "Your adoption is counted on the entry. If it is the first adoption (or the fifth), the builder receives recorded evidence. Only you and auditors see that you adopted it."
+      },
+      "note": "How you use it (optional)",
+      "noteHint": "Plain text, up to 200 characters"
+    },
+    "act": {
+      "draft": "Draft saved (v{v})",
+      "submit": "Submitted (v{v})",
+      "approve": "Approved",
+      "return": "Returned",
+      "reject": "Rejected",
+      "retire": "Retired"
+    },
+    "my": {
+      "intro": "Share a governed automation or agent you built inside an approved AI system. AI governance reviews it; once approved and adopted by a colleague, you receive builder credit on your skills passport.",
+      "toGallery": "Open the gallery",
+      "tile": {
+        "entries": "My entries",
+        "approved": "Approved",
+        "adopters": "Adopters",
+        "adoptersSub": "across my approved entries",
+        "credit": "Highest credit",
+        "creditSub": "automation design"
+      },
+      "list": {
+        "title": "My entries",
+        "intro": "Drafts and returned entries can change; approved entries are changed only by AI governance."
+      },
+      "new": "Describe a new automation",
+      "edit": "Edit",
+      "fix": "Fix and resubmit",
+      "none": "You have not shared an automation yet.",
+      "noneBody": "Built something useful inside an approved AI system? Describe it here so colleagues can reuse it.",
+      "evidence": {
+        "title": "My builder credit",
+        "eyebrow": "Recorded evidence",
+        "none": "No builder credit yet: it is written once an entry is approved and adopted.",
+        "note": "Builder credit is recorded F01 evidence on automation design.",
+        "passport": "Open my skills passport"
+      },
+      "adopted": {
+        "title": "Entries I use",
+        "none": "You have not adopted an entry yet."
+      }
+    },
+    "ed": {
+      "newTitle": "Describe an automation or agent",
+      "editTitle": "Edit the entry",
+      "rules": {
+        "title": "Metadata only",
+        "body": "Describe what it does in plain words. No code, scripts, file names, links or credentials: Kafa'a stores the description and never runs anything."
+      },
+      "title_en": "Title (English)",
+      "title_ar": "Title (Arabic)",
+      "purpose_en": "Purpose (English)",
+      "purpose_ar": "Purpose (Arabic)",
+      "data_used_en": "Data it uses (English)",
+      "data_used_ar": "Data it uses (Arabic)",
+      "oversight_en": "Human check on the output (English)",
+      "oversight_ar": "Human check on the output (Arabic)",
+      "benefit_en": "Expected benefit (English)",
+      "benefit_ar": "Expected benefit (Arabic)",
+      "how_en": "How to use it (English)",
+      "how_ar": "How to use it (Arabic)",
+      "limit": "Up to {n} characters",
+      "kind": "Kind",
+      "system": "AI system it runs on",
+      "systemPick": "Choose a register entry",
+      "systemHint": "Only published register entries can be chosen",
+      "owner": "Accountable owner",
+      "ownerPick": "Choose a staff member",
+      "rung": "Minimum rung for users",
+      "rungHint": "Users below this rung cannot adopt it",
+      "classes": "Data classes",
+      "ready": "Ready to submit",
+      "minRung": "Minimum rung",
+      "saveDraft": "Save draft",
+      "submit": "Submit to AI governance",
+      "confirm": {
+        "submitTitle": "Submit to AI governance",
+        "submit": "AI governance reviews the entry against the register. You cannot edit it while it is under review.",
+        "draftTitle": "Save the draft",
+        "draft": "The draft stays private to you and AI governance."
+      },
+      "me": "Me",
+      "systemOwner": "system owner"
+    },
+    "problem": {
+      "title": "Add a title in both languages (up to 120 characters).",
+      "kind": "Choose a kind.",
+      "purpose": "Add the purpose in both languages (up to 600 characters).",
+      "data": "Describe the data it uses in both languages (up to 400 characters).",
+      "classes": "Choose at least one data class.",
+      "system": "Choose the register entry it runs on.",
+      "system_closed": "The AI system must be published in the register.",
+      "owner": "Choose the accountable owner (ENEC staff).",
+      "oversight": "Name the human check in both languages (up to 400 characters).",
+      "benefit": "Add the expected benefit in both languages (up to 300 characters).",
+      "how": "Explain how to use it in both languages (up to 600 characters).",
+      "rung": "The minimum rung must be 1, 2 or 3.",
+      "action": "Save as a draft or submit.",
+      "code": "Metadata only: remove code, scripts, links or file names.",
+      "secret": "Remove credentials or passwords.",
+      "restricted": "Entries never touch plant security.",
+      "claim": "Kafa'a does not certify: remove certification or compliance wording."
+    },
+    "adm": {
+      "intro": "Review submitted automations and agents against the AI-literacy register. Decisions are audited; approvals and retirements are written to the NEXUS ledger. You never decide an entry you built or own.",
+      "tile": {
+        "queue": "Waiting for review",
+        "approved": "Approved",
+        "adoptions": "Adoptions",
+        "adopters": "{n} adopters",
+        "credited": "Credited builders",
+        "creditedSub": "people counts under 10 are suppressed"
+      },
+      "queue": {
+        "title": "Review queue",
+        "intro": "Submitted entries with the governance checklist.",
+        "none": "Nothing is waiting for review."
+      },
+      "chk": {
+        "register": "Runs on a published register entry",
+        "oversight": "A human check on the output is named",
+        "metadata": "Metadata only: no code, links or credentials",
+        "personal": "No personal data (if marked, confirm it is needed and minimised)",
+        "rung": "Minimum rung covers the register's user groups (rung {n})",
+        "maker": "Not built or owned by you"
+      },
+      "submittedBy": "Submitted by {name} on {date}",
+      "ownTitle": "You cannot decide this entry",
+      "ownBody": "You built it or own it. Ask a second AI governance admin to decide.",
+      "approve": "Approve",
+      "return": "Return with a note",
+      "reject": "Reject",
+      "retire": "Retire",
+      "reason": "Reason (shown to the builder)",
+      "confirm": {
+        "approveTitle": "Approve and list",
+        "approve": "The entry appears in the gallery for all staff. The decision is audited and written to the NEXUS ledger. Builder credit follows the first adoption.",
+        "returnTitle": "Return to the builder",
+        "return": "The builder sees your note and can resubmit.",
+        "rejectTitle": "Reject the entry",
+        "reject": "The entry is closed. The builder sees your reason.",
+        "retireTitle": "Retire the entry",
+        "retire": "The entry leaves the gallery and cannot be adopted any more. Builder credit already earned is kept."
+      },
+      "all": {
+        "title": "All entries"
+      },
+      "col": {
+        "title": "Entry",
+        "status": "Status",
+        "kind": "Kind",
+        "builder": "Builder",
+        "system": "AI system",
+        "adopters": "Adopters",
+        "credit": "Credit"
+      },
+      "fam": {
+        "title": "Adopters by job family",
+        "eyebrow": "Families under 10 adopters are suppressed; security, safeguards and cyber are never broken out",
+        "none": "No adoption yet."
+      },
+      "otherFamilies": "Other families",
+      "sys": {
+        "title": "Approved entries by AI system",
+        "entries": "{n} entries"
+      }
+    },
+    "fromFluency": "Automation gallery",
+    "myBuilds": "What I built",
+    "sysList": {
+      "title": "Automations on this system",
+      "intro": "Approved gallery entries that run on this register entry (metadata only).",
+      "none": "No approved automation runs on this system yet."
+    },
+    "by": {
+      "governance": "AI governance"
     }
   }
 }

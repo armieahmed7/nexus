@@ -5,7 +5,8 @@
 // leaves the rest live (wave G: anon and authenticated kept the row-removal and table-emptying privileges on
 // kafaa_prearrival_shares; the second one bypasses RLS). The shared validator database (supabase/tests/nexus_stubs.sql) has no
 // such defaults, so a missing revoke is invisible there. This check loads the stubs, then the Supabase default privileges, then
-// every migration, and asserts on every public.kafaa_% table / view created by a migration dated WAVE_FROM or later (waves E-I;
+// every migration, and asserts on every public.kafaa_% table / view created by a migration dated WAVE_FROM or later (since the
+// audit-fixes PR #5 merged, WAVE_FROM is '' and that is every public.kafaa_* relation; before it, waves E-I only;
 // generic: a later wave's table is covered with no change):
 //   anon          SELECT only, except ANON_WRITE
 //   authenticated SELECT only, except AUTH_WRITE (direct client writes through SupabaseBackend insert/update, RLS-gated)
@@ -14,13 +15,16 @@
 // Every other write goes through SECURITY DEFINER kafaa_* RPCs. No client code removes rows (SupabaseBackend only inserts and
 // updates), so no exception holds a removal privilege.
 //
-// Scope: the schema-wide fix (the pre-wave-E tables that earlier waves left partly open on live) lives in the `audit-fixes` PR,
-// not in wave H. Until that merges, tables from before WAVE_FROM are reported by --audit only, never as failures; once it is
-// merged, the scope can widen to every public.kafaa_* relation (set WAVE_FROM to '' ). The two exception-list checks (every
+// Scope: the schema-wide fix (the pre-wave-E tables that earlier waves left partly open on live) lives in the `audit-fixes` PR
+// (#5, kafaa_audit_grants), not in wave H. It has merged, so WAVE_FROM is '' and every public.kafaa_* relation is asserted (wave I
+// QA, after merging main). Setting WAVE_FROM back to a migration prefix makes earlier tables audit-only again. The two
+// exception-list checks (every
 // explicit grant is documented; every documented exception is still granted) read the explicit grants only and stay schema-wide.
 //
 // Documented exceptions (the earlier-wave convention):
 //   ANON_WRITE  kafaa_contact_requests INSERT: the M12 public contact form (anonInsert in src/data/schema.ts).
+//   AUTH_WRITE_COLUMNS  kafaa_contact_requests UPDATE (status) to authenticated: staff mark a request routed / closed
+//               (src/modules/m16/AdminPage.tsx); granted by kafaa_audit_contact_requests, RLS (kafaa_update) decides who may.
 //   AUTH_WRITE  the tables some migration explicitly grants INSERT/UPDATE to authenticated: the generated RLS file
 //               (scripts/gen-schema.mjs: tables with a client write rule) and the g4 / g5 / w0e1 / w1e2 / w1e3 / w1e5 / w2e3 / fs11 grants
 //               (kafaa_skills, kafaa_career_targets, kafaa_roadmaps, kafaa_learning_goals, kafaa_future_interest,
@@ -40,8 +44,11 @@ import { pathToFileURL } from 'node:url';
 const read = (p) => readFileSync(p, 'utf8');
 export const PRIVS = ['SELECT', 'INSERT', 'UPDATE', 'DELETE', 'TRUNCATE', 'REFERENCES', 'TRIGGER'];
 const ROLES = ['anon', 'authenticated', 'public'];
-/** First migration of wave E (FS51). Tables created from here on are asserted; earlier ones are audit-only (see Scope above). */
-export const WAVE_FROM = '20261010251001';
+/** '' = every migration: every public.kafaa_* relation is asserted (the audit-fixes PR #5 closed the pre-wave-E tables). Set it to
+ *  the first migration of a wave (e.g. '20261010251001', FS51) to assert only the tables created from there on (see Scope above). */
+export const WAVE_FROM = '';
+/** In-scope label for messages. */
+const SCOPE = WAVE_FROM ? 'wave E-I ' : '';
 
 /** Names of the kafaa_* tables / views created by a migration dated WAVE_FROM or later (the generated schema file is earlier). */
 export function waveTables(before) {
@@ -59,6 +66,8 @@ alter default privileges in schema public grant all on functions to anon, authen
 `;
 
 export const ANON_WRITE = { kafaa_contact_requests: ['INSERT'] };
+/** Column-level client writes: { table: { PRIV: [columns] } } for authenticated (table-level privilege not held). */
+export const AUTH_WRITE_COLUMNS = { kafaa_contact_requests: { UPDATE: ['status'] } };
 export const AUTH_WRITE = Object.fromEntries([
   'kafaa_adv_skills', 'kafaa_adv_technologies', 'kafaa_adv_tracks', 'kafaa_assessment_forms', 'kafaa_benchmarks',
   'kafaa_blueprints', 'kafaa_career_paths', 'kafaa_career_targets', 'kafaa_competencies', 'kafaa_consents',
@@ -109,10 +118,17 @@ export async function violations(db) {
     const extra = PRIVS.filter((p) => g[role].has(p) && !allowed(role, t).has(p));
     if (extra.length) out.push({ table: t, role, privs: extra });
   }
-  const cols = (await db.query(`select table_name t, grantee g, privilege_type p, count(*)::int n from information_schema.column_privileges
+  const cols = (await db.query(`select table_name t, grantee g, privilege_type p, count(*)::int n, array_agg(column_name::text order by column_name) c
+    from information_schema.column_privileges
     where table_schema = 'public' and table_name like 'kafaa\\_%' and grantee in ('anon', 'authenticated', 'PUBLIC') and privilege_type <> 'SELECT'
     group by 1, 2, 3`)).rows;
-  for (const r of cols) { const role = r.g === 'PUBLIC' ? 'public' : r.g; if (!allowed(role, r.t).has(r.p)) out.push({ table: r.t, role, privs: [`${r.p} on ${r.n} columns`] }); }
+  for (const r of cols) {
+    const role = r.g === 'PUBLIC' ? 'public' : r.g;
+    if (allowed(role, r.t).has(r.p)) continue;
+    const doc = role === 'authenticated' ? AUTH_WRITE_COLUMNS[r.t]?.[r.p] : undefined;
+    if (doc && r.c.every((c) => doc.includes(c))) continue;
+    out.push({ table: r.t, role, privs: [`${r.p} on ${r.n} columns`] });
+  }
   return out;
 }
 
@@ -126,23 +142,26 @@ export default async function fsqa8Grants({ ok }) {
   const W = waveTables();
   const inW = [...L.keys()].filter((t) => W.has(t));
   ok(L.size >= 360, `live-like grants: ${L.size} public.kafaa_* relations loaded on top of the Supabase default privileges`);
-  ok(inW.length >= 60 && inW.length === W.size, `scope: ${inW.length} public.kafaa_* relations created by migrations from ${WAVE_FROM} (waves E-I); the ${L.size - inW.length} earlier ones are audit-only until the audit-fixes PR merges`);
+  ok(inW.length >= 60 && inW.length === W.size, `scope: ${inW.length} public.kafaa_* relations created by migrations from ${WAVE_FROM || 'the first one (every relation; audit-fixes PR #5 merged)'}${WAVE_FROM ? ' (waves E-I)' : ''}; ${L.size - inW.length} earlier ones are audit-only`);
   const v = (await violations(live)).filter((x) => W.has(x.table));
-  for (const [role, label] of [['anon', `anon holds SELECT only on every wave E-I public.kafaa_* relation (exception: kafaa_contact_requests INSERT)`],
-    ['authenticated', `authenticated holds SELECT plus only the documented INSERT/UPDATE grants on every wave E-I public.kafaa_* relation`],
-    ['public', 'PUBLIC holds no privilege on any wave E-I public.kafaa_* relation']]) {
+  for (const [role, label] of [['anon', `anon holds SELECT only on every ${SCOPE}public.kafaa_* relation (exception: kafaa_contact_requests INSERT)`],
+    ['authenticated', `authenticated holds SELECT plus only the documented INSERT/UPDATE grants on every ${SCOPE}public.kafaa_* relation`],
+    ['public', `PUBLIC holds no privilege on any ${SCOPE}public.kafaa_* relation`]]) {
     const mine = v.filter((x) => x.role === role);
     ok(mine.length === 0, `${label}${mine.length ? `; beyond: ${brief(mine)}` : ''}`);
   }
-  ok(!v.some((x) => x.privs.some((p) => /^(DELETE|TRUNCATE)/.test(p))), 'no API role can remove rows from or empty a wave E-I public.kafaa_* table (TRUNCATE bypasses RLS)');
+  ok(!v.some((x) => x.privs.some((p) => /^(DELETE|TRUNCATE)/.test(p))), `no API role can remove rows from or empty any ${SCOPE}public.kafaa_* table (TRUNCATE bypasses RLS)`);
   // the exceptions are exactly the explicit grants: a migration that grants a client write must be listed above on purpose
   const undocumented = [];
   for (const [t, g] of E) for (const role of ROLES) for (const p of g[role]) if (!allowed(role, t).has(p)) undocumented.push({ table: t, role, privs: [p] });
   ok(undocumented.length === 0, `every explicit grant to anon / authenticated / PUBLIC is SELECT or a documented exception${undocumented.length ? `; undocumented: ${brief(undocumented.map((x) => ({ ...x, privs: [`${x.role} ${x.privs[0]}`] })))}` : ''}`);
   const unused = Object.entries(AUTH_WRITE).flatMap(([t, ps]) => ps.filter((p) => !E.get(t)?.authenticated.has(p)).map((p) => `${t} ${p}`));
-  ok(unused.length === 0, `every documented authenticated exception is still granted by the migrations${unused.length ? `; stale: ${unused.join(', ')}` : ''}`);
+  const colGranted = new Set((await explicit.query(`select table_name || ' ' || privilege_type || ' ' || column_name k from information_schema.column_privileges
+    where table_schema = 'public' and grantee = 'authenticated'`)).rows.map((r) => r.k));
+  for (const [t, ps] of Object.entries(AUTH_WRITE_COLUMNS)) for (const [p, cs] of Object.entries(ps)) for (const c of cs) if (!colGranted.has(`${t} ${p} ${c}`)) unused.push(`${t} ${p} (${c})`);
+  ok(unused.length === 0, `every documented authenticated exception (table and column level) is still granted by the migrations${unused.length ? `; stale: ${unused.join(', ')}` : ''}`);
   const differ = [...L].filter(([t]) => W.has(t)).filter(([t, g]) => ROLES.some((r) => [...g[r]].sort().join() !== [...(E.get(t)?.[r] ?? [])].sort().join())).map(([t]) => t);
-  ok(differ.length === 0, `live-like grants equal the explicit ones on all ${inW.length} wave E-I relations (nothing comes only from the Supabase defaults)${differ.length ? `; differ: ${differ.slice(0, 8).join(', ')}` : ''}`);
+  ok(differ.length === 0, `live-like grants equal the explicit ones on all ${inW.length} ${SCOPE}relations (nothing comes only from the Supabase defaults)${differ.length ? `; differ: ${differ.slice(0, 8).join(', ')}` : ''}`);
   await live.close();
   await explicit.close();
 }

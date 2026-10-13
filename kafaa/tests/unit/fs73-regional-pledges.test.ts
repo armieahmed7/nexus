@@ -327,8 +327,9 @@ describe('FS65 · each pledge names its organisation, skill area and date (accep
 
 describe('FS64 / FS65 · routes, RBAC, benchmarks and i18n', () => {
   it('six M36 routes with the ecosystem guards; every route title in EN and AR; benchmarks from the cards', () => {
-    expect(routes.map((r) => r.id)).toEqual(['ecosystem-regional-plan', 'ecosystem-commitments', 'ecosystem-commitment', 'ecosystem-demand-release', 'ecosystem-pledges', 'ecosystem-pledges-register']);
-    for (const r of routes) {
+    const g = routes.filter((r) => /^FS6[45]\b/.test(r.spec)); // FS wave I · E4 (fsIe4): M36 also carries the FS82/FS83 routes (tests/unit/fs94-grants-consortium.test.ts)
+    expect(g.map((r) => r.id)).toEqual(['ecosystem-regional-plan', 'ecosystem-commitments', 'ecosystem-commitment', 'ecosystem-demand-release', 'ecosystem-pledges', 'ecosystem-pledges-register']);
+    for (const r of g) {
       expect((en.routes as Record<string, { title: string }>)[r.id].title).toBeTruthy();
       expect((ar.routes as Record<string, { title: string }>)[r.id].title).toMatch(/[؀-ۿ]/);
       expect(r.guard.signedIn).toBe(true);

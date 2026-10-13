@@ -1,0 +1,10 @@
+fswaveI journeys (E2E_BACKEND=local, vite preview of the build with the QA fixes, one Chromium, workers=1): 8 passed (1.8m)
+  ✓ I1 FS78: the balance equals grants minus approved use; only outcome-gated catalogue items can be charged; a study-time request is decided by a second person (the line manager) with an audit row;
+  ✓ I2 FS79 + M17: unverified certificates write no evidence and read "claimed"; a verifier (never the holder) verifies through reviewed crosswalk rows only; the trust tier shows on the certificate 
+  ✓ I3 FS80: the gallery holds metadata only (nothing runs in Kafa\
+  ✓ I4 FS81: my plan is SIMULATED with review dates and names every alerted task with the practice added; plans are for the person and HR only (the crew B manager, the training manager and HR analys
+  ✓ I5 FS82: rounds open and close on schedule (the round to 10 Oct is closed, the round to 10 Dec open); budgets are SIMULATED; statistics under 10 are suppressed; the HR director decides after the
+  ✓ I6 FS83: partner organisations are synthetic and labelled; each partner sees only its own trainees; a visit writes evidence only after host confirmation (here the programme office on behalf, wit
+  ✓ I7 FS84: each team target shows the 2030 role-profile version it came from; the inventory suppresses cells under 10; the data-quality figures equal the rule (dataQuality on the seed)
+  ✓ I8 wiring: the inventory from the skills outlook (HR only), the consortium from the energy academy, rung alerts from the simulator page; Arabic RTL on the wave-I pages
+visual -g fsi: 74 passed (RTL 32 + 390 px 32 pages + shots; checked by eye on contact sheets)

@@ -10,6 +10,7 @@ import { todayIso } from '../../domain/rules';
 import { badgeCandidates, badgeView, daysUntil } from './walletRules';
 import { verifyCredential, ISSUER_KEYS, type KeyId } from './issuer';
 import { BadgeMedal, BadgeStatusPill, Stat, usePassportData, type PassportData } from './ui';
+import { ExternalCertsCard } from './xcUi'; // FS79 -> M17 (wave I integration): external certificates with their trust tier
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Row = any;
@@ -125,6 +126,8 @@ function Wallet({ d, me }: { d: PassportData; me: string }) {
           </ul>
         )}
       </section>
+
+      <ExternalCertsCard personId={me} />
 
       <Card title={t('m17.wallet.ready')} eyebrow={t('m17.wallet.readyEyebrow')}>
         {cands.length === 0 ? (

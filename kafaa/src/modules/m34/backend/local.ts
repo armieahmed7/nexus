@@ -18,6 +18,7 @@ import {
 } from '../rpl';
 import { CR_MSG, checkTag, creditsFor, creditsOf, crResultCode, ledgerDiff, ledgerTotal, nqfForLevel, tagId, type CreditWorld } from '../credits';
 import type { M34Rpc, RplAttestInput, RplDecideInput, RplSubmitInput } from './rpc';
+import { makeLocalFs91 } from './local.fs91'; // FS wave I · E1 (FS78, FS79)
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 const str = (v: unknown) => (typeof v === 'string' ? v.replace(/^[ \t\r\n]+|[ \t\r\n]+$/g, '') : '');
@@ -85,6 +86,7 @@ export function makeLocalM34(b: LocalBackend, h: LocalRpcHelpers): M34Rpc {
   };
 
   return {
+    ...makeLocalFs91(b, h), // FS wave I · E1: requestStudyTime, decideStudyTime, learningBalance, submitExternalCert, verifyExternalCert
     async submitRpl(input: RplSubmitInput) {
       await b.whenReady();
       type R = { id: string; status: string; evidence_id?: string | null };

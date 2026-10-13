@@ -78,6 +78,14 @@
     "training-credentials-strategic": {
       "title": "Strategic credentials",
       "purpose": "The strategic tier: which gigs and rotations each credential unlocks, and how holders move internally."
+    },
+    "team-skills-future": {
+      "title": "Team 2030 capability targets",
+      "purpose": "Team targets for 2028 and 2030 from the role profiles, the gap from today's team and the profile version each target came from."
+    },
+    "workforce-skills-inventory": {
+      "title": "Organisation skills inventory",
+      "purpose": "Every skill by area and entity, suppressed under 10, with a data-quality panel: profile coverage, staleness and the share validated."
     }
   },
   "mirror": "Mirror",
@@ -123,7 +131,9 @@
     "lr_qual": "{title}: mirrored as qualified or not qualified only",
     "lr_skill": "Skill {title} from your skills passport",
     "lr_provenance": "Level {level}, basis: {basis}",
-    "lr_never": "Security and medical detail is never part of the record"
+    "lr_never": "Security and medical detail is never part of the record",
+    "lr_xcert": "External certificate {title}: verified with the issuer",
+    "lr_tier": "Trust tier: {tier}"
   },
   "passport": {
     "intro": "Your skills as Kafa'a derives them from recorded evidence: qualification records, courses, assessments, JPMs, validated ratings and credentials. Every level shows how it was evidenced.",
@@ -275,7 +285,9 @@
       "credential": "Credential",
       "rating": "Rating",
       "claim": "Self-claim",
-      "validated": "Validated rating"
+      "validated": "Validated rating",
+      "xcert": "External certificate",
+      "automation": "Builder credit: approved automation adopted by colleagues"
     },
     "sys": {
       "assess": "Kafa'a assessments",
@@ -283,7 +295,11 @@
       "wallet": "Kafa'a credential wallet",
       "application": "the application form",
       "onboarding": "the onboarding profile",
-      "passport": "Kafa'a skills passport"
+      "passport": "Kafa'a skills passport",
+      "recognition": "Kafa'a recognition",
+      "gallery": "the automation gallery",
+      "grants": "the micro-grant programme",
+      "consortium": "the energy consortium cohort"
     }
   },
   "claims": {
@@ -1408,13 +1424,15 @@
       "mc": "Micro-credentials",
       "badge": "Badges",
       "qual": "Qualification mirror",
-      "skill": "Skills"
+      "skill": "Skills",
+      "xcert": "External certificates"
     },
     "kindEmpty": {
       "mc": "No micro-credentials yet.",
       "badge": "No badges yet.",
       "qual": "No qualification lines.",
-      "skill": "No skills at level 1 or above yet."
+      "skill": "No skills at level 1 or above yet.",
+      "xcert": "No verified external certificates."
     },
     "empty": "Nothing to share yet",
     "emptyBody": "Credentials, qualification lines and skills appear here as you earn them.",
@@ -1637,5 +1655,157 @@
         "status": "Status"
       }
     }
+  },
+  "tt": {
+    "intro": "What this team will need in 2028 and 2030, derived from the published future role profiles of its members, against the skills the team holds today with counted evidence. Each target names the role-profile version it came from.",
+    "toHeatmap": "Today's coverage",
+    "toHorizons": "Role horizons",
+    "horizon": "Horizon",
+    "h": {
+      "2028": "2028",
+      "2030": "2030"
+    },
+    "assumptionTitle": "Planning assumption, no deployment decision implied",
+    "assumption_2030": "2030 targets take each member's published 2030 role profile. Per skill, the target level is the level most of the team's roles ask for (ties go to the higher level), and the target count is how many people need at least that level.",
+    "assumption_2028": "2028 targets are the half-way point from today's role profile to the 2030 profile, rounded up: a skill needed at level 3 in 2030 and level 1 today is a level 2 target for 2028. The target count follows the same rule as 2030.",
+    "agg": "You see counts for the whole organisation. Names, holders and member readiness are shown only to managers in scope and the training manager.",
+    "tile": {
+      "readiness": "Team readiness",
+      "readinessSub": "Levels held against the {h} profiles",
+      "targets": "Targets",
+      "targetsSub": "{n} skills new by then",
+      "covered": "Already covered",
+      "coveredSub": "{thin} thin · {unc} with nobody yet",
+      "gap": "People to develop",
+      "gapSub": "Sum of the gaps across targets",
+      "profiled": "Members with a profile",
+      "profiledSub": "{none} without a 2030 profile · {path} path-only roles"
+    },
+    "adoptedTitle": "Stored team targets",
+    "adoptedOn": "Adopted on {date} by {who}",
+    "notAdopted": "Not adopted yet: the targets below are derived live from the role profiles.",
+    "upToDate": "Matches the latest role profiles",
+    "changedN": "{n} targets no longer match a republished profile",
+    "freshN": "{n} new targets since adoption",
+    "retiresN": "{n} stored targets no longer derive",
+    "adopt": "Adopt as team targets",
+    "readopt": "Adopt again",
+    "whoAdopts": "A manager in scope or the training manager adopts targets.",
+    "confirmTitle": "Adopt the {h} targets for {group}?",
+    "confirmBody": "{n} targets will be stored and {r} stored targets switched off (never removed). The step is recorded in the audit log.",
+    "note": "Note for the team (optional)",
+    "noneTitle": "No targets for this group",
+    "none": "None of the group's roles has a published 2030 profile with skill requirements yet.",
+    "tableTitle": "{h} targets and today's gap",
+    "tableIntro": "Ordered by the size of the gap. Holders count verified, evidenced and validated levels only; a self-claim never counts.",
+    "col": {
+      "target": "Target",
+      "now": "Hold it now",
+      "gap": "Gap",
+      "from": "From role profile",
+      "adopted": "Stored",
+      "why": "Why this target",
+      "readiness": "Readiness for the horizon",
+      "toGrow": "Largest gaps"
+    },
+    "change": {
+      "new": "New by then",
+      "raised": "Level raised"
+    },
+    "levelOnly": "Level {level}+ (counts suppressed)",
+    "gapN": "{n} to develop",
+    "barLabel": "{n} of {of} people",
+    "versionChip": "2030 v{v}",
+    "notStored": "Not stored",
+    "stored": "Stored",
+    "was": "Stored: {n} at L{level}+",
+    "newVersion": "A newer profile version exists",
+    "retiredTitle": "Stored targets that no longer derive",
+    "retiredIntro": "These skills left the role profiles. Adopting again switches them off; they stay in the record.",
+    "membersTitle": "Each member against their own role profile",
+    "membersIntro": "Readiness is the share of the levels their role asks for at this horizon that they hold today with counted evidence. Listed by name, never ranked.",
+    "membersNote": "Use it to plan development with each person; the numbers are not a performance rating.",
+    "noRole": "No role on record",
+    "readinessOf": "Readiness of {name}",
+    "moreN": "+{n} more",
+    "allMet": "Every level met",
+    "status": {
+      "no_role": "No role on record",
+      "no_profile": "No 2030 profile for this role",
+      "path_only": "Path-level role (no skill requirements)",
+      "ok": "Profiled"
+    },
+    "method": "Source: the FS05 role profiles (planning assumptions, published versions only) and today's skill states. Kafa'a does not decide staffing; targets support development planning.",
+    "why": {
+      "rule_2030": "Target: the level most of the team's roles ask for in 2030 (level {level}), for everyone who needs at least that level ({people}).",
+      "rule_2028": "Target: half-way from today's profile to the 2030 profile, rounded up (level {level}), for everyone who needs at least that level ({people}).",
+      "role": "{role}: level {level} in the 2030 profile, version {version}.",
+      "role_2028": "{role}: level {level} for 2028 (today {now}, 2030 profile version {version}).",
+      "new": "No role in this team asks for this skill today.",
+      "holders": "{n} people hold it today with counted evidence; {gap} still to develop."
+    },
+    "fromHeatmap": "2028 and 2030 targets"
+  },
+  "inv": {
+    "intro": "The organisation's skills inventory: every skill by area and by entity or job family, counting people who hold the skill at its key level with counted evidence. Every cell under 10 is suppressed. The data-quality panel shows how far the inventory can be trusted.",
+    "toTargets": "Team 2030 targets",
+    "toConfidence": "Skill confidence",
+    "forbiddenTitle": "Aggregate access needed",
+    "forbidden": "The organisation skills inventory is for HR aggregates and the training manager.",
+    "dim": "Break down by",
+    "dims": {
+      "entity": "Entity",
+      "family": "Job family"
+    },
+    "csv": "Export CSV",
+    "watermark": "Kafa'a organisation skills inventory · cells under 10 suppressed · exported by {role} on {date}",
+    "qualityTitle": "Data quality",
+    "qualityIntro": "Computed on {date} from the stored skill states with published rules; the same rules run on both backends.",
+    "q": {
+      "coverage": "Profile coverage",
+      "coverageSub": "{n} of {of} active staff have a skills profile",
+      "req": "Role requirements recorded",
+      "reqSub": "{n} of {of} required skills have a recorded state",
+      "stale": "Stale states",
+      "staleSub": "{a} past their half-life · {r} on a skill past its review date ({k} skills)",
+      "validated": "Share validated",
+      "validatedSub": "{n} of {of} states verified or validated"
+    },
+    "basisTitle": "Skill states by evidence basis",
+    "byGroup": "Data quality by {dim}",
+    "col": {
+      "staff": "Staff",
+      "coverage": "Coverage",
+      "req": "Requirements",
+      "stale": "Stale",
+      "validated": "Validated"
+    },
+    "defsTitle": "How each figure is computed",
+    "def": {
+      "coverage": "Profile coverage: active staff with at least one active skill state (level 1 or more), out of all active staff.",
+      "req": "Role requirements recorded: the skills required by each person's published current role profile that have an active state, out of all required skills.",
+      "stale": "Stale: active states whose newest evidence has passed its half-life (FS03 decay) or whose skill definition is past its review date (FS54 skills council).",
+      "validated": "Share validated: active states verified by a qualification record or validated by a manager or peer check-in, out of all active states. Course and assessment evidence counts as evidenced.",
+      "suppress": "Any count naming fewer than {min} people is suppressed, and groups under {min} staff show no figures. Security skills and the security, safeguards and cyber families are never broken out."
+    },
+    "toCouncil": "Skills council and review dates",
+    "heatTitle": "Skills by area",
+    "heatIntro": "People holding at least one skill of the area at its key level. Open an area for its {n} skills in full. Cells under {min} are suppressed.",
+    "famNoteTitle": "Small families",
+    "famNote": "Most job families have fewer than 10 people, so their cells are suppressed. The entity view shows more.",
+    "total": "All staff",
+    "skillsN": "{n} skills, {shown} with a count to show",
+    "heatNote": "Cells show people and the share of the group's staff. Holders count verified, evidenced and validated levels at the skill's key level; self-claims never count."
+  },
+  "xc": {
+    "title": "External certificates",
+    "eyebrow": "{n} verified of {all}",
+    "manage": "Add or follow a certificate",
+    "body": "Certificates from universities, professional bodies, vendors and online platforms, with the trust tier each one earned. Only verified certificates count as evidence; the tier sets how far.",
+    "loading": "Loading certificates…",
+    "empty": "No external certificates yet",
+    "emptyBody": "Add one with its verification link; a verifier checks it with the issuer before it counts.",
+    "notAuthority": "Kafa'a is not the issuer and not an authority",
+    "expires": "expires {date}"
   }
 }

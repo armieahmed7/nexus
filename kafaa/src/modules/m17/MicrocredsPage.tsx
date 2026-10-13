@@ -12,6 +12,7 @@ import { useSession } from '../../auth/session';
 import { verifyCredential } from './issuer';
 import { shareUrl, SignatureChip } from './WalletPage';
 import { awardView, componentsOf, type AwardRow, type DefRow, type Eligibility } from './microcred';
+import { ExternalCertsCard } from './xcUi'; // FS79 -> M17 (wave I integration)
 import { AreaChip, CriteriaList, McMedal, McStatusPill, ProgressLine, cardState, eligibilityReasons, useMcData, type McData } from './mcUi';
 
 export default function MicrocredsPage() {
@@ -23,6 +24,7 @@ export default function MicrocredsPage() {
       actions={<div className="flex flex-wrap gap-2"><L to="/my/skills/credentials/future" className="btn-primary btn-sm no-underline" data-testid="m17-to-future">{t('m17.fc.toFuture')}</L><L to="/my/skills/wallet" className="btn-outline btn-sm no-underline">{t('m17.mc.toWallet')}</L><L to="/my/skills" className="btn-ghost btn-sm no-underline">{t('m17.wallet.toPassport')}</L></div>}>
       <Callout tone="sim" title={t('m17.mc.noticeTitle')}>{t('m17.mc.notice')}</Callout>
       <Async state={q}>{(d) => <Catalogue d={d} />}</Async>
+      <div className="mt-6"><ExternalCertsCard personId={s.identity.personId} /></div>
     </Page>
   );
 }

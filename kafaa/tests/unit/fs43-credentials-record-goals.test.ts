@@ -150,7 +150,7 @@ describe('FS32 · learner record', () => {
     const qs = new Set(T.qual_standards.filter((s) => s.security_restricted || s.security_mirror_only).map((s) => s.id));
     expect(qs.size).toBeGreaterThan(0);
     for (const p of T.people.filter((x) => x.kind === 'staff')) {
-      const w = { today: TODAY, person: p.id, initials: p.initials, microcred_awards: T.microcred_awards, microcred_defs: DEFS, badges: T.badges, certificates: T.certificates, qual_records: T.qual_records, qual_standards: T.qual_standards, person_skills: T.person_skills, skills: T.skills, competencies: T.competencies };
+      const w = { today: TODAY, person: p.id, initials: p.initials, microcred_awards: T.microcred_awards, microcred_defs: DEFS, badges: T.badges, certificates: T.certificates, qual_records: T.qual_records, qual_standards: T.qual_standards, person_skills: T.person_skills, skills: T.skills, competencies: T.competencies, external_certs: T.external_certs }; // FS79 -> FS32 (wave I integration)
       const items = recordItems(w as never);
       for (const i of items) {
         if (i.kind === 'qual') expect(qs.has(T.qual_records.find((r) => r.id === i.id)!.standard_id), i.id).toBe(false);
