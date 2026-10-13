@@ -1,0 +1,4 @@
+01_kafaa_cleanup_dup_enrolments.sql
+02_kafaa_cleanup_fs31_award_notices.sql
+03_kafaa_cleanup_e2e_applications.sql
+04_kafaa_cleanup_history_repair.sql
