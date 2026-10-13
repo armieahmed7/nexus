@@ -53,78 +53,151 @@
     "pageUnavailable": "This page is not available right now."
   },
   "home": {
-    "titleTag": "Nuclear careers and skills",
-    "eyebrow": "Kafa'a · كفاءة",
-    "title": "Careers, competence and qualification for the UAE's nuclear energy workforce",
-    "intro": "Explore the roles that run Barakah, the programmes that lead to them, and how people are trained and qualified. Every figure links its public source.",
-    "ctaCareers": "Explore careers",
-    "ctaProgrammes": "Find a programme",
+    "titleTag": "Upskilling for the nuclear energy workforce",
+    "eyebrow": "Skills · Learning · Credentials · Careers",
+    "title": "Build the skills for the UAE's clean-energy future",
+    "intro": "Kafa'a helps ENEC's people and the next generation see the skills every role needs, learn them, prove them with credentials anyone can verify, and grow into the roles of 2030.",
+    "ctaLearn": "Explore learning",
+    "ctaSignIn": "Sign in",
+    "ctaMy": "Go to My Kafa'a",
     "ctaAsk": "Ask Dalil",
     "concept": "A concept within ENEC NEXUS. Not an official ENEC website; official information is on enec.ae.",
-    "audiencesTitle": "Where would you like to start?",
-    "aud": {
-      "students": {
-        "title": "Students and school leavers",
-        "body": "Which subjects lead to nuclear careers, and the programmes open to you after school or university.",
+    "scale": {
+      "eyebrow": "One scale for every skill",
+      "title": "From awareness to expert",
+      "body": "Every skill is described at four levels, so you always know what good looks like now and what to show next.",
+      "link": "How levels work"
+    },
+    "stepN": "Step {n}:",
+    "journeyTitle": "How Kafa'a works",
+    "journeyIntro": "One journey from the skills a role needs to the role you want next.",
+    "journey": {
+      "discover": {
+        "title": "Discover",
+        "body": "See the skills each role needs today and in 2030, and how experience from another industry carries over.",
         "links": {
-          "pathways": "Programmes by life stage",
-          "dnt": "Leaving school? Diploma in Nuclear Technology",
-          "stem": "STEM materials for schools"
+          "skills": "Skills catalogue",
+          "horizons": "Roles in 2030 and 2035",
+          "translate": "Your skills in nuclear"
         }
       },
-      "seekers": {
-        "title": "Job seekers",
-        "body": "Roles, entry routes and what counts towards becoming a Reactor Operator or Senior Reactor Operator.",
+      "learn": {
+        "title": "Learn",
+        "body": "Courses, future-skills academies, guided pathways and open practice quizzes, with mentors and a Learning Coach once you sign in.",
         "links": {
-          "careers": "Career Map",
-          "licensing": "How operator certification works",
-          "jobs": "Open roles (official channel)"
+          "catalogue": "Learning catalogue",
+          "academies": "Future-skills academies",
+          "practice": "Practice quizzes"
         }
       },
-      "staff": {
-        "title": "ENEC staff",
-        "body": "Your qualifications, licence tracker, learning and development plan. Sign in with a demo role card.",
-        "signedIn": "You are signed in: go to your dashboard for expiries, training and notices.",
+      "prove": {
+        "title": "Prove",
+        "body": "Assessments, micro-credentials and signed records anyone can check. What you already do at work can count as credit too.",
         "links": {
-          "my": "My dashboard",
-          "learn": "Training catalogue",
-          "safety": "Safety culture"
+          "recognition": "Recognition of prior learning",
+          "verify": "Verify a certificate",
+          "badge": "Verify a badge"
         }
       },
-      "partners": {
-        "title": "Suppliers and partners",
-        "body": "How to become a Barakah supplier, the partner directory, and routes for universities and researchers.",
+      "grow": {
+        "title": "Grow",
+        "body": "Plan a route to the role you want, see the steps and conditions on the way, and how new reactor technology could change it.",
         "links": {
-          "suppliers": "Become a supplier",
-          "directory": "Partner directory",
-          "universities": "Universities and research"
+          "plan": "Plan a path to a role",
+          "paths": "Career paths",
+          "nextGen": "Next-generation reactors and your role"
         }
       }
     },
-    "numbersTitle": "Barakah in numbers",
-    "numbersIntro": "Each figure shows its source and the date it was checked.",
-    "aboutLink": "About Barakah",
-    "programmesTitle": "Featured programmes",
-    "programmesIntro": "Eligibility and duration as published; ENEC decides admission.",
-    "nat": {
-      "uae_only": "UAE nationals",
-      "uae_priority": "UAE nationals first",
-      "open": "Open to all"
+    "focusTitle": "Future skills, open to everyone",
+    "focusIntro": "The frameworks Kafa'a uses to prepare people for AI, new technology and the energy transition. No sign-in needed.",
+    "focusOpen": "Explore",
+    "focus": {
+      "ai": {
+        "title": "AI Fluency Ladder",
+        "body": "What good AI use looks like at a nuclear plant: four rungs, plant examples and a target for every job family."
+      },
+      "core": {
+        "title": "Nuclear critical core skills",
+        "body": "The 16 human and thinking skills every plant role needs, and how each one is developed and assessed."
+      },
+      "clean": {
+        "title": "Clean-energy competences",
+        "body": "ENEC's sustainability competence framework: twelve competences in four areas, with learning outcomes."
+      },
+      "courses": {
+        "title": "Future-skills courses",
+        "body": "Modular courses that close future-skill gaps, each linked to a skill at a stated level."
+      }
     },
-    "peopleTitle": "People behind Barakah",
-    "newsTitle": "Latest news",
-    "safetyTitle": "Safety culture",
-    "safetyEyebrow": "M08",
-    "safetyBody": "The 10 traits of a healthy nuclear safety culture, human performance tools and how to raise a concern safely.",
-    "safetyLink": "Explore safety culture",
-    "speakUpLink": "Raise a concern",
-    "emergencyTitle": "Emergency information",
-    "emergencyEyebrow": "Official guidance",
-    "emergencyBody": "Public emergency guidance lives on official ENEC and NCEMA pages. Kafa'a links to them.",
-    "emergencyLink": "Official links",
-    "dalilTitle": "Dalil, the guide",
-    "dalilEyebrow": "Governed AI",
-    "dalilBody": "Ask about careers, programmes and partnering. Dalil answers only from approved sources, cites them, and hands off to people."
+    "audiencesTitle": "Find your starting point",
+    "audiencesIntro": "Kafa'a works differently for each person who uses it.",
+    "aud": {
+      "staff": {
+        "title": "ENEC employees",
+        "body": "Your Skills Passport, a Learning Coach that ranks what to learn next, and skills-based mentoring.",
+        "links": {
+          "passport": "My Skills Passport",
+          "coach": "Learning Coach",
+          "mentoring": "Mentoring"
+        }
+      },
+      "talent": {
+        "title": "Students and new talent",
+        "body": "From school or university to a first role: programmes, scholarships and a shared trainee cohort across energy employers.",
+        "links": {
+          "journey": "Your journey from school",
+          "programmes": "Programmes and scholarships",
+          "consortium": "Energy trainee consortium"
+        }
+      },
+      "managers": {
+        "title": "Managers and HR",
+        "body": "See your team's skill depth, secure the critical skills of the future and plan training on evidence.",
+        "links": {
+          "heatmap": "Team capability heatmap",
+          "critical": "Critical future skills",
+          "needs": "Training needs forecast"
+        }
+      },
+      "partners": {
+        "title": "Partners and universities",
+        "body": "Join the supply chain, find announced partners, and work with ENEC on curricula, scholarships and research.",
+        "links": {
+          "suppliers": "Become a supplier",
+          "directory": "Partner directory",
+          "universities": "Universities"
+        }
+      }
+    },
+    "signInFirst": "sign in first",
+    "trustTitle": "Built to be trusted",
+    "trust": {
+      "verify": {
+        "title": "Verifiable records",
+        "body": "Kafa'a certificates and badges are signed, so anyone you share them with can check them.",
+        "link": "Verify a certificate"
+      },
+      "nuclear": {
+        "title": "Made for nuclear work",
+        "body": "Skills are tied to real roles, regulated qualifications and international frameworks.",
+        "link": "See the framework mapping"
+      },
+      "bilingual": {
+        "title": "Arabic and English",
+        "body": "Every page is written in both languages, with a right-to-left layout in Arabic.",
+        "link": "Accessibility statement"
+      },
+      "ai": {
+        "title": "Governed AI guidance",
+        "body": "Dalil answers only from approved sources, cites them, and hands you to a person when it should.",
+        "link": "Ask Dalil"
+      }
+    },
+    "nextTitle": "Know where you want to go?",
+    "nextBody": "Plan the route from your current role, or from outside ENEC, to the role you want: the steps, the conditions and the skills to build.",
+    "ctaPlan": "Plan your path",
+    "ctaCareers": "Explore the Career Map"
   },
   "news": {
     "topics": {

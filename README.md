@@ -34,7 +34,7 @@ Other scripts (run inside `kafaa/`):
 | `VITE_KAFAA_BACKEND` | `supabase` (default) or `local` (in-browser store seeded from `src/seed/seed.json`). |
 | `VITE_SUPABASE_URL` | Supabase project URL. Defaults to the NEXUS project `hlirqxoddysxtdezwcgv`. |
 | `VITE_SUPABASE_ANON_KEY` | Public anon key. Leave empty to use the built-in default in `src/config.ts`. |
-| `VITE_NEXUS_URL` | Target of "Back to NEXUS" links. Defaults to `https://enecai.xyz/`. |
+| `VITE_NEXUS_URL` | Target of NEXUS deep links (the header no longer has a "Back to NEXUS" link). Defaults to `https://enecai.xyz/`. |
 | `VITE_NEXUS_DEMO_PASSWORD` | Shared NEXUS demo-account password, baked into the bundle at build time so role-card sign-in works off the NEXUS origin. **Never commit it**: `.env.local` locally, Netlify environment variables for deploys. |
 | `KAFAA_E2E_PASSWORD` | Optional, only for `scripts/e2e-supabase.mjs` (live end-to-end check). |
 
