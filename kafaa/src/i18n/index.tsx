@@ -15,11 +15,31 @@ export type Digits = 'latn' | 'arab';
 export type Calendar = 'gregorian' | 'hijri';
 type Dict = Record<string, unknown>;
 
-const files = import.meta.glob('./*.json', { eager: true, import: 'default' }) as Record<string, Dict>;
+// Dictionaries load per language (audit 2026-10-13, finding 19): src/i18n/dict.<lang>.ts is one chunk per language, so the entry bundle
+// carries neither. main.tsx waits for the page's language before the first render (no raw keys); the other language loads only when
+// something asks for it (the language switch preloads it before navigating; bilingual helpers trigger it and re-render when it lands).
+const LOADERS: Record<Lang, () => Promise<{ default: Record<string, Dict> }>> = { en: () => import('./dict.en'), ar: () => import('./dict.ar') };
 const DICTS: Record<Lang, Record<string, Dict>> = { en: {}, ar: {} };
-for (const [path, dict] of Object.entries(files)) {
-  const m = path.match(/\.\/(.+)\.(en|ar)\.json$/);
-  if (m) DICTS[m[2] as Lang][m[1]] = dict;
+const LOADED: Record<Lang, boolean> = { en: false, ar: false };
+const loading: Partial<Record<Lang, Promise<void>>> = {};
+const listeners = new Set<() => void>();
+export const isLangLoaded = (l: Lang) => LOADED[l];
+export function loadLang(l: Lang): Promise<void> {
+  if (LOADED[l]) return Promise.resolve();
+  return (loading[l] ??= LOADERS[l]().then(
+    (m) => {
+      for (const [path, dict] of Object.entries(m.default)) {
+        const x = path.match(/\.\/(.+)\.(en|ar)\.json$/);
+        if (x) DICTS[l][x[1]] = dict;
+      }
+      LOADED[l] = true;
+      listeners.forEach((f) => f());
+    },
+    (e: unknown) => {
+      delete loading[l];
+      throw e;
+    },
+  ));
 }
 
 function lookup(lang: Lang, key: string): string | undefined {
@@ -32,15 +52,16 @@ function lookup(lang: Lang, key: string): string | undefined {
   return typeof cur === 'string' ? cur : undefined;
 }
 export function translate(lang: Lang, key: string, vars?: Record<string, string | number>): string {
-  let s = lookup(lang, key) ?? lookup('en', key);
+  if (!LOADED[lang]) void loadLang(lang).catch(() => undefined); // asked for a language not loaded yet: fetch it (listeners re-render)
+  let s = lookup(lang, key) ?? lookup('en', key) ?? (LOADED.en ? undefined : lookup('ar', key));
   if (s === undefined) {
-    if (import.meta.env.DEV) console.warn(`[i18n] missing ${key}`);
+    if (import.meta.env.DEV && LOADED.en) console.warn(`[i18n] missing ${key}`);
     return key;
   }
   if (vars) s = s.replace(/\{(\w+)\}/g, (_, k) => (vars[k] !== undefined ? String(vars[k]) : `{${k}}`));
   return s;
 }
-export const hasKey = (key: string) => lookup('en', key) !== undefined;
+export const hasKey = (key: string) => (lookup('en', key) ?? lookup('ar', key)) !== undefined;
 
 /** Strip / add the /ar language prefix (router paths are relative to the /kafaa basename). */
 export function splitLang(pathname: string): { lang: Lang; path: string } {
@@ -69,6 +90,37 @@ interface I18nValue {
 const I18nContext = createContext<I18nValue | null>(null);
 const PREFS_KEY = 'kafaa.prefs.v1';
 
+/** The language the visitor chose last (kafaa.prefs.v1 lang), or null. */
+export function storedLang(): Lang | null {
+  try {
+    const p = JSON.parse(localStorage.getItem(PREFS_KEY) || '{}') as { lang?: unknown };
+    return p.lang === 'ar' || p.lang === 'en' ? p.lang : null;
+  } catch {
+    return null;
+  }
+}
+function storeLang(l: Lang) {
+  try {
+    const p = JSON.parse(localStorage.getItem(PREFS_KEY) || '{}');
+    localStorage.setItem(PREFS_KEY, JSON.stringify({ ...p, lang: l }));
+  } catch {
+    /* ignore */
+  }
+}
+/**
+ * Audit 2026-10-13 (finding 14): the stored language was written but never read. A visitor who last chose Arabic and enters through an
+ * unprefixed link (a bookmark, a shared link, NEXUS) is sent to the /ar twin of that page; the redirect only ever adds /ar, so it cannot
+ * loop. An explicit choice of English (the language switch) stores 'en', so English sticks. Returns the new pathname or null.
+ */
+export function preferredLangPath(pathname: string, basename: string, stored: Lang | null): string | null {
+  if (stored !== 'ar') return null;
+  const base = basename.replace(/\/$/, '');
+  if (pathname !== base && !pathname.startsWith(`${base}/`)) return null;
+  const rest = pathname.slice(base.length) || '/';
+  if (splitLang(rest).lang === 'ar') return null;
+  return base + localPath(rest, 'ar');
+}
+
 function readPrefs(): Prefs {
   try {
     const p = JSON.parse(localStorage.getItem(PREFS_KEY) || '{}') as Partial<Prefs> & { lang?: Lang };
@@ -83,23 +135,34 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const { lang, path } = splitLang(location.pathname);
   const [prefs, setPrefsState] = useState<Prefs>(readPrefs);
+  const [version, setVersion] = useState(0);
+
+  // a dictionary that lands later (the other language, asked for by a bilingual helper) re-renders the tree
+  useEffect(() => {
+    const f = () => setVersion((n) => n + 1);
+    listeners.add(f);
+    if (!LOADED[lang]) void loadLang(lang).catch(() => undefined);
+    return () => {
+      listeners.delete(f);
+    };
+  }, [lang]);
 
   useEffect(() => {
     const html = document.documentElement;
     html.lang = lang;
     html.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    try {
-      const p = JSON.parse(localStorage.getItem(PREFS_KEY) || '{}');
-      localStorage.setItem(PREFS_KEY, JSON.stringify({ ...p, lang }));
-    } catch {
-      /* ignore */
-    }
+    // an /ar page is an Arabic choice; an unprefixed page is not a choice (English is stored only by the language switch)
+    if (lang === 'ar') storeLang('ar');
   }, [lang]);
 
   const setLang = useCallback(
     (l: Lang) => {
       if (l === lang) return;
-      navigate(localPath(path, l) + location.search + location.hash);
+      storeLang(l);
+      const to = localPath(path, l) + location.search + location.hash;
+      // load the other language first, so the switch never shows English text in an RTL page (or keys)
+      if (LOADED[l]) navigate(to);
+      else void loadLang(l).catch(() => undefined).finally(() => navigate(to));
     },
     [lang, path, navigate, location.search, location.hash],
   );
@@ -118,7 +181,8 @@ export function I18nProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<I18nValue>(
     () => ({ lang, dir: lang === 'ar' ? 'rtl' : 'ltr', path, t: (k, v) => translate(lang, k, v), setLang, prefs, setPrefs }),
-    [lang, path, setLang, prefs, setPrefs],
+    // version: a dictionary loaded after the first render changes t, so every consumer re-renders
+    [lang, path, setLang, prefs, setPrefs, version],
   );
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 }

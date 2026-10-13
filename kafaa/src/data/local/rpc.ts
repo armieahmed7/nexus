@@ -5,12 +5,13 @@
  * Change both files together.
  */
 import type { LocalBackend } from './LocalBackend';
-import type { AggregateRow, CertificateCheck, Result, Rpc, SignoffInput, RowOf, ObserverReportDraft, ScenarioInput, ResearchChallengeInput, ResearchProposalInput, DalilTurnInput, DalilTurnResult, ConcernReferralInput, DalilMode } from '../types';
+import type { AggregateRow, CertificateCheck, Result, Rpc, SignoffInput, RowOf, ObserverReportDraft, ScenarioInput, ResearchChallengeInput, ResearchProposalInput, DalilTurnInput, DalilTurnResult, ConcernReferralInput, DalilMode, ContactInput } from '../types';
 import type { PlatformRole } from '../../auth/policy';
 import { MIN_GROUP_SIZE } from '../../auth/policy';
 import { addWorkingDays, isoDate, todayIso, bookingPriority, scoreJpm } from '../../domain/rules';
 import { concernTransitionError, dalilModeAllowed, CONCERN_WITHHELD, HANDOFF_ROLES } from '../../domain/g5rules';
 import { canonical, chainHash, GENESIS } from '../audit';
+import { CONTACT_ROUTES, contactRequestProblems } from '../../domain/contact'; // audit 2026-10-13: kafaa_submit_contact mirror
 import { newId } from './store';
 import { G1LocalRpc } from './rpc.g1';
 import { makeG2LocalRpc } from './rpc_g2';
@@ -492,13 +493,20 @@ export class LocalRpc implements Rpc {
     if (JSON.stringify(a).length > 4000 || Object.values(a).some((v) => typeof v !== 'string')) return this.refuse<{ id: string; stage: string }>('application.submit', 'applications', programmeId, 'invalid', 'Answers are too long or not text', role);
     if (this.b.raw('applications').some((x) => x.person_id === me && x.programme_id === programmeId && !['withdrawn', 'unsuccessful'].includes(x.stage)))
       return this.refuse<{ id: string; stage: string }>('application.submit', 'applications', programmeId, 'conflict', 'You already have an open application for this programme', role);
-    const id = newId('app');
     const stage = a.mode === 'interest' ? 'interest' : 'submitted';
     const now = new Date().toISOString();
     const nat = a.nationality === 'uae' || a.nationality === 'other' ? a.nationality : 'unknown';
-    this.b.rawInsert('applications', { id, person_id: me, programme_id: programmeId, stage: stage as never, submitted_at: now, updated_at: now, decision: 'none', decision_source: null, consent_version: '1', delete_after: null, answers: a as never, nationality_flag: nat as never, gender: null });
-    this.b.rawInsert('application_events', { id: newId('ae'), application_id: id, person_id: me, ts: now, stage, note_en: stage === 'interest' ? 'Interest registered' : 'Application received', note_ar: stage === 'interest' ? 'تم تسجيل الاهتمام' : 'تم استلام الطلب', by_role: 'Applicant' });
-    return this.done('application.submit', 'applications', id, `${programmeId} ${stage}`, role, 'kafaa.application.submit', `Application ${id} to ${programmeId} (${stage})`, stage === 'interest' ? 'Interest registered' : 'Application submitted', { id, stage }, ['applications', 'application_events']);
+    // audit 2026-10-13: re-applying after withdrawing reopens the most recent withdrawn application (same id, history kept)
+    const old = this.b.raw('applications').filter((x) => x.person_id === me && x.programme_id === programmeId && x.stage === 'withdrawn')
+      .sort((x, y) => String(y.updated_at).localeCompare(String(x.updated_at)) || String(y.id).localeCompare(String(x.id)))[0];
+    const reopen = !!old;
+    const id = old ? old.id : newId('app');
+    if (old) this.b.rawUpdate('applications', id, { stage: stage as never, submitted_at: now, updated_at: now, decision: 'none', decision_source: null, consent_version: '1', delete_after: null, answers: a as never, nationality_flag: nat as never });
+    else this.b.rawInsert('applications', { id, person_id: me, programme_id: programmeId, stage: stage as never, submitted_at: now, updated_at: now, decision: 'none', decision_source: null, consent_version: '1', delete_after: null, answers: a as never, nationality_flag: nat as never, gender: null });
+    this.b.rawInsert('application_events', { id: newId('ae'), application_id: id, person_id: me, ts: now, stage,
+      note_en: stage === 'interest' ? 'Interest registered' : reopen ? 'Application received again (re-applied after withdrawing)' : 'Application received',
+      note_ar: stage === 'interest' ? 'تم تسجيل الاهتمام' : reopen ? 'تم استلام الطلب مجدداً (إعادة تقديم بعد السحب)' : 'تم استلام الطلب', by_role: 'Applicant' });
+    return this.done('application.submit', 'applications', id, `${programmeId} ${stage}${reopen ? ' reopened' : ''}`, role, 'kafaa.application.submit', `Application ${id} to ${programmeId} (${stage})${reopen ? ', reopened' : ''}`, stage === 'interest' ? 'Interest registered' : 'Application submitted', { id, stage }, ['applications', 'application_events']);
   }
   async withdrawApplication(id: string, reason: string) {
     await this.b.whenReady();
@@ -513,6 +521,20 @@ export class LocalRpc implements Rpc {
     const note = (reason ?? '').slice(0, 300);
     this.b.rawInsert('application_events', { id: newId('ae'), application_id: id, person_id: me, ts: now, stage: 'withdrawn', note_en: note || 'Withdrawn by applicant', note_ar: note || 'سحبه المتقدم', by_role: 'Applicant' });
     return this.done('application.withdraw', 'applications', id, 'withdrawn', role, 'kafaa.application.withdraw', `Application ${id} (${ap.programme_id}) withdrawn by the applicant`, 'Application withdrawn', undefined, ['applications', 'application_events']);
+  }
+  /** Audit 2026-10-13 (finding 7): the public contact and supplier forms send through this RPC. Mirror of kafaa_submit_contact (the
+   *  per-IP throttle is server-side only: the local demo has no client address). */
+  async submitContact(p: ContactInput): Promise<Result<{ id: string; route_to: string }>> {
+    await this.b.whenReady();
+    type R = { id: string; route_to: string };
+    const route = CONTACT_ROUTES[String(p?.topic ?? '')];
+    if (!route) return this.refuse<R>('contact.submit', 'contact_requests', null, 'invalid', 'Choose a topic');
+    const row = { id: newId('con'), topic: p.topic, route_to: route, name: p.name?.trim() || null, email: p.email?.trim() || null, message: (p.message ?? '').trim(),
+      status: p.status ?? 'new', lang: p.lang === 'ar' ? 'ar' : 'en', consent_contact: p.consent_contact === true, retention_until: p.retention_until || null };
+    const problem = contactRequestProblems(row, todayIso());
+    if (problem) return this.refuse<R>('contact.submit', 'contact_requests', null, 'invalid', `Contact request not sent: ${problem}`);
+    this.b.rawInsert('contact_requests', { ...row, created_at: new Date().toISOString() } as never);
+    return this.done<R>('contact.submit', 'contact_requests', row.id, `${row.topic} ${row.status}`, null, null, '', 'Request sent', { id: row.id, route_to: route }, ['contact_requests']);
   }
   async draftObserverReport(p: ObserverReportDraft) {
     await this.b.whenReady();
@@ -675,7 +697,7 @@ export class LocalRpc implements Rpc {
     const redacted = !!p.redact_question || p.refusal_category === 'concern';
     const n = session.turns;
     this.b.rawInsert('advisor_turns', { id: `${session.id}-${n + 1}`, session_id: session.id, person_id: me, speaker: 'user', text: redacted ? CONCERN_WITHHELD : p.question.slice(0, 2000), citations: [], refused: false, refusal_category: null, ts: now, intent: p.intent ?? null, confidence: null, redacted, mode: p.mode });
-    this.b.rawInsert('advisor_turns', { id: `${session.id}-${n + 2}`, session_id: session.id, person_id: me, speaker: 'dalil', text: p.answer.slice(0, 4000), citations: (p.citations ?? []).slice(0, 10), refused: !!p.refused, refusal_category: p.refusal_category ?? null, ts: now, intent: p.intent ?? null, confidence: p.confidence ?? null, redacted: false, mode: p.mode });
+    this.b.rawInsert('advisor_turns', { id: `${session.id}-${n + 2}`, session_id: session.id, person_id: me, speaker: 'dalil', text: p.answer.slice(0, 4000), citations: (p.citations ?? []).slice(0, 10), refused: !!p.refused, refusal_category: p.refusal_category ?? null, ts: now, intent: p.intent ?? null, confidence: p.confidence ?? null, redacted: false, mode: p.mode, answer_source: 'browser' });
     this.b.rawUpdate('advisor_sessions', session.id, { turns: n + 2, last_turn_at: now, mode: p.mode });
     return this.done<R>('dalil.turn', 'advisor_turns', session.id, `${p.mode} ${p.intent ?? '-'}${p.refused ? ` refused:${p.refusal_category}` : ''}`, null, null, '', 'ok', { session_id: session.id, used: used + 1, limit, remaining: Math.max(0, limit - used - 1) }, ['advisor_sessions', 'advisor_turns']);
   }

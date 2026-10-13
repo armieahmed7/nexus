@@ -14,7 +14,7 @@ import {
 import { todayIso } from '../../domain/rules';
 import type { SkillAlignmentsRow, SkillsRow } from '../../data/types';
 import { AL_MSG, CODE_PATTERNS, MATCH_TYPES, canonLevelMap, checkAlignment, isIndicative, type AlignmentInput, type FrameworkId } from './crosswalk';
-import { CodeCell, MatchPill, ReviewPill, useCatalogue, type Catalogue } from './ui';
+import { CatalogueGaps, CodeCell, MatchPill, ReviewPill, useCatalogue, type Catalogue } from './ui';
 
 const STATUS_TONE = { draft: 'neutral', published: 'ok', retired: 'bad' } as const;
 
@@ -24,7 +24,7 @@ export default function AlignmentsAdminPage() {
   return (
     <Page title={t('m28.routes.admin-skills-alignments.title')} intro={t('m28.admin.intro')} wide actions={<L to="/skills/frameworks" className="btn-outline">{t('m28.admin.public')}</L>}>
       <div data-testid="m28-bench-fs08"><BenchmarkChips feature="FS08" /></div>
-      <Async state={c} isEmpty={(d) => d.frameworks.length === 0} empty={<EmptyState title={t('m28.fw.empty')} />}>{(d) => <Admin c={d} />}</Async>
+      <Async state={c} isEmpty={(d) => d.frameworks.length === 0} empty={<EmptyState title={t('m28.fw.empty')} />}>{(d) => <><CatalogueGaps c={d} onRetry={c.reload} /><Admin c={d} /></>}</Async>
     </Page>
   );
 }

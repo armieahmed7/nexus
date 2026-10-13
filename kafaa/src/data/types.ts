@@ -25,6 +25,18 @@ export interface Query<T> {
   offset?: number;
 }
 
+/** A contact or supplier-interest request (kafaa_submit_contact). route_to is derived from the topic on the server. */
+export interface ContactInput {
+  topic: string;
+  message: string;
+  name?: string | null;
+  email?: string | null;
+  status?: 'new' | 'routed';
+  lang?: 'en' | 'ar';
+  consent_contact?: boolean;
+  retention_until?: string | null;
+}
+
 export interface Result<T = unknown> {
   ok: boolean;
   code: 'ok' | 'forbidden' | 'not_found' | 'not_signed_in' | 'self_sign' | 'not_evaluator' | 'invalid' | 'conflict' | 'maker_checker' | 'separation_of_duties' | 'error' | string;
@@ -265,6 +277,8 @@ export interface Rpc extends G2Rpc, G4Rpc, W0Rpc, ExtRpc {
   // ── [G3] M06 talent pipeline, M07 workforce analytics, M10 universities and research (SQL: 20261008133001_kafaa_g3_rpcs.sql)
   submitApplication(programmeId: string, answers: Record<string, string>): Promise<Result<{ id: string; stage: string }>>;
   withdrawApplication(id: string, reason: string): Promise<Result>;
+  /** Audit 2026-10-13: the public contact and supplier forms (kafaa_submit_contact: same bounds as the table check, per-IP throttle). */
+  submitContact(p: ContactInput): Promise<Result<{ id: string; route_to: string }>>;
   draftObserverReport(p: ObserverReportDraft): Promise<Result<{ id: string }>>;
   saveScenario(p: ScenarioInput): Promise<Result<{ id: string }>>;
   setBenchTarget(id: string, target: number, reason: string): Promise<Result>;

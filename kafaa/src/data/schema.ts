@@ -118,6 +118,15 @@ export const SCHEMA: Record<string, TableDef> = {
     read: [{ res: 'audit_log' }],
     write: { mode: 'append' },
   },
+  // [Audit2 2026-10-13] rate-limit counters for the anonymous RPCs (Dalil, public verification, contact form): one row per bucket and
+  // key (a slug, an md5 of the client IP, or '*' for the global cap), reset when its window passes. Keys hold no personal data.
+  // Written only by kafaa_rl_hit() (20261013100001_kafaa_audit2_rate_limits.sql); auditors may read them.
+  rate_limits: {
+    module: 'M16', label: 'Rate-limit counters for anonymous RPCs (hashed keys only)',
+    cols: { id: 'text pk', bucket: 'text idx', key: 'text', window_start: 'ts =now', n: 'int =0', updated_at: 'ts =now' },
+    read: [{ res: 'audit_log' }],
+    write: { mode: 'rpc' },
+  },
   notifications: {
     module: 'M14', label: 'Notices: expiries, assignments, applications',
     cols: {
@@ -151,7 +160,8 @@ export const SCHEMA: Record<string, TableDef> = {
       lang: 'text enum:en|ar =\'en\'', consent_contact: 'bool =false', retention_until: 'date?',
     },
     read: [{ res: 'users_roles' }],
-    write: { mode: 'direct', res: 'users_roles', anonInsert: true },
+    // [Audit2 2026-10-13] the public forms send through kafaa_submit_contact (per-IP throttle); only admins insert directly
+    write: { mode: 'direct', res: 'users_roles' },
   },
 
   // ───────────────────────────── Roles and competencies (M01, M02)
@@ -173,7 +183,7 @@ export const SCHEMA: Record<string, TableDef> = {
     cols: {
       id: 'text pk', family_id: 'text ref:job_families idx', title_en: 'text', title_ar: 'text', function_en: 'text =\'\'', function_ar: 'text =\'\'',
       level: 'text enum:entry|professional|senior|leadership', regulated: 'bool =false', regulation_ref: 'text?', regulation_url: 'text?',
-      basis: 'text enum:barakah|generic|uncertain', basis_note: 'text?',
+      basis: 'text enum:barakah|generic|uncertain', basis_note: 'text?', basis_note_ar: 'text?',
       summary_en: 'text', summary_ar: 'text', qualifications_en: 'text', qualifications_ar: 'text', training_path_en: 'text', training_path_ar: 'text',
       licensing_body_en: 'text', licensing_body_ar: 'text', entry_routes: 'json =[]',
       education: 'text enum:high_school|diploma|bachelor|master', entry_level: 'bool =false', emiratization_reserved: 'bool =false', critical: 'bool =false',
@@ -634,7 +644,8 @@ export const SCHEMA: Record<string, TableDef> = {
       status: 'text enum:in_study|graduated|placed|withdrawn', progress_note: 'text =\'\'', year_of_study: 'int?',
       consent_university: 'bool =false', consent_sponsor: 'bool =true',
     },
-    read: [{ res: 'cohorts', person: 'person_id', special: 'university_consent' }], write: { mode: 'direct', res: 'cohorts', own: true },
+    // [Audit2 2026-10-13] no self branch: scholar records are HR's (cohorts W/A) or an RPC's; kafaa_apply_grant trusts status 'in_study'
+    read: [{ res: 'cohorts', person: 'person_id', special: 'university_consent' }], write: { mode: 'direct', res: 'cohorts' },
   },
   internships: {
     module: 'M10', label: 'Internship placement',
@@ -949,6 +960,9 @@ export const SCHEMA: Record<string, TableDef> = {
       refused: 'bool =false', refusal_category: 'text?', ts: 'ts =now',
       // G5 (M13): detected intent, retrieval confidence, and whether the user's text was withheld (concerns are never stored)
       intent: 'text?', confidence: 'num?', redacted: 'bool =false', mode: 'text? enum:public|applicant|staff|partner',
+      // [Audit2 2026-10-13] 'browser' on every Dalil answer kafaa_dalil_turn records: the text and citations were composed in the
+      // visitor's browser (no LLM, no server-side generation), so review screens must not treat them as server-made. Null on user turns.
+      answer_source: 'text? enum:browser|server',
       // W5E5 (F37): 'career' for Dalil career-mode turns (mode stays 'staff'; see advisor_sessions.submode)
       submode: 'text? enum:career',
     },

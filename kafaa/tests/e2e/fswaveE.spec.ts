@@ -18,6 +18,11 @@ import { FEATURE_BENCHMARKS } from '../../src/domain/taxonomy';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const T = JSON.parse(readFileSync('src/seed/seed.json', 'utf8')).tables as Record<string, any[]>;
 const W = { timeout: 45_000 };
+// Audit 2026-10-13 (finding 4): the browser clock is fixed on 2026-10-11, 09:00 Abu Dhabi, the day this wave's journeys were written
+// for, so date-dependent digests (FS75 adds future-skill items from 2026-10-12) cannot change what E6 expects. The owed-approval order
+// from 2026-10-12 on is proved by tests/unit/audit2-fixes.test.ts and scripts/validate/audit2-fixes.mjs.
+const DAY = new Date('2026-10-11T05:00:00Z');
+test.beforeEach(async ({ page }) => { await page.clock.setFixedTime(DAY); });
 
 async function go(page: Page, path: string) {
   await page.goto(BASE + path);

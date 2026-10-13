@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { Page, Section, Card, Grid, KeyValue, Async, EmptyState, Callout, ConfirmDialog, DataTable, Icon, Skeleton } from '../../ui';
 import { useAction, useQuery, useRepo } from '../../data';
 import type { SessionsRow } from '../../data/types';
-import { L, useFormat, useLang, usePick, useT } from '../../i18n';
+import { L, hasKey, useFormat, useLang, usePick, useT } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { isOpen, missingPrerequisites } from '../../domain/learning';
 import { Chip, G2Pill, Sources, useLabels, usePeople } from './ui';
@@ -89,7 +89,7 @@ export default function LearnCoursePage() {
                   [t('m04.course.programmeDuration'), d.programme ? pick(d.programme, 'duration') || '—' : '—'],
                   [t('m04.course.passMark'), c.pass_mark != null ? f.pct(c.pass_mark, 0) : '—'],
                   [t('m04.course.validity'), c.validity_months ? t('m04.common.months', { n: f.num(c.validity_months) }) : '—'],
-                  [t('m04.course.owner'), c.owner_role],
+                  [t('m04.course.owner'), ownerRoleLabel(t, c.owner_role)],
                 ]} />
                 {d.programme && <Sources items={(c.sources as unknown[])?.length ? c.sources : d.programme.sources} />}
               </Card>
@@ -199,3 +199,11 @@ export default function LearnCoursePage() {
   );
 }
 
+/** Audit 2026-10-13 (finding 15): owner_role is stored in English ("Nuclear Training"); known owners are shown in the reader's
+ *  language (m04.course.owners.<camelCase>), anything else as stored. */
+function ownerRoleLabel(t: (k: string) => string, owner: string | null | undefined): string {
+  if (!owner) return '—';
+  const key = owner.replace(/[^A-Za-z0-9 ]+/g, ' ').trim().split(/\s+/).map((w, i) => (i ? w[0].toUpperCase() + w.slice(1).toLowerCase() : w.toLowerCase())).join('');
+  const k = `m04.course.owners.${key}`;
+  return hasKey(k) ? t(k) : owner;
+}

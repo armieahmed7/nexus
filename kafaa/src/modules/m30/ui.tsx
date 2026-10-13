@@ -76,7 +76,8 @@ export function BandPill({ band }: { band: Band }) {
 }
 export function DriverChip({ driver, children }: { driver: string; children?: ReactNode }) {
   const t = useT();
-  return <span className="chip border-info-line bg-info-bg text-info" data-testid="m30-driver">{t(`m30.driver.${driver}`)}{children}</span>;
+  // audit 2026-10-13 (finding 16): long Arabic driver names wrap inside the hero card instead of overflowing it at 390 px
+  return <span className="chip max-w-full shrink whitespace-normal break-words border-info-line bg-info-bg text-start text-info" data-testid="m30-driver">{t(`m30.driver.${driver}`)}{children}</span>;
 }
 export function HorizonChip({ horizon }: { horizon: string | null | undefined }) {
   const t = useT();

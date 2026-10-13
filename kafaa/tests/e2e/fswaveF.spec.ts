@@ -18,6 +18,11 @@ import { FEATURE_BENCHMARKS } from '../../src/domain/taxonomy';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const T = JSON.parse(readFileSync('src/seed/seed.json', 'utf8')).tables as Record<string, any[]>;
 const W = { timeout: 60_000 };
+// Audit 2026-10-13 (finding 4): the browser clock is fixed on 2026-10-11, 09:00 Abu Dhabi, the day this wave's journeys were written
+// for, so date-dependent digests (FS75 adds future-skill items from 2026-10-12) cannot change what F6 expects. The owed-approval order
+// from 2026-10-12 on is proved by tests/unit/audit2-fixes.test.ts and scripts/validate/audit2-fixes.mjs.
+const DAY = new Date('2026-10-11T05:00:00Z');
+test.beforeEach(async ({ page }) => { await page.clock.setFixedTime(DAY); });
 
 async function go(page: Page, path: string) {
   await page.goto(BASE + path);
@@ -245,7 +250,7 @@ test('F3 FS54/FS55: a staff proposal to retire a skill passes the inclusion rule
   // FS55: every ranked surface has a card (registry tab shows none missing), surface fairness, datasheet, model-risk template
   await asLocal(page, 'k-admin');
   await go(page, '/admin/ai-transparency');
-  await expect(page.locator('[data-testid="m16-engine-card"]')).toHaveCount(34, W);
+  await expect(page.locator('[data-testid="m16-engine-card"]')).toHaveCount(T.engine_cards.length, W); // one card per seeded surface (35 since wave H; audit 2026-10-13)
   await page.getByRole('tab', { name: /Ranked surfaces/ }).click();
   await expect(tid(page, 'm16-reg-table')).toHaveAttribute('data-missing', '0', W);
   await page.getByRole('tab', { name: /Surface fairness/ }).click();

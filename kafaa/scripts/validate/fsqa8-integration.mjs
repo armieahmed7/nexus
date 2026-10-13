@@ -131,6 +131,12 @@ export default async function fsqa8Checks({ db, as, one, ok, uid }) {
   await db.exec(readFileSync(FS83, 'utf8'));
   await db.exec(sql);
   await db.exec(sql); // idempotent
+  // audit 2026-10-13: a later migration redefines kafaa_dg_compose (owed approvals before future-dated ones); replay it after the older
+  // body so the shared database keeps the final one, as the live apply order does
+  for (const m of readdirSync('supabase/migrations').filter((f) => f > '20261010289999' && f.endsWith('.sql')).sort()) {
+    const body = readFileSync(`supabase/migrations/${m}`, 'utf8');
+    if (/create or replace function kafaa_dg_compose\(/.test(body)) await db.exec(body);
+  }
 
   // 2. idempotent per period
   await db.exec('begin');

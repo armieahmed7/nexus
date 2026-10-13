@@ -8,6 +8,7 @@ import { L, useFormat, useLang, usePick, useT } from '../../i18n';
 import { Async, Card, ConfirmDialog, EmptyState, Icon, ProgressBar, SourceLink, StatTile, StatusPill } from '../../ui';
 import { CEC_AREAS, CEC_MAX, byCecSort, type CecStatus, type LearningRef } from './cec';
 import { credentialRoute, quickRoute, trackHours, type CriterionRoute } from './transition';
+import { CourseLink } from '../m04/CourseLink';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Row = any;
@@ -101,11 +102,18 @@ export const KIND_ICON: Record<string, string> = { course: 'book', pathway: 'cha
 export function LearningLink({ r, testId = 'm32-learning' }: { r: LearningRef; testId?: string }) {
   const t = useT();
   const pick = usePick();
-  return (
-    <L to={(HREF[r.kind] ?? (() => '/learn'))(r.ref)} className="inline-flex items-center gap-1.5 text-[13px]" data-testid={testId} data-kind={r.kind}>
+  const inner = (
+    <>
       <Icon name={KIND_ICON[r.kind] ?? 'link'} size={13} className="text-accent" />
       <span className="caps text-[10.5px] text-ink-3">{t(`m32.kind.${r.kind}`)}</span>
       <span>{pick(r as Row, 'title')}</span>
+    </>
+  );
+  // audit 2026-10-13: a course is linked only when the viewer can open it (internal courses: staff sign-in hint)
+  if (r.kind === 'course') return <CourseLink courseId={r.ref} title={<span className="inline-flex items-center gap-1.5">{inner}</span>} className="inline-flex flex-wrap items-center gap-1.5 text-[13px]" testId={testId}>{inner}</CourseLink>;
+  return (
+    <L to={(HREF[r.kind] ?? (() => '/learn'))(r.ref)} className="inline-flex items-center gap-1.5 text-[13px]" data-testid={testId} data-kind={r.kind}>
+      {inner}
     </L>
   );
 }

@@ -7,6 +7,7 @@ import { SourceList, useSourceDates, type Source } from '../m09/shared';
 import { useFutureData, type FutureData } from './FuturePage';
 import { AREAS, NoDecision, RELATION_CLS, TECH_ORGS, techSlug } from './shared';
 import { NextGenLink } from '../m31/links'; // FS wave E integration (FS38 -> ADVANCE pages)
+import { CourseLink } from '../m04/CourseLink'; // audit 2026-10-13: internal courses are not linked for signed-out visitors
 
 export default function FutureTechPage() {
   const t = useT();
@@ -102,7 +103,7 @@ function Tech({ d, id }: { d: FutureData; id: string }) {
         </Card>
         <Card title={t('m11.pub.tracksTitle')}>
           {tracks.length === 0 ? <p className="text-ink-3">—</p> : (
-            <ul className="space-y-2 text-[13px]">{tracks.map((r) => <li key={r.id}><span className="font-semibold">{pick(r, 'title')}</span><p className="text-ink-2">{pick(r, 'summary')}</p>{r.course_id && <L to={`/learn/course/${r.course_id}`}>{t('m11.pub.openCourse')}</L>}</li>)}</ul>
+            <ul className="space-y-2 text-[13px]">{tracks.map((r) => <li key={r.id}><span className="font-semibold">{pick(r, 'title')}</span><p className="text-ink-2">{pick(r, 'summary')}</p>{r.course_id && <CourseLink courseId={r.course_id}>{t('m11.pub.openCourse')}</CourseLink>}</li>)}</ul>
           )}
         </Card>
       </Grid>

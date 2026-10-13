@@ -102,6 +102,14 @@ export interface AuditEventsRow {
   ledger_status: 'written' | 'skipped' | 'not_applicable';
   ledger_seq?: number | null;
 }
+export interface RateLimitsRow {
+  id: string;
+  bucket: string;
+  key: string;
+  window_start: string;
+  n: number;
+  updated_at: string;
+}
 export interface NotificationsRow {
   id: string;
   person_id: string;
@@ -176,6 +184,7 @@ export interface JobRolesRow {
   regulation_url?: string | null;
   basis: 'barakah' | 'generic' | 'uncertain';
   basis_note?: string | null;
+  basis_note_ar?: string | null;
   summary_en: string;
   summary_ar: string;
   qualifications_en: string;
@@ -1311,6 +1320,7 @@ export interface AdvisorTurnsRow {
   confidence?: number | null;
   redacted: boolean;
   mode?: 'public' | 'applicant' | 'staff' | 'partner' | null;
+  answer_source?: 'browser' | 'server' | null;
   submode?: 'career' | null;
 }
 export interface EvalRunsRow {
@@ -6242,6 +6252,7 @@ export interface Tables {
   role_assignments: RoleAssignmentsRow;
   consents: ConsentsRow;
   audit_events: AuditEventsRow;
+  rate_limits: RateLimitsRow;
   notifications: NotificationsRow;
   user_settings: UserSettingsRow;
   data_requests: DataRequestsRow;

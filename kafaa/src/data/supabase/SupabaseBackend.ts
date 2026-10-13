@@ -205,6 +205,7 @@ export class SupabaseBackend implements Repository {
         return (data ?? []) as { programme_id: string; stage: string; n: number | null; suppressed: boolean }[];
       },
       // ── [G3] M06 / M07 / M10 (supabase/migrations/20261008133001_kafaa_g3_rpcs.sql)
+      submitContact: (p) => this.call('kafaa_submit_contact', { p }, ['contact_requests']), // audit 2026-10-13
       submitApplication: (programmeId, answers) => this.call('kafaa_submit_application', { p_programme_id: programmeId, p_answers: answers ?? {} }, ['applications', 'application_events']),
       withdrawApplication: (id, reason) => this.call('kafaa_withdraw_application', { p_id: id, p_reason: reason ?? '' }, ['applications', 'application_events']),
       draftObserverReport: (p) => this.call('kafaa_draft_observer_report', { p }, ['observer_reports']),

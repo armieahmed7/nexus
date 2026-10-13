@@ -5,6 +5,7 @@ import { useQuery, useRepo } from '../../data';
 import { L, useFormat, usePick, useT } from '../../i18n';
 import { BenchmarkChip, Icon, StatusPill } from '../../ui';
 import { CLUSTERS, CORE_MAX, byCoreSort, type CoreStatus, type RouteRef } from './coreSkills';
+import { CourseLink } from '../m04/CourseLink';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Row = any;
@@ -73,7 +74,7 @@ export function RouteLink({ r, d, icon }: { r: RouteRef; d: M33Ref; icon?: strin
   const label = pick(r as unknown as Row, 'title');
   const course = r.kind === 'course' ? d.courses.find((c: Row) => c.id === r.ref) : null;
   let body: ReactNode = <span>{label}</span>;
-  if (r.kind === 'course') body = <L to={`/learn/course/${r.ref}`}>{course ? pick(course, 'title') : label}</L>;
+  if (r.kind === 'course') body = <CourseLink courseId={r.ref} title={course ? pick(course, 'title') : label}>{course ? pick(course, 'title') : label}</CourseLink>; // audit 2026-10-13
   else if (r.kind === 'practice' || r.kind === 'sjt') body = <L to={`/my/core-skills/practice?skill=${r.ref}`}>{label}</L>;
   else if (r.ref.startsWith('/')) body = <L to={r.ref}>{label}</L>;
   return (

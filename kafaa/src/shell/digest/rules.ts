@@ -18,12 +18,13 @@
  *   future       FS75 (wave H): future-skills nudges from src/shell/digest/future.ts (fast-decay lapse, FS33 goal, AI-literacy
  *                requirement, role 2030 profile change, FS70 rising skill, FS27 gig, FS17 pathway); approvals also gain FS67
  *                fellowship sign-offs owed. Everything FS75 adds applies from FS75_FROM (2026-10-12); earlier days are unchanged.  urgency 3
- * Order: urgency (expiry < approvals < others), then days to the date (no date last), then kind, then score, then id.
+ * Order: urgency (expiry < approvals < others), then days to the date (no date last; approvals owed now before approvals dated in the
+ * future, audit 2026-10-13), then kind, then score, then id.
  * Opting out of ranked recommendations (F24) removes the ranked kinds: no coach hint (coach), no match-based items (marketplace).
  * Expiry reminders cannot be muted. Speak-up routes never show or build a digest (the page guard has noTelemetry).
  */
 
-import { gatherFs75Approvals, gatherFuture, type FutureData } from './future.ts';
+import { FS75_FROM, gatherFs75Approvals, gatherFuture, type FutureData } from './future.ts';
 
 export type DigestKind = 'expiry' | 'approval' | 'coach' | 'opportunity' | 'mentoring' | 'conversation' | 'refresher' | 'future';
 export type DigestFrequency = 'weekly' | 'fortnightly' | 'monthly';
@@ -435,9 +436,17 @@ export function gatherDigest(d: DigestData, me: string, today: string, hints: Di
   return out;
 }
 
-/** Final order (same as SQL): urgency, days (no date last), kind, score (higher first), id. */
+/** Day key of the order (same as SQL kafaa_dg_compose `dd`): days, no date last. From FS75_FROM on (the digest day = due_on - days), an
+ *  approval dated in the future (days > 0) sorts after every owed approval (undated, due today or overdue), by its days (audit
+ *  2026-10-13, finding 4: future-dated FS69 pre-arrival checks pushed owed plant-visit and role-play approvals out of the cap of 3).
+ *  Digests of earlier days keep their order (the seeded W38-W41 runs are records). */
+export function dayKey(i: Pick<DigestItem, 'kind' | 'days' | 'due_on'>): number {
+  if (i.kind === 'approval' && i.days != null && i.days > 0 && i.due_on && addDays(i.due_on, -i.days) >= FS75_FROM) return NO_DAYS + i.days;
+  return i.days ?? NO_DAYS;
+}
+/** Final order (same as SQL): urgency, day key (owed approvals first, no date last), kind, score (higher first), id. */
 export function compareItems(a: DigestItem, b: DigestItem): number {
-  return a.urgency - b.urgency || (a.days ?? NO_DAYS) - (b.days ?? NO_DAYS) || KIND_RANK[a.kind] - KIND_RANK[b.kind] || (b.score ?? 0) - (a.score ?? 0) || cmp(a.id, b.id);
+  return a.urgency - b.urgency || dayKey(a) - dayKey(b) || KIND_RANK[a.kind] - KIND_RANK[b.kind] || (b.score ?? 0) - (a.score ?? 0) || cmp(a.id, b.id);
 }
 /** Mutes (never expiry), per-kind caps (opportunities by score first), then the urgency order and the 7-item limit. */
 export function composeDigest(cands: DigestItem[], prefs: Pick<DigestPrefs, 'muted_kinds'>): DigestItem[] {

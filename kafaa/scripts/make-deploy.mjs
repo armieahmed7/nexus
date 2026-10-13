@@ -1,6 +1,7 @@
 // Assemble the Netlify publish folder: deploy_out/_redirects + deploy_out/kafaa/ (the Vite build, base /kafaa/).
 // Run after `vite build` (npm run build:deploy does both). Nothing here deploys anything.
 import { cpSync, existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 
 const DIST = 'dist/kafaa';
 const OUT = 'deploy_out';
@@ -25,8 +26,20 @@ for (const f of ['.well-known/kafaa-issuer.json', 'kafaa/issuer/kafaa-issuer.jso
   }
 }
 
+// Security and cache headers (audit 2026-10-13, finding 1) live in the repo-root netlify.toml (git-linked builds read it). Check them
+// against the build, and copy them into deploy_out/netlify.toml so a prebuilt zip upload is served with the same headers.
+const ROOT_TOML = '../netlify.toml';
+if (!existsSync(ROOT_TOML)) fail(`${ROOT_TOML} (the security headers) is missing`);
+const headerBlocks = parseHeaderBlocks(readFileSync(ROOT_TOML, 'utf8'));
+const builtHtml = readFileSync(`${OUT}/kafaa/index.html`, 'utf8');
+checkHeaders(headerBlocks, builtHtml);
+
 // A zip upload (Netlify MCP deploy-site) triggers a remote build: publish the folder as is, with no build command.
-writeFileSync(`${OUT}/netlify.toml`, '[build]\n  publish = "."\n  command = ""\n');
+writeFileSync(`${OUT}/netlify.toml`, '[build]\n  publish = "."\n  command = ""\n' + headerBlocks.map((b) => `\n${b.text}`).join(''));
+
+// robots.txt at the site root (finding 22): every page already carries <meta name="robots" content="noindex">; crawlers are asked not to
+// fetch anything (that also keeps them from opening public verification links, which are rate-limited and counted).
+writeFileSync(`${OUT}/robots.txt`, "# Kafa'a demo portal: not for indexing (every page is noindex).\nUser-agent: *\nDisallow: /\n");
 
 const redirects = readFileSync(`${OUT}/_redirects`, 'utf8');
 const rules = redirects.split('\n').map((l) => l.trim().replace(/\s+/g, ' '));
@@ -60,4 +73,45 @@ if (!html.includes('/kafaa/assets/')) {
 }
 const pw = process.env.VITE_NEXUS_DEMO_PASSWORD || (existsSync('.env.local') && /^VITE_NEXUS_DEMO_PASSWORD=.+$/m.test(readFileSync('.env.local', 'utf8')));
 if (!pw) console.warn('make-deploy: WARNING VITE_NEXUS_DEMO_PASSWORD was not set for this build; role-card sign-in will only work on the NEXUS origin.');
-console.log(`make-deploy: ${OUT}/ ready (_redirects + netlify.toml + kafaa/)`);
+console.log(`make-deploy: ${OUT}/ ready (_redirects + netlify.toml with ${headerBlocks.length} header blocks + robots.txt + kafaa/)`);
+
+function fail(msg) {
+  console.error(`make-deploy: ${msg}`);
+  process.exit(1);
+}
+/** [[headers]] blocks of a netlify.toml: { for, values, text }. Values are single-line "..." strings. */
+function parseHeaderBlocks(toml) {
+  const blocks = [];
+  const lines = toml.split('\n');
+  let cur = null;
+  for (const line of lines) {
+    if (/^\s*\[\[headers\]\]\s*$/.test(line)) { cur = { for: null, values: {}, lines: [line] }; blocks.push(cur); continue; }
+    if (cur && /^\s*\[(?!headers\.values\])/.test(line)) { cur = null; continue; }
+    if (!cur) continue;
+    if (/^\s*(#.*)?$/.test(line)) continue;
+    cur.lines.push(line);
+    const m = line.match(/^\s*("?)([A-Za-z0-9-]+)\1\s*=\s*"(.*)"\s*$/);
+    if (m && m[2] === 'for') cur.for = m[3];
+    else if (m) cur.values[m[2]] = m[3];
+  }
+  return blocks.map((b) => ({ for: b.for, values: b.values, text: b.lines.join('\n') + '\n' }));
+}
+/** The headers the audit requires, checked against the built index.html (inline script hashes). */
+function checkHeaders(blocks, html) {
+  const page = blocks.find((b) => b.for === '/kafaa/*');
+  const assets = blocks.find((b) => b.for === '/kafaa/assets/*');
+  if (!page) fail('netlify.toml has no [[headers]] block for "/kafaa/*"');
+  if (!assets || !/max-age=31536000/.test(assets.values['Cache-Control'] ?? '') || !/immutable/.test(assets.values['Cache-Control'] ?? '')) fail('netlify.toml: /kafaa/assets/* needs Cache-Control "public, max-age=31536000, immutable"');
+  const v = page.values;
+  const want = { 'X-Frame-Options': /^DENY$/, 'X-Content-Type-Options': /^nosniff$/, 'Referrer-Policy': /^strict-origin-when-cross-origin$/, 'Permissions-Policy': /camera=\(\)/ };
+  for (const [h, re] of Object.entries(want)) if (!re.test(v[h] ?? '')) fail(`netlify.toml: /kafaa/* header ${h} is missing or wrong (${v[h] ?? 'absent'})`);
+  const csp = v['Content-Security-Policy'] ?? '';
+  const dir = Object.fromEntries(csp.split(';').map((x) => x.trim()).filter(Boolean).map((x) => { const [k, ...r] = x.split(/\s+/); return [k, r]; }));
+  if (!(dir['frame-ancestors'] ?? []).includes("'none'")) fail("CSP needs frame-ancestors 'none'");
+  if (!(dir['connect-src'] ?? []).includes('https://hlirqxoddysxtdezwcgv.supabase.co')) fail('CSP connect-src must allow the Supabase project');
+  if ((dir['script-src'] ?? []).some((x) => x === "'unsafe-inline'" || x === "'unsafe-eval'" || x === '*')) fail('CSP script-src must not allow inline or eval scripts');
+  const inline = [...html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g)].map((m) => `'sha256-${createHash('sha256').update(m[1]).digest('base64')}'`);
+  const listed = (dir['script-src'] ?? []).filter((x) => x.startsWith("'sha256-"));
+  for (const h of inline) if (!listed.includes(h)) fail(`CSP script-src lacks ${h} (an inline script of index.html changed: update netlify.toml)`);
+  for (const h of listed) if (!inline.includes(h)) fail(`CSP script-src lists ${h}, which matches no inline script of index.html (remove it)`);
+}

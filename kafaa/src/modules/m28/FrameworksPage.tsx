@@ -10,7 +10,7 @@ import { FS_AREAS } from '../../domain/taxonomy';
 import type { SkillAlignmentsRow } from '../../data/types';
 import { MATCH_TYPES, coverage, isIndicative, isLabelLevel, sortAlignments } from './crosswalk';
 import { isListed } from './explorer';
-import { CodeCell, ExportButtons, MatchLegend, MatchPill, ReviewPill, useCatalogue, type Catalogue } from './ui';
+import { CatalogueGaps, CodeCell, ExportButtons, MatchLegend, MatchPill, ReviewPill, useCatalogue, type Catalogue } from './ui';
 
 const GROUPS = ['established', ...FS_AREAS];
 
@@ -21,7 +21,7 @@ export default function FrameworksPage() {
     <Page title={t('m28.routes.skills-frameworks.title')} eyebrow={t('m28.fw.eyebrow')} intro={t('m28.fw.intro')} wide
       actions={<L to="/skills" className="btn-outline">{t('m28.fw.toExplorer')}</L>}>
       <div data-testid="m28-bench-fs08"><BenchmarkChips feature="FS08" /></div>
-      <Async state={c} isEmpty={(d) => d.frameworks.length === 0} empty={<EmptyState title={t('m28.fw.empty')} />}>{(d) => <Body c={d} />}</Async>
+      <Async state={c} isEmpty={(d) => d.frameworks.length === 0} empty={<EmptyState title={t('m28.fw.empty')} />}>{(d) => <><CatalogueGaps c={d} onRetry={c.reload} /><Body c={d} /></>}</Async>
     </Page>
   );
 }

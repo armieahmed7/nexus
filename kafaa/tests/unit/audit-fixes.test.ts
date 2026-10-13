@@ -34,15 +34,18 @@ describe('contact requests (fix e)', () => {
     expect(contactRequestProblems(form({ retention_until: '2027-11-13' }), '2026-10-08')).toMatch(/retention/);
   });
 
-  it('anonymous visitors send the public form; a crafted row is refused; an admin only changes the status', async () => {
+  // audit 2026-10-13 (finding 7): the public forms send through kafaa_submit_contact (rpc.submitContact); anon no longer inserts directly
+  it('anonymous visitors send the public form through submitContact; a crafted row and a direct insert are refused; an admin only changes the status', async () => {
     await as(null);
-    const sent = await b.insert('contact_requests', form() as never);
+    const { route_to: _r, ...payload } = form();
+    const sent = await b.rpc.submitContact(payload as never);
     expect(sent.ok).toBe(true);
-    const supplier = await b.insert('contact_requests', { topic: 'suppliers', route_to: CONTACT_ROUTES.suppliers, name: 'Co', email: 'suppliers@example.org', message: 'Company: Co' } as never);
+    const supplier = await b.rpc.submitContact({ topic: 'suppliers', name: 'Co', email: 'suppliers@example.org', message: 'Company: Co' });
     expect(supplier.ok).toBe(true);
-    expect((await b.insert('contact_requests', form({ status: 'closed' }) as never)).ok).toBe(false);
-    expect((await b.insert('contact_requests', form({ route_to: 'A named person' }) as never)).ok).toBe(false);
+    expect((await b.rpc.submitContact({ ...payload, status: 'closed' } as never)).ok).toBe(false);
+    expect((await b.insert('contact_requests', form() as never)).ok).toBe(false);
     await as('k-admin');
+    expect((await b.insert('contact_requests', form({ route_to: 'A named person' }) as never)).ok).toBe(false);
     expect((await b.update('contact_requests', sent.data!.id, { status: 'closed' } as never)).ok).toBe(true);
     const edit = await b.update('contact_requests', sent.data!.id, { message: 'changed' } as never);
     expect(edit.ok).toBe(false);
@@ -77,11 +80,15 @@ describe('public forms insert without reading the row back (anon has no SELECT o
     expect(call.url).toMatch(/select=/);
     expect(call.prefer).toMatch(/return=representation/);
   });
-  it('the contact and supplier forms ask for return=minimal', () => {
-    for (const f of ['src/modules/m12/ContactPage.tsx', 'src/modules/m09/SuppliersPage.tsx']) expect(readFileSync(f, 'utf8')).toMatch(/insert\('contact_requests', \{[^\n]*\}, \{ returning: 'minimal' \}\)/);
+  it('the contact and supplier forms send through rpc.submitContact (audit 2026-10-13), never a direct insert', () => {
+    for (const f of ['src/modules/m12/ContactPage.tsx', 'src/modules/m09/SuppliersPage.tsx']) {
+      const src = readFileSync(f, 'utf8');
+      expect(src).toMatch(/repo\.rpc\.submitContact\(/);
+      expect(src).not.toMatch(/insert\('contact_requests'/);
+    }
   });
   it('local: returning minimal gives back the row as sent with its id, never server defaults', async () => {
-    await as(null);
+    await as('k-admin'); // only admins insert contact requests directly since audit 2026-10-13
     const r = await b.insert('contact_requests', form() as never, { returning: 'minimal' });
     expect(r.ok).toBe(true);
     expect(r.data!.id).toBeTruthy();

@@ -129,6 +129,17 @@ create table if not exists kafaa_audit_events (
 );
 comment on table kafaa_audit_events is '[M16] Append-only, hash-chained audit log';
 
+-- M16 · Rate-limit counters for anonymous RPCs (hashed keys only)
+create table if not exists kafaa_rate_limits (
+  id text primary key,
+  bucket text not null,
+  key text not null,
+  window_start timestamptz not null default now(),
+  n integer not null default 0,
+  updated_at timestamptz not null default now()
+);
+comment on table kafaa_rate_limits is '[M16] Rate-limit counters for anonymous RPCs (hashed keys only)';
+
 -- M14 · Notices: expiries, assignments, applications
 create table if not exists kafaa_notifications (
   id text primary key,
@@ -222,6 +233,7 @@ create table if not exists kafaa_job_roles (
   regulation_url text,
   basis text not null check (basis in ('barakah', 'generic', 'uncertain')),
   basis_note text,
+  basis_note_ar text,
   summary_en text not null,
   summary_ar text not null,
   qualifications_en text not null,
@@ -1612,6 +1624,7 @@ create table if not exists kafaa_advisor_turns (
   confidence numeric,
   redacted boolean not null default false,
   mode text check (mode in ('public', 'applicant', 'staff', 'partner')),
+  answer_source text check (answer_source in ('browser', 'server')),
   submode text check (submode in ('career'))
 );
 comment on table kafaa_advisor_turns is '[M13] Dalil turn (question, cited answer or refusal)';
@@ -7936,6 +7949,7 @@ create index if not exists kafaa_role_assignments_role_idx on kafaa_role_assignm
 create index if not exists kafaa_role_assignments_org_id_idx on kafaa_role_assignments (org_id);
 create index if not exists kafaa_consents_person_id_idx on kafaa_consents (person_id);
 create index if not exists kafaa_audit_events_action_idx on kafaa_audit_events (action);
+create index if not exists kafaa_rate_limits_bucket_idx on kafaa_rate_limits (bucket);
 create index if not exists kafaa_notifications_person_id_idx on kafaa_notifications (person_id);
 create index if not exists kafaa_data_requests_person_id_idx on kafaa_data_requests (person_id);
 create index if not exists kafaa_job_roles_family_id_idx on kafaa_job_roles (family_id);
@@ -8780,4 +8794,4 @@ create trigger kafaa_evaluation_acks_append_only before update or delete on kafa
 drop trigger if exists kafaa_xapi_statements_append_only on kafaa_xapi_statements;
 create trigger kafaa_xapi_statements_append_only before update or delete on kafaa_xapi_statements for each row execute function kafaa_append_only();
 
-insert into kafaa_schema_version (id, tables) values (1, 369) on conflict (id) do update set generated_at = now(), tables = excluded.tables;
+insert into kafaa_schema_version (id, tables) values (1, 370) on conflict (id) do update set generated_at = now(), tables = excluded.tables;

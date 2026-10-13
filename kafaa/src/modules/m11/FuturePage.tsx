@@ -9,6 +9,7 @@ import { publicTextIsClean } from '../../domain/future';
 import { SourceList, useSourceDates, type Source } from '../m09/shared';
 import { AREAS, NoDecision, RELATION_CLS, techSlug } from './shared';
 import { NextGenLink } from '../m31/links'; // FS wave E integration (FS38 -> ADVANCE pages)
+import { CourseLink } from '../m04/CourseLink'; // audit 2026-10-13: internal courses are not linked for signed-out visitors
 
 export type FutureData = {
   techs: RowOf<'adv_technologies'>[];
@@ -263,7 +264,7 @@ function Tracks({ d }: { d: FutureData }) {
             </ol>
             <div className="mt-auto flex flex-wrap items-center justify-between gap-2 border-t border-line pt-2">
               <SourceList sources={(x.sources as Source[]) ?? []} dates={dates} compact />
-              {x.course_id && <L to={`/learn/course/${x.course_id}`} className="text-[12.5px]">{t('m11.pub.openCourse')}</L>}
+              {x.course_id && <CourseLink courseId={x.course_id} className="text-[12.5px]">{t('m11.pub.openCourse')}</CourseLink>}
             </div>
           </li>
         ))}

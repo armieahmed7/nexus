@@ -837,5 +837,16 @@
       "reject": "Suggestion rejected",
       "not_me": "Marked not me"
     }
+  },
+  "gaps": {
+    "title": "Part of this page did not load",
+    "body": "Not shown: {parts}. The rest of the page is complete; try again in a moment.",
+    "retry": "Try again",
+    "part": {
+      "frameworks": "framework links",
+      "alignments": "crosswalk rows",
+      "sources": "source citations",
+      "benchmarks": "benchmarks"
+    }
   }
 }

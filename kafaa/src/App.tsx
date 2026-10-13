@@ -38,9 +38,14 @@ const router = createBrowserRouter(
       children: [{ path: '/', element: <Layout />, children: [...children(''), ...children('ar')] }],
     },
   ],
-  { basename: config.basename },
+  {
+    basename: config.basename,
+    // audit 2026-10-13 (finding 17): opt in to the React Router v7 behaviours now (removes six warnings on every page). Kafa'a links are
+    // absolute (L / localPath), so the splat-relative path change does not affect them.
+    future: { v7_relativeSplatPath: true, v7_fetcherPersist: true, v7_normalizeFormMethod: true, v7_partialHydration: true, v7_skipActionErrorRevalidation: true },
+  },
 );
 
 export default function App() {
-  return <RouterProvider router={router} />;
+  return <RouterProvider router={router} future={{ v7_startTransition: true }} />;
 }

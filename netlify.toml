@@ -16,3 +16,25 @@
   # --max-old-space-size=2048 on both main and fsE-integration-qa). vite build peaks near 3 GB as well.
   NODE_OPTIONS = "--max-old-space-size=4096"
   # Set VITE_NEXUS_DEMO_PASSWORD in the Netlify UI (Site configuration > Environment variables), never here.
+
+# Security headers (audit 2026-10-13, finding 1). kafaa/scripts/make-deploy.mjs checks these blocks on every build (every header
+# present, frame-ancestors 'none', the script-src hashes equal the sha256 of each inline <script> in the built index.html, the Supabase
+# origin in connect-src) and copies them into deploy_out/netlify.toml, so a prebuilt zip upload carries the same headers.
+# CSP notes: script-src allows the bundle ('self') and the two inline scripts of index.html by hash (language/theme before first paint,
+# NEXUS rehearsal mode); style-src needs 'unsafe-inline' for the inline badge-hiding <style>, React style attributes and the srcdoc
+# print frames (passport, SAT reports); fonts and small assets may be inlined by Vite as data: URIs; connect-src is Supabase REST,
+# Auth, Edge Functions (kafaa-persona-signin) and Realtime of project hlirqxoddysxtdezwcgv; the OJT service worker is 'self'.
+[[headers]]
+  for = "/kafaa/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'sha256-qXTjCDTwKwU+p8XGjPv196HMXW0W4LKmWBLPPzACzE0=' 'sha256-mM0ONRkrN88pbby9g+b2y7WCKXRlzrXLwaa3fcVt62g='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self' data:; connect-src 'self' https://hlirqxoddysxtdezwcgv.supabase.co wss://hlirqxoddysxtdezwcgv.supabase.co; frame-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), browsing-topics=()"
+
+# Content-hashed build output never changes under the same name: cache for a year. Missing chunks still 404 through _redirects.
+[[headers]]
+  for = "/kafaa/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

@@ -41,6 +41,10 @@ export function directWriteGuard(table: string, before: Row | null, next: Row, c
       if (['sme', 'sme_skill_ids', 'sme_nominated_by', 'sme_nominated_on'].some((k) => changed(before, next, k) && !(before == null && (next[k] == null || next[k] === false || (Array.isArray(next[k]) && !(next[k] as unknown[]).length)))))
         return 'Subject-matter expert nominations are recorded by the line manager';
       return null;
+    case 'people': // audit 2026-10-13 (finding 8; SQL: column grants in 20261013100005_kafaa_audit2_people_scholars.sql)
+      if (before ? ['id', 'persona_id', 'status', 'org_id'].some((k) => changed(before, next, k)) : next.persona_id != null)
+        return 'Persona binding, status and organisation are changed by an administrator action, not by a direct edit';
+      return null;
     case 'contact_requests': { // audit 2026-10-12: new requests as the public forms send them; afterwards staff change the status only
       if (!before) {
         const p = contactRequestProblems(next, todayIso());
