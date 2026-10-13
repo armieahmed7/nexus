@@ -64,6 +64,13 @@ create policy kafaa_read on kafaa_audit_events for select to anon, authenticated
 grant select on kafaa_audit_events to anon, authenticated;
 -- writes: append-only, through kafaa_audit() / RPCs
 
+-- rate_limits
+alter table kafaa_rate_limits enable row level security;
+drop policy if exists kafaa_read on kafaa_rate_limits;
+create policy kafaa_read on kafaa_rate_limits for select to anon, authenticated using (kafaa_rule_read('audit_log', null::text, null::text, true));
+grant select on kafaa_rate_limits to anon, authenticated;
+-- writes: only through SECURITY DEFINER kafaa_* RPCs (consequential action, ledger)
+
 -- notifications
 alter table kafaa_notifications enable row level security;
 drop policy if exists kafaa_read on kafaa_notifications;
@@ -109,11 +116,11 @@ alter table kafaa_contact_requests enable row level security;
 drop policy if exists kafaa_read on kafaa_contact_requests;
 create policy kafaa_read on kafaa_contact_requests for select to anon, authenticated using (kafaa_rule_read('users_roles', null::text, null::text, true));
 drop policy if exists kafaa_insert on kafaa_contact_requests;
-create policy kafaa_insert on kafaa_contact_requests for insert to anon, authenticated with check (true);
+create policy kafaa_insert on kafaa_contact_requests for insert to anon, authenticated with check (kafaa_has_grant('users_roles', array['W','A']));
 drop policy if exists kafaa_update on kafaa_contact_requests;
 create policy kafaa_update on kafaa_contact_requests for update to authenticated using (kafaa_has_grant('users_roles', array['W','A'])) with check (kafaa_has_grant('users_roles', array['W','A']));
-grant select, insert on kafaa_contact_requests to authenticated;
-grant select, insert on kafaa_contact_requests to anon;
+grant select, insert, update on kafaa_contact_requests to authenticated;
+grant select on kafaa_contact_requests to anon;
 drop trigger if exists kafaa_contact_requests_audit on kafaa_contact_requests;
 create trigger kafaa_contact_requests_audit after insert or update on kafaa_contact_requests for each row execute function kafaa_audit_row();
 
@@ -720,9 +727,9 @@ alter table kafaa_scholars enable row level security;
 drop policy if exists kafaa_read on kafaa_scholars;
 create policy kafaa_read on kafaa_scholars for select to anon, authenticated using ((kafaa_rule_read('cohorts', person_id, null::text, true) or (kafaa_role_grant('university', 'cohorts', 'Scope') and university_org_id = kafaa_my_org() and consent_university)));
 drop policy if exists kafaa_insert on kafaa_scholars;
-create policy kafaa_insert on kafaa_scholars for insert to anon, authenticated with check (kafaa_has_grant('cohorts', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('cohorts', array['Own','Scope'])));
+create policy kafaa_insert on kafaa_scholars for insert to anon, authenticated with check (kafaa_has_grant('cohorts', array['W','A']));
 drop policy if exists kafaa_update on kafaa_scholars;
-create policy kafaa_update on kafaa_scholars for update to authenticated using (kafaa_has_grant('cohorts', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('cohorts', array['Own','Scope']))) with check (kafaa_has_grant('cohorts', array['W','A']) or (person_id = kafaa_me() and kafaa_has_grant('cohorts', array['Own','Scope'])));
+create policy kafaa_update on kafaa_scholars for update to authenticated using (kafaa_has_grant('cohorts', array['W','A'])) with check (kafaa_has_grant('cohorts', array['W','A']));
 grant select, insert, update on kafaa_scholars to authenticated;
 grant select on kafaa_scholars to anon;
 drop trigger if exists kafaa_scholars_audit on kafaa_scholars;

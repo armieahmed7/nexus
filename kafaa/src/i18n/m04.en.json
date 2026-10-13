@@ -413,7 +413,14 @@
     "withdraw": "Withdraw",
     "withdrawTitle": "Withdraw from this course?",
     "withdrawElective": "Your place is released and the next person on the waitlist is offered it.",
-    "withdrawMandatory": "This course is required for your role. Withdrawing frees the session seat only; the course stays assigned and you will need to book another session."
+    "withdrawMandatory": "This course is required for your role. Withdrawing frees the session seat only; the course stays assigned and you will need to book another session.",
+    "owners": {
+      "nuclearTraining": "Nuclear Training",
+      "supplierDevelopmentConcept": "Supplier Development (concept)",
+      "corporateSustainability": "Corporate Sustainability",
+      "operationsTraining": "Operations Training",
+      "engineering": "Engineering"
+    }
   },
   "hub": {
     "approvals": "Awaiting approval",
@@ -1707,5 +1714,9 @@
     "rosterNote": "Module enrolments also appear in the M04 cohort views:",
     "noAlumni": "No alumni yet.",
     "result": "Capstone result"
+  },
+  "courseLink": {
+    "staffSignIn": "Staff: sign in to open",
+    "internal": "Internal course"
   }
 }

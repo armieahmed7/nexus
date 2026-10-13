@@ -16,7 +16,7 @@ import { todayIso } from '../../domain/rules';
 import type { PersonSkillsRow, SkillGoalsRow, SkillsRow } from '../../data/types';
 import { TRAINING_PATHS } from '../m04/paths';
 import { datedSources, learningFor, rolesForSkill, type PathRef } from './explorer';
-import { CrosswalkList, LIFE_TONE, MatchLegend, useCatalogue, type Catalogue } from './ui';
+import { CatalogueGaps, CrosswalkList, LIFE_TONE, MatchLegend, useCatalogue, type Catalogue } from './ui';
 import { LevelIndicators } from '../m02/levelsUi'; // FS wave C integration: FS23 behavioural indicators on the ladder
 
 const TABS = ['overview', 'roles', 'learning', 'crosswalk', 'sources'] as const;
@@ -73,6 +73,7 @@ function SkillView({ s, c }: { s: SkillsRow; c: Catalogue }) {
         {s.area !== 'security' && <L to={`/ask?mode=future&q=${encodeURIComponent(t('m28.skill.askQ', { name: pick(s, 'name') }))}`} className="btn-outline no-underline" data-testid="m28-skill-ask-dalil">{t('m28.skill.askDalil')}</L>}{/* FS76 (wave-H integration) */}
       </span>}
     >
+      <CatalogueGaps c={c} />
       <div className="flex flex-wrap items-center gap-1.5" data-testid="m28-skill-chips">
         <StatusPill tone={LIFE_TONE[s.lifecycle]}>{t(`fs.lifecycle.${s.lifecycle}`)}</StatusPill>
         {s.fs_area && <span className="chip border-accent/40 bg-accent-soft text-eyebrow">{t(`fs.area.${s.fs_area}`)}</span>}

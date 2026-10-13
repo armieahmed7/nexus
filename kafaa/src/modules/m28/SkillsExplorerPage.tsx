@@ -10,7 +10,7 @@ import { Async, BenchmarkChips, Card, EmptyState, FilterBar, Icon, Page, StatTil
 import { FUTURE_GROUPS, FS_AREAS, LIFECYCLES, REUSABILITY } from '../../domain/taxonomy';
 import type { PersonSkillsRow, SkillGoalsRow, SkillsRow } from '../../data/types';
 import { filterSkills, isListed, searchSkills } from './explorer';
-import { LIFE_TONE, useCatalogue, type Catalogue } from './ui';
+import { CatalogueGaps, LIFE_TONE, useCatalogue, type Catalogue } from './ui';
 
 const AREAS = ['plant_systems', 'operations', 'maintenance', 'radiation_chemistry', 'engineering', 'safety', 'human_performance', 'emergency', 'security', 'quality', 'leadership', 'digital', 'project'];
 
@@ -27,7 +27,7 @@ export default function SkillsExplorerPage() {
     >
       <div data-testid="m28-bench-fs07"><BenchmarkChips feature="FS07" /></div>
       <Async state={c} isEmpty={(d) => d.skills.length === 0} empty={<EmptyState title={t('m28.explorer.empty')} />}>
-        {(d) => <Explorer c={d} />}
+        {(d) => <><CatalogueGaps c={d} onRetry={c.reload} /><Explorer c={d} /></>}
       </Async>
     </Page>
   );

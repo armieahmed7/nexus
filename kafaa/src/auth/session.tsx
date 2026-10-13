@@ -140,7 +140,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const signIn = useCallback(
     async (persona: string) => {
       const card = PERSONAS.find((p) => p.persona === persona);
-      if (!card) return { ok: false, message: 'Unknown persona' };
+      if (!card) return { ok: false, code: 'unknown_persona' };
       if (backend === 'supabase') {
         if (!card.nexus) {
           // Kafa'a-only persona: a real Supabase session from the kafaa-persona-signin Edge Function (no password on the client).
@@ -150,7 +150,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
           return { ok: true };
         }
         const ok = await signInNexusPersona(persona);
-        if (!ok) return { ok: false, message: 'Choose this role card in ENEC NEXUS first (Sign in), then come back.' };
+        if (!ok) return { ok: false, code: 'nexus_unavailable' }; // audit 2026-10-13: shown in the reader's language (m14.signIn.errors.nexus_unavailable)
         signOutKafaa(); // the NEXUS role card now wins over an earlier Kafa'a persona choice
         setPersonaId(persona);
         return { ok: true };

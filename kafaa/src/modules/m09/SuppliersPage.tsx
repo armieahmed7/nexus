@@ -192,7 +192,7 @@ function Register() {
             onSubmit={form.handleSubmit(async (v) => {
               if (!consent) return;
               const message = `Company: ${v.company}\nTrade licence: ${v.licence || '-'}\nCapability: ${v.capability}`;
-              const r = await run(() => repo.insert('contact_requests', { topic: 'suppliers', route_to: 'Supplier development (role mailbox)', name: v.company, email: v.mailbox, message }, { returning: 'minimal' }), { success: t('m09.sup.sentTitle') });
+              const r = await run(() => repo.rpc.submitContact({ topic: 'suppliers', name: v.company, email: v.mailbox, message }), { success: t('m09.sup.sentTitle') }); // audit 2026-10-13: kafaa_submit_contact
               if (r.ok) setSent(true);
             })}
             data-testid="m09-sup-form"

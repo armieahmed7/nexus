@@ -20,18 +20,25 @@ export interface Catalogue {
   fwById: Map<string, SkillFrameworksRow>;
   /** crosswalk labels per skill (published rows), for search */
   labels: Map<string, Bi[]>;
+  /** secondary lookups that failed to load (audit 2026-10-13): the page still renders the skills, with an inline notice */
+  missing: CatalogueLookup[];
 }
+export type CatalogueLookup = 'frameworks' | 'alignments' | 'sources' | 'benchmarks';
 
-/** Skills, frameworks, the alignments the viewer may read, citation registry and benchmark rows: one query, both backends. */
+/** Skills, frameworks, the alignments the viewer may read, citation registry and benchmark rows: one query, both backends.
+ *  Only the skills are required: if a secondary lookup fails (e.g. a transient statement timeout on skill_frameworks), the page
+ *  renders without it and shows <CatalogueGaps> instead of replacing everything with an error (audit 2026-10-13, finding 13). */
 export function useCatalogue() {
   const repo = useRepo();
   return useQuery(['skills', 'skill_frameworks', 'skill_alignments', 'sources', 'benchmarks'], async (): Promise<Catalogue> => {
+    const missing: CatalogueLookup[] = [];
+    const opt = <T,>(what: CatalogueLookup, p: Promise<T[]>): Promise<T[]> => p.catch((e: unknown) => { console.warn(`[m28] ${what} not loaded`, e); missing.push(what); return [] as T[]; });
     const [skills, frameworks, alignments, sources, benchmarks] = await Promise.all([
       repo.list('skills', { order: [['sort', 'asc']] }),
-      repo.list('skill_frameworks', { order: [['sort', 'asc']] }),
-      repo.list('skill_alignments', { order: [['sort', 'asc']] }),
-      repo.list('sources'),
-      repo.list('benchmarks'),
+      opt('frameworks', repo.list('skill_frameworks', { order: [['sort', 'asc']] })),
+      opt('alignments', repo.list('skill_alignments', { order: [['sort', 'asc']] })),
+      opt('sources', repo.list('sources')),
+      opt('benchmarks', repo.list('benchmarks')),
     ]);
     const bySkill = new Map<string, SkillAlignmentsRow[]>();
     const labels = new Map<string, Bi[]>();
@@ -44,10 +51,22 @@ export function useCatalogue() {
       }
     }
     return {
-      skills, frameworks, alignments, bySkill, labels,
+      skills, frameworks, alignments, bySkill, labels, missing: missing.sort(),
       sources: new Map(sources.map((s) => [s.id, s])), benchmarks: new Map(benchmarks.map((b) => [b.id, b])), fwById: new Map(frameworks.map((f) => [f.id, f])),
     };
   });
+}
+
+/** Inline notice when part of the catalogue did not load (the rest of the page is shown). */
+export function CatalogueGaps({ c, onRetry }: { c: Pick<Catalogue, 'missing'>; onRetry?: () => void }) {
+  const t = useT();
+  if (!c.missing.length) return null;
+  return (
+    <Callout tone="sim" title={t('m28.gaps.title')}>
+      <span data-testid="m28-catalogue-gaps">{t('m28.gaps.body', { parts: c.missing.map((m) => t(`m28.gaps.part.${m}`)).join(', ') })}</span>
+      {onRetry && <button type="button" className="btn-outline btn-sm ms-2" onClick={onRetry}>{t('m28.gaps.retry')}</button>}
+    </Callout>
+  );
 }
 
 export const MATCH_TONE: Record<string, PillTone> = { exact: 'ok', close: 'info', broad: 'neutral', partial: 'sim' };

@@ -38,7 +38,9 @@
     "errors": {
       "kafaa_unavailable": "Live sign-in for Kafa'a personas is not switched on for this site yet. Use local demo data to try this persona now.",
       "kafaa_not_resolved": "The Kafa'a persona signed in, but the live Kafa'a records do not recognise it yet (a database update is pending). Use local demo data to try this persona now.",
-      "kafaa_failed": "Kafa'a persona sign-in failed. Try again in a moment, or use local demo data."
+      "kafaa_failed": "Kafa'a persona sign-in failed. Try again in a moment, or use local demo data.",
+      "nexus_unavailable": "Choose this role card in ENEC NEXUS first (Sign in), then come back.",
+      "unknown_persona": "Unknown persona"
     },
     "signedInAs": "Signed in as {who}",
     "groups": {

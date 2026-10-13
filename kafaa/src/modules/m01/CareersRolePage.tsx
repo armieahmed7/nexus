@@ -79,7 +79,7 @@ function RoleView({ role, data }: { role: Role; data: CareerData }) {
       <RoleOutlookLine roleId={role.id} />
       {role.basis !== 'barakah' && (
         <Callout tone="sim" title={t(`m01.basis.${role.basis}`)}>
-          {role.basis_note || t(`m01.basis.${role.basis}Hint`)}
+          {pick(role, 'basis_note') || t(`m01.basis.${role.basis}Hint`)}
         </Callout>
       )}
       {role.security_sensitive && (

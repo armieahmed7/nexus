@@ -26,7 +26,7 @@ interface Persisted {
   tables: Rows;
 }
 interface SeedFile {
-  meta: { generated_at: string; demo_today: string };
+  meta: { generated_at: string; digest?: string; demo_today: string };
   personas: { persona: string; person_id: string; nexus: boolean }[];
   tables: Rows;
 }
@@ -65,7 +65,8 @@ export class LocalBackend implements Repository {
   private async init() {
     const seed = await loadSeed();
     this.nexusPersonas = new Set(seed.personas.filter((p) => p.nexus).map((p) => p.persona));
-    const stamp = `${seed.meta.generated_at}:${Object.values(seed.tables).reduce((n, r) => n + r.length, 0)}`;
+    // the content digest changes whenever the seed does (generated_at is the fixed demo day since audit 2026-10-13)
+    const stamp = `${seed.meta.digest ?? seed.meta.generated_at}:${Object.values(seed.tables).reduce((n, r) => n + r.length, 0)}`;
     let persisted: Persisted | null = null;
     try {
       const raw = localStorage.getItem(config.localStorageKey);

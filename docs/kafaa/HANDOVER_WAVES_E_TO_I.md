@@ -157,12 +157,13 @@ Main dependencies: React 18.3, React Router 6.28, Vite 5.4, TypeScript 5.6, Tail
 ### 2.5 Netlify (site `enec-kafaa`)
 
 - [ ] **Connect the Netlify connector** on the new account with a Netlify user in team **Mawaheb** (slug `armieahmed7`).
-- Site: `enec-kafaa`, id **`24579361-38f3-42b5-87cd-6f7a6f75f046`**, URL https://enec-kafaa.netlify.app. Not git-linked: deploys are zip uploads of `deploy_out/`.
+- Site: `enec-kafaa`, id **`24579361-38f3-42b5-87cd-6f7a6f75f046`**, URL https://enec-kafaa.netlify.app.
+- **Update 2026-10-13 (final state):** the site is now **git-linked** to GitHub `armieahmed7/nexus` through the repo-root `netlify.toml` (base `kafaa`, `npm run build:deploy`, publish `deploy_out`, `NODE_OPTIONS=--max-old-space-size=4096`). A merge to `main` is a production deploy (about 2-3 minutes; Netlify posts no GitHub status, so confirm by watching the `assets/index-*.js` name on https://enec-kafaa.netlify.app/kafaa/). PRs into `main` get deploy previews. Production on 2026-10-13 serves `main` at `28d0456`, which holds waves E to I (#1 `bc02f10`, #2 `534dc4c`, #3 `5b5f348`, #4 `375b3ab`, #6 `0e7acdf`), the audit fixes (#5 `cad41fd`), persona sign-in (#7 `e61150c`) and the 390 px fix (#8 `28d0456`). The zip-upload procedure below remains only as a fallback (`make-deploy.mjs` copies the root `netlify.toml` security headers into `deploy_out/netlify.toml`, so a zip upload is served with the same headers). Security headers (CSP, X-Frame-Options, nosniff, Referrer-Policy, Permissions-Policy) and the one-year cache of `/kafaa/assets/*` live in the root `netlify.toml`; `make-deploy.mjs` fails the build when they are missing or when the inline scripts of `index.html` no longer match the CSP hashes. Current status of every wave, PR and live bundle: `ref/PROGRAMME_STATUS.md`.
 - **Never touch** `enec-nexus` (id `69afeda6-b3fd-4de8-8173-af9fe3ba3327`, domains `enecai.xyz`, `enec-nexus.netlify.app`; published deploy `6abece0c8021c4c58397f533`). Reading it to confirm it is unchanged is fine.
 - Never use the Netlify token that was pasted into a chat on 29 Sep 2026 (Armie was asked to revoke it).
 - **Permission:** the Claude Code auto-mode classifier blocked deploys twice ("[Production Deploy]" on `deploy-site`, "[Data Exfiltration]" on the upload command) until Armie approved in the session. Armie's earlier standing approval was given to the old session; **ask Armie for an explicit "deploy" in your session** (or an allow rule for the `deploy-site` call and the upload command).
 
-#### Deploy procedure (exactly as done for waves 1 to 5 and FS A to C)
+#### Deploy procedure (exactly as done for waves 1 to 5 and FS A to C; since 2026-10-12 a fallback only, see the update above)
 
 **Step 1, build.** Run `npm run build:deploy` from final `master` with `.env.local` present. It runs gen, the i18n check, typecheck and `vite build`, then `scripts/make-deploy.mjs` assembles `deploy_out/`:
 

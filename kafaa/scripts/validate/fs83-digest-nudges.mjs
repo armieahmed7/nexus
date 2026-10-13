@@ -6,7 +6,7 @@
 //  - Release gate: nothing FS75 adds appears before 2026-10-12 (the seeded digests stay valid).
 //  - At most 7 items, at most 2 future items, idempotent per period (kafaa_build_digest twice), mutes ('future' can be muted, expiry not),
 //    digest stats list 8 kinds, the new helper is closed to API roles, the method rows are public, the migration is additive.
-import { readFileSync } from 'node:fs';
+import { readFileSync, readdirSync } from 'node:fs';
 
 const TABLES = ['people', 'qual_records', 'qual_standards', 'licences', 'skill_checkins', 'skill_ratings', 'mentoring_requests', 'mentoring_agreements', 'mentoring_sessions', 'opportunities',
   'opportunity_applications', 'career_conversations', 'refresh_state', 'refresh_prefs', 'enrolments', 'courses', 'person_skills', 'skills', 'role_competencies', 'career_paths', 'career_targets',
@@ -31,6 +31,12 @@ export default async function fs83Checks({ db, as, count, ok, uid }) {
   // Earlier validators replay older migrations on the shared database (fs25-future-roles replays the fs6qa file, which holds the previous
   // kafaa_dg_gather body); replay this file first so the checks below run on the final FS75 bodies (idempotent, as on the live project).
   await db.exec(readFileSync(FILE, 'utf8'));
+  // audit 2026-10-13: a later migration redefines kafaa_dg_compose (owed approvals before future-dated ones); replay it after the older
+  // body so the shared database keeps the final one, as the live apply order does
+  for (const m of readdirSync('supabase/migrations').filter((f) => f > '20261010289999' && f.endsWith('.sql')).sort()) {
+    const body = readFileSync(`supabase/migrations/${m}`, 'utf8');
+    if (/create or replace function kafaa_dg_compose\(/.test(body)) await db.exec(body);
+  }
   const load = async () => {
     const d = {};
     for (const t of TABLES) {

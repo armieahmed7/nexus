@@ -24,15 +24,16 @@ export default async function auditFixChecks({ db, as, one, ok }) {
   ok(!/alter default privileges/i.test(mig) && !/in schema public/i.test(mig) && /c\.relname like 'kafaa\\_%'/.test(mig), 'the grants fix touches kafaa_* tables only (no schema-wide revoke, no default privileges: NEXUS objects unchanged)');
   const anonW = await q(`select c.relname t, p.priv from pg_class c join pg_namespace n on n.oid = c.relnamespace cross join (values ('INSERT'), ('UPDATE'), ('DELETE')) p(priv)
     where n.nspname = 'public' and c.relkind in ('r', 'p') and c.relname like 'kafaa\\_%' and has_table_privilege('anon', c.oid, p.priv)`);
-  ok(anonW.length === 1 && anonW[0].t === 'kafaa_contact_requests' && anonW[0].priv === 'INSERT', `anon writes only the contact form (${anonW.map((r) => `${r.t}:${r.priv}`).join(', ')})`);
+  // audit 2026-10-13 (20261013100004_kafaa_audit2_contact_rpc.sql): the contact form sends through kafaa_submit_contact, so anon writes nothing
+  ok(anonW.length === 0, `anon writes no kafaa_* table directly (${anonW.map((r) => `${r.t}:${r.priv}`).join(', ') || 'none'})`);
   const del = await q(`select c.relname from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind in ('r', 'p') and c.relname like 'kafaa\\_%'
     and has_table_privilege('authenticated', c.oid, 'DELETE')`);
   ok(del.length === 0, 'no signed-in user deletes rows of a Kafa\'a table directly');
   const mismatch = await q(`select c.relname t, x.cmd from pg_class c join pg_namespace n on n.oid = c.relnamespace cross join (values ('INSERT'), ('UPDATE')) x(cmd)
     where n.nspname = 'public' and c.relkind in ('r', 'p') and c.relname like 'kafaa\\_%' and c.relname <> 'kafaa_contact_requests'
-      and has_table_privilege('authenticated', c.oid, x.cmd) <> exists (select 1 from pg_policies p where p.schemaname = 'public' and p.tablename = c.relname
+      and (has_table_privilege('authenticated', c.oid, x.cmd) or has_any_column_privilege('authenticated', c.oid, x.cmd)) <> exists (select 1 from pg_policies p where p.schemaname = 'public' and p.tablename = c.relname
             and p.cmd in (x.cmd, 'ALL') and p.roles && array['authenticated', 'public']::name[])`);
-  ok(mismatch.length === 0, `authenticated INSERT/UPDATE exactly where a policy admits it (${mismatch.map((r) => `${r.t}:${r.cmd}`).join(', ')})`);
+  ok(mismatch.length === 0, `authenticated INSERT/UPDATE (table or column grants, audit 2026-10-13) exactly where a policy admits it (${mismatch.map((r) => `${r.t}:${r.cmd}`).join(', ')})`);
   const cr = (await q(`select has_table_privilege('authenticated', 'kafaa_contact_requests', 'UPDATE') t, has_column_privilege('authenticated', 'kafaa_contact_requests', 'status', 'UPDATE') s,
     has_column_privilege('authenticated', 'kafaa_contact_requests', 'message', 'UPDATE') m`))[0];
   ok(!cr.t && cr.s && !cr.m, 'contact requests: staff may update the status column only');
@@ -66,24 +67,16 @@ export default async function auditFixChecks({ db, as, one, ok }) {
     }
     ok(!!xid && xDenied, 'xAPI statements cannot be deleted (even by the owner)');
 
-    // e. contact form
+    // e. contact form. Audit 2026-10-13: the bounded part-04 insert check now sits in kafaa_submit_contact (checked in audit2-fixes.mjs);
+    // the table's insert policy admits admins only and anon holds no INSERT. Admin inserts still pass the column bounds of the table.
     const ins = `insert into kafaa_contact_requests (id, topic, route_to, name, email, message, status, lang, consent_contact, retention_until) values ($1, $2, $3, $4, $5, $6, coalesce($7, 'new'), 'en', false, $8::date)`;
     const keep = (days) => `(current_date + ${days})`;
     const okRow = ['con-audit-1', 'careers', CONTACT_ROUTES.careers, 'Test', 'careers@example.org', 'I would like to know more about the programmes.', 'routed', null];
-    ok(!(await fails(null, ins.replace('$8::date', keep(180)), okRow.slice(0, 7))), 'contact form: the public form payload is accepted (status routed, topic mailbox, 180-day retention)');
-    ok(await fails(null, `insert into kafaa_contact_requests (id, topic, route_to, message) values ('con-audit-r', 'careers', $1, 'Read it back') returning id`, [CONTACT_ROUTES.careers]),
-      'contact form: a signed-out INSERT ... RETURNING fails (no SELECT for anon), so the forms insert with return=minimal');
-    ok(!(await fails(null, `insert into kafaa_contact_requests (id, topic, route_to, name, email, message) values ('con-audit-2', 'suppliers', $1, 'Co', 'suppliers@example.org', 'Company: Co')`, [CONTACT_ROUTES.suppliers])), 'contact form: the supplier interest payload is accepted (default status)');
-    const bad = [
-      [['con-audit-3', 'careers', CONTACT_ROUTES.careers, null, null, 'hello there friend', 'closed', null], 'a closed status'],
-      [['con-audit-4', 'careers', 'Somebody personal', null, null, 'hello there friend', 'new', null], 'a route that is not the topic mailbox'],
-      [['con-audit-5', 'careers', CONTACT_ROUTES.media, null, null, 'hello there friend', 'new', null], 'another topic\'s mailbox'],
-      [['con-audit-6', 'careers', CONTACT_ROUTES.careers, null, null, 'x'.repeat(4001), 'new', null], 'a message over 4000 characters'],
-      [['con-audit-7', 'careers', CONTACT_ROUTES.careers, 'n'.repeat(201), null, 'hello there friend', 'new', null], 'a name over 200 characters'],
-      [['x'.repeat(65), 'careers', CONTACT_ROUTES.careers, null, null, 'hello there friend', 'new', null], 'an id over 64 characters'],
-    ];
-    for (const [row, what] of bad) ok(await fails(null, ins.replace('$8::date', 'null'), row.slice(0, 7)), `contact form refuses ${what}`);
-    ok(await fails(null, ins.replace('$8::date', keep(401)), ['con-audit-8', 'careers', CONTACT_ROUTES.careers, null, null, 'hello there friend', 'new']), 'contact form refuses a retention over 400 days');
+    ok(await fails(null, ins.replace('$8::date', keep(180)), okRow.slice(0, 7)), 'contact form: a signed-out direct INSERT is refused (the forms use kafaa_submit_contact)');
+    ok(await fails('sro', ins.replace('$8::date', keep(180)), okRow.slice(0, 7)), 'contact form: a signed-in non-admin direct INSERT is refused');
+    ok(!(await fails('k-admin', ins.replace('$8::date', keep(180)), okRow.slice(0, 7))), 'contact form: an admin may still insert a request directly');
+    const sentAnon = (await one(null, 'select kafaa_submit_contact($1::jsonb) r', [JSON.stringify({ topic: 'careers', message: 'I would like to know more about the programmes.', status: 'routed' })])).r;
+    ok(sentAnon.ok && sentAnon.data.route_to === CONTACT_ROUTES.careers, 'contact form: signed-out visitors send through kafaa_submit_contact (mailbox of the topic)');
     // the TS mirror agrees on the same cases
     ok(contactRequestProblems({ id: 'c', topic: 'careers', route_to: CONTACT_ROUTES.careers, message: 'hello', status: 'routed' }, '2026-10-08') === null
       && contactRequestProblems({ id: 'c', topic: 'careers', route_to: CONTACT_ROUTES.media, message: 'hello' }, '2026-10-08') !== null

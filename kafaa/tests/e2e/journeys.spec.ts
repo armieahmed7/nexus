@@ -284,6 +284,11 @@ async function apply(page: Page, programme: string) {
   await confirmOk(page);
   await expect(page.locator('[data-testid="m06-apply-done"]')).toBeVisible();
 }
+/** Application references listed on /my/applications (open and withdrawn). */
+async function myRefs(page: Page): Promise<string[]> {
+  await go(page, '/my/applications');
+  return (await page.locator('[data-testid="m06-my-applications"]').textContent())?.match(/\bapp-(?:[a-f0-9]{32}|[a-z]-?\d{1,4})/g) ?? [];
+}
 async function withdrawAll(page: Page, programmeName: RegExp) {
   await go(page, '/my/applications');
   const card = page.locator('[data-testid="m06-my-applications"] > *', { hasText: programmeName });
@@ -299,11 +304,15 @@ test('J5 programme application → HR screening decision', async ({ page }) => {
   await pinBackend(page, 'supabase');
   await signIn(page, 'nse');
   await withdrawAll(page, /Graduate Plant Operator/);
+  // Audit 2026-10-13 (finding 5): this journey runs against the live project. Re-applying after withdrawing reopens the withdrawn
+  // application (kafaa_submit_application), so every run reuses the same application row instead of adding one to the live funnel.
+  const before = await myRefs(page);
   await apply(page, 'gpo');
   await go(page, '/my/applications');
   const openCard = page.locator('[data-testid="m06-my-applications"] > *', { has: page.locator('[data-testid="m06-withdraw"]') }).first();
   const ref = (await openCard.textContent())?.match(/\bapp-[a-f0-9]+/)?.[0];
   expect(ref, 'application reference shown to the applicant').toBeTruthy();
+  if (before.length) expect(before.some((b) => ref!.startsWith(b)), `re-applying reuses a withdrawn application (${ref} in ${before.join(', ')}): no new live row`).toBe(true);
   await signIn(page, 'chco');
   await go(page, '/workforce/applications');
   await page.getByRole('tab', { name: /Screening queue/ }).click();
@@ -327,9 +336,12 @@ test('J6 scholarship application (Energy Pioneers)', async ({ page }) => {
   await pinBackend(page, 'supabase');
   await signIn(page, 'buyer');
   await withdrawAll(page, /Energy Pioneers/);
+  const before = await myRefs(page); // audit 2026-10-13 (finding 5): the reopened application keeps its reference
   await apply(page, 'energy-pioneers');
   await go(page, '/my/applications');
   await expect(page.locator('[data-testid="m06-my-applications"]')).toContainText(/Energy Pioneers/);
+  const after = await myRefs(page);
+  if (before.length) expect(new Set(after), 'no new application row on live').toEqual(new Set(before));
   await withdrawAll(page, /Energy Pioneers/);
   expect(w.take()).toEqual([]);
 });

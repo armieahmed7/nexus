@@ -157,7 +157,12 @@ if (problems.length) {
 const personas = PERSONAS.map((p) => ({ persona: p.persona, person_id: personPid(p.persona), nexus: p.nexus, title_en: p.title_en, title_ar: p.title_ar, kind: p.kind, org_id: p.org_id ?? null, roles: p.roles.map((x) => x.role), scopes: p.roles.map((x) => `${x.role}:${x.scope_type}${x.scope_value ? '=' + x.scope_value : ''}`) }));
 
 mkdirSync('src/seed', { recursive: true });
-const seed = { meta: { generated_at: new Date().toISOString().slice(0, 10), demo_today: DEMO_TODAY, tenant: "demo (synthetic)", note: "Kafa'a demo tenant. All people are synthetic. Public facts cite sources; everything else is SAMPLE." }, personas, tables: T };
+// generated_at is reproducible (audit 2026-10-13, finding 18): SOURCE_DATE_EPOCH when set (reproducible-builds convention), else the demo
+// day, so `npm run gen` on a later day leaves no diff.
+const GENERATED_AT = process.env.SOURCE_DATE_EPOCH && /^\d+$/.test(process.env.SOURCE_DATE_EPOCH) ? new Date(Number(process.env.SOURCE_DATE_EPOCH) * 1000).toISOString().slice(0, 10) : DEMO_TODAY;
+// digest: a content hash of the tables; the local demo backend resets a browser's stored copy when it changes (LocalBackend seedStamp).
+const SEED_DIGEST = createHash('sha256').update(JSON.stringify(T)).digest('hex').slice(0, 16);
+const seed = { meta: { generated_at: GENERATED_AT, digest: SEED_DIGEST, demo_today: DEMO_TODAY, tenant: "demo (synthetic)", note: "Kafa'a demo tenant. All people are synthetic. Public facts cite sources; everything else is SAMPLE." }, personas, tables: T };
 writeFileSync('src/seed/seed.json', JSON.stringify(seed));
 writeFileSync('src/seed/personas.json', JSON.stringify(personas, null, 1));
 
