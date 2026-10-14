@@ -119,9 +119,9 @@ function RoleView({ role, data }: { role: Role; data: CareerData }) {
                     t('m01.role.regulation'),
                     role.regulated && role.regulation_ref ? (
                       role.regulation_url ? (
-                        <SourceLink href={role.regulation_url}>{role.regulation_ref}</SourceLink>
+                        <SourceLink href={role.regulation_url}>{pick(role, 'regulation_ref')}</SourceLink>
                       ) : (
-                        role.regulation_ref
+                        pick(role, 'regulation_ref')
                       )
                     ) : (
                       t('m01.role.notRegulated')

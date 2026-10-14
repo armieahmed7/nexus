@@ -5,6 +5,7 @@ import { Icon } from '../../ui/Icon';
 import { DigestItemRow } from './DigestItemRow';
 import { useDigest, useNoNudges } from './useDigest';
 import { usePeriodLabel } from './DigestPanel';
+import { useCanOpenLink } from '../GuardedLink';
 
 export function DigestBellCard({ onNavigate }: { onNavigate: () => void }) {
   const t = useT();
@@ -12,6 +13,7 @@ export function DigestBellCard({ onNavigate }: { onNavigate: () => void }) {
   const { view, me } = useDigest();
   const label = usePeriodLabel();
   const noNudges = useNoNudges();
+  const open = useCanOpenLink(); // readiness fixes 2026-10-13: items this person cannot open are not shown
   if (!me || noNudges || !view || !view.prefs.enabled) return null;
   const cur = view.current;
   return (
@@ -19,10 +21,10 @@ export function DigestBellCard({ onNavigate }: { onNavigate: () => void }) {
       <div className="flex items-center gap-2 px-1">
         <Icon name="sparkle" size={14} className="text-accent" />
         <span className="text-[12.5px] font-semibold">{t('digest.bell.title', { period: label(view.period) })}</span>
-        {cur && <span className="num ms-auto text-[12px] text-ink-3">{t('digest.panel.items', { n: f.num(cur.item_count) })}</span>}
+        {cur && <span className="num ms-auto text-[12px] text-ink-3">{t('digest.panel.items', { n: f.num(cur.items.filter((i) => open(i.link)).length) })}</span>}
       </div>
       {cur ? (
-        cur.items.length ? <ol className="px-1">{cur.items.slice(0, 3).map((i) => <DigestItemRow key={i.id} i={i} compact onOpen={onNavigate} />)}</ol> : <p className="px-1 text-[12px] text-ink-3">{t('digest.panel.nothing')}</p>
+        cur.items.some((i) => open(i.link)) ? <ol className="px-1">{cur.items.filter((i) => open(i.link)).slice(0, 3).map((i) => <DigestItemRow key={i.id} i={i} compact onOpen={onNavigate} />)}</ol> : <p className="px-1 text-[12px] text-ink-3">{t('digest.panel.nothing')}</p>
       ) : (
         <p className="px-1 text-[12px] text-ink-3">{t('digest.bell.notYet')}</p>
       )}

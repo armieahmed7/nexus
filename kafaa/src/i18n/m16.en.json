@@ -548,7 +548,10 @@
     "request": "Request id",
     "hashes": "Hashes",
     "hash": "Hash",
-    "noEdit": "Audit entries cannot be changed. To correct a record, make a new entry through the normal workflow."
+    "noEdit": "Audit entries cannot be changed. To correct a record, make a new entry through the normal workflow.",
+    "showing": "Showing the newest {n} of {total} matching entries",
+    "more": "Load more",
+    "refine": "Narrow the filters to see older entries."
   },
   "ai": {
     "eyebrow": "AI governance",

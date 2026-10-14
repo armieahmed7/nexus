@@ -1,17 +1,23 @@
 // /learn (M04, public): programme catalogue by area with published durations and sources; course summaries; links to paths.
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 import { Page, Section, Card, Grid, StatTile, FilterBar, useFilters, Async, EmptyState, Callout, Icon, SourceLink } from '../../ui';
 import { useQuery, useRepo } from '../../data';
 import type { ProgrammesRow } from '../../data/types';
 import { L, useFormat, usePick, useT, useLang } from '../../i18n';
 import { useSession } from '../../auth/session';
-import { G2Pill, Sources, useCatalogue, useLabels, Chip } from './ui';
+import { G2Pill, Sources, SourcesRegistryProvider, useCatalogue, useLabels, Chip } from './ui';
 import { TRAINING_PATHS } from './paths';
 
 const AREAS = ['all_staff', 'operations', 'disciplines', 'foundation', 'leadership', 'emergency', 'simulation', 'soft_skills', 'supplier'] as const;
 const MODALITIES = ['classroom', 'ojt', 'simulator', 'elearning', 'drill', 'external', 'blended', 'clinic'];
 
+// Readiness fixes 2026-10-13 (finding 4): the citation registry is loaded once for the page (SourcesRegistryProvider) instead of once per
+// programme card, and the cards are rendered by a plain function (an inner component type was re-created, and so remounted, on every render).
 export default function LearnPage() {
+  return <SourcesRegistryProvider><LearnView /></SourcesRegistryProvider>;
+}
+
+function LearnView() {
   const t = useT();
   const pick = usePick();
   const f = useFormat();
@@ -81,7 +87,7 @@ export default function LearnPage() {
               {byArea.map((g) => (
                 <section key={g.area} id={`area-${g.area}`} aria-labelledby={`h-${g.area}`}>
                   <h3 id={`h-${g.area}`} className="mb-2 text-[16px] font-semibold">{lab.area(g.area)} <span className="text-ink-3">· {f.num(g.items.length)}</span></h3>
-                  <Grid cols={2}>{g.items.map((p) => <ProgrammeCard key={p.id} p={p} />)}</Grid>
+                  <Grid cols={2}>{g.items.map((p) => <Fragment key={p.id}>{programmeCard(p)}</Fragment>)}</Grid>
                 </section>
               ))}
             </div>
@@ -93,7 +99,7 @@ export default function LearnPage() {
     </Page>
   );
 
-  function ProgrammeCard({ p }: { p: ProgrammesRow }) {
+  function programmeCard(p: ProgrammesRow) {
     const courses = cat.courses.filter((c) => c.programme_id === p.id);
     return (
       <Card as="article" eyebrow={<span className="ltr">{p.code}</span>} title={pick(p, 'name')}
@@ -101,9 +107,9 @@ export default function LearnPage() {
         <p className="text-[13.5px] text-ink-2">{pick(p, 'purpose')}</p>
         <div className="mt-3 flex flex-wrap items-center gap-2 text-[13px]">
           {pick(p, 'duration') && <span className="inline-flex items-center gap-1"><Icon name="calendar" size={14} className="text-ink-3" /><span className="font-semibold">{pick(p, 'duration')}</span></span>}
-          {p.population_2024 != null && <span className="text-ink-2">· {t('m04.learn.population', { n: f.num(p.population_2024), note: p.population_note ?? '' })}</span>}
+          {p.population_2024 != null && <span className="text-ink-2">· {t('m04.learn.population', { n: f.num(p.population_2024), note: pick(p, 'population_note') })}</span>}
         </div>
-        {p.conflict_note && <div className="mt-2"><Callout tone="sim" title={t('m04.learn.sourcesDiffer')}>{p.conflict_note}</Callout></div>}
+        {p.conflict_note && <div className="mt-2"><Callout tone="sim" title={t('m04.learn.sourcesDiffer')}>{pick(p, 'conflict_note')}</Callout></div>}
         {courses.length > 0 && (
           <ul className="mt-3 space-y-1 border-t border-line pt-2" aria-label={t('m04.learn.courses')}>
             {courses.slice(0, 5).map((c) => (

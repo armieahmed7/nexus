@@ -12,6 +12,7 @@ import type { PlatformRole } from '../../auth/policy';
 import { accessTokenFor } from '../../auth/nexusSession';
 import { makeG2SupabaseRpc } from './rpc_g2';
 import { makeExtSupabaseRpc } from '../ext/supabase'; // F01: M17-M27 module RPCs
+import { InFlight, copyRow, copyRows, readKey, readWithRetry } from './readPolicy';
 
 type AnyQ = any; // supabase-js builder types are deep; kept local to this file
 
@@ -19,6 +20,7 @@ export class SupabaseBackend implements Repository {
   readonly backend = 'supabase' as const;
   private client: SupabaseClient;
   private listeners = new Set<(t: Table[]) => void>();
+  private inflight = new InFlight();
   readonly rpc: Rpc;
   readonly nexus: NexusReads;
 
@@ -66,31 +68,39 @@ export class SupabaseBackend implements Repository {
     if (q.limit != null) b = b.range(q.offset ?? 0, (q.offset ?? 0) + q.limit - 1);
     return b;
   }
-  async list<K extends Table>(table: K, q?: Query<RowOf<K>>): Promise<RowOf<K>[]> {
+  // Reads share an identical request that is already running and retry once on a 5xx (./readPolicy.ts, readiness fixes 2026-10-13).
+  list<K extends Table>(table: K, q?: Query<RowOf<K>>): Promise<RowOf<K>[]> {
+    return this.inflight.share(readKey('list', table, q), () => this.listOnce(table, q), copyRows);
+  }
+  private async listOnce<K extends Table>(table: K, q?: Query<RowOf<K>>): Promise<RowOf<K>[]> {
     // PostgREST caps responses (1000 rows by default): page through when no limit is given.
     if (q?.limit != null) {
-      const { data, error } = await this.applyQuery(this.client.from(sqlName(table)).select('*'), q as never);
+      const { data, error } = await readWithRetry(() => this.applyQuery(this.client.from(sqlName(table)).select('*'), q as never) as PromiseLike<{ data: unknown[] | null; error: { message: string } | null; status?: number }>);
       if (error) throw new Error(error.message);
       return (data ?? []) as RowOf<K>[];
     }
     const out: RowOf<K>[] = [];
     for (let off = 0; ; off += 1000) {
-      const { data, error } = await this.applyQuery(this.client.from(sqlName(table)).select('*'), { ...((q ?? {}) as object), limit: 1000, offset: off } as never);
+      const { data, error } = await readWithRetry(() => this.applyQuery(this.client.from(sqlName(table)).select('*'), { ...((q ?? {}) as object), limit: 1000, offset: off } as never) as PromiseLike<{ data: unknown[] | null; error: { message: string } | null; status?: number }>);
       if (error) throw new Error(error.message);
       out.push(...((data ?? []) as RowOf<K>[]));
       if (!data || data.length < 1000) break;
     }
     return out;
   }
-  async get<K extends Table>(table: K, id: string): Promise<RowOf<K> | null> {
-    const { data, error } = await this.client.from(sqlName(table)).select('*').eq('id', id).maybeSingle();
-    if (error) throw new Error(error.message);
-    return (data as RowOf<K>) ?? null;
+  get<K extends Table>(table: K, id: string): Promise<RowOf<K> | null> {
+    return this.inflight.share<RowOf<K> | null>(readKey('get', table, id), async () => {
+      const { data, error } = await readWithRetry(() => this.client.from(sqlName(table)).select('*').eq('id', id).maybeSingle());
+      if (error) throw new Error(error.message);
+      return (data as RowOf<K>) ?? null;
+    }, (r) => copyRow(r));
   }
-  async count<K extends Table>(table: K, q?: Query<RowOf<K>>): Promise<number> {
-    const { count, error } = await this.applyQuery(this.client.from(sqlName(table)).select('id', { count: 'exact', head: true }), { ...((q ?? {}) as object), limit: undefined, order: undefined } as never);
-    if (error) throw new Error(error.message);
-    return count ?? 0;
+  count<K extends Table>(table: K, q?: Query<RowOf<K>>): Promise<number> {
+    return this.inflight.share(readKey('count', table, q), async () => {
+      const { count, error } = await readWithRetry(() => this.applyQuery(this.client.from(sqlName(table)).select('id', { count: 'exact', head: true }), { ...((q ?? {}) as object), limit: undefined, order: undefined } as never) as PromiseLike<{ count: number | null; error: { message: string } | null; status?: number }>);
+      if (error) throw new Error(error.message);
+      return count ?? 0;
+    });
   }
   private toResult<T>(error: { message: string; code?: string } | null, data?: T): Result<T> {
     if (!error) return { ok: true, code: 'ok', message: 'Saved', data };
@@ -134,12 +144,14 @@ export class SupabaseBackend implements Repository {
     };
   }
   private emit(t: Table[]) {
+    this.inflight.bump(); // a write or a persona switch: later reads never join a request sent before it
     for (const l of this.listeners) l(t);
   }
 
   // ───────────── RPCs (same names and argument order as supabase/migrations/*_kafaa_rpcs.sql)
   private async call<T>(fn: string, args: Record<string, unknown>, touched: Table[] = []): Promise<Result<T>> {
     const { data, error } = await this.client.rpc(fn, args);
+    this.inflight.bump(); // a consequential RPC may have written: reads sent after it start fresh
     if (error) return { ok: false, code: error.code === '42501' ? 'forbidden' : 'error', message: error.message };
     const r = data as Result<T>;
     if (r?.ok && touched.length) this.emit(touched);

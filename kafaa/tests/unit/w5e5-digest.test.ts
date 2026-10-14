@@ -20,7 +20,7 @@ const T = S.tables;
 const TODAY = S.meta.demo_today;
 const data = (): DigestData => Object.fromEntries(['people', 'qual_records', 'qual_standards', 'licences', 'skill_checkins', 'skill_ratings', 'mentoring_requests', 'mentoring_agreements', 'mentoring_sessions',
   'opportunities', 'opportunity_applications', 'career_conversations', 'refresh_state', 'refresh_prefs', 'enrolments', 'courses', 'person_skills', 'skills', 'role_competencies', 'career_paths', 'career_targets',
-  'engine_settings', 'reco_optouts', 'ojt_logs', 'ojt_eval_requests', 'plant_visits', 'roleplay_sessions' /* FS wave F integration */].map((t) => [t, T[t] ?? []])) as unknown as DigestData;
+  'engine_settings', 'reco_optouts', 'ojt_logs', 'ojt_eval_requests', 'plant_visits', 'roleplay_sessions' /* FS wave F integration */, 'role_assignments' /* readiness 2026-10-13 */].map((t) => [t, T[t] ?? []])) as unknown as DigestData;
 let b: LocalBackend;
 const as = async (p: string | null) => { b.setPersona(p); await b.whenReady(); };
 beforeEach(async () => { b = new LocalBackend(); await b.whenReady(); await b.reset(); });

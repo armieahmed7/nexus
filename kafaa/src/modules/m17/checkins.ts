@@ -19,6 +19,7 @@
  * Import-free apart from pure helpers, so node scripts can load it.
  */
 import type { Reason, Ranked, BiText } from '../../domain/engines/types';
+import { hoursSinceSyncOf } from '../../domain/mirrorClock.ts';
 
 /** MIN_GROUP_SIZE from src/auth/policy.ts (inlined so node scripts can load this file; a unit test keeps them equal). */
 export const MIN_GROUP = 10;
@@ -204,7 +205,7 @@ export function coverageSummary(rows: CoverageRow[]): CoverageSummary {
 export function availabilityOf(personId: string, licences: Row[], medical: Row[], now: Date, today: string): boolean | null {
   const l = licences.find((x) => x.person_id === personId);
   if (!l) return true;
-  if ((now.getTime() - new Date(l.last_synced).getTime()) / 3_600_000 > STALE_HOURS) return null;
+  if (hoursSinceSyncOf(l.last_synced, now) > STALE_HOURS) return null; // mirror clock (readiness 2026-10-13)
   const m = medical.find((x) => x.person_id === personId);
   return l.status === 'valid' && String(l.expires_on).slice(0, 10) >= today && !!m && String(m.due_on).slice(0, 10) >= today;
 }

@@ -11,7 +11,7 @@ import { useQuery, useRepo } from '../../data';
 import { useSession } from '../../auth/session';
 import { useFormat, usePick, useT, L } from '../../i18n';
 import { ARCHETYPES, BANDS, DRIVERS, MIN_GROUP, type ExposureCell, type ReadyCell } from './transform';
-import { BenchTies, DriverChip, FS11, FS12, HorizonToggle, useRefData, type RefData } from './ui';
+import { BenchTies, DriverChip, FS11, FS12, HorizonToggle, useRefData, type RefData, RefGaps } from './ui';
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -32,6 +32,7 @@ export default function WorkforceTransformationPage() {
         <L to="/workforce/rung-alerts" className="btn-outline no-underline" data-testid="m30-to-rung-alerts">{t('m30.tp.links.rung')}</L>
         {s.can('transformation', ['A']) && <L to="/workforce/transition-plans" className="btn-outline no-underline" data-testid="m30-to-transition-plans">{t('m30.tp.links.plans')}</L>}
       </span>}>
+      <RefGaps d={ref.data} onRetry={ref.reload} />
       <Async state={ref}>{(d) => (
         <Async state={agg}>{(a) => (
           <Tabs tabs={[

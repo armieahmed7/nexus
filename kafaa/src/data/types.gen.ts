@@ -181,6 +181,7 @@ export interface JobRolesRow {
   level: 'entry' | 'professional' | 'senior' | 'leadership';
   regulated: boolean;
   regulation_ref?: string | null;
+  regulation_ref_ar?: string | null;
   regulation_url?: string | null;
   basis: 'barakah' | 'generic' | 'uncertain';
   basis_note?: string | null;
@@ -251,6 +252,7 @@ export interface CareerPathsRow {
   label_ar: string;
   conditions: any;
   rule_ref?: string | null;
+  rule_ref_ar?: string | null;
   basis: 'barakah' | 'generic' | 'uncertain';
   sort: number;
   kind: 'current' | 'future';
@@ -460,10 +462,12 @@ export interface ProgrammesRow {
   hours?: number | null;
   population_2024?: number | null;
   population_note?: string | null;
+  population_note_ar?: string | null;
   purpose_en: string;
   purpose_ar: string;
   sources: any;
   conflict_note?: string | null;
+  conflict_note_ar?: string | null;
   mandatory: boolean;
   sort: number;
 }
@@ -780,6 +784,7 @@ export interface TalentProgrammesRow {
   link_out_url?: string | null;
   sources: any;
   conflict_note?: string | null;
+  conflict_note_ar?: string | null;
   criteria: any;
   sort: number;
   nexus_program_id?: string | null;
@@ -816,6 +821,7 @@ export interface VacanciesRow {
   role_id?: string | null;
   entity_id: string;
   location: string;
+  location_ar?: string | null;
   uae_nationals_only: boolean;
   posted_on: string;
   closes_on?: string | null;
@@ -1258,6 +1264,7 @@ export interface FactsRow {
   sample: boolean;
   public: boolean;
   conflict_note?: string | null;
+  conflict_note_ar?: string | null;
   topic: string;
 }
 export interface GlossaryRow {

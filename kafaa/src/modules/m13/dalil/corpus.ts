@@ -75,7 +75,7 @@ export async function buildCorpus(repo: Repository, opts: { signedIn: boolean; p
       id: `cd-programme-${p.id}`, kind: 'programme', title: { en: p.name_en, ar: p.name_ar },
       text: { en: `${p.facts_en} For: ${p.education_en}. Duration: ${p.duration_en}. Leads to: ${p.outcome_en}.`, ar: `${p.facts_ar} الفئة: ${p.education_ar}. المدة: ${p.duration_ar}. يقود إلى: ${p.outcome_ar}.` },
       cite: { label: p.name_en, url: `/pathways/${p.id}` }, route: `/pathways/${p.id}`, modes: ALL, keywords: [p.stage, 'programme', 'برنامج'],
-      data: { programmeId: p.id, facts_en: p.facts_en, facts_ar: p.facts_ar, nationality: p.nationality, education_en: p.education_en, education_ar: p.education_ar, duration_en: p.duration_en, duration_ar: p.duration_ar, outcome_en: p.outcome_en, outcome_ar: p.outcome_ar, apply_mode: p.apply_mode, link_out_url: p.link_out_url, conflict_note: p.conflict_note, source: s, name_en: p.name_en, name_ar: p.name_ar },
+      data: { programmeId: p.id, facts_en: p.facts_en, facts_ar: p.facts_ar, nationality: p.nationality, education_en: p.education_en, education_ar: p.education_ar, duration_en: p.duration_en, duration_ar: p.duration_ar, outcome_en: p.outcome_en, outcome_ar: p.outcome_ar, apply_mode: p.apply_mode, link_out_url: p.link_out_url, conflict_note: p.conflict_note, conflict_note_ar: p.conflict_note_ar ?? null, source: s, name_en: p.name_en, name_ar: p.name_ar },
     });
   }
   for (const p of trainingProgs) {

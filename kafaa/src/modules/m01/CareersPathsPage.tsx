@@ -72,7 +72,7 @@ function LadderView({ data }: { data: CareerData }) {
                     {role && <BasisBadge basis={s.edge?.basis ?? role.basis} />}
                   </span>
                 ),
-                sub: s.edge ? `${pick(s.edge, 'label')}${m ? ` · ${t('m01.months', { n: f.num(m) })}` : ''}${s.edge.rule_ref ? ` · ${s.edge.rule_ref}` : ''}` : pick(role, 'licensing_body'),
+                sub: s.edge ? `${pick(s.edge, 'label')}${m ? ` · ${t('m01.months', { n: f.num(m) })}` : ''}${s.edge.rule_ref ? ` · ${pick(s.edge, 'rule_ref')}` : ''}` : pick(role, 'licensing_body'),
                 conditions: s.edge ? condText(s.edge) : [t('m01.ladder.loCondition')],
               };
             })}

@@ -1,7 +1,7 @@
 /** Shared M04/M05 view helpers (G2). Module-local; not part of the shared UI kit. */
-import { useMemo, type ReactNode } from 'react';
+import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import { useQuery, useRepo } from '../../data';
-import type { CoursesRow, PeopleRow, ProgrammesRow } from '../../data/types';
+import type { CoursesRow, PeopleRow, ProgrammesRow, SourcesRow } from '../../data/types';
 import { SourceLink, StatusPill, type PillTone } from '../../ui';
 import { useFormat, useLang, useT } from '../../i18n';
 import { PERSONAS, useSession } from '../../auth/session';
@@ -32,15 +32,31 @@ export function useLabels() {
   }, [t]);
 }
 
+/** The citation registry (kafaa_sources), loaded once by a page that renders many <Sources> (readiness fixes 2026-10-13, finding 4:
+ *  /learn rendered one per programme card and each fetched the whole table). Without a provider each <Sources> loads it itself. */
+const SourcesRegistry = createContext<SourcesRow[] | null>(null);
+export function SourcesRegistryProvider({ children }: { children: ReactNode }) {
+  const repo = useRepo();
+  const reg = useQuery('sources', () => repo.list('sources'), []);
+  return <SourcesRegistry.Provider value={reg.data ?? EMPTY_SOURCES}>{children}</SourcesRegistry.Provider>;
+}
+const EMPTY_SOURCES: SourcesRow[] = [];
+function useSourcesRegistry(): SourcesRow[] {
+  const shared = useContext(SourcesRegistry);
+  const repo = useRepo();
+  // Hooks run unconditionally; with a provider the own query is a no-op that never touches the network.
+  const own = useQuery('sources', () => (shared ? Promise.resolve(EMPTY_SOURCES) : repo.list('sources')), [shared === null]);
+  return shared ?? own.data ?? EMPTY_SOURCES;
+}
+
 /** Public citations: [{id,label,url}] from the row, with the registry's "accessed" date as the as-of date. */
 export function Sources({ items, compact }: { items: unknown; compact?: boolean }) {
-  const repo = useRepo();
   const f = useFormat();
   const t = useT();
-  const reg = useQuery('sources', () => repo.list('sources'), []);
+  const reg = useSourcesRegistry();
   const list = (Array.isArray(items) ? items : []) as { id: string; label: string; url: string }[];
   if (!list.length) return null;
-  const accessed = (id: string) => reg.data?.find((s) => s.id === id)?.accessed ?? null;
+  const accessed = (id: string) => reg.find((s) => s.id === id)?.accessed ?? null;
   return (
     <div className={`flex flex-wrap items-center gap-x-3 gap-y-1 ${compact ? '' : 'mt-2'}`} data-testid="m04-sources">
       <span className="caps">{t('m04.common.sources')}</span>
@@ -54,9 +70,8 @@ export function Sources({ items, compact }: { items: unknown; compact?: boolean 
 }
 /** Resolve source ids (paths content) against the citation registry. */
 export function SourceIds({ ids }: { ids: string[] }) {
-  const repo = useRepo();
-  const reg = useQuery('sources', () => repo.list('sources'), []);
-  const items = (reg.data ?? []).filter((s) => ids.includes(s.id)).map((s) => ({ id: s.id, label: s.label, url: s.url }));
+  const reg = useSourcesRegistry();
+  const items = reg.filter((s) => ids.includes(s.id)).map((s) => ({ id: s.id, label: s.label, url: s.url }));
   return <Sources items={items} compact />;
 }
 

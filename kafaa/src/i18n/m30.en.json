@@ -610,5 +610,19 @@
     "eyebrowFires": "{n} junior tasks need practice",
     "eyebrowNone": "No alert at this horizon",
     "note": "Task bands come from the FS06 planning assumptions (SIMULATED AI capability levels). Simulator scenarios are metadata only; no scenario content is shown."
+  },
+  "refGaps": {
+    "title": "Part of this page did not load",
+    "body": "Not shown: {parts}. The rest of the page is complete; try again in a moment.",
+    "retry": "Try again",
+    "part": {
+      "families": "job families",
+      "skills": "skill names",
+      "competencies": "competencies",
+      "courses": "courses",
+      "archetypes": "role archetypes",
+      "milestones": "the timeline",
+      "maps": "role transformation maps"
+    }
   }
 }

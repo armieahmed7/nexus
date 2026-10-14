@@ -198,7 +198,7 @@ export function WhatRaisesIt({ d, r, ranked, onTrack }: { d: FutureMeData; r: RV
           <div className="flex flex-wrap gap-1.5">
             <button type="button" className="btn-outline btn-sm" onClick={() => setPv(a)} data-testid="m21-preview-open"><Icon name="chart" size={13} /> {t('m21.v2.preview.open')}</button>
             {a.kind === 'course' && (planned.has(a.ref)
-              ? <StatusPill tone="info">{t('m21.v2.planned')}</StatusPill>
+              ? <StatusPill tone="info">{t('m21.v2.plannedPill')}</StatusPill>
               : <button type="button" className="btn-primary btn-sm" onClick={() => act(() => repo.rpc.enrolCourse(a.ref, null))} data-testid="m21-plan-course"><Icon name="plus" size={13} /> {t('m21.v2.plan')}</button>)}
             {a.kind === 'track' && onTrack && <button type="button" className="btn-primary btn-sm" onClick={() => onTrack(a.ref)}><Icon name="book" size={13} /> {t('m21.v2.openTrack')}</button>}
             {a.kind === 'practice' && <L to="/my/skills" className="btn-ghost btn-sm">{t('m21.v2.openPassport')}</L>}

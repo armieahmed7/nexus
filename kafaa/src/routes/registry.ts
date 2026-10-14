@@ -67,14 +67,21 @@ if (errors.length) throw new Error(`Route registry invalid:\n${errors.join('\n')
 
 export const ROUTE_BY_ID: Record<string, RouteDef> = Object.fromEntries(ROUTES.map((r) => [r.id, r]));
 
-/** Find the route for a path (without the /ar prefix). Static paths win over param paths. */
+/** Find the route for a path (without the /ar prefix). Static paths win over param paths. Sorted once and memoised per path
+ *  (readiness fixes 2026-10-13: dashboards and the digest now check every link they render against its route's guard). */
+const SORTED: RouteDef[] = [...ROUTES].sort((a, b) => Number(a.path.includes(':')) - Number(b.path.includes(':')));
+const MATCHED = new Map<string, { def: RouteDef; params: Record<string, string> } | null>();
 export function routeForPath(path: string): { def: RouteDef; params: Record<string, string> } | null {
-  const sorted = [...ROUTES].sort((a, b) => Number(a.path.includes(':')) - Number(b.path.includes(':')));
-  for (const def of sorted) {
+  const hit = MATCHED.get(path);
+  if (hit !== undefined) return hit;
+  let out: { def: RouteDef; params: Record<string, string> } | null = null;
+  for (const def of SORTED) {
     const m = matchPath({ path: def.path, end: true }, path);
-    if (m) return { def, params: m.params as Record<string, string> };
+    if (m) { out = { def, params: m.params as Record<string, string> }; break; }
   }
-  return null;
+  if (MATCHED.size > 2000) MATCHED.clear();
+  MATCHED.set(path, out);
+  return out;
 }
 
 /** Fill a route path with params: href('careers-role', { slug: 'ro' }) → /careers/roles/ro */

@@ -10,7 +10,7 @@ import { useAction, useRepo } from '../../data';
 import { useFormat, usePick, useT, L } from '../../i18n';
 import { useCrumbLabel } from '../../shell/crumbs';
 import { ARCHETYPES, DRIVERS, PUBLIC_MAX, SUMMARY_MAX, bannedWording, checkTransformation, isPathOnly, type RtInput } from './transform';
-import { BenchTies, FS11, useRefData, useRoleMap, type RefData } from './ui';
+import { BenchTies, FS11, useRefData, useRoleMap, type RefData, RefGaps } from './ui';
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 type Src = { label: string; url: string; as_of?: string | null };
@@ -23,6 +23,7 @@ export default function TransformationEditPage() {
   return (
     <Page title={t('m30.routes.workforce-transformation-edit.title')} intro={t('m30.ed.intro')} eyebrow={<BenchTies feature={FS11} />}
       actions={<L to="/workforce/transformation" className="btn-outline no-underline">{t('m30.routes.workforce-transformation.title')}</L>}>
+      <RefGaps d={ref.data} onRetry={ref.reload} />
       <Async state={ref}>{(d) => (
         <Async state={q}>{(v) => {
           const role = d.roleById.get(roleId);

@@ -272,7 +272,7 @@ describe('FS77 seed, schema, routes and i18n', () => {
     const r = Object.fromEntries(routes.map((x) => [x.id, x]));
     expect(r['pathways-starter'].guard).toEqual({});
     expect(r['pathways-starter'].path).toBe('/pathways/journey/starter');
-    expect(r['my-induction'].guard).toEqual({ signedIn: true });
+    expect(r['my-induction'].guard).toEqual({ signedIn: true, anyRole: ['employee'] }); // readiness 2026-10-13: employees only
     expect(r['workforce-intake-baselines'].guard).toEqual({ signedIn: true, anyRole: ['hr_analyst', 'hr_director', 'training_manager', 'admin', 'auditor'] });
     expect(FEATURE_BENCHMARKS.FS77).toEqual(['UAE-AI', 'NEA', 'UK-NUC']);
   });

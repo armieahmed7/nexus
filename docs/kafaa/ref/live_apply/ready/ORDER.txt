@@ -1,0 +1,8 @@
+01_kafaa_ready_scope_people_p1.sql
+02_kafaa_ready_rls_scope_p1.sql
+03_kafaa_ready_rls_scope_p2.sql
+04_kafaa_ready_mirror_clock_p1.sql
+05_kafaa_ready_cec_stats_p1.sql
+06_kafaa_ready_route_guards_p1.sql
+07_kafaa_ready_digest_access_p1.sql
+08_kafaa_ready_ar_columns_p1.sql

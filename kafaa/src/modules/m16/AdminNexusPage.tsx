@@ -46,7 +46,8 @@ export default function AdminNexusPage() {
       safe(repo.nexus.ecoPartnerships(), []),
       safe(repo.nexus.ledger(), [] as LedgerEntry[]),
       safe(repo.list('integrations'), []),
-      safe(repo.list('audit_events', { order: [['seq', 'desc']] }), []),
+      // readiness fixes 2026-10-13: counts per ledger status instead of downloading the whole audit log
+      safe(Promise.all((['written', 'skipped', 'not_applicable'] as const).map(async (k) => ({ k, n: await repo.count('audit_events', { filter: { ledger_status: k } }) }))), [] as { k: string; n: number }[]),
     ]);
     return { personas, authority, programs, courses, partnerships, ledger, ints, audit };
   });
@@ -68,7 +69,7 @@ export default function AdminNexusPage() {
               default: return { st: 'proposed', detail: t('m16.nexus.d.identity') };
             }
           };
-          const ledgerCounts = ['written', 'skipped', 'not_applicable'].map((k) => ({ k, n: d.audit.filter((a) => a.ledger_status === k).length }));
+          const ledgerCounts = d.audit;
           return (
             <div className="space-y-4">
               <div className="grid gap-3 sm:grid-cols-4" data-testid="m16-nexus-metrics">

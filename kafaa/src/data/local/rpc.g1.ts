@@ -9,6 +9,7 @@ import type { Result, RowOf } from '../types';
 import { RULES } from '../../auth/policy';
 import { addWorkingDays, daysBetween, isoDate, proficiency, quarterEnd, quarterOf, todayIso, toDate, withdrawalDate } from '../../domain/rules';
 import { newId } from './store';
+import { hoursSinceSyncOf } from '../../domain/mirrorClock.ts';
 
 const addDays = (d: string, n: number) => isoDate(new Date(toDate(d).getTime() + n * 86_400_000));
 const addMonths = (d: string, m: number) => {
@@ -213,7 +214,7 @@ export class G1LocalRpc {
     const out: { person_id: string; available: boolean | null }[] = [];
     for (const l of this.b.raw('licences')) {
       if (!this.ctx.canReadRow('licences', l as never)) continue;
-      const stale = (Date.now() - toDate(l.last_synced).getTime()) / 3_600_000 > RULES.staleSyncHours;
+      const stale = hoursSinceSyncOf(l.last_synced) > RULES.staleSyncHours; // mirror clock (readiness 2026-10-13)
       const med = this.b.raw('medical_due').find((m) => m.person_id === l.person_id);
       out.push({ person_id: l.person_id, available: stale ? null : l.status === 'valid' && l.expires_on >= today && !!med && med.due_on >= today });
     }

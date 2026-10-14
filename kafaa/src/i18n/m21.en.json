@@ -316,7 +316,8 @@
       "note": "Points = credit ÷ number of ADVANCE skills in the family. The three kinds of evidence each close part of the gap that is left.",
       "raiseTitle": "What raises this family",
       "raiseDesc": "The learning and practice that would add most to this family, with a before/after preview."
-    }
+    },
+    "plannedPill": "Planned"
   },
   "hz2": {
     "title": "Horizon lanes 2026 to 2035",

@@ -230,6 +230,7 @@ create table if not exists kafaa_job_roles (
   level text not null check (level in ('entry', 'professional', 'senior', 'leadership')),
   regulated boolean not null default false,
   regulation_ref text,
+  regulation_ref_ar text,
   regulation_url text,
   basis text not null check (basis in ('barakah', 'generic', 'uncertain')),
   basis_note text,
@@ -315,6 +316,7 @@ create table if not exists kafaa_career_paths (
   label_ar text not null default '',
   conditions jsonb not null default '[]'::jsonb,
   rule_ref text,
+  rule_ref_ar text,
   basis text not null default 'barakah' check (basis in ('barakah', 'generic', 'uncertain')),
   sort integer not null default 0,
   kind text not null default 'current' check (kind in ('current', 'future'))
@@ -578,10 +580,12 @@ create table if not exists kafaa_programmes (
   hours numeric,
   population_2024 integer,
   population_note text,
+  population_note_ar text,
   purpose_en text not null,
   purpose_ar text not null,
   sources jsonb not null default '[]'::jsonb,
   conflict_note text,
+  conflict_note_ar text,
   mandatory boolean not null default false,
   sort integer not null default 0
 );
@@ -964,6 +968,7 @@ create table if not exists kafaa_talent_programmes (
   link_out_url text,
   sources jsonb not null default '[]'::jsonb,
   conflict_note text,
+  conflict_note_ar text,
   criteria jsonb not null default '[]'::jsonb,
   sort integer not null default 0,
   nexus_program_id text
@@ -1009,6 +1014,7 @@ create table if not exists kafaa_vacancies (
   role_id text,
   entity_id text not null,
   location text not null,
+  location_ar text,
   uae_nationals_only boolean not null default false,
   posted_on date not null,
   closes_on date,
@@ -1547,6 +1553,7 @@ create table if not exists kafaa_facts (
   sample boolean not null default false,
   public boolean not null default true,
   conflict_note text,
+  conflict_note_ar text,
   topic text not null default 'barakah'
 );
 comment on table kafaa_facts is '[M12] Sourced statistic with "as of" date (or SAMPLE label)';

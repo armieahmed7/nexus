@@ -15,6 +15,7 @@ import type { DigestBuildResult } from './backend/rpc';
 import { DigestItemRow } from './DigestItemRow';
 import { FutureNudgeStrip } from './FutureNudges';
 import { useDigest, useNoNudges, type RunRow } from './useDigest';
+import { useCanOpenLink } from '../GuardedLink';
 
 export function usePeriodLabel() {
   const t = useT();
@@ -57,6 +58,8 @@ export function DigestPanel() {
   const box = useRef<HTMLDivElement>(null);
   const [failed, setFailed] = useState<Result<DigestBuildResult> | null>(null);
   const [tick, setTick] = useState(0);
+  // readiness fixes 2026-10-13 (finding 2): a digest built before the server-side filter may still hold items this person cannot open
+  const open = useCanOpenLink();
   useEffect(() => { if (location.hash === '#digest' && view) box.current?.scrollIntoView({ block: 'start' }); }, [location.hash, view]);
   // opening the digest marks its notification read (the open rate admins see, aggregated)
   useEffect(() => { if (view?.notice && !view.notice.read_at) void repo.update('notifications', view.notice.id, { read_at: new Date().toISOString() }).catch(() => undefined); }, [view?.notice, repo]);
@@ -82,16 +85,16 @@ export function DigestPanel() {
               <StatusPill tone="neutral">{t(`digest.freq.${view.current.frequency}`)}</StatusPill>
               {view.current.coach_hint && <StatusPill tone="info">{t('digest.panel.coachEngine')}</StatusPill>}
             </div>
-            {view.current.items.length === 0 ? (
+            {view.current.items.filter((i) => open(i.link)).length === 0 ? (
               <p className="text-[13px] text-ink-2" data-testid="digest-empty">{t('digest.panel.nothing')}</p>
             ) : (
               <ol className="space-y-2" data-testid="digest-items">
-                {view.current.items.map((i) => <DigestItemRow key={i.id} i={i} />)}
+                {view.current.items.filter((i) => open(i.link)).map((i) => <DigestItemRow key={i.id} i={i} />)}
               </ol>
             )}
             <FutureNudgeStrip items={view.current.items} asOf={view.current.as_of} />
             <p className="text-[12px] text-ink-3">{t('digest.panel.rule')}</p>
-            {view.history.length > 0 && <History runs={view.history} label={label} />}
+            {view.history.length > 0 && <History runs={view.history} label={label} open={open} />}
           </div>
         ) : quiet ? (
           <Callout tone="info" title={t('digest.panel.quietTitle')}><span data-testid="digest-quiet">{t('digest.panel.quietBody', { h: String(view.prefs.quiet_end).padStart(2, '0') })}</span></Callout>
@@ -110,7 +113,7 @@ export function DigestPanel() {
   );
 }
 
-function History({ runs, label }: { runs: RunRow[]; label: (p: string) => string }) {
+function History({ runs, label, open }: { runs: RunRow[]; label: (p: string) => string; open: (link: string) => boolean }) {
   const t = useT();
   const f = useFormat();
   return (
@@ -120,7 +123,7 @@ function History({ runs, label }: { runs: RunRow[]; label: (p: string) => string
         {runs.map((r) => (
           <li key={r.id}>
             <div className="caps">{label(r.period)} · {t('digest.panel.items', { n: f.num(r.item_count) })}</div>
-            <ol>{r.items.map((i) => <DigestItemRow key={i.id} i={i} compact />)}</ol>
+            <ol>{r.items.filter((i) => open(i.link)).map((i) => <DigestItemRow key={i.id} i={i} compact />)}</ol>
           </li>
         ))}
       </ul>

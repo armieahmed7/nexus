@@ -23,6 +23,7 @@ const TABLES: (keyof DigestData)[] = [
   'role_profile_versions', 'skill_goals', 'skill_goal_plans', 'pathways', 'pathway_enrolments', 'ai_rungs', 'ai_skill_tracks', 'ai_systems', 'ai_system_users',
   'skill_signals', 'fellowship_milestones',
   'prearrival_shares', 'record_shares', 'organisations', // FS wave H integration (FS69 pre-arrival checks owed by the evaluator who opened the share)
+  'role_assignments', // readiness fixes 2026-10-13: only items whose link the person may open
 ];
 /** Everything the digest reads, straight from the in-memory tables (no RLS: the RPC is the gate and reads only the caller's items). */
 export function localDigestData(b: LocalBackend): DigestData {

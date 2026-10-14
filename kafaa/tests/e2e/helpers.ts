@@ -42,8 +42,24 @@ export async function pinBackend(page: Page, backend: Backend, localPersona: str
   );
 }
 
+/**
+ * Readiness fixes 2026-10-13: the journeys write tagged rows (E2E-QA opportunities, sessions, notifications, ratings...) through the real
+ * RPCs, and on the shared live demo database ENEC testers saw them. A journey that signs in to write now runs against the live project
+ * (hlirqxoddysxtdezwcgv, the build's default VITE_SUPABASE_URL) only when KAFAA_E2E_LIVE_WRITES=1 is set on purpose, with the owner's
+ * consent; otherwise it fails at sign-in with this message. Build against a Supabase branch (VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY)
+ * to run them freely. The read-only sweeps (sweep.spec.ts, visual.spec.ts) sign in with { readOnly: true } and are not affected.
+ */
+export const LIVE_PROJECT = 'hlirqxoddysxtdezwcgv';
+export function assertWritableTarget() {
+  const target = process.env.VITE_SUPABASE_URL || `https://${LIVE_PROJECT}.supabase.co`;
+  if (target.includes(LIVE_PROJECT) && process.env.KAFAA_E2E_LIVE_WRITES !== '1') {
+    throw new Error(`E2E journeys write E2E-QA rows; ${target} is the shared live demo database ENEC testers use. Point the build at a Supabase branch (VITE_SUPABASE_URL), or set KAFAA_E2E_LIVE_WRITES=1 only with the owner's consent.`);
+  }
+}
+
 /** Sign in through the real sign-in screen (supabase: Supabase Auth password grant with the NEXUS demo account). */
-export async function signIn(page: Page, persona: string) {
+export async function signIn(page: Page, persona: string, opts: { readOnly?: boolean } = {}) {
+  if (!opts.readOnly) assertWritableTarget();
   await page.goto(`${BASE}/sign-in`);
   await page.locator(`[data-testid="persona-${persona}"]`).click();
   await expect(page.locator('[data-testid="account-menu"]')).toBeVisible({ timeout: 30_000 });
