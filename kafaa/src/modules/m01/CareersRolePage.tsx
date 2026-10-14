@@ -4,7 +4,7 @@
 import { useParams } from 'react-router-dom';
 import { Page, Section, Card, Grid, Async, EmptyState, KeyValue, Callout, StatusPill, SourceLink, Icon, Tabs, useFilters } from '../../ui';
 import { useQuery, useRepo } from '../../data';
-import { useT, usePick, L, useFormat } from '../../i18n';
+import { useT, usePick, L, useFormat, useRefText } from '../../i18n';
 import { useCrumbLabel } from '../../shell/crumbs';
 import { useCareerData, RoleBadges, RoleSources, useConditionText, EdgeCard, type CareerData, type Role } from './shared';
 import { neighbours } from './careerGraph';
@@ -38,6 +38,7 @@ export default function CareersRolePage() {
 function RoleView({ role, data }: { role: Role; data: CareerData }) {
   const t = useT();
   const pick = usePick();
+  const refText = useRefText();
   const f = useFormat();
   const repo = useRepo();
   const condText = useConditionText();
@@ -154,7 +155,7 @@ function RoleView({ role, data }: { role: Role; data: CareerData }) {
                       <p className="text-[14px]">{pick({ x_en: r.en, x_ar: r.ar }, 'x')}</p>
                       {r.rule_ref && (
                         <div className="mt-2">
-                          {r.url ? <SourceLink href={r.url}>{r.rule_ref}</SourceLink> : <span className="chip border-line bg-sunken">{r.rule_ref}</span>}
+                          {r.url ? <SourceLink href={r.url}>{refText(r.rule_ref)}</SourceLink> : <span className="chip border-line bg-sunken">{refText(r.rule_ref)}</span>}
                         </div>
                       )}
                     </li>

@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Page, Section, Card, Async, EmptyState, Callout, StatusPill, StatTile, Grid, Icon, CheckboxField, SelectField, TextField, ConfirmDialog, SimChip, SourceLink, Timeline, downloadText, useFilters, EngineBadge, BenchmarkChips } from '../../ui';
 import { useAction, useRepo } from '../../data';
 import { useEngine } from '../../data/useEngine'; // direct import: avoids a circular chunk warning in the build
-import { useT, usePick, useFormat, useLang, L } from '../../i18n';
+import { useT, usePick, useFormat, useLang, L, localizeRef } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { buildRoadmap, developmentBlocks, routeOptions, roadmapCsv, quarterIndex, quarterStart, addMonths, DEFAULT_SCENARIO, HORIZON_QUARTERS, MAX_DELAY_Q, type Block, type Roadmap, type RoadmapInput, type Scenario, type RmEdge } from './roadmap';
 import { reachableRoles } from './career';
@@ -352,7 +352,7 @@ function SourcesTable({ r }: { r: Roadmap }) {
               <td>
                 <div className="flex flex-wrap items-center gap-1.5">
                   {b.source && <SourceLink href={b.source.url}>{b.source.label.length > 48 ? `${b.source.label.slice(0, 47)}…` : b.source.label}</SourceLink>}
-                  {!b.source && b.rule_ref && <span className="text-[12px] text-ink-2">{b.rule_ref}</span>}
+                  {!b.source && b.rule_ref && <span className="text-[12px] text-ink-2">{localizeRef(b.rule_ref, lang)}</span>}
                   {b.indicative && <SimChip label={t('m18.rm.sample')} />}
                 </div>
               </td>

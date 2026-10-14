@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { useQuery, useRepo } from '../../data';
 import type { RowOf } from '../../data';
 import { StatusPill, SourceLink, Icon } from '../../ui';
-import { useFormat, usePick } from '../../i18n';
+import { useFormat, usePick, useRefText } from '../../i18n';
 import { useT, useLang, useI18n, L } from '../../i18n';
 import { conds, edgeMonths, type PathEdge } from './careerGraph';
 
@@ -132,6 +132,7 @@ export function CareerSourcesFooter({ data, ids }: { data: CareerData; ids: stri
 export function EdgeCard({ edge, to, title, conds }: { edge: Edge; to?: Role; title?: string; conds: string[] }) {
   const t = useT();
   const pick = usePick();
+  const refText = useRefText();
   const f = useFormat();
   const m = edgeMonths(edge);
   return (
@@ -154,7 +155,7 @@ export function EdgeCard({ edge, to, title, conds }: { edge: Edge; to?: Role; ti
           ))}
         </ul>
       )}
-      {edge.rule_ref && <div className="mt-1.5 text-[11.5px] text-ink-3">{pick(edge, 'rule_ref')}</div>}
+      {edge.rule_ref && <div className="mt-1.5 text-[11.5px] text-ink-3">{refText(pick(edge, 'rule_ref'))}</div>}
     </div>
   );
 }

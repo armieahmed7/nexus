@@ -5,7 +5,7 @@
 import { useMemo, useState } from 'react';
 import { Page, Section, Card, Grid, Async, EmptyState, StatusPill, Callout, FilterBar, useFilters, Modal, SelectField, TextField, ConfirmDialog, downloadText, Icon, StatTile } from '../../ui';
 import { useAction, useQuery, useRepo, type RowOf } from '../../data';
-import { useT, usePick, useFormat } from '../../i18n';
+import { useT, usePick, useFormat, useRefText } from '../../i18n';
 import { RULES } from '../../auth/policy';
 import { examNoticeDue, examNoticeReminder, todayIso, daysBetween, isoDate, toDate } from '../../domain/rules';
 import { workingDaysLeft } from './licensing';
@@ -44,6 +44,7 @@ export default function LicensingCalendarPage() {
 function Calendar({ d }: { d: Data }) {
   const t = useT();
   const pick = usePick();
+  const refText = useRefText();
   const f = useFormat();
   const repo = useRepo();
   const act = useAction();
@@ -148,7 +149,7 @@ function Calendar({ d }: { d: Data }) {
                       <div>
                         <div className="font-semibold">{e.o ? pick(e.o, 'title') : `${t(`m03.kind.${e.m!.kind}`)}${e.m!.programme_id ? ` · ${pick(d.progById.get(e.m!.programme_id), 'name')}` : ''}`}</div>
                         <div className="text-[12.5px] text-ink-2">
-                          {e.o ? `${e.o.rule_ref} · ${t('m03.cal.owner', { r: e.o.owner_role })}` : e.m!.note_en ? pick(e.m!, 'note') : ''}
+                          {e.o ? `${refText(e.o.rule_ref)} · ${t('m03.cal.owner', { r: e.o.owner_role })}` : e.m!.note_en ? pick(e.m!, 'note') : ''}
                           {e.m?.person_id && <> · {d.people.get(e.m.person_id)?.display_name}</>}
                         </div>
                         {e.m?.kind === 'fanr_written' && e.m.status === 'planned' && (

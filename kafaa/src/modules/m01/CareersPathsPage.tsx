@@ -2,7 +2,7 @@
 // (Local Operator -> RO -> SRO -> Shift Supervisor) with the structured condition on each step.
 import { useMemo } from 'react';
 import { Page, Section, Card, Grid, Async, EmptyState, Tabs, CareerLadder, PathGraph, StatusPill, Callout, SourceLink, FilterBar, useFilters } from '../../ui';
-import { useT, usePick, useI18n, useNav, L, useFormat } from '../../i18n';
+import { useT, usePick, useI18n, useNav, L, useFormat, useRefText } from '../../i18n';
 import { useCareerData, BasisBadge, EdgeCard, CareerSourcesFooter, useConditionText, useArrow, LEVELS, type CareerData } from './shared';
 import { ladderSteps, edgeMonths, neighbours } from './careerGraph';
 import { ConceptBanner, PlanningNotice, BenchmarkChips } from './horizons';
@@ -45,6 +45,7 @@ function LadderView({ data }: { data: CareerData }) {
   const arrow = useArrow();
   const t = useT();
   const pick = usePick();
+  const refText = useRefText();
   const f = useFormat();
   const nav = useNav();
   const condText = useConditionText();
@@ -72,7 +73,7 @@ function LadderView({ data }: { data: CareerData }) {
                     {role && <BasisBadge basis={s.edge?.basis ?? role.basis} />}
                   </span>
                 ),
-                sub: s.edge ? `${pick(s.edge, 'label')}${m ? ` · ${t('m01.months', { n: f.num(m) })}` : ''}${s.edge.rule_ref ? ` · ${pick(s.edge, 'rule_ref')}` : ''}` : pick(role, 'licensing_body'),
+                sub: s.edge ? `${pick(s.edge, 'label')}${m ? ` · ${t('m01.months', { n: f.num(m) })}` : ''}${s.edge.rule_ref ? ` · ${refText(pick(s.edge, 'rule_ref'))}` : ''}` : pick(role, 'licensing_body'),
                 conditions: s.edge ? condText(s.edge) : [t('m01.ladder.loCondition')],
               };
             })}

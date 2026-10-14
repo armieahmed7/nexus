@@ -6,7 +6,7 @@
  *                       them. Without a configured gateway it falls back to retrieval (no LLM key in the demo).
  * Every answer carries citations to the Kafa'a pages or public sources it used, or says it found nothing approved.
  */
-import { translate } from '../../../i18n';
+import { translate, localizeRef } from '../../../i18n';
 import type { DalilCitation } from '../../../data/types';
 import { detectGuard } from './guard';
 import { bestSentences, pickLang, SearchIndex, type Hit } from './search';
@@ -125,15 +125,15 @@ export class RetrievalEngine implements AnswerEngine {
     if (routes.length) {
       const ref = routes[0].rule_ref;
       const url = routes[0].url ?? d.regulation_url ?? reg?.cite.url;
-      if (url) citations.push({ label: ref.includes('REG-17') ? 'FANR-REG-17 Art. 4' : ref, url });
+      if (url) citations.push({ label: localizeRef(ref.includes('REG-17') ? 'FANR-REG-17 Art. 4' : ref, lang), url });
     }
     citations.push(cite(role));
     if (reg && routes.some((r) => r.rule_ref.includes('REG-17'))) citations.push(cite(reg));
     const main = routes.filter((r) => r.id !== 'clearance');
     const extra = routes.filter((r) => r.id === 'clearance');
-    const bullets = main.map((r) => `${lang === 'ar' ? r.ar : r.en} (${r.rule_ref})`);
+    const bullets = main.map((r) => `${lang === 'ar' ? r.ar : r.en} (${localizeRef(r.rule_ref, lang)})`);
     const text = routes.length
-      ? say(lang, 'entry.intro', { role: title, n: main.length, ref: routes[0].rule_ref }) + (extra.length ? ` ${lang === 'ar' ? extra[0].ar : extra[0].en}` : '')
+      ? say(lang, 'entry.intro', { role: title, n: main.length, ref: localizeRef(routes[0].rule_ref, lang) }) + (extra.length ? ` ${lang === 'ar' ? extra[0].ar : extra[0].en}` : '')
       : say(lang, 'entry.noRoutes', { role: title });
     return {
       intent: 'entry_requirements', lang, text: `${text} ${say(lang, 'notDecision')}`, bullets, citations: uniq(citations), followUps: followUpsFor('entry', lang, input.mode, String(role.data?.roleId)),

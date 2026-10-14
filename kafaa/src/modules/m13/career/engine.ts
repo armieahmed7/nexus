@@ -10,7 +10,7 @@
  *   roleplay         offers the scripted interview or career-conversation practice    (cites the role page or /my/career/conversations)
  * Anything else falls back to the governed staff-mode retrieval. Opt-outs (F24) give unranked lists. Nothing is an eligibility decision.
  */
-import { translate } from '../../../i18n';
+import { translate, localizeRef } from '../../../i18n';
 import type { DalilCitation } from '../../../data/types';
 import type { Reason } from '../../../domain/engines/types';
 import { coursesForGaps } from '../../../domain/engines/rank';
@@ -168,7 +168,7 @@ export class CareerEngine implements AnswerEngine {
     const isReg = !!primary?.rule_ref?.includes('REG-17') || !!role?.regulation_ref?.includes('REG-17');
     const bullets: string[] = [];
     if (primary) {
-      bullets.push(say(lang, 'gap.route', { route: lang === 'ar' ? primary.label.ar : primary.label.en, ref: primary.rule_ref ?? '-' }));
+      bullets.push(say(lang, 'gap.route', { route: lang === 'ar' ? primary.label.ar : primary.label.en, ref: primary.rule_ref ? localizeRef(primary.rule_ref, lang) : '-' }));
       for (const g of primary.conditions) bullets.push(`${lang === 'ar' ? g.ar : g.en}: ${say(lang, `gate.${g.status}`)}${g.status === 'not_met' && g.remaining_months > 0 ? ` (${say(lang, 'gate.months', { n: g.remaining_months })})` : ''}`);
     }
     const gaps = r.gaps.slice(0, 3);
@@ -272,7 +272,7 @@ export class CareerEngine implements AnswerEngine {
     return this.base(lang, 'career.roadmap_date', `${say(lang, 'roadmap.intro', { role: title, quarter: quarterLabel(rm.end), months: rm.months, route: path.map(label).join(' → ') })} ${say(lang, 'roadmap.indicative')}`,
       [cite, isReg ? this.regCite(lang) : null, this.roleCite(lang, target)], {
         bullets: ms.map((b) => `${quarterLabel(b.start)} · ${lang === 'ar' ? b.title.ar : b.title.en}${b.indicative ? ` (${say(lang, 'roadmap.sample')})` : ''}`),
-        cards: ms.slice(0, 4).map((b) => ({ id: b.id, kind: 'milestone', title: lang === 'ar' ? b.title.ar : b.title.en, sub: `${quarterLabel(b.start)}${b.rule_ref ? ` · ${b.rule_ref}` : ''}`, to: `/my/career/roadmap?role=${target}` })),
+        cards: ms.slice(0, 4).map((b) => ({ id: b.id, kind: 'milestone', title: lang === 'ar' ? b.title.ar : b.title.en, sub: `${quarterLabel(b.start)}${b.rule_ref ? ` · ${localizeRef(b.rule_ref, lang)}` : ''}`, to: `/my/career/roadmap?role=${target}` })),
         followUps: [say(lang, 'follow.gap', { role: title }), say(lang, 'follow.courses', { role: title })], links: [{ label: say(lang, 'link.roadmap'), to: `/my/career/roadmap?role=${target}` }],
       });
   }

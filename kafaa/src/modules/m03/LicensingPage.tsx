@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { Page, Section, Card, Grid, Async, Callout, StatusPill, SourceLink, StatTile, Timeline, TextField, CheckboxField, Icon } from '../../ui';
 import { useQuery, useRepo, type RowOf } from '../../data';
-import { useT, usePick, useFormat, L } from '../../i18n';
+import { useT, usePick, useFormat, L, useRefText } from '../../i18n';
 import { routeChecks, type ExperienceInput } from '../../domain/rules';
 import { REG17_RULES } from './licensing';
 
@@ -27,6 +27,7 @@ export default function LicensingPage() {
 function Explainer({ d }: { d: { roles: Map<string, RowOf<'job_roles'>>; src: Map<string, RowOf<'sources'>> } }) {
   const t = useT();
   const pick = usePick();
+  const refText = useRefText();
   const f = useFormat();
   const reg = d.src.get('fanr-reg17');
   const cns = d.src.get('cns10');
@@ -65,7 +66,7 @@ function Explainer({ d }: { d: { roles: Map<string, RowOf<'job_roles'>>; src: Ma
                   <li key={r.id} className="rounded-btn border border-line p-2.5 text-[13.5px]">
                     <div className="caps mb-0.5">{t('m01.role.routeN', { n: i + 1 })}</div>
                     {pick({ x_en: r.en, x_ar: r.ar }, 'x')}
-                    {r.rule_ref && <div className="mt-1">{r.url ? <SourceLink href={r.url}>{r.rule_ref}</SourceLink> : r.rule_ref}</div>}
+                    {r.rule_ref && <div className="mt-1">{r.url ? <SourceLink href={r.url}>{refText(r.rule_ref)}</SourceLink> : refText(r.rule_ref)}</div>}
                   </li>
                 ))}
               </ol>
@@ -125,6 +126,7 @@ const ZERO: Record<keyof ExperienceInput, string> = { highSchool: 'true', bsc: '
 
 function Eligibility() {
   const t = useT();
+  const refText = useRefText();
   const [v, setV] = useState(ZERO);
   const num = (k: keyof ExperienceInput) => Math.max(0, Math.min(600, Number(v[k]) || 0));
   const input: ExperienceInput = {
@@ -160,7 +162,7 @@ function Eligibility() {
               <div key={c.route} className={`rounded-card border p-3 ${ok ? 'border-ok-line bg-ok-bg' : 'border-line bg-panel'}`} data-status={ok ? 'met' : 'open'}>
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="font-semibold">
-                    {t(`m03.route.${c.route}`)} <span className="text-[12px] font-normal text-ink-3">({c.ruleRef})</span>
+                    {t(`m03.route.${c.route}`)} <span className="text-[12px] font-normal text-ink-3">({refText(c.ruleRef)})</span>
                   </div>
                   <StatusPill tone={ok ? 'ok' : 'neutral'}>{ok ? t('m03.elig.allMet') : t('m03.elig.open', { n: c.met.filter((m) => !m.ok).length })}</StatusPill>
                 </div>
