@@ -7,7 +7,7 @@ import { useMemo, type KeyboardEvent } from 'react';
 import { useQuery, useRepo } from '../../data';
 import type { RowOf } from '../../data';
 import { Icon, ProgressRing, StatusPill, type PillTone } from '../../ui';
-import { useFormat, useI18n, useLang, usePick, useT } from '../../i18n';
+import { useFormat, useI18n, useLang, usePick, useRefText, useT } from '../../i18n';
 import { careerFacts, type CareerFacts, type CareerReadiness, type RouteGate, type CondStatus, type Band } from './career';
 import type { BiText } from './career';
 
@@ -113,6 +113,7 @@ export function GateRoutes({ routes, roleById, compact }: { routes: RouteGate[];
   const pick = usePick();
   const f = useFormat();
   const bi = useBi();
+  const refText = useRefText();
   if (!routes.length) return <p className="text-[13px] text-ink-2">{t('m18.gates.none')}</p>;
   return (
     <ol className="space-y-3" data-testid="m18-gates">
@@ -148,7 +149,7 @@ export function GateRoutes({ routes, roleById, compact }: { routes: RouteGate[];
           {r.rule_ref && (
             <div className="mt-2 text-[11.5px] text-ink-3">
               <Icon name="shield" size={12} className="me-1 inline" />
-              {r.rule_ref}
+              {refText(r.rule_ref)}
             </div>
           )}
         </li>

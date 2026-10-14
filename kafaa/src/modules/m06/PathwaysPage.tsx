@@ -124,7 +124,7 @@ function VacanciesPreview() {
             {rows.map((v) => (
               <Card key={v.id} title={pick(v, 'title')} actions={v.sample ? <SimChip label={t('common.sample')} /> : undefined}>
                 <div className="flex flex-wrap items-center gap-2 text-[12.5px] text-ink-2">
-                  <span>{v.location}</span>
+                  <span>{pick(v, 'location')}</span>
                   {v.closes_on && <span>· {t('m06.vacancies.closes', { date: f.date(v.closes_on) })}</span>}
                   {v.uae_nationals_only && <StatusPill tone="accent">{t('m06.nationality.uae_only')}</StatusPill>}
                 </div>

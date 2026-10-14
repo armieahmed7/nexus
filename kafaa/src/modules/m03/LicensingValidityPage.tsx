@@ -6,7 +6,7 @@
 import { useMemo, useState } from 'react';
 import { Page, Section, Card, Grid, Async, EmptyState, StatTile, Tabs, DataTable, StatusPill, ConfirmDialog, Donut, BarChart, FilterBar, useFilters, SelectField, TextField, Drawer, KeyValue, Callout, ProgressBar, Icon } from '../../ui';
 import { useAction, useQuery, useRepo, type RowOf } from '../../data';
-import { useT, usePick, useFormat, systemName } from '../../i18n';
+import { useT, usePick, useFormat, systemName, useRefText } from '../../i18n';
 import { licenceView, medicalView, proficiency, quarterOf, todayIso, withdrawalDate } from '../../domain/rules';
 import { riskOf, workingDaysLeft, type Risk } from './licensing';
 import { LicencePill, MedicalPill, PersonLabel } from './shared';
@@ -237,6 +237,7 @@ function PersonDrawer({ d, lic, onClose }: { d: Data; lic: RowOf<'licences'> | n
 function Tasks({ d }: { d: Data }) {
   const t = useT();
   const pick = usePick();
+  const refText = useRefText();
   const f = useFormat();
   const repo = useRepo();
   const act = useAction();
@@ -269,7 +270,7 @@ function Tasks({ d }: { d: Data }) {
           empty={<EmptyState title={t('m03.tasks.none')} icon="check" />}
           columns={[
             { key: 'kind', header: t('m03.tasks.kind'), value: (x) => x.kind, render: (x) => <StatusPill tone={x.kind === 'lapse_report' || x.kind === 'withdrawal_risk' || x.kind === 'medical_overdue' ? 'bad' : x.kind === 'proficiency_risk' ? 'sim' : 'info'}>{t(`m03.tasks.k_${x.kind}`)}</StatusPill> },
-            { key: 'title', header: t('m03.tasks.title'), value: (x) => pick(x, 'title'), render: (x) => <div><div>{pick(x, 'title')}</div>{x.rule_ref && <div className="text-[11.5px] text-ink-3">{x.rule_ref}</div>}</div> },
+            { key: 'title', header: t('m03.tasks.title'), value: (x) => pick(x, 'title'), render: (x) => <div><div>{pick(x, 'title')}</div>{x.rule_ref && <div className="text-[11.5px] text-ink-3">{refText(x.rule_ref)}</div>}</div> },
             { key: 'person', header: t('m02.team.person'), value: (x) => d.people.get(x.person_id ?? '')?.display_name ?? '', render: (x) => (x.person_id ? <PersonLabel p={d.people.get(x.person_id)} /> : '—') },
             { key: 'created', header: t('m03.tasks.created'), value: (x) => x.created_at, render: (x) => f.date(x.created_at.slice(0, 10)) },
             {

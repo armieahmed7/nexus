@@ -9,6 +9,7 @@
  */
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Link, NavLink, useLocation, useNavigate, type LinkProps, type NavLinkProps } from 'react-router-dom';
+import { localizeRef } from './refs';
 
 export type Lang = 'en' | 'ar';
 export type Digits = 'latn' | 'arab';
@@ -194,6 +195,13 @@ export function useI18n(): I18nValue {
 }
 export const useT = () => useI18n().t;
 export const useLang = () => useI18n().lang;
+
+/** Regulation/source reference in the current language: ref('FANR-REG-17 Art. 4') -> 'FANR-REG-17 المادة 4' on /ar. */
+export { localizeRef } from './refs';
+export function useRefText() {
+  const lang = useLang();
+  return useCallback((ref: string | null | undefined) => localizeRef(ref, lang), [lang]);
+}
 
 /** Bilingual field picker: pick(row, 'title') -> row.title_ar | row.title_en */
 export function usePick() {

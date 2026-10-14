@@ -4,7 +4,7 @@ import { useMemo, type ReactNode } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Page, Async, EmptyState, StatusPill, SelectField, Icon, Card } from '../../ui';
 import { useQuery, useRepo } from '../../data';
-import { useT, usePick, L, useFormat } from '../../i18n';
+import { useT, usePick, L, useFormat, useRefText } from '../../i18n';
 import { useCareerData, RoleBadges, type CareerData } from './shared';
 import { neighbours, parseCompare } from './careerGraph';
 
@@ -21,6 +21,7 @@ export default function CareersComparePage() {
 function Compare({ data }: { data: CareerData }) {
   const t = useT();
   const pick = usePick();
+  const refText = useRefText();
   const f = useFormat();
   const repo = useRepo();
   const [params, setParams] = useSearchParams();
@@ -114,7 +115,7 @@ function Compare({ data }: { data: CareerData }) {
                 <ol className="list-decimal space-y-1 ps-4">
                   {routesOf(i).map((r) => (
                     <li key={r.id}>
-                      {pick({ x_en: r.en, x_ar: r.ar }, 'x')} {r.rule_ref && <span className="text-ink-3">({r.rule_ref})</span>}
+                      {pick({ x_en: r.en, x_ar: r.ar }, 'x')} {r.rule_ref && <span className="text-ink-3">({refText(r.rule_ref)})</span>}
                     </li>
                   ))}
                 </ol>

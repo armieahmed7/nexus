@@ -169,14 +169,15 @@ function VacanciesTab() {
     { key: 'title_ar', label: t('m06.talent.titleAr'), type: 'text', required: true, dir: 'rtl' },
     { key: 'role_id', label: t('m06.talent.role'), type: 'select', options: lk.roles },
     { key: 'entity_id', label: t('m06.talent.entity'), type: 'select', required: true, options: lk.entities },
-    { key: 'location', label: t('m06.talent.location'), type: 'text', required: true },
+    { key: 'location', label: t('m06.talent.locationEn'), type: 'text', required: true, dir: 'ltr' },
+    { key: 'location_ar', label: t('m06.talent.locationAr'), type: 'text', dir: 'rtl' }, // shown on /ar pages via pick(v, 'location')
     { key: 'official_url', label: t('m06.talent.officialUrl'), type: 'url', required: true },
     { key: 'posted_on', label: t('m06.talent.postedOn'), type: 'date', required: true },
     { key: 'closes_on', label: t('m06.talent.closesOn'), type: 'date' },
     { key: 'uae_nationals_only', label: t('m06.talent.uaeOnly'), type: 'checkbox' },
     { key: 'sample', label: t('m06.talent.sampleFlag'), type: 'checkbox' },
   ];
-  const blank = { title_en: '', title_ar: '', role_id: '', entity_id: 'enec-ops', location: 'Barakah, Al Dhafra', official_url: 'https://www.enec.ae/careers-and-scholarships/careers/', posted_on: todayIso(), closes_on: '', uae_nationals_only: false, sample: true, status: 'open' };
+  const blank = { title_en: '', title_ar: '', role_id: '', entity_id: 'enec-ops', location: 'Barakah, Al Dhafra', location_ar: 'براكة، منطقة الظفرة', official_url: 'https://www.enec.ae/careers-and-scholarships/careers/', posted_on: todayIso(), closes_on: '', uae_nationals_only: false, sample: true, status: 'open' };
   return (
     <Card title={t('m06.talent.tabVacancies')} actions={<button className="btn-primary btn-sm" onClick={() => setEdit('new')} data-testid="m06-new-vacancy"><Icon name="plus" size={14} />{t('m06.talent.newVacancy')}</button>} padded={false}>
       <div className="p-3">
