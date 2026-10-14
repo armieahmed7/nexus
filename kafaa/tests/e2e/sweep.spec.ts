@@ -79,7 +79,7 @@ for (const m of MATRIX) {
     const roles = card ? card.roles : null;
     await pinBackend(page, backend, backend === 'local' ? m.persona : null);
     const w = watchErrors(page);
-    if (m.persona && backend === 'supabase') await signIn(page, m.persona);
+    if (m.persona && backend === 'supabase') await signIn(page, m.persona, { readOnly: true }); // read-only sweep (readiness 2026-10-13)
     else await page.goto(`${BASE}/`);
     w.take();
     const results: { route: string; url: string; expect: string; got: string; issues: string[] }[] = [];

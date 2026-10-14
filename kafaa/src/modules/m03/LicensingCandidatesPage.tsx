@@ -47,8 +47,7 @@ function Candidates({ d }: { d: Data }) {
   const lang = useLang();
   const repo = useRepo();
   const act = useAction();
-  const active = d.progs.filter((p) => p.status !== 'closed');
-  const [sel, setSel] = useState(active[0]?.id ?? d.progs[0].id);
+  const [sel, setSel] = useState(() => defaultProgramme(d.progs, todayIso()));
   const [add, setAdd] = useState(false);
   const [statusFor, setStatusFor] = useState<{ c: Cand; to: Cand['status'] } | null>(null);
   const prog = d.progs.find((p) => p.id === sel)!;
@@ -241,4 +240,14 @@ function AddCandidate({ d, prog, onClose }: { d: Data; prog: RowOf<'licence_prog
       </div>
     </Modal>
   );
+}
+
+/** Readiness fixes 2026-10-13 (finding 9): open on the programme whose candidate list is due next (today or later), not the oldest one
+ *  (which was a past class with no candidates); then the open programme whose list was due most recently; then the first one. */
+export function defaultProgramme(progs: Pick<RowOf<'licence_programmes'>, 'id' | 'status' | 'candidate_list_due' | 'start_on'>[], today: string): string {
+  const open = progs.filter((p) => p.status !== 'closed');
+  const upcoming = open.filter((p) => p.candidate_list_due >= today).sort((a, b) => a.candidate_list_due.localeCompare(b.candidate_list_due) || a.start_on.localeCompare(b.start_on));
+  if (upcoming.length) return upcoming[0].id;
+  const latest = [...open].sort((a, b) => b.candidate_list_due.localeCompare(a.candidate_list_due));
+  return latest[0]?.id ?? progs[0].id;
 }

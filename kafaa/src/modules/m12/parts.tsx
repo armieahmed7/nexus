@@ -20,7 +20,7 @@ export function FactTile({ fact, source }: { fact: FactsRow; source?: SourcesRow
       </div>
       <div className="num mt-1 text-[24px] font-semibold leading-tight text-ink">{pick(fact, 'value') || fact.value}</div>
       {pick(fact, 'detail') && <div className="mt-1 text-[12.5px] text-ink-2">{pick(fact, 'detail')}</div>}
-      {fact.conflict_note && <div className="mt-1 text-[11.5px] text-sim">{t('m12.common.sourcesDiffer')}: {fact.conflict_note}</div>}
+      {fact.conflict_note && <div className="mt-1 text-[11.5px] text-sim">{t('m12.common.sourcesDiffer')}: {pick(fact, 'conflict_note')}</div>}
       <div className="mt-auto pt-3 text-[11.5px] text-ink-3">
         {source ? <SourceLink href={source.url}>{source.label}</SourceLink> : <span>{t('m12.common.noSource')}</span>}
         <span className="ms-1">· {t('common.asOf', { date: f.date(fact.as_of) })}</span>

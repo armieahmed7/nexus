@@ -161,7 +161,7 @@ export class RetrievalEngine implements AnswerEngine {
     const L = (k: string) => String((d[`${k}_${lang}`] as string) || (d[`${k}_en`] as string) || '');
     const nat = say(lang, `nationality.${d.nationality}`);
     const bullets = [`${say(lang, 'prog.who')}: ${L('education')} · ${nat}`, `${say(lang, 'prog.duration')}: ${L('duration')}`, `${say(lang, 'prog.outcome')}: ${L('outcome')}`, say(lang, `prog.apply.${d.apply_mode}`)];
-    if (d.conflict_note) bullets.push(`${say(lang, 'prog.sourcesDiffer')}: ${d.conflict_note}`);
+    if (d.conflict_note) bullets.push(`${say(lang, 'prog.sourcesDiffer')}: ${(lang === 'ar' && d.conflict_note_ar) || d.conflict_note}`);
     const src = d.source as { label?: string; url?: string } | null;
     const citations = [cite(p)];
     if (src?.url) citations.push({ label: src.label ?? 'Source', url: src.url });

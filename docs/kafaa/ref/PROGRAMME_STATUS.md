@@ -15,7 +15,8 @@ Built from the final report template (handover section 7.4) where it fits. First
 | Persona sign-in (14 Kafa'a personas) | #7 | `e61150c` | `persona_signin/` part 1 and the Edge Function `kafaa-persona-signin` | |
 | Layout fix at 390 px (/esg, /emergency, /universities) | #8 | `28d0456` | none | |
 | Data clean-up 2026-10-13 | #9 | `c392947` | `kafaa_cleanup_dup_enrolments`, `kafaa_cleanup_fs31_award_notices`, `kafaa_cleanup_e2e_applications` (by hand, verified), `kafaa_cleanup_history_repair` | owner-approved data changes |
-| Final audit fixes | this PR | | `audit2/` (9 parts + 1 approval-gated data part), **not applied** | see "Final audit" below |
+| Final audit fixes | #10 | | `audit2/` (9 parts + 1 approval-gated data part), **not applied** | see "Final audit" below |
+| Readiness fixes (review of 2026-10-13) | PR "Kafa'a readiness fixes" | | `ready/` (parts in ORDER.txt + 1 approval-gated data part), **not applied** | see "Readiness review" below |
 
 ### As-applied names of the audit-fix parts (migration history after the 2026-10-13 repair)
 
@@ -122,6 +123,20 @@ public verification links, a throttled contact RPC, column grants on people, no 
 course, Arabic sign-in errors and role notes, and front-end polish (language preference, lazy dictionaries per language, router flags,
 reproducible seed, robots.txt). Its SQL is the bundle `live_apply/audit2/` (9 parts, the last one the enrolment index; plus one
 approval-gated data part for the 16 Arabic role notes). Apply it before merging: the contact and supplier forms call `kafaa_submit_contact`.
+
+## Readiness review (2026-10-13, evening)
+
+The readiness review of the live site before ENEC testing (4 medium, 6 low findings) is fixed by PR "Kafa'a readiness fixes" (branch
+`readiness-fixes`) with the bundle `live_apply/ready/` (see its `EXPECTED.md`): sync freshness of the mirrors is judged at the demo
+snapshot (`MIRROR_AS_OF`, SQL `kafaa_mirror_now()`), so licences no longer all read "stale"; dashboards, the digest and the future-skills
+rules link only to pages the person can open (`canOpen`, SQL `kafaa_route_ok_for` generated from the routes); RLS without a
+SECURITY DEFINER call per row (`kafaa_scope_people`, 163 policies altered with ALTER POLICY) and a set-based `kafaa_cec_stats_core`; identical reads
+share one request and 5xx reads retry once; /learn reads the citation registry once; the audit log is read a page at a time; Arabic
+columns for seven English-only fields (values in an approval-gated data part); m30
+reference errors, the Future Me pill and the default licensing programme. E2E journeys that write now need `KAFAA_E2E_LIVE_WRITES=1`
+to run against the live project; the residue they left is listed in `live_apply/ready/E2E_RESIDUE.md` (not removed). Not changed:
+job roles for the four staff personas without one (finding 8), because a role feeds stored demand, outlook and forecast snapshots
+(owner's choice; see `EXPECTED.md` section 7).
 
 ## Open issues and recommendations
 1. **Apply `live_apply/audit2/`** (parts 01-09 in ORDER.txt order, then `data_update/` with the owner's approval) and check it against its `EXPECTED.md`; then merge the final-audit PR.

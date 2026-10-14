@@ -30,7 +30,8 @@ const data = () => ({
   opportunity_applications: T.opportunity_applications, career_conversations: T.career_conversations, refresh_state: T.refresh_state, refresh_prefs: T.refresh_prefs,
   enrolments: T.enrolments, courses: T.courses, person_skills: T.person_skills, skills: T.skills, role_competencies: T.role_competencies, career_paths: T.career_paths,
   career_targets: T.career_targets, engine_settings: T.engine_settings, reco_optouts: T.reco_optouts, ojt_logs: T.ojt_logs, ojt_eval_requests: T.ojt_eval_requests,
-  plant_visits: T.plant_visits, roleplay_sessions: T.roleplay_sessions, // FS wave E/F integration: host confirmations and role-play reviews owed are digest approvals too
+  plant_visits: T.plant_visits, roleplay_sessions: T.roleplay_sessions, role_assignments: T.role_assignments, // readiness 2026-10-13: link access
+  // FS wave E/F integration: host confirmations and role-play reviews owed are digest approvals too
 });
 
 describe('F38 -> F36: OJT approvals in the personal digest', () => {

@@ -154,7 +154,7 @@ export function EdgeCard({ edge, to, title, conds }: { edge: Edge; to?: Role; ti
           ))}
         </ul>
       )}
-      {edge.rule_ref && <div className="mt-1.5 text-[11.5px] text-ink-3">{edge.rule_ref}</div>}
+      {edge.rule_ref && <div className="mt-1.5 text-[11.5px] text-ink-3">{pick(edge, 'rule_ref')}</div>}
     </div>
   );
 }

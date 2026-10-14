@@ -124,7 +124,7 @@ export default async function fsqa6Checks({ db, as, ok, uid }) {
   // 7. digest approvals for reviewers
   const data = Object.fromEntries(['people', 'qual_records', 'qual_standards', 'licences', 'skill_checkins', 'skill_ratings', 'mentoring_requests', 'mentoring_agreements', 'mentoring_sessions', 'opportunities',
     'opportunity_applications', 'career_conversations', 'refresh_state', 'refresh_prefs', 'enrolments', 'courses', 'person_skills', 'skills', 'role_competencies', 'career_paths', 'career_targets',
-    'engine_settings', 'reco_optouts', 'ojt_logs', 'ojt_eval_requests', 'plant_visits', 'roleplay_sessions'].map((x) => [x, T[x] ?? []]));
+    'engine_settings', 'reco_optouts', 'ojt_logs', 'ojt_eval_requests', 'plant_visits', 'roleplay_sessions', 'role_assignments' /* readiness 2026-10-13 */].map((x) => [x, T[x] ?? []]));
   const reviewers = [...new Set(T.roleplay_sessions.map((s) => s.reviewer_id).filter(Boolean))].sort();
   const spread = T.people.filter((p) => p.kind === 'staff').map((p) => p.id).sort().filter((_, i) => i % 9 === 0);
   let dd = 0, dn = 0;

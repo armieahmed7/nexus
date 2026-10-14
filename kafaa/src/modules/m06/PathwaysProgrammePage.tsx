@@ -21,6 +21,7 @@ export default function PathwaysProgrammePage() {
   const { programme = '' } = useParams();
   const t = useT();
   const pick = usePick();
+  const lang = useLang();
   const repo = useRepo();
   const q = useQuery('talent_programmes', () => repo.get('talent_programmes', programme), [programme]);
   const roles = useQuery('job_roles', () => repo.list('job_roles', { filter: { id: ROLE_LINKS[programme] ?? [] } }), [programme]);
@@ -55,7 +56,7 @@ export default function PathwaysProgrammePage() {
                 {p.conflict_note && (
                   <div className="mt-3">
                     <Callout tone="sim" title={t('m06.programme.sourcesDisagree')}>
-                      <span dir="ltr" lang="en">{p.conflict_note}</span>
+                      {lang === 'ar' && p.conflict_note_ar ? <span>{p.conflict_note_ar}</span> : <span dir="ltr" lang="en">{p.conflict_note}</span>}
                     </Callout>
                   </div>
                 )}

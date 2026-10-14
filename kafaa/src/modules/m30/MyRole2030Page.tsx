@@ -11,8 +11,7 @@ import { MOVES, type RoleMap } from './transform';
 import { RoleOutlookLine } from '../m18/futureUi'; // FS wave B: FS16 label of the role
 import type { RoleTransformationView } from './backend/rpc';
 import {
-  ArchetypeCard, BenchTies, DriverChip, FS11, HorizonChip, HorizonToggle, MilestoneTimeline, MovePill, NoDeployNote, RolePicker, roleLink, useRefData, useRefLabel, useRoleMap, useRoleParams, type RefData,
-} from './ui';
+  ArchetypeCard, BenchTies, DriverChip, FS11, HorizonChip, HorizonToggle, MilestoneTimeline, MovePill, NoDeployNote, RolePicker, roleLink, useRefData, useRefLabel, useRoleMap, useRoleParams, type RefData, RefGaps } from './ui';
 
 export default function MyRole2030Page() {
   const t = useT();
@@ -28,6 +27,7 @@ export default function MyRole2030Page() {
         <L to={`/ask?mode=future&q=${encodeURIComponent(t('m30.my.askQ'))}`} className="btn-outline no-underline" data-testid="m30-ask-dalil">{t('m30.my.askDalil')}</L>{/* FS76 (wave-H integration) */}
         <L to="/my/transition-plan" className="btn-ghost no-underline" data-testid="m30-to-transition-plan">{t('m30.tp.links.mine')}</L>{/* FS81 (wave I · E3) */}
       </span>}>
+      <RefGaps d={ref.data} onRetry={ref.reload} />
       <Async state={ref}>{(d) => (
         <div className="space-y-6">
           <div className="flex flex-wrap items-end gap-4" data-testid="m30-controls">

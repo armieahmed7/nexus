@@ -9,6 +9,7 @@ import { Async, BarChart, Callout, Card, DataTable, Page, SimChip, StatusPill, t
 import type { IntegrationsRow } from '../../data/types';
 import { RULES } from '../../auth/policy';
 import { syncState } from '../../domain/g5rules';
+import { hoursSinceSyncOf } from '../../domain/mirrorClock';
 import { GatedConfirm, Metric } from './parts';
 import { EnginesCard } from './EnginesCard'; // F02 (wave 0)
 
@@ -29,7 +30,7 @@ export default function AdminIntegrationsPage() {
   const q = useQuery('integrations', () => repo.list('integrations', { order: [['name', 'asc']] }));
   const [act, setAct] = useState<{ i: IntegrationsRow; kind: 'sync' | 'disable' | 'enable' } | null>(null);
   const now = new Date();
-  const hoursAgo = (ts: string) => Math.max(0, Math.round((now.getTime() - new Date(ts).getTime()) / 3_600_000));
+  const hoursAgo = (ts: string) => Math.round(hoursSinceSyncOf(ts, now)); // mirror clock, like syncState
 
   const doAction = (i: IntegrationsRow, kind: 'sync' | 'disable' | 'enable') => {
     if (kind === 'sync') return run(() => repo.update('integrations', i.id, { last_success: new Date().toISOString(), status: i.errors > 0 ? 'degraded' : 'ok' }), { success: t('m16.int.synced', { name: rowText(i, 'name') }) });

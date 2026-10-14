@@ -22,9 +22,11 @@
  * come after the owed ones, audit 2026-10-13), then kind, then score, then id.
  * Opting out of ranked recommendations (F24) removes the ranked kinds: no coach hint (coach), no match-based items (marketplace).
  * Expiry reminders cannot be muted. Speak-up routes never show or build a digest (the page guard has noTelemetry).
+ * Readiness fixes 2026-10-13: an item is offered only when the person may open its link (openableItems; SQL kafaa_route_ok_for).
  */
 
 import { FS75_FROM, gatherFs75Approvals, gatherFuture, type FutureData } from './future.ts';
+import { linkOpenFor, rolesOn } from '../../routes/linkAccess.ts';
 
 export type DigestKind = 'expiry' | 'approval' | 'coach' | 'opportunity' | 'mentoring' | 'conversation' | 'refresher' | 'future';
 export type DigestFrequency = 'weekly' | 'fortnightly' | 'monthly';
@@ -127,6 +129,8 @@ export interface DigestData extends FutureData {
   plant_visits?: Row[];
   /** FS wave F integration (FS59): role-play sessions sent to a named reviewer (optional). */
   roleplay_sessions?: Row[];
+  /** Readiness fixes 2026-10-13 (finding 2): my role assignments, to keep only items whose link I can open. */
+  role_assignments: Row[];
 }
 
 // ───────────── dates (ISO yyyy-mm-dd, UTC)
@@ -462,8 +466,15 @@ export function composeDigest(cands: DigestItem[], prefs: Pick<DigestPrefs, 'mut
   }
   return kept.sort(compareItems).slice(0, DIGEST_MAX);
 }
+/** Readiness fixes 2026-10-13 (finding 2): only items whose deep link the person may open (the router's guard for their roles on that
+ *  day; SQL kafaa_route_ok_for). An applicant or partner is no longer offered staff opportunities or skills pages that say "no access". */
+export function openableItems(d: Pick<DigestData, 'role_assignments'>, me: string, today: string, items: DigestItem[]): DigestItem[] {
+  if (!Array.isArray(d.role_assignments)) throw new Error('digest: role_assignments missing from the digest data');
+  const roles = rolesOn(d.role_assignments, me, today);
+  return items.filter((i) => linkOpenFor(i.link, roles));
+}
 export function buildDigestItems(d: DigestData, me: string, today: string, prefs: Pick<DigestPrefs, 'muted_kinds'>, hints: DigestHints = {}): DigestItem[] {
-  return composeDigest(gatherDigest(d, me, today, hints), prefs);
+  return composeDigest(openableItems(d, me, today, gatherDigest(d, me, today, hints)), prefs);
 }
 
 /** The notification written with a digest (same text in SQL). */

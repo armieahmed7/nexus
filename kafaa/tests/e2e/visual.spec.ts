@@ -16,7 +16,7 @@ type Shot = { name: string; path: string; persona?: string; ar?: boolean; mobile
 
 async function open(page: Page, s: Shot) {
   await pinBackend(page, 'supabase');
-  if (s.persona) await signIn(page, s.persona);
+  if (s.persona) await signIn(page, s.persona, { readOnly: true }); // screenshots only (readiness 2026-10-13)
   if (s.mobile) await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`${BASE}${s.ar ? '/ar' : ''}${s.path === '/' && s.ar ? '' : s.path}`);
   await settle(page);

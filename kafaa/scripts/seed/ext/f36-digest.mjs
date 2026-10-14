@@ -70,6 +70,7 @@ export function finalize(T, ctx) {
     ojt_logs: T.ojt_logs ?? [], ojt_eval_requests: T.ojt_eval_requests ?? [], // W5 integration (F38)
     plant_visits: T.plant_visits ?? [], // FS wave E integration (FS39 host confirmations)
     roleplay_sessions: T.roleplay_sessions ?? [], // FS wave F integration (FS59 role-play reviews owed)
+    role_assignments: T.role_assignments ?? [], // readiness fixes 2026-10-13: only items whose link the person may open
   };
   T.digest_runs = [];
   const prefsBy = new Map(T.digest_prefs.map((p) => [p.person_id, p]));

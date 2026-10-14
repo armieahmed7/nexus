@@ -54,7 +54,7 @@ export default async function fsqa5Checks({ db, as, ok, uid }) {
   // 2. digest approvals for hosts
   const data = Object.fromEntries(['people', 'qual_records', 'qual_standards', 'licences', 'skill_checkins', 'skill_ratings', 'mentoring_requests', 'mentoring_agreements', 'mentoring_sessions', 'opportunities',
     'opportunity_applications', 'career_conversations', 'refresh_state', 'refresh_prefs', 'enrolments', 'courses', 'person_skills', 'skills', 'role_competencies', 'career_paths', 'career_targets',
-    'engine_settings', 'reco_optouts', 'ojt_logs', 'ojt_eval_requests', 'plant_visits', 'roleplay_sessions' /* FS wave F integration (fsqa6) */].map((t) => [t, T[t] ?? []]));
+    'engine_settings', 'reco_optouts', 'ojt_logs', 'ojt_eval_requests', 'plant_visits', 'roleplay_sessions' /* FS wave F integration (fsqa6) */, 'role_assignments' /* readiness 2026-10-13 */].map((t) => [t, T[t] ?? []]));
   const hosts = [...new Set(T.plant_visits.map((v) => v.host_person_id))].sort();
   const spread = T.people.filter((p) => p.kind === 'staff').map((p) => p.id).sort().filter((_, i) => i % 7 === 0);
   let dd = 0, dn = 0;

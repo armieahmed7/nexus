@@ -151,7 +151,10 @@
       "warn": "Action due",
       "bad": "Urgent"
     },
-    "linksTitle": "Your areas"
+    "linksTitle": "Your areas",
+    "homeTitle": "Your area in Kafa'a",
+    "homeBody": "Most of what your role does in Kafa'a is in {area}. This page keeps your notices and your digest.",
+    "homeOpen": "Open {area}"
   },
   "profile": {
     "intro": "The minimal profile Kafa'a keeps about you. You can change your language and digits; other details come from systems of record and are corrected through a request.",

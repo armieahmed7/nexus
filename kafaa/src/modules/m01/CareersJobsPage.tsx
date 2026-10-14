@@ -24,7 +24,7 @@ export default function CareersJobsPage() {
       if (flt.status && st !== flt.status) return false;
       if (flt.family && roles?.get(v.role_id ?? '')?.family_id !== flt.family) return false;
       if (flt.nationals && String(v.uae_nationals_only) !== flt.nationals) return false;
-      return !term || [v.title_en, v.title_ar, v.location].some((s) => String(s).toLowerCase().includes(term));
+      return !term || [v.title_en, v.title_ar, v.location, v.location_ar ?? ''].some((s) => String(s).toLowerCase().includes(term));
     });
   }, [q.data, career.data, flt, today]);
   const official = q.data?.[0]?.official_url ?? 'https://www.enec.ae/careers-and-scholarships/careers/';
@@ -78,7 +78,7 @@ export default function CareersJobsPage() {
                   ),
                 },
                 { key: 'role', header: t('m01.jobs.role'), value: (r) => pick(career.data?.roleById.get(r.role_id ?? ''), 'title'), render: (r) => (r.role_id ? <L to={`/careers/roles/${r.role_id}`}>{pick(career.data?.roleById.get(r.role_id), 'title') || r.role_id}</L> : '—') },
-                { key: 'location', header: t('m01.jobs.location'), value: (r) => r.location, sortable: true },
+                { key: 'location', header: t('m01.jobs.location'), value: (r) => pick(r, 'location'), sortable: true },
                 { key: 'posted', header: t('m01.jobs.posted'), value: (r) => r.posted_on, render: (r) => fmt.date(r.posted_on), sortable: true },
                 { key: 'closes', header: t('m01.jobs.closes'), value: (r) => r.closes_on ?? '9999', render: (r) => (r.closes_on ? fmt.date(r.closes_on) : '—'), sortable: true },
                 { key: 'status', header: t('m01.jobs.status'), value: (r) => (r.status === 'open' && (!r.closes_on || r.closes_on >= today) ? 'open' : 'closed'), render: (r) => <StatusPill status={r.status === 'open' && (!r.closes_on || r.closes_on >= today) ? 'open' : 'closed'} /> },

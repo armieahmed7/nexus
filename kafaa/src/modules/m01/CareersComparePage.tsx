@@ -108,7 +108,7 @@ function Compare({ data }: { data: CareerData }) {
             {row(t('m01.role.qualifications'), (i) => pick(roles[i], 'qualifications'))}
             {row(t('m01.role.trainingPath'), (i) => pick(roles[i], 'training_path'))}
             {row(t('m01.role.licensingBody'), (i) => pick(roles[i], 'licensing_body'))}
-            {row(t('m01.role.regulation'), (i) => roles[i].regulation_ref ?? t('m01.role.notRegulated'))}
+            {row(t('m01.role.regulation'), (i) => (roles[i].regulation_ref ? pick(roles[i], 'regulation_ref') : t('m01.role.notRegulated')))}
             {row(t('m01.role.entryRoutes'), (i) =>
               routesOf(i).length ? (
                 <ol className="list-decimal space-y-1 ps-4">

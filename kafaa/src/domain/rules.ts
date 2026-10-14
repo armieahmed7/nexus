@@ -4,6 +4,7 @@
  * these functions only interpret mirrored records; they never decide eligibility or licensing outcomes.
  */
 import { RULES, MIN_GROUP_SIZE } from '../auth/policy';
+import { hoursSinceSyncOf } from './mirrorClock.ts';
 
 export const DAY = 86_400_000;
 export const toDate = (d: string | Date) => (typeof d === 'string' ? new Date(d.length === 10 ? `${d}T00:00:00Z` : d) : d);
@@ -63,10 +64,13 @@ export function proficiency(sp: ShiftCounts, isSro: boolean): ProficiencyStatus 
   return { met, atRisk, sroMet, sroAtRisk, messages };
 }
 
+// ───────────── Mirror freshness clock (readiness fixes 2026-10-13, finding 1): see ./mirrorClock.ts
+export { MIRROR_AS_OF, mirrorNow, hoursSinceSyncOf } from './mirrorClock.ts';
+
 // ───────────── M03 licence display (stale sync never shows "valid")
 export type LicenceView = 'valid' | 'renewal_due' | 'lapsed' | 'suspended' | 'withdrawn' | 'pending' | 'stale';
 export function licenceView(l: { status: string; expires_on: string; last_synced: string }, now = new Date()): { view: LicenceView; daysToExpiry: number; stale: boolean; hoursSinceSync: number } {
-  const hoursSinceSync = (now.getTime() - toDate(l.last_synced).getTime()) / 3_600_000;
+  const hoursSinceSync = hoursSinceSyncOf(l.last_synced, now);
   const stale = hoursSinceSync > RULES.staleSyncHours;
   const daysToExpiry = daysBetween(now, l.expires_on);
   let view: LicenceView = l.status as LicenceView;

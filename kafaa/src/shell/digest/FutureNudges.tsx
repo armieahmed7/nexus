@@ -5,6 +5,7 @@ import { useQuery, useRepo } from '../../data';
 import { L, useFormat, usePick, useT } from '../../i18n';
 import { BenchmarkChips, Icon, Skeleton, StatusPill } from '../../ui';
 import { FS75_FROM } from './future';
+import { useCanOpenLink } from '../GuardedLink';
 import type { DigestItem } from './rules';
 
 interface RuleRow { id: string; topic: string; kind: string; name_en: string; name_ar: string; rule_en: string; rule_ar: string; window_days: number | null; link: string; source_feature: string; since: string; sort: number }
@@ -14,6 +15,7 @@ export function FutureNudgeRules({ compact = false }: { compact?: boolean }) {
   const f = useFormat();
   const pick = usePick();
   const repo = useRepo();
+  const open = useCanOpenLink(); // readiness fixes 2026-10-13: link a rule's page only for people who may open it
   const q = useQuery('digest_nudge_rules', () => repo.list('digest_nudge_rules', { order: [['sort', 'asc']] }));
   if (q.error) return <p className="text-[12.5px] text-ink-3">{t('digest.future.empty')}</p>;
   if (!q.data) return <Skeleton lines={2} />;
@@ -32,7 +34,7 @@ export function FutureNudgeRules({ compact = false }: { compact?: boolean }) {
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-ink-3">
             <span>{t('digest.future.feature', { id: r.source_feature })}</span>
             <span>{t('digest.future.since', { date: f.date(r.since) })}</span>
-            <L to={r.link} className="font-semibold text-accent">{t('digest.future.link')}</L>
+            {open(r.link) && <L to={r.link} className="font-semibold text-accent">{t('digest.future.link')}</L>}
           </div>
         </li>
       ))}

@@ -3,6 +3,7 @@
  * is chosen explicitly here. Local mode: any of the 57 personas. Supabase mode: the 43 NEXUS role cards via the
  * NEXUS session, and the 14 Kafa'a-only personas via the kafaa-persona-signin Edge Function (src/auth/personaSession.ts).
  */
+import { landing } from './landing';
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSession, roleLabel, type PersonaCard } from '../../auth/session';
@@ -124,14 +125,4 @@ export default function SignInPage() {
       ))}
     </Page>
   );
-}
-
-/** Where to land after sign-in, by most specific role. */
-function landing(roles: PlatformRole[]): string {
-  if (roles.includes('observer')) return '/observer';
-  if (roles.includes('partner_admin') || roles.includes('partner_user') || roles.includes('university')) return '/partner';
-  if (roles.includes('admin') || roles.includes('editor')) return '/admin';
-  if (roles.includes('auditor') && !roles.includes('employee')) return '/admin/audit';
-  if (roles.includes('applicant') && roles.length === 1) return '/my/applications';
-  return '/my';
 }

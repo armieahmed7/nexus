@@ -14,23 +14,40 @@ export const FS12 = 'FS12';
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
 // ───────────── data
+/** Optional reference lookups of the m30 pages: when one fails the page still renders and names what is missing (RefGaps). */
+export type RefLookup = 'families' | 'skills' | 'competencies' | 'courses' | 'archetypes' | 'milestones' | 'maps';
+/** Readiness fixes 2026-10-13 (finding 5): the job roles are required, so a failed read shows the error state with a retry (it used to
+ *  become an empty list and a valid role page said "Role not found"); the other lookups are optional and listed in `missing`. */
 export function useRefData() {
   const repo = useRepo();
   return useQuery(['job_roles', 'job_families', 'skills', 'competencies', 'courses', 'transformation_archetypes', 'transformation_milestones', 'role_transformations'], async () => {
-    const safe = <T,>(p: Promise<T[]>) => p.catch(() => [] as T[]);
+    const missing: RefLookup[] = [];
+    const opt = <T,>(what: RefLookup, p: Promise<T[]>) => p.catch((e: unknown) => { console.warn(`[m30] ${what} not loaded`, e); missing.push(what); return [] as T[]; });
     const [roles, families, skills, comps, courses, archetypes, milestones, maps] = await Promise.all([
-      safe(repo.list('job_roles', { order: [['sort', 'asc']] })), safe(repo.list('job_families', { order: [['sort', 'asc']] })),
-      safe(repo.list('skills', { order: [['sort', 'asc']] })), safe(repo.list('competencies')), safe(repo.list('courses')),
-      safe(repo.list('transformation_archetypes', { order: [['sort', 'asc']] })), safe(repo.list('transformation_milestones', { order: [['sort', 'asc']] })),
-      safe(repo.list('role_transformations', { order: [['sort', 'asc']] })),
+      repo.list('job_roles', { order: [['sort', 'asc']] }), opt('families', repo.list('job_families', { order: [['sort', 'asc']] })),
+      opt('skills', repo.list('skills', { order: [['sort', 'asc']] })), opt('competencies', repo.list('competencies')), opt('courses', repo.list('courses')),
+      opt('archetypes', repo.list('transformation_archetypes', { order: [['sort', 'asc']] })), opt('milestones', repo.list('transformation_milestones', { order: [['sort', 'asc']] })),
+      opt('maps', repo.list('role_transformations', { order: [['sort', 'asc']] })),
     ]);
     const current = roles.filter((r) => ((r as Row).lifecycle ?? 'current') === 'current');
     return {
       roles: current, roleById: new Map(roles.map((r) => [r.id, r as Row])), familyById: new Map(families.map((f) => [f.id, f as Row])), families: families as Row[],
       skillById: new Map(skills.map((s) => [s.id, s as Row])), compById: new Map(comps.map((c) => [c.id, c as Row])), courseById: new Map(courses.map((c) => [c.id, c as Row])),
       archetypes: archetypes as Row[], milestones: milestones as Row[], maps: maps as Row[], mapByRole: new Map(maps.map((m) => [(m as Row).role_id as string, m as Row])),
+      missing: missing.sort(),
     };
   });
+}
+/** Names the optional lookups that did not load, with a retry (same notice as m28 CatalogueGaps). */
+export function RefGaps({ d, onRetry }: { d: { missing: RefLookup[] } | undefined; onRetry?: () => void }) {
+  const t = useT();
+  if (!d || !d.missing.length) return null;
+  return (
+    <Callout tone="sim" title={t('m30.refGaps.title')}>
+      <span data-testid="m30-ref-gaps">{t('m30.refGaps.body', { parts: d.missing.map((m) => t(`m30.refGaps.part.${m}`)).join(', ') })}</span>
+      {onRetry && <button type="button" className="btn-outline btn-sm ms-2" onClick={onRetry}>{t('m30.refGaps.retry')}</button>}
+    </Callout>
+  );
 }
 export type RefData = NonNullable<ReturnType<typeof useRefData>['data']>;
 

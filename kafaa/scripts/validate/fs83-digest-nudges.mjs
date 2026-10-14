@@ -10,7 +10,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 
 const TABLES = ['people', 'qual_records', 'qual_standards', 'licences', 'skill_checkins', 'skill_ratings', 'mentoring_requests', 'mentoring_agreements', 'mentoring_sessions', 'opportunities',
   'opportunity_applications', 'career_conversations', 'refresh_state', 'refresh_prefs', 'enrolments', 'courses', 'person_skills', 'skills', 'role_competencies', 'career_paths', 'career_targets',
-  'engine_settings', 'reco_optouts', 'ojt_logs', 'ojt_eval_requests', 'plant_visits', 'roleplay_sessions',
+  'engine_settings', 'reco_optouts', 'ojt_logs', 'ojt_eval_requests', 'plant_visits', 'roleplay_sessions', 'role_assignments' /* readiness 2026-10-13 */,
   'role_profile_versions', 'skill_goals', 'skill_goal_plans', 'pathways', 'pathway_enrolments', 'ai_rungs', 'ai_skill_tracks', 'ai_systems', 'ai_system_users', 'skill_signals', 'fellowship_milestones'];
 const FILE = 'supabase/migrations/20261010283001_kafaa_fs83_digest_nudges.sql';
 

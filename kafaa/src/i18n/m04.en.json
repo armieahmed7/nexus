@@ -476,7 +476,7 @@
     "noMatch": "No programmes match these filters.",
     "pathsTitle": "Training paths",
     "pathsIntro": "Follow a track from entry to qualification.",
-    "population": "{n} people in 2024 {note}",
+    "population": "{n} {note}",
     "practice": "Try a practice quiz",
     "publicNoteTitle": "About this catalogue",
     "publicNote": "Public pages describe programmes at summary level from published reports. Course schedules, procedures and assessment content stay internal.",

@@ -1,10 +1,15 @@
 // M16 · /admin/audit: search the append-only, hash-chained audit log (admin and auditor read only). There is no edit or
 // delete control anywhere: the database trigger rejects UPDATE and DELETE, and "Verify chain" recomputes every hash
 // (rpc.auditVerify). Each entry shows whether it also reached the NEXUS evidence ledger.
+// Readiness fixes 2026-10-13 (finding 3): the log is read a page at a time (the newest PAGE entries matching the filters, "Load more"
+// for the next ones) with the filters applied by the database, and the totals are counts. It used to download all ~16,000 entries
+// in 1,000-row requests on every visit, which hit the statement timeout when several people used the site.
 import { useMemo, useState } from 'react';
 import { useQuery, useRepo } from '../../data';
 import { useFormat, useLang, useT } from '../../i18n';
-import { ROLE_LABELS, type PlatformRole } from '../../auth/policy';
+import { PLATFORM_ROLES, ROLE_LABELS, type PlatformRole } from '../../auth/policy';
+import { SCHEMA } from '../../data/schema';
+import type { Query } from '../../data/types';
 import { Async, Callout, DataTable, Drawer, FilterBar, Icon, KeyValue, Page, StatusPill, TextField, useFilters, type Column } from '../../ui';
 import type { AuditEventsRow } from '../../data/types';
 import { Metric } from './parts';
@@ -16,24 +21,26 @@ export default function AdminAuditPage() {
   const roleName = (r: string) => ROLE_LABELS[r as PlatformRole]?.[lang] ?? r;
   const f = useFormat();
   const repo = useRepo();
-  const q = useQuery('audit_events', () => repo.list('audit_events', { order: [['seq', 'desc']] }));
   const [flt, setFlt] = useFilters({ q: '', outcome: '', table: '', role: '', ledger: '', from: '', to: '' }, true);
+  const [limit, setLimit] = useState(PAGE);
+  const query = useMemo((): Query<AuditEventsRow> => auditQuery(flt), [flt]);
+  const key = JSON.stringify(query);
+  const q = useQuery('audit_events', () => repo.list('audit_events', { ...query, order: [['seq', 'desc']], limit }), [key, limit]);
+  const totals = useQuery('audit_events', async () => {
+    const [entries, refused, written] = await Promise.all([
+      repo.count('audit_events', query),
+      repo.count('audit_events', { ...query, filter: { ...query.filter, outcome: 'refused' } }),
+      repo.count('audit_events', { ...query, filter: { ...query.filter, ledger_status: 'written' } }),
+    ]);
+    return { entries, refused, written };
+  }, [key]);
   const [open, setOpen] = useState<AuditEventsRow | null>(null);
   const [verify, setVerify] = useState<{ ok: boolean; message: string; entries?: number } | null>(null);
   const [verifying, setVerifying] = useState(false);
-  const all = q.data ?? [];
-  const tables = useMemo(() => [...new Set(all.map((a) => a.entity_table).filter(Boolean) as string[])].sort(), [all]);
-  const roles = useMemo(() => [...new Set(all.map((a) => a.actor_role).filter(Boolean) as string[])].sort(), [all]);
-  const rows = all.filter(
-    (a) =>
-      (!flt.outcome || a.outcome === flt.outcome) &&
-      (!flt.table || a.entity_table === flt.table) &&
-      (!flt.role || a.actor_role === flt.role) &&
-      (!flt.ledger || a.ledger_status === flt.ledger) &&
-      (!flt.from || a.ts.slice(0, 10) >= flt.from) &&
-      (!flt.to || a.ts.slice(0, 10) <= flt.to) &&
-      (!flt.q || `${a.action} ${a.entity_id ?? ''} ${a.actor_person_id ?? ''} ${a.reason ?? ''}`.toLowerCase().includes(flt.q.toLowerCase())),
-  );
+  const rows = q.data ?? [];
+  // filter choices: every table and platform role, plus any other value on the loaded page (NEXUS role titles, "system")
+  const tables = useMemo(() => [...new Set([...Object.keys(SCHEMA), ...rows.map((a) => a.entity_table).filter(Boolean) as string[]])].sort(), [rows]);
+  const roles = useMemo(() => [...new Set([...PLATFORM_ROLES, ...rows.map((a) => a.actor_role).filter(Boolean) as string[]])].sort(), [rows]);
   const runVerify = async () => {
     setVerifying(true);
     try {
@@ -70,19 +77,19 @@ export default function AdminAuditPage() {
         </Callout>
       )}
       <Callout tone="info">{t('m16.audit.appendOnly')}</Callout>
-      <Async state={q}>
-        {(d) => (
+      <Async state={totals}>
+        {(n) => (
           <div className="grid gap-3 sm:grid-cols-4" data-testid="m16-audit-metrics">
-            <Metric label={t('m16.audit.mEntries')} value={f.num(d.length)} />
-            <Metric label={t('m16.audit.mRefused')} value={f.num(d.filter((a) => a.outcome === 'refused').length)} tone="sim" />
-            <Metric label={t('m16.audit.mLedger')} value={f.num(d.filter((a) => a.ledger_status === 'written').length)} tone="ok" />
-            <Metric label={t('m16.audit.mLast')} value={d[0] ? f.date(d[0].ts) : '—'} />
+            <Metric label={t('m16.audit.mEntries')} value={f.num(n.entries)} />
+            <Metric label={t('m16.audit.mRefused')} value={f.num(n.refused)} tone="sim" />
+            <Metric label={t('m16.audit.mLedger')} value={f.num(n.written)} tone="ok" />
+            <Metric label={t('m16.audit.mLast')} value={rows[0] ? f.date(rows[0].ts) : '—'} />
           </div>
         )}
       </Async>
       <FilterBar
         value={flt}
-        onChange={setFlt}
+        onChange={(v) => { setLimit(PAGE); setFlt(v); }}
         search="q"
         fields={[
           { key: 'outcome', label: t('m16.audit.outcome'), options: ['ok', 'refused', 'error'].map((x) => ({ value: x, label: t(`m16.audit.out.${x}`) })) },
@@ -101,6 +108,13 @@ export default function AdminAuditPage() {
         {() => (
           <div data-testid="m16-audit-table">
             <DataTable rows={rows} rowKey={(a) => a.id} columns={cols} csvName="kafaa-audit" onRowClick={setOpen} pageSize={50} initialSort={{ key: 'seq', dir: 'desc' }} />
+            <div className="mt-2 flex flex-wrap items-center gap-2 text-[12.5px] text-ink-3" data-testid="m16-audit-paging">
+              <span>{t('m16.audit.showing', { n: f.num(rows.length), total: f.num(totals.data?.entries ?? rows.length) })}</span>
+              {rows.length >= limit && limit < MAX_ROWS && (
+                <button type="button" className="btn-outline btn-sm" onClick={() => setLimit((x) => Math.min(MAX_ROWS, x + PAGE))} data-testid="m16-audit-more">{t('m16.audit.more')}</button>
+              )}
+              {rows.length >= MAX_ROWS && <span>{t('m16.audit.refine')}</span>}
+            </div>
           </div>
         )}
       </Async>
@@ -137,4 +151,20 @@ export default function AdminAuditPage() {
       </Drawer>
     </Page>
   );
+}
+
+/** Entries read per page and at most (one request: PostgREST serves up to 1,000 rows). */
+const PAGE = 200;
+const MAX_ROWS = 1000;
+/** The filters as a repository query (applied by the database). Dates are whole UTC days. */
+export function auditQuery(flt: { q: string; outcome: string; table: string; role: string; ledger: string; from: string; to: string }): Query<AuditEventsRow> {
+  const filter: Record<string, unknown> = {};
+  if (flt.outcome) filter.outcome = flt.outcome;
+  if (flt.table) filter.entity_table = flt.table;
+  if (flt.role) filter.actor_role = flt.role;
+  if (flt.ledger) filter.ledger_status = flt.ledger;
+  const day = /^\d{4}-\d{2}-\d{2}$/;
+  if (day.test(flt.from) || day.test(flt.to)) filter.ts = { ...(day.test(flt.from) ? { gte: `${flt.from}T00:00:00Z` } : {}), ...(day.test(flt.to) ? { lte: `${flt.to}T23:59:59Z` } : {}) };
+  const term = flt.q.trim();
+  return { filter: filter as Query<AuditEventsRow>['filter'], ...(term ? { search: { term, columns: ['action', 'entity_id', 'actor_person_id', 'reason'] } } : {}) };
 }

@@ -1,13 +1,18 @@
 // M14 · /my dashboard: the signed-in person's next expiries (qualifications, licence, medical flag), assigned training,
 // development-plan progress, applications and notices, plus quick links to every area their roles open.
 // Everything is read through the repository with an explicit person filter, so a manager's scope never leaks in here.
+// Readiness fixes 2026-10-13 (finding 2): a card, tile or link shows only when the route it opens lets this person in (canOpen, the
+// router's own guard check). Applicants, partners, observers and auditors no longer see staff cards that lead to "You don't have access";
+// people whose main area is elsewhere get a pointer to it (the sign-in landing page).
 import { useMemo } from 'react';
 import { useAction, useQuery, useRepo } from '../../data';
 import { useSession } from '../../auth/session';
 import { checkGuard } from '../../auth/guards';
-import { ROUTES } from '../../routes/registry';
+import { ROUTES, routeForPath } from '../../routes/registry';
+import { useCanOpenLink } from '../../shell/GuardedLink';
+import { landing } from './landing';
 import { L, useFormat, usePick, useT, systemName } from '../../i18n';
-import { Async, Card, EmptyState, Icon, Page, ProgressBar, StatTile, StatusPill } from '../../ui';
+import { Async, Callout, Card, EmptyState, Icon, Page, ProgressBar, StatTile, StatusPill } from '../../ui';
 import { licenceView, medicalView, qualView } from '../../domain/rules';
 import type { NotificationsRow } from '../../data/types';
 import { DigestPanel } from '../../shell/digest/DigestPanel'; // W5E5 (F36): personal weekly digest
@@ -23,6 +28,9 @@ export default function MyPage() {
   const run = useAction();
   const s = useSession();
   const me = s.identity.personId;
+  const open = useCanOpenLink();
+  const home = landing(s.roles);
+  const homeRoute = home !== '/my' && open(home) ? routeForPath(home)?.def ?? null : null;
   const data = useQuery(
     ['qual_records', 'qual_standards', 'licences', 'medical_due', 'enrolments', 'courses', 'dev_plans', 'plan_activities', 'applications', 'talent_programmes', 'notifications', 'job_roles'],
     async () => {
@@ -77,19 +85,33 @@ export default function MyPage() {
           const done = acts.filter((a) => a.status === 'done').length;
           const apps = d.apps.filter((a) => OPEN_APPLICATION.includes(a.stage));
           const unread = d.notes.filter((n) => !n.read_at);
+          // a card shows when its page opens for this person, or when it has records of theirs to show (then without the link)
+          const show = {
+            expiries: open('/my/quals') || !!lic || !!med || quals.length > 0,
+            training: open('/my/learning') || training.length > 0,
+            plan: open('/my/plan') || !!plan,
+            apps: open('/my/applications') || apps.length > 0,
+          };
+          const tiles = [show.expiries, show.training, show.plan, true].filter(Boolean).length;
           return (
             <div className="space-y-6">
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4" data-testid="m14-my-tiles">
-                <StatTile label={t('m14.my.tileExpiring')} value={f.num(dueSoon.length)} tone={dueSoon.length ? 'sim' : 'ok'} sub={t('m14.my.tileExpiringSub')} />
-                <StatTile label={t('m14.my.tileTraining')} value={f.num(training.length)} tone={training.some((e) => e.due_on && e.due_on < new Date().toISOString().slice(0, 10)) ? 'bad' : undefined} sub={t('m14.my.tileTrainingSub')} />
-                <StatTile label={t('m14.my.tilePlan')} value={acts.length ? f.pct((done * 100) / acts.length, 0) : '—'} sub={plan ? pick(role.get(plan.target_role_id) ?? { title_en: '', title_ar: '' }, 'title') : t('m14.my.noPlan')} />
+              {homeRoute && (
+                <Callout tone="info" title={t('m14.my.homeTitle')}>
+                  <span data-testid="m14-my-home">{t('m14.my.homeBody', { area: t(`${homeRoute.module.toLowerCase()}.routes.${homeRoute.id}.title`) })}</span>{' '}
+                  <L to={home} className="btn-outline btn-sm ms-1" data-testid="m14-my-home-link">{t('m14.my.homeOpen', { area: t(`${homeRoute.module.toLowerCase()}.routes.${homeRoute.id}.title`) })}</L>
+                </Callout>
+              )}
+              <div className={`grid gap-3 sm:grid-cols-2 ${tiles >= 4 ? 'lg:grid-cols-4' : tiles === 3 ? 'lg:grid-cols-3' : ''}`} data-testid="m14-my-tiles">
+                {show.expiries && <StatTile label={t('m14.my.tileExpiring')} value={f.num(dueSoon.length)} tone={dueSoon.length ? 'sim' : 'ok'} sub={t('m14.my.tileExpiringSub')} />}
+                {show.training && <StatTile label={t('m14.my.tileTraining')} value={f.num(training.length)} tone={training.some((e) => e.due_on && e.due_on < new Date().toISOString().slice(0, 10)) ? 'bad' : undefined} sub={t('m14.my.tileTrainingSub')} />}
+                {show.plan && <StatTile label={t('m14.my.tilePlan')} value={acts.length ? f.pct((done * 100) / acts.length, 0) : '—'} sub={plan ? pick(role.get(plan.target_role_id) ?? { title_en: '', title_ar: '' }, 'title') : t('m14.my.noPlan')} />}
                 <StatTile label={t('m14.my.tileNotices')} value={f.num(unread.length)} tone={unread.length ? 'info' : undefined} sub={t('m14.my.tileNoticesSub')} />
               </div>
 
               <DigestPanel />
 
               <div className="grid gap-4 lg:grid-cols-2">
-                <Card title={t('m14.my.expiriesTitle')} actions={<L to="/my/quals" className="btn-ghost btn-sm">{t('m14.my.viewAll')}</L>}>
+                {show.expiries && <Card title={t('m14.my.expiriesTitle')} actions={open('/my/quals') ? <L to="/my/quals" className="btn-ghost btn-sm">{t('m14.my.viewAll')}</L> : undefined}>
                   <ul className="space-y-2" data-testid="m14-my-expiries">
                     {lic && lv && (
                       <li className="flex flex-wrap items-center justify-between gap-2 rounded-btn border border-line p-2.5">
@@ -99,7 +121,7 @@ export default function MyPage() {
                         </div>
                         <div className="flex items-center gap-2">
                           <StatusPill status={lv.view} />
-                          <L to="/my/licence" className="btn-ghost btn-sm">{t('m14.my.open')}</L>
+                          {open('/my/licence') && <L to="/my/licence" className="btn-ghost btn-sm">{t('m14.my.open')}</L>}
                         </div>
                       </li>
                     )}
@@ -126,9 +148,9 @@ export default function MyPage() {
                     ))}
                     {!lic && !med && quals.length === 0 && <li className="text-[13px] text-ink-3">{t('m14.my.noExpiries')}</li>}
                   </ul>
-                </Card>
+                </Card>}
 
-                <Card title={t('m14.my.trainingTitle')} actions={<L to="/my/learning" className="btn-ghost btn-sm">{t('m14.my.viewAll')}</L>}>
+                {show.training && <Card title={t('m14.my.trainingTitle')} actions={open('/my/learning') ? <L to="/my/learning" className="btn-ghost btn-sm">{t('m14.my.viewAll')}</L> : undefined}>
                   {training.length === 0 ? (
                     <p className="text-[13px] text-ink-3">{t('m14.my.noTraining')}</p>
                   ) : (
@@ -148,11 +170,11 @@ export default function MyPage() {
                       ))}
                     </ul>
                   )}
-                </Card>
+                </Card>}
 
-                <Card title={t('m14.my.planTitle')} actions={<L to="/my/plan" className="btn-ghost btn-sm">{t('m14.my.open')}</L>}>
+                {show.plan && <Card title={t('m14.my.planTitle')} actions={open('/my/plan') ? <L to="/my/plan" className="btn-ghost btn-sm">{t('m14.my.open')}</L> : undefined}>
                   {!plan ? (
-                    <EmptyState title={t('m14.my.noPlan')} action={<L to="/my/plan" className="btn-outline btn-sm">{t('m14.my.startPlan')}</L>} />
+                    <EmptyState title={t('m14.my.noPlan')} action={open('/my/plan') ? <L to="/my/plan" className="btn-outline btn-sm">{t('m14.my.startPlan')}</L> : undefined} />
                   ) : (
                     <div className="space-y-2">
                       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -171,9 +193,9 @@ export default function MyPage() {
                       </ul>
                     </div>
                   )}
-                </Card>
+                </Card>}
 
-                <Card title={t('m14.my.appsTitle')} actions={<L to="/my/applications" className="btn-ghost btn-sm">{t('m14.my.viewAll')}</L>}>
+                {show.apps && <Card title={t('m14.my.appsTitle')} actions={open('/my/applications') ? <L to="/my/applications" className="btn-ghost btn-sm">{t('m14.my.viewAll')}</L> : undefined}>
                   {apps.length === 0 ? (
                     <p className="text-[13px] text-ink-3">{t('m14.my.noApps')}</p>
                   ) : (
@@ -188,10 +210,10 @@ export default function MyPage() {
                       ))}
                     </ul>
                   )}
-                </Card>
+                </Card>}
               </div>
 
-              <Card title={t('m14.my.noticesTitle')} actions={<L to="/my/settings#notifications" className="btn-ghost btn-sm">{t('m14.my.noticeSettings')}</L>}>
+              <Card title={t('m14.my.noticesTitle')} actions={open('/my/settings') ? <L to="/my/settings#notifications" className="btn-ghost btn-sm">{t('m14.my.noticeSettings')}</L> : undefined}>
                 {d.notes.length === 0 ? (
                   <p className="text-[13px] text-ink-3">{t('m14.my.noNotices')}</p>
                 ) : (
@@ -208,7 +230,7 @@ export default function MyPage() {
                         </div>
                         <div className="flex items-center gap-2">
                           <StatusPill tone={n.severity === 'warn' ? 'sim' : n.severity === 'bad' ? 'bad' : n.severity === 'ok' ? 'ok' : 'info'}>{t(`m14.my.sev.${n.severity}`)}</StatusPill>
-                          {n.link && <L to={n.link} className="btn-ghost btn-sm" onClick={() => !n.read_at && markRead(n)}>{t('m14.my.open')}</L>}
+                          {n.link && open(n.link) && <L to={n.link} className="btn-ghost btn-sm" onClick={() => !n.read_at && markRead(n)}>{t('m14.my.open')}</L>}
                           {!n.read_at && <button className="btn-ghost btn-sm" onClick={() => markRead(n)}>{t('m14.my.markRead')}</button>}
                         </div>
                       </li>

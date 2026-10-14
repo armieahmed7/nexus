@@ -182,7 +182,7 @@ export const SCHEMA: Record<string, TableDef> = {
     module: 'M01', label: 'Role (28 seed roles) with EN/AR, regulated flag, basis and sources',
     cols: {
       id: 'text pk', family_id: 'text ref:job_families idx', title_en: 'text', title_ar: 'text', function_en: 'text =\'\'', function_ar: 'text =\'\'',
-      level: 'text enum:entry|professional|senior|leadership', regulated: 'bool =false', regulation_ref: 'text?', regulation_url: 'text?',
+      level: 'text enum:entry|professional|senior|leadership', regulated: 'bool =false', regulation_ref: 'text?', regulation_ref_ar: 'text?', regulation_url: 'text?', // regulation_ref_ar: readiness 2026-10-13
       basis: 'text enum:barakah|generic|uncertain', basis_note: 'text?', basis_note_ar: 'text?',
       summary_en: 'text', summary_ar: 'text', qualifications_en: 'text', qualifications_ar: 'text', training_path_en: 'text', training_path_ar: 'text',
       licensing_body_en: 'text', licensing_body_ar: 'text', entry_routes: 'json =[]',
@@ -221,7 +221,7 @@ export const SCHEMA: Record<string, TableDef> = {
     cols: {
       id: 'text pk', from_role_id: 'text? ref:job_roles idx', to_role_id: 'text ref:job_roles idx', from_label_en: 'text?', from_label_ar: 'text?',
       type: 'text enum:entry|vertical|lateral|cross_functional', route_code: 'text?', label_en: 'text =\'\'', label_ar: 'text =\'\'',
-      conditions: 'json =[]', rule_ref: 'text?', basis: 'text enum:barakah|generic|uncertain =\'barakah\'', sort: 'int =0',
+      conditions: 'json =[]', rule_ref: 'text?', rule_ref_ar: 'text?', basis: 'text enum:barakah|generic|uncertain =\'barakah\'', sort: 'int =0', // rule_ref_ar: readiness 2026-10-13
       // FS05 (fsAe4): 'future' edges lead from a current role to a concept future role (planning assumption only)
       kind: 'text enum:current|future =\'current\' idx',
     },
@@ -377,8 +377,8 @@ export const SCHEMA: Record<string, TableDef> = {
       id: 'text pk', code: 'text', name_en: 'text', name_ar: 'text',
       area: 'text enum:all_staff|operations|disciplines|foundation|leadership|emergency|simulation|soft_skills|supplier',
       kind: 'text enum:initial|continuing|leadership|foundation|supplier|general', family_id: 'text? ref:job_families',
-      duration_en: 'text =\'\'', duration_ar: 'text =\'\'', weeks: 'num?', hours: 'num?', population_2024: 'int?', population_note: 'text?',
-      purpose_en: 'text', purpose_ar: 'text', sources: 'json =[]', conflict_note: 'text?', mandatory: 'bool =false', sort: 'int =0',
+      duration_en: 'text =\'\'', duration_ar: 'text =\'\'', weeks: 'num?', hours: 'num?', population_2024: 'int?', population_note: 'text?', population_note_ar: 'text?',
+      purpose_en: 'text', purpose_ar: 'text', sources: 'json =[]', conflict_note: 'text?', conflict_note_ar: 'text?', mandatory: 'bool =false', sort: 'int =0', // *_ar notes: readiness 2026-10-13
     },
     read: PUB, write: { mode: 'direct', res: 'training' },
   },
@@ -589,7 +589,7 @@ export const SCHEMA: Record<string, TableDef> = {
       id: 'text pk', name_en: 'text', name_ar: 'text', stage: 'text enum:school|school_leaver|university|graduate|experienced|postgraduate|mixed idx',
       nationality: 'text enum:uae_only|uae_priority|open', education_en: 'text', education_ar: 'text', duration_en: 'text', duration_ar: 'text',
       facts_en: 'text', facts_ar: 'text', outcome_en: 'text =\'\'', outcome_ar: 'text =\'\'', apply_mode: 'text enum:in_kafaa|link_out|closed',
-      link_out_url: 'text?', sources: 'json =[]', conflict_note: 'text?', criteria: 'json =[]', sort: 'int =0', nexus_program_id: 'text?',
+      link_out_url: 'text?', sources: 'json =[]', conflict_note: 'text?', conflict_note_ar: 'text?', criteria: 'json =[]', sort: 'int =0', nexus_program_id: 'text?', // conflict_note_ar: readiness 2026-10-13
     },
     read: [{ res: 'talent_content' }], write: { mode: 'direct', res: 'talent_content' },
   },
@@ -614,7 +614,7 @@ export const SCHEMA: Record<string, TableDef> = {
   vacancies: {
     module: 'M06', label: 'Vacancy (links out to ENEC\'s official careers channel)',
     cols: {
-      id: 'text pk', title_en: 'text', title_ar: 'text', role_id: 'text? ref:job_roles', entity_id: 'text ref:organisations', location: 'text',
+      id: 'text pk', title_en: 'text', title_ar: 'text', role_id: 'text? ref:job_roles', entity_id: 'text ref:organisations', location: 'text', location_ar: 'text?', // location_ar: readiness 2026-10-13
       uae_nationals_only: 'bool =false', posted_on: 'date', closes_on: 'date?', official_url: 'text', status: 'text enum:open|closed =\'open\'', sample: 'bool =true',
     },
     read: [{ res: 'talent_content' }], write: { mode: 'direct', res: 'talent_content' },
@@ -917,7 +917,7 @@ export const SCHEMA: Record<string, TableDef> = {
     module: 'M12', label: 'Sourced statistic with "as of" date (or SAMPLE label)',
     cols: {
       id: 'text pk', key: 'text uniq', label_en: 'text', label_ar: 'text', value: 'text', value_ar: 'text =\'\'', detail_en: 'text =\'\'', detail_ar: 'text =\'\'',
-      source_id: 'text? ref:sources', as_of: 'date', sample: 'bool =false', public: 'bool =true', conflict_note: 'text?', topic: 'text =\'barakah\'',
+      source_id: 'text? ref:sources', as_of: 'date', sample: 'bool =false', public: 'bool =true', conflict_note: 'text?', conflict_note_ar: 'text?', topic: 'text =\'barakah\'', // conflict_note_ar: readiness 2026-10-13
     },
     read: [{ res: 'public_content', where: 'public' }, { res: 'internal_content' }], write: { mode: 'direct', res: 'public_content' },
   },

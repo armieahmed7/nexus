@@ -9,7 +9,7 @@ import { useQuery, useRepo } from '../../data';
 import { usePick, useT, L } from '../../i18n';
 import { useCrumbLabel } from '../../shell/crumbs';
 import { isPathOnly, transformRole } from './transform';
-import { ArchetypeCard, BenchTies, DriverChip, FS11, MilestoneTimeline, NoDeployNote, useRefData, useRefLabel, type RefData } from './ui';
+import { ArchetypeCard, BenchTies, DriverChip, FS11, MilestoneTimeline, NoDeployNote, RefGaps, useRefData, useRefLabel, type RefData } from './ui';
 
 type Row = Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
 
@@ -23,12 +23,12 @@ export default function CareersTransformationPage() {
       if (!role || (role.lifecycle ?? 'current') !== 'current') {
         return <Page title={t('m30.routes.careers-role-transformation.title')}><EmptyState title={t('m30.pub.notFound')}><L to="/careers">{t('m30.pub.toCareers')}</L></EmptyState></Page>;
       }
-      return <View d={d} role={role} />;
+      return <View d={d} role={role} reload={ref.reload} />;
     }}</Async>
   );
 }
 
-function View({ d, role }: { d: RefData; role: Row }) {
+function View({ d, role, reload }: { d: RefData; role: Row; reload: () => void }) {
   const t = useT();
   const pick = usePick();
   const repo = useRepo();
@@ -43,6 +43,7 @@ function View({ d, role }: { d: RefData; role: Row }) {
       eyebrow={<BenchTies feature={FS11} />}
       actions={<L to={`/my/role-2030?role=${role.id}`} className="btn-primary no-underline" data-testid="m30-pub-signin">{t('m30.pub.mine')}</L>}>
       <div className="space-y-6" data-testid="m30-public">
+        <RefGaps d={d} onRetry={reload} />
         {!map ? <EmptyState title={t('m30.pub.noMap')} /> : path ? (
           <Callout tone="info" title={t('m30.pathOnly.title')}><span data-testid="m30-path-only">{pick(map, 'public_summary')}</span></Callout>
         ) : (

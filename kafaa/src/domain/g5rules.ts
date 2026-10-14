@@ -5,6 +5,7 @@
  */
 import type { PlatformRole } from '../auth/policy';
 import { addWorkingDays, daysBetween, todayIso } from './rules';
+import { hoursSinceSyncOf } from './mirrorClock.ts';
 
 // ───────────── M13 Dalil
 export type DalilModeName = 'public' | 'applicant' | 'staff' | 'partner';
@@ -102,7 +103,7 @@ export function reviewOverdue(p: { review_on?: string | null }, today = todayIso
 // ───────────── M16 integrations
 export function syncState(i: { status: string; last_success: string; threshold_hours: number }, now = new Date()): 'ok' | 'degraded' | 'stale' | 'error' | 'disabled' {
   if (i.status === 'disabled' || i.status === 'error') return i.status;
-  const hours = (now.getTime() - new Date(i.last_success).getTime()) / 3_600_000;
+  const hours = hoursSinceSyncOf(i.last_success, now); // mirror clock (readiness 2026-10-13): the demo feeds are a snapshot
   if (hours > i.threshold_hours) return 'stale';
   return i.status === 'degraded' ? 'degraded' : 'ok';
 }

@@ -6,7 +6,7 @@ import { Page, Section, Card, Async, EmptyState, Callout, Donut, WhyThis, SimChi
 import { useFormat, usePick, useT, L } from '../../i18n';
 import { BANDS, pctOf, type Band, type MapTask, type RoleMap } from './transform';
 import type { RoleTransformationView } from './backend/rpc';
-import { BandPill, BenchTies, DriverChip, FS12, HorizonChip, NoDeployNote, RolePicker, useRefData, useRefLabel, useRoleMap, useRoleParams, type RefData } from './ui';
+import { BandPill, BenchTies, DriverChip, FS12, HorizonChip, NoDeployNote, RolePicker, useRefData, useRefLabel, useRoleMap, useRoleParams, type RefData, RefGaps } from './ui';
 
 export default function TaskExposurePage() {
   const t = useT();
@@ -17,6 +17,7 @@ export default function TaskExposurePage() {
     <Page title={t('m30.routes.my-role-2030-tasks.title')} intro={t('m30.tx.intro')} wide
       eyebrow={<span className="inline-flex flex-wrap items-center gap-2"><SimChip label={t('m30.planning.chip')} /><BenchTies feature={FS12} /></span>}
       actions={<L to={`/my/role-2030${p.role ? `?role=${p.role}` : ''}`} className="btn-outline no-underline" data-testid="m30-to-map">{t('m30.tx.toMap')}</L>}>
+      <RefGaps d={ref.data} onRetry={ref.reload} />
       <Async state={ref}>{(d) => (
         <div className="space-y-6">
           <div className="sm:max-w-md"><RolePicker d={d} value={p.role ?? ''} onChange={(v) => p.set('role', v || null)} /></div>
