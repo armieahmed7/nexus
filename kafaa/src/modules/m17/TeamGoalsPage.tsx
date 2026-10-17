@@ -65,7 +65,7 @@ function Team({ lines }: { lines: Line[] }) {
       </Grid>
       <Card title={t('m17.sg.team.listTitle')} actions={
         <div className="flex flex-wrap gap-1" role="group" aria-label={t('m17.sg.team.col.person')}>
-          {[{ id: 'all', display_name: t('m17.sg.team.everyone') }, ...people].map((p) => <button key={p.id} type="button" aria-pressed={who === p.id} className={`chip ${who === p.id ? 'border-accent bg-accent/10 text-accent' : 'border-line text-ink-2'}`} onClick={() => setWho(p.id)}>{p.id === 'all' ? p.display_name : pick(p, 'display_name')}</button>)}
+          {[{ id: 'all', display_name: t('m17.sg.team.everyone') }, ...people].map((p) => <button key={p.id} type="button" aria-pressed={who === p.id} className={`chip ${who === p.id ? 'border-accent bg-accent/10 text-eyebrow' : 'border-line text-ink-2'}`} onClick={() => setWho(p.id)}>{p.id === 'all' ? p.display_name : pick(p, 'display_name')}</button>)}
         </div>}>
         <div data-testid="m17-sg-team"><DataTable rows={rows} columns={cols} rowKey={(l) => l.id} csvName="team-shared-skill-goals.csv" searchable={false} /></div>
         <p className="mt-2 text-[12px] text-ink-3">{t('m17.sg.team.note')}</p>

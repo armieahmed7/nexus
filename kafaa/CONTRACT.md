@@ -99,7 +99,7 @@ await act(() => repo.rpc.signoffEvaluation({ record_id, task_id, result: 'pass' 
 - Layout: `Page`, `Section`, `Card`, `Grid`, `StatTile`, `KeyValue`, `Callout`, `Tabs`, `Timeline`, `Stepper`.
 - Status and provenance: `StatusPill` (uses `common.status.*` labels), `SimChip` (simulated/mirror data), `SourceLink` (every public fact links its source and "as of" date).
 - States: `Async`, `Skeleton`, `EmptyState`, `ErrorState`.
-- Data: `DataTable` (sorting, paging, CSV via `toCsv` + `downloadText`), `FilterBar` + `useFilters`.
+- Data: `DataTable` (sorting, paging, CSV via `toCsv` + `downloadText`), `FilterBar` + `useFilters`, `ScrollRegion` (use it instead of a bare `overflow-x-auto` div around wide tables, grids and timelines: it takes keyboard focus, and a region name from `label`, while its content overflows).
 - Forms: `useForm` with validators `required`, `email`, `minLen`, `maxLen`, `pattern`, `numberRange`; fields `TextField`, `TextArea`, `SelectField`, `CheckboxField`, `RadioGroup`. Validation messages come from `common.validation.*`.
 - Overlays: `Modal`, `Drawer`, `ConfirmDialog` (use it before every consequential RPC), toasts via `useToast` (or `useAction`).
 - Charts (SVG, RTL-aware, accessible tables behind them): `BarChart`, `LineChart`, `Donut`, `Funnel`, `Heatmap`, `ProgressRing`, `ProgressBar`. Career graphs: `CareerLadder`, `PathGraph`, `layoutGraph`.
@@ -127,7 +127,7 @@ await act(() => repo.rpc.signoffEvaluation({ record_id, task_id, result: 'pass' 
 
 - `npm run verify` before every commit. Individually: `npm run gen`, `check:i18n`, `typecheck`, `test:unit`, `migrations:validate`, `check:public`, `build`, `test:smoke`.
 - Smoke (`tests/smoke`) visits every route in `routes.ts` files automatically: anonymous, as `k-ro`, `training-mgr` and `alnoor-gm`, and in Arabic. It fails on uncaught page errors or a guard mismatch (sign-in or forbidden screen shown when it should not be, or missing when it should be). New routes are covered without editing the test.
-- Accessibility (`tests/smoke/a11y.spec.ts`, part of the smoke run): axe-core with the WCAG 2.0/2.1 A and AA rules on every public route in English at 1280 px and in Arabic at 390 px, and on the `k-ro` home and key `/my` pages in both. Serious and critical violations fail; moderate and minor ones are listed as test annotations. Run it alone with `npx playwright test tests/smoke/a11y.spec.ts` after a build; `KAFAA_A11Y_OUT=<dir>` writes every violation per page as JSON. Fix the page, never disable a rule to get green (a rule switched off for a proven false positive needs a comment saying why).
+- Accessibility (`tests/smoke/a11y.spec.ts`, part of the smoke run): axe-core with the WCAG 2.0/2.1 A and AA rules on every public route in English at 1280 px and in Arabic at 390 px, and on signed-in pages (local backend): each signed-in route goes to the first of ten personas that can open it, and by default one page per module per persona is checked in English, every other one also in Arabic (about 140 page views). Set `KAFAA_A11Y_FULL=1` to check every signed-in route in both directions (about 660 page views; an occasional full run, roughly 15 to 25 minutes). Serious and critical violations fail; moderate and minor ones are listed as test annotations. Run it alone with `npx playwright test tests/smoke/a11y.spec.ts` after a build; `KAFAA_A11Y_OUT=<dir>` writes every violation per page as JSON. Fix the page, never disable a rule to get green (a rule switched off for a proven false positive needs a comment saying why).
 - Add module tests as `tests/unit/mNN-*.test.ts` (vitest, LocalBackend in memory, see `tests/unit/local-backend.test.ts`) and Playwright journeys as `tests/smoke/mNN.spec.ts` when the spec's acceptance list asks for a flow.
 - `npm run check:public` fails if a public payload carries a person name, email or photo URL.
 - Optional live check (foundation): `KAFAA_E2E_PASSWORD=… node scripts/e2e-supabase.mjs [--write]`.
@@ -980,7 +980,7 @@ Each group's hand-off lists every box below as done, or explains why not. These 
 - [ ] Role grants of elevated roles need a second admin (`rpc.grantRole` / `approveRole`).
 ### M15 (F)
 - [x] A CI check fails if any route lacks approved Arabic content (`check:i18n`).
-- [x] Automated accessibility checks pass on every route in both directions (`tests/smoke/a11y.spec.ts`: axe-core WCAG 2.0/2.1 A + AA on every public route in English at 1280 px and Arabic at 390 px, plus signed-in `k-ro` pages; serious or critical violations fail `npm run test:smoke`).
+- [x] Automated accessibility checks pass on every route in both directions (`tests/smoke/a11y.spec.ts`: axe-core WCAG 2.0/2.1 A + AA on every public route in English at 1280 px and Arabic at 390 px, plus one signed-in page per module per persona, and every signed-in route with `KAFAA_A11Y_FULL=1`; serious or critical violations fail `npm run test:smoke`).
 - [ ] A manual screen-reader test passes on the top ten journeys.
 ### M16 (G5)
 - [ ] No production build contains a route under /api/debug or similar.

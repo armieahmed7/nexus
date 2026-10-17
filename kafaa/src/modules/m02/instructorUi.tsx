@@ -81,7 +81,7 @@ export function CurrencyPill({ c }: { c: CurrencyView | null }) {
 }
 export function RouteChip({ route }: { route: string }) {
   const t = useT();
-  return <span className={`chip ${route === 'asip' ? 'border-accent/40 bg-accent/10 text-accent' : 'border-line bg-sunken text-ink-2'}`}>{t(`m02.ins.route.${route}`)}</span>;
+  return <span className={`chip ${route === 'asip' ? 'border-accent/40 bg-accent/10 text-eyebrow' : 'border-line bg-sunken text-ink-2'}`}>{t(`m02.ins.route.${route}`)}</span>;
 }
 export function NoticeChip({ c }: { c: CurrencyView | null }) {
   const t = useT();

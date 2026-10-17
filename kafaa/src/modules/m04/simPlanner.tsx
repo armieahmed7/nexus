@@ -133,7 +133,7 @@ export function CyclePlanner({ lib, debriefs }: { lib: SimLibrary; debriefs: Deb
                   return (
                     <tr key={r.objective_id} data-status={r.status} data-testid="m04-scn-matrix-row" className={r.status === 'missing' ? 'bg-bad-bg/40' : r.status === 'under' ? 'bg-sim-bg/40' : ''}>
                       <th scope="row" className="text-start font-normal"><span className="ltr me-1 text-ink-3">{o?.code}</span>{o ? pick(o, 'title') : r.objective_id}</th>
-                      {cov.segments.map((g) => <td key={g.segment} className="text-center">{r.segments.includes(g.segment) ? <span className="inline-block h-2.5 w-2.5 rounded-full bg-accent" aria-label={t('m04.scn.plan.inSegment', { n: g.segment })} /> : <span className="text-ink-3">·</span>}</td>)}
+                      {cov.segments.map((g) => <td key={g.segment} className="text-center">{r.segments.includes(g.segment) ? <span className="inline-block h-2.5 w-2.5 rounded-full bg-accent" role="img" aria-label={t('m04.scn.plan.inSegment', { n: g.segment })} /> : <span className="text-ink-3">·</span>}</td>)}
                       <td className="num text-end">{f.num(r.planned)} / {f.num(r.min_runs)}</td>
                       <td className="num text-end">{f.num(r.runs)}</td>
                       <td><StatusPill tone={COVER_TONE[r.status]}>{l.cover(r.status)}</StatusPill></td>

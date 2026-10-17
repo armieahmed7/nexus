@@ -85,7 +85,7 @@ function MapView({ v, map, d }: { v: RoleTransformationView; map: RoleMap; d: Re
             {row && <p className="text-[14px] text-ink-2" data-testid="m30-summary">{pick(row, 'summary')}</p>}
             <RoleOutlookLine roleId={map.role_id} />
             <div className="flex flex-wrap gap-1.5" data-testid="m30-drivers">
-              {map.drivers.map((x) => <DriverChip key={x.driver} driver={x.driver}><span className="num ms-1 opacity-75">{t('m30.driverCounts', { tasks: f.num(x.tasks), skills: f.num(x.reqs) })}</span></DriverChip>)}
+              {map.drivers.map((x) => <DriverChip key={x.driver} driver={x.driver}><span className="num ms-1">{t('m30.driverCounts', { tasks: f.num(x.tasks), skills: f.num(x.reqs) })}</span></DriverChip>)}
             </div>
             {v.can_edit && <L to={`/workforce/transformation/${map.role_id}`} className="text-[12.5px]" data-testid="m30-edit-link">{t('m30.my.edit')}</L>}
           </div>

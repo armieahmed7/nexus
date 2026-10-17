@@ -58,7 +58,7 @@ export function AvailChip({ availability, hours }: { availability: string; hours
   const t = useT();
   const f = useFormat();
   const tone = availability === 'open' ? 'border-ok-line bg-ok-bg text-ok' : availability === 'paused' ? 'border-line bg-sunken text-ink-3' : 'border-sim-line bg-sim-bg text-sim';
-  return <span className={`chip ${tone}`}>{t(`m20.res.avail.${availability}`)}{availability !== 'paused' && <span className="num opacity-80">· {t('m20.res.hoursMonth', { n: f.num(hours) })}</span>}</span>;
+  return <span className={`chip ${tone}`}>{t(`m20.res.avail.${availability}`)}{availability !== 'paused' && <span className="num">· {t('m20.res.hoursMonth', { n: f.num(hours) })}</span>}</span>;
 }
 const REQ_TONE: Record<string, PillTone> = { pending_hr: 'sim', open: 'ok', filled: 'info', closed: 'neutral', declined: 'bad' };
 export function ReqPill({ status }: { status: string }) {
@@ -81,7 +81,7 @@ export function SnapshotSkills({ snapshot, lab, max = 12, testId = 'm20-res-snap
       {list.map((s) => (
         <li key={s.skill_id} className="chip border-line bg-panel text-ink" title={t('m20.res.levelBasis', { level: s.level, basis: t(`m20.res.basis.${s.basis}`) })}>
           <span className="max-w-[16rem] truncate">{lab.skill(s.skill_id)}</span>
-          <span className="inline-flex gap-0.5" aria-label={t('m20.res.levelOf', { n: s.level })}>
+          <span className="inline-flex gap-0.5" role="img" aria-label={t('m20.res.levelOf', { n: s.level })}>
             {[1, 2, 3, 4].map((i) => <span key={i} className={`inline-block h-1.5 w-1.5 rounded-full ${i <= s.level ? (s.basis === 'verified' ? 'bg-ok' : 'bg-accent') : 'bg-line'}`} />)}
           </span>
         </li>

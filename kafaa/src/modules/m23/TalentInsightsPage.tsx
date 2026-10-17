@@ -1,7 +1,7 @@
 // /talent/review/insights (M23 · F18): HR aggregates of placements (talent_review Agg/R/A). Every cell under the minimum group
 // size is suppressed, including the women and Emirati splits; the CSV export carries the same suppressed values, never names.
 import { useState } from 'react';
-import { Page, Section, Card, Async, Callout, Grid, StatTile, SelectField, DataTable, Icon, downloadText, type Column } from '../../ui';
+import { Page, Section, Card, Async, Callout, Grid, StatTile, SelectField, DataTable, Icon, downloadText, type Column, ScrollRegion } from '../../ui';
 import { useQuery, useRepo } from '../../data';
 import { L, useFormat, usePick, useT } from '../../i18n';
 import { ConfidentialNote, unwrap } from './ui';
@@ -52,7 +52,7 @@ function Body({ a, cycles }: { a: TalentAggregates; cycles: CycleSummary[] }) {
         <StatTile label={t('m23.ins.emirati')} value={v(a.emirati)} sub={t('m23.ins.minGroup', { n: f.num(a.min_group) })} />
       </Grid>
       <Card title={t('m23.ins.grid')} actions={<button className="btn-outline btn-sm" onClick={exportCsv} data-testid="m23-ins-export"><Icon name="download" size={14} />{t('m23.ins.export')}</button>}>
-        <div className="overflow-x-auto">
+        <ScrollRegion label={t('m23.ins.grid')} className="overflow-x-auto">
           <table className="w-full min-w-[520px] table-fixed border-separate border-spacing-1.5" data-testid="m23-ins-grid">
             <caption className="sr-only">{t('m23.ins.grid')}</caption>
             <thead><tr><th className="w-20" />{[1, 2, 3].map((p) => <th key={p} scope="col" className="caps text-center">{t(`m23.perf.${p}`)}</th>)}</tr></thead>
@@ -74,7 +74,7 @@ function Body({ a, cycles }: { a: TalentAggregates; cycles: CycleSummary[] }) {
               ))}
             </tbody>
           </table>
-        </div>
+        </ScrollRegion>
         <p className="mt-2 text-[12px] text-ink-3">{t('m23.ins.gridNote', { n: f.num(a.min_group) })}</p>
       </Card>
       <Section title={t('m23.ins.byCycle')}>

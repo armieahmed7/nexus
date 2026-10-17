@@ -1,7 +1,7 @@
 // M27 (F30) shared pieces: statement sentence, result chips, provenance ("Why is this here?"), the xAPI 2.0 JSON view, the learning
 // mix summary, the statement timeline and the emitter registry. Every label comes from m27.* in both languages.
 import { useMemo, useState, type ReactNode } from 'react';
-import { Card, Donut, BarChart, Drawer, Grid, KeyValue, StatTile, StatusPill, Timeline, WhyThis, Icon, type PillTone } from '../../ui';
+import { Card, Donut, BarChart, Drawer, Grid, KeyValue, StatTile, StatusPill, Timeline, WhyThis, Icon, type PillTone, ScrollRegion } from '../../ui';
 import { useT, useLang, useFormat, L } from '../../i18n';
 import type { Reason } from '../../domain/engines/types';
 import { EMITTERS, isoTs, summarise, toXapi, durationMinutes, type Source, type StatementRow } from './xapi';
@@ -123,7 +123,7 @@ export function StatementDetail({ row, who }: { row: StatementRow; who?: string 
             {copied ? t('m27.detail.copied') : t('m27.detail.copy')}
           </button>
         </div>
-        <pre dir="ltr" className="max-h-96 overflow-auto rounded-card border border-line bg-sunken p-3 text-start font-mono text-[11.5px] leading-5 text-ink-2" data-testid="m27-json">{json}</pre>
+        <pre dir="ltr" tabIndex={0} className="max-h-96 overflow-auto rounded-card border border-line bg-sunken p-3 text-start font-mono text-[11.5px] leading-5 text-ink-2" data-testid="m27-json">{json}</pre>
         <p className="mt-1 text-[12px] text-ink-3">{t('m27.detail.jsonNote')}</p>
       </div>
     </div>
@@ -220,7 +220,7 @@ export function EmittersTable({ counts }: { counts?: Record<string, number | nul
   const t = useT();
   const f = useFormat();
   return (
-    <div className="overflow-x-auto" data-testid="m27-emitters">
+    <ScrollRegion className="overflow-x-auto" data-testid="m27-emitters">
       <table className="w-full min-w-[640px] text-[13px]">
         <thead>
           <tr className="border-b border-line text-start">
@@ -246,7 +246,7 @@ export function EmittersTable({ counts }: { counts?: Record<string, number | nul
           ))}
         </tbody>
       </table>
-    </div>
+    </ScrollRegion>
   );
 }
 

@@ -84,7 +84,7 @@ export default function LrsAdaptersPage() {
         </Card>
       </Grid>
       <Section title={t('m27.ad.sampleTitle')} description={t('m27.ad.sampleBody')}>
-        <pre dir="ltr" className="max-h-96 overflow-auto rounded-card border border-line bg-sunken p-3 text-start font-mono text-[11.5px] leading-5 text-ink-2" data-testid="m27-sample">{sample}</pre>
+        <pre dir="ltr" tabIndex={0} className="max-h-96 overflow-auto rounded-card border border-line bg-sunken p-3 text-start font-mono text-[11.5px] leading-5 text-ink-2" data-testid="m27-sample">{sample}</pre>
       </Section>
       <Grid cols={2}>
         <Card title={t('m27.ad.mapTitle')}>

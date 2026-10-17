@@ -322,7 +322,7 @@
     "chart": "Top courses by demand",
     "table": "Demand and capacity by course",
     "tableHint": "Select a number to see where it comes from.",
-    "drillAria": "Drill down into {source}",
+    "drillAria": "{n}: drill down into {source}",
     "intake": "Intake (SIMULATED)",
     "plusDraft": "+{n} in drafts",
     "covered": "Covered",

@@ -358,7 +358,7 @@ Compute the same digest locally in PGlite over the generated seed (the validator
 | Public payloads | `npm run check:public` | no names, emails or photos in public payloads; benchmarks and skills cite https sources |
 | Build | `npx vite build` (or `npm run build`) | chunk-size warnings are known |
 | Smoke | `npm run test:smoke` | Playwright, every route as anon, `k-ro`, `training-mgr`, `alnoor-gm`, and in Arabic; includes the accessibility gate |
-| Accessibility | `npx playwright test tests/smoke/a11y.spec.ts` (after a build) | axe-core WCAG 2.0/2.1 A + AA on every public route (EN 1280 px, AR 390 px) and signed-in `k-ro` pages; serious/critical fail, the rest are annotations; `KAFAA_A11Y_OUT=<dir>` writes JSON per page |
+| Accessibility | `npx playwright test tests/smoke/a11y.spec.ts` (after a build) | axe-core WCAG 2.0/2.1 A + AA on every public route (EN 1280 px, AR 390 px) and one signed-in page per module per persona (ten local-backend personas); serious/critical fail, the rest are annotations; `KAFAA_A11Y_FULL=1` checks every signed-in route EN + AR (about 660 page views); `KAFAA_A11Y_OUT=<dir>` writes JSON per page |
 | Deploy build | `npm run build:deploy` | integration lead / deployer only |
 | Everything | `npm run verify` | gen, i18n, typecheck, unit, migrations, public, build, smoke |
 | E2E sweep | `npm run build && E2E_ONLY=<personas> E2E_MODULES=<M31,...> npx playwright test -c playwright.e2e.config.ts tests/e2e/sweep.spec.ts` | `E2E_ONLY` filters sessions (comma list), `E2E_MODULES` filters modules; output in `KAFAA_QA_OUT` |

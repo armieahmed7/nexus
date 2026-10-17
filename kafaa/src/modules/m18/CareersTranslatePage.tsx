@@ -136,7 +136,7 @@ function FromOccupation({ b }: { b: Base }) {
 function Level({ n }: { n: number }) {
   const t = useT();
   return (
-    <span className="inline-flex items-center gap-0.5" aria-label={t('m18.fs34.levelAria', { n })} title={t(`m18.fs34.level.${Math.max(1, Math.min(4, n))}`)}>
+    <span className="inline-flex items-center gap-0.5" role="img" aria-label={t('m18.fs34.levelAria', { n })} title={t(`m18.fs34.level.${Math.max(1, Math.min(4, n))}`)}>
       {[1, 2, 3, 4].map((i) => <span key={i} className={`h-2 w-2 rounded-full ${i <= n ? 'bg-accent' : 'bg-line'}`} />)}
     </span>
   );

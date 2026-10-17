@@ -11,6 +11,7 @@
  */
 import type { ReactNode } from 'react';
 import { useFormat, useT } from '../i18n';
+import { ScrollRegion } from './ScrollRegion';
 
 const TONES: Record<string, string> = { accent: 'rgb(var(--accent))', ok: 'rgb(var(--ok))', bad: 'rgb(var(--bad))', info: 'rgb(var(--info))', sim: 'rgb(var(--sim))', leaf: 'rgb(var(--leaf))', sky: 'rgb(var(--sky))', ink: 'rgb(var(--ink-3))' };
 const PALETTE = ['accent', 'sky', 'leaf', 'sim', 'info', 'bad', 'ink'];
@@ -186,7 +187,7 @@ export function Funnel({ title, stages }: { title: string; stages: Datum[] }) {
           <div key={s.label} className="flex items-center gap-3 text-[12.5px]">
             <span className="w-32 shrink-0 truncate text-ink-2">{s.label}</span>
             <div className="flex-1">
-              <div className={`mx-auto flex h-7 items-center justify-center rounded text-[12px] font-semibold ${s.suppressed ? 'bg-sunken text-ink-3' : 'bg-accent text-accent-ink'}`} style={{ width: `${w}%`, opacity: s.suppressed ? 1 : 1 - i * 0.08 }}>
+              <div className={`mx-auto flex h-7 items-center justify-center rounded text-[12px] font-semibold ${s.suppressed ? 'bg-sunken text-ink-3' : 'bg-accent text-accent-ink'}`} style={{ width: `${w}%` }}>
                 <span className="num">{s.suppressed ? t('common.suppressedShort') : f.num(s.value)}</span>
               </div>
             </div>
@@ -205,7 +206,7 @@ export function Heatmap({ title, rows, cols, value, rowLabel, colLabel }: { titl
   const hi = Math.max(1, ...all);
   const toneBg: Record<string, string> = { ok: 'bg-ok-bg text-ok', bad: 'bg-bad-bg text-bad', sim: 'bg-sim-bg text-sim', info: 'bg-info-bg text-info', neutral: 'bg-sunken text-ink-3' };
   return (
-    <div className="overflow-x-auto" tabIndex={0} data-testid="heatmap">
+    <ScrollRegion label={title} data-testid="heatmap">
       <table className="border-separate border-spacing-0.5 text-[12px]">
         <caption className="sr-only">{title}</caption>
         <thead>
@@ -252,7 +253,7 @@ export function Heatmap({ title, rows, cols, value, rowLabel, colLabel }: { titl
           ))}
         </tbody>
       </table>
-    </div>
+    </ScrollRegion>
   );
 }
 

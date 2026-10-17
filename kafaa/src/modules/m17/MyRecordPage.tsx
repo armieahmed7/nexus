@@ -185,7 +185,7 @@ function ShareWizard({ items }: { items: RecordItem[] }) {
             <div className="space-y-1">
               <div className="text-[13px] font-semibold">{t('m17.lr.wizard.expiry')}</div>
               <div className="flex flex-wrap gap-1.5" role="radiogroup" aria-label={t('m17.lr.wizard.expiry')}>
-                {[7, 14, 30, 60, 90].map((n) => <button key={n} type="button" role="radio" aria-checked={days === n} className={`chip ${days === n ? 'border-accent bg-accent/10 text-accent' : 'border-line text-ink-2'}`} onClick={() => setDays(n)}>{t('m17.lr.wizard.days', { n: f.num(n) })}</button>)}
+                {[7, 14, 30, 60, 90].map((n) => <button key={n} type="button" role="radio" aria-checked={days === n} className={`chip ${days === n ? 'border-accent bg-accent/10 text-eyebrow' : 'border-line text-ink-2'}`} onClick={() => setDays(n)}>{t('m17.lr.wizard.days', { n: f.num(n) })}</button>)}
               </div>
               <p className="text-[12px] text-ink-3">{t('m17.lr.wizard.expiresOn', { date: f.date(expires) })}</p>
             </div>

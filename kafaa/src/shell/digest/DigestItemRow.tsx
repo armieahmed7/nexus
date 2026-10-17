@@ -37,7 +37,7 @@ export function DigestItemRow({ i: stored, compact = false, onOpen, done = false
   const reasons = itemReasons(i).map((r) => (r.key.startsWith('digest.why.') && typeof r.vars?.days === 'number' ? { ...r, vars: { ...r.vars, days: days(r.vars.days) } } : r));
   return (
     <li className={`flex items-start gap-3 ${compact ? 'py-1.5' : 'rounded-btn border border-line bg-panel p-3'}`} data-testid="digest-item" data-kind={i.kind} data-urgency={i.urgency} data-done={done ? 'true' : undefined}>
-      <span className={`mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full ${done ? 'bg-ok-bg text-ok' : i.urgency === 1 ? 'bg-bad-bg text-bad' : i.urgency === 2 ? 'bg-sim-bg text-sim' : 'bg-accent-soft text-accent'}`}>
+      <span className={`mt-0.5 grid h-7 w-7 shrink-0 place-items-center rounded-full ${done ? 'bg-ok-bg text-ok' : i.urgency === 1 ? 'bg-bad-bg text-bad' : i.urgency === 2 ? 'bg-sim-bg text-sim' : 'bg-accent-soft text-eyebrow'}`}>
         <Icon name={(done ? 'check' : KIND_ICON[i.kind] ?? 'info') as IconName} size={14} />
       </span>
       <div className="min-w-0 flex-1">

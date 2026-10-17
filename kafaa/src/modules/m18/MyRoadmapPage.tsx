@@ -5,7 +5,7 @@
 // Two scenarios compare side by side. Saved scenarios can be shared with the line manager and sent to the development plan
 // (rpc.roadmapToPlan, behind a ConfirmDialog). Indicative durations carry a SAMPLE tag on screen, in print and in the export.
 import { useEffect, useMemo, useState } from 'react';
-import { Page, Section, Card, Async, EmptyState, Callout, StatusPill, StatTile, Grid, Icon, CheckboxField, SelectField, TextField, ConfirmDialog, SimChip, SourceLink, Timeline, downloadText, useFilters, EngineBadge, BenchmarkChips } from '../../ui';
+import { Page, Section, Card, Async, EmptyState, Callout, StatusPill, StatTile, Grid, Icon, CheckboxField, SelectField, TextField, ConfirmDialog, SimChip, SourceLink, Timeline, downloadText, useFilters, EngineBadge, BenchmarkChips, ScrollRegion } from '../../ui';
 import { useAction, useRepo } from '../../data';
 import { useEngine } from '../../data/useEngine'; // direct import: avoids a circular chunk warning in the build
 import { useT, usePick, useFormat, useLang, L, localizeRef } from '../../i18n';
@@ -280,7 +280,7 @@ function Gantt({ rs }: { rs: { label: string; r: Roadmap }[] }) {
   }
   const todayX = pos(new Date().toISOString().slice(0, 10));
   return (
-    <div className="card overflow-x-auto p-3" data-testid="m18-gantt">
+    <ScrollRegion className="card overflow-x-auto p-3" data-testid="m18-gantt">
       <div className="min-w-[760px]">
         <div className="relative ms-[132px] h-6 border-b border-line text-[11px] text-ink-2">
           {years.map((y) => (
@@ -331,7 +331,7 @@ function Gantt({ rs }: { rs: { label: string; r: Roadmap }[] }) {
           <span><span className="me-1 inline-block h-2.5 w-0.5 bg-bad/60 align-middle" aria-hidden />{t('m18.rm.today')}</span>
         </div>
       </div>
-    </div>
+    </ScrollRegion>
   );
 }
 

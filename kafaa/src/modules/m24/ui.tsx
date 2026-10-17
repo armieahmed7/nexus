@@ -75,7 +75,7 @@ export function ActionPill({ status, overdue }: { status: string; overdue?: bool
 export function FactorDots({ value, label }: { value: number; label: string }) {
   const f = useFormat();
   return (
-    <span className="relative inline-flex items-center gap-0.5" title={label} aria-label={label}>
+    <span className="relative inline-flex items-center gap-0.5" title={label} role="img" aria-label={label}>
       {[1, 2, 3, 4, 5].map((i) => <span key={i} aria-hidden className={`h-2 w-2 rounded-full ${i <= value ? (value >= 4 ? 'bg-bad' : value === 3 ? 'bg-sim' : 'bg-accent') : 'bg-sunken ring-1 ring-line'}`} />)}
       <span className="num ms-1 text-[12px] text-ink-2" aria-hidden>{f.num(value)}</span>
     </span>
@@ -156,7 +156,7 @@ export function useRouteExists(path: string): boolean {
 
 export function Chips({ items, empty }: { items: ReactNode[]; empty?: ReactNode }) {
   if (!items.length) return <span className="text-[12.5px] text-ink-3">{empty ?? '—'}</span>;
-  return <span className="flex flex-wrap gap-1.5">{items.map((x, i) => <span key={i} className="chip border-line bg-sunken text-ink-2">{x}</span>)}</span>;
+  return <span className="flex flex-wrap gap-1.5">{items.map((x, i) => <span key={i} className="chip border-line bg-sunken text-ink-2 [&_a]:text-eyebrow">{x}</span>)}</span>;
 }
 
 /** A labelled multi-select of checkboxes in a scrollable box (skills, standards). */

@@ -170,7 +170,7 @@ function Compare({ data }: { data: CareerData }) {
                           const v = lvl(r.id, cid);
                           return (
                             <td key={r.id}>
-                              <span className="flex items-center gap-1" aria-label={t('m01.compare.levelOf', { n: v })}>
+                              <span className="flex items-center gap-1" role="img" aria-label={t('m01.compare.levelOf', { n: v })}>
                                 {[1, 2, 3, 4].map((k) => (
                                   <span key={k} className={`inline-block h-2.5 w-5 rounded-sm ${k <= v ? 'bg-accent' : 'bg-sunken'}`} />
                                 ))}

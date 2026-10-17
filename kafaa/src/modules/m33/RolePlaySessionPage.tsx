@@ -154,7 +154,7 @@ function TurnInput({ step, busy, onAnswer, speakBox, error }: { step: RpStep; bu
     <div className="space-y-4" data-testid="m33-rp-turn" data-turn={turn.id}>
       <TurnHeader step={step} n={step.answered} />
       <div className="flex items-start gap-3">
-        <span className="mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent" aria-hidden="true"><Icon name="user" size={16} /></span>
+        <span className="mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-accent-soft text-eyebrow" aria-hidden="true"><Icon name="user" size={16} /></span>
         <div className="min-w-0 rounded-card rounded-ss-none border border-line bg-panel p-3 text-[14.5px] leading-relaxed" data-testid="m33-rp-prompt">{pick(turn as unknown as Row, 'prompt')}</div>
       </div>
       <Card>

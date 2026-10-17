@@ -4,7 +4,7 @@
 // gap plan resolves to a catalogue skill (future_skill_map). Plans are recorded through the audited saveSkillGapPlan RPC.
 // Benchmarks: IAEA NG-T-3.10 (scenario bands, assess capability, fill plan per gap) and ESCO (one keyspace, published crosswalk).
 import { useMemo, useState } from 'react';
-import { Page, Section, Card, Callout, Async, EmptyState, Grid, StatTile, DataTable, Drawer, ConfirmDialog, SelectField, TextField, TextArea, SimChip, Heatmap, WhyThis, SourceLink, type Column } from '../../ui';
+import { Page, Section, Card, Callout, Async, EmptyState, Grid, StatTile, DataTable, Drawer, ConfirmDialog, SelectField, TextField, TextArea, SimChip, Heatmap, WhyThis, SourceLink, type Column, ScrollRegion } from '../../ui';
 import { useT, usePick, useFormat, useLang, L } from '../../i18n';
 import { useAction, useQuery, useRepo, type RowOf } from '../../data';
 import { useSession } from '../../auth/session';
@@ -94,7 +94,7 @@ function Planner(d: Data) {
       </Async>
       <PlansSection plans={plans} canPlan={canPlan} keyLabel={keyLabel} skName={skName} onEdit={setEdit} onNew={() => setEdit({ scenario, action: 'train', status: 'draft' })} />
       <Section title={t('m11.wf.structureTitle')} description={t('m11.wf.structureDesc')}>
-        <div className="card overflow-x-auto">
+        <ScrollRegion label={t('m11.wf.structureTitle')} className="card overflow-x-auto">
           <table className="table-base w-full text-[13px]">
             <caption className="sr-only">{t('m11.wf.structureTitle')}</caption>
             <thead className="bg-raised"><tr><th scope="col">{t('m11.wf.tech')}</th><th scope="col" className="text-end">{t('m11.wf.bridges')}</th><th scope="col" className="text-end">{t('m11.wf.conceptRoles')}</th></tr></thead>
@@ -102,7 +102,7 @@ function Planner(d: Data) {
               {techs.map((x) => <tr key={x.id}><th scope="row" className="text-start font-medium">{pick(x, 'family')}</th><td className="num text-end">{f.num(new Set(bridges.filter((b) => b.tech_id === x.id).map((b) => b.from_role_id)).size)}</td><td className="num text-end">{f.num(roles.filter((r) => r.tech_ids.includes(x.id)).length)}</td></tr>)}
             </tbody>
           </table>
-        </div>
+        </ScrollRegion>
       </Section>
       {edit && <PlanEditor plan={edit} skills={skills} scenarios={scenarios} map={map} catalogue={catalogue} onClose={() => setEdit(null)} />}
     </>

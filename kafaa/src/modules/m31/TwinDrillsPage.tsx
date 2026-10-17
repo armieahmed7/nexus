@@ -25,7 +25,7 @@ export function useTwins(personId: string | null) {
 
 export function Dots({ n }: { n: number }) {
   const t = useT();
-  return <span className="inline-flex items-center gap-0.5" aria-label={t('m31.tw.difficulty', { n })}>{[1, 2, 3].map((i) => <span key={i} className={`h-1.5 w-3 rounded-full ${i <= n ? 'bg-[rgb(var(--accent))]' : 'bg-sunken'}`} />)}</span>;
+  return <span className="inline-flex items-center gap-0.5" role="img" aria-label={t('m31.tw.difficulty', { n })}>{[1, 2, 3].map((i) => <span key={i} className={`h-1.5 w-3 rounded-full ${i <= n ? 'bg-[rgb(var(--accent))]' : 'bg-sunken'}`} />)}</span>;
 }
 
 export default function TwinDrillsPage() {

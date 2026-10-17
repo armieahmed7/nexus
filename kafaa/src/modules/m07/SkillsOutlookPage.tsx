@@ -143,7 +143,7 @@ function Workbench({ loadReq }: { loadReq: { params: OutlookParams; id: string |
                 <option value="">{t('m07.so.currentFleet')}</option>
                 {(scen.data ?? []).filter((x) => x.kind === 'headcount' || x.kind === 'technology').map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}
               </select>
-              <span className="text-[11.5px] text-ink-3">{t('m07.so.scenarioHint')} <L to="/workforce/scenarios">{t('m07.so.scenarioLink')}</L></span>
+              <span className="text-[11.5px] text-ink-3">{t('m07.so.scenarioHint')} <L to="/workforce/scenarios" className="underline underline-offset-2">{t('m07.so.scenarioLink')}</L></span>
             </label>
             <label className="flex flex-col gap-1">
               <span className="text-[13px] font-semibold">{t('m07.so.param.horizon')}</span>

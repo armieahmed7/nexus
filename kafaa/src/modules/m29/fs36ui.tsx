@@ -119,7 +119,7 @@ export function MeasureLink({ m }: { m: Row }) {
 export function Difficulty({ n }: { n: number }) {
   const t = useT();
   return (
-    <span className="inline-flex items-center gap-1" aria-label={t('m29.dr.difficulty', { n })} title={t('m29.dr.difficulty', { n })}>
+    <span className="inline-flex items-center gap-1" role="img" aria-label={t('m29.dr.difficulty', { n })} title={t('m29.dr.difficulty', { n })}>
       {[1, 2, 3].map((i) => <span key={i} className={`h-2 w-2 rounded-full ${i <= n ? 'bg-[rgb(var(--accent))]' : 'bg-sunken border border-line'}`} />)}
     </span>
   );

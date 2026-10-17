@@ -3,7 +3,7 @@
  * (rpc.careerReadiness, same rules in TS and SQL), and the presentation bits reused by the Navigator, Roadmap and team pages:
  * band and gate pills, the route-by-route gate list, the readiness ring and the opportunity map.
  */
-import { useMemo, type KeyboardEvent } from 'react';
+import { useId, useMemo, type KeyboardEvent } from 'react';
 import { useQuery, useRepo } from '../../data';
 import type { RowOf } from '../../data';
 import { Icon, ProgressRing, StatusPill, type PillTone } from '../../ui';
@@ -198,6 +198,7 @@ export function OpportunityMap({ nodes, edges, onSelect, selected }: { nodes: Ma
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodes, rtl]);
   const dash: Record<string, string | undefined> = { vertical: undefined, lateral: '7 5', cross_functional: '2 5' };
+  const uid = useId().replace(/:/g, '');
   const key = (e: KeyboardEvent, id: string) => {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(id); }
   };
@@ -230,15 +231,18 @@ export function OpportunityMap({ nodes, edges, onSelect, selected }: { nodes: Ma
             const band: Band = n.steps === 0 ? 'current' : n.security ? 'path_only' : (n.r?.band ?? 'stretch');
             const [fill, stroke] = BAND_FILL[band];
             const mine = n.steps === 0;
-            const label = n.label.length > 27 ? `${n.label.slice(0, 26)}…` : n.label;
             const pctText = mine ? t('m18.map.you') : n.security ? t('m18.map.pathOnly') : n.r?.pct != null ? f.pct(n.r.pct, 0) : '…';
+            const sub = mine ? t('m18.map.you') : `${pctText} · ${n.security ? t('m18.map.careerOnly') : t(`m18.band.${band}`, { n: f.num(n.r?.months ?? 0) })}`;
+            // The full role name is drawn and clipped to the box (not cut with "…"), and ends with a space so it does not run into the second
+            // line in the text content: the accessible name then contains every visible word (WCAG 2.5.3).
             return (
-              <g key={n.id} transform={`translate(${p.x},${p.y})`} role="button" tabIndex={0} aria-label={`${n.label}: ${pctText}`} aria-pressed={selected === n.id}
+              <g key={n.id} transform={`translate(${p.x},${p.y})`} role="button" tabIndex={0} aria-label={`${n.label}: ${sub}`} aria-pressed={selected === n.id}
                 className="cursor-pointer outline-none [&:focus-visible>rect]:stroke-[3px]" onClick={() => onSelect(n.id)} onKeyDown={(e) => key(e, n.id)} data-testid="m18-map-node" data-role={n.id} data-band={band}>
                 <rect width={NW} height={NH} rx="10" fill={`rgb(${fill})`} stroke={selected === n.id ? 'rgb(var(--accent))' : `rgb(${stroke})`} strokeWidth={selected === n.id ? 2.5 : 1.2} />
-                <text x={rtl ? NW - 12 : 12} y={21} textAnchor={rtl ? 'end' : 'start'} fontSize="12" fontWeight="600" fill={mine ? 'rgb(var(--accent-ink))' : 'rgb(var(--ink))'}>{label}</text>
-                <text x={rtl ? NW - 12 : 12} y={39} textAnchor={rtl ? 'end' : 'start'} fontSize="11" className="num" fill={mine ? 'rgb(var(--accent-ink))' : 'rgb(var(--ink-2))'}>
-                  {mine ? t('m18.map.you') : `${pctText} · ${n.security ? t('m18.map.careerOnly') : t(`m18.band.${band}`, { n: f.num(n.r?.months ?? 0) })}`}
+                <clipPath id={`${uid}-${n.id}`}><rect x={8} width={NW - 16} height={NH} /></clipPath>
+                <text x={rtl ? NW - 12 : 12} y={21} textAnchor={rtl ? 'end' : 'start'} fontSize="12" fontWeight="600" fill={mine ? 'rgb(var(--accent-ink))' : 'rgb(var(--ink))'} clipPath={`url(#${uid}-${n.id})`}>{n.label} </text>
+                <text x={rtl ? NW - 12 : 12} y={39} textAnchor={rtl ? 'end' : 'start'} fontSize="11" className="num" fill={mine ? 'rgb(var(--accent-ink))' : 'rgb(var(--ink-2))'} clipPath={`url(#${uid}-${n.id})`}>
+                  {sub}
                 </text>
               </g>
             );

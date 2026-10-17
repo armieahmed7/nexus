@@ -83,7 +83,7 @@ describe('FS36/FS37 pages', () => {
     await renderPage(<DrillPage />, { persona: 'k-ro', path: '/my/ai-fluency/drills/ad-valve-lineup', route: '/my/ai-fluency/drills/:id' });
     const doc = await screen.findByTestId('m29-drill-doc', {}, W);
     expect(doc.getAttribute('data-synthetic')).toBe('true');
-    expect(doc.textContent).toMatch(/SYNTHETIC/);
+    expect(doc.querySelector('[data-wm]')?.getAttribute('data-wm')).toMatch(/SYNTHETIC/); // the watermark (drawn by CSS)
     const key = T.ai_drill_keys.find((k) => k.drill_id === 'ad-valve-lineup')!;
     for (const e of key.errors) {
       const seg = screen.getAllByTestId('m29-drill-seg').find((x) => x.getAttribute('data-seg') === e.segment_id)!;

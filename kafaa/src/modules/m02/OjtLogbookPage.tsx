@@ -153,7 +153,7 @@ function MyPractice({ d, online, onQueued }: { d: OjtData; online: boolean; onQu
       </Grid>
       <div className="flex flex-wrap gap-1.5" role="group" aria-label={t('m02.ojt.standards')}>
         {groups.map((x) => (
-          <button key={x.std.id} type="button" aria-pressed={x.std.id === g.std.id} className={`chip ${x.std.id === g.std.id ? 'border-accent bg-accent/10 text-accent' : 'border-line text-ink-2'}`} onClick={() => setStdId(x.std.id)} data-testid="m02-ojt-std">
+          <button key={x.std.id} type="button" aria-pressed={x.std.id === g.std.id} className={`chip ${x.std.id === g.std.id ? 'border-accent bg-accent/10 text-eyebrow' : 'border-line text-ink-2'}`} onClick={() => setStdId(x.std.id)} data-testid="m02-ojt-std">
             <span className="num">{x.std.code}</span>
           </button>
         ))}

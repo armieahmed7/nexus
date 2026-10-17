@@ -103,7 +103,7 @@ export function FutureSkillChips({ ids, skills, levels }: { ids: string[]; skill
           <li key={id} className={`chip ${future ? LIFE_TONE[s?.lifecycle ?? 'stable'] ?? LIFE_TONE.stable : 'border-line bg-panel text-ink-2'}`} title={future ? t(`m20.fs.lifecycle.${s?.lifecycle ?? 'stable'}`) : undefined}>
             {future && <Icon name="sparkle" size={11} />}
             <span>{s ? pick(s, 'name') : id}</span>
-            {levels && <span className="num opacity-75">{t('m20.fs.levelNow', { n: f.num(levels.get(id) ?? 0) })}</span>}
+            {levels && <span className="num">{t('m20.fs.levelNow', { n: f.num(levels.get(id) ?? 0) })}</span>}
           </li>
         );
       })}
