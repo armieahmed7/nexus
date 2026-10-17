@@ -27,6 +27,8 @@
   "rowsCount": "{n} صف",
   "exportCsv": "تصدير CSV",
   "noRows": "لا توجد صفوف مطابقة",
+  "openRowHeader": "فتح",
+  "openRow": "فتح {label}",
   "pageOf": "الصفحة {page} من {pages}",
   "prev": "السابق",
   "next": "التالي",
