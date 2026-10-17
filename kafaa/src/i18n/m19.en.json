@@ -121,7 +121,6 @@
     "noneBody": "Set a realistic number of learning hours a week if it helps you plan. It is optional.",
     "set": "Set a goal",
     "change": "Change",
-    "week": "Last 7 days: {n} h of {goal} h",
     "monthFit": "This month's list is about {feed} h; your goal is about {month} h a month.",
     "private": "Only you can see your goal.",
     "modalTitle": "Weekly learning goal",
@@ -130,7 +129,31 @@
     "noStreaks": "There are no streaks or reminders that punish a missed week. Training hours are tracked, not maximised.",
     "saved": "Goal saved",
     "clear": "Remove goal",
-    "cleared": "Goal removed"
+    "cleared": "Goal removed",
+    "weekOf": {
+      "zero": "This week: {done} of {n} hours recorded",
+      "one": "This week: {done} of {n} hour recorded",
+      "two": "This week: {done} of {n} hours recorded",
+      "few": "This week: {done} of {n} hours recorded",
+      "many": "This week: {done} of {n} hours recorded",
+      "other": "This week: {done} of {n} hours recorded"
+    },
+    "nHours": {
+      "zero": "{n} hours",
+      "one": "{n} hour",
+      "two": "{n} hours",
+      "few": "{n} hours",
+      "many": "{n} hours",
+      "other": "{n} hours"
+    },
+    "weekLoading": "This week: reading your learning record…",
+    "weekReached": "You have reached this week's goal. Nothing more is needed for it.",
+    "weekLeft": "{hours} left, with {days} to go this week (Monday to Sunday).",
+    "fitsTitle": "Fits in the time left (required items first)",
+    "recordedNote": "Recorded hours come from your own learning record; some activities record no time.",
+    "recordLink": "My learning record",
+    "barsLabel": "Recorded hours in the last {n} weeks",
+    "barWeek": "Week of {date}: {hours}"
   },
   "focus": {
     "eyebrow": "Planning for",

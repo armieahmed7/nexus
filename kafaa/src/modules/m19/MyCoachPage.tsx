@@ -55,7 +55,7 @@ export default function MyCoachPage() {
           <div className="space-y-6">
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
               <FocusCard result={result} />
-              <GoalCard result={result} feedHours={hours} />
+              <GoalCard result={result} feedHours={hours} feed={feed} />
               <Card eyebrow={t('m19.coach.monthEyebrow')} title={t('m19.coach.monthTitle', { n: f.num(feed.length) })}>
                 <ul className="space-y-1.5 text-[13.5px] text-ink-2" data-testid="m19-month-summary">
                   <li className="flex items-center gap-2"><Icon name="alert" size={14} className="text-bad" />{t('m19.coach.monthPinned', { n: f.num(feed.filter((c) => c.pinned).length) })}</li>
