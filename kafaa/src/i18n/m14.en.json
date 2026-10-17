@@ -62,6 +62,13 @@
       "unknown_persona": "Unknown persona"
     },
     "signedInAs": "Signed in as {who}",
+    "suggested": {
+      "title": "Suggested for what you were doing",
+      "body": "These role cards can use the page you were on: {page}.",
+      "bodyAny": "These role cards can continue where you were.",
+      "showAll": "Show all role cards",
+      "hideOthers": "Hide the other role cards"
+    },
     "groups": {
       "kafaa": "Kafa'a personas",
       "staff": "ENEC NEXUS role cards: managers and authorities",

@@ -14,6 +14,9 @@ import { Page, Callout } from '../../ui/Page';
 import { Icon } from '../../ui/Icon';
 import { useToast } from '../../ui/Toast';
 import { config } from '../../config';
+import { routeForPath } from '../../routes/registry';
+import { linkPath } from '../../routes/linkAccess';
+import { suggestedPersonas } from './suggestCards';
 
 const GROUPS: { id: string; match: (p: PersonaCard) => boolean }[] = [
   { id: 'kafaa', match: (p) => !p.nexus && p.kind === 'staff' },
@@ -35,17 +38,25 @@ export default function SignInPage() {
   const [q, setQ] = useState('');
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
+  // PUB-01: the cards that can open (or act on) the page the visitor came from go first; filtering searches every card
+  const suggested = useMemo(() => suggestedPersonas(next, s.personas), [next, s.personas]);
+  const target = useMemo(() => { const p = next ? linkPath(next) : null; return p ? routeForPath(p)?.def ?? null : null; }, [next]);
+  const filtering = q.trim() !== '';
 
-  const grouped = useMemo(() => {
+  const groupsOf = (pass: (p: PersonaCard) => boolean) => {
     const term = q.trim().toLowerCase();
-    const list = s.personas.filter((p) => !term || [p.title_en, p.title_ar, p.persona, ...p.roles.map((r) => ROLE_LABELS[r]?.en ?? r)].join(' ').toLowerCase().includes(term));
+    const list = s.personas.filter((p) => pass(p) && (!term || [p.title_en, p.title_ar, p.persona, ...p.roles.map((r) => ROLE_LABELS[r]?.en ?? r)].join(' ').toLowerCase().includes(term)));
     const used = new Set<string>();
     return GROUPS.map((g) => {
       const items = list.filter((p) => !used.has(p.persona) && g.match(p));
       items.forEach((p) => used.add(p.persona));
       return { id: g.id, items };
     }).filter((g) => g.items.length);
-  }, [s.personas, q]);
+  };
+  const split = !!suggested && !filtering;
+  const grouped = split ? groupsOf((p) => suggested!.has(p.persona)) : groupsOf(() => true);
+  const others = split ? groupsOf((p) => !suggested!.has(p.persona)) : [];
 
   const choose = async (p: PersonaCard) => {
     setError(null);
@@ -60,6 +71,42 @@ export default function SignInPage() {
     const dest = next && next.startsWith('/') && !next.startsWith('//') ? next : landing(p.roles);
     nav(dest);
   };
+
+  const renderGroup = (g: { id: string; items: PersonaCard[] }) => (
+    <section key={g.id} className="space-y-2">
+      <h2 className="text-[16px] font-semibold">{t(`m14.signIn.groups.${g.id}`)}</h2>
+      <p className="text-[13px] text-ink-2">{t(`m14.signIn.groupHelp.${g.id}`)}</p>
+      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {g.items.map((p) => {
+          const current = s.identity.personaId === p.persona;
+          return (
+            <li key={p.persona}>
+              <button
+                className={`card flex h-full w-full flex-col items-start gap-2 p-3 text-start transition hover:border-accent ${current ? 'border-accent ring-2 ring-accent/20' : ''}`}
+                onClick={() => choose(p)}
+                disabled={busy !== null}
+                data-testid={`persona-${p.persona}`}
+                aria-describedby={`pd-${p.persona}`}
+              >
+                <div className="flex w-full items-start justify-between gap-2">
+                  <span className="font-semibold">{lang === 'ar' ? p.title_ar : p.title_en}</span>
+                  {p.nexus ? <span className="chip border-accent/30 bg-accent-soft text-eyebrow">NEXUS</span> : <span className="chip border-accent/30 bg-accent-soft text-eyebrow" data-testid={`persona-badge-${p.persona}`}>{t('m14.signIn.kafaaBadge')}</span>}
+                </div>
+                <div id={`pd-${p.persona}`} className="flex flex-wrap gap-1">
+                  {p.roles.map((r: PlatformRole) => (
+                    <span key={r} className="chip border-line bg-sunken text-ink-2">
+                      {roleLabel(r, lang)}
+                    </span>
+                  ))}
+                </div>
+                <div className="caps mt-auto">{busy === p.persona ? t('common.working') : current ? t('m14.signIn.current') : (scopeSummary(t, p.scopes) || ' ')}</div>
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </section>
+  );
 
   return (
     <Page title={t('m14.signIn.title')} intro={t('m14.signIn.intro')} eyebrow={t('shell.brand')}>
@@ -89,41 +136,21 @@ export default function SignInPage() {
           </button>
         )}
       </div>
-      {grouped.map((g) => (
-        <section key={g.id} className="space-y-2">
-          <h2 className="text-[16px] font-semibold">{t(`m14.signIn.groups.${g.id}`)}</h2>
-          <p className="text-[13px] text-ink-2">{t(`m14.signIn.groupHelp.${g.id}`)}</p>
-          <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {g.items.map((p) => {
-              const current = s.identity.personaId === p.persona;
-              return (
-                <li key={p.persona}>
-                  <button
-                    className={`card flex h-full w-full flex-col items-start gap-2 p-3 text-start transition hover:border-accent ${current ? 'border-accent ring-2 ring-accent/20' : ''}`}
-                    onClick={() => choose(p)}
-                    disabled={busy !== null}
-                    data-testid={`persona-${p.persona}`}
-                    aria-describedby={`pd-${p.persona}`}
-                  >
-                    <div className="flex w-full items-start justify-between gap-2">
-                      <span className="font-semibold">{lang === 'ar' ? p.title_ar : p.title_en}</span>
-                      {p.nexus ? <span className="chip border-accent/30 bg-accent-soft text-eyebrow">NEXUS</span> : <span className="chip border-accent/30 bg-accent-soft text-eyebrow" data-testid={`persona-badge-${p.persona}`}>{t('m14.signIn.kafaaBadge')}</span>}
-                    </div>
-                    <div id={`pd-${p.persona}`} className="flex flex-wrap gap-1">
-                      {p.roles.map((r: PlatformRole) => (
-                        <span key={r} className="chip border-line bg-sunken text-ink-2">
-                          {roleLabel(r, lang)}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="caps mt-auto">{busy === p.persona ? t('common.working') : current ? t('m14.signIn.current') : (scopeSummary(t, p.scopes) || ' ')}</div>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-      ))}
+      {split && (
+        <div className="rounded-card border border-accent/30 bg-accent-soft/40 p-3" data-testid="signin-suggested">
+          <h2 className="text-[16px] font-semibold">{t('m14.signIn.suggested.title')}</h2>
+          <p className="text-[13px] text-ink-2">{target ? t('m14.signIn.suggested.body', { page: t(`${target.module.toLowerCase()}.routes.${target.id}.title`) }) : t('m14.signIn.suggested.bodyAny')}</p>
+        </div>
+      )}
+      {grouped.map(renderGroup)}
+      {split && others.length > 0 && (
+        <div>
+          <button type="button" className="btn-outline" aria-expanded={showAll} aria-controls="signin-other-cards" onClick={() => setShowAll((v) => !v)} data-testid="signin-show-all">
+            {showAll ? t('m14.signIn.suggested.hideOthers') : t('m14.signIn.suggested.showAll')}
+          </button>
+        </div>
+      )}
+      {split && others.length > 0 && <div id="signin-other-cards" className="space-y-6" hidden={!showAll} data-testid="signin-other-cards">{others.map(renderGroup)}</div>}
     </Page>
   );
 }
