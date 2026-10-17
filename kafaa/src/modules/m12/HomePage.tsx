@@ -1,5 +1,5 @@
-// M12 · Home: the front door of the upskilling platform. A clear promise, the four-step skills journey (discover, learn,
-// prove, grow), the open future-skills frameworks, entry points by audience, and why the records can be trusted.
+// M12 · Home: the front door of the upskilling platform. A clear promise (with "Find my route" beside the main call to action),
+// the four-step skills journey (discover, learn, prove, grow), the open future-skills frameworks, entry points by audience, and why the records can be trusted.
 // No plant statistics here (those live on /about). Every link is a registered route: public ones open directly, staff ones
 // go through /sign-in?next=… for signed-out visitors (see HOME_LINKS, checked by tests/unit/home-refresh.test.tsx).
 import { useEffect } from 'react';
@@ -139,6 +139,10 @@ export default function HomePage() {
                 {t('m12.home.ctaLearn')}
                 <Icon name="chevron" size={14} />
               </L>
+              <L to="/start" className="btn-outline h-10 border-accent px-4 text-[14px] text-accent" data-testid="m12-cta-route">
+                <Icon name="search" size={14} />
+                {t('m12.home.ctaRoute')}
+              </L>
               {signedIn ? (
                 <L to="/my" className="btn-outline h-10 px-4 text-[14px]" data-testid="m12-cta-my">
                   {t('m12.home.ctaMy')}
@@ -225,7 +229,17 @@ export default function HomePage() {
       </Section>
 
       {/* Audiences */}
-      <Section title={t('m12.home.audiencesTitle')} description={t('m12.home.audiencesIntro')} id="audiences">
+      <Section
+        title={t('m12.home.audiencesTitle')}
+        description={t('m12.home.audiencesIntro')}
+        id="audiences"
+        actions={
+          <L to="/start" className="inline-flex items-center gap-1 text-[13px] font-semibold" data-testid="m12-aud-route">
+            {t('m12.home.audiencesRoute')}
+            <Icon name="chevron" size={12} />
+          </L>
+        }
+      >
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" data-testid="m12-audiences">
           {AUDIENCES.map((a) => (
             <article key={a.id} className="flex flex-col border-t-2 border-accent pt-4" data-audience={a.id}>

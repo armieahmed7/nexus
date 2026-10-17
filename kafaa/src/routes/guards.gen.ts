@@ -16,6 +16,8 @@ export const ROUTE_GUARDS: [string, GuardLite][] = [
   ["/legal/:page", {}],
   ["/help", {}],
   ["/help/glossary", {}],
+  ["/future-skills", {}],
+  ["/start", {}],
   ["/help/:guide", {}],
   ["/careers", {}],
   ["/careers/roles/:slug", {}],

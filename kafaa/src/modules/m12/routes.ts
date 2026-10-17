@@ -18,5 +18,9 @@ export const routes: RouteDef[] = [
   // Help centre (2026-10-17): static bilingual guides and the future-skills glossary (src/modules/m12/help/*), public, in the Help menu with the FAQ.
   { id: 'help', path: '/help', module: 'M12', zone: 'public', guard: {}, nav: { lens: 'public', section: 'help', order: 70 }, parent: 'home', spec: "M12 help centre: guides and glossary", component: lazy(() => import('./HelpPage')) },
   { id: 'help-glossary', path: '/help/glossary', module: 'M12', zone: 'public', guard: {}, nav: { lens: 'public', section: 'help', order: 71 }, parent: 'help', spec: "M12 future-skills glossary A-Z", component: lazy(() => import('./HelpGlossaryPage')) },
+  // Orientation (2026-10-17): the future-skills programme explainer (Learn menu) and "Find my route" (Help menu, homepage call to
+  // action). Static bilingual content in src/modules/m12/orient/*; the route's answers live in the URL query, nothing is stored.
+  { id: 'future-skills', path: '/future-skills', module: 'M12', zone: 'public', guard: {}, nav: { lens: 'public', section: 'learn', order: 29 }, parent: 'home', spec: "M12 future-skills programme explainer: twelve themes", component: lazy(() => import('./FutureSkillsPage')) },
+  { id: 'start', path: '/start', module: 'M12', zone: 'public', guard: {}, nav: { lens: 'public', section: 'help', order: 69 }, parent: 'home', spec: "M12 find my route: questionnaire to a printable route", component: lazy(() => import('./StartPage')) },
   { id: 'help-guide', path: '/help/:guide', module: 'M12', zone: 'public', guard: {}, parent: 'help', spec: "M12 help guide", component: lazy(() => import('./HelpGuidePage')) },
 ];
