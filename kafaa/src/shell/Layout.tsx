@@ -16,6 +16,7 @@ import { GlobalSearch } from './GlobalSearch';
 import { Notifications } from './Notifications';
 import { DalilLauncher } from './DalilLauncher';
 import { PageHelp } from './PageHelp';
+import { RouteAnnouncer } from './RouteAnnouncer';
 import { routeTitle, isRehearsal } from './util';
 import { useToast } from '../ui/Toast';
 import { useDismiss } from './useDismiss';
@@ -61,6 +62,8 @@ export function Layout() {
       <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:start-2 focus:top-2 focus:z-[80] focus:rounded focus:bg-panel focus:p-2">
         <SkipLabel />
       </a>
+      {/* ahead of <main> on purpose: its effect must run before the new page's (see RouteAnnouncer) */}
+      <RouteAnnouncer />
       <div className="flex min-h-screen flex-col bg-bg text-ink">
         <Header lens={lens} onMenu={() => setMenuOpen((v) => !v)} />
         <RehearsalBanner />
