@@ -226,9 +226,11 @@ export function l3ToSchedule(comps: Completion[], courses: Row[], surveys: Row[]
 }
 
 // ───────────── committee pack (export rows; suppressed cells print "<10")
+/** What a suppressed cell holds in the CSV export. On screen it shows as t('common.suppressedShort') ("أقل من 10" in Arabic). */
+export const SUPPRESSED_CELL = '<10';
 export interface PackRow { course: string; code: string; committee: string; completions: string; l1_n: string; relevance: string; recommend: string; l2_pairs: string; gain: string; l3_done: string; applied: string; kpis: string; redesign: string }
 export function packRows(cards: CourseCard[], label: (courseId: string) => { code: string; title: string }, kpiText: (k: KpiView) => string, yes: string, no: string): PackRow[] {
-  const s = (v: number | null, f?: (n: number) => string) => (v === null ? '<10' : f ? f(v) : String(v));
+  const s = (v: number | null, f?: (n: number) => string) => (v === null ? SUPPRESSED_CELL : f ? f(v) : String(v));
   return cards.map((c) => ({
     course: label(c.course_id).title, code: label(c.course_id).code, committee: c.committee, completions: s(c.completions),
     l1_n: s(c.l1.n), relevance: s(c.l1.items.relevance, (n) => (n / 10).toFixed(1)), recommend: s(c.l1.recommend, (n) => `${n}%`),
