@@ -49,7 +49,7 @@
   "search": {
     "open": "Search",
     "title": "Search Kafa'a",
-    "placeholder": "Search pages, guides, roles, programmes, courses, partners",
+    "placeholder": "Search pages, skills, guides, roles, courses and FAQs",
     "none": "No results",
     "kind": {
       "page": "Page",
@@ -59,6 +59,33 @@
       "partner": "Partner",
       "term": "Term",
       "guide": "Guide"
+    },
+    "label": "Search Kafa'a",
+    "hint": "Type in English or Arabic. Arrow keys move through the results, Enter opens one, Escape closes.",
+    "results": "Search results",
+    "suggested": "Suggested pages",
+    "groupHeading": "{label} ({n})",
+    "loading": "Loading search…",
+    "countOne": "1 result",
+    "countMany": "{n} results",
+    "noneFor": "No results for “{q}”",
+    "noneHint": "Try fewer or different words, or:",
+    "tryHelp": "Search the Help centre for “{q}”",
+    "tryFaq": "Search the FAQ for “{q}”",
+    "askDalil": "Ask Dalil: “{q}”",
+    "group": {
+      "page": "Pages",
+      "guide": "Guides",
+      "term": "Glossary terms",
+      "skill": "Skills",
+      "role": "Roles",
+      "programme": "Programmes",
+      "course": "Courses",
+      "faq": "FAQ",
+      "framework": "Skills frameworks",
+      "partner": "Partners",
+      "news": "News",
+      "benchmark": "International benchmarks"
     }
   },
   "notifications": {

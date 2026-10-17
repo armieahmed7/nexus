@@ -2,7 +2,7 @@
  * Kafa'a shell: header (brand, search, language, notices, backend, account), lens switcher,
  * role-aware navigation, breadcrumbs, footer with the concept disclaimer, Rehearsal chip and the Dalil launcher.
  */
-import { Suspense, useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { Suspense, useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useSession, roleLabel } from '../auth/session';
 import { L, NL, useI18n, useNav, useT } from '../i18n';
@@ -105,6 +105,8 @@ function Header({ lens, onMenu }: { lens: Lens; onMenu: () => void }) {
   const { lang, setLang } = useI18n();
   const s = useSession();
   const [searchOpen, setSearchOpen] = useState(false);
+  const searchBtn = useRef<HTMLButtonElement>(null);
+  const closeSearch = useCallback(() => setSearchOpen(false), []); // stable: a new function each render re-ran the dialog's focus trap
   const [theme, setTheme] = useTheme();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -127,7 +129,7 @@ function Header({ lens, onMenu }: { lens: Lens; onMenu: () => void }) {
         {/* No "Back to NEXUS" link: Kafa'a stands on its own as the upskilling platform (homepage refresh, 2026-10-13). */}
         <Brand />
         <div className="ms-auto flex min-w-0 items-center gap-0.5 sm:gap-1">
-          <button className="btn-ghost btn-sm" onClick={() => setSearchOpen(true)} aria-label={t('shell.search.open')} data-testid="open-search">
+          <button ref={searchBtn} className="btn-ghost btn-sm" onClick={() => setSearchOpen(true)} aria-label={t('shell.search.open')} aria-haspopup="dialog" data-testid="open-search">
             <Icon name="search" />
             <span className="hidden md:inline">{t('shell.search.open')}</span>
             <kbd className="ms-1 hidden rounded border border-line px-1 text-[10px] text-ink-3 md:inline">/</kbd>
@@ -144,7 +146,7 @@ function Header({ lens, onMenu }: { lens: Lens; onMenu: () => void }) {
       </div>
       <div className="frame-line h-[2px]" />
       <LensSwitcher lens={lens} />
-      <GlobalSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
+      <GlobalSearch open={searchOpen} onClose={closeSearch} triggerRef={searchBtn} />
     </header>
   );
 }
