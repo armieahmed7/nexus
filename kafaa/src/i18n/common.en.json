@@ -332,5 +332,59 @@
   "designs": {
     "natrium": "Natrium; lead-cooled fast reactor",
     "ap1000": "AP1000 and others"
+  },
+  "ics": {
+    "add": "Add to calendar",
+    "addAll": "Add all to calendar",
+    "addOne": "Add {title} to calendar",
+    "addUpcoming": "Add everything coming up to calendar",
+    "addShown": "Add shown sessions to calendar",
+    "addDue": "Add due dates to calendar",
+    "addExpiries": "Add expiries to calendar",
+    "addDates": "Add these dates to calendar",
+    "addShownItems": "Add shown items to calendar",
+    "nEvents": {
+      "zero": "{n} events",
+      "one": "{n} event",
+      "two": "{n} events",
+      "few": "{n} events",
+      "many": "{n} events",
+      "other": "{n} events"
+    },
+    "saved": "Calendar file saved ({n})",
+    "savedDetail": "Open the .ics file to add it to Outlook or your calendar app. Kafa'a keeps no copy and sends nothing.",
+    "note": "From Kafa'a (demo, synthetic data). Your calendar copy does not update by itself; check the page for the latest details.",
+    "notFanr": "Prepared in Kafa'a for the named role to review and send through official channels. Kafa'a sends nothing to FANR.",
+    "mirror": "As recorded in {system}. Kafa'a mirrors this date and never decides it.",
+    "nothing": "Nothing coming up to add to your calendar.",
+    "upcomingHint": "Training sessions, assessments, plan due dates, expiries and licence dates, as one calendar file.",
+    "cal": {
+      "myLearning": "Kafa'a: my training sessions",
+      "myAssessments": "Kafa'a: my assessments",
+      "myPlan": "Kafa'a: my development plan",
+      "myQuals": "Kafa'a: my qualification expiries",
+      "myLicence": "Kafa'a: my licence dates",
+      "licensing": "Kafa'a: licensing obligations and exam milestones",
+      "schedule": "Kafa'a: training sessions",
+      "upcoming": "Kafa'a: everything coming up for me"
+    },
+    "sum": {
+      "session": "Training: {title}",
+      "assessment": "Assessment: {title}",
+      "due": "Due: {title}",
+      "expiry": "Expires: {title}",
+      "licence": "Licence: {title}",
+      "obligation": "Due: {title}"
+    },
+    "desc": {
+      "course": "Course {code}",
+      "kind": "Type: {kind}",
+      "crew": "Crew {crew}",
+      "rules": "{n} questions · {min} minutes · pass mark {pass}",
+      "rule": "Rule: {ref}",
+      "owner": "Owner: {role}",
+      "plan": "Development plan towards {role}",
+      "status": "Status: {status}"
+    }
   }
 }

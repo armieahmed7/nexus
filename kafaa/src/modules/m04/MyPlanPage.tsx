@@ -1,13 +1,15 @@
 // /my/plan (M04): individual development plan towards a target role. Skills gap from the competency framework (M02),
 // suggested courses, activities and milestones, submission for line-manager approval. Managers approve their team's plans here.
 import { useMemo, useState } from 'react';
-import { Page, Grid, Card, Section, KeyValue, Async, EmptyState, ConfirmDialog, Modal, DataTable, ProgressRing, Callout, Icon, SelectField, TextField, TextArea, useForm, required, maxLen, Skeleton, WhyThis } from '../../ui';
+import { Page, Grid, Card, Section, KeyValue, Async, EmptyState, ConfirmDialog, Modal, DataTable, ProgressRing, Callout, Icon, SelectField, TextField, TextArea, useForm, required, maxLen, Skeleton, WhyThis, AddToCalendar } from '../../ui';
 import { useAction, useQuery, useRepo } from '../../data';
 import type { DevPlansRow, PlanActivitiesRow } from '../../data/types';
 import { L, useFormat, usePick, useT } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { Chip, G2Pill, useLabels, usePeople } from './ui';
 import { rankPlanSuggestions } from './plan';
+import { useCalendarEvents } from '../../shell/calendar/useCalendarEvents'; // SHR-01
+import { upcomingOnly } from '../../domain/ics';
 
 const KINDS = ['course', 'ojt', 'mentoring', 'project', 'assessment', 'reading'] as const;
 
@@ -67,6 +69,7 @@ function PlanView({ plan, acts }: { plan: DevPlansRow; acts: PlanActivitiesRow[]
   const run = useAction();
   const s = useSession();
   const people = usePeople();
+  const cal = useCalendarEvents();
   const [adding, setAdding] = useState<{ kind: string; title_en: string; title_ar: string; course_id: string | null } | null>(null);
   const [submit, setSubmit] = useState(false);
   const me = s.identity.personId ?? '';
@@ -147,7 +150,10 @@ function PlanView({ plan, acts }: { plan: DevPlansRow; acts: PlanActivitiesRow[]
               </Section>
             )}
 
-            <Section title={t('m04.plan.activities')} actions={editable ? <button className="btn-primary btn-sm" onClick={() => setAdding({ kind: 'ojt', title_en: '', title_ar: '', course_id: null })} data-testid="m04-plan-add"><Icon name="plus" size={14} />{t('m04.plan.addActivity')}</button> : null}>
+            <Section title={t('m04.plan.activities')} actions={<div className="flex flex-wrap gap-2">
+              <AddToCalendar events={upcomingOnly(acts.filter((a) => a.status !== 'done').map((a) => cal.planActivity(a, '/my/plan', role ? pick(role, 'title') : undefined)).filter((e) => e !== null))} file="my-plan-due-dates" calendarName={t('common.ics.cal.myPlan')} label={t('common.ics.addDue')} testId="m04-plan-ics" />
+              {editable && <button className="btn-primary btn-sm" onClick={() => setAdding({ kind: 'ojt', title_en: '', title_ar: '', course_id: null })} data-testid="m04-plan-add"><Icon name="plus" size={14} />{t('m04.plan.addActivity')}</button>}
+            </div>}>
               <DataTable rows={acts} rowKey={(r) => r.id} searchable={false} csvName="development-plan" empty={t('m04.plan.noActivities')} initialSort={{ key: 'due', dir: 'asc' }} columns={[
                 { key: 'kind', header: t('m04.common.kind'), value: (r) => lab.activity(r.kind) },
                 { key: 'title', header: t('m04.common.title'), value: (r) => pick(r, 'title'), render: (r) => r.course_id ? <L to={`/learn/course/${r.course_id}`}>{pick(r, 'title')}</L> : pick(r, 'title') },

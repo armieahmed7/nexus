@@ -2,13 +2,15 @@
 // acknowledgement; expiry timeline; gap analysis for my role (and a target role); my expiry notices.
 // Mirror of the training records system: Kafa'a never sets a qualification status by itself.
 import { useMemo, useState } from 'react';
-import { Page, Section, Card, Async, EmptyState, StatTile, Grid, Tabs, Timeline, Callout, StatusPill, SelectField, DataTable, SimChip } from '../../ui';
+import { Page, Section, Card, Async, EmptyState, StatTile, Grid, Tabs, Timeline, Callout, StatusPill, SelectField, DataTable, SimChip, AddToCalendar } from '../../ui';
 import { useQuery, useRepo } from '../../data';
 import { useT, usePick, useFormat, L } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { displayView } from './quals';
 import { ReadBeforeRequal } from '../m24/links'; // W3 integration: F21 assets read before requalification
 import { useQualData, QualPill, MirrorNote, ExpiryText, TaskTable, QualGapTable, NoticeChip, type QualData } from './shared';
+import { useCalendarEvents } from '../../shell/calendar/useCalendarEvents'; // SHR-01
+import { upcomingOnly } from '../../domain/ics';
 
 export default function MyQualsPage() {
   const t = useT();
@@ -28,6 +30,7 @@ function MyQuals({ d, me, roleId }: { d: QualData; me: string; roleId: string | 
   const f = useFormat();
   const repo = useRepo();
   const [target, setTarget] = useState('');
+  const cal = useCalendarEvents();
   const recs = d.records.filter((r) => r.person_id === me);
   const views = recs.map((r) => ({ r, v: displayView(r) }));
   const count = (pred: (v: ReturnType<typeof displayView>) => boolean) => views.filter((x) => pred(x.v)).length;
@@ -115,7 +118,14 @@ function MyQuals({ d, me, roleId }: { d: QualData; me: string; roleId: string | 
           {
             id: 'timeline',
             label: t('m02.my.tabTimeline'),
-            content: timeline.length ? <Timeline items={timeline} /> : <EmptyState title={t('m02.my.noExpiries')} />,
+            content: timeline.length ? (
+              <div className="space-y-3">
+                <div className="flex justify-end">
+                  <AddToCalendar events={upcomingOnly(views.filter((x) => !x.v.masked).map((x) => cal.qualExpiry(x.r, d.stdById.get(x.r.standard_id), '/my/quals')).filter((e) => e !== null))} file="my-qualification-expiries" calendarName={t('common.ics.cal.myQuals')} label={t('common.ics.addExpiries')} testId="m02-quals-ics" />
+                </div>
+                <Timeline items={timeline} />
+              </div>
+            ) : <EmptyState title={t('m02.my.noExpiries')} />,
           },
           {
             id: 'gap',
