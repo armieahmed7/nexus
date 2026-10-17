@@ -9,6 +9,8 @@ import { useSession } from '../../auth/session';
 import { licenceView, proficiency, quarterOf, todayIso, daysBetween } from '../../domain/rules';
 import { displayView, ackState, type EvalLite } from './quals';
 import { useQualData, PersonName, QualPill, type QualData, type Ev } from './shared';
+import { scopeAssignments, scopePeople } from '../../data/scope'; // MGR-01: the team is the people RLS puts in my scope
+import type { Identity } from '../../data/types';
 
 export default function TeamPage() {
   const t = useT();
@@ -24,13 +26,13 @@ export default function TeamPage() {
         </L>
       }
     >
-      <Async state={q}>{(d) => <Team d={d} me={s.identity.personId ?? ''} />}</Async>
+      <Async state={q}>{(d) => <Team d={d} me={s.identity.personId ?? ''} identity={s.identity} />}</Async>
       {s.can('licence', ['Scope']) && <CrewLicences />}
     </Page>
   );
 }
 
-function Team({ d, me }: { d: QualData; me: string }) {
+function Team({ d, me, identity }: { d: QualData; me: string; identity: Identity }) {
   const t = useT();
   const pick = usePick();
   const f = useFormat();
@@ -38,7 +40,11 @@ function Team({ d, me }: { d: QualData; me: string }) {
   const act = useAction();
   const [sweep, setSweep] = useState(false);
   const [ack, setAck] = useState<Ev | null>(null);
-  const team = d.people.filter((p) => p.id !== me && p.kind === 'staff');
+  // MGR-01: the directory (people) is readable far beyond a manager's scope, so "every person I can read" counted the whole company
+  // (106 for a 7-person crew). The team is the people kafaa_scope_people('qual_records') admits, the same set RLS returns records for.
+  const scope = useMemo(() => scopePeople(identity, d.people, 'qual_records'), [identity, d.people]);
+  const scopeName = useScopeName(identity);
+  const team = d.people.filter((p) => p.id !== me && p.kind === 'staff' && (scope === 'all' || scope.has(p.id)));
   const ids = new Set(team.map((p) => p.id));
   const recs = d.records.filter((r) => ids.has(r.person_id));
   const v = recs.map((r) => ({ r, v: displayView(r) }));
@@ -65,7 +71,7 @@ function Team({ d, me }: { d: QualData; me: string }) {
   return (
     <>
       <Grid cols={4}>
-        <StatTile label={t('m02.team.tPeople')} value={f.num(team.length)} sub={t('m02.team.tPeopleSub', { n: f.num(recs.length) })} />
+        <StatTile label={t('m02.team.tPeople')} value={f.num(team.length)} sub={scopeName ? t('m02.team.tPeopleScope', { scope: scopeName, n: f.num(recs.length) }) : t('m02.team.tPeopleSub', { n: f.num(recs.length) })} />
         <StatTile label={t('m02.team.tQualified')} value={f.pct(pct, 0)} tone="ok" />
         <StatTile label={t('m02.team.tDue')} value={f.num(v.filter((x) => x.v.view === 'due').length)} sub={t('m02.team.tDueSub')} tone="sim" />
         <StatTile label={t('m02.team.tExpired')} value={f.num(v.filter((x) => x.v.view === 'expired' || x.v.view === 'not_qualified').length)} sub={t('m02.team.tReview', { n: f.num(recs.filter((r) => r.needs_review).length) })} tone="bad" />
@@ -222,4 +228,28 @@ function CrewLicences() {
       </Async>
     </Section>
   );
+}
+
+/** MGR-01: what my scope is made of, by name ("Crew B", "Operations", "ENEC Operations"), shown under "People in scope". */
+function useScopeName(identity: Identity): string | null {
+  const t = useT();
+  const pick = usePick();
+  const repo = useRepo();
+  const parts = scopeAssignments(identity, 'qual_records');
+  const needsNames = parts.some((p) => p.type === 'family' || p.type === 'entity' || p.type === 'org');
+  const names = useQuery(['job_families', 'organisations'], async () => {
+    if (!needsNames) return null;
+    const [families, orgs] = await Promise.all([repo.list('job_families').catch(() => []), repo.list('organisations').catch(() => [])]);
+    return { families, orgs };
+  }, [needsNames]);
+  if (!parts.length) return null;
+  const label = (p: { type: string; value: string | null }) => {
+    const v = p.value ?? '';
+    if (p.type === 'all') return t('m02.team.scopeAll');
+    if (p.type === 'crew') return t('m02.team.scopeCrew', { c: v });
+    if (p.type === 'family') return pick(names.data?.families.find((x) => x.id === v), 'name') || v;
+    if (p.type === 'entity' || p.type === 'org') return pick(names.data?.orgs.find((x) => x.id === v), 'name') || v;
+    return ''; // team ids (ops-wc) have no display name: keep the plain subtitle
+  };
+  return parts.map(label).filter(Boolean).join(' · ') || null;
 }
