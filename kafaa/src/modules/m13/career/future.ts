@@ -14,6 +14,7 @@
 import { translate } from '../../../i18n';
 import type { DalilCitation, Repository, Table } from '../../../data/types';
 import { SCHEMA } from '../../../data/schema';
+import { sharedList } from '../../../data/sharedReads';
 import type { Reason } from '../../../domain/engines/types';
 import { hasAny, normText, tokenize, type Lang } from '../dalil/text';
 import type { AnswerCard, AskInput, DalilAnswer, DalilLink } from '../dalil/types';
@@ -53,6 +54,8 @@ export const FUTURE_PERSONAL_TABLES = ['person_skills', 'skill_goals', 'future_g
 
 const has = (x: string) => Object.prototype.hasOwnProperty.call(SCHEMA, x);
 const safe = (repo: Repository, tb: string, q?: object): Promise<Row[]> => (has(tb) ? (repo.list(tb as Table, q as never) as Promise<Row[]>).catch(() => []) : Promise.resolve([]));
+/** TECH-07: public catalogues are read once per backend and persona (shared with Dalil's corpus and the header search). */
+const safeShared = (repo: Repository, tb: string, q?: object): Promise<Row[]> => (has(tb) ? (sharedList(repo, tb as Table, q as never) as Promise<Row[]>).catch(() => []) : Promise.resolve([]));
 
 /** Pure: the public part from seed-shaped tables (tests, the release-gate evaluation). Drafts and unlisted rows are left out as RLS would for the public. */
 export function futurePublicFrom(t: Record<string, Row[] | undefined>, opts: { staff: boolean }): FuturePublic {
@@ -83,7 +86,7 @@ export function futurePersonalFrom(t: Record<string, Row[] | undefined>, me: str
 /** Through the repository (both backends; RLS applies): public catalogues for everyone, pathways only where the caller may read them. */
 export async function loadFuturePublic(repo: Repository, staff: boolean): Promise<FuturePublic> {
   const names = ['job_roles', 'role_transformations', 'role_profile_versions', 'ai_rungs', 'ai_skill_tracks', 'ai_role_targets', 'job_families', 'skills', 'competencies', 'skill_alignments', 'skill_frameworks', 'pathways', 'courses', 'dalil_intents'];
-  const rows = await Promise.all(names.map((n) => safe(repo, n, n === 'role_profile_versions' || n === 'skill_alignments' ? { filter: { status: 'published' } } : n === 'job_roles' ? { order: [['sort', 'asc']] } : undefined)));
+  const rows = await Promise.all(names.map((n) => safeShared(repo, n, n === 'role_profile_versions' || n === 'skill_alignments' ? { filter: { status: 'published' } } : n === 'job_roles' ? { order: [['sort', 'asc']] } : undefined)));
   return futurePublicFrom(Object.fromEntries(names.map((n, i) => [n, rows[i]])), { staff });
 }
 export async function loadFuturePersonal(repo: Repository, me: string): Promise<FuturePersonal | null> {
