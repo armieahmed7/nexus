@@ -95,6 +95,7 @@ function PlanView({ plan, acts }: { plan: DevPlansRow; acts: PlanActivitiesRow[]
         const levelsLoaded = !!d.states && !!d.skills;
         const gaps = planGaps({ roleComps: d.rc, targetRoleId: plan.target_role_id, currentRoleId: current, own: levelsLoaded ? ownCompetencyLevels(d.states!, d.skills!) : new Map() });
         const comp = (id: string) => d.comps.find((c) => c.id === id);
+        const compLabel = (r: (typeof gaps)[number]) => { const c = comp(r.competency_id); return c ? `${c.code} · ${pick(c, 'name')}` : r.competency_id; };
         const planned = new Set(acts.map((a) => a.course_id).filter((x): x is string => !!x));
         const suggestions = rankPlanSuggestions({
           gaps, courses: d.courses, planned, enrolments: d.enrolments, roleId: current, quals: d.quals, standards: d.standards,
@@ -127,11 +128,14 @@ function PlanView({ plan, acts }: { plan: DevPlansRow; acts: PlanActivitiesRow[]
               {!levelsLoaded && <Callout tone="bad" title={t('m04.plan.levelsUnavailable')} />}
               {gaps.length === 0 ? <Callout tone="ok" title={t('m04.plan.noGap')}>{t('m04.plan.noGapBody')}</Callout> : (
                 <DataTable rows={gaps} rowKey={(r) => r.id} searchable={false} csvName="skills-gap" columns={[
-                  { key: 'comp', header: t('m04.plan.competency'), value: (r) => { const c = comp(r.competency_id); return c ? `${c.code} · ${pick(c, 'name')}` : r.competency_id; } },
-                  { key: 'imp', header: t('m04.plan.importance'), value: (r) => r.importance, render: (r) => <Chip tone={r.importance === 'core' ? 'accent' : 'neutral'}>{t(`m04.plan.imp.${r.importance}`)}</Chip> },
-                  { key: 'asks', header: t('m04.plan.currentLevel'), value: (r) => r.roleAsks, render: (r) => <span className="num text-ink-2">{f.num(r.roleAsks)}</span>, align: 'end' },
+                  // Phones (below sm): importance and the two role levels fold into this cell's second line; their columns hide.
+                  { key: 'comp', header: t('m04.plan.competency'), value: compLabel, render: (r) => (
+                    <>{compLabel(r)}<span className="mt-0.5 block text-[12px] text-ink-3 sm:hidden" data-testid="m04-plan-gap-folded">{t('m04.plan.gapFolded', { imp: t(`m04.plan.imp.${r.importance}`), asks: f.num(r.roleAsks), need: f.num(r.required_level) })}</span></>
+                  ) },
+                  { key: 'imp', header: t('m04.plan.importance'), value: (r) => r.importance, render: (r) => <Chip tone={r.importance === 'core' ? 'accent' : 'neutral'}>{t(`m04.plan.imp.${r.importance}`)}</Chip>, hideBelow: 'sm' },
+                  { key: 'asks', header: t('m04.plan.currentLevel'), value: (r) => r.roleAsks, render: (r) => <span className="num text-ink-2">{f.num(r.roleAsks)}</span>, align: 'end', hideBelow: 'sm' },
                   { key: 'have', header: t('m04.plan.yourLevel'), value: (r) => r.have, render: (r) => r.evidenced ? <span className="num font-semibold" data-testid="m04-plan-own" data-comp={r.competency_id}>{f.num(r.have)}</span> : <span className="text-[12.5px] text-ink-3" data-testid="m04-plan-own" data-comp={r.competency_id}>{t('m04.plan.noEvidence')}</span>, align: 'end' },
-                  { key: 'need', header: t('m04.plan.requiredLevel'), value: (r) => r.required_level, render: (r) => <span className="num">{f.num(r.required_level)}</span>, align: 'end' },
+                  { key: 'need', header: t('m04.plan.requiredLevel'), value: (r) => r.required_level, render: (r) => <span className="num">{f.num(r.required_level)}</span>, align: 'end', hideBelow: 'sm' },
                   { key: 'gap', header: t('m04.plan.gap'), value: (r) => r.gap, render: (r) => <span className="num font-semibold text-bad">+{f.num(r.gap)}</span>, align: 'end', sortable: true },
                 ]} />
               )}
@@ -159,12 +163,14 @@ function PlanView({ plan, acts }: { plan: DevPlansRow; acts: PlanActivitiesRow[]
               {editable && <button className="btn-primary btn-sm" onClick={() => setAdding({ kind: 'ojt', title_en: '', title_ar: '', course_id: null })} data-testid="m04-plan-add"><Icon name="plus" size={14} />{t('m04.plan.addActivity')}</button>}
             </div>}>
               <DataTable rows={acts} rowKey={(r) => r.id} searchable={false} csvName="development-plan" empty={t('m04.plan.noActivities')} initialSort={{ key: 'due', dir: 'asc' }} columns={[
-                { key: 'kind', header: t('m04.common.kind'), value: (r) => lab.activity(r.kind) },
-                { key: 'title', header: t('m04.common.title'), value: (r) => pick(r, 'title'), render: (r) => r.course_id ? <L to={`/learn/course/${r.course_id}`}>{pick(r, 'title')}</L> : pick(r, 'title') },
+                { key: 'kind', header: t('m04.common.kind'), value: (r) => lab.activity(r.kind), hideBelow: 'sm' },
+                { key: 'title', header: t('m04.common.title'), value: (r) => pick(r, 'title'), render: (r) => (
+                  <>{r.course_id ? <L to={`/learn/course/${r.course_id}`}>{pick(r, 'title')}</L> : pick(r, 'title')}<span className="mt-0.5 block text-[12px] text-ink-3 sm:hidden">{lab.activity(r.kind)}</span></>
+                ) },
                 { key: 'due', header: t('m04.common.due'), value: (r) => r.due_on ?? '', render: (r) => f.date(r.due_on), sortable: true },
                 { key: 'status', header: t('m04.common.status'), value: (r) => r.status, render: (r) => <G2Pill status={r.status === 'planned' ? 'not_started' : r.status === 'done' ? 'completed' : r.status} /> },
                 { key: 'act', header: '', csv: false, render: (r) => editable && r.status !== 'done' ? (
-                  <div className="flex justify-end gap-1">
+                  <div className="flex flex-col items-end gap-1 sm:flex-row sm:justify-end">{/* stacked on phones so the row fits */}
                     {r.status === 'planned' && <button className="btn-ghost btn-sm" onClick={() => setStatus(r, 'in_progress')}>{t('m04.plan.start')}</button>}
                     <button className="btn-outline btn-sm" onClick={() => setStatus(r, 'done')}>{t('m04.plan.markDone')}</button>
                   </div>

@@ -745,6 +745,7 @@
     "current": "Current role",
     "currentLevel": "Your current role asks for",
     "yourLevel": "Your level",
+    "gapFolded": "{imp} · Current role asks for {asks} · Target role needs {need}",
     "noEvidence": "No evidence yet",
     "levelsUnavailable": "Your own levels could not be loaded just now, so each gap below is counted from level 0. Reload the page to try again.",
     "gap": "Gap",

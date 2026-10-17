@@ -5,6 +5,7 @@
  *     { key: 'status', header: '...', value: (r) => r.status, render: (r) => <StatusPill status={r.status} /> },
  *   ]} csvName="roles" />
  * `value` drives sort, search and CSV; `render` only changes display. CSV never includes columns marked csv: false.
+ * `hideBelow: 'sm'` hides a column on phones (display only: it still sorts, filters and exports).
  * With onRowClick, each row also ends in an "Open {label}" button (A11Y-02) so the row opens by keyboard and screen readers;
  * the label is `rowLabel(row)`, else the first column's value. A mouse click on the row moves focus to that button first, so a
  * drawer or dialog the row opens returns focus to the row when it closes.
@@ -23,6 +24,9 @@ export interface Column<T> {
   csv?: boolean;
   align?: 'start' | 'end' | 'center';
   width?: string;
+  /** Hide this column below Tailwind `sm` (phones) so the table fits without sideways scrolling. Fold what it shows into a
+   *  visible cell (e.g. a `sm:hidden` line under the first column) so nothing is lost; sort, search and CSV still use it. */
+  hideBelow?: 'sm';
 }
 export interface DataTableProps<T> {
   rows: T[];
@@ -99,6 +103,7 @@ export function DataTable<T>({ rows, columns, rowKey, pageSize = 20, searchable 
 
   const toggleSort = (key: string) => setSort((s) => (s?.key === key ? (s.dir === 'asc' ? { key, dir: 'desc' } : null) : { key, dir: 'asc' }));
   const alignCls = (a?: string) => (a === 'end' ? 'text-end' : a === 'center' ? 'text-center' : 'text-start');
+  const hideCls = (c: Column<T>) => (c.hideBelow === 'sm' ? ' hidden sm:table-cell' : '');
   const labelCol = columns.find((c) => c.value);
   const labelOf = (r: T) => (rowLabel ? rowLabel(r) : String(labelCol?.value?.(r) ?? rowKey(r)));
   const rowClick = (r: T) => (e: MouseEvent<HTMLTableRowElement>) => {
@@ -144,7 +149,7 @@ export function DataTable<T>({ rows, columns, rowKey, pageSize = 20, searchable 
           <thead className="bg-raised">
             <tr>
               {columns.map((c) => (
-                <th key={c.key} scope="col" className={alignCls(c.align)} style={c.width ? { width: c.width } : undefined} aria-sort={sort?.key === c.key ? (sort.dir === 'asc' ? 'ascending' : 'descending') : undefined}>
+                <th key={c.key} scope="col" className={alignCls(c.align) + hideCls(c)} style={c.width ? { width: c.width } : undefined} aria-sort={sort?.key === c.key ? (sort.dir === 'asc' ? 'ascending' : 'descending') : undefined}>
                   {c.sortable && c.value ? (
                     <button className="inline-flex items-center gap-1 uppercase hover:text-ink" onClick={() => toggleSort(c.key)}>
                       {c.header}
@@ -173,7 +178,7 @@ export function DataTable<T>({ rows, columns, rowKey, pageSize = 20, searchable 
               visible.map((r) => (
                 <tr key={rowKey(r)} className={onRowClick ? 'cursor-pointer hover:bg-sunken' : ''} onClick={onRowClick ? rowClick(r) : undefined}>
                   {columns.map((c) => (
-                    <td key={c.key} className={`${alignCls(c.align)} ${dense ? '!py-1.5' : ''}`}>
+                    <td key={c.key} className={`${alignCls(c.align)}${hideCls(c)} ${dense ? '!py-1.5' : ''}`}>
                       {c.render ? c.render(r) : (c.value?.(r) ?? '—')}
                     </td>
                   ))}
