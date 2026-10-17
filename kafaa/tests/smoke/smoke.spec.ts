@@ -62,7 +62,9 @@ test('sign-in flow: choose a role card, see role nav, sign out', async ({ page }
   await visit(page, `${BASE}/sign-in`);
   await page.click('[data-testid="persona-k-licensing-coord"]');
   await page.waitForURL(/\/kafaa\/my$/);
-  await expect(page.locator('[data-testid="side-nav"]')).toContainText('Licensing candidates');
+  // The role nav renders once the session has settled; on the local backend that waits for the seed chunk (~25 MB),
+  // which takes 5-8 s on a loaded machine, so this gets the same 20 s budget as visit() rather than the 5 s default.
+  await expect(page.locator('[data-testid="side-nav"]')).toContainText('Licensing candidates', { timeout: 20_000 });
   await page.click('[data-testid="account-menu"]');
   await page.click('[data-testid="sign-out"]');
   await expect(page.locator('[data-testid="sign-in-link"]')).toBeVisible();
