@@ -14,6 +14,7 @@
  *   FS48          the mentoring card step is guarded on the live version 13 and matches the local FS48 card text
  *   migration     the QA migration is additive (one function replaced with the same signature, one guarded update, no removal words) */
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { ROUTE_IDS_SORTED } from '../fixtures/routeManifest';
 import { readFileSync } from 'node:fs';
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -74,10 +75,10 @@ const fresh = async (persona: string | null = null) => {
 afterEach(() => { vi.useRealTimers(); });
 
 describe('FS wave G · route registry', () => {
-  it('367 routes after wave G (380 after wave H, 401 after wave I), and the 29 wave-G routes are registered', async () => {
+  it('the route loader sees every route in the generated manifest (367 after wave G), and the 29 wave-G routes are registered', async () => {
     const { loadRoutes } = await import('../smoke/routes');
     const R = loadRoutes();
-    expect(R.length).toBe(406); // Orientation 2026-10-17: + 2 (future-skills, start). Help centre 2026-10-17: + 3 (help, help-glossary, help-guide). FS wave I QA: + 21 (FS78/FS79 M34 5: my-learning-balance, team-study-time, workforce-learning-balances, my-external-certs, external-certs-queue; FS80 M29 4: workforce-ai-automations, workforce-ai-automation, my-ai-builds, admin-ai-automations; FS81 M30 4: my-transition-plan, workforce-transition-plans, workforce-transition-plan, workforce-rung-alerts; FS82/FS83 M36 6: my-grants, ecosystem-grants, workforce-grants, ecosystem-consortium, ecosystem-consortium-cohort, my-consortium; FS84 M17 2: team-skills-future, workforce-skills-inventory). FS wave H QA: + 13 (FS70-FS72 M28 7: skills-rising, skills-rising-method, workforce-skill-signals, my-manager-pulse, skills-technologies, admin-skills-technologies, my-skills-suggestions; FS73/FS74 M37 3: national-emirati-pipeline, my-future-wallet, national-future-wallet; FS77 M06 3: pathways-starter, my-induction, workforce-intake-baselines; FS75 shell digest and FS76 M13 none). FS wave G QA: + 29 (M35 6, M37 5, M36 6, M10 7, M09 5)
+    expect(R.map((r) => r.id).sort()).toEqual(ROUTE_IDS_SORTED); // the loader must find every route id in tests/fixtures/routes.manifest.json (npm run gen); tests/unit/route-manifest.test.ts diffs the registry against it
     const byId = new Map(R.map((r) => [r.id, r.path]));
     expect(WAVE_G.length).toBe(29);
     for (const [, id, path] of WAVE_G) expect(byId.get(id), id).toBe(path);

@@ -89,6 +89,7 @@ await act(() => repo.rpc.signoffEvaluation({ record_id, task_id, result: 'pass' 
 
 - `src/data/schema.ts` is the single source for tables, columns, indexes, read rules and write modes. You may add columns or tables **for your own module**, appended inside your module's block. Then run `npm run gen`, which regenerates `src/data/types.gen.ts`, the first three migration files, `supabase/seed.sql`, `src/seed/seed.json` and `docs/RBAC.md`.
 - Never hand-edit generated files. If a rebase conflicts in a generated file, take either side and re-run `npm run gen`.
+- Adding, removing or re-guarding a route: run `npm run gen` and commit `tests/fixtures/routes.manifest.json` with `src/routes/guards.gen.ts` (and the route-guard migration if it changed). `tests/unit/route-manifest.test.ts` diffs the registry against the manifest and names the routes that differ. Do not pin route counts in tests; read them from `tests/fixtures/routeManifest.ts` (`ROUTE_COUNT`, `ROUTE_IDS_SORTED`).
 - Seed rows come from `scripts/seed/*.mjs`. Add rows for your tables in the matching builder; keep ids stable and readable (`qs-ro`, `w-ro-01`). No real names; every public fact carries a `sources` entry.
 - `npm run migrations:validate` applies all migrations plus the seed to PGlite twice (idempotence) and runs the RLS/RPC checks. It must pass.
 

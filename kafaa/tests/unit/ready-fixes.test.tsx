@@ -77,7 +77,7 @@ describe('1 · mirror clock: sync freshness is judged at the demo snapshot', () 
 });
 
 describe('2 · links only to pages the person can open', () => {
-  it('guards.gen.ts equals the router registry (path and guard of all 406 routes, in order)', () => {
+  it('guards.gen.ts equals the router registry (path and guard of every route, in order)', () => {
     expect(ROUTE_GUARDS.length).toBe(ROUTES.length);
     ROUTES.forEach((r, i) => {
       const g: Row = {};
