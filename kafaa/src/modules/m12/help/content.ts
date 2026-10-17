@@ -107,7 +107,7 @@ export const GUIDES: HelpGuide[] = [
         'Skill check-ins let your line manager and up to two colleagues validate up to five of your self-rated skills.',
         'تتيح تقييمات المهارات لمديرك المباشر ولزميلين اثنين كحد أقصى اعتماد ما يصل إلى خمس من المهارات التي قيّمتها بنفسك.'),
       s('Let the Coach rank your learning', 'دع مدرّب التعلّم يرتّب تعلّمك',
-        'The Learning Coach ranks your next-best learning this month against your role and your target roles, with the reason for every suggestion. Set skill goals to steer it.',
+        'The Learning Coach ranks what to learn next this month against your role and your target roles, with the reason for every suggestion. Set skill goals to steer it.',
         'يرتّب مدرّب التعلّم أفضل خطوات التعلّم التالية لك هذا الشهر وفق دورك الحالي وأدوارك المستهدفة، مع سبب كل اقتراح. حدّد أهدافك المهارية لتوجيهه.'),
       s('Find a mentor and plan your career', 'اعثر على مرشد وخطّط لمسارك',
         'Mentoring suggests people with the reasons, and the Career Navigator shows your readiness for every next role. People decide; suggestions only help.',
