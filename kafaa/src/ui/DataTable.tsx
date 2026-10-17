@@ -122,7 +122,7 @@ export function DataTable<T>({ rows, columns, rowKey, pageSize = 20, searchable 
           </div>
         </div>
       )}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto" tabIndex={0}>
         <table className="table-base w-full border-collapse text-[13px]">
           {caption && <caption className="sr-only">{caption}</caption>}
           <thead className="bg-raised">

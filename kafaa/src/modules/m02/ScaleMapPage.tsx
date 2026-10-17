@@ -48,7 +48,7 @@ function Body({ d }: { d: LevelsData }) {
 
       <Section title={t('m02.sc.gridTitle')} description={t('m02.sc.gridDesc')} actions={<button type="button" className="btn-outline btn-sm" onClick={csv} data-testid="m02-sc-csv">{t('m02.sc.csv')}</button>}>
         <Card padded={false}>
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto" tabIndex={0}>
             <table className="w-full min-w-[720px] text-[13px]" data-testid="m02-sc-grid">
               <caption className="sr-only">{t('m02.sc.gridTitle')}</caption>
               <thead>

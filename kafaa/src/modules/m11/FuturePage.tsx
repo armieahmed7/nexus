@@ -142,7 +142,7 @@ function SkillsMatrix({ d }: { d: FutureData }) {
   return (
     <Section title={t('m11.pub.matrixTitle')} description={t('m11.pub.matrixDesc')}>
       <div className="flex flex-wrap gap-2 text-[12px]">{(['transfers', 'adapts', 'new'] as const).map((r) => <span key={r} className={`chip ${RELATION_CLS[r]}`}>{t(`m11.rel.${r}`)}: {t(`m11.relHint.${r}`)}</span>)}</div>
-      <div className="card overflow-x-auto">
+      <div className="card overflow-x-auto" tabIndex={0}>
         <table className="table-base w-full text-[12.5px]" data-testid="m11-matrix">
           <caption className="sr-only">{t('m11.pub.matrixTitle')}</caption>
           <thead className="bg-raised">

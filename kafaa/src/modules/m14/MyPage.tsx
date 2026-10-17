@@ -165,7 +165,7 @@ export default function MyPage() {
                             <span>{e.due_on ? t('m14.my.dueOn', { date: f.date(e.due_on) }) : t('m14.my.noDue')}</span>
                             <span>· {t(`m14.my.source.${e.source}`)}</span>
                           </div>
-                          {e.progress_pct > 0 && <div className="mt-1.5"><ProgressBar value={e.progress_pct} /></div>}
+                          {e.progress_pct > 0 && <div className="mt-1.5"><ProgressBar value={e.progress_pct} label={course.get(e.course_id) ? pick(course.get(e.course_id)!, 'title') : undefined} /></div>}
                         </li>
                       ))}
                     </ul>
@@ -181,7 +181,7 @@ export default function MyPage() {
                         <span className="font-semibold">{t('m14.my.towards', { role: role.get(plan.target_role_id) ? pick(role.get(plan.target_role_id)!, 'title') : plan.target_role_id })}</span>
                         <StatusPill status={plan.status} />
                       </div>
-                      <ProgressBar value={acts.length ? (done * 100) / acts.length : 0} />
+                      <ProgressBar value={acts.length ? (done * 100) / acts.length : 0} label={t('m14.my.planTitle')} />
                       <p className="text-[12.5px] text-ink-2">{t('m14.my.planProgress', { done: f.num(done), total: f.num(acts.length) })}</p>
                       <ul className="space-y-1 text-[13px]">
                         {acts.filter((a) => a.status !== 'done').slice(0, 3).map((a) => (
@@ -222,7 +222,7 @@ export default function MyPage() {
                       <li key={n.id} className="flex flex-wrap items-start justify-between gap-2 py-2.5">
                         <div className="min-w-0">
                           <div className={`flex items-center gap-2 ${n.read_at ? 'text-ink-2' : 'font-semibold'}`}>
-                            {!n.read_at && <span className="h-2 w-2 rounded-full bg-accent" aria-label={t('m14.my.unread')} />}
+                            {!n.read_at && <span className="h-2 w-2 rounded-full bg-accent" role="img" aria-label={t('m14.my.unread')} />}
                             {pick(n, 'title')}
                           </div>
                           {(n.body_en || n.body_ar) && <p className="text-[12.5px] text-ink-2">{pick(n, 'body')}</p>}

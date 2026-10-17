@@ -77,7 +77,7 @@ export function TaskTable({ rec, data, onEvaluate }: { rec: Rec; data: QualData;
   if (!tasks.length) return <EmptyState title={t('m02.noTasks')} />;
   const rows = taskRows(tasks.map((x) => x.id), rec.id, data.evals as EvalLite[]);
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto" tabIndex={0}>
       <table className="table-base w-full min-w-[720px]" data-testid="m02-task-table">
         <thead>
           <tr>

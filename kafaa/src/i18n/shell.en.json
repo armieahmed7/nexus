@@ -1,7 +1,7 @@
 {
   "brand": "Kafa'a",
   "brandSub": "Upskilling platform",
-  "brandHome": "Kafa'a home",
+  "brandHome": "Kafa'a Upskilling platform: home",
   "skipToContent": "Skip to content",
   "menu": "Menu",
   "signIn": "Sign in",
@@ -62,7 +62,7 @@
     }
   },
   "notifications": {
-    "label": "Notifications ({n} unread)",
+    "label": "Notifications: {n} unread",
     "title": "Notifications",
     "markAll": "Mark all as read",
     "empty": "No notifications"

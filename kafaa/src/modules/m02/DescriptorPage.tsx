@@ -129,7 +129,7 @@ function Body({ d, skillId }: { d: LevelsData; skillId: string }) {
               <StatusPill tone="info">{t('m02.lv.notALevel')}</StatusPill>
               <span className="ms-auto"><EquivalentChips maps={d.maps} band="authority" frameworks={fws} fwShort={fwShort} /></span>
             </div>
-            <p className="mt-2 text-[13px] text-ink-2">{t('m02.dp.authorityBody')} <L to="/competencies/scale">{t('m02.dp.toScale')}</L></p>
+            <p className="mt-2 text-[13px] text-ink-2">{t('m02.dp.authorityBody')} <L to="/competencies/scale" className="text-eyebrow">{t('m02.dp.toScale')}</L></p>
           </li>
         </ol>
       </Section>

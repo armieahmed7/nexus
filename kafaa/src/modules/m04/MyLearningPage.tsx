@@ -82,7 +82,7 @@ function Overview({ d }: { d: Data }) {
       <Grid cols={2}>
         <Card title={t('m04.my.mandatoryTitle')}>
           <div className="flex items-center gap-4">
-            <ProgressRing value={pct} size={72} tone={pct === 100 ? 'ok' : 'accent'} />
+            <ProgressRing value={pct} size={72} tone={pct === 100 ? 'ok' : 'accent'} name={t('m04.my.mandatoryTitle')} />
             <div className="text-[13.5px] text-ink-2">{t('m04.my.mandatoryBody', { done: f.num(mandatoryDone), total: f.num(mandatory.length) })}</div>
           </div>
           {overdue.length > 0 && <div className="mt-3"><Callout tone="bad" title={t('m04.my.overdueTitle')}>{overdue.map((e) => cat.course.get(e.course_id)?.code ?? e.course_id).join(', ')}</Callout></div>}

@@ -11,6 +11,7 @@ npm install
 npm run dev            # http://localhost:5173/kafaa/ (local backend, seeded in the browser)
 npm run verify         # gen, i18n check, typecheck, unit tests, migration validation, public payload check, build, smoke tests
 npm run build && npm run preview   # production build served at http://localhost:4173/kafaa/
+npx playwright test tests/smoke/a11y.spec.ts   # accessibility gate alone (axe, WCAG A/AA, every public route EN + AR); part of test:smoke
 ```
 
 Sign in at `/kafaa/sign-in` with any role card. The default backend is the live NEXUS project; the `local` backend works offline and the backend chip in the header switches to it (and resets its demo data).

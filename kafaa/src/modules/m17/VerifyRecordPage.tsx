@@ -66,7 +66,7 @@ function Shown({ v }: { v: VerifyResult }) {
     <div className="space-y-4" data-testid="m17-lr-verify" data-status="active">
       <Card>
         <div className="flex flex-wrap items-center gap-4">
-          <span className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-accent bg-accent/10 text-[18px] font-bold text-accent" data-testid="m17-lr-verify-initials" dir="ltr">{v.holder_initials}</span>
+          <span className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-accent bg-accent/10 text-[18px] font-bold text-eyebrow" data-testid="m17-lr-verify-initials" dir="ltr">{v.holder_initials}</span>
           <div className="min-w-0 flex-1 space-y-1">
             <div className="flex flex-wrap items-center gap-2"><StatusPill tone="ok" status="active">{t('m17.lr.share.active')}</StatusPill><span className="text-[12.5px] text-ink-3">{t('m17.lr.verify.initialsOnly')}</span></div>
             <KeyValue items={[
