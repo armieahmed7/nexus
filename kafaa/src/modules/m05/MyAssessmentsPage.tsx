@@ -1,13 +1,14 @@
 // /my/assessments (M05): scheduled exams with timed delivery, results released to me after evaluator sign-off,
 // competency feedback, appeals and retake rules, and my JPM results. No algorithm scores a person; evaluators do.
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Page, Tabs, Card, Grid, Async, EmptyState, ConfirmDialog, Modal, DataTable, Callout, Icon, StatTile, BarChart, TextArea, SelectField, useForm, required, minLen, maxLen } from '../../ui';
+import { Page, Tabs, Card, Grid, Async, EmptyState, ConfirmDialog, Modal, DataTable, Callout, Icon, StatTile, BarChart, TextArea, SelectField, useForm, required, minLen, maxLen, AddToCalendar } from '../../ui';
 import { useAction, useQuery, useRepo } from '../../data';
 import type { AttemptsRow, AssessmentFormsRow, DeliveredItem } from '../../data/types';
 import { L, useFormat, useLang, usePick, useT } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { appealWindow, canOpenAttempt, retakeEligibility } from '../../domain/learning';
 import { G2Pill, Chip, useLabels } from '../m04/ui';
+import { useCalendarEvents } from '../../shell/calendar/useCalendarEvents'; // SHR-01
 
 export default function MyAssessmentsPage() {
   const t = useT();
@@ -51,8 +52,11 @@ function Scheduled({ rows, pending, form, onStart }: { rows: AttemptsRow[]; pend
   const pick = usePick();
   const lab = useLabels();
   const [confirm, setConfirm] = useState<AttemptsRow | null>(null);
+  const cal = useCalendarEvents();
+  const events = rows.map((a) => cal.attempt(a, form(a.form_id), '/my/assessments')).filter((e) => e !== null);
   return (
     <div className="space-y-4">
+      {events.length > 1 && <div className="flex justify-end"><AddToCalendar events={events} file="my-assessments" calendarName={t('common.ics.cal.myAssessments')} testId="m05-ics-all" /></div>}
       {rows.length === 0 ? <EmptyState icon="calendar" title={t('m05.my.noneScheduled')}>{t('m05.my.noneScheduledBody')}</EmptyState> : (
         <Grid cols={2}>
           {rows.map((a) => {
@@ -60,7 +64,7 @@ function Scheduled({ rows, pending, form, onStart }: { rows: AttemptsRow[]; pend
             const open = canOpenAttempt(a.scheduled_for);
             const written = fm?.kind === 'written';
             return (
-              <Card key={a.id} eyebrow={fm ? lab.formKind(fm.kind) : ''} title={fm ? pick(fm, 'title') : a.form_id} actions={<G2Pill status={a.status} />}>
+              <Card key={a.id} eyebrow={fm ? lab.formKind(fm.kind) : ''} title={fm ? pick(fm, 'title') : a.form_id} actions={<span className="flex items-center gap-1"><AddToCalendar compact events={[cal.attempt(a, fm, '/my/assessments')].filter((e) => e !== null)} itemTitle={fm ? pick(fm, 'title') : a.form_id} file={`assessment-${a.id}`} calendarName={t('common.ics.cal.myAssessments')} testId="m05-ics-one" /><G2Pill status={a.status} /></span>}>
                 <ul className="space-y-1 text-[13.5px] text-ink-2">
                   <li>{t('m05.my.when', { when: f.dateTime(a.scheduled_for) })}</li>
                   {fm && <li>{t('m05.my.rules', { n: f.num(fm.item_ids.length), min: f.num(fm.time_limit_min), pass: f.pct(fm.pass_mark, 0) })}</li>}

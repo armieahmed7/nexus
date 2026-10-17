@@ -3,12 +3,13 @@
 // exam milestones in one calendar. Adding a FANR written exam adds its 60-day notice milestone; draft data packs download
 // for the named role to review. Kafa'a never sends anything to FANR.
 import { useMemo, useState } from 'react';
-import { Page, Section, Card, Grid, Async, EmptyState, StatusPill, Callout, FilterBar, useFilters, Modal, SelectField, TextField, ConfirmDialog, downloadText, Icon, StatTile } from '../../ui';
+import { Page, Section, Card, Grid, Async, EmptyState, StatusPill, Callout, FilterBar, useFilters, Modal, SelectField, TextField, ConfirmDialog, downloadText, Icon, StatTile, AddToCalendar } from '../../ui';
 import { useAction, useQuery, useRepo, type RowOf } from '../../data';
 import { useT, usePick, useFormat, useRefText, useCount } from '../../i18n';
 import { RULES } from '../../auth/policy';
 import { examNoticeDue, examNoticeReminder, todayIso, daysBetween, isoDate, toDate } from '../../domain/rules';
 import { workingDaysLeft } from './licensing';
+import { useCalendarEvents } from '../../shell/calendar/useCalendarEvents'; // SHR-01
 
 type Obl = RowOf<'reporting_obligations'>;
 type Ms = RowOf<'exam_milestones'>;
@@ -54,6 +55,7 @@ function Calendar({ d }: { d: Data }) {
   const [addMs, setAddMs] = useState(false);
   const [move, setMove] = useState<{ o: Obl; to: Obl['status'] } | null>(null);
   const [plan, setPlan] = useState(false);
+  const cal = useCalendarEvents();
   const entries = useMemo<Entry[]>(() => {
     const out: Entry[] = [...d.obl.map((o) => ({ id: o.id, date: o.due_on, source: 'obligation' as const, o })), ...d.ms.map((m) => ({ id: m.id, date: m.due_on, source: 'milestone' as const, m }))];
     return out
@@ -122,7 +124,8 @@ function Calendar({ d }: { d: Data }) {
             { key: 'range', label: t('m03.cal.range'), options: [{ value: '90', label: t('m03.cal.next90') }] },
           ]}
         />
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
+          <AddToCalendar events={entries.map((e) => (e.o ? cal.obligation(e.o, '/licensing/calendar') : cal.milestone(e.m!, '/licensing/calendar')))} file="licensing-calendar" calendarName={t('common.ics.cal.licensing')} label={t('common.ics.addShownItems')} testId="m03-cal-ics" />
           <button className="btn-outline btn-sm" onClick={() => setPlan(true)} data-testid="m03-add-plan-report">
             <Icon name="plus" size={13} className="me-1 inline" />
             {t('m03.cal.addPlan')}

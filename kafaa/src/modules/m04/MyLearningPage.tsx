@@ -1,7 +1,7 @@
 // /my/learning (M04): assigned and elective training, enrolments, simulator sessions, transcript, certificates,
 // external course requests, and (for managers) team approvals. Progress, not rank: no points or leaderboards.
 import { useState } from 'react';
-import { Page, Grid, Card, StatTile, Tabs, DataTable, Async, EmptyState, ConfirmDialog, Drawer, Modal, ProgressBar, ProgressRing, Callout, Icon, TextField, TextArea, useForm, required, numberRange, maxLen } from '../../ui';
+import { Page, Grid, Card, StatTile, Tabs, DataTable, Async, EmptyState, ConfirmDialog, Drawer, Modal, ProgressBar, ProgressRing, Callout, Icon, TextField, TextArea, useForm, required, numberRange, maxLen, AddToCalendar } from '../../ui';
 import { useAction, useQuery, useRepo } from '../../data';
 import type { CertificatesRow, EnrolmentsRow, ExternalRequestsRow, SessionsRow, SimulatorSlotsRow, TrainingRecordsRow } from '../../data/types';
 import { L, useFormat, usePick, useT, systemName } from '../../i18n';
@@ -9,6 +9,7 @@ import { useSession } from '../../auth/session';
 import { isOpen } from '../../domain/learning';
 import { G2Pill, useCatalogue, useLabels, daysUntil, Chip } from './ui';
 import { TeamApprovals } from './TeamApprovals';
+import { useCalendarEvents } from '../../shell/calendar/useCalendarEvents'; // SHR-01
 
 export default function MyLearningPage() {
   const t = useT();
@@ -62,6 +63,8 @@ function Overview({ d }: { d: Data }) {
   const f = useFormat();
   const pick = usePick();
   const cat = useCatalogue();
+  const lab = useLabels();
+  const cal = useCalendarEvents();
   const mandatory = d.enrolments.filter((e) => e.source === 'role_rule' || cat.course.get(e.course_id)?.mandatory);
   const mandatoryDone = mandatory.filter((e) => e.status === 'completed').length;
   const open = d.enrolments.filter((e) => isOpen(e.status));
@@ -71,6 +74,7 @@ function Overview({ d }: { d: Data }) {
   const sessionById = new Map(d.sessions.map((x) => [x.id, x]));
   const upcoming = open.filter((e) => e.session_id && sessionById.get(e.session_id) && sessionById.get(e.session_id)!.starts_at > new Date().toISOString()).sort((a, b) => sessionById.get(a.session_id!)!.starts_at.localeCompare(sessionById.get(b.session_id!)!.starts_at));
   const pct = mandatory.length ? Math.round((mandatoryDone * 100) / mandatory.length) : 100;
+  const sessionEvent = (e: EnrolmentsRow) => { const x = sessionById.get(e.session_id!)!; return cal.session(x, cat.course.get(e.course_id), '/my/learning', lab.sessionKind(x.kind), e.status); };
   return (
     <div className="space-y-4">
       <Grid cols={4}>
@@ -87,7 +91,7 @@ function Overview({ d }: { d: Data }) {
           </div>
           {overdue.length > 0 && <div className="mt-3"><Callout tone="bad" title={t('m04.my.overdueTitle')}>{overdue.map((e) => cat.course.get(e.course_id)?.code ?? e.course_id).join(', ')}</Callout></div>}
         </Card>
-        <Card title={t('m04.my.upcomingTitle')}>
+        <Card title={t('m04.my.upcomingTitle')} actions={upcoming.length > 1 ? <AddToCalendar events={upcoming.map(sessionEvent)} file="my-training-sessions" calendarName={t('common.ics.cal.myLearning')} testId="m04-upcoming-ics" /> : undefined}>
           {upcoming.length === 0 ? <p className="text-ink-3">{t('m04.my.noUpcoming')}</p> : (
             <ul className="space-y-2" data-testid="m04-upcoming">
               {upcoming.slice(0, 5).map((e) => {
@@ -96,7 +100,7 @@ function Overview({ d }: { d: Data }) {
                 return (
                   <li key={e.id} className="flex items-center justify-between gap-2">
                     <div className="min-w-0"><L to={`/learn/course/${e.course_id}`} className="font-semibold">{c ? pick(c, 'title') : e.course_id}</L><div className="text-[12.5px] text-ink-3">{f.dateTime(x.starts_at)} · {pick(x, 'location')}</div></div>
-                    <G2Pill status={e.status} />
+                    <span className="flex shrink-0 items-center gap-1"><AddToCalendar compact events={[sessionEvent(e)]} itemTitle={c ? pick(c, 'title') : e.course_id} file={`session-${x.id}`} calendarName={t('common.ics.cal.myLearning')} testId="m04-upcoming-ics-one" /><G2Pill status={e.status} /></span>
                   </li>
                 );
               })}

@@ -1,7 +1,7 @@
 // M03 /my/licence: my RO/SRO certificate as recorded in the licensee's certification records (OCTS mirror): validity
 // countdown (never "valid" when the sync is stale), medical due date and flag only (no medical content), this quarter's
 // shifts against the REG-17 Art. 11 minimums with an at-risk warning, requalification window and COCT hours, key dates.
-import { Page, Section, Card, Grid, Async, EmptyState, Callout, StatusPill, KeyValue, ProgressBar, ProgressRing, Timeline, DataTable, SimChip } from '../../ui';
+import { Page, Section, Card, Grid, Async, EmptyState, Callout, StatusPill, KeyValue, ProgressBar, ProgressRing, Timeline, DataTable, SimChip, AddToCalendar } from '../../ui';
 import { useQuery, useRepo, type RowOf } from '../../data';
 import { useT, useFormat, usePick, L, systemName, useCount } from '../../i18n';
 import { useSession } from '../../auth/session';
@@ -9,6 +9,8 @@ import { RULES } from '../../auth/policy';
 import { licenceView, medicalView, proficiency, quarterOf, quarterEnd, withdrawalDate, todayIso } from '../../domain/rules';
 import { keyDates, validityElapsedPct } from './licensing';
 import { LicencePill, MedicalPill } from './shared';
+import { useCalendarEvents } from '../../shell/calendar/useCalendarEvents'; // SHR-01
+import { upcomingOnly } from '../../domain/ics';
 
 export default function MyLicencePage() {
   const t = useT();
@@ -51,6 +53,12 @@ function Mine({ d }: { d: Mine }) {
   const pct = validityElapsedPct(lic.issued_on, lic.expires_on);
   const dates = keyDates(lic, d.med, d.rq);
   const today = todayIso();
+  const cal = useCalendarEvents();
+  const calEvents = upcomingOnly([
+    ...dates.map((k) => cal.licenceDate(k, '/my/licence', k.kind === 'medical' ? d.med?.source_system : ['expiry', 'renewal_start', 'withdrawal'].includes(k.kind) ? lic.source_system : undefined)),
+    ...d.tasks.map((x) => cal.licensingTask(x, '/my/licence')).filter((e) => e !== null),
+    ...d.ms.filter((m) => m.status === 'planned').map((m) => cal.milestone(m, '/my/licence')),
+  ]);
   return (
     <>
       {v.stale && (
@@ -154,7 +162,7 @@ function Mine({ d }: { d: Mine }) {
             <p className="text-ink-2">{t('m03.requal.none')}</p>
           )}
         </Card>
-        <Card title={t('m03.my.datesTitle')}>
+        <Card title={t('m03.my.datesTitle')} actions={<AddToCalendar events={calEvents} file="my-licence-dates" calendarName={t('common.ics.cal.myLicence')} label={t('common.ics.addDates')} testId="m03-licence-ics" />}>
           <Timeline items={dates.map((k) => ({ id: k.id, when: f.date(k.date), title: t(`m03.dates.${k.kind}`), tone: k.date < today ? 'neutral' : k.kind === 'withdrawal' || k.kind === 'expiry' ? 'bad' : 'accent' }))} />
         </Card>
       </Grid>

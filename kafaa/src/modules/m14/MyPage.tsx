@@ -16,6 +16,7 @@ import { Async, Callout, Card, EmptyState, Icon, Page, ProgressBar, StatTile, St
 import { licenceView, medicalView, qualView } from '../../domain/rules';
 import type { NotificationsRow } from '../../data/types';
 import { DigestPanel } from '../../shell/digest/DigestPanel'; // W5E5 (F36): personal weekly digest
+import { MyUpcomingCalendar } from './MyUpcomingCalendar'; // SHR-01: everything coming up as one .ics
 
 const ACTIVE_ENROLMENT = ['assigned', 'requested', 'approved', 'waitlisted', 'enrolled', 'in_progress'];
 const OPEN_APPLICATION = ['interest', 'submitted', 'screening', 'assessment', 'interview', 'offer'];
@@ -100,6 +101,11 @@ export default function MyPage() {
                   <span data-testid="m14-my-home">{t('m14.my.homeBody', { area: t(`${homeRoute.module.toLowerCase()}.routes.${homeRoute.id}.title`) })}</span>{' '}
                   <L to={home} className="btn-outline btn-sm ms-1" data-testid="m14-my-home-link">{t('m14.my.homeOpen', { area: t(`${homeRoute.module.toLowerCase()}.routes.${homeRoute.id}.title`) })}</L>
                 </Callout>
+              )}
+              {(show.expiries || show.training || show.plan) && (
+                <div className="flex justify-end">
+                  <MyUpcomingCalendar personId={me!} enrolments={d.enrolments} courses={d.courses} plans={d.plans} activities={d.activities} roles={d.roles} quals={d.quals} standards={d.standards} licence={lic ?? null} medical={med ?? null} />
+                </div>
               )}
               <div className={`grid gap-3 sm:grid-cols-2 ${tiles >= 4 ? 'lg:grid-cols-4' : tiles === 3 ? 'lg:grid-cols-3' : ''}`} data-testid="m14-my-tiles">
                 {show.expiries && <StatTile label={t('m14.my.tileExpiring')} value={f.num(dueSoon.length)} tone={dueSoon.length ? 'sim' : 'ok'} sub={t('m14.my.tileExpiringSub')} />}

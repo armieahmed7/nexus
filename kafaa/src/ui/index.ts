@@ -12,3 +12,4 @@ export * from './Toast';
 export { Icon } from './Icon';
 export * from './WhyThis'; // F02 (wave 0)
 export * from './Benchmark'; // FS01 (future skills, wave A)
+export * from './AddToCalendar'; // SHR-01 add to calendar (.ics)

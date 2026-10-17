@@ -2,7 +2,7 @@
 // Completion of a qualifying course needs its linked evaluation (M05); certificates are issued only after a pass.
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Page, DataTable, Drawer, Modal, ConfirmDialog, FilterBar, useFilters, Async, Callout, Icon, TextField, TextArea, SelectField, useForm, required, numberRange, Card, StatusPill, Skeleton } from '../../ui';
+import { Page, DataTable, Drawer, Modal, ConfirmDialog, FilterBar, useFilters, Async, Callout, Icon, TextField, TextArea, SelectField, useForm, required, numberRange, Card, StatusPill, Skeleton, AddToCalendar } from '../../ui';
 import { useAction, useQuery, useRepo } from '../../data';
 import type { EnrolmentsRow, SessionsRow } from '../../data/types';
 import { useFormat, usePick, useT } from '../../i18n';
@@ -11,6 +11,7 @@ import { holdsSeat, isOpen } from '../../domain/learning';
 import { Chip, G2Pill, useCatalogue, useLabels, usePeople } from './ui';
 import { PerformanceModal } from './PerformanceModal';
 import { ProposedSessionsCard } from '../m25/ProposedSessionsCard'; // W4E1 (F26): draft sessions from the needs forecast
+import { useCalendarEvents } from '../../shell/calendar/useCalendarEvents'; // SHR-01
 
 export default function TrainingSchedulePage() {
   const t = useT();
@@ -21,6 +22,7 @@ export default function TrainingSchedulePage() {
   const s = useSession();
   const cat = useCatalogue();
   const people = usePeople();
+  const cal = useCalendarEvents();
   const [params] = useSearchParams();
   const [flt, setFlt] = useFilters({ q: '', course: '', kind: '', when: 'upcoming', mine: params.get('mine') ? '1' : '' }, true);
   const [create, setCreate] = useState(false);
@@ -46,7 +48,10 @@ export default function TrainingSchedulePage() {
           const waiting = (id: string) => d.enrolments.filter((e) => e.session_id === id && e.status === 'waitlisted').length;
           const rows = d.sessions.filter((x) => (!flt.course || x.course_id === flt.course) && (!flt.kind || x.kind === flt.kind) && (flt.when === 'past' ? x.starts_at < now : flt.when === 'upcoming' ? x.ends_at >= now : true)
             && (!flt.mine || x.instructor_person_id === s.identity.personId) && (!flt.q || `${x.location} ${x.location_ar ?? ''} ${cat.course.get(x.course_id)?.code} ${pick(cat.course.get(x.course_id), 'title')}`.toLowerCase().includes(flt.q.toLowerCase())));
+          const calRows = rows.filter((x) => x.status !== 'cancelled' && x.ends_at >= now);
           return (
+            <>
+            {calRows.length > 0 && <div className="flex justify-end"><AddToCalendar events={calRows.map((x) => cal.session(x, cat.course.get(x.course_id), '/training/schedule', lab.sessionKind(x.kind)))} file="training-sessions" calendarName={t('common.ics.cal.schedule')} label={t('common.ics.addShown')} testId="m04-schedule-ics" /></div>}
             <DataTable rows={rows} rowKey={(r) => r.id} csvName="sessions" searchable={false} onRowClick={(r) => setOpen(r.id)} empty={t('m04.schedule.none')} initialSort={{ key: 'when', dir: flt.when === 'past' ? 'desc' : 'asc' }} columns={[
               { key: 'when', header: t('m04.common.when'), value: (r) => r.starts_at, render: (r) => <div><div className="font-semibold">{f.dateTime(r.starts_at)}</div><div className="text-[12px] text-ink-3">{t('m04.schedule.until', { time: f.dateTime(r.ends_at) })}</div></div>, sortable: true },
               { key: 'course', header: t('m04.common.course'), value: (r) => cat.course.get(r.course_id)?.code ?? r.course_id, render: (r) => <div><div>{pick(cat.course.get(r.course_id), 'title') || r.course_id}</div><div className="ltr text-[12px] text-ink-3">{cat.course.get(r.course_id)?.code}</div></div>, sortable: true },
@@ -58,6 +63,7 @@ export default function TrainingSchedulePage() {
               { key: 'seats', header: t('m04.common.seats'), value: (r) => taken(r.id), render: (r) => <span className={`num ${taken(r.id) >= r.capacity ? 'font-semibold text-sim' : ''}`}>{f.num(taken(r.id))} / {f.num(r.capacity)}{waiting(r.id) ? ` · +${f.num(waiting(r.id))}` : ''}</span>, sortable: true },
               { key: 'status', header: t('m04.common.status'), value: (r) => r.status, render: (r) => <G2Pill status={r.status} /> },
             ]} />
+            </>
           );
         }}
       </Async>
