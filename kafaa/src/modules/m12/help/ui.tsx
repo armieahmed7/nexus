@@ -67,14 +67,15 @@ export function groupByLetter(items: GlossaryItem[], lang: Lang): { letter: stri
 }
 export const letterAnchor = (letter: string) => `letter-${letter}`;
 
-/** A link into the app as a button: opens directly when the viewer may; sign-in first for staff pages; otherwise shown as unavailable. */
-export function GoToLink({ link, className = 'btn-outline btn-sm' }: { link: HelpLink; className?: string }) {
+/** A link into the app as a button: opens directly when the viewer may; sign-in first for staff pages; otherwise shown as unavailable.
+ *  Labelled with the route's title unless a label is given. */
+export function GoToLink({ link, className = 'btn-outline btn-sm', label: given }: { link: HelpLink; className?: string; label?: string }) {
   const t = useT();
   const s = useSession();
   const def = ROUTE_BY_ID[link.route];
   if (!def) return null;
   const path = href(link.route, link.params ?? {}) + (link.hash ? `#${link.hash}` : '');
-  const label = routeTitle(t, def);
+  const label = given ?? routeTitle(t, def);
   if (canOpen(path, s)) {
     return (
       <L to={path} className={`${className} no-underline`} data-testid={`help-go-${link.route}`}>

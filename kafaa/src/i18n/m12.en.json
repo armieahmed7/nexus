@@ -56,6 +56,14 @@
     "help-guide": {
       "title": "Guide",
       "purpose": "A step-by-step help guide with links to the pages it describes, sources and the date it was last reviewed."
+    },
+    "future-skills": {
+      "title": "Future skills programme",
+      "purpose": "The twelve future-skills themes in plain language: what each one is, who it helps, what you can do on Kafa'a, and how the skills data is kept honest."
+    },
+    "start": {
+      "title": "Find my route",
+      "purpose": "Answer three short questions and get a personal, printable route through Kafa'a: the pages, guides and programmes to open first, in order."
     }
   },
   "common": {
@@ -73,6 +81,7 @@
     "ctaSignIn": "Sign in",
     "ctaMy": "Go to My Kafa'a",
     "ctaAsk": "Ask Dalil",
+    "ctaRoute": "Find my route",
     "concept": "A concept within ENEC NEXUS. Not an official ENEC website; official information is on enec.ae.",
     "scale": {
       "eyebrow": "One scale for every skill",
@@ -144,6 +153,7 @@
     },
     "audiencesTitle": "Find your starting point",
     "audiencesIntro": "Kafa'a works differently for each person who uses it.",
+    "audiencesRoute": "Not sure where you fit? Find my route",
     "aud": {
       "staff": {
         "title": "ENEC employees",
@@ -560,5 +570,159 @@
       "none": "No term matches",
       "note": "Definitions explain terms; they are not ENEC policy, and Kafa'a is not a regulator or a certification body."
     }
+  },
+  "fsx": {
+    "eyebrow": "Future skills",
+    "intro": "Kafa'a prepares people for AI, new reactor technology and the energy transition through twelve themes. Here is what each one is, who it helps and where to find it.",
+    "findRoute": "Find my route",
+    "print": "Print this page",
+    "mapTitle": "Twelve themes at a glance",
+    "mapIntro": "Choose a theme to jump to what it covers.",
+    "band": {
+      "skills": "The skills",
+      "growth": "Learning, careers and recognition",
+      "system": "Planning and partnership"
+    },
+    "bandIntro": {
+      "skills": "What people need to know and be able to do.",
+      "growth": "How people learn, move between roles and get credit.",
+      "system": "How the organisation plans ahead and works with others."
+    },
+    "who": "Who it helps",
+    "doHere": "On Kafa'a you can",
+    "explore": "Explore",
+    "follows": "Follows",
+    "lockNote": "Pages with a lock open after you sign in.",
+    "honest": {
+      "title": "How the skills data is kept honest",
+      "intro": "The future-skills pages follow published international benchmarks, let evidence age, keep every change on record and label anything simulated.",
+      "bmTitle": "Benchmarks with sources",
+      "bmBody": "Each feature names the international benchmarks it follows. Every benchmark is stored with its owner, its sources and the date they were read; select one to see them.",
+      "bmCount": "{n} benchmarks · sources last read {date}",
+      "bmShow": "Show all benchmarks",
+      "decayTitle": "Evidence ages",
+      "decayBody": "Every skill has a decay class. When your newest evidence for a level passes the half-life of its class, it counts one level lower until it is refreshed. Skill definitions are reviewed on a cycle of their own.",
+      "decayCaption": "Decay classes, evidence half-lives and review cycles",
+      "decayClass": "Class",
+      "halfLife": "Evidence half-life",
+      "review": "Definition review",
+      "months": "{n} months",
+      "lifeTitle": "Every change on record",
+      "lifeBody": "Each skill shows whether demand for it is emerging, growing, stable or declining. Obsolete skills are kept and marked, never deleted, and every published change goes into the change log.",
+      "simTitle": "A concept with synthetic data",
+      "simBody": "Kafa'a is a concept within ENEC NEXUS, not an official ENEC website. The people and records you see are synthetic demo data, and figures marked \"Simulated\" or \"Sample data\" are illustrative, never presented as real. Official information is on enec.ae.",
+      "authBody": "Kafa'a records never change a licence or a qualification record; qualification entries only mirror the licensee's records as qualified or not qualified.",
+      "readMore": "Read more"
+    },
+    "nextTitle": "Not sure where to begin?",
+    "nextBody": "Answer three short questions and get a route through these pages that fits you."
+  },
+  "start": {
+    "intro": "Answer three short questions and get a route through Kafa'a that fits you: the pages, guides and programmes to open first, in order.",
+    "privacy": "Your answers are kept only in this page's address, so you can bookmark or share your route. Nothing is sent, saved or tracked.",
+    "progress": "Progress",
+    "step": {
+      "who": "You",
+      "goal": "Your goal",
+      "details": "Details",
+      "route": "Your route"
+    },
+    "stepOf": "Question {n} of {total}",
+    "q": {
+      "who": "Which of these describes you best?",
+      "family": "Which role family are you in?",
+      "goal": "What do you want to do?",
+      "details": "Anything else?",
+      "detailsHint": "Both questions are optional. They add a focus step to your route.",
+      "interest": "An area that interests you",
+      "level": "Your experience"
+    },
+    "who": {
+      "student": {
+        "label": "School or university student",
+        "hint": "Exploring a first career in nuclear energy."
+      },
+      "graduate": {
+        "label": "Graduate or job seeker",
+        "hint": "Looking for a programme or a job, including from another industry."
+      },
+      "employee": {
+        "label": "ENEC employee",
+        "hint": "Growing in your role or preparing for the next one."
+      },
+      "manager": {
+        "label": "Manager or HR",
+        "hint": "Developing a team or planning the workforce."
+      },
+      "partner": {
+        "label": "Partner, university or supplier",
+        "hint": "Working with ENEC on skills, research or supply."
+      }
+    },
+    "family": {
+      "operations": "Operations and outage management",
+      "technical": "Maintenance, engineering, fuel and IT/OT",
+      "science": "Radiation protection, chemistry and environment",
+      "safety": "Safety, security, quality and licensing",
+      "support": "Training, supply chain and corporate"
+    },
+    "goal": {
+      "explore": {
+        "label": "Explore careers",
+        "hint": "See roles, career paths and how roles will change."
+      },
+      "skill": {
+        "label": "Build a skill",
+        "hint": "Find out what a skill means and how to learn it."
+      },
+      "recognised": {
+        "label": "Get recognised",
+        "hint": "Turn what you know into credit and records others can check."
+      },
+      "team": {
+        "label": "Plan a team",
+        "hint": "See team skills, gaps and future needs."
+      },
+      "partner": {
+        "label": "Partner with us",
+        "hint": "Universities, research, suppliers and the trainee consortium."
+      }
+    },
+    "interest": {
+      "none": "No preference",
+      "ai": "AI and digital",
+      "clean": "Clean energy",
+      "nextgen": "Next-generation reactors",
+      "human": "Human and leadership skills",
+      "safety": "Knowledge and safety culture"
+    },
+    "level": {
+      "none": "Prefer not to say",
+      "new": "New to this",
+      "some": "Some experience",
+      "experienced": "Experienced"
+    },
+    "next": "Next",
+    "back": "Back",
+    "show": "Show my route",
+    "startOver": "Start over",
+    "change": "Change answers",
+    "required": "Choose an option to continue.",
+    "routeTitle": "Your route",
+    "routeIntro": "{n} steps, in order. Pages with a lock open after you sign in.",
+    "answers": "Your answers",
+    "stepN": "Step {n}",
+    "print": "Print my route",
+    "copy": "Copy link",
+    "copied": "Link copied",
+    "copyFailed": "The link could not be copied. Copy it from the address bar instead.",
+    "programmesTitle": "Programmes for your stage",
+    "programmesIntro": "From the programme finder. Check the eligibility on each programme's page.",
+    "rolesTitle": "Roles in your family",
+    "rolesIntro": "From the Career Map: what each role does, its qualifications and entry routes.",
+    "noneFound": "Nothing to show here right now.",
+    "concept": "Kafa'a is a concept with synthetic demo data. Your route describes how the platform works; it is not ENEC advice or policy.",
+    "moreHelp": "Want more help?",
+    "fsx": "Future skills programme"
   }
 }
