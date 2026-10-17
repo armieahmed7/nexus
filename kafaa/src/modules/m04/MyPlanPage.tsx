@@ -7,7 +7,7 @@ import type { DevPlansRow, PlanActivitiesRow } from '../../data/types';
 import { L, useFormat, usePick, useT } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { Chip, G2Pill, useLabels, usePeople } from './ui';
-import { rankPlanSuggestions } from './plan';
+import { ownCompetencyLevels, planGaps, rankPlanSuggestions } from './plan';
 import { useCalendarEvents } from '../../shell/calendar/useCalendarEvents'; // SHR-01
 import { upcomingOnly } from '../../domain/ics';
 
@@ -73,11 +73,14 @@ function PlanView({ plan, acts }: { plan: DevPlansRow; acts: PlanActivitiesRow[]
   const [adding, setAdding] = useState<{ kind: string; title_en: string; title_ar: string; course_id: string | null } | null>(null);
   const [submit, setSubmit] = useState(false);
   const me = s.identity.personId ?? '';
-  const fw = useQuery(['job_roles', 'role_competencies', 'competencies', 'courses', 'enrolments', 'qual_records', 'qual_standards'], async () => {
-    const [roles, rc, comps, courses, enrolments, quals, standards] = await Promise.all([repo.list('job_roles'), repo.list('role_competencies'), repo.list('competencies'), repo.list('courses'),
+  const fw = useQuery(['job_roles', 'role_competencies', 'competencies', 'courses', 'enrolments', 'qual_records', 'qual_standards', 'person_skills', 'skills'], async () => {
+    const [roles, rc, comps, courses, enrolments, quals, standards, states, skills] = await Promise.all([repo.list('job_roles'), repo.list('role_competencies'), repo.list('competencies'), repo.list('courses'),
       // EMP-02: my own enrolments and qualifications, so suggestions leave out what I have done, am doing or have qualified past
-      repo.list('enrolments', { filter: { person_id: me } }).catch(() => []), repo.list('qual_records', { filter: { person_id: me } }).catch(() => []), repo.list('qual_standards').catch(() => [])]);
-    return { roles, rc, comps, courses, enrolments, quals, standards };
+      repo.list('enrolments', { filter: { person_id: me } }).catch(() => []), repo.list('qual_records', { filter: { person_id: me } }).catch(() => []), repo.list('qual_standards').catch(() => []),
+      // EMP-03: my own skill states (the ones My levels shows), so the gap is measured from my level, not my current role's
+      // A failed read is kept apart from "no evidence": the page says so instead of showing every competency as a full gap.
+      repo.list('person_skills', { filter: { person_id: me } }).catch(() => null), repo.list('skills').catch(() => null)]);
+    return { roles, rc, comps, courses, enrolments, quals, standards, states, skills };
   }, [me]);
   const editable = plan.status === 'draft' || plan.status === 'active';
   const done = acts.filter((a) => a.status === 'done').length;
@@ -89,9 +92,8 @@ function PlanView({ plan, acts }: { plan: DevPlansRow; acts: PlanActivitiesRow[]
       {(d) => {
         const role = d.roles.find((r) => r.id === plan.target_role_id);
         const current = s.person?.job_role_id ?? null;
-        const need = d.rc.filter((x) => x.role_id === plan.target_role_id);
-        const have = new Map(d.rc.filter((x) => x.role_id === current).map((x) => [x.competency_id, x.required_level]));
-        const gaps = need.map((x) => ({ ...x, have: have.get(x.competency_id) ?? 0, gap: x.required_level - (have.get(x.competency_id) ?? 0) })).filter((x) => x.gap > 0).sort((a, b) => b.gap - a.gap);
+        const levelsLoaded = !!d.states && !!d.skills;
+        const gaps = planGaps({ roleComps: d.rc, targetRoleId: plan.target_role_id, currentRoleId: current, own: levelsLoaded ? ownCompetencyLevels(d.states!, d.skills!) : new Map() });
         const comp = (id: string) => d.comps.find((c) => c.id === id);
         const planned = new Set(acts.map((a) => a.course_id).filter((x): x is string => !!x));
         const suggestions = rankPlanSuggestions({
@@ -122,12 +124,14 @@ function PlanView({ plan, acts }: { plan: DevPlansRow; acts: PlanActivitiesRow[]
             </Grid>
 
             <Section title={t('m04.plan.gapTitle')} description={t('m04.plan.gapIntro')}>
+              {!levelsLoaded && <Callout tone="bad" title={t('m04.plan.levelsUnavailable')} />}
               {gaps.length === 0 ? <Callout tone="ok" title={t('m04.plan.noGap')}>{t('m04.plan.noGapBody')}</Callout> : (
                 <DataTable rows={gaps} rowKey={(r) => r.id} searchable={false} csvName="skills-gap" columns={[
                   { key: 'comp', header: t('m04.plan.competency'), value: (r) => { const c = comp(r.competency_id); return c ? `${c.code} · ${pick(c, 'name')}` : r.competency_id; } },
                   { key: 'imp', header: t('m04.plan.importance'), value: (r) => r.importance, render: (r) => <Chip tone={r.importance === 'core' ? 'accent' : 'neutral'}>{t(`m04.plan.imp.${r.importance}`)}</Chip> },
-                  { key: 'have', header: t('m04.plan.currentLevel'), value: (r) => r.have, align: 'end' },
-                  { key: 'need', header: t('m04.plan.requiredLevel'), value: (r) => r.required_level, align: 'end' },
+                  { key: 'asks', header: t('m04.plan.currentLevel'), value: (r) => r.roleAsks, render: (r) => <span className="num text-ink-2">{f.num(r.roleAsks)}</span>, align: 'end' },
+                  { key: 'have', header: t('m04.plan.yourLevel'), value: (r) => r.have, render: (r) => r.evidenced ? <span className="num font-semibold" data-testid="m04-plan-own" data-comp={r.competency_id}>{f.num(r.have)}</span> : <span className="text-[12.5px] text-ink-3" data-testid="m04-plan-own" data-comp={r.competency_id}>{t('m04.plan.noEvidence')}</span>, align: 'end' },
+                  { key: 'need', header: t('m04.plan.requiredLevel'), value: (r) => r.required_level, render: (r) => <span className="num">{f.num(r.required_level)}</span>, align: 'end' },
                   { key: 'gap', header: t('m04.plan.gap'), value: (r) => r.gap, render: (r) => <span className="num font-semibold text-bad">+{f.num(r.gap)}</span>, align: 'end', sortable: true },
                 ]} />
               )}

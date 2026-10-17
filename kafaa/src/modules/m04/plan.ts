@@ -1,5 +1,9 @@
 /**
  * EMP-02: suggested courses on /my/plan, ranked by the gap they help close (pure; tested in tests/unit/emp02-plan-suggest.test.ts).
+ *   gap       EMP-03 (planGaps): the target role's required level minus the person's OWN level for that competency, read from their
+ *             skill states the way My levels and the coach do (SkillsEngine.competencyLevels: the competency's core skill, else the
+ *             best of its skills). No evidence for a competency counts as level 0 and is flagged, never filled in from the current
+ *             role's requirement (the proxy used before, still shown for comparison). Tested in tests/unit/emp03-plan-own-level.test.tsx.
  *   score     sum, over the course's competencies that have a gap towards the target role, of gap x importance weight
  *             (core 3, important 2, useful 1: the weights the FS34 translator in m18/translate.ts uses)
  *   excluded  courses already on the plan, completed, or with an open enrolment (assigned ... in progress); the initial-training
@@ -10,6 +14,7 @@
  * Display only: nothing is recorded about the person, and the rule never edits a plan or an enrolment.
  */
 import type { Reason } from '../../domain/engines/types';
+import { competencyLevels } from '../../domain/engines/skills';
 import { trackForRole } from './paths';
 
 export const IMPORTANCE_WEIGHT: Record<string, number> = { core: 3, important: 2, useful: 1 };
@@ -18,7 +23,31 @@ export const TAKEN_ENROLMENT = ['assigned', 'requested', 'approved', 'waitlisted
 const CURRENT_QUAL = ['qualified', 'due', 'renewed'];
 export const SUGGEST_LIMIT = 8;
 
-export interface PlanGap { competency_id: string; gap: number; have: number; required_level: number; importance: string }
+/** have: the person's own level (0 when not evidenced); roleAsks: what their current role requires (for comparison only). */
+export interface PlanGap { competency_id: string; gap: number; have: number; required_level: number; importance: string; roleAsks?: number; evidenced?: boolean }
+interface RoleCompIn { role_id: string; competency_id: string; required_level: number; importance: string }
+
+/** The person's own level per competency from their skill states (same rule as My levels' competency view and the coach). */
+export function ownCompetencyLevels(states: { skill_id: string; level: number | string; active?: boolean | null }[], skills: { id: string; competency_id: string; core?: boolean | null }[]): Map<string, number> {
+  const live = states.filter((s) => s.active !== false && Number(s.level) > 0).map((s) => ({ skill_id: s.skill_id, level: Number(s.level) }));
+  return competencyLevels(live, skills.map((s) => ({ id: s.id, competency_id: s.competency_id, core: !!s.core })));
+}
+
+/** EMP-03: the competencies where the person's own level is below the target role's requirement, biggest gap first
+ *  (then importance, then competency id). */
+export function planGaps<R extends RoleCompIn>(x: { roleComps: R[]; targetRoleId: string; currentRoleId: string | null; own: Map<string, number> }): (R & Required<PlanGap>)[] {
+  const asks = new Map(x.roleComps.filter((r) => x.currentRoleId && r.role_id === x.currentRoleId).map((r) => [r.competency_id, Number(r.required_level)]));
+  const w = (g: PlanGap) => IMPORTANCE_WEIGHT[g.importance] ?? 1;
+  return x.roleComps
+    .filter((r) => r.role_id === x.targetRoleId)
+    .map((r) => {
+      const mine = x.own.get(r.competency_id);
+      const have = mine ?? 0;
+      return { ...r, required_level: Number(r.required_level), have, evidenced: mine != null, roleAsks: asks.get(r.competency_id) ?? 0, gap: Number(r.required_level) - have };
+    })
+    .filter((g) => g.gap > 0)
+    .sort((a, b) => b.gap - a.gap || w(b) - w(a) || (a.competency_id < b.competency_id ? -1 : a.competency_id > b.competency_id ? 1 : 0));
+}
 interface CourseIn { id: string; code: string; audience: string; initial?: boolean | null; competency_ids?: string[] | null; duration_hours?: number | null }
 interface Bi { en: string; ar: string }
 export interface SuggestInput<C extends CourseIn> {
