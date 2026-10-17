@@ -9,7 +9,7 @@ export default {
         bg: c('bg'), sunken: c('sunken'), panel: c('panel'), raised: c('raised'),
         line: c('line'), 'line-strong': c('line-strong'),
         ink: c('ink'), 'ink-2': c('ink-2'), 'ink-3': c('ink-3'),
-        accent: c('accent'), 'accent-ink': c('accent-ink'), 'accent-soft': c('accent-soft'),
+        accent: c('accent'), 'accent-hover': c('accent-hover'), 'accent-ink': c('accent-ink'), 'accent-soft': c('accent-soft'),
         eyebrow: c('eyebrow'), navactive: c('navactive'), leaf: c('leaf'), sky: c('sky'),
         sim: c('sim'), 'sim-bg': c('sim-bg'), 'sim-line': c('sim-line'),
         ok: c('ok'), 'ok-bg': c('ok-bg'), 'ok-line': c('ok-line'),
