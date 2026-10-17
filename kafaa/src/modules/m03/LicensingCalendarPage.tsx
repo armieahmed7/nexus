@@ -5,7 +5,7 @@
 import { useMemo, useState } from 'react';
 import { Page, Section, Card, Grid, Async, EmptyState, StatusPill, Callout, FilterBar, useFilters, Modal, SelectField, TextField, ConfirmDialog, downloadText, Icon, StatTile } from '../../ui';
 import { useAction, useQuery, useRepo, type RowOf } from '../../data';
-import { useT, usePick, useFormat, useRefText } from '../../i18n';
+import { useT, usePick, useFormat, useRefText, useCount } from '../../i18n';
 import { RULES } from '../../auth/policy';
 import { examNoticeDue, examNoticeReminder, todayIso, daysBetween, isoDate, toDate } from '../../domain/rules';
 import { workingDaysLeft } from './licensing';
@@ -46,6 +46,7 @@ function Calendar({ d }: { d: Data }) {
   const pick = usePick();
   const refText = useRefText();
   const f = useFormat();
+  const plural = useCount();
   const repo = useRepo();
   const act = useAction();
   const today = todayIso();
@@ -157,7 +158,7 @@ function Calendar({ d }: { d: Data }) {
                         )}
                         {e.o && ['open', 'drafted'].includes(e.o.status) && (
                           <div className={`text-[12px] ${e.o.due_on < today ? 'text-bad' : 'text-ink-3'}`}>
-                            {e.o.kind === 'lapse_report' ? (workingDaysLeft(today, e.o.due_on) < 0 ? t('m03.tasks.overdueWd', { n: f.num(-workingDaysLeft(today, e.o.due_on)) }) : t('m03.tasks.wdLeft', { n: f.num(workingDaysLeft(today, e.o.due_on)) })) : daysBetween(today, e.o.due_on) < 0 ? t('m02.expiredAgo', { n: f.num(-daysBetween(today, e.o.due_on)) }) : t('m02.inDays', { n: f.num(daysBetween(today, e.o.due_on)) })}
+                            {e.o.kind === 'lapse_report' ? (workingDaysLeft(today, e.o.due_on) < 0 ? t('m03.tasks.overdueWd', { n: f.num(-workingDaysLeft(today, e.o.due_on)) }) : t('m03.tasks.wdLeft', { n: f.num(workingDaysLeft(today, e.o.due_on)) })) : daysBetween(today, e.o.due_on) < 0 ? t('m02.expiredAgo', { days: plural('common.nDays', -daysBetween(today, e.o.due_on)) }) : t('m02.inDays', { days: plural('common.nDays', daysBetween(today, e.o.due_on)) })}
                           </div>
                         )}
                       </div>

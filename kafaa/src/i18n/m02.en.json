@@ -130,8 +130,8 @@
   "noTasks": "No tasks on this standard",
   "needsReview": "Needs review",
   "qualifiedOn": "Qualified on",
-  "expiredAgo": "expired {n} days ago",
-  "inDays": "in {n} days",
+  "expiredAgo": "expired {days} ago",
+  "inDays": "in {days}",
   "notice": "{n}-day notice",
   "requalNote": "Requalification every {n} months. Notices go out 90, 60 and 30 days before expiry unless the standard sets other intervals.",
   "mirror": {

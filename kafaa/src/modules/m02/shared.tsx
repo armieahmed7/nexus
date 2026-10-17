@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useQuery, useRepo, useAction } from '../../data';
 import type { RowOf, Query } from '../../data';
 import { StatusPill, Callout, EmptyState, ConfirmDialog, SelectField, TextField, CheckboxField, TextArea, Icon } from '../../ui';
-import { useT, usePick, useFormat, systemName } from '../../i18n';
+import { useT, usePick, useFormat, systemName, useCount } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { todayIso } from '../../domain/rules';
 import { displayView, viewTone, taskRows, ackState, qualGap, type EvalLite, type GapStatus } from './quals';
@@ -55,13 +55,14 @@ export function MirrorNote({ system, synced }: { system: string; synced: string 
 export function ExpiryText({ rec }: { rec: Rec }) {
   const t = useT();
   const f = useFormat();
+  const plural = useCount();
   const v = displayView(rec);
   if (v.masked) return <span className="text-ink-3">{t('m02.masked')}</span>;
   if (!rec.expires_on) return <span className="text-ink-3">—</span>;
   return (
     <span>
       {f.date(rec.expires_on)}
-      {v.days != null && <span className={`ms-1.5 text-[12px] ${v.days < 0 ? 'text-bad' : v.days <= 30 ? 'text-sim' : 'text-ink-3'}`}>({v.days < 0 ? t('m02.expiredAgo', { n: f.num(-v.days) }) : t('m02.inDays', { n: f.num(v.days) })})</span>}
+      {v.days != null && <span className={`ms-1.5 text-[12px] ${v.days < 0 ? 'text-bad' : v.days <= 30 ? 'text-sim' : 'text-ink-3'}`}>({v.days < 0 ? t('m02.expiredAgo', { days: plural('common.nDays', -v.days) }) : t('m02.inDays', { days: plural('common.nDays', v.days) })})</span>}
     </span>
   );
 }
