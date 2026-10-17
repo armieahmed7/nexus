@@ -9,6 +9,7 @@ import { L, useFormat, useLang, usePick, useT } from '../../i18n';
 import { READINESS } from './domain';
 import { ConfidentialNote, FlagPills, ReadinessPill, unwrap, useCatalogue, useLabels, type Labels } from './ui';
 import type { SlateView, SuccessionBoard } from './backend/rpc';
+import { useSession } from '../../auth/session';
 
 const FILTERS = ['all', 'critical', 'leadership', 'flagged'] as const;
 
@@ -29,6 +30,7 @@ export default function SuccessionPage() {
 
 function Board({ b, lab }: { b: SuccessionBoard; lab: Labels }) {
   const t = useT();
+  const { roles } = useSession();
   const f = useFormat();
   const repo = useRepo();
   const run = useAction();
@@ -41,10 +43,13 @@ function Board({ b, lab }: { b: SuccessionBoard; lab: Labels }) {
   const withReady = b.slates.filter((s) => !s.flags.includes('no_ready_now')).length;
   const lastRoll = b.slates.map((s) => s.rolled_up).filter(Boolean).sort((x, y) => (x!.at < y!.at ? 1 : -1))[0];
   const curP = period || periods[0] || '';
-  if (!b.slates.length) return <EmptyState icon="users" title={t('m23.sx.none')}>{t(b.view === 'function' ? 'm23.sx.noneFunction' : 'm23.sx.noneBody')}</EmptyState>;
+  // MGR-01: a scoped (read-only) board is either an HR business partner's scope or a line manager's own function. Telling an HR
+  // analyst "HR maintains them" was wrong, so each gets its own copy; the HR director (view 'all') sees neither.
+  const scoped = b.view === 'function' ? (roles.includes('hr_analyst') ? 'hrScope' : 'function') : null;
+  if (!b.slates.length) return <EmptyState icon="users" title={t('m23.sx.none')}>{t(scoped === 'hrScope' ? 'm23.sx.noneHrScope' : scoped ? 'm23.sx.noneFunction' : 'm23.sx.noneBody')}</EmptyState>;
   return (
     <>
-      {b.view === 'function' && <Callout title={t('m23.sx.functionView')}>{t('m23.sx.functionViewBody')}</Callout>}
+      {scoped && <Callout title={t(`m23.sx.${scoped}View`)}><span data-testid="m23-sx-scope-note" data-view={scoped}>{t(`m23.sx.${scoped}ViewBody`)}</span></Callout>}
       <Grid cols={4}>
         <StatTile label={t('m23.sx.slates')} value={f.num(b.slates.length)} sub={t('m23.sx.confirmed', { n: f.num(b.slates.filter((s) => s.status === 'confirmed').length) })} />
         <StatTile label={t('m23.sx.withReady')} value={t('m23.sx.withReadyOf', { n: f.num(withReady), total: f.num(b.slates.length) })} tone={withReady === b.slates.length ? 'ok' : 'bad'} />
