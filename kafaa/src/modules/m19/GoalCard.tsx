@@ -2,10 +2,11 @@
 // writes under own_profile: nobody else can read them). No streaks, points or comparisons: the goal is a planning aid.
 import { useState } from 'react';
 import { Card, Drawer, Modal, ProgressBar, StatusPill, TextField, CheckboxField, Icon, useForm, numberRange } from '../../ui';
-import { useAction, useRepo } from '../../data';
-import { useFormat, usePick, useT } from '../../i18n';
+import { useAction, useQuery, useRepo } from '../../data';
+import { L, useCount, useFormat, useLang, usePick, useT } from '../../i18n';
 import { useSession } from '../../auth/session';
-import { daysFrom, type CoachInput, type CoachResult } from './coach';
+import type { CoachCard, CoachInput, CoachResult } from './coach';
+import { daysLeftInWeek, dubaiToday, fitsInTimeLeft, weeklyRecorded, type WeekBucket } from './week';
 import { goalId } from './insights';
 import type { CoachTables } from './inputs';
 
@@ -18,22 +19,55 @@ async function saveGoal(repo: ReturnType<typeof useRepo>, current: GoalRow | nul
   return current ? repo.update('learning_goals', current.id, row) : repo.insert('learning_goals', { id: goalId(personId), person_id: personId, ...row });
 }
 
-export function GoalCard({ result, feedHours }: { result: R; feedHours: number }) {
+const tenth = (n: number) => Math.round(n * 10) / 10;
+
+export function GoalCard({ result, feedHours, feed = [] }: { result: R; feedHours: number; feed?: CoachCard[] }) {
   const t = useT();
   const f = useFormat();
+  const count = useCount();
+  const lang = useLang();
   const repo = useRepo();
   const run = useAction();
   const [open, setOpen] = useState(false);
   const goal = myGoal(result);
   const hours = Number(goal?.hours_per_week ?? 0);
-  const week = result.input.records.filter((x) => x.result !== 'failed' && daysFrom(x.completed_on, result.input.now) >= 0 && daysFrom(x.completed_on, result.input.now) < 7).reduce((n, x) => n + Number(x.hours ?? 0), 0);
+  // EMP-09: this week's recorded hours come from my own learning record (every recorded activity, not only course completions).
+  const me = result.input.personId;
+  const lrs = useQuery('xapi_statements', async () => (me && hours > 0 ? repo.list('xapi_statements', { filter: { actor_person_id: me } }).catch(() => []) : []), [me, hours > 0]);
+  const today = dubaiToday();
+  const weeks = weeklyRecorded(lrs.data ?? [], today);
+  const week = tenth(weeks[weeks.length - 1].minutes / 60);
+  const left = Math.max(0, tenth(hours - week));
+  const fits = fitsInTimeLeft(feed, left);
+  const weekText = count('m19.goal.weekOf', hours, { done: f.num(week) });
   const form = useForm({ hours: hours ? String(hours) : '' }, { hours: [numberRange(0, 40)] });
   return (
     <Card eyebrow={t('m19.goal.eyebrow')} title={hours ? t('m19.goal.title', { n: f.num(hours) }) : t('m19.goal.none')}
       actions={<button type="button" className="btn-ghost btn-sm" onClick={() => { form.reset(); setOpen(true); }} data-testid="m19-goal-edit">{hours ? t('m19.goal.change') : t('m19.goal.set')}</button>}>
       {hours > 0 ? (
         <div className="space-y-2" data-testid="m19-goal">
-          <ProgressBar value={Math.min(100, Math.round((week * 100) / hours))} tone={week >= hours ? 'ok' : 'accent'} label={t('m19.goal.week', { n: f.num(week), goal: f.num(hours) })} />
+          <ProgressBar value={Math.min(100, Math.round((week * 100) / hours))} tone={week >= hours ? 'ok' : 'accent'} label={weekText} />
+          <p className="text-[13.5px] text-ink-2" data-testid="m19-goal-week" aria-live="polite">{lrs.loading ? t('m19.goal.weekLoading') : weekText}</p>
+          {!lrs.loading && (
+            <p className="text-[12.5px] text-ink-3" data-testid="m19-goal-left">
+              {week >= hours ? t('m19.goal.weekReached') : t('m19.goal.weekLeft', { hours: count('m19.goal.nHours', left), days: count('common.nDays', daysLeftInWeek(today)) })}
+            </p>
+          )}
+          {!lrs.loading && <WeekBars weeks={weeks} goal={hours} />}
+          {!lrs.loading && fits.length > 0 && (
+            <div data-testid="m19-goal-fits">
+              <p className="caps">{t('m19.goal.fitsTitle')}</p>
+              <ul className="mt-1 space-y-1 text-[13px]">
+                {fits.map((c) => (
+                  <li key={c.id} className="flex items-baseline justify-between gap-2">
+                    <L to={c.link} className="min-w-0">{lang === 'ar' ? c.title.ar : c.title.en}</L>
+                    <span className="shrink-0 text-ink-3">{count('m19.goal.nHours', c.hours ?? 0)}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <p className="text-[12px] text-ink-3">{t('m19.goal.recordedNote')} <L to="/my/learning-record">{t('m19.goal.recordLink')}</L></p>
           <p className="text-[12.5px] text-ink-3">{t('m19.goal.monthFit', { feed: f.num(Math.round(feedHours * 10) / 10), month: f.num(Math.round(hours * 4.3 * 10) / 10) })}</p>
         </div>
       ) : <p className="text-[13.5px] text-ink-2">{t('m19.goal.noneBody')}</p>}
@@ -53,6 +87,28 @@ export function GoalCard({ result, feedHours }: { result: R; feedHours: number }
         </form>
       </Modal>
     </Card>
+  );
+}
+
+/** The last weeks as a small bar row (oldest first, this week last). Each bar is a list item with its own text for screen readers. */
+function WeekBars({ weeks, goal }: { weeks: WeekBucket[]; goal: number }) {
+  const t = useT();
+  const f = useFormat();
+  const count = useCount();
+  const top = Math.max(goal, ...weeks.map((w) => w.minutes / 60), 0.5);
+  return (
+    <ul className="flex h-10 items-end gap-1" aria-label={t('m19.goal.barsLabel', { n: f.num(weeks.length) })} data-testid="m19-goal-bars">
+      {weeks.map((w, i) => {
+        const h = tenth(w.minutes / 60);
+        const label = t('m19.goal.barWeek', { date: f.date(w.start), hours: count('m19.goal.nHours', h) });
+        return (
+          <li key={w.start} className="flex h-full flex-1 items-end" title={label} data-hours={h}>
+            <span className="sr-only">{label}</span>
+            <span aria-hidden="true" className={`block w-full rounded-sm ${i === weeks.length - 1 ? 'bg-accent' : 'bg-line'}`} style={{ height: `${Math.max(h > 0 ? 8 : 2, Math.round((h / top) * 100))}%` }} />
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
