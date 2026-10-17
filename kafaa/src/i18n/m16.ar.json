@@ -544,6 +544,8 @@
     "from": "من",
     "to": "إلى",
     "entry": "قيد التدقيق رقم {n}",
+    "rowLabel": "قيد التدقيق رقم {n}: {action} على {target}، {when}",
+    "rowLabelNoTarget": "قيد التدقيق رقم {n}: {action}، {when}",
     "reason": "السبب",
     "request": "معرّف الطلب",
     "hashes": "قيم التجزئة",

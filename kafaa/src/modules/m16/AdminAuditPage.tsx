@@ -107,7 +107,7 @@ export default function AdminAuditPage() {
       <Async state={q}>
         {() => (
           <div data-testid="m16-audit-table">
-            <DataTable rows={rows} rowKey={(a) => a.id} columns={cols} csvName="kafaa-audit" onRowClick={setOpen} pageSize={50} initialSort={{ key: 'seq', dir: 'desc' }} />
+            <DataTable rows={rows} rowKey={(a) => a.id} columns={cols} csvName="kafaa-audit" onRowClick={setOpen} rowLabel={(a) => auditRowLabel(a, t, f.dateTime)} pageSize={50} initialSort={{ key: 'seq', dir: 'desc' }} />
             <div className="mt-2 flex flex-wrap items-center gap-2 text-[12.5px] text-ink-3" data-testid="m16-audit-paging">
               <span>{t('m16.audit.showing', { n: f.num(rows.length), total: f.num(totals.data?.entries ?? rows.length) })}</span>
               {rows.length >= limit && limit < MAX_ROWS && (
@@ -151,6 +151,13 @@ export default function AdminAuditPage() {
       </Drawer>
     </Page>
   );
+}
+
+/** The row's "Open …" button label (A11Y-02): sequence, action, target and time, not the bare sequence number. */
+export function auditRowLabel(a: Pick<AuditEventsRow, 'seq' | 'action' | 'entity_table' | 'entity_id' | 'ts'>, t: (key: string, vars?: Record<string, string | number>) => string, when: (ts: string) => string): string {
+  const target = [a.entity_table, a.entity_id].filter(Boolean).join(' ');
+  const vars = { n: a.seq, action: a.action, when: when(a.ts) };
+  return target ? t('m16.audit.rowLabel', { ...vars, target }) : t('m16.audit.rowLabelNoTarget', vars);
 }
 
 /** Entries read per page and at most (one request: PostgREST serves up to 1,000 rows). */

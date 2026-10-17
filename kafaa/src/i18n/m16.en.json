@@ -544,6 +544,8 @@
     "from": "From",
     "to": "To",
     "entry": "Audit entry #{n}",
+    "rowLabel": "audit entry #{n}: {action} on {target}, {when}",
+    "rowLabelNoTarget": "audit entry #{n}: {action}, {when}",
     "reason": "Reason",
     "request": "Request id",
     "hashes": "Hashes",
