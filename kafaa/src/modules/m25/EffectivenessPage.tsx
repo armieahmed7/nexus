@@ -8,7 +8,7 @@ import { useSession } from '../../auth/session';
 import { MIN_GROUP_SIZE } from '../../auth/policy';
 import { Async, BarChart, Callout, Card, ConfirmDialog, DataTable, EmptyState, Grid, Icon, Modal, Page, Section, SimChip, StatTile, StatusPill, WhyThis, downloadText, toCsv } from '../../ui';
 import { L, useFormat, useT } from '../../i18n';
-import { COMMITTEES, packRows, type CourseCard, type PackRow } from './eff';
+import { COMMITTEES, SUPPRESSED_CELL, packRows, type CourseCard, type PackRow } from './eff';
 import { KirkpatrickLegend, LevelDots, ScoreBar, Sup, TrendChip, VerdictPill, useM25Labels, useM25Refs } from './ui';
 
 const avg = (xs: number[]) => (xs.length ? Math.round(xs.reduce((s, x) => s + x, 0) / xs.length) : null);
@@ -159,7 +159,7 @@ export default function EffectivenessPage() {
   );
 }
 
-/** Committee pack: one discipline's scorecard as CSV or a printable page. Cells under 10 print "<10". */
+/** Committee pack: one discipline's scorecard as CSV or a printable page. Cells under 10 hold "<10" in the CSV and show common.suppressedShort on screen. */
 function CommitteePack({ open, onClose, cards, initial, lab }: { open: boolean; onClose: () => void; cards: CourseCard[]; initial: string; lab: ReturnType<typeof useM25Labels> }) {
   const t = useT();
   const f = useFormat();
@@ -186,7 +186,7 @@ function CommitteePack({ open, onClose, cards, initial, lab }: { open: boolean; 
           <table className="w-full text-[12.5px]">
             <thead><tr>{cols.map((x) => <th key={x.key} className="border-b border-line p-1 text-start">{x.header}</th>)}</tr></thead>
             <tbody>
-              {rows.map((r, i) => <tr key={i}>{cols.map((x) => <td key={x.key} className="border-b border-line p-1 align-top">{r[x.key]}</td>)}</tr>)}
+              {rows.map((r, i) => <tr key={i}>{cols.map((x) => <td key={x.key} className="border-b border-line p-1 align-top">{r[x.key] === SUPPRESSED_CELL ? t('common.suppressedShort') : r[x.key]}</td>)}</tr>)}
               {!rows.length && <tr><td colSpan={cols.length} className="p-2 text-ink-3">{t('m25.pack.empty')}</td></tr>}
             </tbody>
           </table>

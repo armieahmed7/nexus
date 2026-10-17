@@ -34,7 +34,7 @@
   "all": "الكل",
   "clearFilters": "مسح عوامل التصفية",
   "choose": "اختر…",
-  "suppressedShort": "<10",
+  "suppressedShort": "أقل من 10",
   "suppressed": "محجوب: أقل من 10 أشخاص",
   "asOf": "حتى تاريخ {date}",
   "viewAll": "عرض الكل",

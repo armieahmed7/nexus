@@ -66,6 +66,11 @@
   header, nav, footer, .no-print { display: none !important; }
   body { background: #fff; }
 }
+/* A11Y-03: on phones the floating Ask Dalil button sits over the bottom of the screen; anchors and scrolled-to elements stop
+   above it (WCAG 2.4.11). The button also tucks away while scrolling down or typing (src/shell/DalilLauncher.tsx). */
+@media (max-width: 639.98px) {
+  html { scroll-padding-bottom: 4.5rem; }
+}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }

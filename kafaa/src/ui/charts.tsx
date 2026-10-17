@@ -1,6 +1,7 @@
 /**
  * Dependency-free SVG charts. All accept a `title` (used as the accessible name) and render a visually hidden
- * data table for screen readers. Suppressed values (groups under 10) render as hatched "<10" cells, never as numbers.
+ * data table for screen readers. Suppressed values (groups under 10) render as hatched cells with t('common.suppressedShort')
+ * ("<10"; "أقل من 10" in Arabic, so right-to-left text never mirrors it into "10>"), never as numbers.
  *   <BarChart title=".." data={[{ label: 'Operations', value: 54.2, suppressed: false }]} unit="%" />
  *   <LineChart title=".." series={[{ name: 'Emiratization', points: [{ x: '2023', y: 50 }] }]} />
  *   <Donut title=".." data={[{ label: 'Valid', value: 41, tone: 'ok' }]} />
@@ -137,6 +138,7 @@ export function LineChart({ title, series, unit = '', height = 180, yMin, yMax }
 
 export function Donut({ title, data, center, size = 140 }: { title: string; data: Datum[]; center?: ReactNode; size?: number }) {
   const f = useFormat();
+  const t = useT();
   const total = data.reduce((a, d) => a + (d.suppressed ? 0 : (d.value ?? 0)), 0) || 1;
   const r = 52;
   const C = 2 * Math.PI * r;
@@ -161,7 +163,7 @@ export function Donut({ title, data, center, size = 140 }: { title: string; data
           <div key={d.label} className="flex items-center gap-2">
             <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: color(d.tone, i) }} />
             <span className="text-ink-2">{d.label}</span>
-            <span className="num ms-auto ps-3 font-semibold">{d.suppressed ? '<10' : f.num(d.value)}</span>
+            <span className="num ms-auto ps-3 font-semibold">{d.suppressed ? t('common.suppressedShort') : f.num(d.value)}</span>
           </div>
         ))}
       </figcaption>
@@ -198,6 +200,7 @@ export function Funnel({ title, stages }: { title: string; stages: Datum[] }) {
 
 export function Heatmap({ title, rows, cols, value, rowLabel, colLabel }: { title: string; rows: string[]; cols: string[]; value: (r: string, c: string) => { v: number | null; suppressed?: boolean; tone?: 'ok' | 'bad' | 'sim' | 'info' | 'neutral'; label?: string }; rowLabel?: (r: string) => string; colLabel?: (c: string) => string }) {
   const f = useFormat();
+  const t = useT();
   const all = rows.flatMap((r) => cols.map((c) => value(r, c))).filter((x) => !x.suppressed && x.v != null).map((x) => x.v as number);
   const hi = Math.max(1, ...all);
   const toneBg: Record<string, string> = { ok: 'bg-ok-bg text-ok', bad: 'bg-bad-bg text-bad', sim: 'bg-sim-bg text-sim', info: 'bg-info-bg text-info', neutral: 'bg-sunken text-ink-3' };
@@ -225,8 +228,8 @@ export function Heatmap({ title, rows, cols, value, rowLabel, colLabel }: { titl
                 const x = value(r, c);
                 if (x.suppressed) {
                   return (
-                    <td key={c} className="h-8 min-w-[44px] rounded bg-[repeating-linear-gradient(45deg,rgb(var(--sunken))_0_4px,rgb(var(--line))_4px_6px)] text-center text-ink-3" title="<10">
-                      &lt;10
+                    <td key={c} className="h-8 min-w-[44px] rounded bg-[repeating-linear-gradient(45deg,rgb(var(--sunken))_0_4px,rgb(var(--line))_4px_6px)] whitespace-nowrap px-1 text-center text-ink-3" title={t('common.suppressed')} data-suppressed="true">
+                      {t('common.suppressedShort')}
                     </td>
                   );
                 }

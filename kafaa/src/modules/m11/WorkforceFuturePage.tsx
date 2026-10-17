@@ -165,7 +165,7 @@ function RadarView({ r, factor, other, rowFor, planned, canPlan, onPlan, map, ca
         <Card>
           <Radar
             title={t('m11.wf.radarTitle', { s: t(r.scenario.includes('B (') ? 'm11.wf.scnB' : 'm11.wf.scnA') })}
-            axes={calc.map((c) => (c.suppressed ? `${label(c)} (<10)` : label(c)))}
+            axes={calc.map((c) => (c.suppressed ? `${label(c)} (${t('m11.wf.under10')})` : label(c)))}
             series={[
               { name: t('m11.wf.demand'), values: calc.map((c) => c.demand), tone: 'sim' },
               ...(other ? [{ name: t('m11.wf.otherDemand', { s: t(other.includes('B (') ? 'm11.wf.scnB' : 'm11.wf.scnA') }), values: calc.map((c) => c.otherDemand ?? 0), tone: 'info' as const, dashed: true }] : []),
