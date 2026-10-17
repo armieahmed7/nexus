@@ -1,8 +1,9 @@
-// M12 · FAQ: searchable, filterable by topic, deep-linkable (#faq-n), with the reviewed EN/AR glossary.
+// M12 · FAQ: searchable, filterable by topic, deep-linkable (#faq-n). The glossary lives in the Help centre (/help/glossary):
+// the old #glossary anchor sends visitors there, and a card points to it so the FAQ never shows a second copy of the terms.
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useQuery, useRepo } from '../../data';
-import { L, usePick, useT } from '../../i18n';
+import { L, useNav, usePick, useT } from '../../i18n';
 import { Async, EmptyState, FilterBar, Icon, Page, Section, StatusPill, useFilters } from '../../ui';
 import { tokenize } from '../m13/dalil/text';
 
@@ -11,15 +12,19 @@ export default function FaqPage() {
   const pick = usePick();
   const repo = useRepo();
   const loc = useLocation();
+  const nav = useNav();
   const [flt, setFlt] = useFilters({ q: '', topic: '' }, true);
   const faqs = useQuery('faqs', () => repo.list('faqs', { order: [['sort', 'asc']] }));
-  const glossary = useQuery('glossary', () => repo.list('glossary', { order: [['term_en', 'asc']] }));
   const [open, setOpen] = useState<string | null>(null);
   useEffect(() => {
     const id = loc.hash.replace('#', '');
+    if (id === 'glossary') {
+      nav('/help/glossary', { replace: true }); // links made before the glossary moved to the Help centre
+      return;
+    }
     if (id.startsWith('faq-')) setOpen(id);
     if (id) setTimeout(() => document.getElementById(id)?.scrollIntoView({ block: 'start' }), 50);
-  }, [loc.hash, faqs.data]);
+  }, [loc.hash, faqs.data, nav]);
   const topics = useMemo(() => [...new Set((faqs.data ?? []).map((f) => f.topic))], [faqs.data]);
   const filtered = useMemo(() => {
     const q = new Set(tokenize(flt.q));
@@ -59,21 +64,14 @@ export default function FaqPage() {
           )
         }
       </Async>
-      <Section id="glossary" title={t('m12.faq.glossaryTitle')} description={t('m12.faq.glossaryIntro')}>
-        <Async state={glossary}>
-          {(rows) => (
-            <dl className="grid gap-3 sm:grid-cols-2" data-testid="m12-glossary">
-              {rows.map((g) => (
-                <div key={g.id} className="card p-3">
-                  <dt className="font-semibold">
-                    <span lang="en" dir="ltr">{g.term_en}</span> <span className="text-ink-3">·</span> <span lang="ar" dir="rtl">{g.term_ar}</span>
-                  </dt>
-                  <dd className="mt-1 text-[13px] text-ink-2">{pick(g, 'definition')}</dd>
-                </div>
-              ))}
-            </dl>
-          )}
-        </Async>
+      <Section id="glossary" title={t('m12.faq.glossaryTitle')}>
+        <div className="card flex flex-wrap items-center justify-between gap-3 p-4" data-testid="m12-faq-glossary">
+          <p className="max-w-2xl text-ink-2">{t('m12.faq.glossaryMoved')}</p>
+          <L to="/help/glossary" className="btn-outline btn-sm no-underline">
+            <Icon name="book" size={14} />
+            {t('m12.faq.glossaryOpen')}
+          </L>
+        </div>
       </Section>
     </Page>
   );

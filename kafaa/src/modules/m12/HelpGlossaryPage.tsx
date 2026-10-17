@@ -1,7 +1,7 @@
 // M12 · Future-skills glossary (/help/glossary): A to Z in the page language, each term in English and Arabic with its
 // definition, how Kafa'a uses it, where you meet it and a public source with the date it was read. Per-term anchors
-// (#term-<id>) are deep-linked from the header search and the help centre; the plant and licensing terms come from the
-// reviewed database glossary (also on the FAQ).
+// (#term-<id>) are deep-linked from the header search, the help centre and Dalil; the plant and licensing terms come from the
+// reviewed database glossary. This is the only glossary page: the FAQ's old #glossary anchor redirects here.
 import { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { L, useLang, useT } from '../../i18n';
@@ -111,12 +111,14 @@ export default function HelpGlossaryPage() {
                           {it.inKafaa[lang]}
                         </p>
                       )}
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="caps">{t('m12.help.gl.where')}</span>
-                        {it.where.map((w) => (
-                          <GoToLink key={`${w.route}${w.hash ?? ''}`} link={w} className="btn-ghost btn-sm" />
-                        ))}
-                      </div>
+                      {it.where.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-2">
+                          <span className="caps">{t('m12.help.gl.where')}</span>
+                          {it.where.map((w) => (
+                            <GoToLink key={`${w.route}${w.hash ?? ''}`} link={w} className="btn-ghost btn-sm" />
+                          ))}
+                        </div>
+                      )}
                       {it.fromDb ? (
                         <p className="text-[12.5px] text-ink-3">{t('m12.help.gl.fromDb')}</p>
                       ) : (

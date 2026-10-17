@@ -1,6 +1,6 @@
 /**
  * Kafa'a shell: header (brand, search, language, notices, backend, account), lens switcher,
- * role-aware navigation, breadcrumbs, footer with the concept disclaimer, Rehearsal chip and the Dalil launcher.
+ * role-aware navigation, breadcrumbs with "Help with this page" links, footer with the concept disclaimer, Rehearsal chip and the Dalil launcher.
  */
 import { Suspense, useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
@@ -15,6 +15,7 @@ import { CrumbProvider, useCrumbState } from './crumbs';
 import { GlobalSearch } from './GlobalSearch';
 import { Notifications } from './Notifications';
 import { DalilLauncher } from './DalilLauncher';
+import { PageHelp } from './PageHelp';
 import { routeTitle, isRehearsal } from './util';
 import { useToast } from '../ui/Toast';
 import { useDismiss } from './useDismiss';
@@ -67,7 +68,12 @@ export function Layout() {
         <div className={`flex-1 ${sidebar ? 'mx-auto grid w-full max-w-[1400px] lg:grid-cols-[240px_1fr]' : ''}`}>
           {sidebar && <SideNav lens={lens} open={menuOpen} />}
           <main id="main" tabIndex={-1} className="min-w-0 focus:outline-none">
-            {current && current.id !== 'home' && <Breadcrumbs route={current} />}
+            {current && current.id !== 'home' && (
+              <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-4 gap-y-1 px-4 pt-4 sm:px-6">
+                <Breadcrumbs route={current} />
+                <PageHelp route={current} />
+              </div>
+            )}
             <Suspense fallback={<div className="mx-auto max-w-6xl p-6"><Skeleton lines={6} /></div>}>
               <Outlet />
             </Suspense>
@@ -257,7 +263,7 @@ function Breadcrumbs({ route }: { route: RouteDef }) {
   }
   if (chain[0]?.id !== 'home') chain.unshift(ROUTE_BY_ID.home);
   return (
-    <nav aria-label={t('shell.breadcrumbs')} className="mx-auto max-w-6xl px-4 pt-4 sm:px-6">
+    <nav aria-label={t('shell.breadcrumbs')} className="min-w-0">
       <ol className="flex flex-wrap items-center gap-1 text-[12.5px] text-ink-3">
         {chain.map((r, i) => {
           const isLast = i === chain.length - 1;

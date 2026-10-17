@@ -453,7 +453,8 @@
     },
     "none": "No questions match.",
     "glossaryTitle": "Glossary",
-    "glossaryIntro": "Arabic-English nuclear terms reviewed by Nuclear Training."
+    "glossaryMoved": "The glossary is in the Help centre: plant, licensing and future-skills terms in English and Arabic, A to Z, each with a link you can share.",
+    "glossaryOpen": "Open the glossary"
   },
   "contact": {
     "sent": "Message sent",
@@ -566,7 +567,7 @@
       "letters": "Jump to a letter",
       "inKafaa": "In Kafa'a",
       "where": "Where you meet it",
-      "fromDb": "From the reviewed plant and licensing glossary, also on the FAQ page.",
+      "fromDb": "From the reviewed plant and licensing glossary.",
       "none": "No term matches",
       "note": "Definitions explain terms; they are not ENEC policy, and Kafa'a is not a regulator or a certification body."
     }
