@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { useQuery, useRepo } from '../../data';
 import { useSession } from '../../auth/session';
 import { L, useFormat, usePick, useT } from '../../i18n';
-import { Async, BenchmarkChips, Card, EmptyState, FilterBar, Icon, Page, StatTile, StatusPill, WhyThis, useFilters } from '../../ui';
+import { Async, BenchmarkChips, Card, EmptyState, En, FilterBar, Icon, Page, StatTile, StatusPill, WhyThis, useFilters } from '../../ui';
 import { FUTURE_GROUPS, FS_AREAS, LIFECYCLES, REUSABILITY } from '../../domain/taxonomy';
 import type { PersonSkillsRow, SkillGoalsRow, SkillsRow } from '../../data/types';
 import { filterSkills, isListed, searchSkills } from './explorer';
@@ -136,7 +136,7 @@ function SkillCard({ s, c, reasons, held, goal }: { s: SkillsRow; c: Catalogue; 
       </div>
       <div className="mt-auto flex flex-wrap items-center gap-2 pt-3 text-[12px]">
         <span className="text-ink-3" data-testid="m28-card-fw">{t('m28.explorer.mapsTo', { n: f.num(fws.length) })}</span>
-        {fws.slice(0, 4).map((x) => <span key={x} className="chip border-line bg-sunken text-ink-2">{c.fwById.get(x)?.short ?? x}</span>)}
+        {fws.slice(0, 4).map((x) => <span key={x} className="chip border-line bg-sunken text-ink-2"><En>{c.fwById.get(x)?.short ?? x}</En></span>)}
         {held && <span data-testid="m28-card-held"><StatusPill tone="ok">{t('m28.mine.holdShort', { n: f.num(held.level) })}</StatusPill></span>}
         {goal && <StatusPill tone="accent">{t('m28.mine.onGoals')}</StatusPill>}
         {reasons.length > 0 && <span className="ms-auto"><WhyThis reasons={reasons} testId={`m28-why-${s.id}`} /></span>}

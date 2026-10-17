@@ -11,6 +11,7 @@
   "simulated": "SIMULATED",
   "sample": "Sample data",
   "source": "Source",
+  "pathGraph": "Career path graph",
   "empty": "Nothing here yet",
   "errorTitle": "Something went wrong",
   "filterRows": "Filter rows",

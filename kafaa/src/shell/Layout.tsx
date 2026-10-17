@@ -2,7 +2,7 @@
  * Kafa'a shell: header (brand, search, language, notices, backend, account), lens switcher,
  * role-aware navigation, breadcrumbs, footer with the concept disclaimer, Rehearsal chip and the Dalil launcher.
  */
-import { Suspense, useEffect, useState, type ReactNode } from 'react';
+import { Suspense, useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useSession, roleLabel } from '../auth/session';
 import { L, NL, useI18n, useNav, useT } from '../i18n';
@@ -17,14 +17,16 @@ import { Notifications } from './Notifications';
 import { DalilLauncher } from './DalilLauncher';
 import { routeTitle, isRehearsal } from './util';
 import { useToast } from '../ui/Toast';
+import { useDismiss } from './useDismiss';
 
 function useCurrentRoute(): RouteDef | null {
   const { path } = useI18n();
   return routeForPath(path)?.def ?? null;
 }
 
+type Theme = 'light' | 'dark';
 function useTheme() {
-  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+  const [theme, setTheme] = useState<Theme>(() => {
     try {
       return localStorage.getItem('kafaa.theme') === 'dark' ? 'dark' : 'light';
     } catch {
@@ -103,6 +105,7 @@ function Header({ lens, onMenu }: { lens: Lens; onMenu: () => void }) {
   const { lang, setLang } = useI18n();
   const s = useSession();
   const [searchOpen, setSearchOpen] = useState(false);
+  const [theme, setTheme] = useTheme();
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if ((e.key === 'k' && (e.metaKey || e.ctrlKey)) || (e.key === '/' && !(e.target instanceof HTMLInputElement) && !(e.target instanceof HTMLTextAreaElement))) {
@@ -134,9 +137,9 @@ function Header({ lens, onMenu }: { lens: Lens; onMenu: () => void }) {
             {/* Icon only on phones: the full header would otherwise scroll sideways at 390 px (E2E QA). */}
             <span className="hidden sm:inline">{lang === 'ar' ? 'English' : 'العربية'}</span>
           </button>
-          {s.status === 'signed_in' && <Notifications />}
+          {s.status === 'signed_in' ? <Notifications /> : <ThemeToggle theme={theme} setTheme={setTheme} />}
           <BackendChip />
-          <AccountMenu />
+          <AccountMenu theme={theme} setTheme={setTheme} />
         </div>
       </div>
       <div className="frame-line h-[2px]" />
@@ -181,27 +184,38 @@ function PublicNav() {
               </NL>
             </li>
           ) : (
-            <li key={g.section} className="relative" onMouseLeave={() => setOpen(null)}>
-              <button className="flex items-center gap-1 px-2.5 py-2.5 text-[13px] font-semibold text-ink-2 hover:text-ink" aria-expanded={open === g.section} onClick={() => setOpen(open === g.section ? null : g.section)} onMouseEnter={() => setOpen(g.section)}>
-                {t(`shell.sections.${g.section}`)}
-                <Icon name="chevronDown" size={12} />
-              </button>
-              {open === g.section && (
-                <ul className="card absolute start-0 top-full z-30 min-w-[220px] p-1.5">
-                  {g.items.map((r) => (
-                    <li key={r.id}>
-                      <NL to={r.path} end className={({ isActive }) => `link-plain block rounded-btn px-2.5 py-1.5 text-[13px] ${isActive ? 'bg-navactive font-semibold' : 'hover:bg-sunken'}`}>
-                        {routeTitle(t, r)}
-                      </NL>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
+            <NavMenu key={g.section} section={g.section} items={g.items} open={open === g.section} setOpen={(v) => setOpen(v ? g.section : null)} />
           ),
         )}
       </ul>
     </nav>
+  );
+}
+
+function NavMenu({ section, items, open, setOpen }: { section: string; items: RouteDef[]; open: boolean; setOpen: (v: boolean) => void }) {
+  const t = useT();
+  const id = useId();
+  const root = useRef<HTMLLIElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+  useDismiss(open, () => setOpen(false), root, trigger);
+  return (
+    <li ref={root} className="relative" onMouseLeave={() => setOpen(false)}>
+      <button ref={trigger} className="flex items-center gap-1 px-2.5 py-2.5 text-[13px] font-semibold text-ink-2 hover:text-ink" aria-expanded={open} aria-controls={id} onClick={() => setOpen(!open)} onMouseEnter={() => setOpen(true)} data-testid={`nav-menu-${section}`}>
+        {t(`shell.sections.${section}`)}
+        <Icon name="chevronDown" size={12} />
+      </button>
+      {open && (
+        <ul id={id} className="card absolute start-0 top-full z-30 min-w-[220px] p-1.5">
+          {items.map((r) => (
+            <li key={r.id}>
+              <NL to={r.path} end className={({ isActive }) => `link-plain block rounded-btn px-2.5 py-1.5 text-[13px] ${isActive ? 'bg-navactive font-semibold' : 'hover:bg-sunken'}`}>
+                {routeTitle(t, r)}
+              </NL>
+            </li>
+          ))}
+        </ul>
+      )}
+    </li>
   );
 }
 
@@ -271,14 +285,18 @@ function BackendChip() {
   const s = useSession();
   const toast = useToast();
   const [open, setOpen] = useState(false);
+  const id = useId();
+  const root = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+  useDismiss(open, () => setOpen(false), root, trigger);
   return (
-    <div className="relative">
-      <button className={`chip ${s.backend === 'local' ? 'border-sim-line bg-sim-bg text-sim' : 'border-ok-line bg-ok-bg text-ok'}`} onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-label={t(`shell.backend.${s.backend}`)} title={t(`shell.backend.${s.backend}`)} data-testid="backend-chip" data-backend={s.backend}>
+    <div ref={root} className="relative">
+      <button ref={trigger} className={`chip ${s.backend === 'local' ? 'border-sim-line bg-sim-bg text-sim' : 'border-ok-line bg-ok-bg text-ok'}`} onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-controls={id} aria-label={t(`shell.backend.${s.backend}`)} title={t(`shell.backend.${s.backend}`)} data-testid="backend-chip" data-backend={s.backend}>
         <span aria-hidden="true" className="inline-block h-2 w-2 rounded-full bg-current sm:hidden" />
         <span className="hidden sm:inline">{t(`shell.backend.${s.backend}`)}</span>
       </button>
       {open && (
-        <div className="card absolute end-0 top-full z-50 mt-1 w-72 p-3 text-[13px]" onMouseLeave={() => setOpen(false)}>
+        <div id={id} className="card absolute end-0 top-full z-50 mt-1 w-72 p-3 text-[13px]" onMouseLeave={() => setOpen(false)}>
           <p className="text-ink-2">{t(`shell.backend.${s.backend}Help`)}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {s.backend === 'local' && (
@@ -305,13 +323,26 @@ function BackendChip() {
   );
 }
 
-function AccountMenu() {
+function ThemeToggle({ theme, setTheme }: { theme: Theme; setTheme: (t: Theme) => void }) {
+  const t = useT();
+  const label = t(theme === 'dark' ? 'shell.account.light' : 'shell.account.dark');
+  return (
+    <button className="btn-ghost btn-sm" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label={label} title={label} data-testid="theme-toggle">
+      <Icon name={theme === 'dark' ? 'sun' : 'moon'} />
+    </button>
+  );
+}
+
+function AccountMenu({ theme, setTheme }: { theme: Theme; setTheme: (t: Theme) => void }) {
   const t = useT();
   const s = useSession();
   const { lang, prefs } = useI18n();
   const nav = useNav();
   const [open, setOpen] = useState(false);
-  const [theme, setTheme] = useTheme();
+  const id = useId();
+  const root = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
+  useDismiss(open, () => setOpen(false), root, trigger);
   if (s.status !== 'signed_in') {
     return (
       <L to="/sign-in" className="btn-primary btn-sm" data-testid="sign-in-link">
@@ -321,13 +352,13 @@ function AccountMenu() {
   }
   const name = s.person ? (lang === 'ar' ? s.person.display_name_ar || s.person.display_name : s.person.display_name) : (s.identity.personaId ?? '');
   return (
-    <div className="relative">
-      <button className="btn-ghost btn-sm" onClick={() => setOpen((v) => !v)} aria-expanded={open} data-testid="account-menu">
+    <div ref={root} className="relative">
+      <button ref={trigger} className="btn-ghost btn-sm" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-controls={id} data-testid="account-menu">
         <Icon name="user" />
         <span className="hidden max-w-[160px] truncate md:inline">{s.persona ? (lang === 'ar' ? s.persona.title_ar : s.persona.title_en) : name}</span>
       </button>
       {open && (
-        <div className="card absolute end-0 top-full z-50 mt-1 w-72 p-3 text-[13px]" onMouseLeave={() => setOpen(false)}>
+        <div id={id} className="card absolute end-0 top-full z-50 mt-1 w-72 p-3 text-[13px]" onMouseLeave={() => setOpen(false)}>
           <div className="font-semibold">{name}</div>
           <div className="mt-1 flex flex-wrap gap-1">
             {s.roles.filter((r) => r !== 'public').map((r) => (

@@ -456,6 +456,7 @@
   },
   "verify": {
     "intro": "Check a Kafa'a badge: its signature, its current status and what it certifies. Only the holder's initials are shown.",
+    "issuerName": "Kafa'a demo tenant",
     "bannerTitle": "Not a FANR certificate or licence",
     "notFound": "Badge not found",
     "notFoundBody": "No Kafa'a badge has this link. Check the address with the holder.",

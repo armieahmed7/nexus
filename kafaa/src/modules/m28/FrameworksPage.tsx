@@ -4,7 +4,7 @@
 import { useMemo } from 'react';
 import { L, useFormat, useLang, usePick, useT } from '../../i18n';
 import {
-  Async, BenchmarkChip, BenchmarkChips, Card, DataTable, EmptyState, FilterBar, Heatmap, Page, Section, SourceLink, StatTile, StatusPill, useFilters, type Column,
+  Async, BenchmarkChip, BenchmarkChips, Card, DataTable, EmptyState, En, FilterBar, Heatmap, Page, Section, SourceLink, StatTile, StatusPill, useFilters, type Column,
 } from '../../ui';
 import { FS_AREAS } from '../../domain/taxonomy';
 import type { SkillAlignmentsRow } from '../../data/types';
@@ -74,7 +74,7 @@ function Body({ c }: { c: Catalogue }) {
             const cell = cov.byFramework[fw.id];
             const n = pub.filter((a) => a.framework === fw.id).length;
             return (
-              <Card key={fw.id} as="li" title={<span className="flex flex-wrap items-center gap-2">{fw.short}{n === 0 && <StatusPill tone="sim">{t('m28.fw.notYet')}</StatusPill>}</span>}>
+              <Card key={fw.id} as="li" title={<span className="flex flex-wrap items-center gap-2"><En>{fw.short}</En>{n === 0 && <StatusPill tone="sim">{t('m28.fw.notYet')}</StatusPill>}</span>}>
                 <p className="text-[13px] font-medium">{pick(fw, 'name')}</p>
                 <p className="text-[12px] text-ink-3">{pick(fw, 'owner')}{fw.version_label ? ` · ${fw.version_label}` : ''}</p>
                 <p className="mt-2 text-[12.5px] text-ink-2">{pick(fw, 'scope')}</p>

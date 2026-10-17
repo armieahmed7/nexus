@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import { Page, Card, Callout, KeyValue, TextArea, Icon, Skeleton } from '../../ui';
 import { useQuery, useRepo, type Result } from '../../data';
 import { useT, useLang, useFormat, L } from '../../i18n';
-import { verifyCredential, ISSUER_KEYS, NOTICE_AR, NOTICE_EN, type CredentialCheck } from './issuer';
+import { verifyCredential, ISSUER_KEYS, ISSUER_NAME, NOTICE_AR, NOTICE_EN, type CredentialCheck } from './issuer';
 import { BadgeMedal, BadgeStatusPill } from './ui';
 import { SignatureChip, issuerKeyUrl } from './WalletPage';
 import type { BadgeCheck, MicrocredCheck } from './backend/rpc';
@@ -92,7 +92,7 @@ export function CredentialCard({ cred, status, check, checkedOn }: { cred: Cred;
           <KeyValue
             items={[
               [t('m17.badge.holder'), <span className="num" key="h">{String(cred?.credentialSubject?.holderInitials ?? '—')}</span>],
-              [t('m17.verify.issuer'), String(cred?.issuer?.name ?? '—')],
+              [t('m17.verify.issuer'), cred?.issuer?.name === ISSUER_NAME ? t('m17.verify.issuerName') : String(cred?.issuer?.name ?? '—')], // display only: the signed bytes keep ISSUER_NAME
               [t('m17.badge.issued'), cred?.validFrom ? f.date(String(cred.validFrom).slice(0, 10)) : '—'],
               [t('m17.badge.validTo'), cred?.validUntil ? f.date(String(cred.validUntil).slice(0, 10)) : t('m17.badge.noExpiry')],
               [t('m17.verify.criteria'), String((lang === 'ar' ? a.criteriaAr : a.criteria?.narrative) ?? '—')],
