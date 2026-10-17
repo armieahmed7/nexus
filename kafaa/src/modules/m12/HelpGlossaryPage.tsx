@@ -6,7 +6,8 @@ import { useEffect, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { L, useLang, useT } from '../../i18n';
 import { Callout, Icon, Page, Skeleton, useFilters } from '../../ui';
-import { foldText, termAnchor } from './help/search';
+import { foldText } from '../../domain/text';
+import { termAnchor } from './help/search';
 import { GoToLink, HelpSources, groupByLetter, letterAnchor, useMergedGlossary } from './help/ui';
 
 export default function HelpGlossaryPage() {

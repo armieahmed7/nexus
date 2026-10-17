@@ -3,19 +3,20 @@
  * ConfirmDialog is mandatory before any consequential write ("evidence will be recorded"): it states the action,
  * who is acting, and requires a reason when `requireReason` is set.
  */
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import { Icon } from './Icon';
 import { useT } from '../i18n';
 
-function useFocusTrap(open: boolean, onClose: () => void) {
+/** initialFocus: the element to focus on open (default: the first focusable). returnFocus: where focus goes on close (default: the opener). */
+function useFocusTrap(open: boolean, onClose: () => void, initialFocus?: RefObject<HTMLElement | null>, returnFocus?: RefObject<HTMLElement | null>) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!open) return;
     const opener = document.activeElement as HTMLElement | null;
     const el = ref.current;
     const focusables = () => Array.from(el?.querySelectorAll<HTMLElement>('button,[href],input,select,textarea,[tabindex]:not([tabindex="-1"])') ?? []).filter((x) => !x.hasAttribute('disabled'));
-    setTimeout(() => (focusables()[0] ?? el)?.focus(), 0);
+    setTimeout(() => (initialFocus?.current ?? focusables()[0] ?? el)?.focus(), 0);
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.stopPropagation();
@@ -41,15 +42,34 @@ function useFocusTrap(open: boolean, onClose: () => void) {
     return () => {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = prevOverflow;
-      opener?.focus?.();
+      const back = returnFocus?.current;
+      (back?.isConnected ? back : opener)?.focus?.();
     };
-  }, [open, onClose]);
+  }, [open, onClose, initialFocus, returnFocus]);
   return ref;
 }
 
-export function Modal({ open, onClose, title, children, footer, size = 'md' }: { open: boolean; onClose: () => void; title: ReactNode; children?: ReactNode; footer?: ReactNode; size?: 'sm' | 'md' | 'lg' }) {
+export function Modal({
+  open,
+  onClose,
+  title,
+  children,
+  footer,
+  size = 'md',
+  initialFocus,
+  returnFocus,
+}: {
+  open: boolean;
+  onClose: () => void;
+  title: ReactNode;
+  children?: ReactNode;
+  footer?: ReactNode;
+  size?: 'sm' | 'md' | 'lg';
+  initialFocus?: RefObject<HTMLElement | null>;
+  returnFocus?: RefObject<HTMLElement | null>;
+}) {
   const t = useT();
-  const ref = useFocusTrap(open, onClose);
+  const ref = useFocusTrap(open, onClose, initialFocus, returnFocus);
   if (!open) return null;
   const w = { sm: 'max-w-md', md: 'max-w-xl', lg: 'max-w-3xl' }[size];
   return createPortal(

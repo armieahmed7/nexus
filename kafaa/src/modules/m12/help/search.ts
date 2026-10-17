@@ -2,18 +2,11 @@
 // every word of the query appears in its English or Arabic text, whatever the page language. Arabic is folded first:
 // diacritics (tashkeel, shadda) and tatweel are removed, أ إ آ ٱ become ا, ة becomes ه and ى becomes ي, so "مشغل" also finds
 // "مشغّل" and "امن" finds "أمن". Pure functions, shared by /help, /help/glossary, the header search and tests.
-import { normAr } from '../../../domain/text';
+import { foldText } from '../../../domain/text';
 import type { Lang } from '../../../i18n';
 import { GUIDES } from './content';
 import { GLOSSARY } from './glossary';
 import type { Bi } from './types';
-
-/** Lower-case, Arabic-normalised text with punctuation folded to single spaces. */
-export function foldText(s: string): string {
-  return normAr(s.toLowerCase())
-    .replace(/[^\p{L}\p{N}*]+/gu, ' ')
-    .trim();
-}
 
 export interface HelpEntry {
   kind: 'guide' | 'term';

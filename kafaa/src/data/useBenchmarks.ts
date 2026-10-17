@@ -10,7 +10,7 @@ import type { BenchmarkRow } from '../domain/benchmarks';
 
 const cache = new WeakMap<Repository, Promise<BenchmarkRow[]>>();
 const watched = new WeakSet<Repository>();
-function load(repo: Repository): Promise<BenchmarkRow[]> {
+export function loadBenchmarks(repo: Repository): Promise<BenchmarkRow[]> {
   if (!watched.has(repo)) {
     watched.add(repo);
     repo.subscribe((changed) => {
@@ -27,5 +27,5 @@ function load(repo: Repository): Promise<BenchmarkRow[]> {
 }
 export function useBenchmarks() {
   const repo = useRepo();
-  return useQuery('benchmarks', () => load(repo));
+  return useQuery('benchmarks', () => loadBenchmarks(repo));
 }

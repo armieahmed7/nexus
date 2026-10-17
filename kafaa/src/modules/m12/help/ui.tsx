@@ -8,7 +8,8 @@ import { ROUTE_BY_ID, href } from '../../../routes/registry';
 import { routeTitle } from '../../../shell/util';
 import { Icon, SourceLink } from '../../../ui';
 import { GLOSSARY } from './glossary';
-import { foldText, isReplacedDbTerm, makeEntry, termHref, type HelpEntry } from './search';
+import { foldText } from '../../../domain/text';
+import { isReplacedDbTerm, makeEntry, termHref, type HelpEntry } from './search';
 import type { Bi, HelpLink, HelpSource } from './types';
 
 /** One glossary entry on the page: a sourced static term, or a reviewed plant/licensing term from the database glossary. */

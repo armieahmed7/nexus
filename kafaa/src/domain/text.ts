@@ -20,6 +20,17 @@ export function normAr(s: string): string {
     .replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)));
 }
 
+/**
+ * Search folding, shared by the help centre and the header search (moved here from m12/help/search.ts): lower case, Latin
+ * accents removed (é -> e), Arabic normalised as normAr (tashkeel, shadda and tatweel removed; أ إ آ ٱ -> ا, ة -> ه, ى -> ي),
+ * punctuation folded to single spaces. "مشغل" and "مشغّل", "امن" and "أمن", "Resume" and "Résumé" fold to the same text.
+ */
+export function foldText(s: string): string {
+  return normAr(s.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase())
+    .replace(/[^\p{L}\p{N}*]+/gu, ' ')
+    .trim();
+}
+
 const EN_STOP = new Set(
   'a an the and or of to in on for at by with from about into is are was were be been being do does did can could should would will shall may might must i me my we our you your it its this that these those there here what which who whom whose how when where why tell please some any all as if than then so not no yes also just get got have has had need want know like give show explain'.split(' '),
 );
