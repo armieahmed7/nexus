@@ -2,7 +2,8 @@
  * Header search sources. Data loads once per backend and persona when the search first opens (not with the shell) and is
  * reused on every later open; it reloads only when one of its tables changes or the persona switches (the backend then emits
  * [] or the table names). Only public catalogue tables are read, and RLS decides what comes back. Benchmarks share the
- * <BenchmarkChip> cache, so a page that already shows chips costs no extra request.
+ * <BenchmarkChip> cache, so a page that already shows chips costs no extra request, and the tables go through sharedList()
+ * (TECH-07), so the ones Dalil's corpus already read (partners, programmes, glossary) are not read again.
  *
  * Items carry both languages; pages take their titles from the dictionaries (GlobalSearch loads the other language only when a
  * query is typed in it).
@@ -11,6 +12,7 @@
 import type { Repository } from '../../data/types';
 import type { RowOf } from '../../data/types.gen';
 import { loadBenchmarks } from '../../data/useBenchmarks';
+import { sharedList } from '../../data/sharedReads';
 import type { BenchmarkRow } from '../../domain/benchmarks';
 import { ROUTES, routeForPath } from '../../routes/registry';
 import type { RouteDef } from '../../routes/types';
@@ -55,15 +57,15 @@ export function loadSearchSources(repo: Repository): Promise<SearchSources> {
       return [];
     };
     p = Promise.all([
-      repo.list('job_roles').catch(none),
-      repo.list('talent_programmes').catch(none),
-      repo.list('courses', { filter: { audience: ['public', 'staff'] } }).catch(none),
-      repo.list('organisations', { filter: { public_listed: true } }).catch(none),
-      repo.list('glossary').catch(none),
-      repo.list('skills', { order: [['sort', 'asc']] }).catch(none),
-      repo.list('skill_frameworks', { order: [['sort', 'asc']] }).catch(none),
-      repo.list('faqs', { order: [['sort', 'asc']] }).catch(none),
-      repo.list('content_pages', { filter: { kind: 'news', is_published: true }, order: [['published_on', 'desc']] }).catch(none),
+      sharedList(repo, 'job_roles').catch(none),
+      sharedList(repo, 'talent_programmes').catch(none),
+      sharedList(repo, 'courses', { filter: { audience: ['public', 'staff'] } }).catch(none),
+      sharedList(repo, 'organisations', { filter: { public_listed: true } }).catch(none),
+      sharedList(repo, 'glossary').catch(none),
+      sharedList(repo, 'skills', { order: [['sort', 'asc']] }).catch(none),
+      sharedList(repo, 'skill_frameworks', { order: [['sort', 'asc']] }).catch(none),
+      sharedList(repo, 'faqs', { order: [['sort', 'asc']] }).catch(none),
+      sharedList(repo, 'content_pages', { filter: { kind: 'news', is_published: true }, order: [['published_on', 'desc']] }).catch(none),
       loadBenchmarks(repo).catch(none),
       // Help centre guides and glossary (static, loaded with the search, not with the shell)
       import('../../modules/m12/help/search').catch(() => null),

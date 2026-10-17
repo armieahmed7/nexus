@@ -2,8 +2,12 @@
  * Builds Dalil's approved corpus from Kafa'a content through the repository, so row-level security decides what a
  * caller can reach: anonymous visitors only ever see public rows (no staff-mode content), staff see internal guides,
  * partners see their own organisation's records. corpus_docs rows marked approved=false remove matching documents.
+ * TECH-07: the catalogue tables are read through sharedList(), once per backend and persona until a table changes, so a
+ * second visit to /ask (or the future-skills answers and the header search reading the same tables) sends no new requests.
+ * job_roles shares the future-skills read (ordered by sort) and keeps the published rows here, as the server filter did.
  */
 import type { DalilMode, Repository } from '../../../data/types';
+import { sharedList } from '../../../data/sharedReads';
 import type { Corpus, CorpusDoc, EcpChannel, RefusalPolicy } from './types';
 import { GUIDES } from '../../m12/help/content';
 import { GLOSSARY } from '../../m12/help/glossary';
@@ -23,23 +27,24 @@ async function safe<T>(p: Promise<T[]>): Promise<T[]> {
 }
 
 export async function buildCorpus(repo: Repository, opts: { signedIn: boolean; personId: string | null; orgId?: string | null }): Promise<Corpus> {
-  const [docsRaw, roles, talent, trainingProgs, courses, orgs, faqs, facts, sources, traits, hu, ecp, glossary, techs, policiesRaw] = await Promise.all([
-    safe(repo.list('corpus_docs')),
-    safe(repo.list('job_roles', { filter: { status: 'published' } })),
-    safe(repo.list('talent_programmes')),
-    safe(repo.list('programmes')),
-    safe(repo.list('courses')),
-    safe(repo.list('organisations', { filter: { public_listed: true } })),
-    safe(repo.list('faqs')),
-    safe(repo.list('facts')),
-    safe(repo.list('sources')),
-    safe(repo.list('sc_traits')),
-    safe(repo.list('hu_tools')),
-    safe(repo.list('ecp_channels', { order: [['sort', 'asc']] })),
-    safe(repo.list('glossary')),
-    safe(repo.list('adv_technologies')),
-    safe(repo.list('refusal_policies')),
+  const [docsRaw, rolesAll, talent, trainingProgs, courses, orgs, faqs, facts, sources, traits, hu, ecp, glossary, techs, policiesRaw] = await Promise.all([
+    safe(sharedList(repo, 'corpus_docs')),
+    safe(sharedList(repo, 'job_roles', { order: [['sort', 'asc']] })),
+    safe(sharedList(repo, 'talent_programmes')),
+    safe(sharedList(repo, 'programmes')),
+    safe(sharedList(repo, 'courses')),
+    safe(sharedList(repo, 'organisations', { filter: { public_listed: true } })),
+    safe(sharedList(repo, 'faqs')),
+    safe(sharedList(repo, 'facts')),
+    safe(sharedList(repo, 'sources')),
+    safe(sharedList(repo, 'sc_traits')),
+    safe(sharedList(repo, 'hu_tools')),
+    safe(sharedList(repo, 'ecp_channels', { order: [['sort', 'asc']] })),
+    safe(sharedList(repo, 'glossary')),
+    safe(sharedList(repo, 'adv_technologies')),
+    safe(sharedList(repo, 'refusal_policies')),
   ]);
+  const roles = rolesAll.filter((r) => r.status === 'published');
   const unapproved = new Set(docsRaw.filter((d) => !d.approved).map((d) => d.id));
   const docs: CorpusDoc[] = [];
   const push = (d: CorpusDoc) => {
@@ -133,14 +138,14 @@ export async function buildCorpus(repo: Repository, opts: { signedIn: boolean; p
 async function buildPersonal(repo: Repository, personId: string, orgId: string | null): Promise<CorpusDoc[]> {
   const [quals, standards, licences, enrol, courses, plans, acts, apps, progs, onboarding] = await Promise.all([
     safe(repo.list('qual_records', { filter: { person_id: personId } })),
-    safe(repo.list('qual_standards')),
+    safe(sharedList(repo, 'qual_standards')),
     safe(repo.list('licences', { filter: { person_id: personId } })),
     safe(repo.list('enrolments', { filter: { person_id: personId } })),
-    safe(repo.list('courses')),
+    safe(sharedList(repo, 'courses')),
     safe(repo.list('dev_plans', { filter: { person_id: personId } })),
     safe(repo.list('plan_activities', { filter: { person_id: personId } })),
     safe(repo.list('applications', { filter: { person_id: personId } })),
-    safe(repo.list('talent_programmes')),
+    safe(sharedList(repo, 'talent_programmes')),
     safe(repo.list('partner_onboarding')),
   ]);
   const out: CorpusDoc[] = [];
