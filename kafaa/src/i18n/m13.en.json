@@ -310,7 +310,8 @@
       "f2": "Which AI rung do I need?",
       "f3": "What is the ESCO equivalent of digital twin validation?",
       "f4": "Which pathway closes my gap?"
-    }
+    },
+    "helpLink": "Need help? Read the guide to using Dalil"
   },
   "admin": {
     "intro": "Switch Dalil on or off, curate the approved corpus and refusal policies, run the evaluation set before each release, and review conversation logs and hand-offs.",

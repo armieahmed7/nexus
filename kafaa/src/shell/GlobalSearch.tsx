@@ -5,7 +5,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Modal } from '../ui/Modal';
 import { Icon } from '../ui/Icon';
-import { useNav, usePick, useT } from '../i18n';
+import { useLang, useNav, usePick, useT } from '../i18n';
 import { useRepo } from '../data';
 import { ROUTES, href } from '../routes/registry';
 import { checkGuard } from '../auth/guards';
@@ -26,6 +26,7 @@ export function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => 
   const nav = useNav();
   const repo = useRepo();
   const s = useSession();
+  const lang = useLang();
   const [q, setQ] = useState('');
   const [data, setData] = useState<Hit[]>([]);
   const [active, setActive] = useState(0);
@@ -36,12 +37,14 @@ export function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => 
     setQ('');
     let alive = true;
     (async () => {
-      const [roles, progs, courses, orgs, gloss] = await Promise.all([
+      const [roles, progs, courses, orgs, gloss, help] = await Promise.all([
         repo.list('job_roles').catch(() => []),
         repo.list('talent_programmes').catch(() => []),
         repo.list('courses', { filter: { audience: ['public', 'staff'] } }).catch(() => []),
         repo.list('organisations', { filter: { public_listed: true } }).catch(() => []),
         repo.list('glossary').catch(() => []),
+        // Help centre guides and glossary (static, loaded with the search, not with the shell)
+        import('../modules/m12/help/search').catch(() => null),
       ]);
       if (!alive) return;
       setData([
@@ -49,13 +52,15 @@ export function GlobalSearch({ open, onClose }: { open: boolean; onClose: () => 
         ...progs.map((r) => ({ key: `p-${r.id}`, kind: t('shell.search.kind.programme'), title: pick(r, 'name'), sub: pick(r, 'duration'), to: href('pathways-programme', { programme: r.id }) })),
         ...courses.map((r) => ({ key: `c-${r.id}`, kind: t('shell.search.kind.course'), title: pick(r, 'title'), sub: r.code, to: href('learn-course', { id: r.id }) })),
         ...orgs.map((r) => ({ key: `o-${r.id}`, kind: t('shell.search.kind.partner'), title: pick(r, 'name'), sub: pick(r, 'relationship'), to: href('partners-detail', { slug: r.id }) })),
-        ...gloss.map((r) => ({ key: `g-${r.id}`, kind: t('shell.search.kind.term'), title: pick(r, 'term'), sub: pick(r, 'definition'), to: '/faq' })),
+        // Help centre: glossary hits open the term on /help/glossary; guides and the sourced future-skills terms come from the static help index.
+        ...gloss.filter((r) => !help?.isReplacedDbTerm(r.id)).map((r) => ({ key: `g-${r.id}`, kind: t('shell.search.kind.term'), title: pick(r, 'term'), sub: pick(r, 'definition'), to: help ? help.termHref(r.id) : '/faq' })),
+        ...(help?.helpSearchItems(lang) ?? []).map((h) => ({ ...h, kind: t(`shell.search.kind.${h.kind}`) })),
       ]);
     })();
     return () => {
       alive = false;
     };
-  }, [open, repo, pick, t]);
+  }, [open, repo, pick, t, lang]);
 
   const pages = useMemo<Hit[]>(
     () => ROUTES.filter((r) => !r.path.includes(':') && checkGuard(r.guard, s) === 'ok').map((r) => ({ key: `route-${r.id}`, kind: t('shell.search.kind.page'), title: routeTitle(t, r), sub: routePurpose(t, r), to: r.path })),

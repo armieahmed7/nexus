@@ -419,7 +419,7 @@ function Footer() {
           <p className="mt-3 text-[12.5px] text-ink-2">{t('shell.footer.tagline')}</p>
         </div>
         <FooterCol title={t('shell.footer.explore')} links={[['/careers', 'm01.routes.careers.title'], ['/pathways', 'm06.routes.pathways.title'], ['/learn', 'm04.routes.learn.title'], ['/partners', 'm09.routes.partners.title']]} />
-        <FooterCol title={t('shell.footer.help')} links={[['/faq', 'm12.routes.faq.title'], ['/contact', 'm12.routes.contact.title'], ['/verify', 'm02.routes.verify.title'], ['/speak-up', 'm08.routes.speak-up.title'], ['/emergency', 'm12.routes.emergency.title']]} />
+        <FooterCol title={t('shell.footer.help')} links={[['/help', 'm12.routes.help.title'], ['/faq', 'm12.routes.faq.title'], ['/contact', 'm12.routes.contact.title'], ['/verify', 'm02.routes.verify.title'], ['/speak-up', 'm08.routes.speak-up.title'], ['/emergency', 'm12.routes.emergency.title']]} />
         <FooterCol title={t('shell.footer.legal')} links={[['/legal/terms', 'shell.footer.terms'], ['/legal/privacy', 'shell.footer.privacy'], ['/legal/accessibility', 'shell.footer.accessibility']]} />
       </div>
       <div className="border-t border-line">
