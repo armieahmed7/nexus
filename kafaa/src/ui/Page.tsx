@@ -189,7 +189,7 @@ export function Callout({ tone = 'info', title, children }: { tone?: 'info' | 's
         <Icon name={tone === 'bad' ? 'alert' : 'info'} className="mt-0.5" />
         <div className="min-w-0 text-[13.5px]">
           {title && <div className="font-semibold">{title}</div>}
-          {children && <div className="text-ink-2">{children}</div>}
+          {children && <div className="callout-body text-ink-2">{children}</div>}
         </div>
       </div>
     </div>

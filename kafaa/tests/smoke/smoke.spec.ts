@@ -3,34 +3,11 @@
  * in English, plus an Arabic (RTL) pass. Guarded routes must show the sign-in prompt to anonymous visitors.
  * Run: npm run build && npm run test:smoke   (serves dist/ with vite preview on :4173/kafaa/)
  */
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import { loadRoutes, fill, isPublic } from './routes';
+import { BASE, asPersona, visit } from './helpers';
 
 const ROUTES = loadRoutes();
-const BASE = '/kafaa';
-
-async function asPersona(page: Page, persona: string | null) {
-  await page.addInitScript((p) => {
-    try {
-      localStorage.setItem('kafaa.backend', 'local');
-      if (p) localStorage.setItem('kafaa.session.v1', JSON.stringify({ persona: p, at: Date.now() }));
-      else localStorage.removeItem('kafaa.session.v1');
-    } catch {
-      /* ignore */
-    }
-  }, persona);
-}
-
-async function visit(page: Page, url: string) {
-  const errors: string[] = [];
-  page.on('pageerror', (e) => errors.push(e.message));
-  await page.goto(url);
-  await page.waitForSelector('main', { timeout: 20_000 });
-  // Wait until the guard/session has settled (skeletons gone from main) or a terminal state is visible.
-  await expect(page.locator('main [data-testid="skeleton"]').first()).toHaveCount(0, { timeout: 20_000 });
-  await expect(page.locator('[data-testid="page-crash"]')).toHaveCount(0);
-  expect(errors, `page errors on ${url}`).toEqual([]);
-}
 
 test('registry is non-empty', () => {
   expect(ROUTES.length).toBeGreaterThan(80);

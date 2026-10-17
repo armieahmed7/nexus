@@ -60,11 +60,12 @@ export function BenchmarkChip({ id, row: given }: { id: string; row?: BenchmarkR
         onClick={() => setOpen(true)}
         title={name}
         aria-haspopup="dialog"
-        aria-label={t('fs.bm.chip.aria', { name, year: year(row) })}
+        // The name starts with the visible short name and year (WCAG 2.5.3 label in name); the full name stays in `title`.
+        aria-label={t('fs.bm.chip.aria', { name: shortName(name), year: year(row) })}
         data-testid={`benchmark-chip-${id}`}
       >
         <Icon name="book" size={12} />
-        <span className="min-w-0 max-w-[15rem] break-words">{shortName(name)}</span>
+        <span className="min-w-0 max-w-[15rem] break-words">{shortName(name)}</span>{' '}
         <span className="min-w-0 tabular-nums text-ink-3">{year(row)}</span>
       </button>
       <BenchmarkDrawer row={row} open={open} onClose={() => setOpen(false)} />

@@ -208,7 +208,7 @@ function Register() {
             </div>
             <div className="flex flex-wrap items-center gap-3 md:col-span-2">
               <button type="submit" className="btn-primary" disabled={form.submitting || !consent} data-testid="m09-sup-submit">{form.submitting ? t('common.working') : t('m09.sup.f.send')}</button>
-              <span className="text-[12.5px] text-ink-3">{t('m09.sup.f.already')} <L to="/sign-in">{t('m09.sup.f.signIn')}</L></span>
+              <p className="text-[12.5px] text-ink-3">{t('m09.sup.f.already')} <L to="/sign-in">{t('m09.sup.f.signIn')}</L></p>
             </div>
           </form>
         )}

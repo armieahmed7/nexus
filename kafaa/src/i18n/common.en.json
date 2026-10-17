@@ -13,6 +13,7 @@
   "source": "Source",
   "pathGraph": "Career path graph",
   "empty": "Nothing here yet",
+  "progress": "Progress",
   "errorTitle": "Something went wrong",
   "filterRows": "Filter rows",
   "rowsCount": "{n} rows",

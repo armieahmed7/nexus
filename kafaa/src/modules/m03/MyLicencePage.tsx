@@ -72,7 +72,7 @@ function Mine({ d }: { d: Mine }) {
       <Grid cols={2}>
         <Card title={t('m03.cert.title')} eyebrow={t(`m03.type.${lic.type}`)} actions={<LicencePill lic={lic} />} footer={t('m02.mirror.asRecorded', { system: systemName(t, lic.source_system), date: f.dateTime(lic.last_synced) })}>
           <div className="flex items-center gap-4" data-testid="m03-my-certificate">
-            <ProgressRing value={100 - pct} label={v.stale ? '—' : f.num(Math.max(0, v.daysToExpiry))} tone={v.view === 'valid' ? 'ok' : v.view === 'renewal_due' ? 'sim' : 'bad'} size={72} />
+            <ProgressRing value={100 - pct} name={t('m03.cert.title')} label={v.stale ? '—' : f.num(Math.max(0, v.daysToExpiry))} tone={v.view === 'valid' ? 'ok' : v.view === 'renewal_due' ? 'sim' : 'bad'} size={72} />
             <KeyValue
               items={[
                 [t('m03.cert.number'), <span className="num">{lic.cert_no}</span>],

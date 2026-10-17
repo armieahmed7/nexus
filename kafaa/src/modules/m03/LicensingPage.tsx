@@ -77,7 +77,7 @@ function Explainer({ d }: { d: { roles: Map<string, RowOf<'job_roles'>>; src: Ma
       </Section>
 
       <Section title={t('m03.pub.rulesTitle')} description={t('m03.pub.rulesDesc')}>
-        <div className="card overflow-x-auto p-0">
+        <div className="card overflow-x-auto p-0" tabIndex={0}>
           <table className="table-base w-full min-w-[720px]" data-testid="m03-rules">
             <thead>
               <tr>

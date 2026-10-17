@@ -202,7 +202,7 @@ export function Heatmap({ title, rows, cols, value, rowLabel, colLabel }: { titl
   const hi = Math.max(1, ...all);
   const toneBg: Record<string, string> = { ok: 'bg-ok-bg text-ok', bad: 'bg-bad-bg text-bad', sim: 'bg-sim-bg text-sim', info: 'bg-info-bg text-info', neutral: 'bg-sunken text-ink-3' };
   return (
-    <div className="overflow-x-auto" data-testid="heatmap">
+    <div className="overflow-x-auto" tabIndex={0} data-testid="heatmap">
       <table className="border-separate border-spacing-0.5 text-[12px]">
         <caption className="sr-only">{title}</caption>
         <thead>
@@ -237,9 +237,10 @@ export function Heatmap({ title, rows, cols, value, rowLabel, colLabel }: { titl
                     </td>
                   );
                 }
-                const a = x.v == null ? 0 : 0.12 + 0.78 * (x.v / hi);
+                // Shade tops out at 62% accent so ink text keeps 4.5:1 in both themes (white on mid-tone accent never reached it).
+                const a = x.v == null ? 0 : 0.12 + 0.5 * (x.v / hi);
                 return (
-                  <td key={c} className="num h-8 min-w-[44px] rounded px-1 text-center" style={{ background: `rgb(var(--accent) / ${a})`, color: a > 0.55 ? 'rgb(var(--accent-ink))' : 'rgb(var(--ink))' }}>
+                  <td key={c} className="num h-8 min-w-[44px] rounded px-1 text-center text-ink" style={{ background: `rgb(var(--accent) / ${a})` }}>
                     {x.label ?? (x.v == null ? '—' : f.num(x.v))}
                   </td>
                 );
@@ -252,12 +253,14 @@ export function Heatmap({ title, rows, cols, value, rowLabel, colLabel }: { titl
   );
 }
 
-export function ProgressRing({ value, size = 56, label, tone = 'accent' }: { value: number; size?: number; label?: ReactNode; tone?: string }) {
+/** `name` is the accessible name (defaults to "Progress"); `label` is the visible text in the middle. */
+export function ProgressRing({ value, size = 56, label, tone = 'accent', name }: { value: number; size?: number; label?: ReactNode; tone?: string; name?: string }) {
+  const t = useT();
   const r = 22;
   const C = 2 * Math.PI * r;
   const v = Math.max(0, Math.min(100, value));
   return (
-    <div className="relative inline-grid place-items-center" style={{ width: size, height: size }} role="progressbar" aria-valuenow={Math.round(v)} aria-valuemin={0} aria-valuemax={100}>
+    <div className="relative inline-grid place-items-center" style={{ width: size, height: size }} role="progressbar" aria-valuenow={Math.round(v)} aria-valuemin={0} aria-valuemax={100} aria-label={name ?? t('common.progress')}>
       <svg viewBox="0 0 56 56" width={size} height={size}>
         <circle cx="28" cy="28" r={r} fill="none" stroke="rgb(var(--sunken))" strokeWidth="6" />
         <circle cx="28" cy="28" r={r} fill="none" stroke={TONES[tone] ?? TONES.accent} strokeWidth="6" strokeLinecap="round" strokeDasharray={`${(v / 100) * C} ${C}`} transform="rotate(-90 28 28)" />
@@ -269,8 +272,9 @@ export function ProgressRing({ value, size = 56, label, tone = 'accent' }: { val
 
 /** Thin linear progress bar. */
 export function ProgressBar({ value, tone = 'accent', label }: { value: number; tone?: string; label?: string }) {
+  const t = useT();
   return (
-    <div className="h-2 w-full rounded-full bg-sunken" role="progressbar" aria-valuenow={Math.round(value)} aria-valuemin={0} aria-valuemax={100} aria-label={label}>
+    <div className="h-2 w-full rounded-full bg-sunken" role="progressbar" aria-valuenow={Math.round(value)} aria-valuemin={0} aria-valuemax={100} aria-label={label ?? t('common.progress')}>
       <div className="h-2 rounded-full" style={{ width: `${Math.max(0, Math.min(100, value))}%`, background: TONES[tone] ?? TONES.accent }} />
     </div>
   );

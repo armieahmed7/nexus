@@ -93,7 +93,7 @@ function Brand() {
         <circle cx="23" cy="10" r="2.4" fill="rgb(var(--leaf))" />
       </svg>
       <span className="leading-tight">
-        <span className="block text-[15px] font-bold">{t('shell.brand')}</span>
+        <span className="block text-[15px] font-bold">{t('shell.brand')}</span>{' '}
         <span className="caps hidden !text-[9.5px] min-[420px]:block">{t('shell.brandSub')}</span>
       </span>
     </L>
@@ -355,7 +355,7 @@ function AccountMenu({ theme, setTheme }: { theme: Theme; setTheme: (t: Theme) =
     <div ref={root} className="relative">
       <button ref={trigger} className="btn-ghost btn-sm" onClick={() => setOpen((v) => !v)} aria-expanded={open} aria-controls={id} data-testid="account-menu">
         <Icon name="user" />
-        <span className="hidden max-w-[160px] truncate md:inline">{s.persona ? (lang === 'ar' ? s.persona.title_ar : s.persona.title_en) : name}</span>
+        <span className="sr-only max-w-[160px] truncate md:not-sr-only md:inline">{s.persona ? (lang === 'ar' ? s.persona.title_ar : s.persona.title_en) : name}</span>
       </button>
       {open && (
         <div id={id} className="card absolute end-0 top-full z-50 mt-1 w-72 p-3 text-[13px]" onMouseLeave={() => setOpen(false)}>

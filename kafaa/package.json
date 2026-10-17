@@ -29,6 +29,7 @@
     "react-router-dom": "^6.28.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
     "@electric-sql/pglite": "^0.2.12",
     "@playwright/test": "^1.56.1",
     "@testing-library/dom": "^10.4.0",

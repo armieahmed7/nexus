@@ -56,7 +56,7 @@ function Body({ d, deltas }: { d: RefData; deltas: Row[] }) {
                     return (
                       <td key={x.id} className="p-1.5">
                         <button type="button" className={`chip normal-case tracking-normal ${tone} ${r.id === roleId && x.id === techId ? 'ring-2 ring-[rgb(var(--accent))]' : ''}`} onClick={() => set(r.id, x.id)} data-testid="m31-grid-cell" data-role={r.id} data-tech={x.id} data-band={band}
-                          aria-label={`${pick(r, 'title')} · ${pick(x, 'family')}: ${t(`m31.ng.band.${band}`)}`}>
+                          aria-label={`${pick(r, 'title')} · ${pick(x, 'family')}: #${f.num(dl.rank)} ${t(`m31.ng.band.${band}`)}`}>
                           <span className="num">#{f.num(dl.rank)}</span> {t(`m31.ng.band.${band}`)}
                         </button>
                       </td>

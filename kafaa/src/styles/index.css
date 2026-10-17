@@ -26,6 +26,8 @@
   html[lang='ar'] h1, html[lang='ar'] h2, html[lang='ar'] h3 { letter-spacing: 0; }
   a { @apply text-accent; }
   a:hover { text-decoration: underline; }
+  /* WCAG 1.4.1: a link inside running text is underlined, so colour is not its only cue (axe link-in-text-block). */
+  p a:where(:not([class*='btn'], .chip, .link-plain)) { text-decoration: underline; text-underline-offset: 2px; }
   :focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; border-radius: 4px; }
   ::selection { background: rgb(var(--accent) / .2); }
   .num, code, kbd, .mono { font-family: 'IBM Plex Mono', ui-monospace, monospace; }
@@ -51,6 +53,8 @@
   .input[aria-invalid='true'] { @apply border-bad ring-bad/20; }
   .chip { @apply inline-flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-[11.5px] font-semibold leading-4; }
   .link-plain { @apply text-ink; text-decoration: none !important; }
+  /* Callout links: --accent is only 4.4:1 on the info background, so they take the darker eyebrow token, underlined (WCAG 1.4.3, 1.4.1). */
+  .callout-body a:where(:not([class*='btn'], .chip, .link-plain)) { color: rgb(var(--eyebrow)); text-decoration: underline; text-underline-offset: 2px; }
   .skeleton { @apply animate-pulse rounded bg-sunken; }
   .table-base th { @apply caps whitespace-nowrap px-3 py-2 text-start; }
   .table-base td { @apply border-t border-line px-3 py-2 align-top; }

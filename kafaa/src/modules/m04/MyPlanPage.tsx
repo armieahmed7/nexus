@@ -108,7 +108,7 @@ function PlanView({ plan, acts }: { plan: DevPlansRow; acts: PlanActivitiesRow[]
                 </div>
               </Card>
               <Card title={t('m04.plan.progress')}>
-                <div className="flex items-center gap-4"><ProgressRing value={pct} size={72} tone={pct === 100 ? 'ok' : 'accent'} /><div className="text-[13.5px] text-ink-2">{t('m04.plan.progressBody', { done: f.num(done), total: f.num(acts.length) })}</div></div>
+                <div className="flex items-center gap-4"><ProgressRing value={pct} size={72} tone={pct === 100 ? 'ok' : 'accent'} name={t('m04.plan.progress')} /><div className="text-[13.5px] text-ink-2">{t('m04.plan.progressBody', { done: f.num(done), total: f.num(acts.length) })}</div></div>
               </Card>
             </Grid>
 
