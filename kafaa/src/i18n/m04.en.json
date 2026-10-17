@@ -420,7 +420,29 @@
       "corporateSustainability": "Corporate Sustainability",
       "operationsTraining": "Operations Training",
       "engineering": "Engineering"
-    }
+    },
+    "waitTitle": "Waiting for a session",
+    "waitBodyRole": "This course is required for your role, but no session is scheduled yet, so there is nothing to book today. You are already counted in the training team's demand for this course, which they use to plan sessions.",
+    "waitBody": "No session is scheduled for this course yet, so there is nothing to book today. Your place is counted in the training team's demand for this course, which they use to plan sessions.",
+    "waitNext": "What happens next: {owner} schedules the sessions. When one is published it appears under Sessions on this page and you can book it here. If your due date is getting close, ask your line manager or {owner}.",
+    "waitOwnerFallback": "the training team",
+    "waitDue": "Due {date} ({when}).",
+    "waitDueIn": "in {days}",
+    "waitOverdue": "overdue by {days}",
+    "waitProgress": "Progress recorded so far: {pct}.",
+    "modulesRecorded": {
+      "zero": "{done} of {n} modules recorded in your learning record.",
+      "one": "{done} of {n} module recorded in your learning record.",
+      "two": "{done} of {n} modules recorded in your learning record.",
+      "few": "{done} of {n} modules recorded in your learning record.",
+      "many": "{done} of {n} modules recorded in your learning record.",
+      "other": "{done} of {n} modules recorded in your learning record."
+    },
+    "moduleRecorded": "Recorded:",
+    "waitMeanwhile": "Meanwhile, you can read the objectives and modules on this page and keep up with the rest of your learning.",
+    "waitMeanwhilePrereq": "Meanwhile, finish the prerequisites listed below: you can only book a session once they are recorded.",
+    "waitMyLearning": "My learning",
+    "waitCoach": "Learning Coach"
   },
   "hub": {
     "approvals": "Awaiting approval",

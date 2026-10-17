@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Page, Section, Card, Grid, KeyValue, Async, EmptyState, Callout, ConfirmDialog, DataTable, Icon, Skeleton } from '../../ui';
 import { useAction, useQuery, useRepo } from '../../data';
-import type { SessionsRow } from '../../data/types';
-import { L, hasKey, useFormat, useLang, usePick, useT } from '../../i18n';
+import type { CourseModulesRow, EnrolmentsRow, SessionsRow } from '../../data/types';
+import { L, hasKey, useCount, useFormat, useLang, usePick, useT } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { isOpen, missingPrerequisites } from '../../domain/learning';
 import { Chip, G2Pill, Sources, useLabels, usePeople } from './ui';
@@ -27,7 +27,7 @@ export default function LearnCoursePage() {
   const [confirm, setConfirm] = useState<{ session: SessionsRow | null } | null>(null);
   const [withdraw, setWithdraw] = useState(false);
 
-  const q = useQuery(['courses', 'course_modules', 'programmes', 'competencies', 'sessions', 'enrolments', 'assessment_forms', 'training_records'], async () => {
+  const q = useQuery(['courses', 'course_modules', 'programmes', 'competencies', 'sessions', 'enrolments', 'assessment_forms', 'training_records', 'xapi_statements'], async () => {
     const course = await repo.get('courses', id);
     if (!course) return { course: null } as const;
     const [modules, programme, comps, sessions, forms, allCourses] = await Promise.all([
@@ -43,7 +43,12 @@ export default function LearnCoursePage() {
     const seatsBySession = new Map((avail?.data ?? []).map((a) => [a.session_id, a]));
     const records = me ? await repo.list('training_records', { filter: { person_id: me } }) : [];
     const myCompleted = me ? await repo.list('enrolments', { filter: { person_id: me, status: 'completed' } }) : [];
-    return { course, modules, programme, comps, sessions, form: forms[0] ?? null, allCourses, seatsBySession, mine, records, myCompleted };
+    // EMP-06: my own module statements in the learning record (if any), for "2 of 4 modules recorded". Optional: no grant, no ticks.
+    const myModuleStatements = staff && me && modules.length > 0
+      ? await repo.list('xapi_statements', { filter: { actor_person_id: me, object_type: 'module' } }).catch(() => [])
+      : [];
+    const modulesRecorded = modulesWithRecord(modules, myModuleStatements);
+    return { course, modules, programme, comps, sessions, form: forms[0] ?? null, allCourses, seatsBySession, mine, records, myCompleted, modulesRecorded };
   }, [id, me, staff]);
 
   return (
@@ -137,8 +142,11 @@ export default function LearnCoursePage() {
                 {d.modules.length === 0 ? <p className="text-ink-3">{t('m04.course.noModules')}</p> : (
                   <ol className="space-y-1.5">
                     {d.modules.map((m) => (
-                      <li key={m.id} className="flex items-center justify-between gap-2 text-[13.5px]">
-                        <span><span className="num me-2 text-ink-3">{f.num(m.n)}.</span>{pick(m, 'title')}</span>
+                      <li key={m.id} className="flex items-center justify-between gap-2 text-[13.5px]" data-testid="m04-module" data-recorded={d.modulesRecorded.has(m.id) ? 'yes' : 'no'}>
+                        <span>
+                          {d.modulesRecorded.has(m.id) && <><Icon name="check" size={14} className="me-1 inline text-ok" /><span className="sr-only">{t('m04.course.moduleRecorded')} </span></>}
+                          <span className="num me-2 text-ink-3">{f.num(m.n)}.</span>{pick(m, 'title')}
+                        </span>
                         <span className="num text-ink-3">{t('m04.common.minutes', { n: f.num(m.minutes) })}</span>
                       </li>
                     ))}
@@ -158,7 +166,10 @@ export default function LearnCoursePage() {
               <Callout title={t('m04.course.internalTitle')}>{t('m04.course.internalBody')} {s.status !== 'signed_in' && <L to={`/sign-in?next=/learn/course/${c.id}`}>{t('m04.course.signIn')}</L>}</Callout>
             ) : (
               <Section title={t('m04.course.sessions')} description={t('m04.course.sessionsIntro')}
-                actions={active ? <div className="flex items-center gap-2"><span className="caps">{t('m04.course.myStatus')}</span><G2Pill status={active.status} />{active.status !== 'assigned' && <button className="btn-outline btn-sm" onClick={() => setWithdraw(true)} data-testid="m04-withdraw">{t('m04.course.withdraw')}</button>}</div> : null}>
+                actions={active ? <div className="flex items-center gap-2"><span className="caps">{t('m04.course.myStatus')}</span><G2Pill status={active.status} />{active.status !== 'assigned' && <button className={c.mandatory || active.source === 'role_rule' ? 'btn-ghost btn-sm' : 'btn-outline btn-sm'} onClick={() => setWithdraw(true)} data-testid="m04-withdraw">{t('m04.course.withdraw')}</button>}</div> : null}>
+                {active && !bookedLive && upcoming.length === 0 && c.modality !== 'elearning' && (
+                  <WaitingForSession enrolment={active} owner={ownerRoleLabel(t, c.owner_role)} modules={d.modules} recorded={d.modulesRecorded} prereqMissing={missing.length > 0} />
+                )}
                 {missing.length > 0 && <Callout tone="sim" title={t('m04.course.prereqMissing')}>{missing.map((m) => courseCode(m)?.code ?? m).join(', ')}</Callout>}
                 {people.loading ? <Skeleton /> : (
                   <DataTable rows={upcoming} rowKey={(r) => r.id} searchable={false} empty={t('m04.course.noSessions')} columns={[
@@ -196,6 +207,49 @@ export default function LearnCoursePage() {
         );
       }}
     </Async>
+  );
+}
+
+/** Module ids of this course that have one of my own completion-type statements in the learning record. */
+export function modulesWithRecord(modules: Pick<CourseModulesRow, 'id'>[], statements: { object_type?: string; object_id?: string; verb?: string }[]): Set<string> {
+  const ids = new Set(modules.map((m) => m.id));
+  return new Set(statements.filter((x) => x.object_type === 'module' && ids.has(x.object_id ?? '') && ['completed', 'passed', 'attended'].includes(x.verb ?? '')).map((x) => x.object_id as string));
+}
+
+/** Whole days from today (UTC) to a yyyy-mm-dd date; negative when it has passed. */
+export function daysUntil(date: string, today = new Date().toISOString().slice(0, 10)): number {
+  return Math.round((Date.parse(`${date}T00:00:00Z`) - Date.parse(`${today}T00:00:00Z`)) / 86400000);
+}
+
+/** EMP-06: an assigned classroom course with no session to book is not a dead end. Says why there is nothing to book, who schedules
+ *  sessions and what happens next, the due date, the progress the record holds, and where to go meanwhile. Read-only. */
+function WaitingForSession({ enrolment, owner, modules, recorded, prereqMissing }: { enrolment: EnrolmentsRow; owner: string; modules: CourseModulesRow[]; recorded: Set<string>; prereqMissing: boolean }) {
+  const t = useT();
+  const f = useFormat();
+  const count = useCount();
+  const days = enrolment.due_on ? daysUntil(enrolment.due_on) : null;
+  return (
+    <div data-testid="m04-waiting-session">
+      <Callout title={t('m04.course.waitTitle')}>
+        <p>{t(enrolment.source === 'role_rule' ? 'm04.course.waitBodyRole' : 'm04.course.waitBody')}</p>
+        <p className="mt-1">{t('m04.course.waitNext', { owner: owner === '—' ? t('m04.course.waitOwnerFallback') : owner })}</p>
+        {enrolment.due_on && days != null && (
+          <p className="mt-1" data-testid="m04-waiting-due">
+            {t('m04.course.waitDue', { date: f.date(enrolment.due_on), when: days >= 0 ? t('m04.course.waitDueIn', { days: count('common.nDays', days) }) : t('m04.course.waitOverdue', { days: count('common.nDays', -days) }) })}
+          </p>
+        )}
+        {recorded.size > 0 ? (
+          <p className="mt-1" data-testid="m04-waiting-progress">{count('m04.course.modulesRecorded', modules.length, { done: f.num(recorded.size) })}</p>
+        ) : enrolment.progress_pct > 0 ? (
+          <p className="mt-1" data-testid="m04-waiting-progress">{t('m04.course.waitProgress', { pct: f.pct(enrolment.progress_pct, 0) })}</p>
+        ) : null}
+        <p className="mt-1">{t(prereqMissing ? 'm04.course.waitMeanwhilePrereq' : 'm04.course.waitMeanwhile')}</p>
+        <div className="mt-2 flex flex-wrap gap-2">
+          <L to="/my/learning" className="btn-outline btn-sm no-underline" data-testid="m04-waiting-my-learning">{t('m04.course.waitMyLearning')}</L>
+          <L to="/my/coach" className="btn-ghost btn-sm no-underline">{t('m04.course.waitCoach')}</L>
+        </div>
+      </Callout>
+    </div>
   );
 }
 
