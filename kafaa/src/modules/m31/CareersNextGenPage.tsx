@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Page, Section, Card, Async, Callout, EmptyState, BenchmarkChips, SelectField, SimChip } from '../../ui';
 import { useQuery, useRepo } from '../../data';
-import { L, useFormat, usePick, useT } from '../../i18n';
+import { L, techDesigns, useFormat, usePick, useT } from '../../i18n';
 import { changeSize, sizeBand, PATH_ONLY_FAMILIES, type DeltaDim } from './nextgen';
 import { DeltaBody, NoDeployNote, TechName, useNgRef, type RefData, type Row } from './ui';
 
@@ -78,7 +78,7 @@ function Body({ d, deltas }: { d: RefData; deltas: Row[] }) {
           </div>
           {PATH_ONLY_FAMILIES.includes(role.family_id) && <Callout tone="info" title={t('m31.ng.pathOnly.title')}><span data-testid="m31-path-only">{t('m31.ng.pathOnly.body')}</span></Callout>}
           {cur ? (
-            <DeltaBody d={d} delta={cur} aside={<Card><p className="text-[13px]">{t('m31.pub.techLabel')} <strong><TechName d={d} id={cur.tech_id} /></strong> · {d.techById.get(cur.tech_id)?.designs} · {t('m31.ng.sizeLine', { n: f.num(changeSize(cur.dims)), band: t(`m31.ng.band.${cur.path_only ? 'path' : sizeBand(changeSize(cur.dims))}`) })} · {t('m31.pub.version', { v: f.num(cur.version), date: f.date(cur.as_of) })}</p></Card>} />
+            <DeltaBody d={d} delta={cur} aside={<Card><p className="text-[13px]">{t('m31.pub.techLabel')} <strong><TechName d={d} id={cur.tech_id} /></strong> · {techDesigns(t, d.techById.get(cur.tech_id)?.designs)} · {t('m31.ng.sizeLine', { n: f.num(changeSize(cur.dims)), band: t(`m31.ng.band.${cur.path_only ? 'path' : sizeBand(changeSize(cur.dims))}`) })} · {t('m31.pub.version', { v: f.num(cur.version), date: f.date(cur.as_of) })}</p></Card>} />
           ) : <EmptyState title={t('m31.pub.noDelta')} />}
         </Section>
       )}

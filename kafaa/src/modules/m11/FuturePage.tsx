@@ -3,7 +3,7 @@
 // Every page carries "ENEC is evaluating these technologies; no deployment decision is implied". No headcount, no sites.
 import { useMemo, useState } from 'react';
 import { Page, Section, Card, Async, Grid, SelectField, FilterBar, useFilters, EmptyState, SourceLink, Icon } from '../../ui';
-import { useT, usePick, useFormat, useLang, L } from '../../i18n';
+import { useT, usePick, useFormat, useLang, L, techDesigns } from '../../i18n';
 import { useQuery, useRepo, type RowOf } from '../../data';
 import { publicTextIsClean } from '../../domain/future';
 import { SourceList, useSourceDates, type Source } from '../m09/shared';
@@ -89,7 +89,7 @@ function Body({ d }: { d: FutureData }) {
             const sk = d.skills.filter((s) => s.tech_id === x.id);
             return (
               <li key={x.id} className="card flex flex-col gap-2 p-4" data-testid="m11-tech-card">
-                <div className="caps num">{x.designs}</div>
+                <div className="caps num">{techDesigns(t, x.designs)}</div>
                 <L to={`/future/${techSlug(x.id)}`} className="text-[15px] font-semibold leading-snug">{pick(x, 'family')}</L>
                 <p className="text-[13px]"><span className="font-semibold">{t('m11.pub.partners')}: </span>{pick(x, 'partners')}</p>
                 <p className="text-[13px] text-ink-2"><span className="font-semibold text-ink">{t('m11.pub.differs')}: </span>{pick(x, 'skill_areas')}</p>

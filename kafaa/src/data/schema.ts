@@ -404,7 +404,8 @@ export const SCHEMA: Record<string, TableDef> = {
   sessions: {
     module: 'M04', label: 'Scheduled session (class, simulator, drill)',
     cols: {
-      id: 'text pk', course_id: 'text ref:courses idx', starts_at: 'ts idx', ends_at: 'ts', location: 'text', instructor_person_id: 'text? ref:people',
+      id: 'text pk', course_id: 'text ref:courses idx', starts_at: 'ts idx', ends_at: 'ts', location: 'text', location_ar: 'text?', // location_ar: Arabic parity 2026-10-17
+      instructor_person_id: 'text? ref:people',
       capacity: 'int =12', kind: 'text enum:class|simulator|drill|elearning|clinic', crew: 'text?', priority: 'text enum:licence_critical|mandatory|elective =\'mandatory\'',
       audience: 'text enum:staff|contractor|supplier =\'staff\'', public_summary: 'bool =false',
       // G2 additions (2026-10-08): session lifecycle

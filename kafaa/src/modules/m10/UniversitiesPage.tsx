@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useRepo, useQuery } from '../../data';
 import { Page, Section, Grid, Card, Async, EmptyState, StatusPill, Stepper, Callout, DataTable, FilterBar, useFilters, SourceLink } from '../../ui';
-import { L, entityName, useFormat, usePick, useT } from '../../i18n';
+import { L, countryKey, countryName, countryOptions, entityName, useFormat, usePick, useT } from '../../i18n';
 import { SourceList } from '../m06/shared';
 import { CurriculumAlignment } from './shared';
 import { FutureSkillsLinks } from './links'; // FS66/FS67 (fsGe4)
@@ -26,9 +26,9 @@ export default function UniversitiesPage() {
   });
   const shown = useMemo(() => {
     const term = flt.q.trim().toLowerCase();
-    return (orgs.data ?? []).filter((o) => (!flt.kind || o.kind === flt.kind) && (!flt.country || o.country === flt.country) && (!term || `${o.name_en} ${o.name_ar} ${o.relationship_en}`.toLowerCase().includes(term)));
+    return (orgs.data ?? []).filter((o) => (!flt.kind || o.kind === flt.kind) && (!flt.country || countryKey(o.country) === flt.country) && (!term || `${o.name_en} ${o.name_ar} ${o.relationship_en}`.toLowerCase().includes(term)));
   }, [orgs.data, flt]);
-  const countries = useMemo(() => [...new Set((orgs.data ?? []).map((o) => o.country).filter(Boolean))].sort() as string[], [orgs.data]);
+  const countries = useMemo(() => countryOptions(t, (orgs.data ?? []).map((o) => o.country)), [orgs.data, t]);
 
   return (
     <Page title={t('m10.routes.universities.title')} eyebrow={t('m10.uni.eyebrow')} intro={t('m10.uni.intro')}>
@@ -51,7 +51,7 @@ export default function UniversitiesPage() {
           search="q"
           fields={[
             { key: 'kind', label: t('m10.uni.type'), options: [{ value: 'university', label: t('m10.uni.kind.university') }, { value: 'research', label: t('m10.uni.kind.research') }] },
-            { key: 'country', label: t('m10.uni.country'), options: countries.map((c) => ({ value: c, label: c })) },
+            { key: 'country', label: t('m10.uni.country'), options: countries },
           ]}
         />
         <Async state={orgs} empty={<EmptyState title={t('m10.uni.none')} />}>
@@ -62,7 +62,7 @@ export default function UniversitiesPage() {
               <div data-testid="m10-partners">
                 <Grid cols={3}>
                   {shown.map((o) => (
-                    <Card key={o.id} as="article" title={pick(o, 'name')} eyebrow={`${t(`m10.uni.kind.${o.kind}`)} · ${o.country ?? ''}`} actions={<StatusPill status={o.status}>{t(`m10.uni.status.${o.status}`)}</StatusPill>} footer={<SourceList sources={o.sources} />}>
+                    <Card key={o.id} as="article" title={pick(o, 'name')} eyebrow={`${t(`m10.uni.kind.${o.kind}`)} · ${countryName(t, o.country)}`} actions={<StatusPill status={o.status}>{t(`m10.uni.status.${o.status}`)}</StatusPill>} footer={<SourceList sources={o.sources} />}>
                       <p className="text-[13px] text-ink-2">{pick(o, 'relationship')}</p>
                       <div className="mt-2 text-[12.5px] text-ink-3">{t('m10.uni.since', { dates: o.dates ?? '—' })}{o.binding === false && <> · {t('m10.uni.nonBinding')}</>}</div>
                     </Card>

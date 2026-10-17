@@ -163,7 +163,7 @@ export default function LearnCoursePage() {
                 {people.loading ? <Skeleton /> : (
                   <DataTable rows={upcoming} rowKey={(r) => r.id} searchable={false} empty={t('m04.course.noSessions')} columns={[
                     { key: 'when', header: t('m04.common.when'), value: (r) => r.starts_at, render: (r) => f.dateTime(r.starts_at), sortable: true },
-                    { key: 'where', header: t('m04.common.where'), value: (r) => r.location },
+                    { key: 'where', header: t('m04.common.where'), value: (r) => pick(r, 'location') },
                     { key: 'kind', header: t('m04.common.kind'), value: (r) => lab.sessionKind(r.kind) },
                     { key: 'crew', header: t('m04.common.crew'), value: (r) => r.crew ?? '—' },
                     { key: 'instr', header: t('m04.common.instructor'), value: (r) => people.name(r.instructor_person_id) },

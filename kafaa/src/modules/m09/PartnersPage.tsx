@@ -3,7 +3,7 @@
 // listed apart because regulators are not partners. Company names in text only; no logos; no individual names.
 import { useMemo, useState } from 'react';
 import { Page, Section, Callout, Async, EmptyState, FilterBar, useFilters, StatTile, Grid, DataTable, Icon, type Column } from '../../ui';
-import { useT, usePick, useFormat, L, useNav } from '../../i18n';
+import { useT, usePick, useFormat, L, useNav, countryKey, countryName, countryOptions } from '../../i18n';
 import { useQuery, useRepo } from '../../data';
 import { CATEGORIES, CategoryChips, MStatus, NON_BINDING, REL_TYPES, SourceList, useSourceDates, type Org, type Source } from './shared';
 
@@ -28,7 +28,7 @@ function Directory({ orgs }: { orgs: Org[] }) {
   const [flt, setFlt] = useFilters({ q: '', cat: '', status: '', type: '', country: '' }, true);
   const [view, setView] = useState<'cards' | 'table'>('cards');
 
-  const countries = useMemo(() => Array.from(new Set(orgs.map((o) => o.country).filter(Boolean) as string[])).sort(), [orgs]);
+  const countries = useMemo(() => countryOptions(t, orgs.map((o) => o.country)), [orgs, t]); // values are language-neutral keys ("fr/it")
   const filtered = useMemo(() => {
     const term = flt.q.trim().toLowerCase();
     return orgs.filter((o) => {
@@ -36,11 +36,11 @@ function Directory({ orgs }: { orgs: Org[] }) {
       if (flt.cat && !cats.includes(flt.cat)) return false;
       if (flt.status && o.status !== flt.status) return false;
       if (flt.type && !(o.rel_types ?? []).includes(flt.type)) return false;
-      if (flt.country && o.country !== flt.country) return false;
+      if (flt.country && countryKey(o.country) !== flt.country) return false;
       if (!term) return true;
-      return [o.name_en, o.name_ar, o.relationship_en, o.relationship_ar, o.country].some((s) => String(s ?? '').toLowerCase().includes(term));
+      return [o.name_en, o.name_ar, o.relationship_en, o.relationship_ar, o.country, countryName(t, o.country)].some((s) => String(s ?? '').toLowerCase().includes(term));
     });
-  }, [orgs, flt]);
+  }, [orgs, flt, t]);
   const isOversight = (o: Org) => (o.categories?.length ? o.categories : [o.category]).includes('oversight');
   const partners = filtered.filter((o) => !isOversight(o));
   const oversight = filtered.filter(isOversight);
@@ -56,7 +56,7 @@ function Directory({ orgs }: { orgs: Org[] }) {
     { key: 'dates', header: t('m09.dir.col.dates'), value: (o) => datesLabel(t, o.dates) },
     { key: 'status', header: t('m09.dir.col.status'), value: (o) => o.status, render: (o) => <MStatus status={o.status} />, sortable: true },
     { key: 'binding', header: t('m09.dir.col.binding'), value: (o) => (o.binding ? t('m09.dir.binding') : t('m09.dir.nonBinding')) },
-    { key: 'country', header: t('m09.dir.col.country'), value: (o) => o.country ?? '', sortable: true },
+    { key: 'country', header: t('m09.dir.col.country'), value: (o) => countryName(t, o.country), sortable: true },
     { key: 'src', header: t('m09.dir.col.sources'), value: (o) => ((o.sources as Source[]) ?? []).map((s) => s.url).join(' '), render: (o) => <SourceList sources={(o.sources as Source[]) ?? []} dates={dates} compact /> },
   ];
 
@@ -88,7 +88,7 @@ function Directory({ orgs }: { orgs: Org[] }) {
           fields={[
             { key: 'status', label: t('m09.dir.f.status'), options: ['active', 'historic', 'exploratory'].map((s) => ({ value: s, label: t(`m09.status.${s}`) })) },
             { key: 'type', label: t('m09.dir.f.type'), options: REL_TYPES.map((r) => ({ value: r, label: t(`m09.rel.${r}`) })) },
-            { key: 'country', label: t('m09.dir.f.country'), options: countries.map((c) => ({ value: c, label: c })) },
+            { key: 'country', label: t('m09.dir.f.country'), options: countries },
           ]}
           extra={
             <div className="flex items-end gap-1" role="group" aria-label={t('m09.dir.view')}>

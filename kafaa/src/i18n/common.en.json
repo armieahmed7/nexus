@@ -297,5 +297,32 @@
     },
     "level": "Level {level}",
     "confidence": "Confidence {pct}%"
+  },
+  "countries": {
+    "ae": "UAE",
+    "kr": "Korea",
+    "us": "USA",
+    "fr": "France",
+    "gb": "UK",
+    "ca": "Canada",
+    "ru": "Russia",
+    "kz": "Kazakhstan",
+    "es": "Spain",
+    "jp": "Japan",
+    "it": "Italy",
+    "cn": "China",
+    "ro": "Romania",
+    "pl": "Poland",
+    "eg": "Egypt",
+    "in": "India",
+    "intl": "International"
+  },
+  "fwVersion": {
+    "current": "current",
+    "currentRefs": "current references"
+  },
+  "designs": {
+    "natrium": "Natrium; lead-cooled fast reactor",
+    "ap1000": "AP1000 and others"
   }
 }

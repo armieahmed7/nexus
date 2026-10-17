@@ -250,6 +250,9 @@ export function useNav() {
   return useCallback((to: string, opts?: { replace?: boolean }) => navigate(localPath(to, lang), opts), [navigate, lang]);
 }
 
+/** Country, framework-version and reactor-design values stored in English only (closed vocabularies), in the reader's language. */
+export { countryKey, countryName, countryOptions, frameworkVersion, techDesigns } from './dataLabels';
+
 /** Mirrored source-system names are stored in English; show the known ones in the reader's language. */
 const SYSTEM_KEYS: Record<string, string> = {
   'Training records system': 'trs',

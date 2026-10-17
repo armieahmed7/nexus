@@ -3,7 +3,7 @@
 // keeps the SIMULATED chip and the no-decision line; numbers come from rpc.futureReadiness (TS = SQL), previews from previewEvidence.
 import { useMemo, useState, type ReactNode } from 'react';
 import { Card, Section, EmptyState, WhyThis, SimChip, Modal, Icon, StatusPill, BenchmarkChips } from '../../ui';
-import { useT, usePick, useFormat, useLang, L } from '../../i18n';
+import { useT, usePick, useFormat, useLang, L, techDesigns } from '../../i18n';
 import { useAction, useRepo } from '../../data';
 import type { BiText, Ranked } from '../../domain/engines/types';
 import { Radar } from '../m11/shared';
@@ -336,7 +336,7 @@ export function FamiliesV2({ d, r, extra }: { d: FutureMeData; r: RV2; extra?: (
             <li key={fr.tech_id} className="card flex flex-col gap-3 p-4" data-testid="m21-family">
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <div className="caps num">{x?.designs}</div>
+                  <div className="caps num">{techDesigns(t, x?.designs)}</div>
                   <L to={`/my/future/${techSlug(fr.tech_id)}`} className="text-[15px] font-semibold leading-snug">{pick(x, 'family')}</L>
                 </div>
                 {extra?.(fr.tech_id)}

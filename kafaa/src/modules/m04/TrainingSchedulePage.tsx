@@ -45,13 +45,13 @@ export default function TrainingSchedulePage() {
           const taken = (id: string) => d.enrolments.filter((e) => e.session_id === id && holdsSeat(e.status)).length;
           const waiting = (id: string) => d.enrolments.filter((e) => e.session_id === id && e.status === 'waitlisted').length;
           const rows = d.sessions.filter((x) => (!flt.course || x.course_id === flt.course) && (!flt.kind || x.kind === flt.kind) && (flt.when === 'past' ? x.starts_at < now : flt.when === 'upcoming' ? x.ends_at >= now : true)
-            && (!flt.mine || x.instructor_person_id === s.identity.personId) && (!flt.q || `${x.location} ${cat.course.get(x.course_id)?.code} ${pick(cat.course.get(x.course_id), 'title')}`.toLowerCase().includes(flt.q.toLowerCase())));
+            && (!flt.mine || x.instructor_person_id === s.identity.personId) && (!flt.q || `${x.location} ${x.location_ar ?? ''} ${cat.course.get(x.course_id)?.code} ${pick(cat.course.get(x.course_id), 'title')}`.toLowerCase().includes(flt.q.toLowerCase())));
           return (
             <DataTable rows={rows} rowKey={(r) => r.id} csvName="sessions" searchable={false} onRowClick={(r) => setOpen(r.id)} empty={t('m04.schedule.none')} initialSort={{ key: 'when', dir: flt.when === 'past' ? 'desc' : 'asc' }} columns={[
               { key: 'when', header: t('m04.common.when'), value: (r) => r.starts_at, render: (r) => <div><div className="font-semibold">{f.dateTime(r.starts_at)}</div><div className="text-[12px] text-ink-3">{t('m04.schedule.until', { time: f.dateTime(r.ends_at) })}</div></div>, sortable: true },
               { key: 'course', header: t('m04.common.course'), value: (r) => cat.course.get(r.course_id)?.code ?? r.course_id, render: (r) => <div><div>{pick(cat.course.get(r.course_id), 'title') || r.course_id}</div><div className="ltr text-[12px] text-ink-3">{cat.course.get(r.course_id)?.code}</div></div>, sortable: true },
               { key: 'kind', header: t('m04.common.kind'), value: (r) => lab.sessionKind(r.kind) },
-              { key: 'where', header: t('m04.common.where'), value: (r) => r.location },
+              { key: 'where', header: t('m04.common.where'), value: (r) => pick(r, 'location') },
               { key: 'instr', header: t('m04.common.instructor'), value: (r) => people.name(r.instructor_person_id) },
               { key: 'crew', header: t('m04.common.crew'), value: (r) => r.crew ?? '—' },
               { key: 'prio', header: t('m04.schedule.priority'), value: (r) => r.priority, render: (r) => <Chip tone={r.priority === 'licence_critical' ? 'bad' : r.priority === 'mandatory' ? 'accent' : 'neutral'}>{lab.priority(r.priority)}</Chip> },
@@ -77,7 +77,7 @@ function SessionModal({ onClose }: { onClose: () => void }) {
   const people = usePeople();
   const s = useSession();
   const instructors = useQuery('role_assignments', () => repo.list('role_assignments', { filter: { role: ['instructor', 'training_manager'], status: 'active' } }).catch(() => []), []);
-  const form = useForm({ course: '', date: '', start: '08:00', hours: '8', location: '', instructor: s.identity.personId ?? '', capacity: '12', kind: 'class', crew: '', priority: 'mandatory', audience: 'staff' },
+  const form = useForm({ course: '', date: '', start: '08:00', hours: '8', location: '', location_ar: '', instructor: s.identity.personId ?? '', capacity: '12', kind: 'class', crew: '', priority: 'mandatory', audience: 'staff' },
     { course: [required()], date: [required()], start: [required()], hours: [required(), numberRange(0.5, 12)], location: [required()], capacity: [required(), numberRange(1, 60)], kind: [required()] });
   const instructorIds = [...new Set([...(instructors.data ?? []).map((a) => a.person_id), s.identity.personId].filter(Boolean) as string[])];
   return (
@@ -86,7 +86,7 @@ function SessionModal({ onClose }: { onClose: () => void }) {
         const start = new Date(`${v.date}T${v.start}:00+04:00`);
         const end = new Date(start.getTime() + Number(v.hours) * 3_600_000);
         const c = cat.course.get(v.course);
-        const r = await run(() => repo.insert('sessions', { course_id: v.course, starts_at: start.toISOString(), ends_at: end.toISOString(), location: v.location.trim(), instructor_person_id: v.instructor || null, capacity: Number(v.capacity), kind: v.kind as SessionsRow['kind'], crew: v.crew || null, priority: v.priority as SessionsRow['priority'], audience: v.audience as SessionsRow['audience'], public_summary: false, status: 'scheduled' }), { success: t('m04.schedule.created', { course: c?.code ?? '' }) });
+        const r = await run(() => repo.insert('sessions', { course_id: v.course, starts_at: start.toISOString(), ends_at: end.toISOString(), location: v.location.trim(), location_ar: v.location_ar.trim() || null, instructor_person_id: v.instructor || null, capacity: Number(v.capacity), kind: v.kind as SessionsRow['kind'], crew: v.crew || null, priority: v.priority as SessionsRow['priority'], audience: v.audience as SessionsRow['audience'], public_summary: false, status: 'scheduled' }), { success: t('m04.schedule.created', { course: c?.code ?? '' }) });
         if (r.ok) onClose();
       })}>
         <div className="sm:col-span-3"><SelectField label={t('m04.common.course')} required options={cat.courses.map((c) => ({ value: c.id, label: `${c.code} · ${pick(c, 'title')}` }))} {...form.field('course')} /></div>
@@ -94,6 +94,7 @@ function SessionModal({ onClose }: { onClose: () => void }) {
         <TextField label={t('m04.schedule.start')} type="time" required hint={t('m04.schedule.uaeTime')} {...form.field('start')} />
         <TextField label={t('m04.schedule.hours')} type="number" required {...form.field('hours')} />
         <TextField label={t('m04.common.where')} required {...form.field('location')} />
+        <TextField label={t('m04.schedule.whereAr')} hint={t('m04.schedule.whereArHint')} {...form.field('location_ar')} />
         <SelectField label={t('m04.common.instructor')} options={instructorIds.map((id) => ({ value: id, label: people.name(id) }))} {...form.field('instructor')} />
         <TextField label={t('m04.schedule.capacity')} type="number" required {...form.field('capacity')} />
         <SelectField label={t('m04.common.kind')} required options={['class', 'simulator', 'drill', 'elearning', 'clinic'].map((k) => ({ value: k, label: lab.sessionKind(k) }))} {...form.field('kind')} />
@@ -145,7 +146,7 @@ function Roster({ sessionId, onClose }: { sessionId: string; onClose: () => void
           return (
             <div className="space-y-4">
               <Card title={c ? `${c.code} · ${pick(c, 'title')}` : x.course_id} eyebrow={lab.sessionKind(x.kind)} actions={<G2Pill status={x.status} />}>
-                <div className="text-[13.5px] text-ink-2">{f.dateTime(x.starts_at)} – {f.dateTime(x.ends_at)} · {x.location}{x.crew ? ` · ${t('m04.common.crew')} ${x.crew}` : ''}</div>
+                <div className="text-[13.5px] text-ink-2">{f.dateTime(x.starts_at)} – {f.dateTime(x.ends_at)} · {pick(x, 'location')}{x.crew ? ` · ${t('m04.common.crew')} ${x.crew}` : ''}</div>
                 <div className="mt-1 text-[13.5px]">{t('m04.common.instructor')}: {people.name(x.instructor_person_id)} · <span className="num">{f.num(seated.filter((e) => e.status !== 'failed').length)} / {f.num(x.capacity)}</span></div>
                 {c?.qualifying && <div className="mt-2"><Callout title={t('m04.course.evaluationTitle')}>{d.form ? t('m04.schedule.evalForm', { form: pick(d.form, 'title'), kind: lab.formKind(d.form.kind) }) : t('m04.schedule.noForm')}</Callout></div>}
                 {canEdit && x.status === 'scheduled' && <div className="mt-3 flex gap-2">{started && <button className="btn-outline btn-sm" onClick={() => setStatusChange('completed')}>{t('m04.schedule.closeSession')}</button>}<button className="btn-ghost btn-sm" onClick={() => setStatusChange('cancelled')}>{t('m04.schedule.cancelSession')}</button></div>}

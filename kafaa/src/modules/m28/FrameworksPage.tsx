@@ -2,7 +2,7 @@
 // group), per-framework lists with match type, code (or "code pending review"), review state ("indicative" until a framework owner
 // reviews it), source and as-of date, and the machine-readable export of the published framework (CASE-shaped JSON, CSV, schema).
 import { useMemo } from 'react';
-import { L, useFormat, useLang, usePick, useT } from '../../i18n';
+import { L, frameworkVersion, useFormat, useLang, usePick, useT } from '../../i18n';
 import {
   Async, BenchmarkChip, BenchmarkChips, Card, DataTable, EmptyState, En, FilterBar, Heatmap, Page, Section, SourceLink, StatTile, StatusPill, useFilters, type Column,
 } from '../../ui';
@@ -76,7 +76,7 @@ function Body({ c }: { c: Catalogue }) {
             return (
               <Card key={fw.id} as="li" title={<span className="flex flex-wrap items-center gap-2"><En>{fw.short}</En>{n === 0 && <StatusPill tone="sim">{t('m28.fw.notYet')}</StatusPill>}</span>}>
                 <p className="text-[13px] font-medium">{pick(fw, 'name')}</p>
-                <p className="text-[12px] text-ink-3">{pick(fw, 'owner')}{fw.version_label ? ` · ${fw.version_label}` : ''}</p>
+                <p className="text-[12px] text-ink-3">{pick(fw, 'owner')}{fw.version_label ? <> · <VersionLabel v={fw.version_label} /></> : null}</p>
                 <p className="mt-2 text-[12.5px] text-ink-2">{pick(fw, 'scope')}</p>
                 <dl className="mt-2 grid grid-cols-[minmax(0,8rem)_minmax(0,1fr)] gap-x-2 gap-y-1 text-[12px]">
                   <dt className="text-ink-3">{t('m28.fw.codes')}</dt><dd>{pick(fw, 'code_label')} · {fw.codes_copied ? t('m28.fw.copied') : t('m28.fw.pending')}</dd>
@@ -132,4 +132,10 @@ function Body({ c }: { c: Catalogue }) {
       </Section>
     </>
   );
+}
+
+/** Version words ("current references") in the page language; a product name or number left as stored ("O*NET OnLine", "2.2") is tagged English. */
+function VersionLabel({ v }: { v: string }) {
+  const shown = frameworkVersion(useT(), v);
+  return shown === v ? <En>{v}</En> : <>{shown}</>;
 }

@@ -327,3 +327,16 @@ export const shareView = (s: Pick<ShareRow, 'revoked_at' | 'expires_on'>, today:
 export interface VerifyResult { found: boolean; status: 'active' | 'expired' | 'revoked'; checked_on: string; expires_on?: string; holder_initials?: string; item_count?: number; clr?: Row; notice: string; purpose?: string } // purpose (wave G integration, FS69 -> FS32): 'prearrival' for a contractor pre-arrival share, else 'record'
 /** Why a link was shared (active links only): FS69 pre-arrival shares carry consents.purpose = 'prearrival' (= SQL coalesce(consents ->> 'purpose', 'record')). */
 export const sharePurpose = (consents: unknown): string => { const p = (consents as { purpose?: unknown } | null)?.purpose; return typeof p === 'string' && p ? p : 'record'; };
+
+/**
+ * Display name of an embedded signed credential. Course and micro-credential badges carry nameAr ("HU-101 <Arabic title>"); record
+ * statements carry it on the achievement with humanCode. Arabic pages show that; the signed bytes are not touched. English otherwise.
+ */
+export function credName(c: Row, lang: 'en' | 'ar'): string {
+  const ach = c?.credentialSubject?.achievement ?? {};
+  const en = String(c?.name ?? ach.name ?? c?.id ?? '');
+  if (lang !== 'ar') return en;
+  if (c?.nameAr) return String(c.nameAr);
+  if (ach.nameAr) return ach.humanCode ? `${ach.humanCode} ${ach.nameAr}` : String(ach.nameAr);
+  return en;
+}

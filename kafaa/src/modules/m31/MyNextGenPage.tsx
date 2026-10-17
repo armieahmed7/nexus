@@ -10,7 +10,7 @@ import { Page, Section, Card, Async, Callout, EmptyState, StatTile, ProgressRing
 import { useQuery, useRepo } from '../../data';
 import { useEngine } from '../../data/useEngine';
 import { useSession } from '../../auth/session';
-import { L, useFormat, usePick, useT } from '../../i18n';
+import { L, techDesigns, useFormat, usePick, useT } from '../../i18n';
 import { deltaFor, PATH_ONLY_FAMILIES, type DeltaRow, type ProfileReq } from './nextgen';
 import { DeltaBody, NoDeployNote, TechName, TrainingLink, trainingSkills, useNgRef, type RefData, type Row } from './ui';
 
@@ -119,7 +119,7 @@ function DeltaPanel({ d, row, v }: { d: RefData; row: Row; v: ReturnType<typeof 
           {v.readiness != null ? <ProgressRing value={v.readiness} size={84} label={f.pct(v.readiness, 0)} tone={v.readiness >= 50 ? 'ok' : 'accent'} /> : <StatusPill tone="info">{t('m31.ng.pathOnlyShort')}</StatusPill>}
           <div className="min-w-0 flex-1 space-y-1">
             <p className="text-[17px] font-semibold">{tech ? pick(tech, 'family') : row.tech_id}</p>
-            <p className="text-[13px] text-ink-2">{tech?.designs} · {tech ? pick(tech, 'skill_areas') : ''}</p>
+            <p className="text-[13px] text-ink-2">{techDesigns(t, tech?.designs)} · {tech ? pick(tech, 'skill_areas') : ''}</p>
             <p className="text-[13px]" data-testid="m31-size">{t('m31.ng.sizeLine', { n: f.num(v.change_size), band: t(`m31.ng.band.${v.band}`) })}{v.readiness != null && <> · {t('m31.ng.readyLine', { met: f.num(v.met), total: f.num(v.total) })}</>}</p>
             <WhyThis reasons={v.reasons} testId="m31-why" />
           </div>

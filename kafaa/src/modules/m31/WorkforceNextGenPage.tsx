@@ -4,7 +4,7 @@
 // suppressed. Planning assumption: no deployment decision implied; never a headcount plan.
 import { Page, Section, Card, Async, Callout, EmptyState, StatTile, Heatmap, BenchmarkChips, BenchmarkLine, WhyThis, SimChip } from '../../ui';
 import { useQuery, useRepo } from '../../data';
-import { L, useFormat, usePick, useT } from '../../i18n';
+import { L, techDesigns, useFormat, usePick, useT } from '../../i18n';
 import { MIN_GROUP_SIZE } from '../../auth/policy';
 import type { NextGenMatrix } from './backend/rpc';
 import { NoDeployNote, useNgRef, type RefData } from './ui';
@@ -45,7 +45,7 @@ function Body({ d, m }: { d: RefData; m: NextGenMatrix }) {
             const tech = d.techById.get(x.tech_id);
             return (
               <li key={x.tech_id} data-tech={x.tech_id} data-suppressed={x.n == null ? 'yes' : 'no'}>
-                <Card title={tech ? pick(tech, 'family') : x.tech_id} eyebrow={tech?.designs}>
+                <Card title={tech ? pick(tech, 'family') : x.tech_id} eyebrow={techDesigns(t, tech?.designs)}>
                   {x.n == null ? <p className="text-[13px] text-ink-3">{t('m31.wf.cellSuppressed', { min: f.num(MIN_GROUP_SIZE) })}</p> : (
                     <div className="space-y-2">
                       <p className="text-[13px]">{t('m31.wf.techLine', { ready: f.num(x.ready), n: f.num(x.n), deltas: f.num(x.deltas) })}</p>

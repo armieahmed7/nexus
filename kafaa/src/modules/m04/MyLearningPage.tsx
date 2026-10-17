@@ -95,7 +95,7 @@ function Overview({ d }: { d: Data }) {
                 const c = cat.course.get(e.course_id);
                 return (
                   <li key={e.id} className="flex items-center justify-between gap-2">
-                    <div className="min-w-0"><L to={`/learn/course/${e.course_id}`} className="font-semibold">{c ? pick(c, 'title') : e.course_id}</L><div className="text-[12.5px] text-ink-3">{f.dateTime(x.starts_at)} · {x.location}</div></div>
+                    <div className="min-w-0"><L to={`/learn/course/${e.course_id}`} className="font-semibold">{c ? pick(c, 'title') : e.course_id}</L><div className="text-[12.5px] text-ink-3">{f.dateTime(x.starts_at)} · {pick(x, 'location')}</div></div>
                     <G2Pill status={e.status} />
                   </li>
                 );
@@ -167,6 +167,7 @@ function Enrolments({ rows, sessions }: { rows: EnrolmentsRow[]; sessions: Sessi
 function BookDrawer({ enrolment, onClose }: { enrolment: EnrolmentsRow; onClose: () => void }) {
   const t = useT();
   const f = useFormat();
+  const pickLang = usePick(); // `pick` below is the chosen session
   const lab = useLabels();
   const repo = useRepo();
   const run = useAction();
@@ -187,7 +188,7 @@ function BookDrawer({ enrolment, onClose }: { enrolment: EnrolmentsRow; onClose:
                 <li key={x.id} className="card flex items-center justify-between gap-2 p-3">
                   <div>
                     <div className="font-semibold">{f.dateTime(x.starts_at)}</div>
-                    <div className="text-[12.5px] text-ink-3">{x.location} · {lab.sessionKind(x.kind)}{x.crew ? ` · ${t('m04.common.crew')} ${x.crew}` : ''}</div>
+                    <div className="text-[12.5px] text-ink-3">{pickLang(x, 'location')} · {lab.sessionKind(x.kind)}{x.crew ? ` · ${t('m04.common.crew')} ${x.crew}` : ''}</div>
                     <div className="text-[12.5px]">{left > 0 ? t('m04.course.seatsLeft', { n: f.num(left), cap: f.num(x.capacity) }) : t('m04.my.fullWaitlist', { n: f.num(x.a?.waiting ?? 0) })}</div>
                   </div>
                   <button className="btn-primary btn-sm" onClick={() => setPick(x.id)}>{left > 0 ? t('m04.course.book') : t('m04.course.joinWaitlist')}</button>
@@ -217,7 +218,7 @@ function Simulator({ d }: { d: Data }) {
     <div className="space-y-4">
       <Card title={t('m04.my.simMine')}>
         {mySim.length === 0 ? <p className="text-ink-3">{t('m04.my.simNone')}</p> : (
-          <ul className="space-y-2">{mySim.map((e) => { const x = sessionById.get(e.session_id!)!; const c = cat.course.get(e.course_id); return <li key={e.id} className="flex items-center justify-between gap-2"><span><span className="font-semibold">{c ? pick(c, 'title') : e.course_id}</span> · {f.dateTime(x.starts_at)} · {x.location}</span><span className="flex gap-1"><Chip tone={x.priority === 'licence_critical' ? 'bad' : 'neutral'}>{lab.priority(x.priority)}</Chip><G2Pill status={e.status} /></span></li>; })}</ul>
+          <ul className="space-y-2">{mySim.map((e) => { const x = sessionById.get(e.session_id!)!; const c = cat.course.get(e.course_id); return <li key={e.id} className="flex items-center justify-between gap-2"><span><span className="font-semibold">{c ? pick(c, 'title') : e.course_id}</span> · {f.dateTime(x.starts_at)} · {pick(x, 'location')}</span><span className="flex gap-1"><Chip tone={x.priority === 'licence_critical' ? 'bad' : 'neutral'}>{lab.priority(x.priority)}</Chip><G2Pill status={e.status} /></span></li>; })}</ul>
         )}
       </Card>
       <Card title={s.person?.crew ? t('m04.my.simCrew', { crew: s.person.crew }) : t('m04.my.simCrewNone')}>

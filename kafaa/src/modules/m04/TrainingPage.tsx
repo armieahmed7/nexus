@@ -79,7 +79,7 @@ export default function TrainingPage() {
                 <DataTable rows={mine} rowKey={(r) => r.id} searchable={false} pageSize={6} empty={t('m04.hub.noMySessions')} columns={[
                   { key: 'when', header: t('m04.common.when'), value: (r) => r.starts_at, render: (r) => f.dateTime(r.starts_at), sortable: true },
                   { key: 'course', header: t('m04.common.course'), value: (r) => { const c = cat.course.get(r.course_id); return c ? pick(c, 'title') : r.course_id; } },
-                  { key: 'where', header: t('m04.common.where'), value: (r) => r.location },
+                  { key: 'where', header: t('m04.common.where'), value: (r) => pick(r, 'location') },
                   { key: 'seats', header: t('m04.common.seats'), value: (r) => d.enrolments.filter((e) => e.session_id === r.id && holdsSeat(e.status)).length, render: (r) => <span className="num">{f.num(d.enrolments.filter((e) => e.session_id === r.id && holdsSeat(e.status)).length)} / {f.num(r.capacity)}</span> },
                   { key: 'status', header: t('m04.common.status'), value: (r) => r.status, render: (r) => <G2Pill status={r.status} /> },
                 ]} />
