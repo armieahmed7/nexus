@@ -4,13 +4,17 @@
 //   supabase/migrations/20261013200005_kafaa_ready_route_guards.sql kafaa_route_guard(path) + kafaa_route_ok_for(person, link, day): the
 //                                                                 same guard check in SQL, so kafaa_dg_compute drops digest items whose
 //                                                                 link the person cannot open (readiness fixes 2026-10-13, finding 2)
+//   tests/fixtures/routes.manifest.json                            every route's id, path, module, zone and guard in router order: the one
+//                                                                 place tests read the route total from; tests/unit/route-manifest.test.ts
+//                                                                 diffs the live registry against it (TECH-09, 2026-10-17)
 // tests/unit/ready-route-guards.test.ts checks that guards.gen.ts equals the live ROUTES registry (so this parser cannot drift).
-//   node scripts/gen-route-guards.mjs           write both files
-//   node scripts/gen-route-guards.mjs --check   fail if either file is out of date
+//   node scripts/gen-route-guards.mjs           write all three files
+//   node scripts/gen-route-guards.mjs --check   fail if any of them is out of date
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const TS_OUT = 'src/routes/guards.gen.ts';
 const SQL_OUT = 'supabase/migrations/20261013200005_kafaa_ready_route_guards.sql';
+const MANIFEST_OUT = 'tests/fixtures/routes.manifest.json';
 
 const reg = readFileSync('src/routes/registry.ts', 'utf8');
 const imports = Object.fromEntries([...reg.matchAll(/import \{ routes as (m\d+) \} from '\.\.\/modules\/(m\d+)\/routes';/g)].map((m) => [m[1], m[2]]));
@@ -21,6 +25,7 @@ if (!order.length || order.some((m) => !imports[m])) throw new Error('gen-route-
 // so guard constants (const OWN = {...}) resolve exactly as in the app.
 const ts_ = (await import('typescript')).default;
 const list = [];
+const manifest = [];
 for (const m of order) {
   const src = readFileSync(`src/modules/${imports[m]}/routes.ts`, 'utf8');
   const js = ts_.transpileModule(src, { compilerOptions: { module: ts_.ModuleKind.ESNext, target: ts_.ScriptTarget.ES2020 } }).outputText
@@ -35,6 +40,7 @@ for (const m of order) {
     if (guard.grant) g.grant = { res: guard.grant.res, levels: [...guard.grant.levels] };
     if (guard.noTelemetry) g.noTelemetry = true;
     list.push([r.path, g]);
+    manifest.push({ id: r.id, path: r.path, module: r.module, zone: r.zone, guard: g });
   }
 }
 
@@ -95,12 +101,15 @@ end $$;
 revoke all on function kafaa_route_guard(text), kafaa_route_ok_for(text, text, date) from public, anon, authenticated;
 `;
 
+// One route per line, so adding or removing a route is a one-line diff (and a one-line merge conflict at most).
+const json = `[\n${manifest.map((r) => `  ${JSON.stringify(r)}`).join(',\n')}\n]\n`;
+
 let stale = 0;
-for (const [path, body] of [[TS_OUT, ts], [SQL_OUT, sql]]) {
+for (const [path, body] of [[TS_OUT, ts], [SQL_OUT, sql], [MANIFEST_OUT, json]]) {
   if (process.argv.includes('--check')) {
     let cur = '';
     try { cur = readFileSync(path, 'utf8'); } catch { /* missing */ }
-    if (cur !== body) { console.error(`gen-route-guards: ${path} is out of date; run node scripts/gen-route-guards.mjs`); stale++; }
+    if (cur !== body) { console.error(`gen-route-guards: ${path} is out of date; run npm run gen`); stale++; }
   } else writeFileSync(path, body);
 }
 if (stale) process.exit(1);

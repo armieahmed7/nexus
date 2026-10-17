@@ -14,6 +14,7 @@
  *   entry links       FS84 from the skills outlook (HR only), FS83 from the energy academy, FS81 from the simulator page
  *   seed + migration  the fsqa9 finalizer passes on the final seed; the QA migration is additive (three FS32 helpers replaced) */
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { ROUTE_COUNT } from '../fixtures/routeManifest';
 import { readFileSync } from 'node:fs';
 import { cleanup, screen, waitFor, within } from '@testing-library/react';
 import { renderPage } from './g1-harness';
@@ -68,10 +69,10 @@ const onDay = (iso = '2026-10-12T05:00:00Z') => { vi.useFakeTimers({ toFake: ['D
 afterEach(() => { vi.useRealTimers(); });
 
 describe('FS wave I · route registry', () => {
-  it('401 routes, and the 21 wave-I routes are registered with their paths', async () => {
+  it('the registry has the route total of the generated manifest (401 after wave I), and the 21 wave-I routes are registered with their paths', async () => {
     const { ROUTES } = await import('../../src/routes/registry');
     const R = ROUTES as Row[];
-    expect(R.length).toBe(406); // Orientation 2026-10-17: + 2 (future-skills, start). Help centre 2026-10-17: + 3 (help, help-glossary, help-guide). FS wave I QA: + 21 (FS78/FS79 M34 5, FS80 M29 4, FS81 M30 4, FS82/FS83 M36 6, FS84 M17 2)
+    expect(R.length).toBe(ROUTE_COUNT); // route total from tests/fixtures/routes.manifest.json (npm run gen); tests/unit/route-manifest.test.ts diffs the registry against it
     expect(WAVE_I.length).toBe(21);
     for (const [, id, path] of WAVE_I) expect(R.find((r) => r.id === id)?.path, id).toBe(path);
   });

@@ -19,6 +19,7 @@
  *   migration     the QA migration is additive (replaced functions with the same signatures, one internal helper, ALTER POLICY on wave-E
  *                 kafaa_* tables only, guarded updates) */
 import { beforeEach, describe, expect, it } from 'vitest';
+import { ROUTE_IDS_SORTED } from '../fixtures/routeManifest';
 import { readFileSync } from 'node:fs';
 import { cleanup, render, screen, within } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
@@ -75,10 +76,10 @@ const content = (): Content => ({ courses: T.courses as never, externals: T.exte
 const cw = () => ({ courses: T.courses, course_skill_links: T.course_skill_links, adaptive_banks: T.adaptive_banks, performance_tasks: T.performance_tasks, opportunities: T.opportunities, skills: T.skills, twin_scenarios: T.twin_scenarios });
 
 describe('FS wave E · route registry', () => {
-  it('315 routes after wave E (338 after wave F, 367 after wave G, 380 after wave H, 401 after wave I), and the 27 wave-E routes are registered', async () => {
+  it('the route loader sees every route in the generated manifest (315 after wave E), and the 27 wave-E routes are registered', async () => {
     const { loadRoutes } = await import('../smoke/routes');
     const R = loadRoutes();
-    expect(R.length).toBe(406); // Orientation 2026-10-17: + 2 (future-skills, start). Help centre 2026-10-17: + 3 (help, help-glossary, help-guide). FS wave I QA: + 21 (FS78/FS79 M34 5: my-learning-balance, team-study-time, workforce-learning-balances, my-external-certs, external-certs-queue; FS80 M29 4: workforce-ai-automations, workforce-ai-automation, my-ai-builds, admin-ai-automations; FS81 M30 4: my-transition-plan, workforce-transition-plans, workforce-transition-plan, workforce-rung-alerts; FS82/FS83 M36 6: my-grants, ecosystem-grants, workforce-grants, ecosystem-consortium, ecosystem-consortium-cohort, my-consortium; FS84 M17 2: team-skills-future, workforce-skills-inventory). FS wave H QA: + 13 (FS70-FS72 M28 7: skills-rising, skills-rising-method, workforce-skill-signals, my-manager-pulse, skills-technologies, admin-skills-technologies, my-skills-suggestions; FS73/FS74 M37 3: national-emirati-pipeline, my-future-wallet, national-future-wallet; FS77 M06 3: pathways-starter, my-induction, workforce-intake-baselines; FS75 shell digest and FS76 M13 none). FS wave G QA: + 29 (FS60/FS61 M35 6: workforce-disclosure, -metrics, -pack, workforce-pilots, workforce-pilot, skills-pilots; FS62/FS63 M37 5: national-alignment, -tag, national-report, national-occupations, admin-national-tags; FS64/FS65 M36 6: ecosystem-regional-plan, -commitments, -commitment, -demand-release, ecosystem-pledges, -register; FS66/FS67 M10 7: partner-university-programmes, training-university-programmes, university-programme, workforce-graduate-hires, universities-fellowships, university-fellowship, workforce-fellowships; FS68/FS69 M09 5: partner-future-readiness, admin-supplier-future-readiness, partner-prearrival, training-equivalency-prearrival, -share). FS wave F QA: + 23 (FS50/FS51 M35 7, FS54/FS55 M16 6, FS56/FS57 M25 3, FS58/FS59 M33 7; FS52/FS53 M07 none).
+    expect(R.map((r) => r.id).sort()).toEqual(ROUTE_IDS_SORTED); // the loader must find every route id in tests/fixtures/routes.manifest.json (npm run gen); tests/unit/route-manifest.test.ts diffs the registry against it
     const paths = new Set(R.map((r) => r.path));
     expect(WAVE_E.length).toBe(27);
     for (const [p] of WAVE_E) expect(paths.has(p), p).toBe(true);

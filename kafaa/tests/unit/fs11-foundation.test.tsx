@@ -3,6 +3,7 @@
  *  <BenchmarkChip>/<BenchmarkLine> in RTL with the reader's digits, the transform/assess engine surfaces, and a
  *  migration that touches kafaa_* objects only. SQL side: scripts/validate/fs11-foundation.mjs (PGlite). */
 import { describe, expect, it } from 'vitest';
+import { ROUTE_COUNT } from '../fixtures/routeManifest';
 import { existsSync, readFileSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
@@ -40,8 +41,8 @@ describe('FS01 · modules M28-M37 register once', () => {
       for (const f of ['schema', 'rpc', 'local', 'supabase']) expect(readFileSync(`src/data/ext/${f}.ts`, 'utf8')).toContain(`modules/${m}/backend/`);
     }
   });
-  it('the route sweep reads the registry, so routes added to M28-M37 are covered without test edits; today 212 (206 + the 6 wave-A routes of FS03-FS06)', () => {
-    expect(ROUTES.length).toBe(406); // Orientation 2026-10-17: + 2 (future-skills, start). Help centre 2026-10-17: + 3 (help, help-glossary, help-guide). FS wave I QA: + 21 (FS78/FS79 M34 5: my-learning-balance, team-study-time, workforce-learning-balances, my-external-certs, external-certs-queue; FS80 M29 4: workforce-ai-automations, workforce-ai-automation, my-ai-builds, admin-ai-automations; FS81 M30 4: my-transition-plan, workforce-transition-plans, workforce-transition-plan, workforce-rung-alerts; FS82/FS83 M36 6: my-grants, ecosystem-grants, workforce-grants, ecosystem-consortium, ecosystem-consortium-cohort, my-consortium; FS84 M17 2: team-skills-future, workforce-skills-inventory). FS wave H QA: + 13 (FS70-FS72 M28 7: skills-rising, skills-rising-method, workforce-skill-signals, my-manager-pulse, skills-technologies, admin-skills-technologies, my-skills-suggestions; FS73/FS74 M37 3: national-emirati-pipeline, my-future-wallet, national-future-wallet; FS77 M06 3: pathways-starter, my-induction, workforce-intake-baselines; FS75 shell digest and FS76 M13 none). FS wave G QA: + 29 (FS60/FS61 M35 6: workforce-disclosure, -metrics, -pack, workforce-pilots, workforce-pilot, skills-pilots; FS62/FS63 M37 5: national-alignment, -tag, national-report, national-occupations, admin-national-tags; FS64/FS65 M36 6: ecosystem-regional-plan, -commitments, -commitment, -demand-release, ecosystem-pledges, -register; FS66/FS67 M10 7: partner-university-programmes, training-university-programmes, university-programme, workforce-graduate-hires, universities-fellowships, university-fellowship, workforce-fellowships; FS68/FS69 M09 5: partner-future-readiness, admin-supplier-future-readiness, partner-prearrival, training-equivalency-prearrival, -share). FS wave F QA: + 23 (FS50/FS51 M35 7, FS54/FS55 M16 6, FS56/FS57 M25 3, FS58/FS59 M33 7; FS52/FS53 M07 none). FS wave E QA: + 27 (FS38-FS40 M31 9, FS41-FS43 M32 7, FS44/FS45 M24 4, FS46-FS48 M22 5, FS49 M08 2). FS wave D QA: + 29 (FS27/FS28 M20 6, FS29/FS30 M34 7, FS31-FS33 M17 7, FS34/FS35 M18 2, FS36/FS37 M29 7). FS wave C QA: + 32 (FS17/FS18 M19 6, FS19/FS20 M04 6, FS21/FS22 M05 7, FS23/FS24 M02 7, FS25/FS26 M33 6). FS wave B QA: 216 + FS09/FS10 5 + FS11/FS12 5 + FS16 1. FS wave B · E1: + 4 M28 routes (FS07 /skills, /skills/:id; FS08 /skills/frameworks, /admin/skills/alignments)
+  it('the route sweep reads the registry, so routes added to M28-M37 are covered without test edits (route total from the generated manifest)', () => {
+    expect(ROUTES.length).toBe(ROUTE_COUNT); // route total from tests/fixtures/routes.manifest.json (npm run gen); tests/unit/route-manifest.test.ts diffs the registry against it
     const sweep = readFileSync('tests/e2e/sweep.spec.ts', 'utf8');
     expect(sweep).toContain('ROUTES');
     for (const r of ROUTES.filter((x) => NEW.includes(x.module))) {
