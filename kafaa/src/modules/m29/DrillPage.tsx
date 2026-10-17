@@ -75,7 +75,8 @@ function Player({ drill, attempts }: { drill: Row; attempts: Row[] }) {
             <Card title={<span className="flex flex-wrap items-center gap-2">{t('m29.drill.doc')} <StatusPill tone="sim">{t('m29.drill.syntheticChip')}</StatusPill></span>}
               eyebrow={`${drill.doc?.code} · ${t('m29.drill.rev', { r: drill.doc?.revision })}`}>
               <div className="relative" data-testid="m29-drill-doc" data-synthetic="true">
-                <span className="pointer-events-none absolute inset-0 grid select-none place-items-center text-[40px] font-bold uppercase tracking-widest text-ink-3 opacity-[0.07]" aria-hidden="true">{t('m29.drill.syntheticChip')}</span>
+                {/* Decorative watermark (WCAG 1.4.3 exempts it): drawn from data-wm by CSS so it is not page text; the chip above says it in words. */}
+                <span className="pointer-events-none absolute inset-0 grid select-none place-items-center text-[40px] font-bold uppercase tracking-widest text-ink-3 opacity-[0.07] before:content-[attr(data-wm)]" aria-hidden="true" data-wm={t('m29.drill.syntheticChip')} />
                 <p className="mb-2 text-[13px] font-semibold">{pick(drill.doc, 'title')}</p>
                 <ol className="space-y-1.5 text-[13px]">
                   {(drill.doc?.steps ?? []).map((st: Row) => <li key={st.n} className="flex gap-2"><span className="num w-5 shrink-0 text-ink-3">{f.num(st.n)}.</span><span>{lang === 'ar' ? st.text_ar : st.text_en}</span></li>)}

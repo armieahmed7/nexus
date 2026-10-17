@@ -145,7 +145,7 @@ export function NeededSkills({ ids, levelOf, label }: { ids: string[]; levelOf: 
           <li key={id} className={`chip ${okay ? 'border-ok-line bg-ok-bg text-ok' : 'border-sim-line bg-sim-bg text-sim'}`} title={t('m20.common.levelOf', { have: lv, need: NEED_LEVEL })}>
             <Icon name={okay ? 'check' : 'sparkle'} size={11} />
             {label(id)}
-            <span className="num opacity-80">{lv}/{NEED_LEVEL}</span>
+            <span className="num">{lv}/{NEED_LEVEL}</span>
           </li>
         );
       })}

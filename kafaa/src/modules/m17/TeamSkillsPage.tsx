@@ -5,7 +5,7 @@
 // mentoring → F13) with reasons, and a CSV export watermarked with role and date. HR (Agg) sees coverage counts only,
 // suppressed below 10. All data comes from rpc.teamCoverage, which applies the scope on both backends.
 import { useMemo, useState } from 'react';
-import { Page, Async, Card, Callout, ConfirmDialog, EmptyState, Tabs, SelectField, TextArea, SimChip, WhyThis, Icon, CheckboxField, downloadText } from '../../ui';
+import { Page, Async, Card, Callout, ConfirmDialog, EmptyState, Tabs, SelectField, TextArea, SimChip, WhyThis, Icon, CheckboxField, downloadText, ScrollRegion } from '../../ui';
 import { useAction, useQuery, useRepo } from '../../data';
 import { useT, useFormat, usePick, L } from '../../i18n';
 import { useSession } from '../../auth/session';
@@ -128,7 +128,7 @@ function HeatmapView({ cov, cat, rows, states, whatIf, gone, toggle }: { cov: Te
         <CheckboxField label={t('m17.tm.gapsOnly')} checked={gapsOnly} onChange={setGapsOnly} />
         <Legend />
       </div>
-      <div className="max-h-[70vh] overflow-auto rounded-card border border-line" data-testid="m17-tm-heatmap">
+      <ScrollRegion className="max-h-[70vh] overflow-auto rounded-card border border-line" data-testid="m17-tm-heatmap">
         <table className="border-separate border-spacing-0 text-[12px]">
           <caption className="sr-only">{t('m17.tm.heatmapCaption')}</caption>
           <thead className="sticky top-0 z-10 bg-panel">
@@ -182,7 +182,7 @@ function HeatmapView({ cov, cat, rows, states, whatIf, gone, toggle }: { cov: Te
             })}
           </tbody>
         </table>
-      </div>
+      </ScrollRegion>
       <p className="text-[12px] text-ink-3">{t('m17.tm.heatmapNote')}</p>
     </div>
   );

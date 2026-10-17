@@ -63,7 +63,7 @@ function Hub({ d, me }: { d: FutureData; me: string | null }) {
             {['all', ...CHANNELS].map((c) => (
               <button key={c} type="button" className={`chip ${channel === c ? 'border-accent bg-accent text-white' : 'border-line bg-panel text-ink-2'}`} aria-pressed={channel === c} onClick={() => setChannel(c)} data-testid={`m20-fs-channel-${c}`}>
                 {c === 'all' ? t('m20.fs.hub.all') : t(`m20.fs.channel.${c}`)}
-                <span className="num opacity-75">{f.num(c === 'all' ? open.length : open.filter((o) => o.channel === c).length)}</span>
+                <span className="num">{f.num(c === 'all' ? open.length : open.filter((o) => o.channel === c).length)}</span>
               </button>
             ))}
           </div>

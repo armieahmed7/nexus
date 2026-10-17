@@ -5,7 +5,7 @@
  * placeholder text, no raw i18n keys, no "undefined"/"NaN".
  */
 import { test, expect } from '@playwright/test';
-import { loadRoutes, fill, type SmokeRoute } from '../smoke/routes';
+import { loadRoutes, fill, guardOf as guardOfRoute, type SmokeRoute } from '../smoke/routes';
 import { grantsFor, type PlatformRole, type Resource, type Level } from '../../src/auth/policy';
 import { readFileSync } from 'node:fs';
 import { ROUTE_IDS_SORTED } from '../fixtures/routeManifest';
@@ -14,19 +14,7 @@ import { BASE, pinBackend, settle, signIn, textIssues, watchErrors, writeOut, ty
 const ROUTES = loadRoutes();
 const personas = JSON.parse(readFileSync('src/seed/personas.json', 'utf8')) as { persona: string; roles: PlatformRole[] }[];
 type Guard = { signedIn?: boolean; anyRole?: PlatformRole[]; grant?: { res: Resource; levels: Level[] }; noTelemetry?: boolean };
-/** The guard object literal from the loader's capture (which can run past the guard): cut at the balancing brace. */
-function guardOf(r: SmokeRoute): Guard {
-  let depth = 0;
-  let end = 0;
-  for (let i = 0; i < r.guard.length; i++) {
-    if (r.guard[i] === '{') depth++;
-    else if (r.guard[i] === '}' && --depth === 0) {
-      end = i + 1;
-      break;
-    }
-  }
-  return new Function(`return (${r.guard.slice(0, end)});`)() as Guard;
-}
+const guardOf = (r: SmokeRoute) => guardOfRoute(r) as Guard;
 
 function expected(r: SmokeRoute, roles: PlatformRole[] | null): 'ok' | 'signin' | 'forbidden' {
   const g = guardOf(r);

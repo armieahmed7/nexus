@@ -19,7 +19,7 @@ export function PracticeNotice() {
 }
 export function ModeChip({ mode }: { mode: string }) {
   const t = useT();
-  return <span className={`chip ${mode === 'perform' ? 'border-accent/40 bg-accent/10 text-accent' : 'border-line text-ink-2'}`} data-mode={mode}>{t(`m02.ojt.mode.${mode}`)}</span>;
+  return <span className={`chip ${mode === 'perform' ? 'border-accent/40 bg-accent/10 text-eyebrow' : 'border-line text-ink-2'}`} data-mode={mode}>{t(`m02.ojt.mode.${mode}`)}</span>;
 }
 export function LogStatus({ status }: { status: string }) {
   const t = useT();

@@ -2,7 +2,7 @@
 // SQL kafaa_ai_rung), with "Why this?" reasons pointing at the evidence rows, the 16-cell ladder coloured by what I have shown, the
 // next rung's gaps with the learning that closes them, my job family's target, my latest fitness check, and the AI-engineering
 // skills I hold shown apart (they never raise the literacy rung). No points, streaks or leaderboards.
-import { Page, Section, Card, Async, Callout, EmptyState, StatTile, WhyThis, BenchmarkChips, Icon, StatusPill } from '../../ui';
+import { Page, Section, Card, Async, Callout, EmptyState, StatTile, WhyThis, BenchmarkChips, Icon, StatusPill, ScrollRegion } from '../../ui';
 import { useQuery, useRepo } from '../../data';
 import { useSession } from '../../auth/session';
 import { L, useFormat, usePick, useT } from '../../i18n';
@@ -79,7 +79,7 @@ function Mine({ d, v, attempts, evidence }: { d: M29Ref; v: AiFluencyView; attem
       </div>
 
       <Section title={t('m29.my.grid.title')} description={t('m29.my.grid.intro')}>
-        <div className="card overflow-x-auto" data-testid="m29-my-grid">
+        <ScrollRegion label={t('m29.my.grid.title')} className="card overflow-x-auto" data-testid="m29-my-grid">
           <table className="w-full min-w-[640px] table-fixed text-[13px]">
             <caption className="sr-only">{t('m29.my.grid.title')}</caption>
             <thead>
@@ -123,7 +123,7 @@ function Mine({ d, v, attempts, evidence }: { d: M29Ref; v: AiFluencyView; attem
               ))}
             </tbody>
           </table>
-        </div>
+        </ScrollRegion>
       </Section>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">

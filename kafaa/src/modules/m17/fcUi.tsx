@@ -40,7 +40,7 @@ export function useFcData(me: string | null) {
 export function StrategicChip({ on = true }: { on?: boolean }) {
   const t = useT();
   if (!on) return null;
-  return <span className="chip border-accent/50 bg-accent/10 font-semibold text-accent" data-testid="m17-fc-strategic"><Icon name="sparkle" size={12} /> {t('m17.fc.strategic')}</span>;
+  return <span className="chip border-accent/50 bg-accent/10 font-semibold text-eyebrow" data-testid="m17-fc-strategic"><Icon name="sparkle" size={12} /> {t('m17.fc.strategic')}</span>;
 }
 
 /** One gig or rotation that names a credential: open or locked for me, with the reasons. */

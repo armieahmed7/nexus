@@ -8,6 +8,7 @@
  */
 import { useMemo, useState, type ReactNode } from 'react';
 import { Icon } from './Icon';
+import { ScrollRegion } from './ScrollRegion';
 import { useFormat, useT } from '../i18n';
 
 export interface Column<T> {
@@ -122,7 +123,7 @@ export function DataTable<T>({ rows, columns, rowKey, pageSize = 20, searchable 
           </div>
         </div>
       )}
-      <div className="overflow-x-auto" tabIndex={0}>
+      <ScrollRegion label={caption}>
         <table className="table-base w-full border-collapse text-[13px]">
           {caption && <caption className="sr-only">{caption}</caption>}
           <thead className="bg-raised">
@@ -161,7 +162,7 @@ export function DataTable<T>({ rows, columns, rowKey, pageSize = 20, searchable 
             )}
           </tbody>
         </table>
-      </div>
+      </ScrollRegion>
       {pages > 1 && (
         <div className="flex items-center justify-between border-t border-line p-2 text-[12px] text-ink-2">
           <span>{t('common.pageOf', { page: f.num(cur + 1), pages: f.num(pages) })}</span>

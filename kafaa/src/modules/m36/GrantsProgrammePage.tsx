@@ -5,7 +5,7 @@
 import { useQuery, useRepo } from '../../data';
 import type { Table } from '../../data/types';
 import { useSession } from '../../auth/session';
-import { Page, Section, Async, StatTile, Callout, BarChart, BenchmarkChips } from '../../ui';
+import { Page, Section, Async, StatTile, Callout, BarChart, BenchmarkChips, ScrollRegion } from '../../ui';
 import { L, useFormat, useT } from '../../i18n';
 import type { GrantStats } from './grants';
 import { CellView } from './ui';
@@ -47,7 +47,7 @@ function Stats({ g }: { g: GrantStats }) {
         <StatTile label={t('m36.grp.accepted')} value={<CellView c={g.totals.outputs_accepted} testId="m36-grp-tile-accepted" />} sub={t('m36.grp.acceptedSub')} tone="info" />
       </div>
       <Section title={t('m36.grp.rounds')} description={t('m36.grp.roundsIntro', { n: f.num(g.min_group) })}>
-        <div className="overflow-x-auto" data-testid="m36-grp-rounds">
+        <ScrollRegion label={t('m36.grp.rounds')} className="overflow-x-auto" data-testid="m36-grp-rounds">
           <table className="w-full text-[13px]">
             <caption className="sr-only">{t('m36.grp.rounds')}</caption>
             <thead><tr className="text-ink-3">
@@ -75,7 +75,7 @@ function Stats({ g }: { g: GrantStats }) {
               </tr>
             ))}</tbody>
           </table>
-        </div>
+        </ScrollRegion>
       </Section>
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <Section title={t('m36.grp.byKind')}>

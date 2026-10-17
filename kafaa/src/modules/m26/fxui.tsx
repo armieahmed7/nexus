@@ -104,7 +104,7 @@ export function NeedsBars({ needs, horizon, levels, testId = 'm26-fx-needs' }: {
             <div className="relative h-5 rounded bg-sunken" role="img" aria-label={t('m26.fx.barLabel', { dim: t(`m26.fx.dim.${d}`), need: f.num(need), ai: f.num(ai) })}>
               <div className="absolute inset-y-0 start-0 rounded bg-accent/30" style={{ width: `${(need / 5) * 100}%` }} />
               <div className={`absolute inset-y-0 w-0.5 ${covered ? 'bg-sim' : 'bg-ink-2'}`} style={lang === 'ar' ? { right: `calc(${(ai / 5) * 100}% - 1px)` } : { left: `calc(${(ai / 5) * 100}% - 1px)` }} />
-              <div className="absolute inset-0 flex items-center justify-between px-2 text-[10.5px] text-ink-2">
+              <div className="absolute inset-0 flex items-center justify-between px-2 text-[10.5px] text-ink">
                 <span className="num">{t('m26.fx.needN', { n: f.num(need) })}</span>
                 <span className="num">{t('m26.fx.aiN', { n: f.num(ai) })}</span>
               </div>

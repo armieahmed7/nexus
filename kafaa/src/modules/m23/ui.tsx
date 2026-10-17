@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { useQuery, useRepo, type RowOf } from '../../data';
 import { usePick, useFormat, useT } from '../../i18n';
-import { Icon, ProgressBar, ProgressRing, SimChip, StatusPill, WhyThis, type PillTone } from '../../ui';
+import { Icon, ProgressBar, ProgressRing, SimChip, StatusPill, WhyThis, type PillTone, ScrollRegion } from '../../ui';
 import { AspirationSignalCard } from '../m18/AspirationSignal';
 import type { AspirationSignal } from '../m18/conversations';
 import { EVIDENCE_WEIGHTS, evidenceReasons, type EvidenceSnapshot, type FlagCode, type HardGate, type Readiness, type SlateFlag } from './domain';
@@ -103,7 +103,7 @@ export function NineBox({ members, onPick, selected, lang, testId = 'm23-ninebox
   const f = useFormat();
   const placed = members.filter((m) => m.placement);
   return (
-    <div className="overflow-x-auto">
+    <ScrollRegion className="overflow-x-auto">
       <table className="w-full min-w-[520px] table-fixed border-separate border-spacing-1.5" data-testid={testId}>
         <caption className="sr-only">{t('m23.box.caption')}</caption>
         <thead>
@@ -146,7 +146,7 @@ export function NineBox({ members, onPick, selected, lang, testId = 'm23-ninebox
           </tr>
         </tbody>
       </table>
-    </div>
+    </ScrollRegion>
   );
 }
 

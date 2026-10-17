@@ -2,7 +2,7 @@
 // the methodology banner, the fan chart (three-scenario demand band, distinguishable without colour), the level-mix table and a slider.
 // Pages only; the rules live in critical.ts and forecast.ts.
 import { useId, type ReactNode } from 'react';
-import { Callout, Icon, SimChip, StatusPill, type PillTone } from '../../ui';
+import { Callout, Icon, SimChip, StatusPill, type PillTone, ScrollRegion } from '../../ui';
 import { useQuery, useRepo } from '../../data';
 import { L, useFormat, usePick, useT } from '../../i18n';
 import { BASE_YEAR, HORIZON, SCENARIOS, WORK_LEVEL, type ForecastResult, type LeverParam, type ScenarioKey, type SharedParam, type SkillForecast } from './forecast';
@@ -174,7 +174,7 @@ export function LevelMixTable({ k, scenario, years = [2026, 2028, 2030, 2033, 20
   const f = useFormat();
   const x = k.sc[scenario];
   return (
-    <div className="overflow-x-auto" data-testid="m35-level-mix">
+    <ScrollRegion className="overflow-x-auto" data-testid="m35-level-mix">
       <table className="w-full text-[12.5px]">
         <caption className="sr-only">{t('m35.fc.mixTitle')}</caption>
         <thead>
@@ -202,7 +202,7 @@ export function LevelMixTable({ k, scenario, years = [2026, 2028, 2030, 2033, 20
         </tbody>
       </table>
       <p className="mt-1 text-[11.5px] text-ink-3">{t('m35.fc.mixNote')}</p>
-    </div>
+    </ScrollRegion>
   );
 }
 

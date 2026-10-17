@@ -52,3 +52,18 @@ export function fill(r: SmokeRoute): string {
   return r.path.replace(/:(\w+)/g, (_, k) => (PER_ROUTE[r.id]?.[k] ?? PARAMS[k] ?? 'x'));
 }
 export const isPublic = (r: SmokeRoute) => !/signedIn|anyRole|grant/.test(r.guard);
+
+export type SmokeGuard = { signedIn?: boolean; anyRole?: string[]; grant?: { res: string; levels: string[] }; noTelemetry?: boolean };
+/** The guard object literal from the loader's capture (which can run past the guard): cut at the balancing brace. */
+export function guardOf(r: SmokeRoute): SmokeGuard {
+  let depth = 0;
+  let end = 0;
+  for (let i = 0; i < r.guard.length; i++) {
+    if (r.guard[i] === '{') depth++;
+    else if (r.guard[i] === '}' && --depth === 0) {
+      end = i + 1;
+      break;
+    }
+  }
+  return new Function(`return (${r.guard.slice(0, end)});`)() as SmokeGuard;
+}

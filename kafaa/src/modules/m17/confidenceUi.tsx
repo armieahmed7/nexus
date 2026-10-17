@@ -29,7 +29,7 @@ export function BandChip({ band, low, high, testId }: { band: ConfidenceBand | s
       <Icon name={s.icon} size={12} />
       {t(`m17.dk.band.${b}`)}
       {low != null && high != null && (
-        <span className="num opacity-80">
+        <span className="num">
           {' · '}
           <bdi dir="ltr">{t('m17.dk.range', { low: f.pct(Number(low) * 100, 0), high: f.pct(Number(high) * 100, 0) })}</bdi>
         </span>

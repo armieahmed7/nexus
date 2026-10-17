@@ -95,7 +95,7 @@ function Place({ d, m, cap, enr }: { d: AcademyData; m: Row; cap: Row | undefine
           <div className="mt-3">
             <h3 className="caps mb-1.5">{t('m04.my.acad.modules', { done: f.num(done), total: f.num(mods.length) })}</h3>
             <ul className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-              {mods.map((cid) => <li key={cid} className="flex items-center justify-between gap-2 rounded-md bg-sunken px-2 py-1.5 text-[12.5px]"><L to={`/learn/course/${cid}`} className="min-w-0 truncate">{pick(d.courses.get(cid), 'title') || cid}</L><G2Pill status={enrOf(cid)?.status ?? 'assigned'} /></li>)}
+              {mods.map((cid) => <li key={cid} className="flex items-center justify-between gap-2 rounded-md bg-sunken px-2 py-1.5 text-[12.5px]"><L to={`/learn/course/${cid}`} className="min-w-0 truncate text-eyebrow">{pick(d.courses.get(cid), 'title') || cid}</L><G2Pill status={enrOf(cid)?.status ?? 'assigned'} /></li>)}
             </ul>
           </div>
         )}

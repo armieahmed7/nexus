@@ -74,7 +74,7 @@ function Catalogue({ d }: { d: McData }) {
 
       <Section title={t('m17.mc.catalogueTitle')} description={t('m17.mc.catalogueBody')}
         actions={<div className="flex flex-wrap gap-1" role="group" aria-label={t('m17.mc.filterArea')}>
-          {['all', ...areas].map((a) => <button key={a} type="button" aria-pressed={area === a} className={`chip ${area === a ? 'border-accent bg-accent/10 text-accent' : 'border-line text-ink-2'}`} onClick={() => setArea(a)}>{a === 'all' ? t('m17.mc.allAreas') : t(`m17.mc.area.${a}`)}</button>)}
+          {['all', ...areas].map((a) => <button key={a} type="button" aria-pressed={area === a} className={`chip ${area === a ? 'border-accent bg-accent/10 text-eyebrow' : 'border-line text-ink-2'}`} onClick={() => setArea(a)}>{a === 'all' ? t('m17.mc.allAreas') : t(`m17.mc.area.${a}`)}</button>)}
         </div>}>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3" data-testid="m17-mc-catalogue">
           {micro.map(({ def, e, st }) => <McCard key={def.code} def={def} e={e} st={st} d={d} onOpen={() => show(def.code)} />)}

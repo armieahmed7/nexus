@@ -1,6 +1,6 @@
 // /opportunities/rotations/board (M20 · F15): HR programme board. Aggregates only (rpc.rotationBoard): cohort progress, objectives
 // met and check-ins; every cohort tile and family row with fewer than 10 people is suppressed; no names. Synthetic data, labelled.
-import { Page, Section, Grid, Card, Async, StatTile, BarChart, Callout, SimChip, EmptyState, ProgressBar, Icon, Funnel } from '../../ui';
+import { Page, Section, Grid, Card, Async, StatTile, BarChart, Callout, SimChip, EmptyState, ProgressBar, Icon, Funnel, ScrollRegion } from '../../ui';
 import { useQuery, useRepo } from '../../data';
 import { L, useFormat, usePick, useT } from '../../i18n';
 import { ProgrammeChip } from './rotUi';
@@ -39,7 +39,7 @@ export default function RotationBoardPage() {
               <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
                 <Card title={t('m20.rot.board.byFamily')} footer={t('m20.rot.board.byFamilySub', { n: f.num(b.min_group) })}>
                   <BarChart title={t('m20.rot.board.byFamily')} data={b.by_family.filter((r) => !r.suppressed).map((r) => ({ label: fam(r.family_id), value: r.placements ?? 0 }))} />
-                  <div className="mt-3 overflow-x-auto">
+                  <ScrollRegion label={t('m20.rot.board.byFamily')} className="mt-3 overflow-x-auto">
                     <table className="table-base w-full" data-testid="m20-rot-family-table">
                       <thead><tr><th scope="col">{t('m20.rot.board.family')}</th><th scope="col" className="text-end">{t('m20.rot.board.colPeople')}</th><th scope="col" className="text-end">{t('m20.rot.board.colPlacements')}</th><th scope="col" className="text-end">{t('m20.rot.board.colSigned')}</th></tr></thead>
                       <tbody>
@@ -51,7 +51,7 @@ export default function RotationBoardPage() {
                         ))}
                       </tbody>
                     </table>
-                  </div>
+                  </ScrollRegion>
                 </Card>
                 <Card title={t('m20.rot.board.shadow')} footer={b.shadow.suppressed ? sup : t('m20.rot.board.shadowPeople', { n: f.num(b.shadow.people ?? 0) })}>
                   <Funnel title={t('m20.rot.board.shadow')} stages={[

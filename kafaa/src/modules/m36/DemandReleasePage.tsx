@@ -7,7 +7,7 @@ import { useMemo, useState } from 'react';
 import { useAction, useQuery, useRepo } from '../../data';
 import type { Table } from '../../data/types';
 import { useSession } from '../../auth/session';
-import { Page, Section, Async, Card, EmptyState, Callout, ConfirmDialog, TextArea, BenchmarkChips, StatusPill } from '../../ui';
+import { Page, Section, Async, Card, EmptyState, Callout, ConfirmDialog, TextArea, BenchmarkChips, StatusPill, ScrollRegion } from '../../ui';
 import { L, useFormat, useT } from '../../i18n';
 import { publicTextIsClean } from '../../domain/future';
 import { COVERAGE_YEAR, demandRows, type DemandRow } from './regional';
@@ -71,7 +71,7 @@ function Release({ released, demand, skillArea }: { released: Row[]; demand: Row
         <p className="mt-2 text-[12.5px] text-ink-2">{t('m36.rel.forecastInfo', { s: t(`m36.scenario.${fc.scenario}`), date: f.date(fc.released_at), n: f.num(new Set(rows.map((r) => r.area)).size) })}</p>
       </Card>
       <Section title={t('m36.rel.preview', { y: f.num(COVERAGE_YEAR, { useGrouping: false }) })} description={t('m36.rel.previewIntro')}>
-        <div className="overflow-x-auto" data-testid="m36-rel-preview">
+        <ScrollRegion className="overflow-x-auto" data-testid="m36-rel-preview">
           <table className="w-full text-[13px]">
             <caption className="sr-only">{t('m36.rel.preview', { y: String(COVERAGE_YEAR) })}</caption>
             <thead><tr className="text-ink-3">
@@ -97,7 +97,7 @@ function Release({ released, demand, skillArea }: { released: Row[]; demand: Row
               );
             })}</tbody>
           </table>
-        </div>
+        </ScrollRegion>
       </Section>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <Callout tone="ok" title={t('m36.rel.shared.title')}>{t('m36.rel.shared.body')}</Callout>

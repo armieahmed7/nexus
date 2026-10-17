@@ -4,7 +4,7 @@
 // Qualification-standard skills are "verified by qualification only" and security competencies are status only.
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Page, Async, Card, Callout, ConfirmDialog, EmptyState, Tabs, TextArea, CheckboxField, Icon, StatusPill } from '../../ui';
+import { Page, Async, Card, Callout, ConfirmDialog, EmptyState, Tabs, TextArea, CheckboxField, Icon, StatusPill, ScrollRegion } from '../../ui';
 import { useAction, useQuery, useRepo } from '../../data';
 import { useT, useFormat, usePick, L } from '../../i18n';
 import { useSession } from '../../auth/session';
@@ -102,7 +102,7 @@ function MyCheckins({ d, me, onNew }: { d: Data; me: string; onNew: () => void }
             eyebrow={c.status === 'open' ? t('m17.ci.dueOn', { date: f.date(c.due_on) }) : c.decided_at ? t('m17.ci.decidedOn', { date: f.date(c.decided_at) }) : undefined}
             actions={c.status === 'open' ? <button type="button" className="btn-ghost btn-sm" onClick={() => setWithdraw(c)} data-testid="m17-ci-withdraw">{t('m17.ci.withdraw')}</button> : undefined}>
             <p className="mb-2 text-[13px] text-ink-2">{t('m17.ci.raters', { manager: who(c.manager_id), n: f.num((c.peer_ids ?? []).length) })}</p>
-            <div className="overflow-x-auto">
+            <ScrollRegion className="overflow-x-auto">
               <table className="w-full min-w-[560px] text-[13px]">
                 <thead>
                   <tr className="border-b border-line text-start">
@@ -142,7 +142,7 @@ function MyCheckins({ d, me, onNew }: { d: Data; me: string; onNew: () => void }
                   })}
                 </tbody>
               </table>
-            </div>
+            </ScrollRegion>
             {c.decision_note && <p className="mt-2 text-[12px] text-ink-2">{c.decision_note}</p>}
           </Card>
         );

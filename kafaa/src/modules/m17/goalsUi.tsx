@@ -62,7 +62,7 @@ export function GoalCard({ v, readOnly, onEdit, onShare, onWithdraw }: { v: Goal
       <div className="flex h-full flex-col gap-2.5" data-testid="m17-sg-goal" data-skill={v.skill_id} data-status={v.status} data-shared={v.shared ? 'yes' : 'no'}>
         <div className="flex flex-wrap items-center gap-1.5">
           <GoalPill status={v.status} />
-          <span className={`chip ${v.shared ? 'border-accent/40 bg-accent/10 text-accent' : 'border-line text-ink-3'}`}><Icon name={v.shared ? 'users' : 'lock'} size={12} /> {t(v.shared ? 'm17.sg.sharedChip' : 'm17.sg.privateChip')}</span>
+          <span className={`chip ${v.shared ? 'border-accent/40 bg-accent/10 text-eyebrow' : 'border-line text-ink-3'}`}><Icon name={v.shared ? 'users' : 'lock'} size={12} /> {t(v.shared ? 'm17.sg.sharedChip' : 'm17.sg.privateChip')}</span>
           {v.skill?.code && <span className="num text-[11.5px] text-ink-3">{v.skill.code}</span>}
         </div>
         <div className="text-[15px] font-semibold leading-snug">{v.skill ? pick(v.skill, 'name') : v.skill_id}</div>
@@ -117,7 +117,7 @@ export function GoalEditor({ d, open, initial, lockSkill, onClose }: { d: Pick<G
           <div role="radiogroup" aria-label={t('m17.sg.targetLevel')} className="space-y-1">
             <div className="text-[13px] font-semibold">{t('m17.sg.targetLevel')} <span className="text-bad">*</span></div>
             <div className="flex flex-wrap gap-1.5">
-              {[1, 2, 3, 4].map((n) => <button key={n} type="button" role="radio" aria-checked={x.target_level === n} className={`chip ${x.target_level === n ? 'border-accent bg-accent/10 text-accent' : 'border-line text-ink-2'}`} onClick={() => setX({ ...x, target_level: n })} data-testid={`m17-sg-level-${n}`}>{t(`m17.sg.level.${n}`)}</button>)}
+              {[1, 2, 3, 4].map((n) => <button key={n} type="button" role="radio" aria-checked={x.target_level === n} className={`chip ${x.target_level === n ? 'border-accent bg-accent/10 text-eyebrow' : 'border-line text-ink-2'}`} onClick={() => setX({ ...x, target_level: n })} data-testid={`m17-sg-level-${n}`}>{t(`m17.sg.level.${n}`)}</button>)}
             </div>
           </div>
           <TextField type="date" label={t('m17.sg.targetDate')} name="date" value={x.target_date} onChange={(v) => setX({ ...x, target_date: v })} required

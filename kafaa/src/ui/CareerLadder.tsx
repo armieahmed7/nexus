@@ -5,6 +5,7 @@
  */
 import type { ReactNode } from 'react';
 import { Icon } from './Icon';
+import { ScrollRegion } from './ScrollRegion';
 import { useT } from '../i18n';
 
 export interface LadderStep {
@@ -94,7 +95,7 @@ export function PathGraph({ nodes, edges, highlight, onSelect, rtl }: { nodes: G
   const H = Math.max(1, g.rows) * RH;
   const pos = new Map(g.nodes.map((n) => [n.id, { x: (rtl ? g.columns - 1 - n.col : n.col) * CW + 10, y: n.row * RH + 10 }]));
   return (
-    <div className="overflow-x-auto" data-testid="path-graph">
+    <ScrollRegion label={t('common.pathGraph')} data-testid="path-graph">
       <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={t('common.pathGraph')}>
         {g.edges.map((e, i) => {
           const a = pos.get(e.from);
@@ -117,6 +118,6 @@ export function PathGraph({ nodes, edges, highlight, onSelect, rtl }: { nodes: G
           );
         })}
       </svg>
-    </div>
+    </ScrollRegion>
   );
 }

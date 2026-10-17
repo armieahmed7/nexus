@@ -5,7 +5,7 @@
 // adopted targets that no longer match a republished profile. Member readiness is shown in id order, never ranked. Planning
 // assumptions only: no deployment decision implied. All data comes from rpc.teamFutureTargets (scope applied on both backends).
 import { useMemo, useState } from 'react';
-import { Page, Section, Async, BenchmarkChips, Callout, ConfirmDialog, EmptyState, Icon, ProgressBar, SelectField, StatTile, StatusPill, TextArea, WhyThis } from '../../ui';
+import { Page, Section, Async, BenchmarkChips, Callout, ConfirmDialog, EmptyState, Icon, ProgressBar, SelectField, StatTile, StatusPill, TextArea, WhyThis, ScrollRegion } from '../../ui';
 import { useAction, useQuery, useRepo } from '../../data';
 import { useSession } from '../../auth/session';
 import { L, useFormat, usePick, useT } from '../../i18n';
@@ -175,7 +175,7 @@ function TargetTable({ d, cat, horizon }: { d: TeamFutureTargets; cat: Catalogue
                 <L to={`/skills/${x.skill_id}`} className="font-medium text-ink">{sk(x.skill_id)}</L>
                 <span className="mt-0.5 flex flex-wrap gap-1.5 text-[11px]">
                   <span className="text-ink-3">{t(`m17.area.${cat.skill.get(x.skill_id)?.area ?? 'digital'}`)}</span>
-                  {x.change !== 'kept' && <span className={`chip ${x.change === 'new' ? 'border-accent/40 bg-accent/10 text-accent' : 'border-info/40 bg-info-bg text-info'}`}>{t(`m17.tt.change.${x.change}`)}</span>}
+                  {x.change !== 'kept' && <span className={`chip ${x.change === 'new' ? 'border-accent/40 bg-accent/10 text-eyebrow' : 'border-info/40 bg-info-bg text-info'}`}>{t(`m17.tt.change.${x.change}`)}</span>}
                 </span>
               </th>
               <td className="py-2 pe-2">{x.min_people == null ? t('m17.tt.levelOnly', { level: f.num(x.min_level) }) : t('m17.tm.targetText', { n: f.num(x.min_people), level: f.num(x.min_level) })}</td>
@@ -229,7 +229,7 @@ function Members({ d, cat }: { d: TeamFutureTargets; cat: Catalogue }) {
   const person = new Map(d.people.map((p) => [p.id, p]));
   return (
     <Section title={t('m17.tt.membersTitle')} description={t('m17.tt.membersIntro')}>
-      <div className="overflow-x-auto">
+      <ScrollRegion label={t('m17.tt.membersTitle')} className="overflow-x-auto">
         <table className="w-full min-w-[640px] text-[13px]" data-testid="m17-tt-members">
           <caption className="sr-only">{t('m17.tt.membersTitle')}</caption>
           <thead>
@@ -263,7 +263,7 @@ function Members({ d, cat }: { d: TeamFutureTargets; cat: Catalogue }) {
             ))}
           </tbody>
         </table>
-      </div>
+      </ScrollRegion>
       <p className="text-[12px] text-ink-3">{t('m17.tt.membersNote')}</p>
     </Section>
   );

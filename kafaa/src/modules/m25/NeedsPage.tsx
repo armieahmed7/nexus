@@ -116,7 +116,7 @@ export default function NeedsPage() {
                       ...SOURCES.map((src) => ({
                         key: src, header: t(`m25.source.${src}.short`), value: (r: NeedsRow) => r.sources[src], sortable: true, align: 'end' as const,
                         render: (r: NeedsRow) => (r.detail[src].length ? (
-                          <button type="button" className="btn-ghost btn-sm" onClick={() => setDrill({ row: r, source: src })} data-testid={`m25-drill-${r.course_id}-${src}`} aria-label={t('m25.needs.drillAria', { source: t(`m25.source.${src}.name`) })}><Sup v={r.sources[src]} /></button>
+                          <button type="button" className="btn-ghost btn-sm" onClick={() => setDrill({ row: r, source: src })} data-testid={`m25-drill-${r.course_id}-${src}`} aria-label={t('m25.needs.drillAria', { n: r.sources[src] == null ? t('m25.common.suppressed') : f.num(r.sources[src]!), source: t(`m25.source.${src}.name`) })}><Sup v={r.sources[src]} /></button>
                         ) : <span className="text-ink-3">·</span>),
                       })),
                       ...(rep.simulated ? [{ key: 'intake', header: t('m25.needs.intake'), value: (r: NeedsRow) => rep.intake[r.course_id] ?? 0, align: 'end' as const, render: (r: NeedsRow) => (rep.intake[r.course_id] ? <span className="num text-sim">+{f.num(rep.intake[r.course_id])}</span> : <span className="text-ink-3">·</span>) }] : []),

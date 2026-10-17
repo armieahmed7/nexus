@@ -348,7 +348,7 @@ test('D5 FS36/FS37: the register computes coverage from FS09 rungs and suppresse
   expect(att.every((a: { person_id: string; level: number | null }) => a.person_id === 'p-qc-inspector' && (a.level ?? 0) <= 2)).toBe(true);
   await go(page, '/my/ai-fluency/drills/ad-valve-lineup');
   await expect(page.locator('[data-testid="m29-drill-doc"]')).toHaveAttribute('data-synthetic', 'true');
-  await expect(page.locator('[data-testid="m29-drill-doc"]')).toContainText(/SYNTHETIC/);
+  await expect(page.locator('[data-testid="m29-drill-doc"] [data-wm]')).toHaveAttribute('data-wm', /SYNTHETIC/);
   await clean(page, w);
   // local: a drill end to end (flag, protocol, confirm), scored result with level-1 evidence and reasons
   await toLocal(page, 'k-ro');

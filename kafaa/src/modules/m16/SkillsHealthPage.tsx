@@ -46,7 +46,7 @@ function Health({ health, skills }: { health: { summary: import('./taxonomyGov')
     return [...m.entries()].sort((a, b) => b[1] - a[1]).map(([k, v]) => ({ label: t(`fs.owner.${k}`), value: v }));
   }, [health, byId, t]);
   const canPropose = s.can('skills_taxonomy', ['W']);
-  const tick = (ok: boolean, label: string) => <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full ${ok ? 'bg-ok-bg text-ok' : 'bg-bad-bg text-bad'}`} aria-label={`${label}: ${ok ? t('m16.gov.hl.yes') : t('m16.gov.hl.no')}`}><Icon name={ok ? 'check' : 'close'} size={11} /></span>;
+  const tick = (ok: boolean, label: string) => <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full ${ok ? 'bg-ok-bg text-ok' : 'bg-bad-bg text-bad'}`} role="img" aria-label={`${label}: ${ok ? t('m16.gov.hl.yes') : t('m16.gov.hl.no')}`}><Icon name={ok ? 'check' : 'close'} size={11} /></span>;
   type R = (typeof rows)[number];
   const cols: Column<R>[] = [
     { key: 'skill', header: t('m16.gov.hl.col.skill'), value: (r) => r.skill?.code ?? r.skill_id, sortable: true, render: (r) => <span className="min-w-0"><span className="font-mono text-[11px] text-ink-3" dir="ltr">{r.skill?.code}</span> <L to={`/skills/${r.skill_id}`} className="link">{pick(r.skill, 'name')}</L></span> },
@@ -97,7 +97,7 @@ function Health({ health, skills }: { health: { summary: import('./taxonomyGov')
           <div className="flex flex-wrap gap-1.5" role="tablist" aria-label={t('m16.gov.hl.drillTitle')} data-testid="m16-health-filters">
             {FILTERS.map((k) => {
               const n = health.skills.filter((h) => match(k, h)).length;
-              return <button key={k} role="tab" aria-selected={filter === k} className={`chip ${filter === k ? 'border-accent bg-accent-soft text-accent' : 'border-line bg-panel text-ink-2'}`} onClick={() => setFilter(k)} data-filter={k} data-n={n}>{t(`m16.gov.hl.filter.${k}`)} · {f.num(n)}</button>;
+              return <button key={k} role="tab" aria-selected={filter === k} className={`chip ${filter === k ? 'border-accent bg-accent-soft text-eyebrow' : 'border-line bg-panel text-ink-2'}`} onClick={() => setFilter(k)} data-filter={k} data-n={n}>{t(`m16.gov.hl.filter.${k}`)} · {f.num(n)}</button>;
             })}
           </div>
         </div>

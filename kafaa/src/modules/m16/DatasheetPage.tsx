@@ -117,7 +117,7 @@ function Section({ n, title, body, children }: { n: number; title: string; body:
   return (
     <section className="space-y-3" aria-labelledby={`m16-ds-${n}`} data-testid={`m16-ds-section-${n}`}>
       <div>
-        <h2 id={`m16-ds-${n}`} className="flex items-center gap-2 text-[17px] font-semibold"><span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-accent-soft text-[12px] text-accent">{f.num(n)}</span>{title}</h2>
+        <h2 id={`m16-ds-${n}`} className="flex items-center gap-2 text-[17px] font-semibold"><span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-accent-soft text-[12px] text-eyebrow">{f.num(n)}</span>{title}</h2>
         <p className="mt-1 max-w-3xl text-[13.5px] text-ink-2">{body}</p>
       </div>
       {children}

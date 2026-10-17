@@ -225,7 +225,7 @@ function DefEditor({ d, base, onClose }: { d: AdminData; base: DefRow | null; on
           <div className="flex max-h-40 flex-wrap gap-1.5 overflow-y-auto">
             {d.roles.map((r) => {
               const on = x.role_ids.includes(r.id);
-              return <button key={r.id} type="button" aria-pressed={on} className={`chip ${on ? 'border-accent bg-accent/10 text-accent' : 'border-line text-ink-2'}`}
+              return <button key={r.id} type="button" aria-pressed={on} className={`chip ${on ? 'border-accent bg-accent/10 text-eyebrow' : 'border-line text-ink-2'}`}
                 onClick={() => setX((p) => ({ ...p, role_ids: on ? p.role_ids.filter((y) => y !== r.id) : p.role_ids.length < MC_RULES.maxRoles ? [...p.role_ids, r.id] : p.role_ids }))}>{pick(r, 'title')}</button>;
             })}
           </div>
