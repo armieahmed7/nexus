@@ -10,6 +10,7 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "resolveJsonModule": true,
+    "allowArbitraryExtensions": true,
     "isolatedModules": true,
     "allowImportingTsExtensions": true,
     "noEmit": true,

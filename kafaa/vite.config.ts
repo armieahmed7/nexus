@@ -6,6 +6,9 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   base: '/kafaa/',
   plugins: [react()],
+  // JSON modules become JSON.parse('...'): much cheaper to transform and to parse than an object literal, which matters for the
+  // 25 MB seed.json (local backend chunk) and for every unit test that loads it (TECH-02). Default imports only (none are named).
+  json: { stringify: true },
   build: {
     outDir: 'dist/kafaa',
     emptyOutDir: true,
