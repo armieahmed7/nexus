@@ -3,7 +3,7 @@
 import { useMemo } from 'react';
 import { useQuery, useRepo } from '../../data';
 import { useFormat, useLang, usePick, useT, L } from '../../i18n';
-import { Callout, Icon, SourceLink, StatusPill, type PillTone } from '../../ui';
+import { Callout, En, Icon, SourceLink, StatusPill, type PillTone } from '../../ui';
 import type { SkillsRow, SkillAlignmentsRow, SkillFrameworksRow, SourcesRow, BenchmarksRow } from '../../data/types';
 import {
   CASE_SCHEMA, FRAMEWORK_IDS, MATCH_TYPES, alignmentsCsv, buildCasePackage, canonLevelMap, isIndicative, isLabelLevel, shortCode, sortAlignments, validateJson,
@@ -129,7 +129,7 @@ export function CrosswalkList({ rows, fwById }: { rows: SkillAlignmentsRow[]; fw
         return (
           <li key={r.id} className="rounded-card border border-line bg-panel p-3" data-testid="m28-xw-row">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="chip border-accent/40 bg-accent-soft text-eyebrow">{fw?.short ?? r.framework}</span>
+              <span className="chip border-accent/40 bg-accent-soft text-eyebrow"><En>{fw?.short ?? r.framework}</En></span>
               <span className="font-semibold">{label}</span>
               {lang === 'ar' && <span className="text-[11px] text-ink-3">{r.label_ar_official ? t('m28.xw.arOfficial') : t('m28.xw.arKafaa')}</span>}
               <span className="ms-auto flex flex-wrap items-center gap-1.5"><MatchPill m={r.match_type} /><ReviewPill row={r} /></span>

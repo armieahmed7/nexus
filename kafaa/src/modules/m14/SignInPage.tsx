@@ -4,6 +4,7 @@
  * NEXUS session, and the 14 Kafa'a-only personas via the kafaa-persona-signin Edge Function (src/auth/personaSession.ts).
  */
 import { landing } from './landing';
+import { scopeSummary } from './scopeLabels';
 import { useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useSession, roleLabel, type PersonaCard } from '../../auth/session';
@@ -115,7 +116,7 @@ export default function SignInPage() {
                         </span>
                       ))}
                     </div>
-                    <div className="caps mt-auto">{busy === p.persona ? t('common.working') : current ? t('m14.signIn.current') : (p.scopes.filter((x) => !x.endsWith(':self')).join(' · ') || ' ')}</div>
+                    <div className="caps mt-auto">{busy === p.persona ? t('common.working') : current ? t('m14.signIn.current') : (scopeSummary(t, p.scopes) || ' ')}</div>
                   </button>
                 </li>
               );

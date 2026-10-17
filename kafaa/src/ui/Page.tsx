@@ -1,7 +1,7 @@
 /** Layout and status primitives. Every page renders inside <Page>; it sets the document title and the h1. */
 import { useEffect, type ReactNode } from 'react';
 import { Icon } from './Icon';
-import { useT } from '../i18n';
+import { useLang, useT } from '../i18n';
 
 export function Page({ title, eyebrow, intro, actions, children, wide }: { title: string; eyebrow?: ReactNode; intro?: ReactNode; actions?: ReactNode; children?: ReactNode; wide?: boolean }) {
   const t = useT();
@@ -114,12 +114,18 @@ export function SimChip({ label }: { label?: string }) {
   return <span className={`chip ${pillCls.sim}`}>{label ?? t('common.simulated')}</span>;
 }
 
+const ARABIC = /[\u0600-\u06FF]/;
+/** English-only text (source titles, framework acronyms, glossary terms) on an Arabic page: tagged so screen readers switch voice and bidi keeps it LTR. */
+export function En({ children }: { children?: ReactNode }) {
+  return useLang() === 'ar' ? <bdi lang="en" dir="ltr">{children}</bdi> : <>{children}</>;
+}
+
 /** Cite a public source. Opens in a new tab. */
 export function SourceLink({ href, children, date }: { href: string; children?: ReactNode; date?: string | null }) {
   const t = useT();
   return (
     <a href={href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[12.5px]">
-      {children ?? t('common.source')}
+      {children == null ? t('common.source') : typeof children === 'string' && !ARABIC.test(children) ? <En>{children}</En> : children}
       <Icon name="external" size={12} />
       {date && <span className="whitespace-nowrap text-ink-3">(<bdi>{date}</bdi>)</span>}{/* FS wave H QA: an ISO date no longer breaks at its hyphens in narrow RTL columns */}
     </a>
@@ -167,12 +173,12 @@ export function Skeleton({ lines = 3, className = '' }: { lines?: number; classN
   );
 }
 
-/** Render loading / error / empty / data in one place. */
+/** Render loading / error / empty / data in one place. `empty={null}` renders nothing when empty; omit `empty` for the default box. */
 export function Async<T>({ state, children, empty, isEmpty }: { state: { data: T | undefined; loading: boolean; error: Error | null; reload?: () => void }; children: (data: T) => ReactNode; empty?: ReactNode; isEmpty?: (d: T) => boolean }) {
   if (state.error) return <ErrorState error={state.error} retry={state.reload} />;
   if (state.data === undefined) return <Skeleton lines={4} />;
   const emptyNow = isEmpty ? isEmpty(state.data) : Array.isArray(state.data) && state.data.length === 0;
-  if (emptyNow) return <>{empty ?? <EmptyState />}</>;
+  if (emptyNow) return <>{empty !== undefined ? empty : <EmptyState />}</>;
   return <>{children(state.data)}</>;
 }
 

@@ -5,6 +5,7 @@
  */
 import type { ReactNode } from 'react';
 import { Icon } from './Icon';
+import { useT } from '../i18n';
 
 export interface LadderStep {
   id: string;
@@ -85,6 +86,7 @@ export function layoutGraph(nodes: GraphNode[], edges: GraphEdge[]) {
 
 /** Simple SVG path graph built on layoutGraph. Mirrors in RTL by flipping x. */
 export function PathGraph({ nodes, edges, highlight, onSelect, rtl }: { nodes: GraphNode[]; edges: GraphEdge[]; highlight?: string; onSelect?: (id: string) => void; rtl?: boolean }) {
+  const t = useT();
   const g = layoutGraph(nodes, edges);
   const CW = 200;
   const RH = 64;
@@ -93,7 +95,7 @@ export function PathGraph({ nodes, edges, highlight, onSelect, rtl }: { nodes: G
   const pos = new Map(g.nodes.map((n) => [n.id, { x: (rtl ? g.columns - 1 - n.col : n.col) * CW + 10, y: n.row * RH + 10 }]));
   return (
     <div className="overflow-x-auto" data-testid="path-graph">
-      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label="career path graph">
+      <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={t('common.pathGraph')}>
         {g.edges.map((e, i) => {
           const a = pos.get(e.from);
           const b = pos.get(e.to);

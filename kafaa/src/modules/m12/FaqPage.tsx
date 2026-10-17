@@ -66,7 +66,7 @@ export default function FaqPage() {
               {rows.map((g) => (
                 <div key={g.id} className="card p-3">
                   <dt className="font-semibold">
-                    {g.term_en} <span className="text-ink-3">·</span> <span lang="ar" dir="rtl">{g.term_ar}</span>
+                    <span lang="en" dir="ltr">{g.term_en}</span> <span className="text-ink-3">·</span> <span lang="ar" dir="rtl">{g.term_ar}</span>
                   </dt>
                   <dd className="mt-1 text-[13px] text-ink-2">{pick(g, 'definition')}</dd>
                 </div>
