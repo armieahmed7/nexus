@@ -5,8 +5,11 @@
  *     { key: 'status', header: '...', value: (r) => r.status, render: (r) => <StatusPill status={r.status} /> },
  *   ]} csvName="roles" />
  * `value` drives sort, search and CSV; `render` only changes display. CSV never includes columns marked csv: false.
+ * With onRowClick, each row also ends in an "Open {label}" button (A11Y-02) so the row opens by keyboard and screen readers;
+ * the label is `rowLabel(row)`, else the first column's value. A mouse click on the row moves focus to that button first, so a
+ * drawer or dialog the row opens returns focus to the row when it closes.
  */
-import { useMemo, useState, type ReactNode } from 'react';
+import { useMemo, useState, type MouseEvent, type ReactNode } from 'react';
 import { Icon } from './Icon';
 import { ScrollRegion } from './ScrollRegion';
 import { useFormat, useT } from '../i18n';
@@ -30,6 +33,8 @@ export interface DataTableProps<T> {
   csvName?: string;
   initialSort?: { key: string; dir: 'asc' | 'desc' };
   onRowClick?: (row: T) => void;
+  /** Names the row in its "Open {label}" button (default: the first column's value). */
+  rowLabel?: (row: T) => string;
   empty?: ReactNode;
   toolbar?: ReactNode;
   caption?: string;
@@ -59,7 +64,10 @@ export function downloadText(name: string, text: string, mime = 'text/csv;charse
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-export function DataTable<T>({ rows, columns, rowKey, pageSize = 20, searchable = true, csvName, initialSort, onRowClick, empty, toolbar, caption, dense }: DataTableProps<T>) {
+/** A click that lands on a control inside a cell (a link, a button, a field) belongs to that control, not to the row's open button. */
+const INTERACTIVE = 'a[href],button,input,select,textarea,label,summary,[role="button"],[role="link"],[tabindex]';
+
+export function DataTable<T>({ rows, columns, rowKey, pageSize = 20, searchable = true, csvName, initialSort, onRowClick, rowLabel, empty, toolbar, caption, dense }: DataTableProps<T>) {
   const t = useT();
   const f = useFormat();
   const [q, setQ] = useState('');
@@ -91,6 +99,13 @@ export function DataTable<T>({ rows, columns, rowKey, pageSize = 20, searchable 
 
   const toggleSort = (key: string) => setSort((s) => (s?.key === key ? (s.dir === 'asc' ? { key, dir: 'desc' } : null) : { key, dir: 'asc' }));
   const alignCls = (a?: string) => (a === 'end' ? 'text-end' : a === 'center' ? 'text-center' : 'text-start');
+  const labelCol = columns.find((c) => c.value);
+  const labelOf = (r: T) => (rowLabel ? rowLabel(r) : String(labelCol?.value?.(r) ?? rowKey(r)));
+  const rowClick = (r: T) => (e: MouseEvent<HTMLTableRowElement>) => {
+    const hit = (e.target as Element).closest?.(INTERACTIVE);
+    if (!hit || !e.currentTarget.contains(hit)) e.currentTarget.querySelector<HTMLButtonElement>('[data-row-open]')?.focus({ preventScroll: true });
+    onRowClick!(r);
+  };
 
   return (
     <div className="card overflow-hidden" data-testid="data-table">
@@ -140,23 +155,45 @@ export function DataTable<T>({ rows, columns, rowKey, pageSize = 20, searchable 
                   )}
                 </th>
               ))}
+              {onRowClick && (
+                <th scope="col" className="w-10">
+                  <span className="sr-only">{t('common.openRowHeader')}</span>
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
             {visible.length === 0 ? (
               <tr>
-                <td colSpan={columns.length} className="py-8 text-center text-ink-3">
+                <td colSpan={columns.length + (onRowClick ? 1 : 0)} className="py-8 text-center text-ink-3">
                   {empty ?? t('common.noRows')}
                 </td>
               </tr>
             ) : (
               visible.map((r) => (
-                <tr key={rowKey(r)} className={onRowClick ? 'cursor-pointer hover:bg-sunken' : ''} onClick={onRowClick ? () => onRowClick(r) : undefined}>
+                <tr key={rowKey(r)} className={onRowClick ? 'cursor-pointer hover:bg-sunken' : ''} onClick={onRowClick ? rowClick(r) : undefined}>
                   {columns.map((c) => (
                     <td key={c.key} className={`${alignCls(c.align)} ${dense ? '!py-1.5' : ''}`}>
                       {c.render ? c.render(r) : (c.value?.(r) ?? '—')}
                     </td>
                   ))}
+                  {onRowClick && (
+                    <td className={`text-end ${dense ? '!py-1.5' : ''}`}>
+                      <button
+                        type="button"
+                        className="btn-ghost btn-sm !px-1.5"
+                        data-row-open
+                        data-testid="row-open"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onRowClick(r);
+                        }}
+                      >
+                        <Icon name="chevron" size={14} />
+                        <span className="sr-only">{t('common.openRow', { label: labelOf(r) })}</span>
+                      </button>
+                    </td>
+                  )}
                 </tr>
               ))
             )}

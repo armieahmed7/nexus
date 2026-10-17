@@ -27,6 +27,8 @@
   "rowsCount": "{n} rows",
   "exportCsv": "Export CSV",
   "noRows": "No matching rows",
+  "openRowHeader": "Open",
+  "openRow": "Open {label}",
   "pageOf": "Page {page} of {pages}",
   "prev": "Previous",
   "next": "Next",
