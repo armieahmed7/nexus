@@ -4006,21 +4006,21 @@ insert into kafaa_course_modules (id, course_id, n, title_en, title_ar, minutes,
 on conflict (id) do update set course_id = excluded.course_id, n = excluded.n, title_en = excluded.title_en, title_ar = excluded.title_ar, minutes = excluded.minutes, public_summary = excluded.public_summary;
 
 -- sessions (13)
-insert into kafaa_sessions (id, course_id, starts_at, ends_at, location, instructor_person_id, capacity, kind, crew, priority, audience, public_summary, status) values
-('s-coct-b', 'c-coct', '2026-10-14T08:00:00Z', '2026-10-14T16:00:00Z', 'Simulator Training Center', 'p-k-instructor', 6, 'simulator', 'B', 'licence_critical', 'staff', false, 'scheduled'),
-('s-coct-c', 'c-coct', '2026-10-21T08:00:00Z', '2026-10-21T16:00:00Z', 'Simulator Training Center', 'w-instr-01', 6, 'simulator', 'C', 'licence_critical', 'staff', false, 'scheduled'),
-('s-loct-c', 'c-loct', '2026-10-16T08:00:00Z', '2026-10-16T16:00:00Z', 'Operator Training Center', 'w-instr-01', 6, 'simulator', 'C', 'mandatory', 'staff', false, 'scheduled'),
-('s-hu-ref', 'c-hu-ref', '2026-10-12T08:00:00Z', '2026-10-12T10:00:00Z', 'E-learning', null, 16, 'elearning', null, 'mandatory', 'staff', false, 'scheduled'),
-('s-ero', 'c-ero-drill', '2026-10-23T08:00:00Z', '2026-10-23T12:00:00Z', 'Barakah', 'p-ep-manager', 16, 'drill', null, 'mandatory', 'staff', false, 'scheduled'),
-('s-intilaqa', 'c-intilaqa', '2026-10-29T08:00:00Z', '2026-10-29T16:00:00Z', 'Abu Dhabi', 'p-training-mgr', 16, 'class', null, 'elective', 'staff', false, 'scheduled'),
-('s-sa101', 'c-sa-nqa1-101', '2026-10-20T08:00:00Z', '2026-10-20T12:00:00Z', 'Abu Dhabi (supplier academy)', 'p-sq-lead', 16, 'class', null, 'elective', 'supplier', true, 'scheduled'),
-('s-sa103', 'c-sa-cgd-103', '2026-10-27T08:00:00Z', '2026-10-27T11:00:00Z', 'Abu Dhabi (supplier academy)', 'p-sq-lead', 16, 'class', null, 'elective', 'supplier', true, 'scheduled'),
-('s-get', 'c-get', '2026-10-11T08:00:00Z', '2026-10-11T16:00:00Z', 'Barakah training centre', 'w-instr-02', 16, 'class', null, 'mandatory', 'staff', false, 'scheduled'),
-('s-hu-past', 'c-hu', '2026-10-07T08:00:00Z', '2026-10-07T16:00:00Z', 'Barakah training centre', 'p-k-instructor', 16, 'class', null, 'mandatory', 'staff', false, 'scheduled'),
-('s-sam', 'c-sam', '2026-10-19T08:00:00Z', '2026-10-19T16:00:00Z', 'Simulator Training Center', 'p-k-instructor', 6, 'simulator', 'A', 'mandatory', 'staff', false, 'scheduled'),
-('s-coit-gf', 'c-coit-gf', '2026-11-02T08:00:00Z', '2026-11-02T16:00:00Z', 'Barakah training centre', 'w-instr-02', 16, 'class', null, 'mandatory', 'staff', false, 'scheduled'),
-('s-apr', 'c-apr', '2026-10-26T08:00:00Z', '2026-10-26T16:00:00Z', 'Abu Dhabi', 'w-instr-01', 16, 'class', null, 'elective', 'staff', false, 'scheduled')
-on conflict (id) do update set course_id = excluded.course_id, starts_at = excluded.starts_at, ends_at = excluded.ends_at, location = excluded.location, instructor_person_id = excluded.instructor_person_id, capacity = excluded.capacity, kind = excluded.kind, crew = excluded.crew, priority = excluded.priority, audience = excluded.audience, public_summary = excluded.public_summary, status = excluded.status;
+insert into kafaa_sessions (id, course_id, starts_at, ends_at, location, location_ar, instructor_person_id, capacity, kind, crew, priority, audience, public_summary, status) values
+('s-coct-b', 'c-coct', '2026-10-14T08:00:00Z', '2026-10-14T16:00:00Z', 'Simulator Training Center', 'مركز التدريب على المحاكاة', 'p-k-instructor', 6, 'simulator', 'B', 'licence_critical', 'staff', false, 'scheduled'),
+('s-coct-c', 'c-coct', '2026-10-21T08:00:00Z', '2026-10-21T16:00:00Z', 'Simulator Training Center', 'مركز التدريب على المحاكاة', 'w-instr-01', 6, 'simulator', 'C', 'licence_critical', 'staff', false, 'scheduled'),
+('s-loct-c', 'c-loct', '2026-10-16T08:00:00Z', '2026-10-16T16:00:00Z', 'Operator Training Center', 'مركز تدريب المشغّلين', 'w-instr-01', 6, 'simulator', 'C', 'mandatory', 'staff', false, 'scheduled'),
+('s-hu-ref', 'c-hu-ref', '2026-10-12T08:00:00Z', '2026-10-12T10:00:00Z', 'E-learning', 'تعلم إلكتروني', null, 16, 'elearning', null, 'mandatory', 'staff', false, 'scheduled'),
+('s-ero', 'c-ero-drill', '2026-10-23T08:00:00Z', '2026-10-23T12:00:00Z', 'Barakah', 'براكة', 'p-ep-manager', 16, 'drill', null, 'mandatory', 'staff', false, 'scheduled'),
+('s-intilaqa', 'c-intilaqa', '2026-10-29T08:00:00Z', '2026-10-29T16:00:00Z', 'Abu Dhabi', 'أبوظبي', 'p-training-mgr', 16, 'class', null, 'elective', 'staff', false, 'scheduled'),
+('s-sa101', 'c-sa-nqa1-101', '2026-10-20T08:00:00Z', '2026-10-20T12:00:00Z', 'Abu Dhabi (supplier academy)', 'أبوظبي (أكاديمية الموردين)', 'p-sq-lead', 16, 'class', null, 'elective', 'supplier', true, 'scheduled'),
+('s-sa103', 'c-sa-cgd-103', '2026-10-27T08:00:00Z', '2026-10-27T11:00:00Z', 'Abu Dhabi (supplier academy)', 'أبوظبي (أكاديمية الموردين)', 'p-sq-lead', 16, 'class', null, 'elective', 'supplier', true, 'scheduled'),
+('s-get', 'c-get', '2026-10-11T08:00:00Z', '2026-10-11T16:00:00Z', 'Barakah training centre', 'مركز التدريب في براكة', 'w-instr-02', 16, 'class', null, 'mandatory', 'staff', false, 'scheduled'),
+('s-hu-past', 'c-hu', '2026-10-07T08:00:00Z', '2026-10-07T16:00:00Z', 'Barakah training centre', 'مركز التدريب في براكة', 'p-k-instructor', 16, 'class', null, 'mandatory', 'staff', false, 'scheduled'),
+('s-sam', 'c-sam', '2026-10-19T08:00:00Z', '2026-10-19T16:00:00Z', 'Simulator Training Center', 'مركز التدريب على المحاكاة', 'p-k-instructor', 6, 'simulator', 'A', 'mandatory', 'staff', false, 'scheduled'),
+('s-coit-gf', 'c-coit-gf', '2026-11-02T08:00:00Z', '2026-11-02T16:00:00Z', 'Barakah training centre', 'مركز التدريب في براكة', 'w-instr-02', 16, 'class', null, 'mandatory', 'staff', false, 'scheduled'),
+('s-apr', 'c-apr', '2026-10-26T08:00:00Z', '2026-10-26T16:00:00Z', 'Abu Dhabi', 'أبوظبي', 'w-instr-01', 16, 'class', null, 'elective', 'staff', false, 'scheduled')
+on conflict (id) do update set course_id = excluded.course_id, starts_at = excluded.starts_at, ends_at = excluded.ends_at, location = excluded.location, location_ar = excluded.location_ar, instructor_person_id = excluded.instructor_person_id, capacity = excluded.capacity, kind = excluded.kind, crew = excluded.crew, priority = excluded.priority, audience = excluded.audience, public_summary = excluded.public_summary, status = excluded.status;
 
 -- simulator_slots (63)
 insert into kafaa_simulator_slots (id, simulator, starts_at, ends_at, crew, session_id, booking_kind, priority, status, booked_by) values

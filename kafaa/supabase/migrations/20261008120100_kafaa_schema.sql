@@ -640,6 +640,7 @@ create table if not exists kafaa_sessions (
   starts_at timestamptz not null,
   ends_at timestamptz not null,
   location text not null,
+  location_ar text,
   instructor_person_id text,
   capacity integer not null default 12,
   kind text not null check (kind in ('class', 'simulator', 'drill', 'elearning', 'clinic')),

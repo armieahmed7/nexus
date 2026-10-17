@@ -45,7 +45,7 @@ export function ProposedSessionsCard() {
                 <span className="ms-auto flex flex-wrap items-center gap-2">
                   <select className="input h-8 text-[12.5px]" value={pickFor[p.id] ?? ''} onChange={(e) => setPickFor((x) => ({ ...x, [p.id]: e.target.value }))} aria-label={t('m25.schedule.pickSession')} data-testid={`m25-link-pick-${p.id}`}>
                     <option value="">{options.length ? t('m25.schedule.pickSession') : t('m25.schedule.noSession')}</option>
-                    {options.map((x) => <option key={x.id} value={x.id}>{f.dateTime(x.starts_at)} · {x.location}</option>)}
+                    {options.map((x) => <option key={x.id} value={x.id}>{f.dateTime(x.starts_at)} · {pick(x, 'location')}</option>)}
                   </select>
                   <button type="button" className="btn-outline btn-sm" disabled={!pickFor[p.id]} onClick={() => run(() => repo.rpc.linkProposal(p.id, pickFor[p.id]))} data-testid={`m25-link-${p.id}`}>{t('m25.schedule.link')}</button>
                   <button type="button" className="btn-ghost btn-sm" onClick={() => run(() => repo.rpc.withdrawProposal(p.id))}>{t('m25.proposal.withdraw')}</button>

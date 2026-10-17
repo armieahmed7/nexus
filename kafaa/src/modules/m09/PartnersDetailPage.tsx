@@ -2,7 +2,7 @@
 // No individual names, no logos. MoUs are labelled non-binding evaluations unless a source says otherwise.
 import { useParams } from 'react-router-dom';
 import { Page, Section, Card, Callout, Async, EmptyState, KeyValue, Grid, Icon } from '../../ui';
-import { useT, usePick, L } from '../../i18n';
+import { useT, usePick, L, countryName } from '../../i18n';
 import { useQuery, useRepo } from '../../data';
 import { CategoryChips, MStatus, NON_BINDING, SourceList, useSourceDates, type Org, type Source } from './shared';
 
@@ -62,7 +62,7 @@ function Detail({ org, agreements, related }: { org: Org; agreements: { id: stri
               [t('m09.dir.col.dates'), <span key="d" className="num">{org.dates === 'current' || org.dates === 'historic' ? t(`m09.datesWord.${org.dates}`) : org.dates || '—'}</span>],
               [t('m09.dir.col.status'), <MStatus key="s" status={org.status} />],
               [t('m09.dir.col.binding'), org.binding ? t('m09.dir.binding') : t('m09.dir.nonBinding')],
-              [t('m09.dir.col.country'), org.country ?? '—'],
+              [t('m09.dir.col.country'), countryName(t, org.country) || '—'],
               [t('m09.detail.contact'), org.contact_route ?? t('m09.detail.noContact')],
             ]}
           />

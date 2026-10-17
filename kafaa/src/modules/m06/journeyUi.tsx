@@ -83,7 +83,7 @@ export function FactList({ facts, sources, testId = 'm06-journey-facts', forceLa
             <div className="mt-0.5">
               {s ? (
                 <SourceLink href={s.url} date={tl('m06.journey.asOf', { date: asOf(x.as_of, x.precision) })}>
-                  <span data-testid="m06-journey-fact-source">{s.label}</span>
+                  <span data-testid="m06-journey-fact-source" {...(l === 'ar' && !/[\u0600-\u06FF]/.test(s.label) ? { lang: 'en', dir: 'ltr' } : {})}>{s.label}</span>
                 </SourceLink>
               ) : (
                 <span className="text-ink-3">{tl('m06.journey.asOf', { date: asOf(x.as_of, x.precision) })}</span>

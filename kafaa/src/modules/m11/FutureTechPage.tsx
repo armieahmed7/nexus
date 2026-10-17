@@ -2,7 +2,7 @@
 // compared with APR-1400 operations, skill bridges from today's roles, concept future roles and learning tracks.
 import { useParams } from 'react-router-dom';
 import { Page, Section, Card, Async, EmptyState, Grid, KeyValue, Icon } from '../../ui';
-import { useT, usePick, L } from '../../i18n';
+import { useT, usePick, L, techDesigns } from '../../i18n';
 import { SourceList, useSourceDates, type Source } from '../m09/shared';
 import { useFutureData, type FutureData } from './FuturePage';
 import { AREAS, NoDecision, RELATION_CLS, TECH_ORGS, techSlug } from './shared';
@@ -44,7 +44,7 @@ function Tech({ d, id }: { d: FutureData; id: string }) {
   const prev = d.techs[idx - 1];
   const next = d.techs[idx + 1];
   return (
-    <Page title={pick(x, 'family')} eyebrow={x.designs} intro={pick(x, 'skill_areas')} actions={<L to="/future" className="btn-outline">{t('m11.tech.back')}</L>}>
+    <Page title={pick(x, 'family')} eyebrow={techDesigns(t, x.designs)} intro={pick(x, 'skill_areas')} actions={<L to="/future" className="btn-outline">{t('m11.tech.back')}</L>}>
       <NoDecision />
       <div className="mb-4"><NextGenLink compact /></div>
       <Grid cols={2}>

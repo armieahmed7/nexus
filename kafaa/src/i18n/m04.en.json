@@ -812,6 +812,8 @@
     "start": "Start time",
     "statusSaved": "Session updated.",
     "uaeTime": "UAE time (GST)",
+    "whereAr": "Where (Arabic)",
+    "whereArHint": "Shown on Arabic pages. Leave empty to show the English.",
     "until": "until {time}",
     "upcoming": "Upcoming",
     "waitlist": "Waitlist ({n})",

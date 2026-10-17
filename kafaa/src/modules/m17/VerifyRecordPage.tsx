@@ -2,12 +2,12 @@
 // shows only the items the holder chose and their initials; the embedded signed credentials are checked in the browser against
 // the published issuer keys. An expired or revoked link shows nothing personal (no initials, no items, no counts).
 import { useParams } from 'react-router-dom';
-import { Page, BenchmarkChips, Callout, Card, EmptyState, Icon, KeyValue, Skeleton, StatusPill } from '../../ui';
+import { Page, BenchmarkChips, Callout, Card, EmptyState, En, Icon, KeyValue, Skeleton, StatusPill } from '../../ui';
 import { useQuery, useRepo } from '../../data';
-import { useT, usePick, useFormat } from '../../i18n';
+import { useT, usePick, useFormat, useLang } from '../../i18n';
 import { verifyCredential } from './issuer';
 import { SignatureChip, issuerKeyUrl } from './WalletPage';
-import { ITEM_KINDS, type RecordItem, type VerifyResult } from './learnerRecord';
+import { ITEM_KINDS, credName, type RecordItem, type VerifyResult } from './learnerRecord';
 import { ItemStatus } from './xcUi'; // FS79 -> FS32 (wave I integration): the trust tier of a shared external certificate
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -42,6 +42,7 @@ function Missing({ code }: { code: string }) {
 function Shown({ v }: { v: VerifyResult }) {
   const t = useT();
   const f = useFormat();
+  const lang = useLang();
   if (v.status !== 'active') {
     return (
       <Card>
@@ -60,7 +61,7 @@ function Shown({ v }: { v: VerifyResult }) {
   const clr = (v.clr ?? {}) as Row;
   const items = (clr.kafaaItems ?? []) as Omit<RecordItem, 'id'>[];
   const vcs = ((clr.credentialSubject?.verifiableCredential ?? []) as Row[]).filter((c) => c && c.proof);
-  const checks = vcs.map((c) => ({ name: String(c.name ?? c.credentialSubject?.achievement?.name ?? c.id ?? ''), ...verifyCredential(c) }));
+  const checks = vcs.map((c) => ({ name: credName(c, lang), ...verifyCredential(c) }));
   const valid = checks.filter((c) => c.outcome === 'valid').length;
   return (
     <div className="space-y-4" data-testid="m17-lr-verify" data-status="active">
@@ -91,13 +92,15 @@ function Shown({ v }: { v: VerifyResult }) {
       </div>
       {checks.length > 0 && (
         <Card title={t('m17.lr.verify.sigTitle')}>
-          <ul className="space-y-1.5" data-testid="m17-lr-verify-sigs">{checks.map((c, n) => <li key={n} className="flex flex-wrap items-center justify-between gap-2 text-[13px]"><span>{c.name}</span><SignatureChip outcome={c.outcome} keyId={c.keyId} /></li>)}</ul>
+          <ul className="space-y-1.5" data-testid="m17-lr-verify-sigs">{checks.map((c, n) => <li key={n} className="flex flex-wrap items-center justify-between gap-2 text-[13px]"><span>{lang === 'ar' && !ARABIC.test(c.name) ? <En>{c.name}</En> : c.name}</span><SignatureChip outcome={c.outcome} keyId={c.keyId} /></li>)}</ul>
         </Card>
       )}
       <p className="text-[12px] text-ink-3">{t('m17.lr.verify.notice')}</p>
     </div>
   );
 }
+
+const ARABIC = /[\u0600-\u06FF]/;
 
 function VerifyLine({ i }: { i: Omit<RecordItem, 'id'> }) {
   const t = useT();

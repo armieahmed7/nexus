@@ -78,7 +78,7 @@ function Explorer({ c }: { c: Catalogue }) {
         <div className="flex flex-wrap gap-1.5" aria-label={t('m28.explorer.tryLabel')}>
           <span className="text-[12px] text-ink-3">{t('m28.explorer.tryLabel')}</span>
           {['تحليل البيانات', 'systems thinking', 'AI', 'ESCO', 'SMR'].map((x) => (
-            <button key={x} type="button" className="chip border-line bg-sunken text-ink-2 hover:border-accent" onClick={() => setFlt({ q: x })}><bdi>{x}</bdi></button>
+            <button key={x} type="button" className="chip border-line bg-sunken text-ink-2 hover:border-accent" onClick={() => setFlt({ q: x })}>{/[\u0600-\u06FF]/.test(x) ? <bdi>{x}</bdi> : <En>{x}</En>}</button>
           ))}
         </div>
         <FilterBar

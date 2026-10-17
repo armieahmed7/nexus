@@ -513,6 +513,7 @@ export interface SessionsRow {
   starts_at: string;
   ends_at: string;
   location: string;
+  location_ar?: string | null;
   instructor_person_id?: string | null;
   capacity: number;
   kind: 'class' | 'simulator' | 'drill' | 'elearning' | 'clinic';

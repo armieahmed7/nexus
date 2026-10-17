@@ -6,7 +6,7 @@
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Page, Section, Card, Async, EmptyState, WhyThis, EngineBadge, KeyValue, SimChip } from '../../ui';
-import { useT, usePick, useFormat, L } from '../../i18n';
+import { useT, usePick, useFormat, L, techDesigns } from '../../i18n';
 import { useEngine } from '../../data';
 import { skillReasons, type StoredReason } from '../../domain/skills';
 import type { Reason } from '../../domain/engines/types';
@@ -74,7 +74,7 @@ function Tech({ d, id }: { d: FutureMeData; id: string }) {
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-[1fr_1.2fr]">
         <Card className="relative overflow-hidden">
           <div className="frame-line absolute inset-x-0 top-0 h-1" aria-hidden />
-          <div className="caps num">{x.designs}</div>
+          <div className="caps num">{techDesigns(t, x.designs)}</div>
           <h2 className="text-[20px] font-semibold leading-snug">{pick(x, 'family')}</h2>
           <div className="mt-3 flex flex-col gap-3">
             {f2 ? (
