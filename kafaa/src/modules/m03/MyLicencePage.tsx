@@ -3,7 +3,7 @@
 // shifts against the REG-17 Art. 11 minimums with an at-risk warning, requalification window and COCT hours, key dates.
 import { Page, Section, Card, Grid, Async, EmptyState, Callout, StatusPill, KeyValue, ProgressBar, ProgressRing, Timeline, DataTable, SimChip } from '../../ui';
 import { useQuery, useRepo, type RowOf } from '../../data';
-import { useT, useFormat, usePick, L, systemName } from '../../i18n';
+import { useT, useFormat, usePick, L, systemName, useCount } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { RULES } from '../../auth/policy';
 import { licenceView, medicalView, proficiency, quarterOf, quarterEnd, withdrawalDate, todayIso } from '../../domain/rules';
@@ -39,6 +39,7 @@ type Mine = { lic: RowOf<'licences'> | null; med: RowOf<'medical_due'> | null; s
 function Mine({ d }: { d: Mine }) {
   const t = useT();
   const f = useFormat();
+  const plural = useCount();
   const pick = usePick();
   const lic = d.lic!;
   const v = licenceView(lic);
@@ -79,7 +80,7 @@ function Mine({ d }: { d: Mine }) {
                 [t('m03.cert.facility'), lic.facility],
                 [t('m03.cert.issued'), f.date(lic.issued_on)],
                 [t('m03.cert.expires'), f.date(lic.expires_on)],
-                [t('m03.cert.daysLeft'), v.stale ? t('m03.view.stale') : v.daysToExpiry >= 0 ? t('m02.inDays', { n: f.num(v.daysToExpiry) }) : t('m02.expiredAgo', { n: f.num(-v.daysToExpiry) })],
+                [t('m03.cert.daysLeft'), v.stale ? t('m03.view.stale') : v.daysToExpiry >= 0 ? t('m02.inDays', { days: plural('common.nDays', v.daysToExpiry) }) : t('m02.expiredAgo', { days: plural('common.nDays', -v.daysToExpiry) })],
               ]}
             />
           </div>

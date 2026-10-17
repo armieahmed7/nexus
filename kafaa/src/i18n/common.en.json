@@ -1,4 +1,12 @@
 {
+  "nDays": {
+    "zero": "{n} days",
+    "one": "{n} day",
+    "two": "{n} days",
+    "few": "{n} days",
+    "many": "{n} days",
+    "other": "{n} days"
+  },
   "close": "Close",
   "cancel": "Cancel",
   "confirm": "Confirm",

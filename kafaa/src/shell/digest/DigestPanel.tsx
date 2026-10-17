@@ -5,7 +5,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRepo } from '../../data';
-import { L, useFormat, useT } from '../../i18n';
+import { L, useCount, useFormat, useT } from '../../i18n';
 import { Callout, Card, EmptyState, Icon, Skeleton, StatusPill } from '../../ui';
 import type { Result } from '../../data/types';
 import { useCoachData } from '../../modules/m19/useCoachData';
@@ -14,7 +14,7 @@ import { dubaiHour, hintOk, inQuietHours, type DigestHints } from './rules';
 import type { DigestBuildResult } from './backend/rpc';
 import { DigestItemRow } from './DigestItemRow';
 import { FutureNudgeStrip } from './FutureNudges';
-import { useDigest, useNoNudges, type RunRow } from './useDigest';
+import { useDigest, useDoneItems, useNoNudges, type RunRow } from './useDigest';
 import { useCanOpenLink } from '../GuardedLink';
 
 export function usePeriodLabel() {
@@ -63,6 +63,13 @@ export function DigestPanel() {
   useEffect(() => { if (location.hash === '#digest' && view) box.current?.scrollIntoView({ block: 'start' }); }, [location.hash, view]);
   // opening the digest marks its notification read (the open rate admins see, aggregated)
   useEffect(() => { if (view?.notice && !view.notice.read_at) void repo.update('notifications', view.notice.id, { read_at: new Date().toISOString() }).catch(() => undefined); }, [view?.notice, repo]);
+  // EMP-01: the earlier digests listed under this one are shown too, so their notices still unread are marked read as well
+  const unreadEarlier = (view?.earlierNotices ?? []).filter((n) => !n.read_at).map((n) => n.id).join(',');
+  useEffect(() => {
+    if (!unreadEarlier || noNudges) return;
+    void Promise.all(unreadEarlier.split(',').map((id) => repo.update('notifications', id, { read_at: new Date().toISOString() }))).catch(() => undefined);
+  }, [unreadEarlier, repo, noNudges]);
+  const done = useDoneItems(view?.current?.items);
   if (!me || noNudges) return null;
   const quiet = view && !view.current && view.prefs.enabled && inQuietHours(dubaiHour(new Date()), view.prefs.quiet_start, view.prefs.quiet_end);
   return (
@@ -89,7 +96,7 @@ export function DigestPanel() {
               <p className="text-[13px] text-ink-2" data-testid="digest-empty">{t('digest.panel.nothing')}</p>
             ) : (
               <ol className="space-y-2" data-testid="digest-items">
-                {view.current.items.filter((i) => open(i.link)).map((i) => <DigestItemRow key={i.id} i={i} />)}
+                {view.current.items.filter((i) => open(i.link)).map((i) => <DigestItemRow key={i.id} i={i} done={done.has(i.id)} />)}
               </ol>
             )}
             <FutureNudgeStrip items={view.current.items} asOf={view.current.as_of} />
@@ -116,13 +123,14 @@ export function DigestPanel() {
 function History({ runs, label, open }: { runs: RunRow[]; label: (p: string) => string; open: (link: string) => boolean }) {
   const t = useT();
   const f = useFormat();
+  const c = useCount();
   return (
     <details className="rounded-btn border border-line p-2" data-testid="digest-history">
       <summary className="cursor-pointer text-[12.5px] font-semibold text-ink-2">{t('digest.panel.history', { n: f.num(runs.length) })}</summary>
       <ul className="mt-2 space-y-3">
         {runs.map((r) => (
           <li key={r.id}>
-            <div className="caps">{label(r.period)} · {t('digest.panel.items', { n: f.num(r.item_count) })}</div>
+            <div className="caps">{label(r.period)} · {c('digest.panel.items', r.item_count)}</div>
             <ol>{r.items.filter((i) => open(i.link)).map((i) => <DigestItemRow key={i.id} i={i} compact />)}</ol>
           </li>
         ))}

@@ -6,7 +6,7 @@
 import { useMemo, useState } from 'react';
 import { Page, Section, Card, Grid, Async, EmptyState, StatTile, Tabs, DataTable, StatusPill, ConfirmDialog, Donut, BarChart, FilterBar, useFilters, SelectField, TextField, Drawer, KeyValue, Callout, ProgressBar, Icon } from '../../ui';
 import { useAction, useQuery, useRepo, type RowOf } from '../../data';
-import { useT, usePick, useFormat, systemName, useRefText } from '../../i18n';
+import { useT, usePick, useFormat, systemName, useRefText, useCount } from '../../i18n';
 import { licenceView, medicalView, proficiency, quarterOf, todayIso, withdrawalDate } from '../../domain/rules';
 import { riskOf, workingDaysLeft, type Risk } from './licensing';
 import { LicencePill, MedicalPill, PersonLabel } from './shared';
@@ -63,6 +63,7 @@ export default function LicensingValidityPage() {
 function Validity({ d }: { d: Data }) {
   const t = useT();
   const f = useFormat();
+  const plural = useCount();
   const [flt, setFlt] = useFilters({ q: '', type: '', risk: '', crew: '' }, true);
   const [open, setOpen] = useState<RowOf<'licences'> | null>(null);
   const rows = useMemo(
@@ -122,7 +123,7 @@ function Validity({ d }: { d: Data }) {
                       { key: 'cert', header: t('m03.cert.number'), value: (x) => x.l.cert_no, render: (x) => <span className="num">{x.l.cert_no}</span> },
                       { key: 'status', header: t('m03.cert.status'), value: (x) => licenceView(x.l).view, render: (x) => <LicencePill lic={x.l} /> },
                       { key: 'risk', header: t('m03.val.risk'), value: (x) => x.r.risk, render: (x) => <StatusPill tone={x.r.rank < 3 ? 'bad' : x.r.rank < 6 ? 'sim' : 'ok'}>{t(`m03.risk.${x.r.risk}`)}</StatusPill> },
-                      { key: 'exp', header: t('m03.cert.expires'), value: (x) => x.l.expires_on, render: (x) => <span>{f.date(x.l.expires_on)} <span className="text-[12px] text-ink-3">({x.r.days >= 0 ? t('m02.inDays', { n: f.num(x.r.days) }) : t('m02.expiredAgo', { n: f.num(-x.r.days) })})</span></span>, sortable: true },
+                      { key: 'exp', header: t('m03.cert.expires'), value: (x) => x.l.expires_on, render: (x) => <span>{f.date(x.l.expires_on)} <span className="text-[12px] text-ink-3">({x.r.days >= 0 ? t('m02.inDays', { days: plural('common.nDays', x.r.days) }) : t('m02.expiredAgo', { days: plural('common.nDays', -x.r.days) })})</span></span>, sortable: true },
                       { key: 'synced', header: t('m03.val.synced'), value: (x) => x.l.last_synced, render: (x) => <span className="text-[12px]">{f.dateTime(x.l.last_synced)}</span>, sortable: true },
                     ]}
                   />

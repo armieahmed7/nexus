@@ -64,6 +64,15 @@ export function translate(lang: Lang, key: string, vars?: Record<string, string 
 }
 export const hasKey = (key: string) => (lookup('en', key) ?? lookup('ar', key)) !== undefined;
 
+/** CLDR plural category of a count ('zero' | 'one' | 'two' | 'few' | 'many' | 'other'): Arabic uses all six, English one/other. */
+export const pluralCategory = (lang: Lang, n: number): Intl.LDMLPluralRule => new Intl.PluralRules(lang === 'ar' ? 'ar' : 'en-GB').select(n);
+/** A counted phrase: `key` is an object of plural forms ({ one, two, few, many, other, zero }); picks the form for `count`
+ *  (falling back to `other`) and fills {n} with the already formatted number. */
+export function translateCount(lang: Lang, key: string, count: number, vars: Record<string, string | number> = {}): string {
+  const form = `${key}.${pluralCategory(lang, count)}`;
+  return translate(lang, lookup(lang, form) ?? lookup('en', form) ? form : `${key}.other`, { n: count, ...vars });
+}
+
 /** Strip / add the /ar language prefix (router paths are relative to the /kafaa basename). */
 export function splitLang(pathname: string): { lang: Lang; path: string } {
   if (pathname === '/ar' || pathname.startsWith('/ar/')) return { lang: 'ar', path: pathname.slice(3) || '/' };
@@ -216,6 +225,13 @@ export function usePick() {
     },
     [lang],
   );
+}
+
+/** Counted phrases with the right plural form and digits: const c = useCount(); c('common.nDays', 1) -> '1 day' / 'يوم واحد'. */
+export function useCount() {
+  const lang = useLang();
+  const f = useFormat();
+  return useCallback((key: string, count: number, vars: Record<string, string | number> = {}) => translateCount(lang, key, count, { n: f.num(count), ...vars }), [lang, f]);
 }
 
 export function useFormat() {
