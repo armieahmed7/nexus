@@ -34,7 +34,7 @@ export function useMergedGlossary(): { items: GlossaryItem[]; loading: boolean }
       ...GLOSSARY.map((g) => ({ id: g.id, term: g.term, abbr: g.abbr, definition: g.definition, inKafaa: g.inKafaa, where: g.where, sources: g.sources, fromDb: false })),
       ...(db.data ?? [])
         .filter((r) => !isReplacedDbTerm(r.id))
-        .map((r) => ({ id: r.id, term: { en: r.term_en, ar: r.term_ar || r.term_en }, definition: { en: r.definition_en, ar: r.definition_ar || r.definition_en }, where: [{ route: 'faq', hash: 'glossary' }], sources: [], fromDb: true })),
+        .map((r) => ({ id: r.id, term: { en: r.term_en, ar: r.term_ar || r.term_en }, definition: { en: r.definition_en, ar: r.definition_ar || r.definition_en }, where: [], sources: [], fromDb: true })),
     ],
     [db.data],
   );

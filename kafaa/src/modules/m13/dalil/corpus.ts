@@ -7,6 +7,7 @@ import type { DalilMode, Repository } from '../../../data/types';
 import type { Corpus, CorpusDoc, EcpChannel, RefusalPolicy } from './types';
 import { GUIDES } from '../../m12/help/content';
 import { GLOSSARY } from '../../m12/help/glossary';
+import { isReplacedDbTerm, termHref } from '../../m12/help/search';
 
 const ALL: DalilMode[] = ['public', 'applicant', 'staff', 'partner'];
 const stripBase = (u: string) => (u.startsWith('/kafaa/') ? u.slice(6) : u === '/kafaa' ? '/' : u);
@@ -103,14 +104,19 @@ export async function buildCorpus(repo: Repository, opts: { signedIn: boolean; p
   }
   for (const tr of traits) push({ id: `cd-trait-${tr.id}`, kind: 'trait', title: { en: tr.name_en, ar: tr.name_ar }, text: { en: tr.description_en, ar: tr.description_ar }, cite: { label: 'ENEC Operations · Nuclear safety culture', url: '/safety-culture' }, route: '/safety-culture', modes: ALL, keywords: ['qsafetyculture', 'trait', 'سمة'] });
   for (const h of hu) push({ id: `cd-hu-${h.id}`, kind: 'hu_tool', title: { en: h.name_en, ar: h.name_ar }, text: { en: `${h.description_en} (${h.kind} tool)`, ar: h.description_ar }, cite: { label: 'Human performance tools', url: '/safety-culture#hu' }, route: '/safety-culture', modes: ALL, keywords: ['qhu'] });
-  for (const g of glossary) push({ id: `cd-glossary-${g.id}`, kind: 'glossary', title: { en: g.term_en, ar: g.term_ar }, text: { en: g.definition_en, ar: g.definition_ar }, cite: { label: `Glossary · ${g.term_en}`, url: '/faq#glossary' }, route: '/faq', modes: ALL, keywords: ['glossary', 'meaning', 'what is', 'معنى'] });
+  // Database glossary (plant and licensing terms): one document per term, cited to its anchor on /help/glossary (the only
+  // glossary page). Rows a sourced help-centre term replaces are skipped, so a term is never indexed twice.
+  for (const g of glossary) {
+    if (isReplacedDbTerm(g.id)) continue;
+    push({ id: `cd-glossary-${g.id}`, kind: 'glossary', title: { en: g.term_en, ar: g.term_ar }, text: { en: g.definition_en, ar: g.definition_ar }, cite: { label: `Glossary · ${g.term_en}`, url: termHref(g.id) }, route: '/help/glossary', modes: ALL, keywords: ['glossary', 'meaning', 'what is', 'معنى'] });
+  }
   // Help centre (static, src/modules/m12/help): guides answer "how do I ..." questions with a link; future-skills terms link to their glossary anchor.
   for (const g of GUIDES) {
     const steps = (l: 'en' | 'ar') => g.steps.map((x) => `${x.title[l]}: ${x.body[l]}`).join(' ');
     push({ id: `cd-guide-${g.id}`, kind: 'page', title: g.title, text: { en: `${g.summary.en} ${steps('en')}`, ar: `${g.summary.ar} ${steps('ar')}` }, cite: { label: `Help centre · ${g.title.en}`, url: `/help/${g.id}` }, route: `/help/${g.id}`, modes: ALL, keywords: ['help', 'guide', 'مساعدة', 'إرشاد'] });
   }
   for (const term of GLOSSARY) {
-    push({ id: `cd-term-${term.id}`, kind: 'glossary', title: term.term, text: { en: `${term.definition.en} ${term.inKafaa?.en ?? ''}`.trim(), ar: `${term.definition.ar} ${term.inKafaa?.ar ?? ''}`.trim() }, cite: { label: `Glossary · ${term.term.en}`, url: `/help/glossary#term-${term.id}` }, route: '/help/glossary', modes: ALL, keywords: [...(term.abbr ? [term.abbr] : []), 'glossary', 'meaning', 'what is', 'معنى'] });
+    push({ id: `cd-term-${term.id}`, kind: 'glossary', title: term.term, text: { en: `${term.definition.en} ${term.inKafaa?.en ?? ''}`.trim(), ar: `${term.definition.ar} ${term.inKafaa?.ar ?? ''}`.trim() }, cite: { label: `Glossary · ${term.term.en}`, url: termHref(term.id) }, route: '/help/glossary', modes: ALL, keywords: [...(term.abbr ? [term.abbr] : []), 'glossary', 'meaning', 'what is', 'معنى'] });
   }
   for (const t of techs) {
     const s = firstSource(t.sources);

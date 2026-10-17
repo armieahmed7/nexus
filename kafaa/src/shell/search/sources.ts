@@ -133,7 +133,7 @@ export function dataItems(src: SearchSources, s: Pick<Session, 'status' | 'roles
     ...src.faqs.map<SearchItem>((r) => ({ key: `f-${r.id}`, kind: 'faq', title: bi(r, 'q'), sub: bi(r, 'a'), to: `/faq#${encodeURIComponent(r.id)}` })),
     ...src.glossary
       .filter((r) => !help?.isReplacedDbTerm(r.id))
-      .map<SearchItem>((r) => ({ key: `g-${r.id}`, kind: 'term', title: bi(r, 'term'), sub: bi(r, 'definition'), to: help ? help.termHref(r.id) : '/faq#glossary' })),
+      .map<SearchItem>((r) => ({ key: `g-${r.id}`, kind: 'term', title: bi(r, 'term'), sub: bi(r, 'definition'), to: help ? help.termHref(r.id) : '/help/glossary' })),
     ...src.frameworks.map<SearchItem>((r) => ({ key: `fw-${r.id}`, kind: 'framework', title: bi(r, 'name'), sub: bi(r, 'owner'), alt: [r.short], body: [r.scope_en, r.scope_ar], to: '/skills/frameworks' })),
     ...src.partners.map<SearchItem>((r) => ({ key: `o-${r.id}`, kind: 'partner', title: bi(r, 'name'), sub: bi(r, 'relationship'), alt: r.short ? [r.short] : [], to: `/partners/${encodeURIComponent(r.id)}` })),
     ...src.news.map<SearchItem>((r) => ({ key: `n-${r.id}`, kind: 'news', title: bi(r, 'title'), sub: bi(r, 'summary'), to: `/${r.slug}` })),
