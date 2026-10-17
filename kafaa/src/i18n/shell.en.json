@@ -43,12 +43,13 @@
     "leadership": "Leadership",
     "talent": "Talent",
     "knowledge": "Knowledge",
-    "quality": "Training quality"
+    "quality": "Training quality",
+    "help": "Help"
   },
   "search": {
     "open": "Search",
     "title": "Search Kafa'a",
-    "placeholder": "Search pages, roles, programmes, courses, partners",
+    "placeholder": "Search pages, guides, roles, programmes, courses, partners",
     "none": "No results",
     "kind": {
       "page": "Page",
@@ -56,7 +57,8 @@
       "programme": "Programme",
       "course": "Course",
       "partner": "Partner",
-      "term": "Term"
+      "term": "Term",
+      "guide": "Guide"
     }
   },
   "notifications": {

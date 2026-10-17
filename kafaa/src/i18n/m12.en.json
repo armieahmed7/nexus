@@ -44,6 +44,18 @@
     "news-item": {
       "title": "News item",
       "purpose": "A sourced news item."
+    },
+    "help": {
+      "title": "Help centre",
+      "purpose": "Task-based guides for every audience and a future-skills glossary, searchable in English and Arabic."
+    },
+    "help-glossary": {
+      "title": "Future-skills glossary",
+      "purpose": "Workforce and future-skills terms from A to Z, each with a public source and the pages where you meet it."
+    },
+    "help-guide": {
+      "title": "Guide",
+      "purpose": "A step-by-step help guide with links to the pages it describes, sources and the date it was last reviewed."
     }
   },
   "common": {
@@ -487,5 +499,66 @@
     "barrierTitle": "Found a barrier?",
     "barrierLink": "Tell us through the contact form (topic: accessibility)",
     "reviewed": "Content as of {date}; next review {next}."
+  },
+  "help": {
+    "intro": "Short, task-based guides to how Kafa'a works, and a glossary of the future-skills terms it uses. Search in English or Arabic.",
+    "askDalil": "Ask Dalil",
+    "searchLabel": "Search guides and terms",
+    "searchPh": "e.g. passport, RPL, مشغل, digital twin",
+    "searchHint": "Type a word in English or Arabic: results appear as you type.",
+    "results": "{n} results",
+    "noResults": "Nothing matches",
+    "noResultsBody": "Try another word, or the English or Arabic term.",
+    "kind": {
+      "guide": "Guide",
+      "term": "Term"
+    },
+    "startTitle": "Start here",
+    "startIntro": "New to Kafa'a? Read the overview, then the guide for you.",
+    "aud": {
+      "everyone": "Everyone",
+      "students": "Students and graduates",
+      "employees": "ENEC employees",
+      "managers": "Managers and HR",
+      "partners": "Partners and universities"
+    },
+    "cat": {
+      "start": "Start here",
+      "skills": "Skills and levels",
+      "learning": "Learning and credentials",
+      "careers": "Careers and pathways",
+      "trust": "Trust, privacy and safety",
+      "platform": "Using the platform"
+    },
+    "glossaryTitle": "Future-skills glossary, A to Z",
+    "glossaryIntro": "{n} terms the platform uses, each with its meaning and where you meet it.",
+    "glossaryOpen": "Open the full glossary",
+    "concept": "Kafa'a is a concept with synthetic demo data. The guides describe how the platform works; they are not ENEC policy or regulation.",
+    "audienceLabel": "Who it is for",
+    "reviewed": "Last reviewed {date}",
+    "print": "Print this guide",
+    "steps": "Steps",
+    "sections": "In this guide",
+    "noteTitle": "Good to know",
+    "goTo": "Go to",
+    "signInFirst": "sign-in needed",
+    "notForRole": "not available with your role card",
+    "sources": "Sources",
+    "related": "Related guides",
+    "back": "All guides",
+    "stillStuck": "Still stuck? Ask Dalil",
+    "notFound": "Guide not found",
+    "notFoundBody": "This guide does not exist or has moved. Browse all guides instead.",
+    "gl": {
+      "intro": "The workforce and future-skills terms used across Kafa'a, in English and Arabic. Each general definition cites a public source with the date it was read; \"In Kafa'a\" explains how the platform uses the idea.",
+      "filterLabel": "Filter terms",
+      "count": "{n} terms",
+      "letters": "Jump to a letter",
+      "inKafaa": "In Kafa'a",
+      "where": "Where you meet it",
+      "fromDb": "From the reviewed plant and licensing glossary, also on the FAQ page.",
+      "none": "No term matches",
+      "note": "Definitions explain terms; they are not ENEC policy, and Kafa'a is not a regulator or a certification body."
+    }
   }
 }

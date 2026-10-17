@@ -169,6 +169,9 @@ export default function AskPage() {
                 <li>{t('m13.ask.how.3')}</li>
                 <li>{t('m13.ask.how.4')}</li>
               </ul>
+              <L to="/help/using-dalil" className="mt-3 inline-flex items-center gap-1 font-semibold" data-testid="m13-help-link">
+                {t('m13.ask.helpLink')}
+              </L>
             </div>
             <Callout tone="info" title={t('m13.ask.concernTitle')}>
               {t('m13.ask.concernBody')} <L to="/speak-up">{t('m13.ask.concernLink')}</L>
