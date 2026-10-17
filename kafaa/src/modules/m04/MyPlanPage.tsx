@@ -1,12 +1,13 @@
 // /my/plan (M04): individual development plan towards a target role. Skills gap from the competency framework (M02),
 // suggested courses, activities and milestones, submission for line-manager approval. Managers approve their team's plans here.
 import { useMemo, useState } from 'react';
-import { Page, Grid, Card, Section, KeyValue, Async, EmptyState, ConfirmDialog, Modal, DataTable, ProgressRing, Callout, Icon, SelectField, TextField, TextArea, useForm, required, maxLen, Skeleton } from '../../ui';
+import { Page, Grid, Card, Section, KeyValue, Async, EmptyState, ConfirmDialog, Modal, DataTable, ProgressRing, Callout, Icon, SelectField, TextField, TextArea, useForm, required, maxLen, Skeleton, WhyThis } from '../../ui';
 import { useAction, useQuery, useRepo } from '../../data';
 import type { DevPlansRow, PlanActivitiesRow } from '../../data/types';
 import { L, useFormat, usePick, useT } from '../../i18n';
 import { useSession } from '../../auth/session';
 import { Chip, G2Pill, useLabels, usePeople } from './ui';
+import { rankPlanSuggestions } from './plan';
 
 const KINDS = ['course', 'ojt', 'mentoring', 'project', 'assessment', 'reading'] as const;
 
@@ -68,10 +69,13 @@ function PlanView({ plan, acts }: { plan: DevPlansRow; acts: PlanActivitiesRow[]
   const people = usePeople();
   const [adding, setAdding] = useState<{ kind: string; title_en: string; title_ar: string; course_id: string | null } | null>(null);
   const [submit, setSubmit] = useState(false);
-  const fw = useQuery(['job_roles', 'role_competencies', 'competencies', 'courses'], async () => {
-    const [roles, rc, comps, courses] = await Promise.all([repo.list('job_roles'), repo.list('role_competencies'), repo.list('competencies'), repo.list('courses')]);
-    return { roles, rc, comps, courses };
-  }, []);
+  const me = s.identity.personId ?? '';
+  const fw = useQuery(['job_roles', 'role_competencies', 'competencies', 'courses', 'enrolments', 'qual_records', 'qual_standards'], async () => {
+    const [roles, rc, comps, courses, enrolments, quals, standards] = await Promise.all([repo.list('job_roles'), repo.list('role_competencies'), repo.list('competencies'), repo.list('courses'),
+      // EMP-02: my own enrolments and qualifications, so suggestions leave out what I have done, am doing or have qualified past
+      repo.list('enrolments', { filter: { person_id: me } }).catch(() => []), repo.list('qual_records', { filter: { person_id: me } }).catch(() => []), repo.list('qual_standards').catch(() => [])]);
+    return { roles, rc, comps, courses, enrolments, quals, standards };
+  }, [me]);
   const editable = plan.status === 'draft' || plan.status === 'active';
   const done = acts.filter((a) => a.status === 'done').length;
   const pct = acts.length ? Math.round((done * 100) / acts.length) : 0;
@@ -86,9 +90,11 @@ function PlanView({ plan, acts }: { plan: DevPlansRow; acts: PlanActivitiesRow[]
         const have = new Map(d.rc.filter((x) => x.role_id === current).map((x) => [x.competency_id, x.required_level]));
         const gaps = need.map((x) => ({ ...x, have: have.get(x.competency_id) ?? 0, gap: x.required_level - (have.get(x.competency_id) ?? 0) })).filter((x) => x.gap > 0).sort((a, b) => b.gap - a.gap);
         const comp = (id: string) => d.comps.find((c) => c.id === id);
-        const gapIds = new Set(gaps.map((g) => g.competency_id));
-        const planned = new Set(acts.map((a) => a.course_id).filter(Boolean));
-        const suggestions = d.courses.filter((c) => c.audience === 'staff' && (c.competency_ids ?? []).some((k) => gapIds.has(k)) && !planned.has(c.id)).slice(0, 8);
+        const planned = new Set(acts.map((a) => a.course_id).filter((x): x is string => !!x));
+        const suggestions = rankPlanSuggestions({
+          gaps, courses: d.courses, planned, enrolments: d.enrolments, roleId: current, quals: d.quals, standards: d.standards,
+          compName: (id) => { const c = comp(id); return c ? { en: `${c.code} · ${c.name_en}`, ar: `${c.code} · ${c.name_ar || c.name_en}` } : null; },
+        });
         return (
           <div className="space-y-6">
             <Grid cols={3}>
@@ -128,10 +134,13 @@ function PlanView({ plan, acts }: { plan: DevPlansRow; acts: PlanActivitiesRow[]
             {suggestions.length > 0 && editable && (
               <Section title={t('m04.plan.suggestTitle')} description={t('m04.plan.suggestIntro')}>
                 <Grid cols={4}>
-                  {suggestions.map((c) => (
+                  {suggestions.map(({ course: c, reasons }) => (
                     <Card key={c.id} eyebrow={<span className="ltr">{c.code}</span>} title={<L to={`/learn/course/${c.id}`}>{pick(c, 'title')}</L>}>
-                      <div className="mb-2 flex flex-wrap gap-1"><Chip>{lab.modality(c.modality)}</Chip></div>
-                      <button className="btn-outline btn-sm" onClick={() => setAdding({ kind: 'course', title_en: c.title_en, title_ar: c.title_ar, course_id: c.id })}><Icon name="plus" size={14} />{t('m04.plan.addToPlan')}</button>
+                      <div className="mb-2 flex flex-wrap gap-1" data-testid="m04-plan-suggestion" data-course={c.id}><Chip>{lab.modality(c.modality)}</Chip></div>
+                      <div className="flex flex-wrap items-center gap-1">
+                        <button className="btn-outline btn-sm" onClick={() => setAdding({ kind: 'course', title_en: c.title_en, title_ar: c.title_ar, course_id: c.id })}><Icon name="plus" size={14} />{t('m04.plan.addToPlan')}</button>
+                        <WhyThis reasons={reasons} testId="m04-plan-why" />
+                      </div>
                     </Card>
                   ))}
                 </Grid>
